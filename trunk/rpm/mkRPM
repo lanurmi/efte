@@ -29,7 +29,7 @@ create_rpm();
 
 sub create_rpm
 {
-    my @cmd = (qw( rpm -ba ), $specfile_name, "--target=$target" );
+    my @cmd = (qw( rpm -ba ), $specfile_name, ); #"--target=$target" );
 
     # figure out which files to move back to 'here'.
     local *PH;

@@ -387,6 +387,7 @@ int C_CommentDelta = 1;
 int C_FirstLevelWidth = -1;
 int C_FirstLevelIndent = 4;
 int C_Continuation = 4;
+int FunctionUsesContinuation = 0;
 
 // this is global, unfortunately -- FIX !!!
 int EBuffer::SetCIndentStyle(ExState &State) {
@@ -985,8 +986,11 @@ static int IndentNormal(EBuffer *B, int Line, int /*StateLen*/, hsState * /*Stat
                 ColP++;
                 if (SkipWhite(B, Line, RowP, ColP, SKIP_FORWARD | SKIP_LINE) != 1)
                     return 0;
-                if (ColP < B->LineChars(RowP)) {
-                    I = B->ScreenPos(B->RLine(RowP), ColP);
+                if (ColP < B->LineChars(RowP) || !FunctionUsesContinuation) {
+                    char strLeft[2] = { CharP, 0 };
+                    char strRight[2] = { CharP == '(' ? ')' : ']', 0 };
+                    I = SearchBackMatch(-1, B, Line - 1, hsC_Normal, strLeft, strRight, &Pos, &L);
+                    I = Pos + 1;
                 } else {
                     I = B->LineIndented(RowP) + C_CONTINUATION;
                 }
