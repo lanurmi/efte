@@ -89,4 +89,8 @@ object GLOBAL {
 
 # Ant (javac)
     CompileRx = { 1, 2, 3, /^.*\s([\w:._\-\/\\]+):(\d+):\s(.*)$/ };
+
+# Python interpreter tracebacks
+    CompileRx = { 1, 2, 3, /^\s*File\s+"([\w:._\-\/\\]+)",\s+line\s+(\d+)(.*)$/ };
+
 }
