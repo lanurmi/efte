@@ -14,6 +14,7 @@
 #include "feature.h"
 #include "sysdep.h"
 
+#include "log.h"
 #include "console.h"
 #include "gui.h"
 #include "c_desktop.h"

@@ -69,7 +69,8 @@ view.$(OEXT) \
 gui.$(OEXT) \
 egui.$(OEXT) \
 fte.$(OEXT) \
-commands.$(OEXT)
+commands.$(OEXT) \
+log.$(OEXT)
 
 OS2OBJS = e_os2.$(OEXT)
 
