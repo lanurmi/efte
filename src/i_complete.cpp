@@ -28,6 +28,7 @@ static int CmpStr(const void *p1, const void *p2) {
     return strcoll(*(char **)p1, *(char **)p2);
 }
 #endif
+
 /**
  * Create Sorted list of possible word extensions
  */
@@ -298,25 +299,33 @@ int ExComplete::RefreshComplete()
     // this might look strange but it is necessary to catch
     // the first word at position 0,0 for match :-)
     unsigned long mask = SEARCH_NOPOS | SEARCH_WORDBEG;
+
     while (Buffer->FindStr(L->Chars + P, wlen, mask) == 1) {
 	mask |= SEARCH_NEXT;
 	PELine M = Buffer->RLine(Buffer->Match.Row);
 	int X = Buffer->CharOffset(M, Buffer->Match.Col);
-	if ((L->Chars == M->Chars) && (P == X))
+
+        if ((L->Chars == M->Chars) && (P == X))
             continue;
-	int XL = X;
-	while ((XL < M->Count) && CheckASCII(M->Chars[XL]))
+
+        int XL = X;
+
+        while ((XL < M->Count) && CheckASCII(M->Chars[XL]))
 	    XL++;
-	int len = XL - X - wlen;
-	if (!len)
+
+        int len = XL - X - wlen;
+
+	if (len == 0)
 	    continue;
 
-	char *s = new char[len + 1];
+        char *s = new char[len + 1];
+
 	if (s != NULL) {
 	    strncpy(s, M->Chars + X + wlen, len);
 	    s[len] = 0;
 
 	    int c = 1, H = 0, L = 0, R = WordsLast;
+
             // using sort to insert only unique words
 	    while (L < R) {
 		H = (L + R) / 2;
@@ -326,19 +335,30 @@ int ExComplete::RefreshComplete()
 		else if (c > 0)
 		    L = H + 1;
 		else
-		    break;
-	    }
+                    break;
+            }
+
 	    if (c != 0) {
+	        // Loop exited without finding the word. Instead,
+	        // it found the spot where the new should be inserted.
 		WordsLast++;
-		int i = WordsLast;
-		while (i > L) {
+
+                int i = WordsLast;
+
+                while (i > L) {
 		    Words[i] = Words[i-1];
 		    i--;
-		}
-		Words[i] = s;
+                }
+
+                Words[i] = s;
+
 		if (WordsLast >= MAXCOMPLETEWORDS)
 		    break;
-	    }
+            } else
+            {
+                // word was already listed, free duplicate.
+                delete s;
+            }
 	}
     }
     Buffer->Match.Row = Buffer->Match.Col = -1;
