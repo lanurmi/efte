@@ -69,14 +69,22 @@ int Hilit_SIMPLE(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Li
                 nextState = tr->nextState;
 
                 //fprintf(stderr,
-                //        "line:%d, char:%d, len:%d, state:%d, tr:%d, st->transCount:%d, st->firstTrans, nextState:%d, matchFlags:%d\n",
-                //        LN, i, len, State, t, st->transCount, st->firstTrans, nextState, matchFlags);
+                //        "line:%d, char:%d (%c), len:%d, state:%d, tr:%d, st->transCount:%d, st->firstTrans:%d, nextState:%d, matchFlags:%08x\n",
+                //        LN, i, *p, len, State, t, st->transCount, st->firstTrans, nextState, matchFlags);
 
-               if (len < matchLen)
+                if (len < matchLen)
+                    continue;
+
+                if ((i > 0) && (matchFlags & MATCH_MUST_BOL))
                     continue;
 
                 if ((matchFlags & (MATCH_SET | MATCH_NOTSET)) == 0) {
-                    if (matchFlags & MATCH_NO_CASE) {
+                    if (matchFlags & MATCH_REGEXP) {
+                        RxMatchRes b;
+                        if (!RxExecMatch(tr->regexp, Line->Chars, Line->Count, p, &b, (matchFlags & MATCH_NO_CASE) ? 0 : RX_CASE)) continue;
+                        if (b.Open[1] != -1 && b.Close[1] != -1) matchLen = b.Open[1] - i;
+                        else matchLen = b.Close[0] - i;
+                    } else if (matchFlags & MATCH_NO_CASE) {
                         if (memicmp(match, p, matchLen))
                             continue;
                     } else {
@@ -91,9 +99,6 @@ int Hilit_SIMPLE(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Li
                     if (WGETBIT(match, *p))
                         continue;
                 }
-
-                if ((i > 0) && (matchFlags & MATCH_MUST_BOL))
-                    continue;
 
                 if ((len != matchLen) && (matchFlags & MATCH_MUST_EOL))
                     continue;
@@ -216,7 +221,7 @@ int Hilit_SIMPLE(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Li
         match = tr->match;
         nextState = tr->nextState;
         
-        if ((i > 0) && (matchFlags & MATCH_MUST_BOL))
+        if (((i > 0) && (matchFlags & MATCH_MUST_BOL)) || (matchFlags & MATCH_REGEXP))
             continue;
 
         //cant match eol beyond eol.

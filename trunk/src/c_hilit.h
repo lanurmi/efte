@@ -10,6 +10,8 @@
 #ifndef __HILIT_H__
 #define __HILIT_H__
 
+#include "e_regex.h"
+
 typedef unsigned short hlState;
 typedef unsigned char hsState;
 
@@ -200,6 +202,7 @@ struct HTrans {
     long matchFlags;
     int nextState;
     int color;
+    RxNode *regexp;
     
     void InitTrans();
 };

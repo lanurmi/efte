@@ -767,7 +767,7 @@ static int ReadColorize(CurPos &cp, EColorize *Colorize, const char *ModeName) {
                 if (GetNum(cp, color) == 0)
                     return -1;
                 obj = GetObj(cp, len);
-                assert(obj == CF_STRING);
+                assert(matchFlags & MATCH_REGEXP ? obj == CF_REGEXP : obj == CF_STRING);
                 if ((match = GetCharStr(cp, len)) == 0)
                     return -1;
 
@@ -777,8 +777,11 @@ static int ReadColorize(CurPos &cp, EColorize *Colorize, const char *ModeName) {
                 newTrans.nextState = nextState;
                 newTrans.color = color;
 
-                if ((newTrans.matchFlags & MATCH_SET) ||
-                    (newTrans.matchFlags & MATCH_NOTSET))
+                if (newTrans.matchFlags & MATCH_REGEXP) {
+                    newTrans.regexp = RxCompile(match);
+                    newTrans.matchLen = 0;
+                } else if ((newTrans.matchFlags & MATCH_SET) ||
+                           (newTrans.matchFlags & MATCH_NOTSET))
                 {
                     newTrans.matchLen = 1;
                     newTrans.match = (char *)malloc(256/8);

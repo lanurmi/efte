@@ -212,6 +212,7 @@ void HTrans::InitTrans() {
     matchFlags = 0;
     nextState = 0;
     color = 0;
+    regexp = 0;
 }
 
 /* ======================================================================= */
@@ -287,7 +288,8 @@ HMachine::~HMachine() {
     {
         while(transCount--)
         {
-            free(trans[transCount].match);
+            if (trans[transCount].match) free(trans[transCount].match);
+            if (trans[transCount].regexp) RxFree(trans[transCount].regexp);
         }
 
         free(trans);
