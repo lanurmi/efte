@@ -186,7 +186,7 @@ DEFAULT_FTE_CONFIG = defcfg.fte
 defcfg.cnf: $(DEFAULT_FTE_CONFIG) cfte
 	./cfte $(DEFAULT_FTE_CONFIG) defcfg.cnf
 
-xfte: depend $(OBJS) $(XOBJS)
+xfte: .depend $(OBJS) $(XOBJS)
 	$(LD) -o $@ $(LDFLAGS) $(OBJS) $(XOBJS) $(XLIBS)
 
 #qfte: g_qt.moc g_qt_dlg.moc $(OBJS) $(QOBJS)
@@ -208,7 +208,7 @@ g_qt.obj: g_qt.moc
 
 g_qt_dlg.obj: g_qt_dlg.moc
 
-depend:
+.depend: defcfg.h
 	$(CC) -MM $(CCFLAGS) $(SRCS) 1>.depend
 
 clean:

@@ -18,7 +18,7 @@ colorize PERL {
     };
 
     keyword 'Editor_Keywords' {
-        'q', 'qq', 'qw', 'qx', 'm', 's', 'y', 'tr',
+        'q', 'qq', 'qw', 'qx', 'qr', 'm', 's', 'y', 'tr',
         'if', 'sub', 'return', 'while', 'for', 'elsif', 'foreach', 'else',
         'unless', 'eq', 'not', 'and', 'or', 'ne', 'until', 'abs', 'accept',
         'alarm', 'atan2', 'bind', 'binmode', 'bless', 'caller', 'chdir',
@@ -66,7 +66,7 @@ mode PERL: PLAIN { # PERL
     MultiLineHilit      = 1;
     AutoHilitParen      = 1;
 
-    RoutineRegexp       = /^{sub}|{package}\s+/;
+    RoutineRegexp       = /^\s*{sub}|{package}\s+/;
     
     SaveFolds           = 2;      # save fold info at end of line
     CommentStart        = ' #';
