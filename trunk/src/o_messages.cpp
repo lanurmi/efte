@@ -8,14 +8,16 @@
  */
 
 #include "fte.h"
+#include "s_files.h"
+#include "c_commands.h"
 
 #ifdef CONFIG_OBJ_MESSAGES
 #define MAXREGEXP  32
 
 EMessages *CompilerMsgs = 0;
 
-int NCRegexp = 0;
-struct {
+static int NCRegexp = 0;
+static struct {
     int RefFile;
     int RefLine;
     int RefMsg;
