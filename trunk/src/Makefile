@@ -29,3 +29,6 @@ djgpp2:
 
 vag:
 	nmake /f fte-vag.mak
+
+clean:
+	rm -f core *.o *~
