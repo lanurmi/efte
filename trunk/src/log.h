@@ -147,7 +147,7 @@ private:
     char        indentChar;
 public:
     // Enter:
-    FunctionLog(GlobalLog& gl, char* funcName);
+    FunctionLog(GlobalLog& gl, char* funcName, unsigned long line);
 
     // Exit:
     ~FunctionLog();
@@ -155,19 +155,24 @@ public:
     // RC?
     ostream& RC(unsigned long line);
 
-    // output line.
+private:
     ostream& OutputLine()
     { return OutputIndent(log()) << '[' << func << "] "; }
+
+public:
+    // output line.
+    ostream& OutputLine(unsigned long line)
+    { return OutputLine() << '{' << line << "} "; }
 
 private:
     ostream& OutputIndent(ostream& os);
 };
 
 #define LOGOBJNAME functionLog__obj
-#define LOG LOGOBJNAME.OutputLine()
+#define LOG LOGOBJNAME.OutputLine(__LINE__)
 #define ENDLINE endl
 
-#define STARTFUNC(func) FunctionLog LOGOBJNAME(globalLog, func)
+#define STARTFUNC(func) FunctionLog LOGOBJNAME(globalLog, func, __LINE__)
 #define ENDFUNCRC(rc) do { LOGOBJNAME.RC(__LINE__) << (rc) << ENDLINE; return (rc); } while (0)
 #define ENDFUNCRC_SAFE(type,rc) do { type LOG__RC = (rc); LOGOBJNAME.RC(__LINE__) << LOG__RC << ENDLINE; return LOG__RC; } while (0)
 #define ENDFUNCAS(type,rc) do { LOGOBJNAME.RC(__LINE__) << (type)(rc) << ENDLINE; return (rc); } while (0)
@@ -266,8 +271,8 @@ inline ostream_func2_char_size_t FillChar(char c, size_t num)
 { return ostream_func2_char_size_t(Log__osFillChar, c, num); }
 
 
-void Log__BinaryData(FunctionLog&, void* bin_data, size_t len);
-#define LOGBINARYDATA(bin_data,len) Log__BinaryData(LOGOBJNAME,bin_data,len)
+void Log__BinaryData(FunctionLog&, void* bin_data, size_t len, unsigned long line);
+#define LOGBINARYDATA(bin_data,len) Log__BinaryData(LOGOBJNAME,bin_data,len, __LINE__)
 
 #else // defined NO_LOGGING
 
