@@ -1011,7 +1011,7 @@ int GUI::RunProgram(int /*mode */ , char *Command)
     return rc;
 }
 
-char ConGetDrawChar(int idx)
+TChar ConGetDrawChar(int idx)
 {
     static const char * use_tab = NULL;
     static int use_tab_size = 0;

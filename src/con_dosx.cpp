@@ -1134,7 +1134,7 @@ int ConPutEvent(TEvent Event)
 	return 0;
 }
 
-char ConGetDrawChar(int index) {
+TChar ConGetDrawChar(int index) {
     static const char *tab = NULL;
 
     if (!tab) {
