@@ -985,7 +985,11 @@ static int IndentNormal(EBuffer *B, int Line, int /*StateLen*/, hsState * /*Stat
                 ColP++;
                 if (SkipWhite(B, Line, RowP, ColP, SKIP_FORWARD | SKIP_LINE) != 1)
                     return 0;
-                I = B->ScreenPos(B->RLine(RowP), ColP);
+                if (ColP < B->LineChars(RowP)) {
+                    I = B->ScreenPos(B->RLine(RowP), ColP);
+                } else {
+                    I = B->LineIndented(RowP) + C_CONTINUATION;
+                }
             }
             return I;
 
