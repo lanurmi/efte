@@ -105,7 +105,7 @@ int Hilit_PERL(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
     int op;
     int setHereDoc = 0;
 #define MAXSEOF 100
-    char hereDocKey[MAXSEOF];
+    static char hereDocKey[MAXSEOF];
 
     C = 0;
     NC = 0;
@@ -327,7 +327,7 @@ int Hilit_PERL(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
                     {
                         hereDocKey[hereDocKeyLen] = p[2 + hereDocKeyLen];
                     }
-                    hereDocKey[len] = '\0';
+                    hereDocKey[hereDocKeyLen] = '\0';
                     State = hsPerl_Punct;
                     Color = Colors[CLR_Punctuation];
                     ColorNext();
