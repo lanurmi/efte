@@ -18,7 +18,7 @@ LDFLAGS   = $(OPTIMIZE) $(LIBDIR) /nologo /MTd
 
 .SUFFIXES: .cpp .$(OEXT)
 
-include objs.inc
+!include objs.inc
 
 .cpp.$(OEXT):
 	$(CC) $(CCFLAGS) -c $<
@@ -26,7 +26,7 @@ include objs.inc
 .c.$(OEXT):
 	$(CC) $(CCFLAGS) -c $<
 
-all: cfte.exe fte.exe
+all: cfte.exe fte.cnf fte.exe
 
 cfte.exe: $(CFTE_OBJS) cfte.def
 	$(LD) $(LDFLAGS) /Fecfte.exe $(CFTE_OBJS) cfte.def
@@ -36,6 +36,9 @@ defcfg.cnf: defcfg.fte cfte.exe
 
 defcfg.h: defcfg.cnf bin2c.exe
 	bin2c defcfg.cnf >defcfg.h
+
+fte.cnf: ..\config\* cfte.exe
+	cfte ..\config\main.fte fte.cnf
 
 bin2c.exe: bin2c.cpp
 	$(CC) $(CCFLAGS) $(LDFLAGS) /Febin2c.exe bin2c.cpp
