@@ -51,7 +51,7 @@ int CursorOverSize[2] = { 0, 100 };
 int OpenAfterClose = 1;
 int SelectPathname = 0;
 char DefaultModeName[32] = "";
-RxNode *CompletionFilter;
+RxNode *CompletionFilter = NULL;
 #if defined(DOS) || defined(DOSP32)
 char PrintDevice[MAXPATH] = "PRN";
 #else
@@ -84,7 +84,11 @@ int AddKeyword(ColorKeywords *tab, char color, const char *keyword) {
 
     if (tab->key[len]) {
         int lx = strlen(tab->key[len]);
-        tab->key[len] = (char *)realloc(tab->key[len], lx + len + 1 + 1);
+        char *key;
+
+        assert((key = (char *)realloc(tab->key[len], lx + len + 1 + 1)) != NULL);
+
+        tab->key[len] = key;
         assert(tab->key[len] != 0);
         strcpy(tab->key[len] + lx, keyword);
         tab->key[len][lx + len] = color;
@@ -141,6 +145,8 @@ int SetModeString(EMode *mode, int what, const char *string) {
             mode->MatchLine = strdup(string);
             mode->MatchLineRx = RxCompile(string);
         } else {
+            // old mode->Flags.str[] should be freed before new is assigned
+            // but it can't be done with current EMode class behauviour
             mode->Flags.str[j & 0xFF] = strdup(string);
         }
     return 0;
@@ -245,7 +251,7 @@ unsigned char GetObj(CurPos &cp, unsigned short &len) {
         unsigned char c;
         unsigned char l[2];
         c = *cp.c++;
-        memcpy(&l, cp.c, 2);
+        memcpy(l, cp.c, 2);
         len = (l[1] << 8) + l[0];
         cp.c += 2;
         return c;
@@ -264,7 +270,7 @@ const char *GetCharStr(CurPos &cp, unsigned short len) {
 int GetNum(CurPos &cp, long &num) {
     unsigned char n[4];
     if (cp.c + 4 > cp.z) return 0;
-    memcpy(&n, cp.c, 4);
+    memcpy(n, cp.c, 4);
     num =
         (n[3] << 24) +
         (n[2] << 16) +
@@ -907,6 +913,10 @@ int ReadConfigFile(CurPos &cp) {
         assert(obj == CF_STRING);
         if ((p = GetCharStr(cp, len)) == 0)
             return -1;
+
+        if (ConfigSourcePath)
+            free(ConfigSourcePath);
+
         ConfigSourcePath = strdup(p);
     }
 
