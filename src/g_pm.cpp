@@ -3494,17 +3494,20 @@ int GUI::RunProgram(int mode, char *Command) {
     int rc;
     PID pid;
     ULONG sid;
+    int ArgsSize;
     
     Prog = getenv("COMSPEC");
+
+    ArgsSize = 3 + strlen(Command) + 1;
     
-    Args = (char *)malloc(3 + strlen(Command) + 1);
+    Args = (char *)malloc(ArgsSize);
     if (Args == NULL) {
         return -1;
     }
     
     if (*Command != 0) {
-        strcpy(Args, "/c ");
-        strcat(Args, Command);
+        strlcpy(Args, "/c ", ArgsSize);
+        strlcat(Args, Command, ArgsSize);
     } else {
         Args[0] = 0;
     }
@@ -3616,14 +3619,15 @@ static int CreatePipeChild(ULONG *sid, PID *pid, HPIPE &hfPipe, char *Command) {
     arglen += strlen(Command) + 1;
     Args[arglen] = '\0';
 #else
-    Args = (char *)malloc(3 + strlen(Command) + 1);
+    int ArgsSize = 3 + strlen(Command) + 1;
+    Args = (char *)malloc(ArgsSize);
     if (Args == NULL) {
         DosClose(hfPipe);
         return -1;
     }
     
-    strcpy(Args, "/c ");
-    strcat(Args, Command);
+    strlcpy(Args, "/c ", ArgsSize);
+    strlcat(Args, Command, ArgsSize);
 #endif
     
     

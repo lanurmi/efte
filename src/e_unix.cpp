@@ -35,8 +35,8 @@ int EView::SysShowHelp(ExState &State, const char *word) {
         word = wordAsk;
     }
 
-    sprintf(file, "/tmp/fte%d-man-%s", getpid(), word);
-    sprintf(command, "%s %s %s >'%s' 2>&1", HelpCommand, options, word, file);
+    snprintf(file, sizeof(file)-1, "/tmp/fte%d-man-%s", getpid(), word);
+    snprintf(command, sizeof(command)-1, "%s %s %s >'%s' 2>&1", HelpCommand, options, word, file);
 
     /// !!! why is this needed ???
 #define SYSCALL(call) while(((call) == -1) && (errno == EINTR))
