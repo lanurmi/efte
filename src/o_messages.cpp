@@ -34,6 +34,14 @@ int AddCRegexp(int file, int line, int msg, const char *regexp) {
     return 1;
 }
 
+void FreeCRegexp()
+{
+    while(NCRegexp--)
+    {
+        RxFree(CRegexp[NCRegexp].rx);
+    }
+}
+
 EMessages::EMessages(int createFlags, EModel **ARoot, char *ADir, char *ACommand): EList(createFlags, ARoot, "Messages") {
     CompilerMsgs = this;
     ErrCount = 0;

@@ -82,6 +82,9 @@ public:
 };
 
 extern EMessages *CompilerMsgs;
+
+void FreeCRegexp();
+
 #endif
 
 #endif
