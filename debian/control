@@ -3,14 +3,14 @@ Section: editors
 Priority: optional
 Maintainer: Zdenek Kabelac <kabi@debian.org>
 Standards-Version: 3.1.1.1
-Build-Depends: debhelper, perl5, libgpmg1-dev, libncurses5-dev, slang1-dev, patch,
+Build-Depends: debhelper, perl5, xlibs-dev, libgpmg1-dev, libncurses5-dev, slang1-dev, patch,
 
 Package: fte
 Architecture: any
 Depends: ${shlibs:Depends}, fte-xwindow | fte-terminal | fte-console
 Conflicts: fte-console (<< 0.49.13-3), fte-cfgdocs (<< 0.49.13-3)
 Suggests: fte-docs, exuberant-ctags
-Description: Text editor for X-Window with I18N support. (for programmers)
+Description: Text editor for programmers -  base package
  Package contains files necessary to build configuration file
  and some elementary documentation.
  There is no editor in this package.
@@ -27,7 +27,7 @@ Package: fte-xwindow
 Architecture: any
 Depends: ${shlibs:Depends}, fte (= ${Source-Version})
 Replaces: fte (<< 0.49.2-1)
-Description: Text editor for X Window with I18N support. (for programmers)
+Description: Text editor for X Window System with I18N support. (for programmers)
  Color syntax highlighting for many more languages.
  Smart indention for C, C++, Java, Perl.
  Multiple file/window editing, Column blocks, configurable menus and
