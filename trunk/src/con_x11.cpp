@@ -1499,8 +1499,8 @@ GUI::GUI(int &argc, char **argv, int XSize, int YSize) {
     argc = o;
     argv[argc] = 0;
 
-    if (SetupXWindow(argc, argv) == 0 &&
-       ::ConInit(XSize, YSize) == 0)
+    if (::ConInit(XSize, YSize) == 0
+        && SetupXWindow(argc, argv) == 0)
         gui = this;
     else
         gui = NULL;
