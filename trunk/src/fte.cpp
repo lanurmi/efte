@@ -271,6 +271,10 @@ int main(int argc, char **argv) {
 
     delete gui;
     gui = 0;
+
+#if defined(EMX)
+    free(argv[0]);
+#endif
     
 #if defined(OS2) && !defined(DBMALLOC) && defined(CHECKHEAP)
     if (_heapchk() != _HEAPOK)
