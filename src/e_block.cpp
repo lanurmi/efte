@@ -126,55 +126,55 @@ int EBuffer::BlockCopy(int Append) {
     AutoExtend = 0;
     if (CheckBlock() == 0) return 0;
     if (RCount == 0) return 0;
-    if (SS == 0) return 0;
+    if (SSBuffer == 0) return 0;
     if (Append) {
         if (SystemClipboard)
             GetPMClip();
     } else
-        SS->Clear();
-    SS->BlockMode = BlockMode;
-    BFI(SS, BFI_TabSize) = BFI(this, BFI_TabSize);
-    BFI(SS, BFI_ExpandTabs) = BFI(this, BFI_ExpandTabs);
-    BFI(SS, BFI_Undo) = 0;
+        SSBuffer->Clear();
+    SSBuffer->BlockMode = BlockMode;
+    BFI(SSBuffer, BFI_TabSize) = BFI(this, BFI_TabSize);
+    BFI(SSBuffer, BFI_ExpandTabs) = BFI(this, BFI_ExpandTabs);
+    BFI(SSBuffer, BFI_Undo) = 0;
     B = BB;
     E = BE;
-    OldCount = SL = SS->RCount;
+    OldCount = SL = SSBuffer->RCount;
     switch (BlockMode) {
     case bmLine:
         for (L = B.Row; L < E.Row; L++) {
-            if (SS->InsLine(SL, 0) == 0) return 0;
-            if (SS->InsLineText(SL, 0, -1, 0, RLine(L)) == 0) return 0;
+            if (SSBuffer->InsLine(SL, 0) == 0) return 0;
+            if (SSBuffer->InsLineText(SL, 0, -1, 0, RLine(L)) == 0) return 0;
             SL++;
         }
         break;
 
     case bmColumn:
         for (L = B.Row; L < E.Row; L++) {
-            if (SS->InsLine(SL, 0) == 0) return 0;
-            if (SS->InsLineText(SL, 0, E.Col - B.Col, B.Col, RLine(L)) == 0) return 0;
-            if (SS->PadLine(SL, E.Col - B.Col) == 0) return 0;
+            if (SSBuffer->InsLine(SL, 0) == 0) return 0;
+            if (SSBuffer->InsLineText(SL, 0, E.Col - B.Col, B.Col, RLine(L)) == 0) return 0;
+            if (SSBuffer->PadLine(SL, E.Col - B.Col) == 0) return 0;
             SL++;
         }
         break;
 
     case bmStream:
         if (B.Row == E.Row) {
-            if (SS->InsLine(SL, 0) == 0) return 0;
-            if (SS->InsLineText(SL, 0, E.Col - B.Col, B.Col, RLine(B.Row)) == 0) return 0;
+            if (SSBuffer->InsLine(SL, 0) == 0) return 0;
+            if (SSBuffer->InsLineText(SL, 0, E.Col - B.Col, B.Col, RLine(B.Row)) == 0) return 0;
         } else {
-            if (SS->InsLine(SL, 0) == 0) return 0;
-            if (SS->InsLineText(SL, 0, -1, B.Col, RLine(B.Row)) == 0) return 0;
+            if (SSBuffer->InsLine(SL, 0) == 0) return 0;
+            if (SSBuffer->InsLineText(SL, 0, -1, B.Col, RLine(B.Row)) == 0) return 0;
             SL++;
             for (L = B.Row + 1; L < E.Row; L++) {
-                if (SS->InsLine(SL, 0) == 0) return 0;
-                if (SS->InsLineText(SL, 0, -1, 0, RLine(L)) == 0) return 0;
+                if (SSBuffer->InsLine(SL, 0) == 0) return 0;
+                if (SSBuffer->InsLineText(SL, 0, -1, 0, RLine(L)) == 0) return 0;
                 SL++;
             }
-            if (SS->InsLine(SL, 0) == 0) return 0;
-            if (SS->InsLineText(SL, 0, E.Col, 0, RLine(E.Row)) == 0) return 0;
+            if (SSBuffer->InsLine(SL, 0) == 0) return 0;
+            if (SSBuffer->InsLineText(SL, 0, E.Col, 0, RLine(E.Row)) == 0) return 0;
         }
         if (Append && OldCount > 0)
-            if (SS->JoinLine(OldCount - 1, 0) == 0)
+            if (SSBuffer->JoinLine(OldCount - 1, 0) == 0)
                 return 0;
         break;
     }
@@ -205,12 +205,12 @@ int EBuffer::BlockPaste() {
     if (SystemClipboard)
         GetPMClip();
 
-    if (SS == 0) return 0;
-    if (SS->RCount == 0) return 0;
+    if (SSBuffer == 0) return 0;
+    if (SSBuffer->RCount == 0) return 0;
     AutoExtend = 0;
-    BFI(SS, BFI_TabSize) = BFI(this, BFI_TabSize);
-    BFI(SS, BFI_ExpandTabs) = BFI(this, BFI_ExpandTabs);
-    BFI(SS, BFI_Undo) = 0;
+    BFI(SSBuffer, BFI_TabSize) = BFI(this, BFI_TabSize);
+    BFI(SSBuffer, BFI_ExpandTabs) = BFI(this, BFI_ExpandTabs);
+    BFI(SSBuffer, BFI_Undo) = 0;
     BlockUnmark();
     B.Row = VToR(CP.Row);
     B.Col = CP.Col;
@@ -218,9 +218,9 @@ int EBuffer::BlockPaste() {
     switch(BlockMode) {
     case bmLine:
         B.Col = 0;
-        for (L = 0; L < SS->RCount; L++) {
+        for (L = 0; L < SSBuffer->RCount; L++) {
             if (InsLine(BL, 0) == 0) return 0;
-            if (InsLineText(BL, 0, SS->LineLen(L), 0, SS->RLine(L)) == 0) return 0;
+            if (InsLineText(BL, 0, SSBuffer->LineLen(L), 0, SSBuffer->RLine(L)) == 0) return 0;
             BL++;
         }
         E.Row = BL;
@@ -230,35 +230,35 @@ int EBuffer::BlockPaste() {
         break;
 
     case bmColumn:
-        for (L = 0; L < SS->RCount; L++) {
+        for (L = 0; L < SSBuffer->RCount; L++) {
             if (AssertLine(BL) == 0) return 0;
-            if (InsLineText(BL, B.Col, SS->LineLen(L), 0, SS->RLine(L)) == 0) return 0;
+            if (InsLineText(BL, B.Col, SSBuffer->LineLen(L), 0, SSBuffer->RLine(L)) == 0) return 0;
             if (TrimLine(BL) == 0) return 0;
             BL++;
         }
         if (AssertLine(BL) == 0) return 0;
         E.Row = BL;
-        E.Col = B.Col + SS->LineLen(0);
+        E.Col = B.Col + SSBuffer->LineLen(0);
         SetBB(B);
         SetBE(E);
         break;
 
     case bmStream:
-        if (SS->RCount > 1)
+        if (SSBuffer->RCount > 1)
             if (SplitLine(B.Row, B.Col) == 0) return 0;
-        if (InsLineText(B.Row, B.Col, SS->LineLen(0), 0, SS->RLine(0)) == 0) return 0;
+        if (InsLineText(B.Row, B.Col, SSBuffer->LineLen(0), 0, SSBuffer->RLine(0)) == 0) return 0;
         E = B;
-        E.Col += SS->LineLen(0);
+        E.Col += SSBuffer->LineLen(0);
         BL++;
-        if (SS->RCount > 1) {
-            for (L = 1; L < SS->RCount - 1; L++) {
+        if (SSBuffer->RCount > 1) {
+            for (L = 1; L < SSBuffer->RCount - 1; L++) {
                 if (InsLine(BL, 0) == 0) return 0;
-                if (InsLineText(BL, 0, SS->LineLen(L), 0, SS->RLine(L)) == 0) return 0;
+                if (InsLineText(BL, 0, SSBuffer->LineLen(L), 0, SSBuffer->RLine(L)) == 0) return 0;
                 BL++;
             }
-            L = SS->RCount - 1;
-            if (InsLineText(BL, 0, SS->LineLen(L), 0, SS->RLine(L)) == 0) return 0;
-            E.Col = SS->LineLen(L);
+            L = SSBuffer->RCount - 1;
+            if (InsLineText(BL, 0, SSBuffer->LineLen(L), 0, SSBuffer->RLine(L)) == 0) return 0;
+            E.Col = SSBuffer->LineLen(L);
             E.Row = BL;
         }
         SetBB(B);
@@ -358,9 +358,9 @@ int EBuffer::BlockKill() {
 }
 
 int EBuffer::ClipClear() {
-    if (SS == 0)
+    if (SSBuffer == 0)
         return 0;
-    SS->Clear();
+    SSBuffer->Clear();
     if (SystemClipboard)
         PutPMClip();
     return 1;
@@ -719,7 +719,7 @@ int EBuffer::BlockReadFrom(char *AFileName, int blockMode) {
         return 0;
     }
 
-    B = new EBuffer(0, (EModel **)&SS, AFileName);
+    B = new EBuffer(0, (EModel **)&SSBuffer, AFileName);
     if (B == 0) return 0;
     B->SetFileName(AFileName, 0);
     if (B->Load() == 0) {

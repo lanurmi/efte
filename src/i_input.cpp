@@ -169,8 +169,8 @@ void ExInput::HandleEvent(TEvent &Event) {
                 if (SystemClipboard)
                     GetPMClip();
                 
-                if (SS == 0) break;
-                if (SS->RCount == 0) break;
+                if (SSBuffer == 0) break;
+                if (SSBuffer->RCount == 0) break;
 
                 if (SelStart < SelEnd) {
                     memmove(Line + SelStart, Line + SelEnd, strlen(Line + SelEnd) + 1);
@@ -178,10 +178,10 @@ void ExInput::HandleEvent(TEvent &Event) {
                     SelStart = SelEnd = 0;
                 }
 
-                len = SS->LineChars(0);
+                len = SSBuffer->LineChars(0);
                 if (strlen(Line) + len < MaxLen) {
                     memmove(Line + Pos + len, Line + Pos, strlen(Line + Pos) + 1);
-                    memcpy(Line + Pos, SS->RLine(0)->Chars, len);
+                    memcpy(Line + Pos, SSBuffer->RLine(0)->Chars, len);
                     TabCount = 0;
                     Event.What = evNone;
                     Pos += len;

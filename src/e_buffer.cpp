@@ -9,7 +9,7 @@
 
 #include "fte.h"
 
-EBuffer *SS = 0; // scrap buffer (clipboard)
+EBuffer *SSBuffer = 0; // scrap buffer (clipboard)
 
 ///////////////////////////////////////////////////////////////////////////////
 

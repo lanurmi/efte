@@ -16,27 +16,27 @@ int GetPMClip() {
     EPoint P;
 
     if (GetClipText(&cd) == 0) {
-        SS->Clear();
+        SSBuffer->Clear();
         j = 0;
         l = 0;
 
         for (i = 0; i < cd.fLen; i++) {
             if (cd.fChar[i] == 0x0A) {
-                SS->AssertLine(l);
+                SSBuffer->AssertLine(l);
                 P.Col = 0; P.Row = l++;
                 dx = 0;
                 if ((i > 0) && (cd.fChar[i-1] == 0x0D)) dx++;
-                SS->InsertLine(P, i - j - dx, cd.fChar + j);
+                SSBuffer->InsertLine(P, i - j - dx, cd.fChar + j);
                 j = i + 1;
             }
         }
         if (j < cd.fLen) { // remainder
             i = cd.fLen;
-            SS->AssertLine(l);
+            SSBuffer->AssertLine(l);
             P.Col = 0; P.Row = l++;
             dx = 0;
             if ((i > 0) && (cd.fChar[i-1] == 0x0D)) dx++;
-            SS->InsText(P.Row, P.Col, i - j - dx, cd.fChar + j);
+            SSBuffer->InsText(P.Row, P.Col, i - j - dx, cd.fChar + j);
             j = i + 1;
         }
     }
@@ -51,12 +51,12 @@ int PutPMClip() {
     ClipData cd;
     int rc;
 
-    for (int i = 0; i < SS->RCount; i++) {
-        L = SS->RLine(i);
+    for (int i = 0; i < SSBuffer->RCount; i++) {
+        L = SSBuffer->RLine(i);
         p = (char *)realloc(p, l + (Len = L->Count) + 2);
         memcpy(p + l, L->Chars, L->Count);
         l += Len;
-        if (i < SS->RCount - 1) {
+        if (i < SSBuffer->RCount - 1) {
             p[l++] = 13;
             p[l++] = 10;
         }

@@ -19,27 +19,27 @@ int GetPMClip() {
     EPoint P;
 
     if (GetXSelection(&len, &data) == 0) {
-        SS->Clear();
+        SSBuffer->Clear();
         j = 0;
         l = 0;
 
         for (i = 0; i < len; i++) {
             if (data[i] == '\n') {
-                SS->AssertLine(l);
+                SSBuffer->AssertLine(l);
                 P.Col = 0; P.Row = l++;
                 dx = 0;
                 if ((i > 0) && (data[i-1] == '\r')) dx++;
-                SS->InsertLine(P, i - j - dx, data + j);
+                SSBuffer->InsertLine(P, i - j - dx, data + j);
                 j = i + 1;
             }
         }
         if (j < len) { // remainder
             i = len;
-            SS->AssertLine(l);
+            SSBuffer->AssertLine(l);
             P.Col = 0; P.Row = l++;
             dx = 0;
             if ((i > 0) && (data[i-1] == '\r')) dx++;
-            SS->InsText(P.Row, P.Col, i - j - dx, data + j);
+            SSBuffer->InsText(P.Row, P.Col, i - j - dx, data + j);
             j = i + 1;
         }
         free(data);
@@ -54,8 +54,8 @@ int PutPMClip() {
     int rc = 0;
     int l = 0;
 
-    for (int i = 0; i < SS->RCount; i++) {
-        L = SS->RLine(i);
+    for (int i = 0; i < SSBuffer->RCount; i++) {
+        L = SSBuffer->RLine(i);
         char *n = (char *)realloc(p, l + L->Count + 1);
         if (n != NULL) {
             for(int j = 0; j < L->Count; j++) {
@@ -64,7 +64,7 @@ int PutPMClip() {
                 else
                     n[l++] = L->Chars[j];
             }
-            if (i < SS->RCount - 1)
+            if (i < SSBuffer->RCount - 1)
                 n[l++] = '\n';
             else
                 n[l] = 0;
