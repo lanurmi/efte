@@ -188,6 +188,26 @@ int EBuffer::FreeUndo() {
 #endif
 
 int EBuffer::Modify() {
+    // if RecheckReadOnly is activated do readonly checking when necessary
+    if (RecheckReadOnly != 0)
+    {
+        if (BFI(this, BFI_ReadOnly)) {
+            // File might have been toggled writable outside the editor, or
+            //  you might do what I do, and do a Tools/Run/"p4 edit Filename.cpp"
+            //  from inside FTE, and it's a pain to manually reopen the file, so
+            //  recheck writability here instead. Note that we don't check the
+            //  converse, since in reality this is rarely a problem, and the
+            //  file save routines will check this (oh well).  --ryan.
+            struct stat StatBuf;
+            if ((FileName != 0) && FileOk && (stat(FileName, &StatBuf) == 0)) {
+                if (!(StatBuf.st_mode & (S_IWRITE | S_IWGRP | S_IWOTH)))
+                    BFI(this, BFI_ReadOnly) = 1;
+                else
+                    BFI(this, BFI_ReadOnly) = 0;
+            }
+        }
+    }
+
     if (BFI(this, BFI_ReadOnly)) {
         Msg(S_ERROR, "File is read-only.");
         return 0;
