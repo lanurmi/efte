@@ -1,10 +1,17 @@
 #!perl -w
-print "/* do not edit */\nchar DefaultConfig[] = {\n";
 
 $n = 1;
 $buf = "";
 $out = "";
-while (($len = sysread(STDIN, $buf, 256)) > 0) {
+local($infile, $outfile) = @ARGV;
+if(defined($infile)) {open(INFILE, "<$infile"); }
+else { open(INFILE, "<&STDIN"); }
+if(defined($outfile)) {open(OUTFILE, ">$outfile"); }
+else { open(OUTFILE, ">&STDOUT"); }
+print OUTFILE "/* do not edit */\nchar DefaultConfig[] = {\n";
+binmode INFILE; # NT needs this
+local($len);
+while (($len = read(INFILE, $buf, 256)) > 0) {
     #$buf =~ s/(.)/sprintf "0x%02X", ord($1))/goe;
     #for ($i = 0; $i < $len; $i++) {
     #    $out .= sprintf "0x%02X", ord(substr($buf, $i, 1,));
@@ -25,10 +32,12 @@ while (($len = sysread(STDIN, $buf, 256)) > 0) {
         }
     }
 
-    print $out;
+    print OUTFILE $out;
     $out = "";
     print STDERR ".";
 }
-print "\n};\n";
+print OUTFILE "\n};\n";
+close(INFILE);
+close(OUTFILE);
 print STDERR "\n";
 

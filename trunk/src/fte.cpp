@@ -181,7 +181,10 @@ static int CmdLoadConfiguration(int &argc, char **argv) {
         } 
     }
     if (GetConfigFileName(argc, argv, ConfigFileName) == 0) {
-        // should we default to internal (NOT?)
+        // should we default to internal
+#ifdef DEFAULT_INTERNAL_CONFIG
+       ign = 1;
+#endif
     }
 
     if (ign) {

@@ -835,7 +835,8 @@ static int IndentNormal(EBuffer *B, int Line, int /*StateLen*/, hsState * /*Stat
         else
             return Pos;
     } else {
-        char CharP = ' ', FirstCharP = ' ';
+        char CharP = ' ';
+        // char FirstCharP = ' ';
         int RowP = Line;
         int ColP = -1;
         int PrevRowP = RowP;
@@ -875,7 +876,7 @@ static int IndentNormal(EBuffer *B, int Line, int /*StateLen*/, hsState * /*Stat
 
         FirstRowP = RowP;
         FirstColP = ColP;
-        FirstCharP = CharP;
+        // FirstCharP = CharP;
 
         PRINTF(("\nFirstRowP=%d, FirstColP=%d, CharP=%c\n", FirstRowP, FirstColP, CharP));
 
@@ -1124,8 +1125,7 @@ static int IndentNormal(EBuffer *B, int Line, int /*StateLen*/, hsState * /*Stat
 
             return I + ContinuationIndent;
 
-        default:
-            return 0;
+        // default: return 0;
         }
     }
     return 0;

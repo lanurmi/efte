@@ -132,7 +132,7 @@ mode MODULA3: PLAIN {      # Modula-3 Mode
     Colorizer           = 'MODULA3';
     AutoIndent          = 1;
     IndentMode          = 'PLAIN';
-    TabSize             = 4;
+    #TabSize             = 4;
     SpaceTabs           = 1;
     MatchCase           = 1;
     Trim                = 1;

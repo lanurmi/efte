@@ -834,7 +834,7 @@ int EBuffer::TypeChar(char aCh) { // does abbrev expansion if appropriate
             Len = P1 - P;
             C = ScreenPos(L, P);
             assert(C1 - C == Len);
-            if (Len > 0 && Len < int(sizeof(Str))) {
+	    if (Len > 0 && Len < int (sizeof(Str))) {
                 //fprintf(stderr, "TypeChar 2\n");
                 memcpy(Str, L->Chars + P, Len);
                 Str[Len] = 0;
@@ -947,10 +947,8 @@ int EBuffer::InsertSpacesToTab(int TSize) {
 }
 
 int EBuffer::InsertTab() {
-    if (BFI(this, BFI_SpaceTabs)) {
-        return InsertSpacesToTab(BFI(this, BFI_TabSize));
-    } else
-        return InsertChar(9);
+    return (BFI(this, BFI_SpaceTabs)) ?
+	InsertSpacesToTab(BFI(this, BFI_TabSize)) : InsertChar(9);
 }
 
 int EBuffer::InsertSpace() {
@@ -968,7 +966,7 @@ int EBuffer::LineIndented(int Row) {
     P = RLine(Row)->Count;
     PC = RLine(Row)->Chars;
     
-    for(I = 0; I < P; I++) {
+    for (I = 0; I < P; I++) {
         if (PC[I] == ' ') Ind++;
         else if ((PC[I] == 9) && (BFI(this, BFI_ExpandTabs) == 1)) Ind = NextTab(Ind, BFI(this, BFI_TabSize));
         else break;
@@ -1030,7 +1028,7 @@ int EBuffer::IsLineBlank(int Row) {
 }
 
 #ifdef CONFIG_WORDWRAP
-#define WFAIL(x) return 0 /*do { puts(#x "\x7"); return -1; } while (0)*/
+#define WFAIL(x) return 0	/*do { puts(#x "\x7"); return -1; } while (0) */
 
 int EBuffer::DoWrap(int WrapAll) {
     int L, Len, C, P, Ind;
@@ -1288,7 +1286,7 @@ int EBuffer::ToggleWordWrap() {
     /*Msg(INFO,
         "WordWrap is now %s.",
         (BFI(this, BFI_WordWrap) == 2) ? "AUTO" :
-        (BFI(this, BFI_WordWrap) == 1) ? "ON" : "OFF");*/
+       (BFI(this, BFI_WordWrap) == 1) ? "ON" : "OFF"); */
     return 1;
 }
 

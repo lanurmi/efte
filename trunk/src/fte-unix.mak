@@ -24,6 +24,12 @@ XMBFLAG = -DUSE_XMB
 
 I18NOPTIONS = $(XMBFLAG) $(REMAPFLAG) $(SYSTEM_X_LOCALE)
 
+# Optionally, you can define:
+# -DDEFAULT_INTERNAL_CONFIG to use internal config by default
+# -DUSE_XTINIT to use XtInitialize on init
+APPOPTIONS = -DDEFAULT_INTERNAL_CONFIG
+
+#gcc/g++
 COPTIONS = -Wall -Wpointer-arith -Wconversion -Wwrite-strings \
            -Wmissing-prototypes -Wmissing-declarations -Winline
 
@@ -43,10 +49,13 @@ XLIBDIR  = -L/usr/X11R6/lib
 
 #######################################################################
 # HP/UX
+#UOS      = -DHPUX -D_HPUX_SOURCE -DCAST_FD_SET_INT
 #UOS      = -DHPUX -D_HPUX_SOURCE
 
 #CC   = CC +a1
 #LD   = CC
+#CC = aCC
+#LD = aCC
 
 #XLIBDIR  = -L/usr/lib/X11R6
 
@@ -78,6 +87,8 @@ SINCDIR   = -I/usr/include/slang
 #######################################################################
 # SunOS (Solaris)
 #UOS      = -DSUNOS
+#CC = CC
+#LD = CC
 #XINCDIR  = -I/usr/openwin/include
 #XLIBDIR  = -L/usr/openwin/lib
 
@@ -121,7 +132,7 @@ INCDIR   =
 OPTIMIZE = -O2 
 #OPTIMIZE = -O2 -s
 
-CCFLAGS  = $(OPTIMIZE) $(I18NOPTIONS) $(COPTIONS) -DUNIX $(UOS) $(INCDIR) $(XINCDIR) $(QINCDIR) $(MINCDIR) $(SINCDIR)
+CCFLAGS  = $(OPTIMIZE) $(I18NOPTIONS) $(APPOPTIONS) $(COPTIONS) -DUNIX $(UOS) $(INCDIR) $(XINCDIR) $(QINCDIR) $(MINCDIR) $(SINCDIR)
 LDFLAGS  = $(OPTIMIZE) $(LIBDIR) $(XLIBDIR) $(QLIBDIR) $(MLIBDIR)
 
 OEXT     = o
@@ -130,6 +141,7 @@ OEXT     = o
 
 include objs.inc
 
+# Need -lXt below if USE_XTINIT is defined
 XLIBS    = -lX11 $(SOCKETLIB)
 VLIBS    = -lgpm -lncurses
 # -ltermcap outdated by ncurses
@@ -157,8 +169,13 @@ c_config.o: defcfg.h
 defcfg.h: defcfg.cnf
 	perl mkdefcfg.pl <defcfg.cnf >defcfg.h
 
-defcfg.cnf: defcfg.fte cfte
-	./cfte defcfg.fte defcfg.cnf
+#DEFAULT_FTE_CONFIG = simple.fte
+DEFAULT_FTE_CONFIG = defcfg.fte
+#DEFAULT_FTE_CONFIG = defcfg2.fte
+#DEFAULT_FTE_CONFIG = ../config/main.fte
+
+defcfg.cnf: $(DEFAULT_FTE_CONFIG) cfte
+	./cfte $(DEFAULT_FTE_CONFIG) defcfg.cnf
 
 xfte: $(OBJS) $(XOBJS)
 	$(LD) $(LDFLAGS) $(OBJS) $(XOBJS) $(XLIBS) -o xfte

@@ -154,14 +154,11 @@ int EBuffer::HilitWord() {
         P--;
     while (len < CK_MAXLEN && P < L->Count && (ChClass(L->Chars[P]) == 1 || L->Chars[P] == '_'))
         s[len++] = L->Chars[P++];
-    s[len] = 0;
     if (len == 0)
         return 0;
-    if (HilitFindWord(s)) {
-        return HilitRemoveWord(s);
-    } else {
-        return HilitAddWord(s);
-    }
+    s[len] = 0;
+
+    return (HilitFindWord(s)) ? HilitRemoveWord(s) :HilitAddWord(s);
 }
 #endif
 

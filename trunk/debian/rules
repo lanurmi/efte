@@ -101,7 +101,7 @@ binary-arch: cleanB checkroot checkscripts build
 
 # this way we are saving few inodes and making it more user friendly
 	@rm -rf debian/$(docs)/usr/share/doc/$(docs)
-	@rm -rf debian/$(console)/usr/share/doc/$(docs)
+	@rm -rf debian/$(console)/usr/share/doc/$(console)
 	@rm -rf debian/$(terminal)/usr/share/doc/$(terminal)
 	@rm -rf debian/$(xwindow)/usr/share/doc/$(xwindow)
 	@ln -s fte debian/$(docs)/usr/share/doc/$(docs)

@@ -122,7 +122,8 @@ void EBuffer::Draw(int Row0, int RowE) {
     if (RowE == -1) {
         RedrawToEos = 1;
         MaxRedraw = MinRedraw;
-    } else if ((RowE > MaxRedraw) || (MaxRedraw == -1)) if (RowE != -1) MaxRedraw = RowE;
+    } else if (((RowE > MaxRedraw) || (MaxRedraw == -1)) && (RowE != -1))
+	MaxRedraw = RowE;
     //    printf("m = %d, max = %d, rts = %d\n", MinRedraw, MaxRedraw, RedrawToEos);
 }
 

@@ -11,21 +11,9 @@
 
 
 #include <stdio.h>
-#include <stdarg.h>
 #include <string.h>
 #include <stdlib.h>
-#include <assert.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <sys/types.h>
-#include <sys/time.h>
-#include <sys/wait.h>
-#include <signal.h>
 #include <ctype.h>
-#if defined(AIX)
-#include <sys/select.h>
-#endif
-#include <X11/Xatom.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/keysym.h>

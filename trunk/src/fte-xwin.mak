@@ -1,27 +1,60 @@
-# fte-unix.make modified to be generic enough to work with WINNT
+# fte-unix.make modified to be generic enough to work with WINNT or UNIX
 
 # versions of FTE to build
+
 # Versions:
 #  xfte - using XLib (the most stable)
+
 #  vfte - for Linux console directly (with limitations, see con_linux.cpp)
 
 #WINNT
-XEXT=.exe
+ESUF=.exe
 OEXT=obj
 OUTFLAG = -out:
+OUTEXEFLAG = /Fe
 
 #UNIX
-#XEXT=
+#ESUF=
 #OEXT=o
 #OUTFLAG = -o 
+#OUTEXEFLAG = -o 
 # -o must have a space after it above
 
 .SUFFIXES: .cpp .$(OEXT)
 
-TARGETS = xfte$(XEXT)
-#TARGETS = vfte$(XEXT) xfte$(XEXT)
+TARGETS = xfte$(ESUF)
+#TARGETS = vfte$(ESUF) xfte$(ESUF)
 
-PRIMARY = xfte$(XEXT)
+PRIMARY = xfte$(ESUF)
+
+# Comment or uncoment this two flags below if
+# you want to use:
+
+# Keyboard remaping by XFTE
+#REMAPFLAG = -DUSE_HARD_REMAP
+
+# Drawing fonts with locale support
+#XMBFLAG = -DUSE_XMB
+
+# System X11R6 is compiled with X_LOCALE
+#SYSTEM_X_LOCALE = -DX_LOCALE
+
+I18NOPTIONS = $(XMBFLAG) $(REMAPFLAG) $(SYSTEM_X_LOCALE)
+
+# Optionally, you can define:
+# -DDEFAULT_INTERNAL_CONFIG to use internal config by default
+# -DUSE_XTINIT to use XtInitialize on init
+APPOPTIONS = -DDEFAULT_INTERNAL_CONFIG -DUSE_XTINIT
+
+#gcc/g++
+#COPTIONS = -Wall -Wpointer-arith -Wconversion -Wwrite-strings \
+#           -Wmissing-prototypes -Wmissing-declarations -Winline
+
+#CC       = g++
+#LD       = g++
+# try this for smaller/faster code and less dependencies
+#CC       = g++ -fno-rtti -fno-exceptions
+#LD       = gcc -fno-rtti -fno-exceptions
 
 # choose your os here
 
@@ -29,16 +62,19 @@ PRIMARY = xfte$(XEXT)
 #MSVC/EXCEED XDK
 X_BASE =	C:\win32app\Exceed\xdk
 
-X_LIBS = -LIBPATH:$(X_BASE)\lib Xm.lib \
-	Mrm.lib Xmu.lib Xt.lib \
-	Xlib.lib hclshm.lib xlibcon.lib
+X_LIBS = -LIBPATH:$(X_BASE)\lib \
+	HCLXm.lib HCLMrm.lib HCLXmu.lib HCLXt.lib Xlib.lib hclshm.lib xlibcon.lib \
+
+#	Xm.lib Mrm.lib Xmu.lib Xt.lib Xlib.lib hclshm.lib xlibcon.lib
+
 XINCDIR = -I:$(X_BASE)\include
 
 #optimize
-OPTIMIZE  = /Ox -DNDEBUG
+#OPTIMIZE  = /Ox -DNDEBUG
+
 #debug
-OPTIMIZE  = /Od /Zi -D_DEBUG
-LDOPTIMIZE = /DEBUG 
+#OPTIMIZE  = /Od /Zi -D_DEBUG
+#LDOPTIMIZE = /DEBUG 
 
 CC        = cl
 LD        = link
@@ -57,15 +93,30 @@ LDFLAGS   = $(LDOPTIMIZE) $(LIBDIR) -nologo Advapi32.lib User32.lib Wsock32.lib 
 
 #######################################################################
 # HP/UX
+#UOS      = -DHPUX -D_HPUX_SOURCE -DCAST_FD_SET_INT
 #UOS      = -DHPUX -D_HPUX_SOURCE
+
+#CC   = CC +a1
+#LD   = CC
+#CC = aCC
+#LD = aCC
+
+#XLIBDIR  = -L/usr/lib/X11R6
+
 #XINCDIR  = -I/usr/include/X11R5
 #XLIBDIR  = -L/usr/lib/X11R5
+
 #MINCDIR  = -I/usr/include/Motif1.2
 #MLIBDIR  = -L/usr/lib/Motif1.2
+
+SINCDIR   = -I/usr/include/slang
 
 #######################################################################
 # AIX
 #UOS      = -DAIX -D_BSD_INCLUDES # not recently tested (it did work)
+
+#CC   = xlC
+#LD   = xlC
 
 #######################################################################
 # Irix
@@ -73,97 +124,123 @@ LDFLAGS   = $(LDOPTIMIZE) $(LIBDIR) -nologo Advapi32.lib User32.lib Wsock32.lib 
 # 6.x has fnmatch now ;-)
 # uncomment below to use SGI CC compiler
 #UOS      = -DIRIX
+#CC   = CC
+#LD   = CC
+#COPTIONS = -xc++
 
 #######################################################################
 # SunOS (Solaris)
 #UOS      = -DSUNOS
+#CC = CC
+#LD = CC
 #XINCDIR  = -I/usr/openwin/include
 #XLIBDIR  = -L/usr/openwin/lib
+
+#######################################################################
+# for SCO CC
+#
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# If you have problems with the program "cfte"
+# try to compile this program without optimalization -O2
+# use just -O
+#
+#UOS = -DSCO
+#CC  = CC  -b elf
+#LD  = $(CC)
+#XLIBDIR  = -L/usr/X11R6/lib
+#SOCKETLIB = -lsocket
+#COPTIONS = +.cpp
+
+#######################################################################
+# NCR
+#CC = cc -Hnocopyr
+#LD = cc -Hnocopyr
+#COPTIONS = -w3
+#UOS = -DNCR
+#XINCDIR  = -I../../include
+#SOCKETLIB = -lsocket -lnsl -lc -lucb
 
 #######################################################################
 
 #QTDIR   = /users/markom/qt
 #QLIBDIR  = -L$(QTDIR)/lib
 #QINCDIR  = -I$(QTDIR)/include
+#QINCDIR  = -I/usr/include/qt
 
 MOC      = moc
-
-# for GCC
-#CC       = g++
-#LD       = gcc
-#COPTIONS = -xc++ -Wall
-
-# for IRIX CC
-#CC       = CC
-#LD       = CC
-#COPTIONS = -xc++
 
 #LIBDIR   = 
 #INCDIR   =
 
-#OPTIMIZE = -g
 #OPTIMIZE = -O -g
-#OPTIMIZE = -O -s
+#OPTIMIZE = -O2
+#OPTIMIZE = -O2 -s
 
 #UNIX
-#CCFLAGS  = $(OPTIMIZE) $(COPTIONS) -DUNIX $(UOS) $(INCDIR) $(XINCDIR) $(QINCDIR) $(MINCDIR)
+#CCFLAGS  = $(OPTIMIZE) $(I18NOPTIONS) $(COPTIONS) -DUNIX $(UOS) $(INCDIR) $(XINCDIR) $(QINCDIR) $(MINCDIR) $(SINCDIR)
 #LDFLAGS  = $(OPTIMIZE) $(LIBDIR) $(XLIBDIR) $(QLIBDIR) $(MLIBDIR)
 
 include objs.inc
 
-.cpp.$(OEXT):
-	$(CC) $(CCFLAGS) -c $<
-
-.c.$(OEXT):
-	$(CC) $(CCFLAGS) -c $<
-
-all: cfte$(XEXT) $(TARGETS)
-
-
 #UNIX
-#XLIBS    = -lX11
+# need -lXt below if USE_XTINIT
+#XLIBS    = -lX11 -Xt $(SOCKETLIB)
+#VLIBS    = -lgpm -lncurses
+# -ltermcap outdated by ncurses
+#SLIBS    = -lslang
 #QLIBS    = -lqt
-#VLIBS    = -lgpm -ltermcap
-#MLIBS    = -lXm -lXt
+#MLIBS    = -lXm -lXp -lXt -lXpm -lXext
 
 .cpp.$(OEXT):
-	$(CC) $(CCFLAGS) -c $<
+	$(CC) $(CCFLAGS) $(APPOPTIONS) -c $<
 
 .c.$(OEXT):
-	$(CC) $(CCFLAGS) -c $<
+	$(CC) $(CCFLAGS) $(APPOPTIONS) -c $<
 
 .cpp.moc: 
 	$(MOC) $< -o $@
 
-all:    cfte$(XEXT) $(TARGETS)
+all:    cfte$(ESUF) $(TARGETS)
 #	rm -f fteln -s $(PRIMARY) fte
 
-cfte$(XEXT): cfte.$(OEXT) s_files.$(OEXT)
-	$(LD) $(LDFLAGS) cfte.$(OEXT) s_files.$(OEXT) $(OUTFLAG)cfte$(XEXT) 
+cfte$(ESUF): cfte.$(OEXT) s_files.$(OEXT)
+	$(LD) $(LDFLAGS) cfte.$(OEXT) s_files.$(OEXT) $(OUTFLAG)cfte$(ESUF) 
 
 c_config.$(OEXT): defcfg.h
 
-defcfg.h: defcfg.cnf
-	perl mkdefcfg.pl <defcfg.cnf >defcfg.h
 
-defcfg.cnf: defcfg.fte cfte$(XEXT)
-	cfte$(XEXT) defcfg.fte defcfg.cnf
+#defcfg.h: defcfg.cnf
+#	perl mkdefcfg.pl <defcfg.cnf >defcfg.h
 
-xfte$(XEXT): $(OBJS) $(XOBJS)
-	$(LD) $(LDFLAGS) $(OBJS) $(XOBJS) $(XLIBS) $(OUTFLAG)xfte$(XEXT)
+defcfg.h: defcfg.cnf bin2c$(ESUF)
+	bin2c$(ESUF) defcfg.cnf >defcfg.h
 
-qfte$(XEXT): g_qt.moc g_qt_dlg.moc $(OBJS) $(QOBJS)
-	$(LD) $(LDFLAGS) $(OBJS) $(QOBJS) $(QLIBS) $(XLIBS) $(OUTFLAG)qfte$(XEXT)
+bin2c$(ESUF): bin2c.cpp
+	$(CC) $(CCFLAGS) $(OUTEXEFLAG)bin2c$(ESUF) bin2c.cpp
 
-vfte$(XEXT): $(OBJS) $(VOBJS)
-	$(LD) $(LDFLAGS) $(OBJS) $(VOBJS) $(VLIBS) $(OUTFLAG)vfte$(XEXT)
+DEFAULT_FTE_CONFIG = simple.fte
+#DEFAULT_FTE_CONFIG = defcfg.fte
+#DEFAULT_FTE_CONFIG = defcfg2.fte
+#DEFAULT_FTE_CONFIG = ../config/main.fte
 
-mfte$(XEXT): $(OBJS) $(MOBJS)
-	$(LD) $(LDFLAGS) $(OBJS) $(MOBJS) $(MLIBS) $(XLIBS) $(OUTFLAG)mfte$(XEXT)
+defcfg.cnf: $(DEFAULT_FTE_CONFIG) cfte$(ESUF)
+	cfte$(ESUF) $(DEFAULT_FTE_CONFIG) defcfg.cnf
+
+xfte$(ESUF): $(OBJS) $(XOBJS)
+	$(LD) $(LDFLAGS) $(OBJS) $(XOBJS) $(XLIBS) $(OUTFLAG)xfte$(ESUF)
+
+qfte$(ESUF): g_qt.moc g_qt_dlg.moc $(OBJS) $(QOBJS)
+	$(LD) $(LDFLAGS) $(OBJS) $(QOBJS) $(QLIBS) $(XLIBS) $(OUTFLAG)qfte$(ESUF)
+
+vfte$(ESUF): $(OBJS) $(VOBJS)
+	$(LD) $(LDFLAGS) $(OBJS) $(VOBJS) $(VLIBS) $(OUTFLAG)vfte$(ESUF)
+
+mfte$(ESUF): $(OBJS) $(MOBJS)
+	$(LD) $(LDFLAGS) $(OBJS) $(MOBJS) $(MLIBS) $(XLIBS) $(OUTFLAG)mfte$(ESUF)
 
 g_qt.$(OEXT): g_qt.moc
 
 g_qt_dlg.$(OEXT): g_qt_dlg.moc
 
 clean:
-	rm -f *.$(OEXT) $(TARGETS) defcfg.h defcfg.cnf cfte$(XEXT) fte$(XEXT)
+	rm -f *.$(OEXT) $(TARGETS) defcfg.h defcfg.cnf cfte$(ESUF) fte$(ESUF)
