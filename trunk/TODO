@@ -8,7 +8,6 @@ Todo list (needs to be updated)
  - hex mode editing
  - shell window support
  - Menus should determine keybindings automatically.
- - CVS/RCS support.
  - Regexp optimizer and improved regexps.
  - multiple frame support for gui version.
  - Win32 gui version.
