@@ -49,6 +49,7 @@ int EBuffer::SetBE(EPoint M) {
     return 1;
 }
 
+// check if there is active or valid selection
 int EBuffer::CheckBlock() {
     if (BB.Row == -1 && BE.Row == 1) {
         BB.Col = -1;
@@ -355,6 +356,27 @@ int EBuffer::BlockKill() {
         break;
     }
     return BlockUnmark();
+}
+
+// remove selected text and paste information from clipboard to replace it
+int EBuffer::BlockPasteOver() {
+    // if there is existing selection, remove it's contents
+    if (CheckBlock())
+    {
+        BlockKill();
+    }
+
+    // paste text from clipboard
+    if (BlockPaste())
+    {
+        // go to end of selection
+        SetPos(BE.Col, BE.Row);
+
+        // remove selection
+        return BlockUnmark();
+    }
+
+    return 0;
 }
 
 int EBuffer::ClipClear() {

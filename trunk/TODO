@@ -3,7 +3,6 @@ Todo list (needs to be updated)
  - improve documentation
  - configurable smart indentation like in C/JAVA/PERL/REXX modes for any mode
  - fully support clipboard in every prompt
- - BlockPasteOver.
  - draw mode
  - piping block to program, redirection of program output to buffer
  - hex mode editing
