@@ -59,7 +59,7 @@ mode JAVA: PLAIN {      # JAVA Mode
     Trim                = 1;
     MultiLineHilit      = 1;
     AutoHilitParen      = 1;
-    RoutineRegexp	= /^\s*\w[\w._]+{\s+[\w._]+}+[\w_]+\([^;]*$/;
+    RoutineRegexp	= /^\s*\w[\w._]+{\s+[\w._]+}+[\w_]+\s*\([^;]*$/;
 
     SaveFolds           = 2;      # save fold info at end of line
     CommentStart        = ' /*';
