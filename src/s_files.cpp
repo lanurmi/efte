@@ -319,7 +319,8 @@ int ExpandPath(const char *Path, char *Expand) {
     case '~':
         if (Name[1] == SLASH || Name[1] == 0) {
             path = Name + 1;
-            strncpy(Name2, getenv("HOME"), sizeof(Name2) - 1);
+	    strncpy(Name2, getenv("HOME"), sizeof(Name2) - 1);
+            Name2[sizeof(Name2) - 1] = 0;
         } else {
             struct passwd *pwd;
 

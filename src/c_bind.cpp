@@ -179,7 +179,8 @@ EKey *SetKey(EEventMap *aMap, const char *aKey) {
 void InitWordChars() {
     static int init = 0;
     if (init == 0) {
-        for (int i = 0; i < 256; i++)
+	for (int i = 0; i < 256; i++)
+            // isalnum???
 	    if (isdigit(i) || (i >= 'A' && i <= 'Z')
 		|| (i >= 'a' && i <= 'z') || (i == '_')) {
                 WSETBIT(DefaultBufferFlags.WordChars, i, 1);
