@@ -292,6 +292,7 @@ eventmap PLAIN: MODEL {
     key     [C+O_C+T]   { ChangeTabSize }
     key     [C+O_C+U]   { ToggleUndo }
     key     [C+O_C+W]   { ToggleWordWrap }
+    key     [C+O_C+V]   { ShowMenu 'MCvs' }
     key     [C+O_.]     { ToggleShowMarkers }
     key     [C+O_[]     { SetLeftMargin }     # set margin to current cursor pos
     key     [C+O_\]]    { SetRightMargin }
