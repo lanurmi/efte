@@ -220,6 +220,7 @@ include 'ab_c.fte';
 %if(OS_OS2)
 include 'ab_c_os2.fte';
 %endif
+include 'ab_rexx.fte';
 
 # some customizations
 
