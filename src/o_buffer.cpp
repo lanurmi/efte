@@ -1392,7 +1392,7 @@ int EBuffer::InsertDate(ExState &State) {
         p = ctime(&t);
         sprintf(buf, "%.10s %.4s", p, p + 20);
     }
-    puts(buf);
+    //puts(buf);
 
     return InsertString(buf, strlen(buf));
 }
