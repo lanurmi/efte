@@ -199,6 +199,24 @@ typedef void (*sighandler_t)(int);
 #define USE_UNICODE_INTERNALS
 //#undef USE_UNICODE_INTERNALS
 
+#if defined(USE_UNICODE_INTERNALS)
+
+#include <wchar.h>
+
+typedef wchar_t TChar;
+#define _T(x) L ## x
+
+#if defined(NT)
+//#define UNICODE
+#endif
+
+#else // USE_UNICODE_INTERNALS
+
+typedef unsigned char TChar;
+#define _T(x) x
+
+#endif // USE_UNICODE_INTERNALS
+
 #ifndef HAVE_BOOL
 #define bool  int
 #define true  1
