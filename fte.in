@@ -2,7 +2,7 @@
 
 if [ ! -f $HOME/.fterc ]
 then
-	# Is there a .fte/mymain.fte ?  If not, create it.
+    # Is there a .fte/mymain.fte ?  If not, create it.
     if [ ! -f $HOME/.fte/mymain.fte ]
     then
     	cp @@CONFIGDIR@@/mymain.fte $HOME/.fte/mymain.fte
