@@ -140,7 +140,7 @@ int Indent_SIMPLE(EBuffer *B, int Line, int PosCursor);
     if (*p == '\t' && ExpandTabs) { \
     NC = NextTab(C, TabSize); \
     if (StateMap) StateMap[i] = hsState(State);\
-    if (B) MoveChar(B, C - Pos, Width, ' ', Color, NC - C);\
+    if (B) MoveChar(B, C - Pos, Width, ' ', HILIT_CLRD(), NC - C);\
     if (BFI(BF, BFI_ShowTabs)) ColorChar();\
     i++,len--,p++;\
     C = NC;\
