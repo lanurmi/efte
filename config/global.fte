@@ -84,6 +84,8 @@ object GLOBAL {
     CompileRx = { 1, 2, 3, /^([\w:._\-\+\/\\]+):(\d+):\s(.*)$/ };
 # Borland C++              
     CompileRx = { 1, 2, 3, /^{Error}|{Warning}\s(\S+)\s(\d+):\s(.*)$/ };
+# Borland C++ 5.5 command line <wirawan0>
+    CompileRx = { 1, 2, 3, /^{Error E}|{Warning W}\d+\s(\S+)\s(\d+):\s(.*)$/ };
 # CSet++
     CompileRx = { 1, 2, 3, /^([\w:._\-\+\/\\]+)\((\d+):\d+\)(.*)$/ };
 # Watcom C++
@@ -105,7 +107,12 @@ object GLOBAL {
 
 # Python interpreter tracebacks
     CompileRx = { 1, 2, 3, /^\s*File\s+"([\w:._\-\+\/\\]+)",\s+line\s+(\d+)(.*)$/ };
-
+    
+# bash: <wirawan0>
+    CompileRx = { 1, 2, 3, /^([\w:._\-\/\\]+): line (\d+):\s(.*)$/ };
+# perl: <wirawan0>
+    CompileRx = { 2, 3, 1, /^(.*) at ([^ ]+) line ([0-9]+)/ };
+    
     CvsIgnoreRx = /^cvs update: Updating /;
     CvsIgnoreRx = /^cvs server: Updating /;
 }

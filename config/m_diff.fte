@@ -6,12 +6,15 @@ colorize DIFF {
         { 'Old',        'DIFF_Old' },
         { 'New',        'DIFF_New' },
         { 'Changed',    'DIFF_Changed' },
+        { 'CPreprocessor', 'Lang_Preprocessor' },
     };
 
     h_state 0 { 'Normal' }
     h_trans { 1, '^<s', '+>', 'New' }
     h_trans { 2, '^<s', '-<', 'Old' }
     h_trans { 3, '^<', '!', 'Changed' }
+    # Unified diff line markers: <wirawan0>
+    h_trans { 4, '^<', '@@', 'CPreprocessor' }
 
     h_state 1 { 'New' }
     h_trans { 0, '$', '', 'Normal' }
@@ -21,10 +24,14 @@ colorize DIFF {
 
     h_state 3 { 'Changed' }
     h_trans { 0, '$', '', 'Normal' }
+
+    # just to mark the hunk boundaries (unified diff)
+    h_state 4 { 'CPreprocessor' }
+    h_trans { 0, '$', '', 'Normal' }
 }
 
 mode DIFF: PLAIN {        # unix/gnu diff
-    FileNameRx          = /\c{DIFF?}$/;
+    FileNameRx          = /\.\c{{DIFF?}|{D?PATCH}}$/;
     FirstLineRx         = /^diff /;
     HilitOn             = 1;
     Colorizer           = 'DIFF';

@@ -33,6 +33,11 @@ colorize C {
         '__cdecl', '_export', '__pascal', '_stdcall', '_syscall',
         '__stdcall', '__syscall', '_fastcall', '__fastcall', '__export',
         'bool', 'true', 'false',
+        # more C++ keywords
+        'reinterpret_cast', 'static_cast', 'dynamic_cast',
+        'const_cast', 'typeid',
+        # wide char (from new C/C++ 1998/1999 standards):
+        'wchar_t',
     };
 }
 

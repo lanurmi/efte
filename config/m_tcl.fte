@@ -1,3 +1,14 @@
+#
+# TCL keyword highlighting (initial version)
+#
+# Contributor: Wirawan Purwanto <wirawan0@softhome.net> [2003-01-22]
+# Submitted to FTE community: 2003-05-20
+#
+# NOTE:
+# All the keywords originally listed in this file were deleted: they
+# were 100% WRONG! They were SH keywords!
+#
+
 colorize TCL {
     SyntaxParser = 'SIMPLE';
     
@@ -12,8 +23,35 @@ colorize TCL {
     };
 
     keyword 'Editor_Keywords' {
-        'case', 'do', 'done', 'elif', 'else', 'esac', 'fi', 'for',
-        'function', 'if', 'in', 'then', 'until', 'while',
+        # These keywords were taken from Tcl/Tk 8.03 electronic reference
+        # (as compiled by Charles Todd, October 1998): only TCL keywords
+        # are included here
+
+        'after', 'append', 'array', 'binary', 'break', 'catch', 'cd',
+        'clock', 'close', 'concat', 'continue', 'eof', 'error', 'eval',
+        'exec', 'exit', 'expr', 'fblocked', 'fconfigure', 'fcopy', 'file',
+        'fileevent', 'filename', 'flush', 'for', 'foreach', 'format',
+        'gets', 'glob', 'global', 'history', 'if', 'incr', 'info',
+        'interp', 'join', 'lappend', 'lindex', 'linsert', 'list',
+        'llength', 'load', 'lrange', 'lreplace', 'lsearch', 'lsort',
+        'namespace', 'open', 'package', 'pid', 'pkg_mkIndex', 'proc',
+        'puts', 'pwd', 'read', 'regexp', 'regsub', 'rename', 'resource',
+        'return', 'scan', 'seek', 'set', 'socket', 'source', 'split',
+        'string', 'subst', 'switch', 'tell', 'time', 'trace', 'unset',
+        'update', 'uplevel', 'upvar', 'variable', 'vwait', 'while',
+
+#       Built-ins that require package:
+	#'registry',  # on Windows only
+
+#       Special commands that must be provided (or can be overridden) by
+#       the user:
+	'bgerror', 'unknown',
+
+#       Obsoleted commands
+        'case',
+
+#       Not a command: don't highlight them!
+	#'Http', 'Safe Base', 'Tcl', 'library',
     };
 
     h_state 0 { 'Normal' }
@@ -56,7 +94,7 @@ colorize TCL {
 
 mode TCL: PLAIN { # *sh
     FileNameRx          = /\.\ctcl$/;
-    FirstLineRx         = /^\#\![^ ]*{wish>}/;
+    FirstLineRx         = /^\#\![^ ]*{{wish>}|{tclsh>}}/;
     HilitOn             = 1;
     Colorizer           = 'TCL';
     MultiLineHilit      = 1;
