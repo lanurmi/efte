@@ -287,7 +287,9 @@ XIC I18NInit(Display * display, Window win, unsigned long *mask) /*fold00*/
 	    input_style = (XIMPreeditNothing | XIMStatusNothing);
 
 	for (i = 0; (unsigned short) i < xim_styles->count_styles; i++)
-	    if (input_style == xim_styles->supported_styles[i]) {
+            if (xim_styles->supported_styles[i] & (XIMPreeditNothing | XIMPreeditNone) &&
+                xim_styles->supported_styles[i] & (XIMStatusNothing  | XIMStatusNone)
+               ) {
 		found = True;
 		break;
 	    }
@@ -302,12 +304,12 @@ XIC I18NInit(Display * display, Window win, unsigned long *mask) /*fold00*/
 	return NULL;
     }
     /* This program only understand the Root preedit_style yet */
-    if (input_style != (XIMPreeditNothing | XIMStatusNothing)) {
+    /*if (input_style != (XIMPreeditNothing | XIMStatusNothing)) {
 	fprintf(stderr, "I18N error: This program only supports the "
 		"'Root' preedit type\n");
 	XCloseIM(xim);
 	return NULL;
-    }
+    }*/
     xic = XCreateIC(xim, XNInputStyle, input_style,
 		    XNClientWindow, win,
 		    XNFocusWindow, win,

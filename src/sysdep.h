@@ -143,7 +143,7 @@
 #    endif
 #endif
 
-#if !defined(__IBMC__) && !defined(__IBMCPP__)
+#if (!defined(__IBMC__) && !defined(__IBMCPP__)) || !defined(OS2)
 #    define _LNK_CONV
 #endif
 
