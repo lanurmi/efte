@@ -25,6 +25,31 @@ menu MOpenInMode {
     item "P&ython"     { FileOpenInMode 'PYTHON' }
 }
 
+menu MChangeMode {
+    item "&Plain"      { ChangeMode 'PLAIN' }
+    item "&Text"       { ChangeMode 'TEXT' }
+    item "&C"	       { ChangeMode 'C' }
+    item "&EMail"      { ChangeMode 'MSG' }
+    item "&HTML"       { ChangeMode 'HTML' }
+    item "&IPF"        { ChangeMode 'IPF' }
+    item "&Ada"        { ChangeMode 'Ada' }
+    item "&REXX"       { ChangeMode 'REXX' }
+    item "MA&KE"        { ChangeMode 'MAKE' }
+    item "&FTE"        { ChangeMode 'FTE' }
+    item "&Win Resource" { ChangeMode 'RESOURCE' }
+    item "&DIFF"       { ChangeMode 'DIFF' }
+    item "&MERGE"      { ChangeMode 'MERGE' }
+    item "&SH"	       { ChangeMode 'SH' }
+    item "PER&L"       { ChangeMode 'PERL' }
+    item "PASCAL"      { ChangeMode 'PASCAL' }
+    item "&JAVA"       { ChangeMode 'JAVA' }
+    item "TE&X"        { ChangeMode 'TEX' }
+    item "&BIN"        { ChangeMode 'BIN' }
+    item "4&GL"        { ChangeMode 'GL' }
+    item "PHP"	       { ChangeMode 'PHP' }
+    item "P&ython"     { ChangeMode 'PYTHON' }
+}
+
 menu MOpenInModeMore {
     item "ASM"			{ FileOpenInMode 'ASM' }
     item "ASM 370 (.CPY,.MLC)"	{ FileOpenInMode 'ASM370' }
@@ -32,7 +57,6 @@ menu MOpenInModeMore {
     item "Fortran 90"		{ FileOpenInMode 'FORTRAN' }
     item "IPF"			{ FileOpenInMode 'IPF' }
     item "A51"			{ FileOpenInMode 'A51' }
-    item "&PHP"			{ FileOpenInMode 'PHP' }
     item "CLARION (.CLW)"	{ FileOpenInMode 'CLARION' }
     item "EBFN"			{ FileOpenInMode 'EBFN' }
     item "SGML"			{ FileOpenInMode 'SGML' }
@@ -40,6 +64,28 @@ menu MOpenInModeMore {
     item "S&Lang"		{ FileOpenInMode 'sl' }
     item "Module 3"		{ FileOpenInMode 'MODULA3' }
     item "Tex Info"		{ FileOpenInMode 'TEXINFO' }
+    item "Diff"			{ FileOpenInMode 'DIFF' }
+    item "Merge"		{ FileOpenInMode 'MERGE' }
+    item "Man pages"		{ FileOpenInMode 'CATBS' }
+}
+
+menu MChangeModeMore {
+    item "ASM"			{ ChangeMode 'ASM' }
+    item "ASM 370 (.CPY,.MLC)"	{ ChangeMode 'ASM370' }
+    item "TCL"			{ ChangeMode 'TCL' }
+    item "Fortran 90"		{ ChangeMode 'FORTRAN' }
+    item "IPF"			{ ChangeMode 'IPF' }
+    item "A51"			{ ChangeMode 'A51' }
+    item "CLARION (.CLW)"	{ ChangeMode 'CLARION' }
+    item "EBFN"			{ ChangeMode 'EBFN' }
+    item "SGML"        		{ ChangeMode 'SGML' }
+    item "SIOD (.cscm)"		{ ChangeMode 'SIOD' }
+    item "S&Lang"		{ ChangeMode 'sl' }
+    item "Module 3"		{ ChangeMode 'MODULA3' }
+    item "Tex Info"		{ ChangeMode 'TEXINFO' }
+    item "Diff"			{ ChangeMode 'DIFF' }
+    item "Merge"		{ ChangeMode 'MERGE' }
+    item "Man pages"		{ ChangeMode 'CATBS' }
 }
 
 menu Object {
@@ -126,46 +172,6 @@ menu Navigate {
 #    item '&C:\\' { DirGoto 'H:\\' }
 }
 
-menu MChangeMode {
-    item "&Plain"      { ChangeMode 'PLAIN' }
-    item "&Text"       { ChangeMode 'TEXT' }
-    item "&C"	       { ChangeMode 'C' }
-    item "&EMail"      { ChangeMode 'MSG' }
-    item "&HTML"       { ChangeMode 'HTML' }
-    item "&IPF"        { ChangeMode 'IPF' }
-    item "&Ada"        { ChangeMode 'Ada' }
-    item "&REXX"       { ChangeMode 'REXX' }
-    item "MAKE"        { ChangeMode 'MAKE' }
-    item "&FTE"        { ChangeMode 'FTE' }
-    item "Win Resource" { ChangeMode 'RESOURCE' }
-    item "&DIFF"       { ChangeMode 'DIFF' }
-    item "&MERGE"      { ChangeMode 'MERGE' }
-    item "&SH"	       { ChangeMode 'SH' }
-    item "PER&L"       { ChangeMode 'PERL' }
-    item "PASCAL"      { ChangeMode 'PASCAL' }
-    item "&JAVA"       { ChangeMode 'JAVA' }
-    item "TE&X"        { ChangeMode 'TEX' }
-    item "&BIN"        { ChangeMode 'BIN' }
-    item "4&GL"        { ChangeMode 'GL' }
-    item "SGML"        { ChangeMode 'SGML' }
-    item "ASM"	       { ChangeMode 'ASM' }
-}
-
-menu MChangeModeMore {
-    item "ASM"			{ ChangeMode 'ASM' }
-    item "ASM 370 (.CPY,.MLC)"	{ ChangeMode 'ASM370' }
-    item "TCL"			{ ChangeMode 'TCL' }
-    item "Fortran 90"		{ ChangeMode 'FORTRAN' }
-    item "IPF"			{ ChangeMode 'IPF' }
-    item "A51"			{ ChangeMode 'A51' }
-    item "&PHP"			{ FileOpenInMode 'PHP' }
-    item "CLARION (.CLW)"	{ ChangeMode 'CLARION' }
-    item "EBFN"			{ ChangeMode 'EBFN' }
-    item "SIOD (.cscm)"		{ ChangeMode 'SIOD' }
-    item "S&Lang"		{ ChangeMode 'sl' }
-    item "Module 3"		{ ChangeMode 'MODULA3' }
-    item "Tex Info"		{ ChangeMode 'TEXINFO' }
-}
 
 menu File {
     item    "&Open...\tF3"		{ FileOpen }
