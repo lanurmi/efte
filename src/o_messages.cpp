@@ -464,8 +464,9 @@ void EMessages::GetErrors() {
                         {
                             free(a->name);
                             delete a;
-                            a = curr_dir;
-                            curr_dir = curr_dir->next;
+			    a = curr_dir;
+                            if (a != 0)
+				curr_dir = curr_dir->next;
                         }
                     }
                 }
