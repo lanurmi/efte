@@ -94,12 +94,17 @@ colorize PYTHON {
     h_trans { 8, '', 'def ', 'Keyword' }
     h_trans { 9, '', 'class ', 'Keyword' }
     h_trans { 1, '<', '#', 'Comment' }
+    h_trans { 2, '<i', 'u"""', 'String' }    
+    h_trans { 2, '<i', 'r"""', 'String' }    
     h_trans { 2, '<', '"""', 'String' }
-    h_trans { 2, '<', 'r"""', 'String' }
+    h_trans { 10, '<i', 'u\'\'\'', 'String' }
+    h_trans { 10, '<i', 'r\'\'\'', 'String' }
     h_trans { 10, '<', '\'\'\'', 'String' }
-    h_trans { 3, '<', 'r"', 'String' }
+    h_trans { 3, '<i', 'u"', 'String' }
+    h_trans { 3, '<i', 'r"', 'String' }
     h_trans { 3, '<', '"', 'String' }
-    h_trans { 4, '<', 'r\'', 'String' }
+    h_trans { 4, '<i', 'u\'', 'String' }
+    h_trans { 4, '<i', 'r\'', 'String' }
     h_trans { 4, '<', '\'', 'String' }
     h_trans { 5, '-s', 'a-zA-Z_', 'Normal' }
     h_trans { 6, '<', '0x', 'HexNumber' }
