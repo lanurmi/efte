@@ -304,14 +304,18 @@ int ReadConsoleEvent(TEvent *E) /*FOLD00*/
         Ch = 0;
 
         // handle special case when user with scandinavian keyboard presses
-        // alt-gr + tilde and then spacebar
+        // alt-gr + special key and then spacebar
         if (inp.Event.KeyEvent.bKeyDown) {
             if ((inp.Event.KeyEvent.wVirtualKeyCode == 0x20) &&
-                (inp.Event.KeyEvent.wVirtualScanCode == 0x39) &&
-                (inp.Event.KeyEvent.uChar.AsciiChar == '~')
-               )
+                (inp.Event.KeyEvent.wVirtualScanCode == 0x39))
             {
-                Ch = '~';
+                switch(inp.Event.KeyEvent.uChar.AsciiChar)
+                {
+                case '~': Ch = '~'; break;
+                case '^': Ch = '^'; break;
+                case '`': Ch = '`'; break;
+                case 'ï': Ch = 'ï'; break;
+                }
             }
         }
 
@@ -803,7 +807,7 @@ int GUI::ShowEntryScreen() { /*FOLD00*/
 char ConGetDrawChar(int index) { /*FOLD00*/
     static char tab[] = "Ú¿ÀÙÄ³ÂÃ´ÁÅ\x1AúÄ±°\x1B\x1A";
 
-    assert(index >= 0 && index < strlen(tab));
+    assert(index >= 0 && index < (int)strlen(tab));
 
     return tab[index];
 }
