@@ -132,7 +132,7 @@ SINCDIR   = -I/usr/include/slang
 
 MOC      = moc
 
-LIBDIR   = 
+LIBDIR   =
 INCDIR   =
 
 OPTIMIZE = -g # -O -g
@@ -150,7 +150,7 @@ include objs.inc
 SRCS = $(OBJS:.o=.cpp)
 
 # Need -lXt below if USE_XTINIT is defined
-XLIBS    = -lX11 $(SOCKETLIB) 
+XLIBS    = -lX11 $(SOCKETLIB)
 #-lmpatrol -lelf
 VLIBS    = -lgpm -lncurses
 # -ltermcap outdated by ncurses
@@ -164,14 +164,14 @@ QLIBS    = -lqt
 .c.o:
 	$(CC) $(CCFLAGS) -c $<
 
-.cpp.moc: 
+.cpp.moc:
 	$(MOC) $< -o $@
 
 all:    cfte $(TARGETS)
 #rm -f fte ; ln -s $(PRIMARY) fte
 
 cfte: cfte.o s_files.o
-	$(LD) $(LDFLAGS) cfte.o s_files.o -o cfte 
+	$(LD) $(LDFLAGS) cfte.o s_files.o -o cfte
 
 c_config.o: defcfg.h
 
@@ -186,19 +186,19 @@ DEFAULT_FTE_CONFIG = defcfg.fte
 defcfg.cnf: $(DEFAULT_FTE_CONFIG) cfte
 	./cfte $(DEFAULT_FTE_CONFIG) defcfg.cnf
 
-xfte: $(OBJS) $(XOBJS)
-	$(LD) $(LDFLAGS) $(OBJS) $(XOBJS) $(XLIBS) -o xfte
+xfte: depend $(OBJS) $(XOBJS)
+	$(LD) -o $@ $(LDFLAGS) $(OBJS) $(XOBJS) $(XLIBS)
 
 #qfte: g_qt.moc g_qt_dlg.moc $(OBJS) $(QOBJS)
-#	$(LD) $(LDFLAGS) $(OBJS) $(QOBJS) $(QLIBS) $(XLIBS) -o qfte
+#	$(LD) -o $@ $(LDFLAGS) $(OBJS) $(QOBJS) $(QLIBS) $(XLIBS)
 
 vfte: $(OBJS) $(VOBJS)
-	$(LD) $(LDFLAGS) $(OBJS) $(VOBJS) $(VLIBS) -o vfte
+	$(LD) -o $@ $(LDFLAGS) $(OBJS) $(VOBJS) $(VLIBS)
 
 sfte: $(OBJS) $(SOBJS) compkeys
-	$(LD) $(LDFLAGS) $(OBJS) $(SOBJS) $(SLIBS) -o sfte
+	$(LD) -o $@ $(LDFLAGS) $(OBJS) $(SOBJS) $(SLIBS)
 
-compkeys: compkeys.o 
+compkeys: compkeys.o
 	$(LD) $(LDFLAGS) compkeys.o -o compkeys
 
 #mfte: $(OBJS) $(MOBJS)
@@ -208,7 +208,7 @@ g_qt.obj: g_qt.moc
 
 g_qt_dlg.obj: g_qt_dlg.moc
 
-depend: 
+depend:
 	$(CC) -MM $(CCFLAGS) $(SRCS) 1>.depend
 
 clean:
