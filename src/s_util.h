@@ -31,7 +31,12 @@ int SetDefaultDirectory(EModel *M);
 int GetDefaultDirectory(EModel *M, char *Path, int MaxLen);
 int UnTabStr(char *dest, int maxlen, const char *source, int slen);
 
-// if source string length exceeds maxlen, it copies maxlen - 1 charcters from orginal string and adds NUL at end.
-char *safe_strncpy(char *dst, const char *str, int maxlen);
+#if !defined(HAVE_STRLCPY)
+size_t strlcpy(char *dst, const char *src, size_t size);
+#endif // !HAVE_STRLCPY
+
+#if !defined(HAVE_STRLCAT)
+size_t strlcat(char *dst, const char *src, size_t size);
+#endif // !HAVE_STRLCAT
 
 #endif

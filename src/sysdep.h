@@ -182,6 +182,9 @@
 #define HAVE_BOOL
 #endif
 
+#undef HAVE_STRLCPY
+#undef HAVE_STRLCAT
+
 #ifndef HAVE_BOOL
 #define bool  int
 #define true  1
