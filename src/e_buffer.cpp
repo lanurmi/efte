@@ -8,6 +8,7 @@
  */
 
 #include "fte.h"
+#include "c_history.h"
 
 EBuffer *SSBuffer = 0; // scrap buffer (clipboard)
 
@@ -630,6 +631,8 @@ int EBuffer::InsLine(int Row, int DoAppend, int DoMark) {
     
     //    printf("InsLine: %d\n", Row);
     
+    if (! LL)
+       return 0;
     if (Row < 0) return 0;
     if (Row > RCount) return 0;
     if (Modify() == 0) return 0;
