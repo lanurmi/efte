@@ -310,7 +310,8 @@ HMachine::~HMachine() {
 }
 
 void HMachine::AddState(HState &aState) {
-    assert((state = (HState *)realloc(state, (stateCount + 1) * sizeof(HState))) != 0);
+    state = (HState *)realloc(state, (stateCount + 1) * sizeof(HState) );
+    assert( state );
     state[stateCount] = aState;
     state[stateCount].firstTrans = transCount;
     stateCount++;
@@ -318,7 +319,8 @@ void HMachine::AddState(HState &aState) {
 
 void HMachine::AddTrans(HTrans &aTrans) {
     assert(stateCount > 0);
-    assert((trans = (HTrans *)realloc(trans, (transCount + 1) * sizeof(HTrans))) != 0);
+    trans = (HTrans *)realloc(trans, (transCount + 1) * sizeof(HTrans) );
+    assert( trans );
     state[stateCount - 1].transCount++;
     trans[transCount] = aTrans;
     transCount++;

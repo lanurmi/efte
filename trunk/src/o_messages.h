@@ -60,7 +60,7 @@ public:
     void AddError(char *file, int line, char *msg, const char *text);
     
     void FreeErrors();
-    int GetLine(char *Line, int max);
+    int GetLine(char *Line, int maxim);
     void GetErrors();
     int Compile(char *Command);
     void ShowError(EView *V, int err);

@@ -257,7 +257,7 @@ void EMessages::FreeErrors() {
     BufLen = BufPos = 0;
 }
 
-int EMessages::GetLine(char *Line, int max) {
+int EMessages::GetLine(char *Line, int maxim) {
     int rc;
     char *p;
     int l;
@@ -276,7 +276,7 @@ int EMessages::GetLine(char *Line, int max) {
         if (rc > 0)
             BufLen += rc;
     }
-    l = max - 1;
+    l = maxim - 1;
     if (BufLen - BufPos < l)
         l = BufLen - BufPos;
     //fprintf(stderr, "GetLine: Data %d\n", l);
