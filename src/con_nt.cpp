@@ -776,6 +776,10 @@ GUI::GUI(int &argc, char **argv, int XSize, int YSize) { /*FOLD00*/
 
 GUI::~GUI() { /*FOLD00*/
     RestoreScreen();
+
+    if (SavedScreen)
+        free(SavedScreen);
+
     ::ConDone();
     gui = 0;
 }
