@@ -267,7 +267,7 @@ inline ostream_func1_char BinChar(char c)
 { return ostream_func1_char(Log__osBinChar, c); }
 
 ostream& Log__osFillChar(ostream&, char const&, size_t const&);
-inline ostream_func2_char_size_t FillChar(char c, size_t num)
+inline ostream_func2_char_size_t FillChar(char const& c, size_t const& num)
 { return ostream_func2_char_size_t(Log__osFillChar, c, num); }
 
 

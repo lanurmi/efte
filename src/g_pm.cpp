@@ -45,6 +45,7 @@
 #include "c_mode.h"
 #include "c_color.h"
 #include "s_files.h"
+#include "log.h"
 
 #define PM_STACK_SIZE (96 * 1024)
 
@@ -337,6 +338,7 @@ ToolBarItem tools[] =
 };
 
 HWND CreateToolBar(HWND parent, HWND owner, int id) {
+    STARTFUNC("CreateToolBar{g_pm.cpp}");
     static int reged = 0;
     HPS hps;
     unsigned int i;
@@ -349,8 +351,10 @@ HWND CreateToolBar(HWND parent, HWND owner, int id) {
     hps = WinGetPS(parent);
     
     for (i = 0; i < sizeof(tools)/sizeof(tools[0]); i++)
+    {
         if (tools[i].hBitmap == 0 && (tools[i].ulType == tiBITMAP))
             tools[i].hBitmap = GpiLoadBitmap(hps, NULLHANDLE, tools[i].ulId, 0, 0);
+    }
     
     WinReleasePS(hps);
     
@@ -502,7 +506,7 @@ int DLGGetFile(GView *View, const char *Prompt, unsigned int BufLen, char *FileN
     dlg.fl =
         /*FDS_CENTER |*/ FDS_CUSTOM |
         ((Flags & GF_SAVEAS) ? FDS_SAVEAS_DIALOG : FDS_OPEN_DIALOG);
-    dlg.pszTitle = Prompt;
+    dlg.pszTitle = (char*)Prompt;
     strcpy(dlg.szFullFile, FileName);
     dlg.hMod = NULLHANDLE;
     dlg.usDlgId = IDD_FILEDLG;

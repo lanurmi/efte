@@ -66,3 +66,6 @@ c_config.$(OEXT): defcfg.h
 fte.exe: $(OBJS) $(NTOBJS)
 	$(LD) $(LDFLAGS) /Fefte.exe $(OBJS) $(NTOBJS) user32.lib
 
+distro: fte.exe fte.cnf cfte.exe
+	zip ../fte-nt.zip fte.exe fte.cnf cfte.exe
+
