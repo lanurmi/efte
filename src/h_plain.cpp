@@ -12,8 +12,7 @@
 #define hsPLAIN_Normal 0
 
 int Hilit_Plain(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine* Line, hlState& State, hsState *StateMap, int *ECol) {
-    ChColor *Colors = BF->Mode->fColorize->Colors;
-    HILIT_VARS(Colors[CLR_Normal], Line);
+    HILIT_VARS(BF->Mode->fColorize->Colors, Line);
 
 #ifdef CONFIG_WORD_HILIT
     int j = 0;
@@ -31,19 +30,19 @@ int Hilit_Plain(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine* Lin
                           ) j++;
                     if (BF->GetHilitWord(j, Line->Chars + i, Color, 1)) ;
                     else {
-                        Color = Colors[CLR_Normal];
+                        Color = CLR_Normal;
                         State = hsPLAIN_Normal;
                     }
                     if (StateMap)
                         memset(StateMap + i, State, j);
                     if (B)
-                        MoveMem(B, C - Pos, Width, Line->Chars + i, Color, j);
+                        MoveMem(B, C - Pos, Width, Line->Chars + i, HILIT_CLRD(), j);
                     i += j;
                     len -= j;
                     p += j;
                     C += j;
                     State = hsPLAIN_Normal;
-                    Color = Colors[CLR_Normal];
+                    Color = CLR_Normal;
                     continue;
                 }
                 ColorNext();

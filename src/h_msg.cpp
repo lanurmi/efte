@@ -18,8 +18,7 @@
 #define hsMSG_Control 4
 
 int Hilit_MSG(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine* Line, hlState& State, hsState *StateMap, int *ECol) {
-    ChColor *Colors = BF->Mode->fColorize->Colors;
-    HILIT_VARS(Colors[CLR_Normal], Line);
+    HILIT_VARS(BF->Mode->fColorize->Colors, Line);
     int is_head = 0, is_quote = 0, is_space = 0, is_tag = 0, is_control = 0;
     
     if (Line->Count > 0) {
@@ -68,19 +67,19 @@ int Hilit_MSG(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine* Line,
     }
     if (is_head) {
         State = hsMSG_Header;
-        Color = Colors[CLR_Header];
+        Color = CLR_Header;
     } else if (is_quote) {
         State = hsMSG_Quote;
-        Color = Colors[CLR_Quotes];
+        Color = CLR_Quotes;
     } else if (is_tag) {
         State = hsMSG_Tag;
-        Color = Colors[CLR_Tag];
+        Color = CLR_Tag;
     } else if (is_control) {
         State = hsMSG_Control;
-        Color = Colors[CLR_Control];
+        Color = CLR_Control;
     } else {
         State = hsMSG_Normal;
-        Color = Colors[CLR_Normal];
+        Color = CLR_Normal;
     }
 
     ChColor DefColor = Color;
@@ -105,7 +104,7 @@ int Hilit_MSG(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine* Line,
                     if (StateMap)
                         memset(StateMap + i, State, j);
                     if (B)
-                        MoveMem(B, C - Pos, Width, Line->Chars + i, Color, j);
+                        MoveMem(B, C - Pos, Width, Line->Chars + i, HILIT_CLRD(), j);
                     i += j;
                     len -= j;
                     p += j;

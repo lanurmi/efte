@@ -20,37 +20,36 @@
 #define hsHTML_Comment 6
 
 int Hilit_HTML(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, hlState &State, hsState *StateMap, int *ECol) {
-    ChColor *Colors = BF->Mode->fColorize->Colors;
-    HILIT_VARS(Colors[CLR_Normal], Line);
+    HILIT_VARS(BF->Mode->fColorize->Colors, Line);
     int j;
 
     for (i = 0; i < Line->Count;) {
         IF_TAB() else {
             switch (State) {
             case hsHTML_Normal:
-                Color = Colors[CLR_Normal];
+                Color = CLR_Normal;
                 if (*p == '<') {
                     State = hsHTML_Command;
-                    Color = Colors[CLR_Command];
+                    Color = CLR_Command;
                     ColorNext();
                     if ((len > 0) && (*p == '/')) ColorNext();
                     continue;
                 } else if (*p == '&') {
                     State = hsHTML_Char;
-                    Color = Colors[CLR_Symbol];
+                    Color = CLR_Symbol;
                 }
                 goto hilit;
             case hsHTML_Slashed:
-                Color = Colors[CLR_Tag];
+                Color = CLR_Tag;
                 if (*p == '/') {
-                    Color = Colors[CLR_Command];
+                    Color = CLR_Command;
                     ColorNext();
                     State = hsHTML_Normal;
                     continue;
                 }
                 goto hilit;
             case hsHTML_Command:
-                Color = Colors[CLR_Command];
+                Color = CLR_Command;
                 if (isalpha(*p) || *p == '_') {
                     j = 0;
                     while (((i + j) < Line->Count) &&
@@ -62,25 +61,25 @@ int Hilit_HTML(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
                     if (StateMap)
                         memset(StateMap + i, State, j);
                     if (B)
-                        MoveMem(B, C - Pos, Width, Line->Chars + i, Color, j);
+                        MoveMem(B, C - Pos, Width, Line->Chars + i, HILIT_CLRD(), j);
                     i += j;
                     len -= j;
                     p += j;
                     C += j;
-                    Color = Colors[CLR_Command];
+                    Color = CLR_Command;
                     continue;
                 } else if (*p == '-' && len > 1 && p[1] == '-') {
                     State = hsHTML_Comment;
-                    Color = Colors[CLR_Comment];
+                    Color = CLR_Comment;
                     ColorNext();
                     goto hilit;
                 } else if (*p == '"') {
                     State = hsHTML_String2;
-                    Color = Colors[CLR_String];
+                    Color = CLR_String;
                     goto hilit;
                 } else if (*p == '\'') {
                     State = hsHTML_String1;
-                    Color = Colors[CLR_String];
+                    Color = CLR_String;
                     goto hilit;
                 } else if (*p == '>') {
                     ColorNext();
@@ -93,7 +92,7 @@ int Hilit_HTML(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
                 }
                 goto hilit;
             case hsHTML_String2:
-                Color = Colors[CLR_String];
+                Color = CLR_String;
                 if (*p == '"') {
                     ColorNext();
                     State = hsHTML_Command;
@@ -101,7 +100,7 @@ int Hilit_HTML(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
                 }
                 goto hilit;
             case hsHTML_String1:
-                Color = Colors[CLR_String];
+                Color = CLR_String;
                 if (*p == '\'') {
                     ColorNext();
                     State = hsHTML_Command;
@@ -109,7 +108,7 @@ int Hilit_HTML(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
                 }
                 goto hilit;
             case hsHTML_Char:
-                Color = Colors[CLR_Symbol];
+                Color = CLR_Symbol;
                 if (*p == ';' || *p == ' ' || *p == '<') {
                     ColorNext();
                     State = hsHTML_Normal;
@@ -117,7 +116,7 @@ int Hilit_HTML(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
                 }
                 goto hilit;
             case hsHTML_Comment:
-                Color = Colors[CLR_Comment];
+                Color = CLR_Comment;
                 if (*p == '-' && len > 1 && p[1] == '-') {
                     ColorNext();
                     ColorNext();
@@ -127,7 +126,7 @@ int Hilit_HTML(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
                 goto hilit;
             default:
                 State = hsHTML_Normal;
-                Color = Colors[CLR_Normal];
+                Color = CLR_Normal;
             hilit:
                 ColorNext();
                 continue;

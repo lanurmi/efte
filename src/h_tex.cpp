@@ -17,34 +17,33 @@
 #define hsTEX_Special 3
 
 int Hilit_TEX(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, hlState &State, hsState *StateMap, int *ECol) {
-    ChColor *Colors = BF->Mode->fColorize->Colors;
-    HILIT_VARS(Colors[CLR_Normal], Line);
+    HILIT_VARS(BF->Mode->fColorize->Colors, Line);
     int j;
 
     for (i = 0; i < Line->Count;) {
         IF_TAB() else {
             switch (State) {
             case hsTEX_Normal:
-                Color = Colors[CLR_Normal];
+                Color = CLR_Normal;
                 if (*p == '%') {
                     State = hsTEX_Comment;
-                    Color = Colors[CLR_Comment];
+                    Color = CLR_Comment;
                     goto hilit;
                 } else if (*p == '\\') {
                     State = hsTEX_Tag;
-                    Color = Colors[CLR_Tag];
+                    Color = CLR_Tag;
                     ColorNext();
                     continue;
                 } else if (*p == '{' || *p == '}' || *p == '$' || *p == '&' || *p == '|') {
                     State = hsTEX_Special;
-                    Color = Colors[CLR_Special];
+                    Color = CLR_Special;
                     ColorNext();
                     State = hsTEX_Normal;
                     continue;
                 }
                 goto hilit;
             case hsTEX_Tag:
-                Color = Colors[CLR_Tag];
+                Color = CLR_Tag;
                 if (isalpha(*p)) {
                     j = 0;
                     while (((i + j) < Line->Count) &&
@@ -56,25 +55,25 @@ int Hilit_TEX(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line,
                     if (StateMap)
                         memset(StateMap + i, State, j);
                     if (B)
-                        MoveMem(B, C - Pos, Width, Line->Chars + i, Color, j);
+                        MoveMem(B, C - Pos, Width, Line->Chars + i, HILIT_CLRD(), j);
                     i += j;
                     len -= j;
                     p += j;
                     C += j;
-                    Color = Colors[CLR_Normal];
+                    Color = CLR_Normal;
                     State = hsTEX_Normal;
                     continue;
                 }
                 ColorNext();
-                Color = Colors[CLR_Normal];
+                Color = CLR_Normal;
                 State = hsTEX_Normal;
                 continue;
             case hsTEX_Comment:
-                Color = Colors[CLR_Comment];
+                Color = CLR_Comment;
                 goto hilit;
             default:
                 State = hsTEX_Normal;
-                Color = Colors[CLR_Normal];
+                Color = CLR_Normal;
             hilit:
                 ColorNext();
                 continue;

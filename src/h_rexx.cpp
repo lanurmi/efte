@@ -18,10 +18,9 @@
 #define hsREXX_Keyword   5
 
 int Hilit_REXX(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, hlState &State, hsState *StateMap, int *ECol) {
-    ChColor *Colors = BF->Mode->fColorize->Colors;
     int j = 0;
     int firstnw = 0;
-    HILIT_VARS(Colors[CLR_Normal], Line);
+    HILIT_VARS(BF->Mode->fColorize->Colors, Line);
     int wascall = 0;
 
     C = 0;
@@ -31,7 +30,7 @@ int Hilit_REXX(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
         IF_TAB() else {
             switch(State) {
             case hsREXX_Comment:
-                Color = Colors[CLR_Comment];
+                Color = CLR_Comment;
                 if ((len >= 2) && (*p == '*') && (*(p+1) == '/')) {
                     ColorNext();
                 set_normal:
@@ -41,13 +40,13 @@ int Hilit_REXX(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
                 }
                 goto hilit;
             case hsREXX_String1:
-                Color = Colors[CLR_String];
+                Color = CLR_String;
                 if (*p == '\'') {
                     goto set_normal;
                 }
                 goto hilit;
             case hsREXX_String2:
-                Color = Colors[CLR_String];
+                Color = CLR_String;
                 if (*p == '"') {
                     goto set_normal;
                 }
@@ -63,7 +62,7 @@ int Hilit_REXX(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
                           ) j++;
                     if (wascall) {
                         State = hsREXX_Normal;
-                        Color = Colors[CLR_Function];
+                        Color = CLR_Function;
                         wascall = 0;
                     } else {
                         if (BF->GetHilitWord(j, Line->Chars + i, Color, 1))
@@ -72,9 +71,9 @@ int Hilit_REXX(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
                             int x;
                             x = i + j;
                             if ((x < Line->Count) && (Line->Chars[x] == '(')) {
-                                Color = Colors[CLR_Function];
+                                Color = CLR_Function;
                             } else {
-                                Color = Colors[CLR_Normal];
+                                Color = CLR_Normal;
                             }
                             State = hsREXX_Normal;
                         }
@@ -82,7 +81,7 @@ int Hilit_REXX(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
                     if (StateMap)
                         memset(StateMap + i, State, j);
                     if (B)
-                        MoveMem(B, C - Pos, Width, Line->Chars + i, Color, j);
+                        MoveMem(B, C - Pos, Width, Line->Chars + i, HILIT_CLRD(), j);
                     if (State == hsREXX_Keyword)
                         if (strnicmp(Line->Chars + i, "CALL", 4) == 0)
                             wascall = 1;
@@ -94,30 +93,30 @@ int Hilit_REXX(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
                     continue;
                 } else if ((len >= 2) && (*p == '/') && (*(p+1) == '*')) {
                     State = hsREXX_Comment;
-                    Color = Colors[CLR_Comment];
+                    Color = CLR_Comment;
                     //hilit2:
                     ColorNext();
                 hilit:
                     ColorNext();
                     continue;
                 } else if (isdigit(*p)) {
-                    Color = Colors[CLR_Number];
+                    Color = CLR_Number;
                     ColorNext();
                     while(len && isdigit(*p)) ColorNext();
                     continue;
                 } else if (*p == '\'') {
                     State = hsREXX_String1;
-                    Color = Colors[CLR_String];
+                    Color = CLR_String;
                     goto hilit;
                 } else if (*p == '"') {
                     State = hsREXX_String2;
-                    Color = Colors[CLR_String];
+                    Color = CLR_String;
                     goto hilit;
                 } else if (ispunct(*p) && *p != '_') {
-                    Color = Colors[CLR_Punctuation];
+                    Color = CLR_Punctuation;
                     goto hilit;
                 }
-                Color = Colors[CLR_Normal];
+                Color = CLR_Normal;
                 goto hilit;
             }
         }
@@ -223,7 +222,7 @@ static int SearchBackContext(EBuffer *B, int Row, char &ChFind) {
     int Count = -1;
     int StateLen;
     hsState *StateMap;
-    int isblank = 0;
+    int is_blank = 0;
 
     ChFind = '0';
     while (Row >= 0) {
@@ -261,18 +260,18 @@ static int SearchBackContext(EBuffer *B, int Row, char &ChFind) {
                 } else if (Match(L, Pos, StateMap, P, "end", hsREXX_Keyword)) {
                     Count--;
                     ChFind = 'e';
-                } else if (isblank < 5 && Match(L, Pos, StateMap, P, "then", hsREXX_Keyword)) {
+                } else if (is_blank < 5 && Match(L, Pos, StateMap, P, "then", hsREXX_Keyword)) {
                     ChFind = 't';
                     if (StateMap)
                         free(StateMap);
                     return B->LineIndented(Row);
-                } else if (isblank < 5 && Match(L, Pos, StateMap, P, "else", hsREXX_Keyword)) {
+                } else if (is_blank < 5 && Match(L, Pos, StateMap, P, "else", hsREXX_Keyword)) {
                     ChFind = 'e';
                     if (StateMap)
                         free(StateMap);
                     return B->LineIndented(Row);
                 } else {
-                    isblank++;
+                    is_blank++;
                     Pos--;
                     continue;
                 }
@@ -282,7 +281,7 @@ static int SearchBackContext(EBuffer *B, int Row, char &ChFind) {
                     return B->LineIndented(Row);
                 }
             }
-            if (P[Pos] != ' ' && P[Pos] != 9) isblank++;
+            if (P[Pos] != ' ' && P[Pos] != 9) is_blank++;
             Pos--;
         }
         if (StateMap) free(StateMap);

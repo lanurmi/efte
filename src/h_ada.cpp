@@ -19,10 +19,9 @@
 #define hsAda_String2     11
 
 int Hilit_ADA(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, hlState &State, hsState *StateMap, int *ECol) {
-    ChColor *Colors = BF->Mode->fColorize->Colors;
     int j = 0;
     int firstnw = 0;
-    HILIT_VARS(Colors[CLR_Normal], Line);
+    HILIT_VARS(BF->Mode->fColorize->Colors, Line);
     int len1 = len;
 //    char *last = p + len1 - 1;
 
@@ -49,16 +48,16 @@ int Hilit_ADA(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line,
                         while ((x < Line->Count) &&
                                ((Line->Chars[x] == ' ') || (Line->Chars[x] == 9))) x++;
                         if ((x < Line->Count) && (Line->Chars[x] == '(')) {
-                            Color = Colors[CLR_Function];
+                            Color = CLR_Function;
                         } else {
-                            Color = Colors[CLR_Normal];
+                            Color = CLR_Normal;
                         }
                         State = hsAda_Normal;
                     }
                     if (StateMap)
                         memset(StateMap + i, State, j);
                     if (B)
-                        MoveMem(B, C - Pos, Width, Line->Chars + i, Color, j);
+                        MoveMem(B, C - Pos, Width, Line->Chars + i, HILIT_CLRD(), j);
                     i += j;
                     len -= j;
                     p += j;
@@ -67,36 +66,36 @@ int Hilit_ADA(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line,
                     continue;
                 } else if ((len >= 2) && (*p == '-') && (*(p+1) == '-')) {
                     State = hsAda_CommentL;
-                    Color = Colors[CLR_Comment];
+                    Color = CLR_Comment;
                 //hilit2:
                     ColorNext();
                 hilit:
                     ColorNext();
                     continue;
                 } else if (isdigit(*p)) {
-                    Color = Colors[CLR_Number];
+                    Color = CLR_Number;
                     ColorNext();
                     while (len && (isdigit(*p) || *p == 'e' || *p == 'E' || *p == '.' || *p == '_')) ColorNext();
                     continue;
                 } else if (*p == '\'') {
                     State = hsAda_String1;
-                    Color = Colors[CLR_String];
+                    Color = CLR_String;
                     goto hilit;
                 } else if (*p == '"') {
                     State = hsAda_String2;
-                    Color = Colors[CLR_String];
+                    Color = CLR_String;
                     goto hilit;
                 } else if (ispunct(*p) && *p != '_') {
-                    Color = Colors[CLR_Punctuation];
+                    Color = CLR_Punctuation;
                     goto hilit;
                 }
-                Color = Colors[CLR_Normal];
+                Color = CLR_Normal;
                 goto hilit;
             case hsAda_CommentL:
-                Color = Colors[CLR_Comment];
+                Color = CLR_Comment;
                 goto hilit;
             case hsAda_String1:
-                Color = Colors[CLR_String];
+                Color = CLR_String;
                 if (*p == '\'') {
                     ColorNext();
                     State = hsAda_Normal;
@@ -104,7 +103,7 @@ int Hilit_ADA(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line,
                 }
                 goto hilit;
             case hsAda_String2:
-                Color = Colors[CLR_String];
+                Color = CLR_String;
                 if (*p == '"') {
                     ColorNext();
                     State = hsAda_Normal;
