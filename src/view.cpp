@@ -454,13 +454,13 @@ void EView::Msg(int level, const char *s, ...) {
         SetMsg(msgbuftmp);
 }
 
-void EView::SetMsg(char *Msg) {
+void EView::SetMsg(char *msg) {
     if (CurMsg)
         free(CurMsg);
     CurMsg = 0;
-    if (Msg && strlen(Msg))
-        CurMsg = strdup(Msg);
-    if (CurMsg && Msg && MView) {
+    if (msg && strlen(msg))
+        CurMsg = strdup(msg);
+    if (CurMsg && msg && MView) {
         TDrawBuffer B;
         char SColor;
         int Cols, Rows;

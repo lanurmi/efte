@@ -714,12 +714,12 @@ void GFrame::Repaint() {
     }
 }
 
-void GFrame::InsertView(GView *Prev, GView *view) {
+void GFrame::InsertView(GView *prev, GView *view) {
     if (!view) return ;
-    if (Prev) {
-        view->Prev = Prev;
-        view->Next = Prev->Next;
-        Prev->Next = view;
+    if (prev) {
+        view->Prev = prev;
+        view->Next = prev->Next;
+	prev->Next = view;
         view->Next->Prev = view;
     } else {
         view->Prev = view->Next = view;

@@ -17,7 +17,6 @@
 #define fiDIRECTORY 2
 
 class FileInfo {
-private:
     char *name;   // minimum set of file information
     off_t size;
     time_t mtime;
@@ -27,10 +26,10 @@ public:
     FileInfo(char *Name, int type, off_t Size, time_t MTime);
     ~FileInfo();
 
-    char *Name() { return name; }
-    off_t Size() { return size; }
-    int Type() { return type; }
-    time_t MTime() { return mtime; }
+    const char *Name() const { return name; }
+    off_t Size() const { return size; }
+    int Type() const { return type; }
+    time_t MTime() const { return mtime; }
 };
 
 #define ffFAST       1  // optimization for UNIX (return name only, NO TYPE CHECK), ignored on OS/2 and NT
@@ -39,7 +38,6 @@ public:
 #define ffHIDDEN     8  // return hidden files (dot-files for UNIX)
 
 class FileFind {
-private:
     char *Directory;
     char *Pattern;
     int Flags;

@@ -135,17 +135,17 @@ int LoadDesktop(char *FileName) {
                 char *file;
                 EPoint P;
                 //long l;
-                char *e;
+                char *c;
 
                 p = line + 2;
-                P.Row = strtol(p, &e, 10);
-                if (*e != '|')
+                P.Row = strtol(p, &c, 10);
+                if (*c != '|')
                     break;
-                p = e + 1;
-                P.Col = strtol(p, &e, 10);
-                if (*e != '|')
+                p = c + 1;
+                P.Col = strtol(p, &c, 10);
+                if (*c != '|')
                     break;
-                p = e + 1;
+                p = c + 1;
                 name = p;
                 while (*p && *p != '|')
                     p++;
