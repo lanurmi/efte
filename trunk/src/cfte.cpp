@@ -231,7 +231,7 @@ int main(int argc, char **argv) {
     b[2] = (unsigned char)((l >> 16) & 0xFF);
     b[3] = (unsigned char)((l >> 24) & 0xFF);
     fseek(output, 0, SEEK_SET);
-    fwrite(&b, 4, 1, output);
+    fwrite(b, 4, 1, output);
     fclose(output);
 
     if (unlink(Target) != 0 && errno != ENOENT) {
