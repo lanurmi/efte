@@ -18,9 +18,9 @@ install: all
 	cp src/cfte $(BINDIR)
 	src/cfte config/main.fte $(LIBDIR)/system.fterc
 	cp -r config $(LIBDIR)
-	chmod a+r $(CONFIG)/*
-	chmod a+r $(CONFIG)/*/*
-	find $(CONFIG) -type d | while read dir; do chmod a+x $dir; done
+	chmod a+r $(CONFIGDIR)/*
+	chmod a+r $(CONFIGDIR)/*/*
+	find $(CONFIGDIR) -type d ! -name CVS | while read dir; do echo chmod a+x $$dir; done
 
 fte: fte.in Makefile fte.spec
 	sed <$< >$@ \
