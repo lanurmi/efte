@@ -521,7 +521,7 @@ sub HTML_PARAM {
 # basic document skeleton
 sub HTML_Base {
     MoveFileStart;
-    InsertString "<!DOCTYPE html PUBLIC \"-//W3C/DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/transitional.dtd\">";
+    InsertString "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">";
     2:LineNew;
     InsertString "<html>"; 2:LineNew;
     InsertString "<head>"; LineNew;
