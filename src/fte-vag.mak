@@ -8,30 +8,31 @@ EXE =
 
 OEXT = obj
 
-DEBUG = 1
+DEBUG = 0
+#DEBUG = 1
 
 CC = icc
 LINK = ilink
 RC = rc
 VOID = echo > NUL
 
-C_OPTIONS =/G4 /Gm+ 
+C_OPTIONS = /Q /Tl /G4 /Gm+ /DOS2 /DINCL_32
 C_OPT_R = /O /Gs- 
 C_OPT_D = /Ti /Tx
-CPP_OPTIONS = /G4 /Gm+ 
+CPP_OPTIONS = /Q /G4 /Gm+ /DOS2 /DINCL_32
 CPP_OPT_R = /O /Gs-
-CPP_OPT_D = /Ti /Tx 
-L_OPTIONS = /BASE:0x010000 /EXEC /NOE
+CPP_OPT_D = /Ti /Tm /Tx 
+L_OPTIONS = /BASE:0x010000 /EXEC /NOE /NOLOGO
 L_OPT_R = /EXEPACK:2 /PACKC /PACKD /OPTF 
 L_OPT_D = /DEBUG /DBGPACK
-RC_OPT= 
+RC_OPT = -n
 
 C_SRC =
 C_H =
 CPP_SRC	= 
 CPP_HPP =
 
-include objs.inc
+!include objs.inc
 
 RES = 
 
@@ -104,7 +105,6 @@ defcfg.cnf: defcfg.fte cfte.exe
 	cfte defcfg.fte defcfg.cnf
 
 defcfg.h: defcfg.cnf bin2c.exe
-	del defcfg.h
 	bin2c defcfg.cnf >defcfg.h
 
 bin2c.obj: bin2c.cpp
