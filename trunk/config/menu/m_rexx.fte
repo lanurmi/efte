@@ -289,7 +289,7 @@ menu REXX_WPS {
 }
 
 menu REXX_RU {
-    item "&Load REXXUtil\tC+E u" { REXX_RexxUtil }
+    item "&Load REXXUtil\tutilx" { REXX_RexxUtil }
     submenu "&Disk Services", REXX_Disk;
     submenu "&Miscellaneous", REXX_Misc;
     submenu "&SysIni", REXX_INI;
