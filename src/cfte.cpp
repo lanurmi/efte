@@ -369,6 +369,7 @@ MODE_BFI(TrimOnSave),
 MODE_BFI(SaveBookmarks),
 MODE_BFI(HilitTags),
 MODE_BFI(ShowBookmarks),
+MODE_BFI(MakeBackups),
 { 0, 0 },
 };
 

@@ -71,6 +71,7 @@ EBufferFlags DefaultBufferFlags = {
         0,                  // save bookmarks
         1,                  // HilitTags
         0,                  // ShowBookmarks
+        1                   // MakeBackups
     },
     {
         0,                  // Routine Regexp

@@ -661,9 +661,9 @@ public:
     int     ToggleWordWrap();
     int     ToggleTrim();
     int     ToggleShowMarkers();
-    int     ToggleHilitTags ();
-    int     ToggleShowBookmarks ();
-
+    int     ToggleHilitTags();
+    int     ToggleShowBookmarks();
+    int     ToggleMakeBackups();
     int     SetLeftMargin();
     int     SetRightMargin();
     

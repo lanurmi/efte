@@ -580,6 +580,7 @@ int EBuffer::ExecCommand(int Command, ExState &State) {
     case ExToggleShowMarkers:     return ToggleShowMarkers();
     case ExToggleHilitTags:       return ToggleHilitTags();
     case ExToggleShowBookmarks:   return ToggleShowBookmarks();
+    case ExToggleMakeBackups:     return ToggleMakeBackups();
     case ExSetLeftMargin:         return SetLeftMargin();
     case ExSetRightMargin:        return SetRightMargin();
     case ExSetIndentWithTabs:     return SetIndentWithTabs(State);
