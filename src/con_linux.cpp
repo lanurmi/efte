@@ -23,6 +23,7 @@
 
 // FIX: caps lock is ignored (I haven't pressed it in years, except by mistake).
 // FIX: access GPM clipboard. how?
+// Also: num lock is ignored
 
 // ... some more comments below
 
@@ -36,6 +37,7 @@
 #include <stdarg.h>
 #include <unistd.h>
 #include <string.h>
+#include <errno.h>
 #include <sys/types.h>
 #include <sys/ioctl.h>
 #include <sys/vt.h>
@@ -110,7 +112,7 @@ static unsigned char fromScreen[256];
 int GetKeyEvent(TEvent *Event);
 int GetMouseEvent(TEvent *Event);
 
-void mouseShow() {
+static void mouseShow() {
 #ifdef USE_GPM
     if (GpmFd != -1 && VcsFd != -1 && drawPointer && mouseDrawn == 0) {
         int pos = (LastMouseX + LastMouseY * VideoCols) * 2 + 4;
@@ -124,7 +126,7 @@ void mouseShow() {
 #endif
 }
 
-void mouseHide() {
+static void mouseHide() {
 #ifdef USE_GPM
     if (GpmFd != -1 && VcsFd != -1 && drawPointer && mouseDrawn == 1) {
         int pos = (LastMouseX + LastMouseY * VideoCols) * 2 + 4;
@@ -346,7 +348,7 @@ int ConContinue() {
 }
 
 #ifdef USE_SCRNMAP
-int conread(int fd, void *p, int len) {   // len should be a multiple of 2
+static int conread(int fd, void *p, int len) {   // len should be a multiple of 2
     char buf[512];
     char *c = (char *)p;
     char *s = buf;
@@ -363,7 +365,7 @@ int conread(int fd, void *p, int len) {   // len should be a multiple of 2
     }
 }
 
-int conwrite(int fd, void *p, int len) {  // len should be a multiple of 2
+static int conwrite(int fd, void *p, int len) {  // len should be a multiple of 2
     char buf[512];
     char *s = (char *)p;
     char *c = buf;
@@ -539,7 +541,6 @@ int ConQueryMouseButtons(int *ButtonCount) {
     return 0;
 }
 
-int GetEvent(TEvent *Event);
 static TEvent Prev = { evNone };
 
 int ConGetEvent(TEventMask /*EventMask*/, TEvent *Event, int WaitTime, int Delete) {
@@ -612,10 +613,10 @@ int ConPutEvent(TEvent Event) {
 int ConFlush(void) {return 0;  }
 int ConGrabEvents(TEventMask /*EventMask*/) { return 0; }
 
-int shift_state = 0;
-int lock_state = 0;
-int slock_state = 0;
-char dead_key = 0;
+static int shift_state = 0;
+static int lock_state = 0;
+static int slock_state = 0;
+static char dead_key = 0;
 
 static const struct {
     unsigned long KeySym;
@@ -677,7 +678,7 @@ static const struct {
 { 0, 0 }
 };
 
-struct {
+static const struct {
     unsigned long KeySym;
     char Diacr;
 } DeadTrans[] = {
@@ -999,8 +1000,7 @@ int ConSetCursorSize(int /*Start*/, int /*End*/) {
     return 0;
 }
 
-static PCell
-SavedScreen = 0;
+static PCell SavedScreen = 0;
 static int SavedX, SavedY, SaveCursorPosX, SaveCursorPosY;
 
 int SaveScreen() {
