@@ -374,15 +374,18 @@ int Hilit_PERL(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
                            (p[2] == '"' || p[2] == '\'' || p[2] == '_' || (toupper(p[2]) >= 'A' && toupper(p[2]) <= 'Z')))
                 {
                     int hereDocKeyLen;
+                    int offset = 2;
+                    if (p[2] == '"' || p[2] == '\'')
+                        offset++;
                     setHereDoc++;
                     for (hereDocKeyLen = 0;
                          hereDocKeyLen < len && (
-                                                 p[2 + hereDocKeyLen] == '_' ||
-                                                 (toupper(p[2 + hereDocKeyLen]) >= 'A' && toupper(p[2 + hereDocKeyLen]) <= 'Z')
+                                                 p[offset + hereDocKeyLen] == '_' ||
+                                                 (toupper(p[offset + hereDocKeyLen]) >= 'A' && toupper(p[offset + hereDocKeyLen]) <= 'Z')
                                                 );
                          ++hereDocKeyLen)
                     {
-                        hereDocKey[hereDocKeyLen] = p[2 + hereDocKeyLen];
+                        hereDocKey[hereDocKeyLen] = p[offset + hereDocKeyLen];
                     }
                     hereDocKey[hereDocKeyLen] = '\0';
                     State = hsPerl_Punct;
