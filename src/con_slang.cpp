@@ -7,7 +7,7 @@
  *
  */
 
-int use_esc_hack = 0;
+static int use_esc_hack = 0;
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -99,7 +99,7 @@ static char slang_dchs[] =
 
 static char raw_dchs[sizeof(slang_dchs)];
 
-unsigned char ftesl_get_dch(char raw)
+static unsigned char ftesl_get_dch(char raw)
 {
     for (int i = 0; i < (int) sizeof(slang_dchs); i++)
 	if (raw_dchs[i] == raw)
@@ -107,7 +107,7 @@ unsigned char ftesl_get_dch(char raw)
     return DCH_SLANG_EOL;
 }
 
-static const char *slang_colors[] =
+static const char *const slang_colors[] =
 {
     "black",
     "blue",
@@ -144,7 +144,7 @@ static const char *slang_colors[] =
 
 #define FTESL_KEY_CTRLAND(x)    (x+1-'a')
 
-static TKeyCode speckeys[] =
+static const TKeyCode speckeys[] =
 {
     kbF1,
     kbF2,
@@ -496,7 +496,7 @@ int ConQueryCursorPos(int *X, int *Y)
     return 0;
 }
 
-int CurVis = 1;
+static int CurVis = 1;
 
 int ConShowCursor()
 {
@@ -555,7 +555,7 @@ int ConQueryMouseButtons(int *ButtonCount)
 static TEvent Prev =
 {evNone};
 
-static TKeyCode keys_ctrlhack[] =
+static const TKeyCode keys_ctrlhack[] =
 {
     kfAlt,
     kbHome,
@@ -755,6 +755,27 @@ int ConGetEvent(TEventMask /*EventMask */ ,
 		    kbuf[1] = (char) key;
 		    SLang_ungetkey_string(kbuf, 2);
 		    key = SLkp_getkey();
+		    if (key == 0xFFFF) {
+			if (SLang_input_pending(0) == 0) {
+			    /*
+			     * SLang got an unknown key and ate it.
+			     * beep and bonk out.
+			     */
+			    SLtt_beep();
+			    return -1;
+			}
+			/*
+			 * SLang encountered an unknown key sequence, so we
+			 * try to parse the sequence one by one and thus
+			 * enable the user to configure a binding for it
+			 */
+			key = SLang_getkey();
+			if (key != 27) {
+			    SLtt_beep();
+			    SLang_flush_input();
+			    return -1;
+			}
+		    }
 		    kcode = ftesl_process_key(key, 0);
 		    break;
 		} else {
@@ -815,9 +836,9 @@ int ConGetEvent(TEventMask /*EventMask */ ,
 		Event->Msg.Command = cmPipeRead;
 		Event->Msg.Param1 = pp;
 		Pipes[pp].stopped = 0;
+		return 0;
 	    }
 	    //fprintf(stderr, "Pipe %d\n", Pipes[pp].fd);
-	    return 0;
 	}
     }
 
