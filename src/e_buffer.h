@@ -634,6 +634,7 @@ public:
     int     BlockPasteStream();
     int     BlockPasteLine();
     int     BlockPasteColumn();
+    int     BlockPasteOver();
     int     BlockSelectWord();
     int     BlockSelectLine();
     int     BlockSelectPara();
