@@ -256,6 +256,15 @@ static int CmdLoadConfiguration(int &argc, char **argv) {
 }
 
 int main(int argc, char **argv) {
+#if defined(_DEBUG) && defined(MSVC) && defined(MSVCDEBUG)
+   _CrtSetReportMode( _CRT_WARN, _CRTDBG_MODE_FILE );
+   _CrtSetReportFile( _CRT_WARN, _CRTDBG_FILE_STDERR );
+   _CrtSetReportMode( _CRT_ERROR, _CRTDBG_MODE_FILE );
+   _CrtSetReportFile( _CRT_ERROR, _CRTDBG_FILE_STDERR );
+   _CrtSetReportMode( _CRT_ASSERT, _CRTDBG_MODE_FILE );
+   _CrtSetReportFile( _CRT_ASSERT, _CRTDBG_FILE_STDERR );
+#endif //_DEBUG && MSVC && MSVCDEBUG
+
 #if defined(EMX) || (defined(NT) && defined(MSVC))
     argv[0] = getProgramName(argv[0]);
 #endif
@@ -298,6 +307,11 @@ int main(int argc, char **argv) {
     if (_heapchk() != _HEAPOK)
         DieError(0, "Heap memory is corrupt.");
 #endif
+
+#if defined(_DEBUG) && defined(MSVC) && defined(MSVCDEBUG)
+    _CrtSetDbgFlag((_CRTDBG_LEAK_CHECK_DF) | _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG));
+#endif //_DEBUG && MSVC && MSVCDEBUG
+
     ENDFUNCRC(0);
     //return 0;
 }
