@@ -53,7 +53,11 @@
 #if defined(UNIX)
 #    include <unistd.h>
 #    include <pwd.h>
-#    include <fnmatch.h>
+#    if defined(__CYGWIN__)
+#        include "fnmatch.h"
+#    else
+#        include <fnmatch.h>
+#    endif
 #    define strnicmp strncasecmp
 #    define stricmp strcasecmp
 #    define filecmp strcmp
