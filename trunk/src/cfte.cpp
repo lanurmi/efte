@@ -1634,7 +1634,7 @@ static int ParseConfigFile(CurPos &cp) {
                                     s = GetString(cp);
                                     if (s == 0) Fail(cp, "Parse failed");
                                     var = Lookup(global_string, w);
-                                    if (var == -1) Fail(cp, "Lookup of '%s' failed");
+                                    if (var == -1) Fail(cp, "Lookup of '%s' failed", w);
                                     PutNumber(cp, CF_SETVAR, var);
                                     PutString(cp, CF_STRING, s);
                                 }
