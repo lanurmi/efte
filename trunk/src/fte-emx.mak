@@ -23,7 +23,7 @@ LIBS      = -lstdcpp
 
 DEFS=-DINCL_32  #-DUSE_OS2_TOOLKIT_HEADERS
 
-CCFLAGS   = $(OPTIMIZE) $(MT) $(XTYPE) -x c++ -Wall -DOS2 -DEMX $(DEFS) $(INCDIR) -pipe
+CCFLAGS   = $(OPTIMIZE) $(MT) $(XTYPE) -x c++ -Wall -DOS2 $(DEFS) $(INCDIR) -pipe
 LDFLAGS   = $(OPTIMIZE) $(MT) -Zmap $(XLTYPE) $(LIBDIR)
 
 .SUFFIXES: .cpp .$(OEXT)

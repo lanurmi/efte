@@ -125,7 +125,7 @@
 #endif
 
 #if defined(OS2) || defined(NT)
-#    if defined(EMX) || defined(WATCOM) || defined(__TOS_OS2__)
+#    if defined(__EMX__) || defined(WATCOM) || defined(__TOS_OS2__)
 #        define FAKE_BEGINTHREAD_NULL NULL,
 #    else
 #        define FAKE_BEGINTHREAD_NULL

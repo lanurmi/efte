@@ -164,7 +164,7 @@ static int GetDiskCurDir(int drive, char *dir) {
     if (drive < 1 || drive > 26)
         return -1;
 
-#if defined(EMX)
+#if defined(__EMX__)
     return (_getcwd1(dir, (char)(drive + 'A' - 1)) == 0) ? 0 : -1;
 #elif defined(OS2)
     {
@@ -204,7 +204,7 @@ static int SetDrive(int drive) { // 1 = A, 2 = B, 3 = C, ...
     // _chdrive seems to be most portable between dosish systems,
     // but seem to take different arguments ???
 
-#if defined(EMX)
+#if defined(__EMX__)
     return _chdrive(drive + 'A' - 1);
 #elif defined(OS2)
     return (DosSetDefaultDisk(drive) == 0) ? 0 : -1;
@@ -286,14 +286,14 @@ int ExpandPath(const char *Path, char *Expand) {
         if (GetDiskCurDir(drive, Expand + 3) == -1)
             return -1;
     } else {
-#if defined(EMX)
+#if defined(__EMX__)
         if (_fullpath(Expand, Name, MAXPATH) == -1) return -1;
 #else
         if (_fullpath(Expand, Name, MAXPATH) == NULL) return -1;
 #endif
     }
 #endif
-#if defined(EMX)
+#if defined(__EMX__)
     {
         char *p = Expand;
 
