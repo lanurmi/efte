@@ -69,10 +69,10 @@ mode C: PLAIN {      # C/C++ Mode
 
     # kabi prefered settings
     IndentWithTabs = 1;
-    CursorThroughTabs = 0;
-    DeleteKillTab = 1;
+    CursorThroughTabs = 1;
+    DeleteKillTab = 0;
     DeleteKillBlock = 0;
-    BackSpKillTab = 1;
+    BackSpKillTab = 0;
     BackSpUnindents = 0;
     Abbreviations = 1;
     UndoMoves = 0;

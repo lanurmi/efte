@@ -147,6 +147,13 @@ menu Line {
     item "Delete to line &end\tAlt+End" { KillToLineEnd }
     item "Delete to li&ne start\tCtrl+Sh+BackSp" { KillToLineStart }
     item;
+    item "Comment\tCtrl+Alt+C" {
+        MoveLineStart; ?FindReplace /^(\s*)/ /\/\/  \1/ "xnc"; MoveDown
+    }
+    item "Uncomment\tCtrl+Alt+U" {
+        MoveLineStart; ?FindReplace /^[\/][\/]  / // "xnc"; MoveDown
+    }
+    item;
     item "&Uppercase"         { LineCaseUp }
     item "&Lowercase"         { LineCaseDown }
     item "&Togglecase"        { LineCaseToggle }
