@@ -7,8 +7,13 @@
  *
  */
 
-#define NEED_LOG_H
 #include "fte.h"
+#include "log.h"
+#include "s_files.h"
+#include "s_util.h"
+#include "o_directory.h"
+#include "c_commands.h"
+#include "c_history.h"
 
 #ifdef CONFIG_OBJ_DIRECTORY
 EDirectory::EDirectory(int createFlags, EModel **ARoot, char *aPath): EList(createFlags, ARoot, aPath) {
