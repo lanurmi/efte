@@ -1,0 +1,72 @@
+# this file defines additional keybindings for HTML mode.
+# HTML_* macros are defined in ../m_html.fte
+# menus are defined in ../menu/m_html.fte
+# this file is included from ../ui.fte
+
+eventmap HTML {
+    key [C+E_0]     { HTML_Base }
+    
+# headers
+    
+    key [C+E_1]     { HTML_H1 }
+    key [C+E_2]     { HTML_H2 }
+    key [C+E_3]     { HTML_H3 }
+    key [C+E_4]     { HTML_H4 }
+    key [C+E_5]     { HTML_H5 }
+    key [C+E_6]     { HTML_H6 }
+    
+# physical
+    
+    key [C+E_C+B]   { HTML_B }
+    key [C+E_C+I]   { HTML_I }
+    key [C+E_C+T]   { HTML_TT }
+    
+# logical
+    
+    key [C+E_C+D]   { HTML_DFN }
+    key [C+E_C+E]   { HTML_EM }
+    key [C+E_C+O]   { HTML_CITE }
+    key [C+E_C+C]   { HTML_CODE }
+    key [C+E_C+K]   { HTML_KBD }
+    key [C+E_C+M]   { HTML_SAMP }
+    key [C+E_C+S]   { HTML_STRONG }
+    key [C+E_C+V]   { HTML_VAR }
+    
+# lists
+    
+    key [C+E_i]     { HTML_LI }
+    key [C+E_u]     { HTML_UL }
+    key [C+E_o]     { HTML_OL }
+    key [C+E_l]     { HTML_DL }
+    key [C+E_t]     { HTML_DT }
+    key [C+E_d]     { HTML_DD }
+    
+# tables
+    
+    key [C+E_A+T] { HTML_TABLE }
+    key [C+E_A+C] { HTML_CAPTION }
+    key [C+E_A+H] { HTML_TH }
+    key [C+E_A+R] { HTML_TR }
+    key [C+E_A+D] { HTML_TD }
+    
+# anchors    
+    
+    key [C+E_C+N]   { HTML_ANAME }
+    key [C+E_C+H]   { HTML_AHREF }
+    
+    key [C+E_C+G]   { HTML_IMG }
+    key [C+E_C+F]   { HTML_PRE }
+    key [C+E_G-Enter] { HTML_BR }
+    key [C+E_-]     { HTML_HR }
+    key [C+E_.]     { HTML_CENTER }
+    key [C+E_C+P]   { HTML_P }
+    
+# character escapes
+    
+    key [C+E_&]     { InsertString "&amp;"; }
+    key [C+E_<]     { InsertString "&lt;"; }
+    key [C+E_>]     { InsertString "&gt;"; }
+    key [C+E_"]     { InsertString "&quot;"; }
+    key [C+E_Space]   { InsertString "&nbsp;"; }
+    key [C+Space]   { InsertString "&nbsp;"; }
+}

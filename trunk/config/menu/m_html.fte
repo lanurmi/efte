@@ -1,0 +1,83 @@
+# HTML
+
+menu HTML_Physical {
+    item    "&Bold        <B>\tC-E C-B" { HTML_B }
+    item    "&Italic      <I>\tC-E C-I" { HTML_I }
+    item    "&Typewriter  <TT>\tC-E C-T" { HTML_TT }
+}
+
+menu HTML_Logical {
+    item    "&Definition  <DFN>\tC-E C-D" { HTML_DFN }
+    item    "&Emphasize   <EM>\tC-E C-E" { HTML_EM }
+    item    "Citati&on    <CITE>\tC-E C-O" { HTML_CITE }
+    item    "&Code        <CODE>\tC-E C-C" { HTML_CODE }
+    item    "&Kbd entry   <KBD>\tC-E C-K" { HTML_KBD }
+    item    "Sam&ple msg  <SAMP>\tC-E C-M" { HTML_SAMP }
+    item    "&Strong EM   <STRONG>\tC-E C-S" { HTML_STRONG }
+    item    "&Variable    <VAR>\tC-E C-V" { HTML_VAR }
+}
+
+menu HTML_Header {
+    item    "&1  <H1>\tC-E 1" { HTML_H1 }
+    item    "&2  <H2>\tC-E 2" { HTML_H2 }
+    item    "&3  <H3>\tC-E 3" { HTML_H3 }
+    item    "&4  <H4>\tC-E 4" { HTML_H4 }
+    item    "&5  <H5>\tC-E 5" { HTML_H5 }
+    item    "&6  <H6>\tC-E 6" { HTML_H6 }
+}
+
+menu HTML_List {
+    item    "List &item        <LI>\tC-E i"  { HTML_LI }
+    item    "&Unordered list   <UI>\tC-E u"  { HTML_UL }
+    item    "&Ordered list     <OL>\tC-E o"  { HTML_OL }
+    item    "Definition &list  <DL>\tC-E l"  { HTML_DL }
+    item    "Definition &tag   <DT>\tC-E t"  { HTML_DT }
+    item    "&Definition       <DD>\tC-E d"  { HTML_DD }
+}
+
+menu HTML_Table {
+    item    "&Table    <TABLE>\tC-E A-T" { HTML_TABLE }
+    item    "&Caption  <CAPTION>\tC-E A-C" { HTML_CAPTION }
+    item    "&Header   <TH>\tC-E A-H" { HTML_TH }
+    item    "&Row      <TR>\tC-E A-R" { HTML_TR }
+    item    "&Data     <TD>\tC-E A-D" { HTML_TD }
+}
+
+menu HTMLTags {
+    item    "&Paragraph     <P>\tC-E C-P  " { HTML_P }
+    item    "Line brea&k    <BR>\tC-E Enter" { HTML_BR }
+    item    "Horiz.line    <HR>\tC-E &-    " { HTML_HR }
+    item;
+    submenu "P&hysical styles                  ", HTML_Physical;
+    submenu "Logical &styles                   ", HTML_Logical;
+    submenu "&Header                           ", HTML_Header;
+    submenu "&Lists                            ", HTML_List;
+    submenu "&Tables                           ", HTML_Table;
+    item;
+    item    "Pre&formatted  <PRE>\tC-E C-F  " { HTML_PRE }
+    item    "&Centered      <CENTER>\tC-E .    " { HTML_CENTER }
+    item;
+    item    "Anchor &Name   <A NAME>\tC-E C-N  " { HTML_ANAME }
+    item    "Anchor H&Ref   <A HREF>\tC-E C-H  " { HTML_AHREF }
+    item;
+    item    "Basic document\tC-E &0   " { HTML_Base }
+}
+
+menu Main_HTML {
+    submenu "&File",    File;
+    submenu "&Edit",    Edit;
+    submenu "&Block",   Block;
+    submenu "&Search",  Search;
+    submenu "Fol&d",    Fold;
+    submenu "&Tools",   Tools;
+    submenu "HT&ML",    HTMLTags;
+    submenu "&Window",  Window;
+    submenu "&Options", Options;
+    submenu "&Help",    Help;
+}
+
+eventmap HTML {
+    MainMenu            = "Main_HTML";   # menu for menubar
+
+    key [A+M] { MainMenu 'M' }
+}

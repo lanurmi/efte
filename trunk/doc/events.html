@@ -1,0 +1,95 @@
+<HTML>
+<HEAD><TITLE>Event Bindings</TITLE></HEAD>
+<BODY>
+
+eventmap section is used to bind editor commands to user events.
+
+<H1><A NAME="keybindings">Keybindings</A></H1>
+<P>
+Keybindings are inherited from parent modes unless overriden.
+<P>
+Here are some examples of key specifiactions:
+<DL>
+<DT>[A]<DD>Uppercase a
+<DT>[a]<DD>Lowercase a 
+<DT>[;]<DD>Semicolon
+<DT>[A+A]<DD>Alt+A
+<DT>[C+B]<DD>Ctrl+B
+<DT>[A+C+F1]<DD>Alt+Ctrl+F1
+<DT>[A+C+S+F1]<DD>Alt+Ctrl+Shift+F1
+<DT>[A+Space]<DD>Alt+Space
+<DT>[C+K_C+B]<DD>Ctrl+K and then Ctrl+B (two keys)
+<DT>[C+A_C+B_C+C]<DD>Ctrl+A Ctrl+B Ctrl+C must be pressed in sequence.
+<DT>[G+-]<DD>Gray -
+<DT>[G++]<DD>Gray +
+<DT>[C-S-X]<DD>X, ignore the state of Ctrl and Shift keys.
+<DT>[C+\\]<DD>Ctrl+Backslash
+<DT>[C+\[]<DD>Ctrl+[
+<DT>[C+G-Left]<DD>Ctrl+Left, ignore difference between the two Left keys.
+<DT>[C+A-A]<DD>Ctrl+A, ignore the state of Alt key.
+</DL>
+<P>The following special keys are available (case sensitive):
+<P><B>F1-F12 Home End PgUp PgDn Insert Delete Up Down Left Right 
+Enter Esc BackSp Space Tab Center</B>
+<P>Keyname can be preceeded by modifiers <B>(A, C, G, S)</B>. If modifier is followed
+by a <B>+</B> (plus), the modifier key must be pressed to match the key 
+specification. If the modifier key is followed by <B>-</B> (minus), the state
+of the modifier key is ignored.
+<P>Multiple-key combinations can be specified by separating
+them with <B>_</B> (underline)
+<P>Keys are bound using the <B>key</B> command:
+<P><B>key</B> <B>[keyspec]</B> { <A HREF="command.html">editor commands</A> }
+<P>ASCII characters >= 32 are bound to TypeChar by default.
+<P>Any number of commands can be bound to a key combination or menu item.
+They are executed in sequence until one of them fails.
+<P>See <I>ui_fte.fte</I> configuration file for examples and default
+configuration.
+
+<H1><A NAME="abbrevs">Abbreviations</A></H1>
+
+Abbreviations are used to automatically replace some text or run an
+editor macro when some word is typed in. When a non-word character is
+entered, the previous word is searched for in the list of
+abbreviations. When it is found, it is either replaced with a new
+string or a macro is executed.
+<P>
+Syntax:
+
+<PRE>
+abbrev 'old-word' 'new-string'
+
+abbrev 'old-word' { Macro }
+</PRE>
+
+<P> Some examples of abbreviations:
+
+<PRE>
+    abbrev 'wcsw' 'WinCreateStdWindow';
+    
+    abbrev 'ifx' {
+        KillWordPrev; InsertString 'if () {'; LineIndent; LineNew; 
+        InsertString '}'; LineIndent; 
+        MoveUp; MoveLineEnd; 3:MoveLeft; 
+        Fail; # do not insert typed character
+    }
+</PRE>
+<P>
+The first one defines a replacement string, while the second one defines
+an editor macro to be run.
+<P>
+For abbreviations to work, setting
+<A HREF="modes.html#ms.Abbreviations">Abbreviations</A> must be set to 1 for
+active mode.
+
+<H1><A NAME="settings-eventmap">EventMap Settings</A></H1>
+
+<H2><A NAME="es.MainMenu">MainMenu</A></H2>
+"menu"
+<P>Main menu displayed when editing in this mode.
+
+<H2><A NAME="es.LocalMenu">LocalMenu</A></H2>
+"menu"
+<P>Local menu used when editing in this mode.
+
+</BODY>
+</HTML>
