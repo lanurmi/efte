@@ -42,6 +42,7 @@ extern int IgnoreBufferList;
 extern char CvsCommand[256];
 extern char CvsLogMode[32];
 extern int ReassignModelIds;
+extern int RecheckReadOnly;
 
 const char *GetGUICharacters(const char *which, const char *defChars);
 int LoadConfig(int argc, char **argv, char *CfgFileName);

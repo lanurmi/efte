@@ -26,7 +26,9 @@ object GLOBAL {
 
     IgnoreBufferList    = 0;   # skip buffer list in FileNext/Prev/Last
     ReassignModelIds    = 0;   # assign first empty number for newly created buffer
-    
+
+    RecheckReadOnly     = 0;   # recheck read only status when trying to modify file (only performed on when read only is set)
+
     CompletionFilter    = /^{\c.+\.o|a|{bak}|{exe}|{lib}|{class}|{jar}|{zip}|{gz}|{tar.gz}|{tgz}}|{.+~}|{CVS}$/;
     # {obj} file is also ASCII Object File Format for MAYA graphics editor
     # so it is removed from Completion Filter

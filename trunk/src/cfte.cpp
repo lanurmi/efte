@@ -450,6 +450,7 @@ MODE_FLG(WeirdScroll),
 MODE_FLG(LoadDesktopMode),
 MODE_FLG(IgnoreBufferList),
 MODE_FLG(ReassignModelIds),
+MODE_FLG(RecheckReadOnly),
 { 0, 0 },
 };
 
