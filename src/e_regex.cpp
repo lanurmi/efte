@@ -762,6 +762,18 @@ int RxTry(RxNode *rx, const char *s) {
     return 0;
 }
 
+int RxExecMatch(RxNode *Regexp, const char *Data, int Len, const char *Start, RxMatchRes *Match, unsigned int RxOpt) {
+    if (Regexp == 0) return 0;
+
+    match = Match;
+    bop = Data;
+    eop = Data + Len;
+
+    flags = RxOpt;
+
+    return RxTry(Regexp, Start);
+}
+
 int RxExec(RxNode *Regexp, const char *Data, int Len, const char *Start, RxMatchRes *Match, unsigned int RxOpt) {
     char Ch;
     if (Regexp == 0) return 0;

@@ -103,6 +103,7 @@ typedef struct {
 } RxMatchRes;
 
 RxNode *RxCompile(const char *Regexp);
+int RxExecMatch(RxNode *Regexp, const char *Data, int Len, const char *Start, RxMatchRes *Match, unsigned int RxOpt = RX_CASE);
 int RxExec(RxNode *Regexp, const char *Data, int Len, const char *Start, RxMatchRes *Match, unsigned int RxOpt = RX_CASE);
 int RxReplace(const char *rep, const char *Src, int len, RxMatchRes match, char **Dest, int *Dlen);
 void RxFree(RxNode *Node);
