@@ -382,7 +382,7 @@ int EBuffer::SaveTo(char *AFileName) {
             if (fwrite(fold, 1, foldlen, fp) != foldlen) goto fail;
 
         // write data
-        if (int(fwrite(L->Chars, 1, L->Count, fp)) != L->Count)
+        if ((int)(fwrite(L->Chars, 1, L->Count, fp)) != L->Count)
             goto fail;
         ByteCount += L->Count;
 

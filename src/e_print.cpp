@@ -72,7 +72,7 @@ int EBuffer::BlockPrint() {
                 if (Z > LL->Count)
                     Z = LL->Count;
                 if (Z > A) {
-                    if (int(fwrite(LL->Chars + A, 1, Z - A, fp)) != Z - A) {
+                    if ((int)(fwrite(LL->Chars + A, 1, Z - A, fp)) != Z - A) {
                         error++;
                         break;
                     } else
@@ -139,7 +139,7 @@ int EBuffer::FilePrint() {
             if (BChars) {
                 ByteCount += BChars;
                 Msg(S_INFO, "Printing: %d lines, %d bytes.", l, ByteCount);
-                if (int(fwrite(FileBuffer, 1, BChars, fp)) != BChars) goto fail;
+                if ((int)(fwrite(FileBuffer, 1, BChars, fp)) != BChars) goto fail;
                 BChars = 0;
             }
         }
@@ -161,7 +161,7 @@ int EBuffer::FilePrint() {
     if (BChars) {
         ByteCount += BChars;
         Msg(S_INFO, "Printing: %d lines, %d bytes.", l, ByteCount);
-        if (int(fwrite(FileBuffer, 1, BChars, fp)) != BChars) goto fail;
+        if ((int)(fwrite(FileBuffer, 1, BChars, fp)) != BChars) goto fail;
     }
     BChars = 0;
     if (PrintDevice[0] == '|')
