@@ -202,6 +202,7 @@ extern EBufferFlags DefaultBufferFlags;
 #define FLAG_CvsLogMode         58
 #define FLAG_ReassignModelIds   59
 #define FLAG_RecheckReadOnly    60
+#define FLAG_XShellCommand      61
 
 #define EM_MENUS 2
 #define EM_MainMenu 0
