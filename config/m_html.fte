@@ -486,15 +486,15 @@ sub HTML_STYLE {
 }
 
 sub HTML_DIV {
-    ?MoveBlockStart; InsertString "<div>"; LineNew;
-    ?MoveBlockEnd; SavePos; BlockUnmark; LineNew;
-    InsertString "</div>"; MoveSavedPos;
+    ?MoveBlockStart; InsertString "<div>"; MoveLeft; SavePos; MoveRight; LineNew;
+    ?MoveBlockEnd; BlockUnmark; LineNew;
+    InsertString "</div>"; MoveSavedPos; MoveRight;
 }
 
 sub HTML_SPAN {
-    ?MoveBlockStart; InsertString "<span>"; LineNew;
-    ?MoveBlockEnd; SavePos; BlockUnmark; LineNew;
-    InsertString "</span>"; MoveSavedPos;
+    ?MoveBlockStart; InsertString "<span>"; MoveLeft;
+    SavePos; MoveRight; ?MoveBlockEnd; BlockUnmark; 
+    InsertString "</span>"; 8:MoveLeft; MoveSavedPos; MoveRight;
 }
 
 # Programming
