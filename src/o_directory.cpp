@@ -71,7 +71,7 @@ void EDirectory::DrawLine(PCell B, int Line, int Col, ChColor color, int Width) 
         if (Col < int(strlen(s)))
             MoveStr(B, 0, Width, s + Col,
                     (Files[Line]->Type() == fiDIRECTORY) ?
-                    color | (1<<3) : color, Width);
+                    (TAttr)(color | (1<<3)) : (TAttr)color, Width);
     }
 }
 
@@ -114,7 +114,13 @@ void EDirectory::RescanList() {
         assert(fi != 0);
         if (strcmp(fi->Name(), ".") != 0) {
             Files = (FileInfo **)realloc((void *)Files, ((FCount | 255) + 1) * sizeof(FileInfo *));
-            if (Files == 0) return;
+            if (Files == 0)
+            {
+                delete fi;
+                delete ff;
+                return;
+            }
+
             Files[FCount] = fi;
 
             SizeCount += Files[FCount]->Size();
@@ -149,6 +155,7 @@ void EDirectory::FreeList() {
         free(Files);
     }
     Files = 0;
+    FCount = 0;
 }
 
 int EDirectory::isDir(int No) {
