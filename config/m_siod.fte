@@ -163,8 +163,6 @@ mode SIOD: PLAIN {      # siod Mode
     Colorizer           = 'SIOD';
     AutoIndent          = 1;
     IndentMode          = 'PLAIN';
-    TabSize             = 2;
-    SpaceTabs           = 1;
     MatchCase           = 0;  #scheme is case insensitive.
     Trim                = 1;
     MultiLineHilit      = 1;

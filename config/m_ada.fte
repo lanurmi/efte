@@ -57,8 +57,6 @@ mode Ada: PLAIN {               # Ada mode
     HilitOn             = 1;
     AutoIndent          = 1;
     IndentMode          = 'PLAIN';
-    #TabSize             = 8;
-    SpaceTabs           = 1;
     MatchCase           = 1;
     Trim                = 1;
     MultiLineHilit      = 0;

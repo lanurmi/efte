@@ -54,8 +54,6 @@ mode SML: PLAIN {
     Colorizer      = 'SML';
     AutoIndent     = 1;
     IndentMode     = 'PLAIN';
-    TabSize        = 3;
-    SpaceTabs      = 1;
     MatchCase      = 1;
     Trim           = 1;
     MultiLineHilit = 1;

@@ -114,6 +114,10 @@ include 'color.fte';
 # must be here to be inherited by other modes
 # object PLAIN { color { { 'Background', '17' } }; }
 
+
+# in this mode are declared all basic values
+# these are inherited in other modes - so basicaly
+# change only necessary values in submodes 
 include 'm_plain.fte';
 
 # must be here to be inherited by other modes

@@ -65,7 +65,6 @@ mode sl: PLAIN {      # SLang Mode
     IndentMode          = 'sl';
     TabSize             = 3; # think twice before changing this, historically
                              # it's been known to cause a mess in sources ;-)
-    SpaceTabs           = 1;
     MatchCase           = 1;
     Trim                = 1;
     MultiLineHilit      = 1;
