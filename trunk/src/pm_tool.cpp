@@ -258,6 +258,7 @@ MRESULT EXPENTRY ToolBarProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
             
         case WM_MOUSEMOVE:
             {
+                STARTFUNC("ToolBarProc[WM_MOUSEMOVE]");
                 int item;
                 POINTL ptl;
                 RECTL rcl;
@@ -273,7 +274,10 @@ MRESULT EXPENTRY ToolBarProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
                 rcl.xLeft = TXBORDER - 1;
                 rcl.xRight = TXBORDER + TXICON + 1;
 
+                LOG << "Depressed: " << td-> ulDepressed << ENDLINE;
                 for (item = 0; item < td->ulCount; item++) {
+                    LOG << "Checking item " << item << ENDLINE;
+                    LOG << "  pItem -> " << (void*)(td->pItems + item) << ENDLINE;
                     if (item == td->ulDepressed) {
                         if (rcl.xLeft <= ptl.x && rcl.yBottom <= ptl.y &&
                             rcl.xRight >= ptl.x && rcl.yTop >= ptl.y)
@@ -364,6 +368,7 @@ HWND CreateToolBar(HWND parent,
                    ULONG count,
                    ToolBarItem *items)
 {
+    STARTFUNC("CreateToolBar");
     ToolBarData *td;
     HWND hwnd;
 
@@ -379,7 +384,7 @@ HWND CreateToolBar(HWND parent,
 
     td->cb = sizeof(ToolBarData);
     td->ulCount = count;
-    td->ulDepressed = 7;
+    td->ulDepressed = (LONG)-1;
     memcpy((void *)td->pItems, (void *)items, sizeof(ToolBarItem) * count);
 
     hwnd = WinCreateWindow(parent,
@@ -393,6 +398,6 @@ HWND CreateToolBar(HWND parent,
                            td,
                            0);
 
-    free(td);
+    //free(td); <-- Don't do this here as now the window owns the memory!
     return hwnd;
 }

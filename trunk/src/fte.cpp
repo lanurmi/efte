@@ -155,6 +155,7 @@ static int GetConfigFileName(int argc, char **argv, char *ConfigFileName) {
 static int CmdLoadConfiguration(int &argc, char **argv) {
     int ign = 0;
     int QuoteAll = 0, QuoteNext = 0;
+    int haveConfig = 0;
     int Arg;
 
     for (Arg = 1; Arg < argc; Arg++) {
@@ -194,13 +195,16 @@ static int CmdLoadConfiguration(int &argc, char **argv) {
                 return 0;
             } else if (argv[Arg][1] == 'c' || argv[Arg][1] == 'C') {
                 if (argv[Arg][2])
+                {
                     strcpy(ConfigFileName, argv[Arg] + 2);
+                    haveConfig = 1;
+                }
                 else
                     ign = 1;
             }
         }
     }
-    if (GetConfigFileName(argc, argv, ConfigFileName) == 0) {
+    if (!haveConfig && GetConfigFileName(argc, argv, ConfigFileName) == 0) {
         // should we default to internal
 #ifdef DEFAULT_INTERNAL_CONFIG
        ign = 1;

@@ -1,8 +1,8 @@
 INCDIR    =
 LIBDIR    =
 
-#OPTIMIZE  = -O -g
-OPTIMIZE  = -O -s
+OPTIMIZE  = -g
+#OPTIMIZE  = -O -s
 #OPTIMIZE   = -O2 -s
 
 MT        = -Zmt
@@ -19,6 +19,7 @@ OEXT=o
 #LIBS      = -lmalloc1
 #DEFS      = -DDEBUG_EDITOR -DDBMALLOC -I/src/dbmalloc
 #LIBS      = -L/src/dbmalloc -ldbmalloc
+LIBS      = -lstdcpp
 
 DEFS=-DINCL_32  #-DUSE_OS2_TOOLKIT_HEADERS
 
@@ -66,9 +67,14 @@ ftepm.res: ftepm.rc pmdlg.rc bmps/*.bmp
 ftepm.exe: $(OBJS) $(PMOBJS) ftepm.def ftepm.res
 	$(LD) $(LDFLAGS) $(OBJS) $(PMOBJS) ftepm.def ftepm.res -o ftepm.exe $(LIBS)
 
+fte.cnf: cfte.exe
+	cfte ..\config\main.fte fte.cnf
 
 #rc -i \emx\include ftepm.rc ftepm.exe
 
 #ftepm.exe:: ftepm.res
 #	rc ftepm.res ftepm.exe
 
+distro: ftepm.exe fte.exe fte.cnf cfte.exe clipserv.exe cliputil.exe
+	zip ../fte-os2.zip ftepm.exe fte.exe fte.cnf cfte.exe clipserv.exe cliputil.exe
+	(cd .. && zip -r fte-config.zip Artistic doc config)
