@@ -64,6 +64,10 @@ object GLOBAL {
     C_FirstLevelWidth   = -1;
     C_FirstLevelIndent  = 4;
     C_ParenDelta        = -1;
+    # if this is true (1), function parameters will only indent
+    # as much as C_Continuation says, rather than line up one column
+    # to the right of the '('.
+    FunctionUsesContinuation = 0;
     
     REXX_Indent         = 4;
 #    REXX_Do_Offset      = 0;

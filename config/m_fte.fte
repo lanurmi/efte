@@ -97,7 +97,7 @@ colorize FTE {
         'CursorOverEnd', 'CursorOverStart', 'CursorThroughTabs',
         'DefaultModeName', 'DefFindOpt', 'DefFindReplaceOpt', 'DeleteKillBlock',
         'DeleteKillTab', 'DetectLineSep', 'ExpandTabs', 'FileNameRx',
-        'FirstLineRx', 'ForceNewLine', 'HelpCommand', 'HilitOn', 'IndentMode',
+        'FirstLineRx', 'ForceNewLine', 'FunctionUsesContinuation', 'HelpCommand', 'HilitOn', 'IndentMode',
         'IndentWithTabs', 'Insert', 'InsertKillBlock', 'KeepBackups',
         'KeepHistory', 'KeepMessages', 'LeftMargin', 'LineChar',
         'LoadDesktopOnEntry', 'LoadMargin', 'MatchCase', 'MultiLineHilit',

@@ -341,6 +341,7 @@ MODE_FLG(C_FirstLevelWidth),
 MODE_FLG(C_FirstLevelIndent),
 MODE_FLG(C_Continuation),
 MODE_FLG(C_ParenDelta),
+MODE_FLG(FunctionUsesContinuation),
 #endif
 #ifdef CONFIG_INDENT_REXX
 MODE_FLG(REXX_Indent),

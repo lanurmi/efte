@@ -25,7 +25,7 @@ colorize C {
         'delete',  'double', 'except',  'extern',  'friend',  'inline',
         'pascal', 'public',  'return', 'signed',  'sizeof',  'static',
         'struct',  'switch',
-        'default', 'private', 'typedef', 'virtual',
+        'default', 'private', 'typedef', 'typename', 'typeof', 'virtual',
         'continue', 'operator',  'register',  'volatile',  'template',
         'unsigned', 'protected',
         'throw', 'namespace', 'using', 'explicit', 'mutable',

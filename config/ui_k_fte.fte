@@ -11,6 +11,7 @@ eventmap MODEL {
     key       [F6]      { FileNext }
     key     [S+F6]      { FilePrev }
     key   [A+S-F6]      { FileLast }
+    key       [F7]      { Find $Word }
     key       [F10]     { MainMenu }
     key     [C+F10]     { FileClose }
     key     [C+F9]      { RunProgram }

@@ -32,6 +32,7 @@ extern int C_FirstLevelWidth;
 extern int C_FirstLevelIndent;
 extern int C_Continuation;
 extern int C_ParenDelta;
+extern int FunctionUsesContinuation;
 #endif
 
 #ifdef CONFIG_INDENT_REXX
@@ -169,6 +170,7 @@ int SetGlobalNumber(int what, int number) {
     case FLAG_C_FirstLevelWidth: C_FirstLevelWidth = number; break;
     case FLAG_C_Continuation:    C_Continuation = number; break;
     case FLAG_C_ParenDelta:      C_ParenDelta = number; break;
+    case FLAG_FunctionUsesContinuation: FunctionUsesContinuation = number; break;
 #endif
 #ifdef CONFIG_INDENT_REXX
     case FLAG_REXX_Indent:       REXX_Base_Indent = number; break;

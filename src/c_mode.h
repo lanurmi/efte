@@ -187,7 +187,8 @@ extern EBufferFlags DefaultBufferFlags;
 #define FLAG_C_FirstLevelIndent 50
 #define FLAG_C_FirstLevelWidth  51
 #define FLAG_C_Continuation     52
-#define FLAG_C_ParenDelta       32
+#define FLAG_C_ParenDelta       53
+#define FLAG_FunctionUsesContinuation 54
 
 #define EM_MENUS 2
 #define EM_MainMenu 0
