@@ -202,12 +202,18 @@ int ConGetEvent(TEventMask EventMask, TEvent *Event, int WaitTime, int Delete);
 int ConPutEvent(TEvent Event);
 
 void MoveCh(PCell B, char Ch, TAttr Attr, int Count);
+void MoveTCh(PCell B, TChar Ch, TAttr Attr, int Count);
 void MoveChar(PCell B, int Pos, int Width, const char Ch, TAttr Attr, int Count);
+void MoveTChar(PCell B, int Pos, int Width, const TChar Ch, TAttr Attr, int Count);
 void MoveMem(PCell B, int Pos, int Width, const char* Ch, TAttr Attr, int Count);
+void MoveTMem(PCell B, int Pos, int Width, const TChar* Ch, TAttr Attr, int Count);
 void MoveStr(PCell B, int Pos, int Width, const char* Ch, TAttr Attr, int MaxCount);
+void MoveTStr(PCell B, int Pos, int Width, const TChar* Ch, TAttr Attr, int MaxCount);
 void MoveCStr(PCell B, int Pos, int Width, const  char* Ch, TAttr A0, TAttr A1, int MaxCount);
+void MoveTCStr(PCell B, int Pos, int Width, const TChar* Ch, TAttr A0, TAttr A1, int MaxCount);
 void MoveAttr(PCell B, int Pos, int Width, TAttr Attr, int Count);
 void MoveBgAttr(PCell B, int Pos, int Width, TAttr Attr, int Count);
+void MoveCell(PCell target, const PCell source, int Count);
 
 int CStrLen(const char *s);
 
