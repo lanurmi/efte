@@ -215,7 +215,7 @@ static int ftesl_getkeysym(TKeyCode keycode)
 int ConInit(int /*XSize */ , int /*YSize */ )
 {
     unsigned i;
-    unsigned short linebuf[sizeof(slang_dchs)];
+    SLsmg_Char_Type linebuf[sizeof(slang_dchs)];
 
     SLtt_get_terminfo();
 
@@ -361,7 +361,7 @@ int ConPutBox(int X, int Y, int W, int H, PCell Cell)
     return 0;
 }
 
-static int ConPutBoxRaw(int X, int Y, int W, int H, unsigned short *box)
+static int ConPutBoxRaw(int X, int Y, int W, int H, SLsmg_Char_Type *box)
 {
     int CurX, CurY;
 
@@ -382,17 +382,22 @@ int ConGetBox(int X, int Y, int W, int H, PCell Cell)
 {
     int CurX, CurY, i;
     char ch;
+    SLsmg_Char_Type buffer[W];
 
     ConQueryCursorPos(&CurX, &CurY);
     while (H > 0) {
 	SLsmg_gotorc(Y++, X);
-	SLsmg_read_raw(Cell, W);
+	SLsmg_read_raw(buffer, W);
 	for (i = 0; i < W; i++)
+	{
+	    Cell[i] = SLSMG_EXTRACT_CHAR(buffer[i]) | (SLSMG_EXTRACT_COLOR(buffer[i]) << 8);
+
 	    if (Cell[i] & 0x8000) {
 		ch = Cell[i] & 0xff;
 		Cell[i] &= 0x7f00;
 		Cell[i] |= ftesl_get_dch(ch);
 	    }
+	}
 	Cell += W;
 	H--;
     }
@@ -402,7 +407,7 @@ int ConGetBox(int X, int Y, int W, int H, PCell Cell)
 
 }
 
-static int ConGetBoxRaw(int X, int Y, int W, int H, unsigned short *box)
+static int ConGetBoxRaw(int X, int Y, int W, int H, SLsmg_Char_Type *box)
 {
     int CurX, CurY;
 
@@ -437,13 +442,14 @@ int ConPutLine(int X, int Y, int W, int H, PCell Cell)
 
 int ConSetBox(int X, int Y, int W, int H, TCell Cell)
 {
-    PCell line = (PCell) malloc(sizeof(TCell) * W);
+//    PCell line = (PCell) malloc(sizeof(TCell) * W);
+    TCell line[W];
     int i;
 
     for (i = 0; i < W; i++)
 	line[i] = Cell;
     ConPutLine(X, Y++, W, H, line);
-    free(line);
+//    free(line);
     return 0;
 }
 
@@ -451,9 +457,9 @@ int ConSetBox(int X, int Y, int W, int H, TCell Cell)
 
 int ConScroll(int Way, int X, int Y, int W, int H, TAttr Fill, int Count)
 {
-    unsigned short *box;
+    SLsmg_Char_Type box[W * H];
 
-    box = new unsigned short [W * H];
+//    box = new unsigned short [W * H];
 
     TCell fill = (((unsigned) Fill) << 8) | ' ';
 
@@ -467,7 +473,7 @@ int ConScroll(int Way, int X, int Y, int W, int H, TAttr Fill, int Count)
 	ConSetBox(X, Y, W, Count, fill);
     }
 
-    delete [] (box);
+  //  delete [] (box);
 
     return 0;
 }
