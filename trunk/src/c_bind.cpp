@@ -186,7 +186,11 @@ static void InitWordChars() {
             //    || (i >= 'a' && i <= 'z') || (i == '_')) {
             if (isalnum(i) || (i == '_')) {
                 WSETBIT(DefaultBufferFlags.WordChars, i, 1);
-                if ((i >= 'A' && i <= 'Z') || isupper(i))
+                // Can someone tell me why we check A through Z?
+                // This won't work should someone port to EBCDIC (why, though?)
+                // besides, isupper is usually a #define that will compile to something
+                // even faster.
+                if (/*(i >= 'A' && i <= 'Z') || */ isupper(i))
                     WSETBIT(DefaultBufferFlags.CapitalChars, i, 1);
             }
         init = 1;
