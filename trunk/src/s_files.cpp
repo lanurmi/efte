@@ -288,7 +288,7 @@ int ExpandPath(const char *Path, char *Expand, int ExpandSize) {
     if (Name[0] && Name[1] == ':' && Name[2] == 0) { // '?:'
         int drive = Name[0];
 
-        strcpy(Expand, Name);
+        strlcpy(Expand, Name, ExpandSize);
         Expand[2] = '\\';
         Expand[3] = 0;
 
@@ -323,15 +323,14 @@ int ExpandPath(const char *Path, char *Expand, int ExpandSize) {
     char Name2[MAXPATH];
     char *path, *p;
 
-    strcpy(Name, Path);
+    strlcpy(Name, Path, sizeof(Name));
     switch (Name[0]) {
     case SLASH:
         break;
     case '~':
         if (Name[1] == SLASH || Name[1] == 0) {
             path = Name + 1;
-	    strncpy(Name2, getenv("HOME"), sizeof(Name2) - 1);
-            Name2[sizeof(Name2) - 1] = 0;
+            strlcpy(Name2, getenv("HOME"), sizeof(Name2));
         } else {
             struct passwd *pwd;
 
@@ -347,17 +346,17 @@ int ExpandPath(const char *Path, char *Expand, int ExpandSize) {
             pwd = getpwnam(Name + 1);
             if (pwd == NULL)
                 return -1;
-            strcpy(Name2, pwd->pw_dir);
+            strlcpy(Name2, pwd->pw_dir, sizeof(Name2));
         }
         if (path[0] != SLASH)
             Slash(Name2, 1);
-        strcat(Name2, path);
-        strcpy(Name, Name2);
+        strlcat(Name2, path, sizeof(Name2));
+        strlcpy(Name, Name2, sizeof(Name));
         break;
     default:
         if (getcwd(Name, MAXPATH) == NULL) return -1;
         Slash(Name, 1);
-        strcat(Name, Path);
+        strlcat(Name, Path, sizeof(Name));
         break;
     }
     return RemoveDots(Name, Expand);
@@ -390,6 +389,13 @@ int JustLastDirectory(const char *Path, char *Dir, int DirSize) {
 
     int secondLastSlash = lastSlash;
     while (secondLastSlash > 0 && !ISSEP(Path[secondLastSlash - 1])) secondLastSlash--;
+
+    if ((lastSlash - secondLastSlash) >= (DirSize-1))
+    {
+        // how unfortunate, we didn't have enough space for directory name
+        // just copy as many characters as possible while leaving room for NUL.
+        lastSlash = secondLastSlash + DirSize - 2;
+    }
 
     strncpy(Dir, Path + secondLastSlash, lastSlash - secondLastSlash);
     Dir[lastSlash - secondLastSlash] = 0;

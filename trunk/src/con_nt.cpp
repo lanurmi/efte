@@ -44,6 +44,7 @@
 #include "console.h"
 #include "gui.h"
 #include "s_files.h"
+#include "s_string.h"
 #include "c_config.h"
 
 #define True    1
@@ -1183,20 +1184,21 @@ int GPipe::runCommand() /*FOLD00*/
         //** It's 4DOS all right..
         args = getenv("SystemRoot");
         if(args== 0) return -1;
-        strcpy(tbuf, args);                 // Get to c:\winnt
-        strcat(tbuf, "\\system32\\cmd.exe");
+        strlcpy(tbuf, args, sizeof(tbuf));                 // Get to c:\winnt
+        strlcat(tbuf, "\\system32\\cmd.exe", sizeof(tbuf));
         comspec = tbuf;
     }
 
-    args    = (char *)malloc(strlen(comspec) + strlen(p_command) + 120);
+    int argslen = strlen(comspec) + strlen(p_command) + 120;
+    args    = (char *)malloc(argslen);
     if(args == 0)
         dbm("malloc() failed for command line..");
     else
     {
         //** Form a command line for the process;
-        strcpy(args, comspec);
-        strcat(args, " /c ");
-        strcat(args, p_command);
+        strlcpy(args, comspec, argslen);
+        strlcat(args, " /c ", argslen);
+        strlcat(args, p_command, argslen);
 
         //** Dup the child handle to get separate handles for stdout and err,
         if (DuplicateHandle(GetCurrentProcess(), p_child_ph, // Source,
@@ -1613,20 +1615,21 @@ static int CreatePipeChild(HANDLE &child, HANDLE &hPipe, char *Command) {
         //** It's 4DOS all right..
         args = getenv("SystemRoot");
         if(args== 0) return -1;
-        strcpy(tbuf, args);                 // Get to c:\winnt
-        strcat(tbuf, "\\system32\\cmd.exe");
+        strlcpy(tbuf, args, sizeof(tbuf));                 // Get to c:\winnt
+        strlcat(tbuf, "\\system32\\cmd.exe", sizeof(tbuf));
         comspec = tbuf;
     }
 
-    args    = (char *)malloc(strlen(comspec) + strlen(Command) + 120);
+    int argslen = strlen(comspec) + strlen(Command) + 120;
+    args    = (char *)malloc(argslen);
     if(args == 0)
         dbm("malloc() failed for command line..");
     else
     {
         //** Form a command line for the process;
-        strcpy(args, comspec);
-        strcat(args, " /c ");
-        strcat(args, Command);
+        strlcpy(args, comspec, argslen);
+        strlcat(args, " /c ", argslen);
+        strlcat(args, Command, argslen);
 
         //** Dup the child handle to get separate handles for stdout and err,
         /*if (DuplicateHandle(GetCurrentProcess(), hChildPipe,

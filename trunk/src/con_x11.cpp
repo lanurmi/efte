@@ -383,7 +383,7 @@ static int SetupXWindow(int argc, char **argv)
 #else
     char *ds;
     if ((ds = getenv("DISPLAY")) == NULL)
-	DieError(1, "$DISPLAY not set?");
+	DieError(1, "$DISPLAY not set? This version of fte must be run under X11.");
     if ((display = XOpenDisplay(ds)) == NULL)
 	DieError(1, "XFTE Fatal: could not open display: %s!", ds);
 #endif

@@ -1118,8 +1118,8 @@ int ConSetTitle(char *Title, char *STitle) {
 }
 
 int ConGetTitle(char *Title, int MaxLen, char *STitle, int SMaxLen) {
-	strcpy(Title, "FTE");
-	strcpy(STitle, "FTE");
+	strlcpy(Title, "FTE", MaxLen);
+	strlcpy(STitle, "FTE", SMaxLen);
 	return 0;
 }
 
