@@ -8,13 +8,15 @@
  */
 
 #include "fte.h"
+#include "c_commands.h"
+#include "o_cvsbase.h"
 
 #ifdef CONFIG_OBJ_CVS
 
 #define MAXREGEXP 32
 
-int CvsIgnoreRegexpCount=0;
-RxNode *CvsIgnoreRegexp[MAXREGEXP];
+static int CvsIgnoreRegexpCount=0;
+static RxNode *CvsIgnoreRegexp[MAXREGEXP];
 
 int AddCvsIgnoreRegexp (const char *regexp) {
     if (CvsIgnoreRegexpCount>=MAXREGEXP) return 0;
