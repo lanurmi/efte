@@ -156,8 +156,8 @@ int Hilit_SIMPLE(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Li
                         goto next_state;
                     }
                 } else {
-                    if (st->GetHilitWord(j, &Line->Chars[i], Color) ||
-                        BF->GetHilitWord(j, &Line->Chars[i], Color, (st->options & STATE_NOCASE) ? 1 : 0))
+                    if (st->GetHilitWord(j, &Line->Chars[i], Color ) ||
+                        BF->GetHilitWord(j, &Line->Chars[i], Color,  BFI( BF, BFI_MatchCase ) ? 0 : 1))
                     {
                         if (st->nextKwdMatchedState != -1)
                             State = st->nextKwdMatchedState;
