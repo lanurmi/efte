@@ -37,7 +37,7 @@ colorize FTE {
         'CharCaseDown', 'CharCaseToggle', 'CharCaseUp', 'CharTrans',
         'ChildClose', 'ClearMessages', 'ClipClear', 'CloseActivate', 'Compile',
         'CompileNextError', 'CompilePrevError', 'CompleteWord',
-        'ConfigRecompile', 'CvsCommand', 'CvsIgnoreRx', 'Delete', 'DeleteFile', 'DesktopSave', 'DesktopSaveAs',
+        'ConfigRecompile', 'Delete', 'DeleteFile', 'DesktopSave', 'DesktopSaveAs',
         'DirOpen', 'DirGoUp', 'DirGoDown', 'DirGoRoot', 'DirGoto',        
         'ExitEditor', 'Fail', 'FileClose', 'FileCloseAll', 'FileLast',
         'FileNext', 'FileOpen', 'FileOpenInMode', 'FilePrev', 'FilePrint',
@@ -97,7 +97,7 @@ colorize FTE {
         'C_FirstLevelIndent', 'C_FirstLevelWidth', 'C_Indent', 'C_ParenDelta',
         'Colorizer', 'CommentEnd', 'CommentStart', 'CompileCommand',
         'CompileRx', 'CompletionFilter', 'CursorInsertEnd', 'CursorInsertStart',
-        'CursorOverEnd', 'CursorOverStart', 'CursorThroughTabs',
+        'CursorOverEnd', 'CursorOverStart', 'CursorThroughTabs', 'CvsCommand', 'CvsIgnoreRx',
         'DefaultModeName', 'DefFindOpt', 'DefFindReplaceOpt', 'DeleteKillBlock',
         'DeleteKillTab', 'DetectLineSep', 'ExpandTabs', 'FileNameRx',
         'FirstLineRx', 'ForceNewLine', 'FunctionUsesContinuation', 'HelpCommand', 'HilitOn', 'HilitTags',
@@ -111,7 +111,8 @@ colorize FTE {
         'SelectPathname', 'ShowHScroll', 'ShowMarkers', 'ShowMenuBar',
         'ShowTabs', 'ShowToolBar', 'ShowVScroll', 'SpaceTabs', 'StripChar',
         'SyntaxParser', 'SysClipboard', 'TabSize', 'Trim', 'TrimOnSave',
-        'UndoLimit', 'UndoMoves', 'WeirdScroll', 'WordChars', 'WordWrap'
+        'UndoLimit', 'UndoMoves', 'WeirdScroll', 'WordChars', 'WordWrap',
+        'XShellCommand'
     };
 }
 
