@@ -603,6 +603,8 @@ static int FindPrevIndent(EBuffer *B, int &RowP, int &ColP, char &CharP, int Fla
                         CharP = BolChar;
                         ColP = BolCol;
                         RowP = BolRow;
+                        free(StateMap);
+                        ENDFUNCRC(1);
                     }
                     if (ColP == 0) { /* speed optimization */
                         free(StateMap);
