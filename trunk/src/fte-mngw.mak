@@ -27,7 +27,7 @@ OEXT=o
 DEFS=-DNT -DNTCONSOLE -DMINGW
 
 CCFLAGS   = $(OPTIMIZE) -x c++ -Wall $(DEFS) $(INCDIR) -pipe
-LDFLAGS   = $(OPTIMIZE) $(LIBDIR)
+LDFLAGS   = $(OPTIMIZE) $(LIBDIR) -Wl,-static 
 
 .SUFFIXES: .cpp .$(OEXT)
 
