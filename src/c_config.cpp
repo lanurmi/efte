@@ -89,6 +89,7 @@ char CvsCommand[256] = "cvs";
 char CvsLogMode[32] = "PLAIN";
 int ReassignModelIds = 0;
 int RecheckReadOnly = 0;
+char XShellCommand[256] = "xterm";
 
 // Which characters to get. defaultCharacters if not set, rest filled
 // with defaultCharacters if too short
@@ -303,6 +304,7 @@ static int SetGlobalString(long what, const char *string) {
     case FLAG_GUICharacters: AppendGUICharacters (string); break;
     case FLAG_CvsCommand: strlcpy(CvsCommand, string, sizeof(CvsCommand)); break;
     case FLAG_CvsLogMode: strlcpy(CvsLogMode, string, sizeof(CvsLogMode)); break;
+    case FLAG_XShellCommand: strlcpy(XShellCommand, string, sizeof(XShellCommand)); break;
     default:
         //printf("Unknown global string: %ld\n", what);
         ENDFUNCRC(-1);

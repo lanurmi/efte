@@ -466,6 +466,7 @@ MODE_FLG(HelpCommand),
 MODE_FLG(GUICharacters),
 MODE_FLG(CvsCommand),
 MODE_FLG(CvsLogMode),
+MODE_FLG(XShellCommand),
 { 0, 0 },
 };
 
