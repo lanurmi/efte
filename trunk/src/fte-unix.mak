@@ -74,7 +74,7 @@ SINCDIR   = -I/usr/include/slang
 
 #CC   = xlC
 #LD   = xlC
-#COPTIONS =
+#COPTIONS = -DNO_NEW_CPP_FEATURES
 #TARGETS = xfte
 
 #######################################################################
