@@ -3,6 +3,8 @@
 #
 # My python miscellany page is: http://www.vex.net/~x/python_stuff.html
 # Edited by Bastian Kleineidam <calvin@users.sourceforge.net>
+#
+# Small changes/fixes by Jon Svendsen (jsvendsen@bergen.frisurf.no)
 
 colorize PYTHON {
     SyntaxParser = 'SIMPLE';
@@ -108,14 +110,18 @@ colorize PYTHON {
     h_trans { 0, '$', '', 'Normal' }
 
     h_state 2 { 'String' }
+    h_trans { 2, '>', '\\\\', 'String' }
+    h_trans { 2, '>', '\\"', 'String' }
     h_trans { 0, '>', '"""', 'String' }
 
     h_state 3 { 'String' }
+    h_trans { 3, '>', '\\\\', 'String' } #special case for strings like "\\"
     h_trans { 3, '>', '\\"', 'String' }
     h_trans { 0, '>', '"', 'String' }
     h_trans { 0, '$', '', 'String' }
 
     h_state 4 { 'String' }
+    h_trans { 4, '>', '\\\\', 'String' } #special case for strings like '\\'
     h_trans { 4, '>', '\\\'', 'String' }
     h_trans { 0, '>', '\'', 'String' }
     h_trans { 0, '$', '', 'String' }
@@ -139,6 +145,8 @@ colorize PYTHON {
     h_trans { 0, '', ':', 'Punctuation' }
 
     h_state 10 { 'String' }
+    h_trans { 10, '>', '\\\\', 'String' }
+    h_trans { 10, '>', '\\\'', 'String' }
     h_trans { 0, '>', '\'\'\'', 'String' }
 }
 
