@@ -95,7 +95,6 @@ int Hilit_SH(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, 
                                 if (s)
                                     CommandStr = 0;
 			    }
-                            printf("XYZ  %s\n", p);
                         }
                     }
                     break;
