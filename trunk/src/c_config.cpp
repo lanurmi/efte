@@ -1216,8 +1216,8 @@ int UseDefaultConfig() {
 
     cp.name = "Internal Configuration";
     cp.sz = sizeof(DefaultConfig);
-    cp.a = DefaultConfig;
-    cp.c = DefaultConfig + 2 * 4;
+    cp.a = (char *)DefaultConfig;
+    cp.c = (char *)DefaultConfig + 2 * 4;
     cp.z = cp.a + cp.sz;
     cp.line = 1;
 
