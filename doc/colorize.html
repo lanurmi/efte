@@ -167,6 +167,10 @@ following characters:
 next character is part of the set.
 <DT><B>S</B>
 <DD>Same as 's' but next character must not be part of the set.
+<DT><B>x</B>
+<DD><TT><I>trans_match</I></TT> is a regular expression. If some part of expression
+is enclosed in parentheses, pointer is advanced up to the start of parenthesized
+match (WARNING: this can cause infinite loops).
 <DT><B>-</B>
 <DD>After successfull match, the pointer is not advanced, matching
 will resume at the same position in next state. (WARNING: this

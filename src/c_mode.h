@@ -253,6 +253,7 @@ extern EBufferFlags DefaultBufferFlags;
 #define MATCH_NOGRAB       0x0400
 #define MATCH_NEGATE       0x0800
 #define MATCH_TAGASNEXT    0x1000
+#define MATCH_REGEXP       0x2000
 
 #define ACTION_NXSTATE     0x0001
 

@@ -819,9 +819,10 @@ static char *GetString(CurPos &cp) {
             cp.c++;
             *p = 0;
             return d;
-        } else if (*cp.c == '\n') return 0;
-        if (*cp.c == '\n') cp.line++;
-        if (*cp.c == '\r') {
+        } else if (*cp.c == '\n') {
+            cp.line++;
+            return 0;
+        } else if (*cp.c == '\r') {
             cp.c++;
             if (cp.c == cp.z) return 0;
         }
@@ -1308,6 +1309,7 @@ static int ParseConfigFile(CurPos &cp) {
                                 //if (strchr(opts, '!')) match_opts |= MATCH_NEGATE;
                                 if (strchr(opts, 'q')) match_opts |= MATCH_QUOTECH;
                                 if (strchr(opts, 'Q')) match_opts |= MATCH_QUOTEEOL;
+                                if (strchr(opts, 'x')) match_opts |= MATCH_REGEXP;
 
                                 if (Parse(cp) != P_COMMA) Fail(cp, "',' expected");
                                 GetOp(cp, P_COMMA);
@@ -1318,7 +1320,7 @@ static int ParseConfigFile(CurPos &cp) {
 
                                 PutNumber(cp, CF_INT, match_opts);
                                 PutNumber(cp, CF_INT, cidx);
-                                PutString(cp, CF_STRING, match);
+                                PutString(cp, match_opts & MATCH_REGEXP ? CF_REGEXP : CF_STRING, match);
 
                                 if (Parse(cp) != P_CLOSEBRACE) Fail(cp, "'}' expected");
                                 GetOp(cp, P_CLOSEBRACE);
