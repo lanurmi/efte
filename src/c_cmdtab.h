@@ -267,6 +267,7 @@ TAB(DirGoUp),
 TAB(DirGoDown), 
 TAB(DirGoRoot),
 TAB(DirGoto),
+TAB(DeleteFile),
 TAB(ShowVersion),
 TAB(ASCIITable),
 TAB(TypeChar),
@@ -325,11 +326,10 @@ TAB(RunCompiler),
 TAB(FoldCreateAtRoutines),
 TAB(LineCenter),
 TAB(RunProgramAsync)
-};
 #if 0
 //TAB(ShowMsg),
 TAB(BlockReadPipe),
 TAB(BlockWritePipe),
 TAB(BlockPipe),
-};
 #endif
+};

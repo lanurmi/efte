@@ -616,6 +616,8 @@ typedef enum {
     ///
     ExActivateInOtherWindow,
     ///
+    ExDeleteFile,
+    ///
 
     ExASCIITable,
     /// Display ASCII selector in status line.
