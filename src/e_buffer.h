@@ -337,7 +337,7 @@ public:
     int SaveRegion(EPoint *A, EPoint *Z, int FH, int AddCR, int AddLF, int Mode);
     
     int AssertLine(int Line);
-    int InsertLine(EPoint Pos, int ACount, char *AChars);
+    int InsertLine(EPoint Pos, int ACount, const char *AChars);
     
     int UpdateMarker(int Type, int Line, int Col, int Lines, int Cols);
     int UpdateMark(EPoint &M, int Type, int Line, int Col, int Lines, int Cols);
@@ -403,10 +403,10 @@ public:
     int UnTabPoint(int Row, int Col);
     int InsLine(int Row, int DoAppend, int DoMark = 1);
     int DelChars(int Row, int Ofs, int ACount);
-    int InsChars(int Row, int Ofs, int ACount, char *Buffer);
-    int ChgChars(int Row, int Ofs, int ACount, char *Buffer);
+    int InsChars(int Row, int Ofs, int ACount, const char *Buffer);
+    int ChgChars(int Row, int Ofs, int ACount, const char *Buffer);
     int DelText(int Row, int Col, int ACount, int DoMark = 1);
-    int InsText(int Row, int Col, int ACount, char *Buffer, int DoMark = 1);
+    int InsText(int Row, int Col, int ACount, const char *Buffer, int DoMark = 1);
     int InsLineText(int Row, int Col, int ACount, int Pos, PELine Line);
     int SplitLine(int Row, int Col);
     int JoinLine(int Row, int Col);
@@ -594,7 +594,7 @@ public:
 
     int     InsertChar(char aCh);
     int     TypeChar(char aCh);
-    int     InsertString(char *aStr, int aCount);
+    int     InsertString(const char *aStr, int aCount);
     int     InsertSpacesToTab(int TSize);
     int     InsertTab();
     int     InsertSpace();
@@ -624,8 +624,8 @@ public:
     int     BlockMarkStream();
     int     BlockMarkLine();
     int     BlockMarkColumn();
-    int     BlockReadFrom(char *aFileName, int blockMode);
-    int     BlockWriteTo(char *aFileName, int Append = 0);
+    int     BlockReadFrom(const char *aFileName, int blockMode);
+    int     BlockWriteTo(const char *aFileName, int Append = 0);
     int     BlockExtendBegin();
     int     BlockExtendEnd();
     int     BlockReIndent();
