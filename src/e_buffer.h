@@ -51,7 +51,22 @@ extern char FileBuffer[RWBUFSIZE];
 // x less than count -> after gap
 // count - 1 before gap -> count - 1
 // after gap -> allocated - 1
-#define GapLine(x,g,c,a) (((x) < (g)) ? (x) : (x) < (c) ? ((x) + (a) - (c)) : (c) - 1 < (g) ? (c) - 1 : (a) - 1 )
+//#define GapLine(x,g,c,a) (((x) < (g)) ? (x) : (x) < (c) ? ((x) + (a) - (c)) : (c) - 1 < (g) ? (c) - 1 : (a) - 1 )
+// Use inline to make it easier to read/debug
+int inline GapLine(int No, int Gap, int Count, int Allocated)
+{
+    int rc = -1;
+    if (No < Gap)
+        rc = No;
+    else if (No < Count)
+        rc = No + Allocated - Count;
+    else if (Count - 1 < Gap)
+        rc = Count - 1;
+    else
+        rc = Allocated - 1;
+    return rc;
+}
+
 
 typedef class ELine* PELine;
 typedef class EPoint* PEPoint;

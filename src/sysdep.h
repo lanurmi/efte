@@ -173,6 +173,10 @@
 #define HAVE_BOOL
 #endif
 
+#if defined _G_HAVE_BOOL
+#define HAVE_BOOL
+#endif
+
 #ifndef HAVE_BOOL
 #define bool  int
 #define true  1
