@@ -23,7 +23,21 @@ int Hilit_SH(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, 
     HILIT_VARS(Colors[CLR_Normal], Line);
     int CommandStr = 0;
 
+    int isEOF = 0;
     for (i = 0; i < Line->Count;) {
+        if (State == hsSH_EOF && 0 == i)
+        {
+            //printf("i=%d, len=%d, strlen(seof)=%d, seof=%s, Line-Chars=%s\n",
+            //           i, len, strlen(seof), seof, Line->Chars);
+
+            // Skip past any leading tabs.
+            char* iseof = Line->Chars;
+            size_t len_left = len;
+            while (*iseof == '\t') ++iseof, --len_left;
+
+            isEOF = strlen(seof) == len_left &&
+                strncmp(seof, iseof, len_left) == 0;
+        }
         IF_TAB() else {
             int j = 1;
 
@@ -118,10 +132,10 @@ int Hilit_SH(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, 
                     //while (len > 0 && (isdigit(*p)))
                     //ColorNext();
                     //continue;
-                } else if (len > 3 && *p == '<' && p[1] == '<') { 
+                } else if (len > 3 && *p == '<' && p[1] == '<') {
 
                     // !!! this is a hack, doesn't work properly -- Mark
-                    
+
                     char *s = seof;
 
                     j += 2;
@@ -204,14 +218,13 @@ int Hilit_SH(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, 
                 break;
             case hsSH_EOF:
                 Color = Colors[CLR_String];
-                //printf("%d %d %s\n", len, strlen(seof),Line->Chars);
-                if (i == 0 && ((int) strlen(seof) == len) &&
-                    strncmp(seof, p, len) == 0)
+
+                if (isEOF)
                 {
                     Color = Colors[CLR_Control];
                     State = hsSH_Normal;
+                    j += len - 1;
                 }
-                j += len - 1;
                 break;
             default:
                 State = hsSH_Normal;
