@@ -81,10 +81,10 @@ FunctionLog::~FunctionLog()
     --log.indent;
 }
 
-ostream& FunctionLog::RC()
+ostream& FunctionLog::RC(unsigned long line)
 {
     indentChar = '!';
-    return OutputLine() << "Returning rc = ";
+    return OutputLine() << "{" << line << "} Returning rc = ";
 }
 
 ostream& FunctionLog::OutputIndent(ostream& os)

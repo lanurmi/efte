@@ -151,7 +151,7 @@ public:
     ~FunctionLog();
 
     // RC?
-    ostream& RC();
+    ostream& RC(unsigned long line);
 
     // output line.
     ostream& OutputLine()
@@ -166,10 +166,10 @@ private:
 #define ENDLINE endl
 
 #define STARTFUNC(func) FunctionLog LOGOBJNAME(globalLog, func)
-#define ENDFUNCRC(rc) do { LOGOBJNAME.RC() << (rc) << ENDLINE; return (rc); } while (0)
-#define ENDFUNCRC_SAFE(type,rc) do { type LOG__RC = (rc); LOGOBJNAME.RC() << LOG__RC << ENDLINE; return LOG__RC; } while (0)
-#define ENDFUNCAS(type,rc) do { LOGOBJNAME.RC() << (type)(rc) << ENDLINE; return (rc); } while (0)
-#define ENDFUNCAS_SAFE(logtype,rctype,rc) do { rctype LOG__RC = (rc); LOGOBJNAME.RC() << (logtype)LOG__RC << ENDLINE; return LOG__RC; } while (0)
+#define ENDFUNCRC(rc) do { LOGOBJNAME.RC(__LINE__) << (rc) << ENDLINE; return (rc); } while (0)
+#define ENDFUNCRC_SAFE(type,rc) do { type LOG__RC = (rc); LOGOBJNAME.RC(__LINE__) << LOG__RC << ENDLINE; return LOG__RC; } while (0)
+#define ENDFUNCAS(type,rc) do { LOGOBJNAME.RC(__LINE__) << (type)(rc) << ENDLINE; return (rc); } while (0)
+#define ENDFUNCAS_SAFE(logtype,rctype,rc) do { rctype LOG__RC = (rc); LOGOBJNAME.RC(__LINE__) << (logtype)LOG__RC << ENDLINE; return LOG__RC; } while (0)
 #define BOOLYESNO(x) ((x) ? "YES" : "NO")
 
 /********************************************************************/
