@@ -32,9 +32,10 @@
  *                      mainloop when console returns empty action..
  *
  */
-//#define WIN32_LEAN_AND_MEAN 1
-#include "windows.h"
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
 #include <process.h>
+#include <signal.h>
 
 #include <wincon.h>
 
@@ -310,7 +311,6 @@ int ReadConsoleEvent(TEvent *E) /*FOLD00*/
             inp.Event.KeyEvent.uChar.AsciiChar,
             inp.Event.KeyEvent.uChar.AsciiChar);
 #endif
-
         Ch = 0;
 
         // handle special case when user with scandinavian keyboard presses
@@ -451,6 +451,7 @@ int ConDone(void) { /*FOLD00*/
 int ConSuspend(void) { /*FOLD00*/
     SetConsoleActiveScreenBuffer(ConOut);
     SetConsoleMode(ConIn, OldConsoleMode);
+
     return 0;
 }
 
@@ -842,7 +843,15 @@ int GUI::RunProgram(int mode, char *Command) { /*FOLD00*/
                          "COMSPEC"
                         );
 
+    // we don't want ctrl-c or ctrl-break to exit our editor...
+    signal(SIGBREAK, SIG_IGN);
+    signal(SIGINT, SIG_IGN);
+
     rc = system(Command);
+
+    // restore handlers back to default handlers
+    signal(SIGBREAK, SIG_DFL);
+    signal(SIGINT, SIG_DFL);
 
     ConContinue();
     ConShowMouse();
