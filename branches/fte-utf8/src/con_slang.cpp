@@ -100,9 +100,9 @@ static char slang_dchs[] =
     '+'
 };
 
-static char raw_dchs[sizeof(slang_dchs)];
+static wchar_t raw_dchs[sizeof(slang_dchs)];
 
-static unsigned char ftesl_get_dch(char raw)
+static unsigned char ftesl_get_dch(wchar_t raw)
 {
     for (int i = 0; i < (int) sizeof(slang_dchs); i++)
 	if (raw_dchs[i] == raw)
@@ -242,14 +242,19 @@ int ConInit(int /*XSize */ , int /*YSize */ )
     }
 
     SLsmg_gotorc(0, 0);
-    SLsmg_set_char_set(1);
 
-    SLsmg_write_nchars(slang_dchs, sizeof(slang_dchs));
+    if (!SLsmg_Is_Unicode)
+    {
+        SLsmg_set_char_set(1);
 
-    SLsmg_gotorc(0, 0);
-    SLsmg_read_raw(linebuf, sizeof(slang_dchs));
-    for (i = 0; i < sizeof(slang_dchs); i++)
-	raw_dchs[i] = (linebuf[i]) & 0xff;
+        SLsmg_write_nchars(slang_dchs, sizeof(slang_dchs));
+
+        SLsmg_gotorc(0, 0);
+        SLsmg_read_raw(linebuf, sizeof(slang_dchs));
+
+        for (i = 0; i < sizeof(slang_dchs); i++)
+            raw_dchs[i] = (linebuf[i]) & 0xff;
+    }
 
     SLsmg_set_char_set(0);
 
@@ -257,6 +262,7 @@ int ConInit(int /*XSize */ , int /*YSize */ )
 
     return 0;
 }
+
 int ConDone(void)
 {
     SLsmg_reset_smg();
@@ -270,6 +276,7 @@ int ConSuspend(void)
     SLang_reset_tty();
     return 0;
 }
+
 int ConContinue(void)
 {
     SLang_init_tty(-1, 0, 1);
@@ -305,44 +312,75 @@ static void fte_write_color_chars(PCell Cell, int W)
 
     SLsmg_set_color(colprev);
     while (W > 0) {
-	for (i = 0; i < W && i < (int) sizeof(buf); i++) {
+        for (i = 0; i < W && i < (int) sizeof(buf); i++) {
             ch = Cell[i].Ch;
             col = Cell[i].Attr;
-	    if (ch <= 127 || ch >= 0xa0) {
-		if (ch < 32)
-		    buf[i] = '.';
-		else
-		    buf[i] = ch;
-		chset = 0;
-	    } else {
-		buf[i] = slang_dchs[ch - 128];
-		chset = 1;
-	    }
+            if (ch <= 127 || ch >= 0xa0) {
+                if (ch < 32)
+                    buf[i] = '.';
+                else
+                    buf[i] = ch;
+                chset = 0;
+            } else {
+                buf[i] = slang_dchs[ch - 128];
+                chset = 1;
+            }
 
+            if (col != colprev || chset != chsetprev)
+                break;
+        }
 
+        if (i > 0) {
+            SLsmg_write_nchars(buf, i);
+            W -= i;
+            Cell += i;
+        }
 
-	    if (col != colprev || chset != chsetprev)
-		break;
+        if (col != colprev) {
+            SLsmg_set_color(col);
+            colprev = col;
+        }
 
-	}
-
-	if (i > 0) {
-	    SLsmg_write_nchars(buf, i);
-	    W -= i;
-	    Cell += i;
-	}
-
-	if (col != colprev) {
-	    SLsmg_set_color(col);
-	    colprev = col;
-	}
-
-	if (chset != chsetprev) {
-	    SLsmg_set_char_set(chset);
-	    chsetprev = chset;
-	}
+        if (chset != chsetprev) {
+            SLsmg_set_char_set(chset);
+            chsetprev = chset;
+        }
     }
     SLsmg_set_char_set(0);
+}
+
+static void fte_unicode_write_color_chars(PCell Cell, int W)
+{
+    int i = 0;
+    unsigned char col = 0x70, colprev = 0x70;
+    wchar_t ch;
+    wchar_t buf[256];
+
+    SLsmg_set_color(colprev);
+    while (W > 0) {
+        for (i = 0; i < W && i < (int) sizeof(buf); i++) {
+            ch = Cell[i].Ch;
+            col = Cell[i].Attr;
+            if (ch < 32)
+                buf[i] = '.';
+            else
+                buf[i] = ch;
+
+            if (col != colprev)
+                break;
+        }
+
+        if (i > 0) {
+            SLsmg_write_nwchars(buf, i);
+            W -= i;
+            Cell += i;
+        }
+
+        if (col != colprev) {
+            SLsmg_set_color(col);
+            colprev = col;
+        }
+    }
 }
 
 int ConPutBox(int X, int Y, int W, int H, PCell Cell)
@@ -350,11 +388,22 @@ int ConPutBox(int X, int Y, int W, int H, PCell Cell)
     int CurX, CurY;
 
     ConQueryCursorPos(&CurX, &CurY);
-    while (H > 0) {
-	SLsmg_gotorc(Y++, X);
-	fte_write_color_chars(Cell, W);
-	Cell += W;
-	H--;
+    if (SLsmg_Is_Unicode)
+    {
+        while (H > 0) {
+            SLsmg_gotorc(Y++, X);
+            fte_unicode_write_color_chars(Cell, W);
+            Cell += W;
+            H--;
+        }
+    } else
+    {
+        while (H > 0) {
+            SLsmg_gotorc(Y++, X);
+            fte_write_color_chars(Cell, W);
+            Cell += W;
+            H--;
+        }
     }
     ConSetCursorPos(CurX, CurY);
     SLsmg_refresh();
@@ -368,10 +417,10 @@ static int ConPutBoxRaw(int X, int Y, int W, int H, SLsmg_Char_Type *box)
 
     ConQueryCursorPos(&CurX, &CurY);
     while (H > 0) {
-	SLsmg_gotorc(Y++, X);
-	SLsmg_write_raw(box, W);
-	box += W;
-	H--;
+        SLsmg_gotorc(Y++, X);
+        SLsmg_write_raw(box, W);
+        box += W;
+        H--;
     }
     ConSetCursorPos(CurX, CurY);
 
@@ -386,27 +435,43 @@ int ConGetBox(int X, int Y, int W, int H, PCell Cell)
     SLsmg_Char_Type buffer[W];
 
     ConQueryCursorPos(&CurX, &CurY);
-    while (H > 0) {
-	SLsmg_gotorc(Y++, X);
-        SLsmg_read_raw(buffer, W);
-        for (i = 0; i < W; i++)
-        {
-            Cell[i].Ch = SLSMG_EXTRACT_CHAR(buffer[i]);
-            Cell[i].Attr = SLSMG_EXTRACT_COLOR(buffer[i]);
 
-            if (Cell[i].Ch & 0x8000) {
-                ch = Cell[i].Ch & 0xff;
-                Cell[i].Ch &= 0x7f00;
-                Cell[i].Ch |= ftesl_get_dch(ch);
+    if (SLsmg_Is_Unicode)
+    {
+        while (H > 0) {
+            SLsmg_gotorc(Y++, X);
+            SLsmg_read_raw(buffer, W);
+            for (i = 0; i < W; i++)
+            {
+                Cell[i].Ch = SLSMG_EXTRACT_CHAR(buffer[i]);
+                Cell[i].Attr = SLSMG_EXTRACT_COLOR(buffer[i]);
             }
+            Cell += W;
+            H--;
         }
-	Cell += W;
-	H--;
+    } else
+    {
+        while (H > 0) {
+            SLsmg_gotorc(Y++, X);
+            SLsmg_read_raw(buffer, W);
+            for (i = 0; i < W; i++)
+            {
+                Cell[i].Ch = SLSMG_EXTRACT_CHAR(buffer[i]) & 0xFF;
+                Cell[i].Attr = SLSMG_EXTRACT_COLOR(buffer[i]);
+
+                if (Cell[i].Ch & 0x80) {
+                    ch = Cell[i].Ch & 0xff;
+                    Cell[i].Ch &= 0x7f;
+                    Cell[i].Ch |= ftesl_get_dch(ch);
+                }
+            }
+            Cell += W;
+            H--;
+        }
     }
     ConSetCursorPos(CurX, CurY);
 
     return 0;
-
 }
 
 static int ConGetBoxRaw(int X, int Y, int W, int H, SLsmg_Char_Type *box)
@@ -423,7 +488,6 @@ static int ConGetBoxRaw(int X, int Y, int W, int H, SLsmg_Char_Type *box)
     ConSetCursorPos(CurX, CurY);
 
     return 0;
-
 }
 
 int ConPutLine(int X, int Y, int W, int H, PCell Cell)
@@ -431,11 +495,22 @@ int ConPutLine(int X, int Y, int W, int H, PCell Cell)
     int CurX, CurY;
 
     ConQueryCursorPos(&CurX, &CurY);
-    while (H > 0) {
-	SLsmg_gotorc(Y, X);
-	fte_write_color_chars(Cell, W);
-	H--;
+    if (SLsmg_Is_Unicode)
+    {
+        while (H > 0) {
+            SLsmg_gotorc(Y, X);
+            fte_unicode_write_color_chars(Cell, W);
+            H--;
+        }
+    } else
+    {
+        while (H > 0) {
+            SLsmg_gotorc(Y, X);
+            fte_write_color_chars(Cell, W);
+            H--;
+        }
     }
+
     ConSetCursorPos(CurX, CurY);
     SLsmg_refresh();
 
@@ -506,12 +581,14 @@ int ConShowCursor()
     SLtt_set_cursor_visibility(1);
     return 0;
 }
+
 int ConHideCursor()
 {
     CurVis = 0;
     SLtt_set_cursor_visibility(0);
     return 0;
 }
+
 int ConCursorVisible()
 {
     return CurVis;
@@ -526,6 +603,7 @@ int ConSetMousePos(int /*X */ , int /*Y */ )
 {
     return -1;
 }
+
 int ConQueryMousePos(int *X, int *Y)
 {
     *X = 0;
@@ -693,7 +771,6 @@ static TKeyCode ftesl_process_key(int key, int ctrlhack = 0)
 	    return '?';
 	}
 }
-
 
 int ConGetEvent(TEventMask /*EventMask */ ,
 		TEvent * Event, int WaitTime, int Delete)
@@ -1045,27 +1122,53 @@ TChar ConGetDrawChar(int idx)
 
     static const TChar tab_linux[] =
     {
-	DCH_SLANG_C1,
-	DCH_SLANG_C2,
-	DCH_SLANG_C3,
-	DCH_SLANG_C4,
-	DCH_SLANG_H,
-	DCH_SLANG_V,
-	DCH_SLANG_M1,
-	DCH_SLANG_M2,
-	DCH_SLANG_M3,
-	DCH_SLANG_M4,
-	DCH_SLANG_X,
-	' ',
-	'.',
-	DCH_SLANG_EOF,
-	DCH_SLANG_END,
-	DCH_SLANG_AUP,
-	DCH_SLANG_ADOWN,
-	DCH_SLANG_HFORE,
-	DCH_SLANG_HBACK,
-	DCH_SLANG_ALEFT,
-        DCH_SLANG_ARIGHT,
+	SLSMG_ULCORN_CHAR_TERM, //DCH_SLANG_C1, // menu
+	SLSMG_URCORN_CHAR_TERM, //DCH_SLANG_C2, // menu
+	SLSMG_LLCORN_CHAR_TERM, //DCH_SLANG_C3, // menu
+        SLSMG_LRCORN_CHAR_TERM, //DCH_SLANG_C4, // menu
+	SLSMG_HLINE_CHAR_TERM, //DCH_SLANG_H, // menu
+	SLSMG_VLINE_CHAR_TERM, //DCH_SLANG_V, // menu
+	'1', //DCH_SLANG_M1,
+	'2', //DCH_SLANG_M2,
+        '3', //DCH_SLANG_M3,
+	'4', //DCH_SLANG_M4,
+	'x', //DCH_SLANG_X,
+	'>', //DCH_SLANG_RPTR, // submenu symbol
+	'.', //DCH_SLANG_EOL,
+	SLSMG_DIAMOND_CHAR_TERM, //DCH_SLANG_EOF,
+	SLSMG_DIAMOND_CHAR_TERM, //DCH_SLANG_END,
+	SLSMG_UARROW_CHAR_TERM, //DCH_SLANG_AUP,
+	SLSMG_DARROW_CHAR_TERM, //DCH_SLANG_ADOWN,
+	' ', //DCH_SLANG_HFORE, // scrollbar position indicator
+	SLSMG_BOARD_CHAR_TERM, //DCH_SLANG_HBACK, // scrollbar background
+	SLSMG_LARROW_CHAR_TERM, //DCH_SLANG_ALEFT,
+        SLSMG_RARROW_CHAR_TERM, //DCH_SLANG_ARIGHT,
+        0
+    };
+
+    static const TChar tab_utf8[] =
+    {
+	SLSMG_ULCORN_CHAR_UNICODE, //DCH_SLANG_C1, // menu
+	SLSMG_URCORN_CHAR_UNICODE, //DCH_SLANG_C2, // menu
+	SLSMG_LLCORN_CHAR_UNICODE, //DCH_SLANG_C3, // menu
+        SLSMG_LRCORN_CHAR_UNICODE, //DCH_SLANG_C4, // menu
+	SLSMG_HLINE_CHAR_UNICODE, //DCH_SLANG_H, // menu
+	SLSMG_VLINE_CHAR_UNICODE, //DCH_SLANG_V, // menu
+	'1', //DCH_SLANG_M1,
+	'2', //DCH_SLANG_M2,
+        '3', //DCH_SLANG_M3,
+	'4', //DCH_SLANG_M4,
+	'x', //DCH_SLANG_X,
+	'>', //DCH_SLANG_RPTR, // submenu symbol
+	'.', //DCH_SLANG_EOL,
+	SLSMG_DIAMOND_CHAR_UNICODE, //DCH_SLANG_EOF,
+	SLSMG_DIAMOND_CHAR_UNICODE, //DCH_SLANG_END,
+	SLSMG_UARROW_CHAR_UNICODE, //DCH_SLANG_AUP,
+	SLSMG_DARROW_CHAR_UNICODE, //DCH_SLANG_ADOWN,
+	' ', //DCH_SLANG_HFORE, // scrollbar position indicator
+	SLSMG_BOARD_CHAR_UNICODE, //DCH_SLANG_HBACK, // scrollbar background
+	SLSMG_LARROW_CHAR_UNICODE, //DCH_SLANG_ALEFT,
+        SLSMG_RARROW_CHAR_UNICODE, //DCH_SLANG_ARIGHT,
         0
     };
     //static const char tab_linux1[] =
@@ -1076,10 +1179,17 @@ TChar ConGetDrawChar(int idx)
     //};
 
     if (use_tab == NULL) {
-	char *c = getenv("TERM");
-        use_tab = ((c == NULL) || strcmp(c, "linux") != 0) ? tab : tab_linux;
-        use_tab=GetGUICharacters ("Slang",use_tab);
-	use_tab_size = tstrlen(use_tab);
+        if (SLsmg_Is_Unicode)
+        {
+            use_tab = tab_utf8;
+        } else
+        {
+            char *c = getenv("TERM");
+            use_tab = ((c == NULL) || strcmp(c, "linux") != 0) ? tab : tab_linux;
+        }
+
+        use_tab = GetGUICharacters ("Slang",use_tab);
+        use_tab_size = tstrlen(use_tab);
     }
 
     assert(idx >= 0 && idx < use_tab_size);
