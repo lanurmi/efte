@@ -36,10 +36,13 @@
 #include "windows.h"
 #include <process.h>
 
+#include <wincon.h>
+
 #include <stdio.h>
 #include "sysdep.h"
 #include "console.h"
 #include "gui.h"
+#include "s_files.h"
 
 #define True    1
 #define False   0
@@ -61,6 +64,9 @@ static DWORD OldConsoleMode;
 static int LastMouseX = 0;
 static int      LastMouseY = 0;
 //static int      isWin95 = 0;
+
+static char winTitle[256] = "FTE";
+static char winSTitle[256] = "FTE";
 
 int codepage;
 
@@ -284,9 +290,9 @@ int ReadConsoleEvent(TEvent *E) /*FOLD00*/
         //** Distill FTE flags from the NT flags. This fails for some keys
         //** because NT has an oddity with enhanced keys (Alt-Grey-+ etc).
         flags = inp.Event.KeyEvent.dwControlKeyState;
-        if (flags & (/*RIGHT_ALT_PRESSED |*/ LEFT_ALT_PRESSED)) flg |= kfAlt;
+        if (flags & (RIGHT_ALT_PRESSED | LEFT_ALT_PRESSED)) flg |= kfAlt;
         if (flags & (RIGHT_CTRL_PRESSED | LEFT_CTRL_PRESSED)) flg |= kfCtrl;
-        if (flags & (RIGHT_ALT_PRESSED)) flg &= ~kfCtrl;
+        /*if (flags & (RIGHT_ALT_PRESSED)) flg &= ~kfCtrl;*/
         if (flags & SHIFT_PRESSED) flg |= kfShift;
         if (flags & ENHANCED_KEY) flg |= kfGray;
 
@@ -843,12 +849,31 @@ int GUI::RunProgram(int mode, char *Command) { /*FOLD00*/
 }
 
 int ConSetTitle(char *Title, char *STitle) { /*FOLD00*/
+    char buf[sizeof(winTitle)] = {0};
+    JustFileName(Title, buf);
+    if (buf[0] == '\0') // if there is no filename, try the directory name.
+        JustLastDirectory(Title, buf);
+
+    strncpy(winTitle, "FTE - ", sizeof(winTitle) - 1);
+    if (buf[0] != 0) // if there is a file/dir name, stick it in here.
+    {
+        strncat(winTitle, buf, sizeof(winTitle) - 1 - strlen(winTitle));
+        strncat(winTitle, " - ", sizeof(winTitle) - 1 - strlen(winTitle));
+    }
+    strncat(winTitle, Title, sizeof(winTitle) - 1 - strlen(winTitle));
+    winTitle[sizeof(winTitle) - 1] = 0;
+    strncpy(winSTitle, STitle, sizeof(winSTitle) - 1);
+    winSTitle[sizeof(winSTitle) - 1] = 0;
+    SetConsoleTitle (winTitle);
+
     return 0;
 }
 
 int ConGetTitle(char *Title, int MaxLen, char *STitle, int SMaxLen) { /*FOLD00*/
-    strcpy(Title, "FTE");
-    strcpy(STitle, "FTE");
+    strncpy(Title, winTitle, MaxLen);
+    Title[MaxLen - 1] = 0;
+    strncpy(STitle, winSTitle, SMaxLen);
+    STitle[SMaxLen - 1] = 0;
     return 0;
 }
 
