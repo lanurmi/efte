@@ -74,7 +74,7 @@ int SaveHistory(char *FileName) { /*FOLD00*/
     return 1;
 }
 
-int LoadHistory(char *FileName) { /*fold00*/
+int LoadHistory(char *FileName) { /*FOLD00*/
     FILE *fp;
     char line[2048];
     char *p, *e;
@@ -280,7 +280,7 @@ int AddInputHistory(int Id, char *String) { /*FOLD00*/
             break;
         }
     }
-    if (i == inputHistory.Count) {
+    if (s == NULL) {
         // Not in list
         s = strdup(String);
         if (inputHistory.Count < MAX_INPUT_HIST) {
@@ -294,18 +294,15 @@ int AddInputHistory(int Id, char *String) { /*FOLD00*/
             free(inputHistory.Line[inputHistory.Count - 1]);
         }
     }
-    memmove(inputHistory.Line + 1,
-            inputHistory.Line,
-            i * sizeof(char *));
-    memmove(inputHistory.Id + 1,
-            inputHistory.Id,
-            i * sizeof(int *));
+
+    memmove(inputHistory.Line + 1, inputHistory.Line, i * sizeof(char *));
+    memmove(inputHistory.Id + 1, inputHistory.Id, i * sizeof(int *));
     inputHistory.Id[0] = Id;
     inputHistory.Line[0] = s;
     return 1;
 }
 
-int CountInputHistory(int Id) { /*fold00*/
+int CountInputHistory(int Id) { /*FOLD00*/
     int i, c = 0;
     
     for (i = 0; i < inputHistory.Count; i++)

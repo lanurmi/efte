@@ -471,7 +471,7 @@ static const struct {
 };
 
 int ParseKey(const char *Key, KeySel &ks) {
-    unsigned char *p = (unsigned char *)Key;
+    const unsigned char *p = (const unsigned char *)Key;
     TKeyCode KeyFlags = 0;
     int i;
 
@@ -498,7 +498,7 @@ int ParseKey(const char *Key, KeySel &ks) {
         p += 2;
     }
     for (i = 0; i < int(sizeof(KeyList)/sizeof(KeyList[0])); i++)
-        if (strcmp((char *)p, KeyList[i].Name) == 0) {
+        if (strcmp((const char *)p, KeyList[i].Name) == 0) {
             ks.Key = KeyList[i].Key;
             break;
         }

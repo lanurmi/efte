@@ -150,7 +150,7 @@ int CompletePath(const char *Base, char *Match, int Count) {
         return 0;
     rc = ff->FindFirst(&fi);
     while (rc == 0) {
-        char *dname = fi->Name();
+	const char *dname = fi->Name();
 
         // filter out unwanted files
         if ((strcmp(dname, ".") != 0) &&

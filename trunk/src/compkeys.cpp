@@ -237,7 +237,7 @@ TKeyCode   ftesl_getkeycode(const char* key)
         if ( (*key)=='\0') return 0;
 
         if ( *(key+1)=='\0') {
-                kcode|=*(unsigned char *)key;
+                kcode|=*(const unsigned char *)key;
                 return kcode;
         }
         
