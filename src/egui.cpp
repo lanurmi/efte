@@ -774,6 +774,9 @@ void EGUI::DoLoadHistoryOnEntry(int &argc, char **argv) {
 void EGUI::DoSaveHistoryOnExit() {
     if (KeepHistory && HistoryFileName[0] != 0)
         SaveHistory(HistoryFileName);
+
+    // since we are exiting, free history
+    ClearHistory();
 }
 #endif
 
@@ -925,11 +928,11 @@ void EGUI::EditorCleanup() {
         EModel *B, *N, *A;
 
         B = A = ActiveModel;
-        while (B != A) {
+        do {
             N = B->Next;
             delete B;
             B = N;
-        }
+        } while (B != A);
     }
     ActiveModel = 0;
 
@@ -940,11 +943,11 @@ void EGUI::EditorCleanup() {
         EView *BW, *NW, *AW;
 
         BW = AW = ActiveView;
-        while (BW != AW) {
+        do {
             NW = BW->Next;
             delete BW;
             BW = NW;
-        }
+        } while (BW != AW);
     }
     ActiveView = 0;
 }
@@ -958,6 +961,104 @@ void EGUI::Stop() {
 #ifdef CONFIG_HISTORY
     DoSaveHistoryOnExit();
 #endif
+
+    // free macros
+    if (Macros!=NULL)
+    {
+        int i;
+
+        while (CMacros--)
+        {
+            free(Macros[CMacros].Name);
+
+            for (i=0; i<Macros[CMacros].Count; i++)
+            {
+                if (Macros[CMacros].cmds[i].type == CT_STRING)
+                {
+                    free(Macros[CMacros].cmds[i].u.string);
+                }
+            }
+
+            free(Macros[CMacros].cmds);
+        }
+
+        free(Macros);
+
+        Macros = NULL;
+    }
+
+    // free colorizers
+    {
+        EColorize *p;
+
+        while ((p = Colorizers) != NULL) {
+            Colorizers = Colorizers->Next;
+            delete p;
+        }
+    }
+
+    // free event maps
+    {
+        EEventMap *em;
+                  
+        while ((em = EventMaps) != NULL) {
+            EventMaps = EventMaps->Next;
+            delete em;
+        }
+    }
+
+    // free modes
+    {
+        EMode *m;
+                  
+        while ((m = Modes) != NULL) {
+            Modes = Modes->fNext;
+            delete m;
+        }
+    }
+
+    // free menus
+    if (Menus)
+    {
+        int mc, c;
+
+        while(MenuCount--)
+        {
+            mc = MenuCount;
+
+            free(Menus[mc].Name);
+
+            while(Menus[mc].Count--)
+            {
+                c = Menus[mc].Count;
+                free(Menus[mc].Items[c].Name);
+            }
+
+            free(Menus[MenuCount].Items);
+        }
+
+        free(Menus);
+
+        Menus = NULL;
+    }
+
+    // free completion rexexp filter
+    {
+        extern RxNode *CompletionFilter;
+
+        RxFree(CompletionFilter);
+    }
+
+    // free CRegexp array from o_messages.cpp
+    {
+        FreeCRegexp();
+    }
+
+    // free configuration file path
+    {
+        free(ConfigSourcePath);
+        ConfigSourcePath = NULL;
+    }
 
     EditorCleanup();
 
