@@ -232,10 +232,7 @@ mode GL: PLAIN {      # 4GL Mode
     Colorizer           = 'GL';
     AutoIndent          = 1;
     IndentMode          = 'PLAIN';
-    TabSize             = 8; # think twice before changing this, historically
-                             # it's been known to cause a mess in sources ;-)
     SpaceTabs           = 0;
-#    MatchCase          = 1;
     Trim                = 1;
     MultiLineHilit      = 1;
     AutoHilitParen      = 1;
