@@ -25,6 +25,8 @@ then
     then
         echo "We don't recommend installing as non-root.  To try anyway,"
         echo "export INSTALL_NONROOT=1 before running the install."
+        echo "NOTE: You should also export PREFIX=/your/home/dir/fte to"
+        echo "give this a chance of working."
         exit 1
     fi
 else
@@ -48,9 +50,28 @@ mkdir -p $LIBDIR
 mkdir -p $LOCALCONFIGDIR
 
 # Set up our binaries.
-cp fte $BINDIR
-cp src/xfte $BINDIR
-cp src/cfte $BINDIR
+for file in fte xfte cfte
+do
+    # each binary is either in . or in src.
+    for dir in . src
+    do
+        # if this is the right directory for this file, use it.
+        if [ -f $dir/$file ]
+        then
+            # try to copy it.
+            cp $dir/$file $BINDIR 2> /dev/null
+            # if that doesn't work, force it.
+            if [ $? -ne 0 ]
+            then
+                # Unix has the nice capability of being able to unlink
+                # in-use files.
+                echo "Forcing $file"
+                rm -f $BINDIR/$file
+                cp $dir/$file $BINDIR
+            fi
+        fi
+    done
+done
 
 # Copy our configuration.
 cp -r config $LIBDIR
@@ -58,17 +79,17 @@ cp -r config $LIBDIR
 chmod a+r $CONFIGDIR/*
 chmod a+r $CONFIGDIR/*/*
 
-# Set the directories to be world-executable.  Except any directory called CVS.
-find $CONFIGDIR -type d ! -name CVS | while read dir
-do
-	chmod a+x $dir
-done
+# Any CVS directory that is copied over should be uncopied over.
+rm -rf `find $CONFIGDIR -type d -name CVS`
+
+# Set the directories to be world-executable.
+chmod a+x `find $CONFIGDIR -type d`
 
 # If the sysadmin does not have a system-wide config, set it up.
 # If it already exists DO NOT OVERWRITE IT.
 if [ ! -f $LOCALCONFIGDIR/systemmain.fte ]
 then
-	mv $CONFIGDIR/systemmain.fte $LOCALCONFIGDIR
+    mv $CONFIGDIR/systemmain.fte $LOCALCONFIGDIR
 fi
 
 # Set up the system default rc file.
