@@ -28,7 +28,8 @@
 #define CONTEXT_CVS      13
 #define CONTEXT_CVSDIFF  14
 
-typedef unsigned char ChColor;
+//typedef unsigned char ChColor;
+typedef int ChColor;
 
 #define HILIT_PLAIN   0
 #define HILIT_C       1
