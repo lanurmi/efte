@@ -107,7 +107,7 @@ mode PASCAL: PLAIN {      # Pascal Mode
     Colorizer           = 'PASCAL';
     AutoIndent          = 1;
     IndentMode          = 'PLAIN';
-    MatchCase           = 1;
+    MatchCase           = 0;
     Trim                = 1;
     MultiLineHilit      = 1;
     AutoHilitParen      = 1;
