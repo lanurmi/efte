@@ -384,6 +384,37 @@ int ReadConsoleEvent(TEvent *E) /*FOLD00*/
         E->Mouse.Count = 1;
         if (inp.Event.MouseEvent.dwEventFlags & DOUBLE_CLICK)
             E->Mouse.Count = 2;
+
+        if (inp.Event.MouseEvent.dwEventFlags == MOUSE_WHEELED)
+        {
+            E->What        = evCommand;
+            E->Msg.View    = 0;
+            E->Msg.Model   = 0;
+            E->Msg.Param2  = 0;
+
+            // Scroll:
+            // (The SDK does not tell how to determine whether the wheel
+            // was scrolled up or down. Found an example on:
+            // http://www.adrianxw.dk/SoftwareSite/Consoles/Consoles5.html
+            if (inp.Event.MouseEvent.dwButtonState & 0xFF000000) {  // Wheel down
+                if (flg & kfShift) { // Translate to horizontal scroll.
+                    E->Msg.Command = (flg & kfCtrl) ? cmHScrollPgRt : cmHScrollRight;
+                } else { // Translate to vertical scroll.
+                    E->Msg.Command = (flg & kfCtrl) ? cmVScrollPgDn : cmVScrollDown;
+                }
+            } else { // Wheel up
+                if (flg & kfShift) { // Translate to horizontal scroll.
+                    E->Msg.Command = (flg & kfCtrl) ? cmHScrollPgLt : cmHScrollLeft;
+                } else { // Translate to vertical scroll.
+                    E->Msg.Command = (flg & kfCtrl) ? cmVScrollPgUp : cmVScrollUp;
+                }
+            }
+
+            E->Msg.Param1 = (flg & kfCtrl) ? 1 : 3; // 1 page / 3 lines
+
+            return True;
+        }
+
         if (inp.Event.MouseEvent.dwEventFlags == MOUSE_MOVED)
         {
             E->What = evMouseMove;
