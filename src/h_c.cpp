@@ -44,7 +44,15 @@ int Hilit_C(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, h
             switch(State) {
             default:
             case hsC_Normal:
-                if (isalpha(*p) || *p == '_') {
+                if (toupper(*p) == 'L' && p[1] == '"') {
+                    State = hsC_String2;
+                    Color = Colors[CLR_String];
+                    goto hilit2;
+                } else if (toupper(*p) == 'L' && p[1] == '\'') {
+                    State = hsC_String1;
+                    Color = Colors[CLR_String];
+                    goto hilit2;
+                } else if (isalpha(*p) || *p == '_') {
                     j = 0;
 		    while (((i + j) < Line->Count)
 			   && ISNAME(Line->Chars[i + j]))
