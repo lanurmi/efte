@@ -81,14 +81,16 @@ ENDFUNCAS_SAFE(HANDLE, unsigned long, GetNextHandle());
 #ifndef __LOGGING_HPP
 #define __LOGGING_HPP
 
-#include <fstream.h>
-#include <string.h>
-#include <assert.h>
-#include <stdlib.h>
+#include <fstream>
+#include <cassert>
+#include <cstring>
+#include <cstdlib>
 
 #define bool  int
 #define true  1
 #define false 0
+
+using namespace std;
 
 #ifndef FTE_NO_LOGGING
 
