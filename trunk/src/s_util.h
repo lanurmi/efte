@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __EDITOR_H__
-#define __EDITOR_H__
+#ifndef __S_UTIL_H__
+#define __S_UTIL_H__
 
 #define USE_CtrlEnter    1
 
