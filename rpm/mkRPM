@@ -18,7 +18,7 @@ my $configdir = '/usr/local/lib/fte/config';
 my $specfile_name = $FindBin::Bin . "/$name-$version-$release.spec";
 my $target = 'i386';
 my $SOURCE_dir = '/usr/src/redhat/SOURCES';
-my $source_file = "$FindBin::Bin/fte-$version-$release.src.tar.gz";
+my $source_file = "$SOURCE_dir/fte-$version-$release.src.tar.gz";
 
 copy_all_files();
 make_specfile();
@@ -196,6 +196,5 @@ sub cleanup
     chdir $FindBin::Bin;
 
     unlink $specfile_name;
-    system("rm -rf $buildroot");
 }
 
