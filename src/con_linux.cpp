@@ -252,9 +252,9 @@ int ConInit(int /*XSize*/, int /*YSize*/) {
 #endif
 
     tmp = tcgetattr(VtFd, &Save_termios);
-    if (tmp) fprintf(stderr, "tcsetattr = %d\n", tmp);
+    if (tmp) fprintf(stderr, "tcgetattr = %d\n", tmp);
     tmp = tcgetattr(VtFd, &newt);
-    if (tmp) fprintf(stderr, "tcsetattr = %d\n", tmp);
+    if (tmp) fprintf(stderr, "tcgetattr = %d\n", tmp);
 
     newt.c_lflag &= ~ (ICANON | ECHO | ISIG);
     newt.c_iflag = 0;
@@ -431,7 +431,7 @@ int ConPutBox(int X, int Y, int W, int H, PCell Cell) {
 
         conwrite(VcsFd, vbuff, 2 * W);
         Cell += W;
-        if (hidden) mouseShow();
+        if (hidden) { mouseShow(); hidden = 0; }
     }
     return 0;
 }
@@ -448,11 +448,11 @@ int ConGetBox(int X, int Y, int W, int H, PCell Cell) {
         for (j = 0; j < W; j++)
         {
             Cell[j].Ch = (vbuff[j] & 0xFF);
-            Cell[j].Attr = (vbuff[j] >> 8);
+            Cell[j].Attr = (vbuff[j] >> 8) & 0xFF;
         }
 
         Cell += W;
-        if (hidden) mouseShow();
+        if (hidden) { mouseShow(); hidden = 0; }
     }
     return 0;
 }
@@ -1038,16 +1038,16 @@ int ConSetCursorSize(int /*Start*/, int /*End*/) {
     return 0;
 }
 
-static PCell SavedScreen = 0;
+static PCell SavedScreen = NULL;
 static int SavedX, SavedY, SaveCursorPosX, SaveCursorPosY;
 
 int SaveScreen() {
     if (SavedScreen)
-        free(SavedScreen);
+        delete [] SavedScreen;
 
     ConQuerySize(&SavedX, &SavedY);
 
-    SavedScreen = (PCell) malloc(SavedX * SavedY * sizeof(PCell));
+    SavedScreen = new TCell[SavedX * SavedY];
 
     if (SavedScreen)
         ConGetBox(0, 0, SavedX, SavedY, SavedScreen);
@@ -1078,7 +1078,7 @@ GUI::~GUI() {
 
     if(SavedScreen)
     {
-        free(SavedScreen);
+        delete [] SavedScreen;
         SavedScreen = 0;
     }
 
