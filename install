@@ -50,9 +50,9 @@ mkdir -p $LIBDIR
 mkdir -p $LOCALCONFIGDIR
 
 # Set up our binaries.
-for file in fte xfte cfte
+for file in fte xfte cfte sfte vfte
 do
-    # each binary is either in . or in src.
+    # each binary is either in . or in src (if it exists at all on this platform)
     for dir in . src
     do
         # if this is the right directory for this file, use it.
@@ -61,6 +61,9 @@ do
             # try to copy it.
             cp $dir/$file $BINDIR 2> /dev/null
             # if that doesn't work, force it.
+            # NOTE: This may crash any running copy of FTE on some platforms
+            #       AIX, Linux: confirmed okay
+            #       Sun: confirmed crash
             if [ $? -ne 0 ]
             then
                 # Unix has the nice capability of being able to unlink
