@@ -54,22 +54,3 @@ mode PLAIN {
     SaveBookmarks       = 0;         # save bookmarks (off = 0, start line = 1, end line = 2, history = 3)
     HilitTags           = 0;
 }
-
-# for viewing nnrrooffff output (do NOT use for editing).
-
-colorize CATBS {
-    SyntaxParser        = 'CATBS';
-    
-    color {
-        { 'Normal',      'Editor_Default' },
-        { 'Keyword',     'Editor_Keywords' },
-        { 'Symbol',      'Editor_Bold' },
-    };
-}
-
-mode CATBS: PLAIN {
-    FileNameRx          = /\.\c{MAN}|{CAT}$/;   # == never
-    HilitOn             = 1;
-    Colorizer           = 'CATBS';
-    ReadOnly            = 1; # this mode cannot edit properly
-}

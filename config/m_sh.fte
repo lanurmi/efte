@@ -2,7 +2,7 @@ colorize SH {
     SyntaxParser = 'SH';
     
     color {
-        { 'Normal',     'Lang_Default' },
+        { 'Normal',     'Editor_Default' },
         { 'Keyword',    'Editor_Keywords' },
         { 'Number',     'Lang_DecimalNumber' },
         { 'Comment',    'Lang_Comment' },

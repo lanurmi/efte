@@ -8,7 +8,7 @@ colorize ASM370 {
     SyntaxParser = 'SIMPLE';
     
     color {
-        { 'Normal',        'Lang_Default' },
+        { 'Normal',        'Editor_Default' },
         { 'Keyword',       'Editor_Keywords' },
         { 'Number',        'Lang_DecimalNumber' },
         { 'HexNumber',     'Lang_HexNumber' },

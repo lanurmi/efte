@@ -1,21 +1,19 @@
-# need to add all assembler commands
 colorize MVSASM {
     SyntaxParser = 'SIMPLE';
-    
+
     color {
-        { 'Normal',        '-7' },
-        { 'Keyword',       '-F' },
-        { 'Number',        '-D' },
-        { 'HexNumber',     '-D' },
-        { 'Punctuation',   '-3' },
-        { 'String',        '-E' },
-        { 'Comment',       '-6' },
-        { 'CPreprocessor', '-A' },
-        { 'Function',      '-B' },
-        { 'Label',         '-C' },
+        { 'Normal',        'Editor_Default' },
+        { 'Number',        'Lang_DecimalNumber' },
+        { 'HexNumber',     'Lang_HexNumber' },
+        { 'Punctuation',   'Lang_Punctuation' },
+        { 'String',        'Lang_String' },
+        { 'Comment',       'Lang_Comment' },
+        { 'CPreprocessor', 'Lang_Preprocessor' },
+        { 'Function',      'Lang_Function' },
+        { 'Label',         'Lang_Label' },
     };
 
-    keyword '-F' {
+    keyword 'Editor_Keywords' {
         'mov', 'push', 'pop', 'movzx', 'movsx',
         'shl', 'shr', 'and', 'or', 'xor', 'not',
         'add', 'sub', 'neg', 'mul', 'div', 'idiv', 'imul',
@@ -44,7 +42,7 @@ colorize MVSASM {
     # keywords here or global
 
     h_state 4 { 'Normal' }         # eat non-keywords in second col
-    h_trans { 0, '$', '', 'Normal' }          
+    h_trans { 0, '$', '', 'Normal' }
     h_trans { 1, '-s', ' ', 'Comment' }
 }
 
@@ -53,7 +51,7 @@ mode MVSASM: PLAIN {
     HilitOn             = 1;
     Colorizer           = 'MVSASM';
     AutoHilitParen      = 1;
-    
+
     SaveFolds           = 2;      # save fold info at end of line
     CommentStart        = ' ;';
     CommentEnd          = '';

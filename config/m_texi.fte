@@ -5,11 +5,10 @@ colorize TEXINFO {
     SyntaxParser = 'SIMPLE';
     
     color {
-        { 'Normal',        'Markup_Default' },
-        { 'Keyword',       'Editor_Keywords' },
+        { 'Normal',        'Editor_Default' },
+        { 'String',        'Lang_String' },
+        { 'Comment',       'Lang_Comment' },
         { 'Punctuation',   'Markup_Punctuation' },
-        { 'String',        'Markup_String' },
-        { 'Comment',       'Markup_Comment' },
         { 'Special',       'Markup_Special' },
         
     };

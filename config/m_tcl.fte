@@ -2,7 +2,7 @@ colorize TCL {
     SyntaxParser = 'SIMPLE';
     
     color {
-        { 'Normal',      'Lang_Default' },
+        { 'Normal',      'Editor_Default' },
         { 'Comment',     'Lang_Comment' },
         { 'String',      'Lang_String' },
         { 'Punctuation', 'Lang_Punctuation' },

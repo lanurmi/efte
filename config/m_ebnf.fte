@@ -2,7 +2,7 @@ colorize EBNF {
     SyntaxParser        = 'SIMPLE';
     
     color {
-        { 'Normal',      'Lang_Default' },
+        { 'Normal',      'Editor_Default' },
         { 'String',      'Lang_String' },
         { 'Symbol',      'Lang_Function' },
         { 'Punctuation', 'Lang_Punctuation' },

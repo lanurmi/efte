@@ -3,8 +3,8 @@
 # based on HTML Mode
 
 sub XML_Base {
-   InsertString '<?xml version="1.0" encoding="ISO-8859-1"?>";'; LineNew; MoveLineStart;
-
+    InsertString '<?xml version="1.0" encoding="ISO-8859-1"?>";';
+    LineNew; MoveLineStart;
 }
 
 
@@ -14,10 +14,10 @@ colorize XML {
     color {
         { 'Normal',     'Editor_Keywords' },
         { 'Command',    'Editor_Default' },
-        { 'String',     'Markup_String' },
+        { 'Comment',    'Lang_Comment' },
+        { 'String',     'Lang_String' },
         { 'Symbol',     'Markup_Symbol' },
         { 'Tag',        'Markup_Tag' },
-        { 'Comment',    'Markup_Comment' },
         { 'Special',    'Markup_Special' },
     };
 
@@ -79,7 +79,4 @@ eventmap XML {
       KillWordPrev; InsertString '<?xml version="1.0" encoding="ISO-8859-1"?>'; LineNew; MoveLineStart;
       Fail;
    }
-
 }
-
-

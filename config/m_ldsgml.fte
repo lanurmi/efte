@@ -5,11 +5,11 @@ colorize LDSGML {
     
     color {
         { 'Normal',     'Editor_Default' },
+        { 'String',     'Lang_String' },
+        { 'Comment',    'Lang_Comment' },
         { 'Command',    'Markup_Default' },
-        { 'String',     'Markup_String' },
         { 'Symbol',     'Markup_Symbol' },
         { 'Tag',        'Markup_Tag' },
-        { 'Comment',    'Markup_Comment' },
         { 'Special',    'Markup_Special' },
     };
 
