@@ -79,6 +79,9 @@
 #        include <dir.h>
 #    endif
 #    define filecmp stricmp
+#    if !defined(__EMX__)
+#        define NO_NEW_CPP_FEATURES
+#    endif
 #endif
 
 #if defined(DOS) || defined(DOSP32)
@@ -86,6 +89,7 @@
 #    include <dos.h>
 #    include <io.h>
 #    include <process.h>
+#    define NO_NEW_CPP_FEATURES
 #    if defined(BCPP)
 #        include <dir.h>
 #    endif

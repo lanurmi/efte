@@ -81,16 +81,25 @@ ENDFUNCAS_SAFE(HANDLE, unsigned long, GetNextHandle());
 #ifndef __LOGGING_HPP
 #define __LOGGING_HPP
 
+#if defined(NO_NEW_CPP_FEATURES)
+#include <fstream.h>
+#include <assert.h>
+#include <string.h>
+#include <stdlib.h>
+#else
 #include <fstream>
 #include <cassert>
 #include <cstring>
 #include <cstdlib>
+#endif
 
 #define bool  int
 #define true  1
 #define false 0
 
+#if !defined(NO_NEW_CPP_FEATURES)
 using namespace std;
+#endif
 
 #ifndef FTE_NO_LOGGING
 
