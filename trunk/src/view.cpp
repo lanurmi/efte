@@ -454,7 +454,7 @@ void EView::Msg(int level, const char *s, ...) {
         SetMsg(msgbuftmp);
 }
 
-void EView::SetMsg(char *msg) {
+void EView::SetMsg(const char *msg) {
     if (CurMsg)
         free(CurMsg);
     CurMsg = 0;
