@@ -348,6 +348,9 @@ int EView::FileOpen(ExState &State) {
             return 0;
         if (MView->Win->GetFile("Open file", sizeof(FName), FName, HIST_PATH, GF_OPEN) == 0) return 0;
     }
+
+    if( strlen( FName ) == 0 ) return 0;
+
 #ifdef CONFIG_OBJ_DIRECTORY
     if (IsDirectory(FName))
         return OpenDir(FName);
@@ -379,6 +382,9 @@ int EView::FileOpenInMode(ExState &State) {
             return OpenDir(FName);
     }
 #endif
+
+    if( strlen( FName ) == 0 ) return 0;
+
     return MultiFileLoad(0, FName, Mode, this);
 }
 
