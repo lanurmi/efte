@@ -1052,14 +1052,10 @@ int EBuffer::FindRepeat(ExState &State) {
 int EBuffer::FindRepeatReverse(ExState &State) {
     int rc;
 
-    if (LSearch.ok == 0) { // ???
-        LSearch.Options ^= SEARCH_BACK;
-        rc = Find(State);
-        LSearch.Options ^= SEARCH_BACK;
-        return rc;
-    }
+    if (LSearch.ok == 0) return Find(State);
     LSearch.Options |= SEARCH_NEXT;
     LSearch.Options &= ~SEARCH_GLOBAL;
+    LSearch.Options ^= SEARCH_BACK;
     rc = Find(LSearch);
     LSearch.Options ^= SEARCH_BACK;
     return rc;
