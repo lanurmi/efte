@@ -23,6 +23,8 @@
 #include "c_fconfig.h"
 #include "s_files.h"
 #include "c_mode.h"
+#include "console.h"
+#include "c_hilit.h"
 
 #define slen(s) ((s) ? (strlen(s) + 1) : 0)
 
@@ -1226,6 +1228,9 @@ static int ParseConfigFile(CurPos &cp) {
                                     if (Parse(cp) == P_CLOSEBRACE) break;
                                     if (Parse(cp) != P_STRING) Fail(cp, "String expected");
                                     kname = GetString(cp);
+
+                                    if (strlen(kname) >= CK_MAXLEN) Fail(cp, "Keyword name is too long");
+
                                     PutString(cp, CF_STRING, kname);
 
                                     if (Parse(cp) != P_COMMA)

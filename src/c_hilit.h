@@ -176,7 +176,7 @@ int Indent_SIMPLE(EBuffer *B, int Line, int PosCursor);
     continue;\
     }
 
-#define CK_MAXLEN 32
+#define CK_MAXLEN 64
 
 inline bool isZeroArray(int* Count, size_t len)
 {
