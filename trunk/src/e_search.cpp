@@ -123,6 +123,17 @@ int ParseSearchReplace(EBuffer *B, const char *str, int replace, SearchReplaceOp
 }
 
 int EBuffer::FindStr(char *Data, int Len, int Options) {
+    SearchReplaceOptions opt;
+
+    memset(&opt, 0, sizeof(opt));
+
+    opt.Options = Options;
+
+    return FindStr(Data, Len, opt);
+}
+
+int EBuffer::FindStr(char *Data, int Len, SearchReplaceOptions &opt) {
+    int Options = opt.Options;
     int LLen, Start, End;
     int C, L;
     PELine X;
@@ -159,7 +170,7 @@ int EBuffer::FindStr(char *Data, int Len, int Options) {
                 C = X->Count;
             }
         } else {
-            C += CC;
+            C += CC * opt.lastInsertLen; // 0 or opt.lastInsertLen
             if (C >= X->Count) {
                 C = 0;
                 L++;
@@ -278,7 +289,8 @@ int EBuffer::FindStr(char *Data, int Len, int Options) {
     return 0;
 }
 
-int EBuffer::FindRx(RxNode *Rx, int Options) {
+int EBuffer::FindRx(RxNode *Rx, SearchReplaceOptions &opt) {
+    int Options = opt.Options;
     int LLen, Start, End;
     int C, L;
     char *P;
@@ -458,6 +470,7 @@ int EBuffer::Find(SearchReplaceOptions &opt) {
     RxNode *R = NULL;
 
     opt.resCount = -1;
+    opt.lastInsertLen = 0;
 
     if (slen == 0) return 0;
     if (Options & SEARCH_BLOCK) {
@@ -489,9 +502,9 @@ int EBuffer::Find(SearchReplaceOptions &opt) {
     opt.resCount = 0;
     while (1) {
         if (Options & SEARCH_RE) {
-            if (FindRx(R, Options) == 0) goto end;
+            if (FindRx(R, opt) == 0) goto end;
         } else {
-            if (FindStr(opt.strSearch, slen, Options) == 0) goto end;
+            if (FindStr(opt.strSearch, slen, opt) == 0) goto end;
         }
         opt.resCount++;
 
@@ -555,6 +568,11 @@ int EBuffer::Find(SearchReplaceOptions &opt) {
             } else {
                 if (DelText(Match.Row, Match.Col, MatchLen) == 0) goto error;
                 if (InsText(Match.Row, Match.Col, rlen, opt.strReplace) == 0) goto error;
+
+                // Cursor remains at start of inserted string. If there is recursive
+                // replace pattern, fte can go it infinite loop.
+                // Workaround: Move cursor to end of inserted string
+                opt.lastInsertLen = strlen(opt.strReplace);
             }
             if (!(Options & SEARCH_BACK)) {
                 MatchLen = rlen;
