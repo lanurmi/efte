@@ -89,8 +89,9 @@ SINCDIR   = -I/usr/include/slang
 #######################################################################
 # SunOS (Solaris)
 #UOS      = -DSUNOS
-#CC = CC
-#LD = CC
+#CC = CC -noex
+#LD = CC -noex
+#COPTIONS =
 #XINCDIR  = -I/usr/openwin/include
 #XLIBDIR  = -L/usr/openwin/lib
 
