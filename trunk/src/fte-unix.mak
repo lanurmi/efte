@@ -27,6 +27,7 @@ I18NOPTIONS = $(XMBFLAG) $(REMAPFLAG) $(SYSTEM_X_LOCALE)
 # Optionally, you can define:
 # -DDEFAULT_INTERNAL_CONFIG to use internal config by default
 # -DUSE_XTINIT to use XtInitialize on init
+# -DFTE_NO_LOGGING to completely disable trace logging
 APPOPTIONS = -DDEFAULT_INTERNAL_CONFIG
 
 #gcc/g++

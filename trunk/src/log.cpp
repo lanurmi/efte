@@ -12,6 +12,8 @@ any of its derivitives.
 #include <iomanip.h>
 #include <ctype.h>
 
+#ifndef FTE_NO_LOGGING
+
 /*********************************************************************
  *
  * Required variables:
@@ -154,3 +156,5 @@ void Log__BinaryData(FunctionLog& LOGOBJNAME, void* bin_data, size_t len)
         os << ']' << ENDLINE;
     }
 }
+
+#endif // FTE_NO_LOGGING

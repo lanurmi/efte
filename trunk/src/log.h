@@ -90,6 +90,8 @@ ENDFUNCAS_SAFE(HANDLE, unsigned long, GetNextHandle());
 #define true  1
 #define false 0
 
+#ifndef FTE_NO_LOGGING
+
 /**
  * GlobalLog handles the actual logging.
  */
@@ -266,5 +268,23 @@ inline ostream_func2_char_size_t FillChar(char c, size_t num)
 
 void Log__BinaryData(FunctionLog&, void* bin_data, size_t len);
 #define LOGBINARYDATA(bin_data,len) Log__BinaryData(LOGOBJNAME,bin_data,len)
+
+#else // defined NO_LOGGING
+
+#define LOG while (0) { cout
+#define ENDLINE endl; }
+
+#define STARTFUNC(func) 
+#define ENDFUNCRC(rc) return rc
+#define ENDFUNCRC_SAFE(type,rc) return rc
+#define ENDFUNCAS(type,rc) return rc
+#define ENDFUNCAS_SAFE(logtype,rctype,rc) return rc
+#define BOOLYESNO(x) ((x) ? "YES" : "NO")
+
+//Replacements for utility functions.
+#define BinChar(c) c
+#define LOGBINARYDATA(b,l)
+
+#endif // NO_LOGGING
 
 #endif // __LOGGING_HPP
