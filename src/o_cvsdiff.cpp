@@ -92,7 +92,7 @@ int ECvsDiff::ExecCommand(int Command, ExState &State) {
 int ECvsDiff::BlockCopy (int Append) {
     if (SSBuffer==0) return ErFAIL;
     if (Append) {
-        if (SystemClipboard) GetPMClip ();
+        if (SystemClipboard) GetPMClip(0);
     } else SSBuffer->Clear ();
     SSBuffer->BlockMode=bmLine;
     // How to set these two ?
@@ -112,7 +112,7 @@ int ECvsDiff::BlockCopy (int Append) {
             last=i;
         }
     }
-    if (SystemClipboard) PutPMClip ();
+    if (SystemClipboard) PutPMClip (0);
     return ErOK;
 }
 

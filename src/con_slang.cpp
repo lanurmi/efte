@@ -305,8 +305,8 @@ static void fte_write_color_chars(PCell Cell, int W)
     SLsmg_set_color(colprev);
     while (W > 0) {
 	for (i = 0; i < W && i < (int) sizeof(buf); i++) {
-	    ch = Cell[i] & 0xff;
-	    col = (Cell[i] >> 8) & 0x7f;
+            ch = Cell[i].Ch;
+            col = Cell[i].Attr;
 	    if (ch <= 127 || ch >= 0xa0) {
 		if (ch < 32)
 		    buf[i] = '.';
@@ -387,17 +387,18 @@ int ConGetBox(int X, int Y, int W, int H, PCell Cell)
     ConQueryCursorPos(&CurX, &CurY);
     while (H > 0) {
 	SLsmg_gotorc(Y++, X);
-	SLsmg_read_raw(buffer, W);
-	for (i = 0; i < W; i++)
-	{
-	    Cell[i] = SLSMG_EXTRACT_CHAR(buffer[i]) | (SLSMG_EXTRACT_COLOR(buffer[i]) << 8);
+        SLsmg_read_raw(buffer, W);
+        for (i = 0; i < W; i++)
+        {
+            Cell[i].Ch = SLSMG_EXTRACT_CHAR(buffer[i]);
+            Cell[i].Attr = SLSMG_EXTRACT_COLOR(buffer[i]);
 
-	    if (Cell[i] & 0x8000) {
-		ch = Cell[i] & 0xff;
-		Cell[i] &= 0x7f00;
-		Cell[i] |= ftesl_get_dch(ch);
-	    }
-	}
+            if (Cell[i].Ch & 0x8000) {
+                ch = Cell[i].Ch & 0xff;
+                Cell[i].Ch &= 0x7f00;
+                Cell[i].Ch |= ftesl_get_dch(ch);
+            }
+        }
 	Cell += W;
 	H--;
     }
@@ -442,26 +443,20 @@ int ConPutLine(int X, int Y, int W, int H, PCell Cell)
 
 int ConSetBox(int X, int Y, int W, int H, TCell Cell)
 {
-//    PCell line = (PCell) malloc(sizeof(TCell) * W);
     TCell line[W];
     int i;
 
     for (i = 0; i < W; i++)
 	line[i] = Cell;
     ConPutLine(X, Y++, W, H, line);
-//    free(line);
     return 0;
 }
-
-
 
 int ConScroll(int Way, int X, int Y, int W, int H, TAttr Fill, int Count)
 {
     SLsmg_Char_Type box[W * H];
 
-//    box = new unsigned short [W * H];
-
-    TCell fill = (((unsigned) Fill) << 8) | ' ';
+    TCell fill = {' ', Fill};
 
     ConGetBoxRaw(X, Y, W, H, box);
 
@@ -472,8 +467,6 @@ int ConScroll(int Way, int X, int Y, int W, int H, TAttr Fill, int Count)
 	ConPutBoxRaw(X, Y + Count, W, H - Count, box);
 	ConSetBox(X, Y, W, Count, fill);
     }
-
-  //  delete [] (box);
 
     return 0;
 }

@@ -227,6 +227,22 @@ int EBuffer::LoadFrom(char *AFileName) {
         if (BFS(this, BFS_CommentEnd) == 0) len_end = 0;
         else len_end = strlen(BFS(this, BFS_CommentEnd));
 
+        // How folds and bookmarks are saved in line comment:
+        //
+        // CommentStart((FOLD)|(fold)nn)?(BOOK(bookmark)+xllllb)?CommentEnd
+        //
+        // After comment start there can be a fold - open or closed - with level number (nn - decimal).
+        // Then bookmarks can follow marked by BOOK "keyword". Last bookmark is terminated by 'x'
+        // character followed by total length of bookmark info (llll - hex) and character 'b'. The
+        // total length is needed when looking for comment start from the line end.
+        // Each bookmark has format "ccccllname" - cccc (hex) is bookmark column, ll (hex) is length
+        // of bookmark name and then the name itself follows.
+        //
+        // Example: FOLD01BOOK000a05mark1001005mark2x001ab
+        //
+        // Open first level fold, bookmark "mark1" at column 10 and bookmark "mark2" at column 16.
+        // At the end is length of string from BOOK up to end of mark2 - 26 (0x1a).
+
 	for (l = RCount - 1; l >= 0; l--) {
 	    if (LL[l]->Count >= len_start + len_end + 6) {
                 for (int where = 1; where < 3; where++) {
@@ -241,7 +257,8 @@ int EBuffer::LoadFrom(char *AFileName) {
                         pos = LL[l]->Count - len_end;
                         // Check if line ends with end comment (if defined)
                         if (len_end != 0 && memcmp(LL[l]->Chars + pos, BFS(this, BFS_CommentEnd), len_end) != 0) continue;
-                        if (BFI(this, BFI_SaveBookmarks) == 2 && pos - 10 >= 0 && LL[l]->Chars[pos-1] == 'b') { // Bookmarks can be at end
+                        // Locate position of comment start - skip bookmarks and fold
+                        if (BFI(this, BFI_SaveBookmarks) == 2 && pos - 10 >= 0 && LL[l]->Chars[pos-1] == 'b') {
                             char numbuf[5];
                             int i;
 
@@ -257,6 +274,8 @@ int EBuffer::LoadFrom(char *AFileName) {
                     }
                     // Check comment start
                     if (pos < 0 || (len_start != 0 && memcmp(LL[l]->Chars + pos, BFS(this, BFS_CommentStart), len_start) != 0)) continue;
+                    // Check comment length - leave empty in file
+                    if (LL[l]->Count - pos == len_start + len_end) continue;
                     startpos = pos;
                     pos += len_start;
                     // We have starting position after comment start
@@ -296,6 +315,7 @@ int EBuffer::LoadFrom(char *AFileName) {
                         int i, col, startBook;
                         char numbuf[5], buf[256];
 
+                        if (memcmp(LL[l]->Chars + pos, "BOOK", 4) != 0) continue;
                         startBook = pos; pos += 4;
                         while (pos + len_end + 6 + 6 <= LL[l]->Count) {
                             // Read column
@@ -314,14 +334,13 @@ int EBuffer::LoadFrom(char *AFileName) {
                                 error = 1; break;
                             }
                             if (i) {
-                                memcpy(buf, LL[l]->Chars + pos, i);
+                                memcpy(buf, LL[l]->Chars + pos, i); buf[i] = 0;
                                 pos += i;
                                 if (PlaceUserBookmark(buf, EPoint(l, col)) == 0) goto fail;
                             }
                             if (LL[l]->Chars[pos] == 'x') {
                                 // Read total length (just test for correctness)
-                                memcpy(numbuf, LL[l]->Chars + pos + 1, 4);
-                                numbuf[4] = 0;
+                                memcpy(numbuf, LL[l]->Chars + pos + 1, 4); numbuf[4] = 0;
                                 if (1 != sscanf(numbuf, "%x", &i)) {
                                     error = 1; break;
                                 }

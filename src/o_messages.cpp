@@ -398,7 +398,7 @@ void EMessages::GetErrors() {
                         strcpy(fn1, curr_dir->name);
                     Slash(fn1, 1);
                     strcat(fn1, fn);
-                    if (ExpandPath(fn1, fn2) == 0)
+                    if (ExpandPath(fn1, fn2, sizeof(fn2)) == 0)
                         file = fn2;
                     else
                         file = fn1;

@@ -186,8 +186,17 @@
 #define HAVE_BOOL
 #endif
 
+#if defined __BORLANDC__ && defined __OS2__
+#define popen _popen
+#define pclose _pclose
+#define ftruncate _ftruncate
+#endif
+
 #undef HAVE_STRLCPY
 #undef HAVE_STRLCAT
+
+#define USE_UNICODE_INTERNALS
+//#undef USE_UNICODE_INTERNALS
 
 #ifndef HAVE_BOOL
 #define bool  int

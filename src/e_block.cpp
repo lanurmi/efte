@@ -119,7 +119,7 @@ int EBuffer::BlockCut(int Append) {
     return 0;
 }
 
-int EBuffer::BlockCopy(int Append) {
+int EBuffer::BlockCopy(int Append, int clipboard) {
     EPoint B, E;
     int L;
     int SL, OldCount;
@@ -130,7 +130,7 @@ int EBuffer::BlockCopy(int Append) {
     if (SSBuffer == 0) return 0;
     if (Append) {
         if (SystemClipboard)
-            GetPMClip();
+            GetPMClip(clipboard);
     } else
         SSBuffer->Clear();
     SSBuffer->BlockMode = BlockMode;
@@ -180,31 +180,31 @@ int EBuffer::BlockCopy(int Append) {
         break;
     }
     if (SystemClipboard)
-        PutPMClip();
+        PutPMClip(clipboard);
     return 1;
 }
 
-int EBuffer::BlockPasteStream() {
+int EBuffer::BlockPasteStream(int clipboard) {
     BlockMode = bmStream;
-    return BlockPaste();
+    return BlockPaste(clipboard);
 }
 
-int EBuffer::BlockPasteLine() {
+int EBuffer::BlockPasteLine(int clipboard) {
     BlockMode = bmLine;
-    return BlockPaste();
+    return BlockPaste(clipboard);
 }
 
-int EBuffer::BlockPasteColumn() {
+int EBuffer::BlockPasteColumn(int clipboard) {
     BlockMode = bmColumn;
-    return BlockPaste();
+    return BlockPaste(clipboard);
 }
 
-int EBuffer::BlockPaste() {
+int EBuffer::BlockPaste(int clipboard) {
     EPoint B, E;
     int L, BL;
 
     if (SystemClipboard)
-        GetPMClip();
+        GetPMClip(clipboard);
 
     if (SSBuffer == 0) return 0;
     if (SSBuffer->RCount == 0) return 0;
@@ -359,7 +359,7 @@ int EBuffer::BlockKill() {
 }
 
 // remove selected text and paste information from clipboard to replace it
-int EBuffer::BlockPasteOver() {
+int EBuffer::BlockPasteOver(int clipboard) {
     // if there is existing selection, remove it's contents
     if (CheckBlock())
     {
@@ -367,7 +367,7 @@ int EBuffer::BlockPasteOver() {
     }
 
     // paste text from clipboard
-    if (BlockPaste())
+    if (BlockPaste(clipboard))
     {
         // go to end of selection
         SetPos(BE.Col, BE.Row);
@@ -379,12 +379,13 @@ int EBuffer::BlockPasteOver() {
     return 0;
 }
 
-int EBuffer::ClipClear() {
+// XXX clipboard ???
+int EBuffer::ClipClear(int clipboard) {
     if (SSBuffer == 0)
         return 0;
     SSBuffer->Clear();
     if (SystemClipboard)
-        PutPMClip();
+        PutPMClip(clipboard);
     return 1;
 }
 

@@ -116,11 +116,21 @@ static void mouseShow() {
 #ifdef USE_GPM
     if (GpmFd != -1 && VcsFd != -1 && drawPointer && mouseDrawn == 0) {
         int pos = (LastMouseX + LastMouseY * VideoCols) * 2 + 4;
+        unsigned short vbuff;
+
         lseek(VcsFd, pos, SEEK_SET);
-        read(VcsFd, &MousePosCell, 2);
-        TCell newCell = MousePosCell ^ 0x7700;  // correct ?
+        read(VcsFd, &vbuff, 2);
+
+        MousePosCell.Ch = vbuff & 0xFF;
+        MousePosCell.Attr = vbuff >> 8;
+
+        TCell newCell = MousePosCell;// ^ 0x7700;  // correct ?
+        newCell.Attr ^= 0x77;
+
+        vbuff = (newCell.Attr << 8) | (newCell.Ch & 0xFF);
+
         lseek(VcsFd, pos, SEEK_SET);
-        write(VcsFd, &newCell, 2);
+        write(VcsFd, &vbuff, 2);
         mouseDrawn = 1;
     }
 #endif
@@ -130,8 +140,12 @@ static void mouseHide() {
 #ifdef USE_GPM
     if (GpmFd != -1 && VcsFd != -1 && drawPointer && mouseDrawn == 1) {
         int pos = (LastMouseX + LastMouseY * VideoCols) * 2 + 4;
+        unsigned short vbuff;
+
+        vbuff = (MousePosCell.Attr << 8) | (MousePosCell.Ch & 0xFF);
+
         lseek(VcsFd, pos, SEEK_SET);
-        write(VcsFd, &MousePosCell, 2);
+        write(VcsFd, &vbuff, 2);
         mouseDrawn = 0;
     }
 #endif
@@ -387,7 +401,7 @@ static int conwrite(int fd, void *p, int len) {  // len should be a multiple of 
 
 int ConClear() {
     int X, Y;
-    TCell Cell = ' ' | (0x07 << 8);
+    TCell Cell = {' ', 0x07};
     ConQuerySize(&X, &Y);
     ConSetBox(0, 0, X, Y, Cell);
     ConSetCursorPos(0, 0);
@@ -403,12 +417,19 @@ int ConGetTitle(char *Title, int /*MaxLen*/, char */*STitle*/, int /*SMaxLen*/) 
 }
 
 int ConPutBox(int X, int Y, int W, int H, PCell Cell) {
-    int i, hidden = 0;
+    int i, j, hidden = 0;
+    unsigned short vbuff[W];
 
     for (i = 0; i < H; i++) {
         if (LastMouseY == Y + i) { mouseHide(); hidden = 1; }
         lseek(VcsFd, 4 + ((Y + i) * VideoCols + X) * 2, SEEK_SET);
-        conwrite(VcsFd, Cell, 2 * W);
+
+        for (j = 0; j < W; j++)
+        {
+            vbuff[j] = (Cell[j].Attr << 8) | (Cell[j].Ch & 0xFF);
+        }
+
+        conwrite(VcsFd, vbuff, 2 * W);
         Cell += W;
         if (hidden) mouseShow();
     }
@@ -416,12 +437,20 @@ int ConPutBox(int X, int Y, int W, int H, PCell Cell) {
 }
 
 int ConGetBox(int X, int Y, int W, int H, PCell Cell) {
-    int i, hidden = 0;
+    int i, j, hidden = 0;
+    unsigned short vbuff[W];
 
     for (i = 0; i < H; i++) {
         if (LastMouseY == Y + i) { mouseHide(); hidden = 1; }
         lseek(VcsFd, 4 + ((Y + i) * VideoCols + X) * 2, SEEK_SET);
-        conread(VcsFd, Cell, 2 * W);
+        conread(VcsFd, vbuff, 2 * W);
+
+        for (j = 0; j < W; j++)
+        {
+            Cell[j].Ch = (vbuff[j] & 0xFF);
+            Cell[j].Attr = (vbuff[j] >> 8);
+        }
+
         Cell += W;
         if (hidden) mouseShow();
     }
@@ -429,12 +458,19 @@ int ConGetBox(int X, int Y, int W, int H, PCell Cell) {
 }
 
 int ConPutLine(int X, int Y, int W, int H, PCell Cell) {
-    int i, hidden = 0;
+    int i, j, hidden = 0;
+    unsigned short vbuff[W];
 
     for (i = 0; i < H; i++) {
         if (LastMouseY == Y + i) { mouseHide(); hidden = 1; }
         lseek(VcsFd, 4 + ((Y + i) * VideoCols + X) * 2, SEEK_SET);
-        conwrite(VcsFd, Cell, 2 * W);
+
+        for (j = 0; j < W; j++)
+        {
+            vbuff[j] = (Cell[j].Attr << 8) | (Cell[j].Ch & 0xFF);
+        }
+
+        conwrite(VcsFd, vbuff, 2 * W);
         if (hidden) mouseShow();
     }
     return 0;
@@ -442,18 +478,19 @@ int ConPutLine(int X, int Y, int W, int H, PCell Cell) {
 
 int ConSetBox(int X, int Y, int W, int H, TCell Cell) {
     TDrawBuffer B;
-    MoveCh(B, Cell & 0xFF, Cell >> 8, W);
+    MoveCh(B, Cell.Ch, Cell.Attr, W);
     ConPutLine(X, Y, W, H, B);
     return 0;
 }
 
 int ConScroll(int Way, int X, int Y, int W, int H, TAttr Fill, int Count) {
-    PCell C;
+    TCell *C;
     TDrawBuffer B;
 
     if (Count == 0 || Count > H) return 0;
-    C = (PCell)malloc(2 * W * H);
-    if (C == 0)
+    //C = (PCell)malloc(2 * W * H);
+    C = new TCell[W * H];
+    if (C == NULL)
         return -1;
 #ifdef USE_SCRNMAP
     noCharTrans = 1;
@@ -470,7 +507,8 @@ int ConScroll(int Way, int X, int Y, int W, int H, TAttr Fill, int Count) {
 #ifdef USE_SCRNMAP
     noCharTrans = 0;
 #endif
-    free((void *)C);
+    delete [] C;
+    //free((void *)C);
     return 0;
 }
 

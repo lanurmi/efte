@@ -45,6 +45,7 @@
 #include "c_mode.h"
 #include "c_color.h"
 #include "s_files.h"
+#include "s_string.h"
 #include "log.h"
 
 #define PM_STACK_SIZE (96 * 1024)
@@ -2041,11 +2042,13 @@ int ConGetEvent(TEventMask EventMask, TEvent *Event, int WaitTime, int Delete, G
                     case SB_LINEUP:
                         Event->What = evCommand;
                         Event->Msg.Command = cmVScrollUp;
+                        Event->Msg.Param1 = 1;
                         break;
                         
                     case SB_LINEDOWN:
                         Event->What = evCommand;
                         Event->Msg.Command = cmVScrollDown;
+                        Event->Msg.Param1 = 1;
                         break;
                         
                     case SB_PAGEUP:
@@ -2091,11 +2094,13 @@ int ConGetEvent(TEventMask EventMask, TEvent *Event, int WaitTime, int Delete, G
                     case SB_LINEUP:
                         Event->What = evCommand;
                         Event->Msg.Command = cmHScrollLeft;
+                        Event->Msg.Param1 = 1;
                         break;
                         
                     case SB_LINEDOWN:
                         Event->What = evCommand;
                         Event->Msg.Command = cmHScrollRight;
+                        Event->Msg.Param1 = 1;
                         break;
                         
                     case SB_PAGEUP:
@@ -2938,13 +2943,13 @@ int GFramePeer::ConQuerySize(int *X, int *Y) {
 int GFramePeer::ConSetTitle(char *Title, char *STitle) {
     char szTitle[256] = {0};
 
-    JustFileName(Title, szTitle);
+    JustFileName(Title, szTitle, sizeof(szTitle));
     if (szTitle[0] == '\0') // if there is no filename, try the directory name.
-        JustLastDirectory(Title, szTitle);
+        JustLastDirectory(Title, szTitle, sizeof(szTitle));
 
     if (szTitle[0] != '\0') // if there is something...
-        strncat(szTitle, " - ", sizeof(szTitle) - 1 - strlen(szTitle));
-    strncat(szTitle, Title, sizeof(szTitle) - 1 - strlen(szTitle));
+        strlcat(szTitle, " - ", sizeof(szTitle));
+    strlcat(szTitle, Title, sizeof(szTitle));
 
     WinSetWindowText(hwndFrame, szTitle);
     return 1;
@@ -3490,17 +3495,20 @@ int GUI::RunProgram(int mode, char *Command) {
     int rc;
     PID pid;
     ULONG sid;
+    int ArgsSize;
     
     Prog = getenv("COMSPEC");
+
+    ArgsSize = 3 + strlen(Command) + 1;
     
-    Args = (char *)malloc(3 + strlen(Command) + 1);
+    Args = (char *)malloc(ArgsSize);
     if (Args == NULL) {
         return -1;
     }
     
     if (*Command != 0) {
-        strcpy(Args, "/c ");
-        strcat(Args, Command);
+        strlcpy(Args, "/c ", ArgsSize);
+        strlcat(Args, Command, ArgsSize);
     } else {
         Args[0] = 0;
     }
@@ -3612,14 +3620,15 @@ static int CreatePipeChild(ULONG *sid, PID *pid, HPIPE &hfPipe, char *Command) {
     arglen += strlen(Command) + 1;
     Args[arglen] = '\0';
 #else
-    Args = (char *)malloc(3 + strlen(Command) + 1);
+    int ArgsSize = 3 + strlen(Command) + 1;
+    Args = (char *)malloc(ArgsSize);
     if (Args == NULL) {
         DosClose(hfPipe);
         return -1;
     }
     
-    strcpy(Args, "/c ");
-    strcat(Args, Command);
+    strlcpy(Args, "/c ", ArgsSize);
+    strlcat(Args, Command, ArgsSize);
 #endif
     
     

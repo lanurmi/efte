@@ -107,41 +107,57 @@ char *getProgramName(char *name) {
 #endif
 
 static int GetConfigFileName(int /*argc*/, char **argv, char *ConfigFileName) {
+    // NOTE: function assumes that ConfigFileName's size is MAXPATH
+
     char CfgName[MAXPATH] = "";
 
     if (ConfigFileName[0] == 0) {
 #if defined(UNIX)
         // ? use ./.fterc if by current user ?
-        ExpandPath("~/.fterc", CfgName);
+        ExpandPath("~/.fterc", CfgName, sizeof(CfgName));
 #elif defined(DOS) || defined(DOSP32)
-        strcpy(CfgName, argv[0]);
-        strcpy(findPathExt(CfgName), ".cnf");
+        strlcpy(CfgName, argv[0], sizeof(CfgName));
+
+        char *extPtr;
+
+        if ((extPtr = findPathExt(CfgName)) != NULL)
+        {
+            *extPtr = 0;
+            strlcat(CfgName, ".cnf", sizeof(CfgName));
+        }
 #elif defined(OS2) || defined(NT)
         char home[MAXPATH] = "";
         char *ph;
 #if defined(OS2)
         ph = getenv("HOME");
-        if (ph) strcpy(home, ph);
+        if (ph) strlcpy(home, ph, sizeof(home));
 #endif
 #if defined(NT)
         ph = getenv("HOMEDRIVE");
-        if (ph) strcpy(home, ph);
+        if (ph) strlcpy(home, ph, sizeof(home));
         ph = getenv("HOMEPATH");
-        if (ph) strcat(home, ph);
+        if (ph) strlcat(home, ph, sizeof(home));
 #endif
         if (home[0]) {
-            strcpy(CfgName, home);
+            strlcpy(CfgName, home, sizeof(CfgName));
             Slash(CfgName, 1);
-            strcat(CfgName, "fte.cnf");
+            strlcat(CfgName, "fte.cnf", sizeof(CfgName));
         }
 
         if (!home[0] || access(CfgName, 0) != 0) {
-            strcpy(CfgName, argv[0]);
-            strcpy(findPathExt(CfgName), ".cnf");
+            strlcpy(CfgName, argv[0], sizeof(CfgName));
+
+            char *extPtr;
+
+            if ((extPtr = findPathExt(CfgName)) != NULL)
+            {
+                *extPtr = 0;
+                strlcat(CfgName, ".cnf", sizeof(CfgName));
+            }
         }
 #endif
 
-        strcpy(ConfigFileName, CfgName);
+        strlcpy(ConfigFileName, CfgName, MAXPATH);
     }
     if (access(ConfigFileName, 0) == 0)
         return 1;
@@ -149,7 +165,7 @@ static int GetConfigFileName(int /*argc*/, char **argv, char *ConfigFileName) {
 #if defined(UNIX)
     for (unsigned int i = 0; i < sizeof(Unix_RCPaths)/sizeof(Unix_RCPaths[0]); i++) {
         if (access(Unix_RCPaths[i], 0) == 0) {
-            strcpy(ConfigFileName, Unix_RCPaths[i]);
+            strlcpy(ConfigFileName, Unix_RCPaths[i], MAXPATH);
             return 1;
         }
     }
@@ -175,12 +191,12 @@ static int CmdLoadConfiguration(int &argc, char **argv) {
 #ifndef FTE_NO_LOGGING
                     char path[MAXPATH];
 #ifdef UNIX
-                    ExpandPath("~/.fte", path);
+                    ExpandPath("~/.fte", path, sizeof(path));
 #else
-                    JustDirectory(argv[0], path);
+                    JustDirectory(argv[0], path, sizeof(path));
 #endif
                     Slash(path,1);
-                    strcat(path, "fte.log");
+                    strlcat(path, "fte.log", sizeof(path));
                     if (debug_clean) unlink(path);
 
                     globalLog.SetLogFile(path);
@@ -201,7 +217,7 @@ static int CmdLoadConfiguration(int &argc, char **argv) {
             } else if (argv[Arg][1] == 'c' || argv[Arg][1] == 'C') {
                 if (argv[Arg][2])
                 {
-                    ExpandPath(argv[Arg] + 2, ConfigFileName);
+                    ExpandPath(argv[Arg] + 2, ConfigFileName, sizeof(ConfigFileName));
                     haveConfig = 1;
                 }
                 else
@@ -233,10 +249,10 @@ static int CmdLoadConfiguration(int &argc, char **argv) {
                 QuoteNext = 1;
 #ifdef CONFIG_DESKTOP
             } else if (argv[Arg][1] == 'D') {
-                ExpandPath(argv[Arg] + 2, DesktopFileName);
+                ExpandPath(argv[Arg] + 2, DesktopFileName, sizeof(DesktopFileName));
                 if (IsDirectory(DesktopFileName)) {
                     Slash(DesktopFileName, 1);
-                    strcat(DesktopFileName, DESKTOP_NAME);
+                    strlcat(DesktopFileName, DESKTOP_NAME, sizeof(DesktopFileName));
                 }
                 if (DesktopFileName[0] == 0) {
                     LoadDesktopOnEntry = 0;
@@ -247,7 +263,7 @@ static int CmdLoadConfiguration(int &argc, char **argv) {
 #endif
 #ifdef CONFIG_HISTORY
             } else if (argv[Arg][1] == 'H') {
-                strcpy(HistoryFileName, argv[Arg] + 2);
+                strlcpy(HistoryFileName, argv[Arg] + 2, sizeof(HistoryFileName));
                 if (HistoryFileName[0] == 0) {
                     KeepHistory = 0;
                 } else {

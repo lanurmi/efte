@@ -1796,27 +1796,21 @@ int GUI::ShowEntryScreen() {
     return 1;
 }
 
-int GUI::RunProgram(int mode, char *Command) {
+int GUI::RunProgram(char *Command) {
     char Cmd[1024];
 
-    char* xterm = getenv("TERM");
-    if (NULL == xterm || 0 == *xterm)
-        xterm = "xterm";
-
-    strcpy(Cmd, xterm);
+    strlcpy(Cmd, XShellCommand, sizeof(Cmd));
 
     if (*Command == 0)  // empty string = shell
-        strcat(Cmd, " -ls &");
+        strlcat(Cmd, " -ls &", sizeof(Cmd));
     else {
-        strcat(Cmd, " -e ");
-        // buffer overflow problem: -2 for possible async.
-	strncat(Cmd, Command, sizeof(Cmd) - strlen(Cmd) - 2);
-        Cmd[sizeof(Cmd) - 3] = 0;
+        strlcat(Cmd, " -e ", sizeof(Cmd));
+	strlcat(Cmd, Command, sizeof(Cmd));
         if (mode == RUN_ASYNC)
-            strcat(Cmd, " &");
+            strlcat(Cmd, " &", sizeof(Cmd));
     }
-    rc = system(Cmd);
-    return rc;
+
+    return system(Cmd);
 }
 
 void PipeCallback(GPipe *pipe, int *source, XtInputId *input) {
@@ -1928,7 +1922,8 @@ int GUI::ClosePipe(int id) {
     return WEXITSTATUS(status);
 }
 
-int GetXSelection(int *len, char **data) {
+int GetXSelection(int *len, char **data, int clipboard) {
+    // XXX use clipboard?
     *data = XFetchBytes(display, len);
     if (*data == 0)
         return -1;
@@ -1936,9 +1931,24 @@ int GetXSelection(int *len, char **data) {
         return 0;
 }
 
-int SetXSelection(int len, char *data) {
+int SetXSelection(int len, char *data, int clipboard) {
+    Atom clip;
     XStoreBytes(display, data, len);
-    XSetSelectionOwner (display, XA_PRIMARY, None, CurrentTime);
+    switch (clipboard) {
+    case 0:
+        clip =  XA_CLIPBOARD;
+        break;
+    case 1:
+        clip = XA_PRIMARY;
+        break;
+    case 2:
+        clip = XA_SECONDARY;
+        break;
+    default:
+        // not supported
+        return -1;
+    }
+    XSetSelectionOwner(display, clip, None, CurrentTime);
     return 1;
 }
 

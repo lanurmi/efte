@@ -167,7 +167,7 @@ void ExInput::HandleEvent(TEvent &Event) {
                 int len;
 
                 if (SystemClipboard)
-                    GetPMClip();
+                    GetPMClip(0);
                 
                 if (SSBuffer == 0) break;
                 if (SSBuffer->RCount == 0) break;

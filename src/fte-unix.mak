@@ -174,8 +174,8 @@ QLIBS    = -lqt
 all:    cfte $(TARGETS)
 #rm -f fte ; ln -s $(PRIMARY) fte
 
-cfte: cfte.o s_files.o
-	$(LD) $(LDFLAGS) cfte.o s_files.o -o cfte
+cfte: cfte.o s_files.o s_string.o
+	$(LD) $(LDFLAGS) cfte.o s_files.o s_string.o -o cfte
 
 c_config.o: defcfg.h
 
@@ -218,8 +218,12 @@ g_qt_dlg.obj: g_qt_dlg.moc
 .depend: defcfg.h
 	$(CC) -MM $(CCFLAGS) $(SRCS) 1>.depend
 
+# purposefully not part of "all".
+tags: $(SRCS) $(wildcard *.h)
+	ctags *.h $(SRCS)
+
 clean:
-	rm -f core *.o .depend $(TARGETS) defcfg.h defcfg.cnf cfte fte vfte compkeys
+	rm -f core *.o .depend $(TARGETS) defcfg.h defcfg.cnf cfte fte vfte compkeys tags
 
 #
 # include dependency files if they exist

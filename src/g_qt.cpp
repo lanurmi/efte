@@ -337,6 +337,7 @@ void QEView::sbHmoveLeft() {
     NextEvent.What = evCommand;
     NextEvent.Msg.View = view->View;
     NextEvent.Msg.Command = cmHScrollLeft;
+    NextEvent.Msg.Param1 = 1;
     ActiveEvent(NextEvent);
 }
 
@@ -344,6 +345,7 @@ void QEView::sbHmoveRight() {
     NextEvent.What = evCommand;
     NextEvent.Msg.View = view->View;
     NextEvent.Msg.Command = cmHScrollRight;
+    NextEvent.Msg.Param1 = 1;
     ActiveEvent(NextEvent);
 }
 
@@ -373,6 +375,7 @@ void QEView::sbVmoveUp() {
     NextEvent.What = evCommand;
     NextEvent.Msg.View = view->View;
     NextEvent.Msg.Command = cmVScrollUp;
+    NextEvent.Msg.Param1 = 1;
     ActiveEvent(NextEvent);
 }
 
@@ -380,6 +383,7 @@ void QEView::sbVmoveDown() {
     NextEvent.What = evCommand;
     NextEvent.Msg.View = view->View;
     NextEvent.Msg.Command = cmVScrollDown;
+    NextEvent.Msg.Param1 = 1;
     ActiveEvent(NextEvent);
 }
 
@@ -1474,10 +1478,8 @@ int GFramePeer::ConSetTitle(char *Title, char *STitle) {
 }
 
 int GFramePeer::ConGetTitle(char *Title, int MaxLen, char *STitle, int SMaxLen) {
-    strncpy(Title, qFrame->caption(), MaxLen);
-    Title[MaxLen - 1] = 0;
-    strncpy(STitle, qFrame->iconText(), SMaxLen);
-    STitle[SMaxLen - 1] = 0;
+    strlcpy(Title, qFrame->caption(), MaxLen);
+    strlcpy(STitle, qFrame->iconText(), SMaxLen);
     return 1;
 }
 
@@ -1962,24 +1964,18 @@ int GUI::ShowEntryScreen() {
 int GUI::RunProgram(char *Command) {
     char Cmd[1024];
 
-    char* xterm = getenv("TERM");
-    if (NULL == xterm || 0 == *xterm)
-        xterm = "xterm";
-
-    strcpy(Cmd, xterm);
+    strlcpy(Cmd, XShellCommand, sizeof(Cmd));
 
     if (*Command == 0)  // empty string = shell
-        strcat(Cmd, " -ls &");
+        strlcat(Cmd, " -ls &", sizeof(Cmd));
     else {
-        strcat(Cmd, " -e ");
-        // buffer overflow problem: -2 for possible async.
-	strncat(Cmd, Command, sizeof(Cmd) - strlen(Cmd) - 2);
-        Cmd[sizeof(Cmd) - 3] = 0;
+        strlcat(Cmd, " -e ", sizeof(Cmd));
+	strlcat(Cmd, Command, sizeof(Cmd));
         if (mode == RUN_ASYNC)
-            strcat(Cmd, " &");
+            strlcat(Cmd, " &", sizeof(Cmd));
     }
-    rc = system(Cmd);
-    return rc;
+
+    return system(Cmd);
 }
 
 /*void PipeCallback(GPipe *pipe, int *source, int *input) {
@@ -2093,11 +2089,23 @@ int GUI::ClosePipe(int id) {
 
 int GUI::multiFrame() { return 1; }
 
-int GetXSelection(int *len, char **data) {
+int GetXSelection(int *len, char **data, int clipboard) {
     QClipboard *cb = QApplication::clipboard();
     const char *text;
+    Mode mode;
+    switch (clipboard) {
+    case 0:
+        mode = QClipboard::Clipboard;
+        break;
+    case 1:
+        mode = QClipboard::Selection;
+        break;
+    default:
+        // not supported
+        return -1;
+    }
 
-    text = cb->text();
+    text = cb->text(mode);
     if (text == 0)
         return -1;
 
@@ -2109,13 +2117,26 @@ int GetXSelection(int *len, char **data) {
     return 0;
 }
 
-int SetXSelection(int len, char *data) {
+int SetXSelection(int len, char *data, int clipboard) {
     QClipboard *cb = QApplication::clipboard();
     char *text = (char *)malloc(len + 1);
+    Mode mode;
     if (text == 0)
         return -1;
+    switch (clipboard) {
+    case 0:
+        mode = QClipboard::Clipboard;
+        break;
+    case 1:
+        mode = QClipboard::Selection;
+        break;
+    default:
+        // not supported
+        return -1;
+    }
     memcpy(text, data, len);
     text[len] = 0;
+    cb.setText(text, mode);
     free(text);
     return 0;
 }
