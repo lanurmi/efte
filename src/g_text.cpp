@@ -595,7 +595,8 @@ GFrame::~GFrame() {
         frames = Next;
     }
     Next = Prev = 0;
-    free(Menu);
+    if (Menu)
+	free(Menu);
 }
 
 int GFrame::ConSetTitle(char *Title, char *STitle) {
