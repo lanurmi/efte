@@ -1,3 +1,12 @@
+fte (0.49.13-13) unstable; urgency=low
+
+  * CVS 2001/06/14
+  * fixed building dependency bug (Closes: #100052)
+  * fixed X Window System description bug (Closes: #76078)
+  * (Closes: #96444) - it was not the fault of fte
+  
+ -- Zdenek Kabelac <kabi@debian.org>  Thu,  7 Jun 2001 14:04:21 +0000
+
 fte (0.49.13-12) unstable; urgency=low
 
   * CVS 2001/06/07
