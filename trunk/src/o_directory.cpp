@@ -22,7 +22,7 @@ EDirectory::EDirectory(int createFlags, EModel **ARoot, char *aPath): EList(crea
     Files = 0;
     FCount = 0;
     SearchLen = 0;
-    ExpandPath(aPath, XPath);
+    ExpandPath(aPath, XPath, sizeof(XPath));
     Slash(XPath, 1);
     Path = strdup(XPath);
     RescanList();
@@ -107,8 +107,8 @@ void EDirectory::RescanList() {
 
     Count = 0;
     FCount = 0;
-    if (JustDirectory(Path, Dir) != 0) return;
-    JustFileName(Path, Name);
+    if (JustDirectory(Path, Dir, sizeof(Dir)) != 0) return;
+    JustFileName(Path, Name, sizeof(Name));
 
     // we don't want any special information about symbolic links, just to browse files
     ff = new FileFind(Dir, "*", ffDIRECTORY | ffHIDDEN | ffLINK);
@@ -167,7 +167,7 @@ void EDirectory::FreeList() {
 int EDirectory::isDir(int No) {
     char FilePath[256];
 
-    JustDirectory(Path, FilePath);
+    JustDirectory(Path, FilePath, sizeof(FilePath));
     Slash(FilePath, 1);
     strcat(FilePath, Files[No]->Name());
     return IsDirectory(FilePath);
@@ -355,15 +355,15 @@ int EDirectory::FmChDir(const char *Name) {
     char CName[256] = "";
 
     if (strcmp(Name, SSLASH) == 0) {
-        JustRoot(Path, Dir);
+        JustRoot(Path, Dir, sizeof(Dir));
     } else if (strcmp(Name, SDOT SDOT) == 0) {
         Slash(Path, 0);
-        JustFileName(Path, CName);
-        JustDirectory(Path, Dir);
+        JustFileName(Path, CName, sizeof(CName));
+        JustDirectory(Path, Dir, sizeof(Dir));
     } else {
-        JustDirectory(Path, Dir);
+        JustDirectory(Path, Dir, sizeof(Dir));
         Slash(Dir, 1);
-        strcat(Dir, Name);
+        strlcat(Dir, Name, sizeof(Dir));
     }
     Slash(Dir, 1);
     free(Path);
@@ -422,7 +422,7 @@ int EDirectory::FmRmDir(char const* Name)
 int EDirectory::FmLoad(const char *Name, EView *XView) {
     char FilePath[256];
 
-    JustDirectory(Path, FilePath);
+    JustDirectory(Path, FilePath, sizeof(FilePath));
     Slash(FilePath, 1);
     strcat(FilePath, Name);
     return FileLoad(0, FilePath, NULL, XView);
@@ -444,9 +444,9 @@ void EDirectory::GetInfo(char *AInfo, int /*MaxLen*/) {
     char buf[256] = {0};
     char winTitle[256] = {0};
 
-    JustFileName(Path, buf);
+    JustFileName(Path, buf, sizeof(buf));
     if (buf[0] == '\0') // if there is no filename, try the directory name.
-        JustLastDirectory(Path, buf);
+        JustLastDirectory(Path, buf, sizeof(buf));
 
     if (buf[0] != 0) // if there is a file/dir name, stick it in here.
     {
@@ -468,17 +468,17 @@ void EDirectory::GetInfo(char *AInfo, int /*MaxLen*/) {
             Path);*/
 }
 
-void EDirectory::GetTitle(char *ATitle, int MaxLen, char *ASTitle, int /*SMaxLen*/) {
+void EDirectory::GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen) {
 
     strncpy(ATitle, Path, MaxLen - 1);
     ATitle[MaxLen - 1] = 0;
 
     {
         char P[MAXPATH];
-        strcpy(P, Path);
+        strlcpy(P, Path, sizeof(P));
         Slash(P, 0);
 
-        JustDirectory(P, ASTitle);
+        JustDirectory(P, ASTitle, SMaxLen);
         Slash(ASTitle, 1);
     }
 }
@@ -492,7 +492,7 @@ int EDirectory::ChangeDir(ExState &State) {
         if (View->MView->Win->GetStr("Set directory", sizeof(Dir), Dir, HIST_PATH) == 0)
             return 0;
     }
-    if (ExpandPath(Dir, Dir2) == -1)
+    if (ExpandPath(Dir, Dir2, sizeof(Dir2)) == -1)
         return 0;
 #if 0
     // is this needed for other systems as well ?

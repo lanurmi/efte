@@ -191,9 +191,9 @@ static int CmdLoadConfiguration(int &argc, char **argv) {
 #ifndef FTE_NO_LOGGING
                     char path[MAXPATH];
 #ifdef UNIX
-                    ExpandPath("~/.fte", path);
+                    ExpandPath("~/.fte", path, sizeof(path));
 #else
-                    JustDirectory(argv[0], path);
+                    JustDirectory(argv[0], path, sizeof(path));
 #endif
                     Slash(path,1);
                     strlcat(path, "fte.log", sizeof(path));
@@ -217,7 +217,7 @@ static int CmdLoadConfiguration(int &argc, char **argv) {
             } else if (argv[Arg][1] == 'c' || argv[Arg][1] == 'C') {
                 if (argv[Arg][2])
                 {
-                    ExpandPath(argv[Arg] + 2, ConfigFileName);
+                    ExpandPath(argv[Arg] + 2, ConfigFileName, sizeof(ConfigFileName));
                     haveConfig = 1;
                 }
                 else
@@ -249,7 +249,7 @@ static int CmdLoadConfiguration(int &argc, char **argv) {
                 QuoteNext = 1;
 #ifdef CONFIG_DESKTOP
             } else if (argv[Arg][1] == 'D') {
-                ExpandPath(argv[Arg] + 2, DesktopFileName);
+                ExpandPath(argv[Arg] + 2, DesktopFileName, sizeof(DesktopFileName));
                 if (IsDirectory(DesktopFileName)) {
                     Slash(DesktopFileName, 1);
                     strlcat(DesktopFileName, DESKTOP_NAME, sizeof(DesktopFileName));

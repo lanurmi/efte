@@ -903,7 +903,7 @@ int EBuffer::FileReload(ExState &/*State*/) {
 int EBuffer::FileSaveAs(char *FName) {
     char Name[MAXPATH];
 
-    if (ExpandPath(FName, Name) == -1) {
+    if (ExpandPath(FName, Name, sizeof(Name)) == -1) {
         View->MView->Win->Choice(GPC_ERROR, "Error", 1, "O&K", "Invalid path: %s.", FName);
         return 0;
     }
@@ -947,7 +947,7 @@ int EBuffer::FileSaveAs(ExState &State) {
 int EBuffer::FileWriteTo(char *FName) {
     char Name[MAXPATH];
 
-    if (ExpandPath(FName, Name) == -1) {
+    if (ExpandPath(FName, Name, sizeof(Name)) == -1) {
         View->MView->Win->Choice(GPC_ERROR, "Error", 1, "O&K", "Invalid path: %s.", FName);
         return 0;
     }
@@ -987,12 +987,12 @@ int EBuffer::BlockReadX(ExState &State, int blockMode) {
     char Name[MAXPATH];
     char FName[MAXPATH];
 
-    if (JustDirectory(FileName, FName) == -1) return 0;
+    if (JustDirectory(FileName, FName, sizeof(FName)) == -1) return 0;
     SlashDir(FName);
     if (State.GetStrParam(View, FName, sizeof(FName)) == 0)
         if (View->MView->Win->GetFile("Read block", sizeof(FName), FName, HIST_PATH, GF_OPEN) == 0) return 0;
 
-    if (ExpandPath(FName, Name) == -1) {
+    if (ExpandPath(FName, Name, sizeof(Name)) == -1) {
         View->MView->Win->Choice(GPC_ERROR, "Error", 1, "O&K", "Invalid path: %s.", FName);
         return 0;
     }
@@ -1020,13 +1020,13 @@ int EBuffer::BlockWrite(ExState &State) {
     char FName[MAXPATH];
     int Append = 0;
 
-    if (JustDirectory(FileName, FName) == -1) return 0;
+    if (JustDirectory(FileName, FName, sizeof(FName)) == -1) return 0;
     SlashDir(FName);
     if (State.GetStrParam(View, FName, sizeof(FName)) == 0)
         if (View->MView->Win->GetFile("Write block", sizeof(FName), FName, HIST_PATH, GF_SAVEAS) == 0)
             return 0;
 
-    if (ExpandPath(FName, Name) == -1) {
+    if (ExpandPath(FName, Name, sizeof(Name)) == -1) {
         View->MView->Win->Choice(GPC_ERROR, "Error", 1, "O&K", "Invalid path: %s.", FName);
         return 0;
     }
@@ -1355,17 +1355,17 @@ void EBuffer::GetName(char *AName, int MaxLen) {
     AName[MaxLen - 1] = 0;
 }
 
-void EBuffer::GetPath(char *APath, int /*MaxLen*/) {
-    JustDirectory(FileName, APath);
+void EBuffer::GetPath(char *APath, int MaxLen) {
+    JustDirectory(FileName, APath, MaxLen);
 }
 
 void EBuffer::GetInfo(char *AInfo, int /*MaxLen*/) {
     char buf[256] = {0};
     char winTitle[256] = {0};
 
-    JustFileName(FileName, buf);
+    JustFileName(FileName, buf, sizeof(buf));
     if (buf[0] == '\0') // if there is no filename, try the directory name.
-        JustLastDirectory(FileName, buf);
+        JustLastDirectory(FileName, buf, sizeof(buf));
 
     if (buf[0] != 0) // if there is a file/dir name, stick it in here.
     {
@@ -1568,25 +1568,25 @@ int EBuffer::GetStrVar(int var, char *str, int buflen) {
         return 1;
 
     case mvFileName:
-        JustFileName(FileName, str);
+        JustFileName(FileName, str, buflen);
         return 1;
 
     case mvFileDirectory:
-        JustDirectory(FileName, str);
+        JustDirectory(FileName, str, buflen);
         return 1;
     case mvFileBaseName:
         {
             char buf[MAXPATH];
             char *dot, *dot2;
 
-            JustFileName(FileName, buf);
+            JustFileName(FileName, buf, sizeof(buf));
 
             dot = strchr(buf, '.');
             while ((dot2 = strchr(dot + 1, '.')) != NULL)
                 dot = dot2;
             if (dot)
                 *dot = 0;
-            strcpy(str, buf);
+            strlcpy(str, buf, buflen);
         }
         return 1;
 
@@ -1595,13 +1595,13 @@ int EBuffer::GetStrVar(int var, char *str, int buflen) {
             char buf[MAXPATH];
             char *dot, *dot2;
 
-            JustFileName(FileName, buf);
+            JustFileName(FileName, buf, sizeof(buf));
 
             dot = strchr(buf, '.');
             while ((dot2 = strchr(dot + 1, '.')) != NULL)
                 dot = dot2;
             if (dot)
-                strcpy(str, dot);
+                strlcpy(str, dot, buflen);
             else
                 str[0] = 0;
         }
@@ -1613,8 +1613,7 @@ int EBuffer::GetStrVar(int var, char *str, int buflen) {
         return 0;
 
     case mvFTEVer:
-        strncpy(str, VERSION, buflen);
-        str[buflen - 1] = 0;
+        strlcpy(str, VERSION, buflen);
         return 1;
     }
 

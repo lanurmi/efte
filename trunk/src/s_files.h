@@ -35,13 +35,13 @@
 
 char *Slash(char *Path, int Add);
 char *SlashDir(char *Path);
-int ExpandPath(const char *Path, char *Expanded);
+int ExpandPath(const char *Path, char *Expanded, int ExpandSize);
 int CompletePath(const char *Path, char *Completed, int Num);
 int IsSameFile(const char *Path1, const char *Path2);
-int JustDirectory(const char *Path, char *Dir);
-int JustFileName(const char *Path, char *Name);
-int JustLastDirectory(const char *Path, char *Dir);
-int JustRoot(const char *Path, char *Root);
+int JustDirectory(const char *Path, char *Dir, int DirSize);
+int JustFileName(const char *Path, char *Name, int NameSize);
+int JustLastDirectory(const char *Path, char *Dir, int DirSize);
+int JustRoot(const char *Path, char *Root, int RootSize);
 int FileExists(const char *Path);
 int IsFullPath(const char *Path);
 int IsDirectory(const char *Path);

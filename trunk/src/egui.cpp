@@ -674,14 +674,14 @@ int EGUI::findDesktop(char *argv[]) {
         //** 0: try curdir then "homedir"..
         //         fprintf(stderr, "ld: Mode 0\n");
         if (FileExists(DESKTOP_NAME))
-            ExpandPath(DESKTOP_NAME, DesktopFileName);
+            ExpandPath(DESKTOP_NAME, DesktopFileName, sizeof(DesktopFileName));
         else {
             //** Use homedir,
 #ifdef UNIX
-            ExpandPath("~/" DESKTOP_NAME, DesktopFileName);
+            ExpandPath("~/" DESKTOP_NAME, DesktopFileName, sizeof(DesktopFileName));
 #else
-            JustDirectory(argv[0], DesktopFileName);
-            strcat(DesktopFileName, DESKTOP_NAME);
+            JustDirectory(argv[0], DesktopFileName, sizeof(DesktopFileName));
+            strlcat(DesktopFileName, DESKTOP_NAME, sizeof(DesktopFileName));
 #endif
         }
         return FileExists(DesktopFileName);
@@ -689,14 +689,14 @@ int EGUI::findDesktop(char *argv[]) {
     case 1:
     case 2:
         //** Try curdir, then it's owner(s)..
-        ExpandPath(".", DesktopFileName);
+        ExpandPath(".", DesktopFileName, sizeof(DesktopFileName));
         //fprintf(stderr, "ld: Mode 1 (start at %s)\n", DesktopFileName);
 
         for (;;) {
             //** Try current location,
             char *pe = DesktopFileName + strlen(DesktopFileName);
             Slash(DesktopFileName, 1);      // Add appropriate slash
-            strcat(DesktopFileName, DESKTOP_NAME);
+            strlcat(DesktopFileName, DESKTOP_NAME, sizeof(DesktopFileName));
 
             //fprintf(stderr, "ld: Mode 1 (trying %s)\n", DesktopFileName);
             if (FileExists(DesktopFileName)) {
@@ -712,9 +712,9 @@ int EGUI::findDesktop(char *argv[]) {
 
             if (p == NULL) {
                 //** No desktop! Set default name in current directory,
-                ExpandPath(".", DesktopFileName);
+                ExpandPath(".", DesktopFileName, sizeof(DesktopFileName));
                 Slash(DesktopFileName, 1);
-                strcat(DesktopFileName, DESKTOP_NAME);
+                strlcat(DesktopFileName, DESKTOP_NAME, sizeof(DesktopFileName));
 
                 SaveDesktopOnExit = 0;      // Don't save,
                 return 0;                   // NOT found!!
@@ -731,7 +731,7 @@ void EGUI::DoLoadDesktopOnEntry(int &/*argc*/, char **argv) {
     if (DesktopFileName[0] != 0) {
         if (IsDirectory(DesktopFileName)) {
             Slash(DesktopFileName, 1);
-            strcat(DesktopFileName, DESKTOP_NAME);
+            strlcat(DesktopFileName, DESKTOP_NAME, sizeof(DesktopFileName));
         }
 
         if (LoadDesktopOnEntry && FileExists(DesktopFileName))
@@ -757,20 +757,20 @@ int EGUI::InterfaceInit(int &/*argc*/, char ** /*argv*/) {
 void EGUI::DoLoadHistoryOnEntry(int &/*argc*/, char **argv) {
     if (HistoryFileName[0] == 0) {
 #ifdef UNIX
-        ExpandPath("~/.fte-history", HistoryFileName);
+        ExpandPath("~/.fte-history", HistoryFileName, sizeof(HistoryFileName));
 #else
-        JustDirectory(argv[0], HistoryFileName);
-        strcat(HistoryFileName, "fte.his");
+        JustDirectory(argv[0], HistoryFileName, sizeof(HistoryFileName));
+        strlcat(HistoryFileName, "fte.his", sizeof(HistoryFileName));
 #endif
     } else {
         char p[256];
 
-        ExpandPath(HistoryFileName, p);
+        ExpandPath(HistoryFileName, p, sizeof(p));
         if (IsDirectory(p)) {
             Slash(p, 1);
-            strcat(p, HISTORY_NAME);
+            strlcat(p, HISTORY_NAME, sizeof(p));
         }
-        strcpy(HistoryFileName, p);
+        strlcpy(HistoryFileName, p, sizeof(HistoryFileName));
     }
 
     if (KeepHistory && FileExists(HistoryFileName))
@@ -842,7 +842,7 @@ int EGUI::CmdLoadFiles(int &argc, char **argv) {
             char Path[MAXPATH];
 
             QuoteNext = 0;
-            if (ExpandPath(argv[Arg], Path) == 0 && IsDirectory(Path)) {
+            if (ExpandPath(argv[Arg], Path, sizeof(Path)) == 0 && IsDirectory(Path)) {
                 EModel *m = new EDirectory(cfAppend, &ActiveModel, Path);
                 assert(ActiveModel != 0 && m != 0);
             } else {

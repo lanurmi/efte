@@ -22,6 +22,7 @@
 #include "sysdep.h"
 #include "c_fconfig.h"
 #include "s_files.h"
+#include "s_string.h"
 #include "c_mode.h"
 #include "console.h"
 #include "c_hilit.h"
@@ -203,7 +204,7 @@ int main(int argc, char **argv) {
 	exit(1);
     }
 
-    JustDirectory(Target, XTarget);
+    JustDirectory(Target, XTarget, sizeof(XTarget));
     Slash(XTarget, 1);
 
     if (preprocess_only == false)
@@ -251,7 +252,7 @@ int main(int argc, char **argv) {
 #ifdef UNIX
                "."
 #endif
-               , StartDir);
+               , StartDir, sizeof(StartDir));
     Slash(StartDir, 1);
 
     if (preprocess_only == false)
@@ -259,7 +260,7 @@ int main(int argc, char **argv) {
         CurPos cp;
         char FSource[MAXPATH];
 
-        if (ExpandPath(Source, FSource) != 0) {
+        if (ExpandPath(Source, FSource, sizeof(FSource)) != 0) {
             fprintf(stderr, "Could not expand path %s\n", Source);
             exit(1);
         }
@@ -1858,7 +1859,7 @@ static int LoadFile(const char *WhereName, const char *CfgName, int Level) {
 
     //fprintf(stderr, "Loading file %s %s\n", WhereName, CfgName);
 
-    JustDirectory(WhereName, last);
+    JustDirectory(WhereName, last, sizeof(last));
 
     if (IsFullPath(CfgName)) {
         strlcpy(Cfg, CfgName, sizeof(Cfg));
@@ -1877,23 +1878,23 @@ static int LoadFile(const char *WhereName, const char *CfgName, int Level) {
         // 1. User's .fte directory.
         char tmp[MAXPATH];
         sprintf(tmp, "~/.fte/%s", CfgName);
-        ExpandPath(tmp, Cfg);
+        ExpandPath(tmp, Cfg, sizeof(Cfg));
         //fprintf(stderr, "Looking for %s\n", Cfg);
         if (!FileExists(Cfg))
         {
             // Okay, now try "local config".
             sprintf(tmp, "%slocalconfig/%s", StartDir, CfgName);
-            ExpandPath(tmp, Cfg);
+            ExpandPath(tmp, Cfg, sizeof(Cfg));
             //fprintf(stderr, "Looking for %s\n", Cfg);
             if (!FileExists(Cfg))
             {
                 sprintf(tmp, "%sconfig/%s", StartDir, CfgName);
-                ExpandPath(tmp, Cfg);
+                ExpandPath(tmp, Cfg, sizeof(Cfg));
                 //fprintf(stderr, "Looking for %s\n", Cfg);
                 if (!FileExists(Cfg))
                 {
                     sprintf(tmp, "./%s", CfgName);
-                    ExpandPath(tmp, Cfg);
+                    ExpandPath(tmp, Cfg, sizeof(Cfg));
                     //fprintf(stderr, "Looking for %s\n", Cfg);
                     if (!FileExists(Cfg))
                     {
@@ -1909,7 +1910,7 @@ static int LoadFile(const char *WhereName, const char *CfgName, int Level) {
 #else // UNIX
         SlashDir(last);
         strlcat(last, CfgName, sizeof(last));
-        ExpandPath(last, Cfg);
+        ExpandPath(last, Cfg, sizeof(Cfg));
 #endif // UNIX
     }
     // puts(Cfg);

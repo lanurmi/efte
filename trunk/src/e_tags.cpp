@@ -322,7 +322,7 @@ static int GotoTag(int M, EView *View) { /*FOLD00*/
     char Dir[MAXPATH];
     TagData *TT = &TagD[TagI[M]];
 
-    JustDirectory(TagMem + TT->TagBase, Dir);
+    JustDirectory(TagMem + TT->TagBase, Dir, sizeof(Dir));
 
     if (IsFullPath(TagMem + TT->FileName)) {
         strcpy(path, TagMem + TT->FileName);
