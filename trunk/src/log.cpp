@@ -119,8 +119,10 @@ void Log__BinaryData(FunctionLog& LOGOBJNAME, void* bin_data, size_t len)
     for (size_t i = 0; i < len; i += LINE_LENGTH)
     {
         ostream& os = LOG;
+        size_t j;
+
         // as characters
-        for (size_t j = i; j < i + LINE_LENGTH; ++j)
+        for (j = i; j < i + LINE_LENGTH; ++j)
         {
             if (j < len)
             {
@@ -135,7 +137,7 @@ void Log__BinaryData(FunctionLog& LOGOBJNAME, void* bin_data, size_t len)
         os << "  [";
         // as hex values
         char const cOldFill = os.fill('0');
-        for (size_t j = i; j < i + LINE_LENGTH; ++j)
+        for (j = i; j < i + LINE_LENGTH; ++j)
         {
             if (j < len)
             {
