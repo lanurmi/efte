@@ -516,17 +516,17 @@ int ParseKey(const char *Key, KeySel &ks) {
     return 0;
 }
 
-int GetKeyName(char *Key, KeySel &ks) {
-    *Key = 0;
+int GetKeyName(char *Key, int KeySize, KeySel &ks) {
+    strlcpy(Key, "", KeySize);
 
-    if (ks.Key  & kfAlt)   strcat(Key, "A+");
-    if (ks.Mask & kfAlt)   strcat(Key, "A-");
-    if (ks.Key  & kfCtrl)  strcat(Key, "C+");
-    if (ks.Mask & kfCtrl)  strcat(Key, "C-");
-    if (ks.Key  & kfGray)  strcat(Key, "G+");
-    if (ks.Mask & kfGray)  strcat(Key, "G-");
-    if (ks.Key  & kfShift) strcat(Key, "S+");
-    if (ks.Mask & kfShift) strcat(Key, "S-");
+    if (ks.Key  & kfAlt)   strlcat(Key, "A+", KeySize);
+    if (ks.Mask & kfAlt)   strlcat(Key, "A-", KeySize);
+    if (ks.Key  & kfCtrl)  strlcat(Key, "C+", KeySize);
+    if (ks.Mask & kfCtrl)  strlcat(Key, "C-", KeySize);
+    if (ks.Key  & kfGray)  strlcat(Key, "G+", KeySize);
+    if (ks.Mask & kfGray)  strlcat(Key, "G-", KeySize);
+    if (ks.Key  & kfShift) strlcat(Key, "S+", KeySize);
+    if (ks.Mask & kfShift) strlcat(Key, "S-", KeySize);
 
     if (keyCode(ks.Key) < 256) {
         char c[2];
@@ -538,13 +538,13 @@ int GetKeyName(char *Key, KeySel &ks) {
         //    if (c[0] < ' ')
         //        c[0] += '@';
         if (c[0] == 32)
-            strcat(Key, "Space");
+            strlcat(Key, "Space", KeySize);
         else
-            strcat(Key, c);
+            strlcat(Key, (char *)c, KeySize);
     } else {
         for (int i = 0; i < int(sizeof(KeyList)/sizeof(KeyList[0])); i++)
             if (KeyList[i].Key == keyCode(ks.Key)) {
-                strcat(Key, KeyList[i].Name);
+                strlcat(Key, KeyList[i].Name, KeySize);
                 break;
             }
     }

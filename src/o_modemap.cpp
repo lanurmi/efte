@@ -34,7 +34,7 @@ void EventMapView::DumpKey(const char *aPrefix, EKey *Key) {
         strcpy(KeyName, aPrefix);
         strcat(KeyName, "_");
     }
-    GetKeyName(KeyName + strlen(KeyName), Key->fKey);
+    GetKeyName(KeyName + strlen(KeyName), sizeof(KeyName)-strlen(KeyName), Key->fKey);
     sprintf(Entry, "%13s   ", KeyName);
     id = Key->Cmd;
     for (int i = 0; i < Macros[id].Count; i++) {
@@ -76,7 +76,7 @@ void EventMapView::DumpMap(const char *aPrefix, EKeyMap *aKeyMap) {
                 strcpy(Prefix, aPrefix);
                 strcat(Prefix, "_");
             }
-            GetKeyName(Prefix + strlen(Prefix), Key->fKey);
+            GetKeyName(Prefix + strlen(Prefix), sizeof(Prefix)-strlen(Prefix), Key->fKey);
             DumpMap(Prefix, Key->fKeyMap);
         } else {
             DumpKey(aPrefix, Key);
