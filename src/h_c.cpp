@@ -7,6 +7,7 @@
  *
  */
 
+#define NEED_LOG_H
 #include "fte.h"
 
 #ifdef CONFIG_HILIT_C
