@@ -7,6 +7,9 @@
  *
  */
 
+#ifndef __I_VIEW_H__
+#define __I_VIEW_H__
+
 class EView;
 
 class GxView: public GView {
@@ -55,3 +58,5 @@ public:
     
     int IsModelView() { return Top ? Top->IsModelView() : 0; }
 };
+
+#endif
