@@ -59,6 +59,8 @@ colorize PASCAL {
     h_trans { 6, '<', '0x', 'HexNumber' }
     h_trans { 6, '<', '$', 'HexNumber' }
     h_trans { 7, '<s', '0-9', 'Number' }
+    h_trans { 15, '<', '#$', 'String' }
+    h_trans { 14, '<', '#', 'String' }
     h_trans { 0, 'S', '_a-zA-Z0-9', 'Punctuation' }
 
     h_state 1 { 'Comment' }
@@ -74,13 +76,13 @@ colorize PASCAL {
     h_state 4 { 'String' }
     h_trans { 0, '>', '\'', 'String' }
     h_trans { 0, '$', '', 'String' }
-
+    
     h_state 5 { 'Normal' }
     h_trans { 0, '$', '', 'Normal' }
     h_wtype { 0, 0, 0, 'i', 'a-zA-Z0-9_' }
 
     h_state 6 { 'HexNumber' }
-    h_trans { 6, 'S', '0-9A-Fa-f', 'Normal' }
+    h_trans { 0, '-S', '0-9A-Fa-f', 'Normal' }
     h_trans { 0, '$', '', 'Normal' }
 
     h_state 7 { 'Number' }
@@ -106,7 +108,15 @@ colorize PASCAL {
 
     h_state 13 { 'Comment' }
     h_trans { 8, '>', '}', 'Comment' }
-    
+
+    h_state 14 { 'String' }       # character of the form #ddd
+    h_trans { 0, '-S', '0-9', 'Normal' }
+    h_trans { 0, '$', '', 'Normal' }
+
+    h_state 15 { 'String' }       # character of the form #$xx
+    h_trans { 0, '-S', '0-9A-Fa-f', 'Normal' }
+    h_trans { 0, '$', '', 'Normal' }
+
 }
 
 mode PASCAL: PLAIN {      # Pascal Mode
