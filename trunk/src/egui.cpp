@@ -210,7 +210,7 @@ void EGUI::SetMap(EKeyMap *aMap, KeySel *ks) {
         SetMsg(0);
     } else {
         if (ks != 0) {
-            GetKeyName(key, *ks);
+            GetKeyName(key, sizeof(key), *ks);
             SetMsg(key);
         }
     }

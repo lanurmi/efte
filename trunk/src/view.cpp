@@ -438,7 +438,7 @@ int EView::ShowKey(ExState &/*State*/) {
     ks.Mask = 0;
     ks.Key = MView->Win->GetChar(0);
 
-    GetKeyName(buf, ks);
+    GetKeyName(buf, sizeof(buf), ks);
     Msg(S_INFO, "Key: '%s' - '%8X'", buf, ks.Key);
     return 1;
 }
