@@ -194,7 +194,11 @@ int main(int argc, char **argv) {
         Slash(StartDir, 1);
     }*/
 
-    ExpandPath("..", StartDir);
+    ExpandPath("."
+#ifdef UNIX
+               "."
+#endif
+               , StartDir);
     Slash(StartDir, 1);
 
     {
