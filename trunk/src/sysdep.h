@@ -121,6 +121,7 @@
 #    endif
 #    if defined(MINGW)
 #        include <dir.h>
+#        define HAVE_BOOL // older versions of MingW may not have it
 #    endif
 #    define filecmp stricmp
 #    define popen _popen
