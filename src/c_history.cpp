@@ -20,6 +20,29 @@ static int FPHistoryCount = 0;
 
 static InputHistory inputHistory = { 0, 0, 0 };
 
+void ClearHistory() { /*FOLD00*/
+
+    // free filenames from all entries
+    while(FPHistoryCount--)
+    {
+        free(FPHistory[FPHistoryCount]->FileName);
+        free(FPHistory[FPHistoryCount]);
+    }
+
+    // free history list
+    free(FPHistory);
+
+    // free input history
+    {
+        while(inputHistory.Count--)
+        {
+            free(inputHistory.Line[inputHistory.Count]);
+        }
+        free(inputHistory.Line);
+        free(inputHistory.Id);
+    }
+}
+
 int SaveHistory(char *FileName) { /*FOLD00*/
     FILE *fp;
     
@@ -147,7 +170,12 @@ int UpdateFPos(char *FileName, int Row, int Col) { /*fold00*/
     while (N <= FPHistoryCount) N *= 2;
     NH = (FPosHistory **)realloc((void *)FPHistory, N * sizeof(FPosHistory *));
     if (NH == 0)
+    {
+        free(fp->FileName);
+        free(fp);
         return 0;
+    }
+
     FPHistory = NH;
     
     if (L < FPHistoryCount)

@@ -34,6 +34,7 @@ typedef struct {
 extern char HistoryFileName[256];
 
 
+void ClearHistory();
 int SaveHistory(char *FileName);
 int LoadHistory(char *FileName);
 
