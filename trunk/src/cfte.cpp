@@ -187,15 +187,15 @@ int main(int argc, char **argv) {
     pos = 2 * 4;
 
     fprintf(stderr, "Compiling to '%s'\n", Target);
-    {
+    /*{
         char PrevDir[MAXPATH];
         sprintf(PrevDir, "%s/..", Target);
         ExpandPath(PrevDir, StartDir);
         Slash(StartDir, 1);
-    }
+    }*/
 
-    //ExpandPath(".", StartDir);
-    //Slash(StartDir, 1);
+    ExpandPath("..", StartDir);
+    Slash(StartDir, 1);
 
     {
         CurPos cp;
