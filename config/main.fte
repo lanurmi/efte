@@ -199,6 +199,7 @@ include 'm_tex.fte';
 include 'm_texi.fte';
 include 'm_unrealscript.fte';
 include 'm_xml.fte';
+include 'm_xslt.fte';
 
 # C indentation style menu
 include 'uicstyle.fte';
