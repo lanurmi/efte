@@ -24,7 +24,7 @@ ChColor hcEntry_Selection = 0x2F;
 
 ChColor hcPlain_Normal = 0x07;
 ChColor hcPlain_Background = 0x07;
-ChColor hcPlain_Selected = 0x80;
+ChColor hcPlain_Selected = 0x30;
 ChColor hcPlain_Markers = 0x03;
 ChColor hcPlain_Found = 0x40;
 ChColor hcPlain_Keyword = 0x0F;
