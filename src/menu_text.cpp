@@ -292,23 +292,23 @@ int ExecVertMenu(int x, int y, int id, TEvent &E, UpMenu *up) {
             case kbEnd: cur = Menus[id].Count;
             case kbUp: 
                 {
-                    int x = cur;
+                    int xcur = cur;
                     
                     do {
                         cur--;
                         if (cur < 0) cur = Menus[id].Count - 1;
-                    } while (cur != x && Menus[id].Items[cur].Name == 0);
+                    } while (cur != xcur && Menus[id].Items[cur].Name == 0);
                 }
                 break;
             case kbPgUp:
             case kbHome: cur = -1;
             case kbDown: 
                 {
-                    int x = cur;
+                    int xcur = cur;
                     do {
                         cur++;
                         if (cur >= Menus[id].Count) cur = 0;
-                    } while (cur != x && Menus[id].Items[cur].Name == 0);
+                    } while (cur != xcur && Menus[id].Items[cur].Name == 0);
                 }
                 break;
             case kbEsc: abort = -1; break;

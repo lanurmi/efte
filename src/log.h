@@ -106,7 +106,7 @@ class GlobalLog
 {
     friend class FunctionLog;
 private:
-    char const* m_strLogFile;
+    char*	m_strLogFile;
     ofstream    m_ofsLog;
 
     bool        m_bOpened;
@@ -119,7 +119,7 @@ public:
     GlobalLog() : m_strLogFile(NULL), m_bOpened(false) {}
     GlobalLog(char const* strLogFile) : m_strLogFile(strdup(strLogFile)), m_bOpened(false) {}
 
-    virtual ~GlobalLog() {free((void*)m_strLogFile);}
+    virtual ~GlobalLog() {free(m_strLogFile);}
 
     void SetLogFile(char const* strNewLogFile)
     {

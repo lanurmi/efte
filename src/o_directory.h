@@ -45,9 +45,9 @@ public:
     virtual void GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen);
     
     int isDir(int No);
-    int FmChDir(const char *Name);
-    int FmLoad(char *Name, EView *View);
-    int FmRmDir(char const* Name);
+    int FmChDir(const char* Name);
+    int FmLoad(const char* Name, EView *View);
+    int FmRmDir(const char* Name);
     int ChangeDir(ExState &State);
     int RescanDir();
 };

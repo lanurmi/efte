@@ -25,10 +25,10 @@ public:
     virtual void RepaintView();
     virtual void UpdateStatus();
     virtual void RepaintStatus();
-    
+
     virtual void GetPos();
     virtual void StorePos();
-    
+
     virtual void Resize(int Width, int Height);
 };
 
@@ -43,7 +43,7 @@ public:
     EModel *Next;    // next model
     EModel *Prev;    // prev model
     EView *View;     // active view of model
-    
+
     int ModelNo;
 
     EModel(int createFlags, EModel **ARoot);
@@ -52,7 +52,7 @@ public:
     void AddView(EView *V);
     void RemoveView(EView *V);
     void SelectView(EView *V);
-    
+
     virtual EViewPort *CreateViewPort(EView *V);
 
     virtual int GetContext();
@@ -75,9 +75,9 @@ public:
 
     virtual int GetStrVar(int var, char *str, int buflen);
     virtual int GetIntVar(int var, int *value);
-    
+
     virtual void NotifyPipe(int PipeId);
-    
+
     virtual void NotifyDelete(EModel *Deleting);
     virtual void DeleteRelated();
 };
@@ -97,24 +97,24 @@ public:
 
     virtual void FocusChange(int GotFocus);
     virtual void Resize(int Width, int Height);
-    
+
     void SetModel(EModel *AModel);
     void SelectModel(EModel *AModel);
     void SwitchToModel(EModel *AModel);
-    
+
     void Activate(int GotFocus);
-    
+
     virtual int GetContext();
     virtual EEventMap *GetEventMap();
     virtual int BeginMacro();
     virtual int ExecCommand(int Command, ExState &State);
-    
+
     virtual void HandleEvent(TEvent &Event);
     virtual void UpdateView();
     virtual void RepaintView();
     virtual void UpdateStatus();
     virtual void RepaintStatus();
-    
+
     void Msg(int level, const char *s, ...);
     void SetMsg(char *Msg);
 
@@ -171,7 +171,7 @@ public:
     int RemoveGlobalBookmark(ExState &State);
     int GotoGlobalBookmark(ExState &State);
     int PopGlobalBookmark();
-    
+
     void DeleteModel(EModel *M);
     int CanQuit();
 
