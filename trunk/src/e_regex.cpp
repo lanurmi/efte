@@ -528,7 +528,7 @@ static RxNode *RxComp(const char **const Regexp) {
     return F;
 }
 
-RxNode *RxOptimize(RxNode *rx) {
+static RxNode *RxOptimize(RxNode *rx) {
     return rx;
 }
 
