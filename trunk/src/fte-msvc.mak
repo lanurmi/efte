@@ -1,8 +1,10 @@
 INCDIR    =
 LIBDIR    =
 
-OPTIMIZE  = /O2
-#OPTIMIZE  = /Zi /Od
+OPTIMIZE  = /O2 /MT
+#OPTIMIZE  = /Zi /Od /MTd
+
+#DEBUG     = -DMSVCDEBUG
 
 CC        = cl
 LD        = cl
@@ -12,9 +14,9 @@ OEXT=obj
 #APPOPTIONS = -DDEFAULT_INTERNAL_CONFIG
 #/Fm /GF /J
 CCFLAGS   = $(OPTIMIZE) -DNT -DNTCONSOLE -DMSVC $(INCDIR) /DWIN32 /D_CONSOLE \
-	$(APPOPTIONS) \
-	/nologo /MTd /W3 /J # /YX
-LDFLAGS   = $(OPTIMIZE) $(LIBDIR) /nologo /MTd
+	$(APPOPTIONS) $(DEBUG)\
+	/nologo /W3 /J # /YX
+LDFLAGS   = $(OPTIMIZE) $(LIBDIR) /nologo
 
 .SUFFIXES: .cpp .$(OEXT)
 
@@ -27,6 +29,22 @@ LDFLAGS   = $(OPTIMIZE) $(LIBDIR) /nologo /MTd
 	$(CC) $(CCFLAGS) -c $<
 
 all: cfte.exe fte.cnf fte.exe
+
+clean:
+	-del bin2c.exe
+	-del bin2c.pdb
+	-del cfte.exe
+	-del cfte.pdb
+	-del cfte.exp
+	-del cfte.lib
+	-del defcfg.cnf
+	-del defcfg.h
+	-del fte.cnf
+	-del fte.exe
+	-del fte.his
+	-del fte.pdb
+	-del vc60.pdb
+	-del *.obj
 
 cfte.exe: $(CFTE_OBJS) cfte.def
 	$(LD) $(LDFLAGS) /Fecfte.exe $(CFTE_OBJS) cfte.def
