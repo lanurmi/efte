@@ -30,8 +30,9 @@ ELine::ELine(char *AChars, int ACount) {
 #endif
 }
 
-ELine::~ELine() { 
-    free(Chars); 
+ELine::~ELine() {
+    if (Chars)
+	free(Chars);
 }
 
 int ELine::Allocate(unsigned int Bytes) { 

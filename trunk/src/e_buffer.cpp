@@ -87,9 +87,11 @@ EBuffer::~EBuffer() {
         markIndex.storeForBuffer(this);
     
     Clear();
-    free(LL);
+    if (LL)
+	free(LL);
     //free(Name);
-    free(FileName);
+    if (FileName)
+	free(FileName);
 #ifdef CONFIG_BOOKMARKS
     if (BMCount != 0) {
         for (int i = 0; i < BMCount; i++)
@@ -138,16 +140,20 @@ int EBuffer::Clear() {
         rlst.Lines = 0;
     }
 #endif
-    for (int I = 0; I < RCount; I++)
-        delete LL[GapLine(I, RGap, RCount, RAllocated)];
+    if (LL)
+    {
+	for (int i = 0; i < RCount; i++)
+	    delete LL[GapLine(i, RGap, RCount, RAllocated)];
+	free(LL);
+	LL = 0;
+    }
     RCount = RAllocated = RGap = 0;
-    if (LL) 
-        free(LL);
-    LL = 0;
     VCount = VAllocated = VGap = 0;
     if (VV)
+    {
         free(VV);
-    VV = 0;
+	VV = 0;
+    }
 #ifdef CONFIG_UNDOREDO
     FreeUndo();
 #endif
@@ -585,6 +591,7 @@ int EBuffer::DelLine(int Row, int DoMark) {
         if (MoveRGap(Row) == 0) return 0;
     
     GapSize = RAllocated - RCount;
+
     delete LL[RGap + GapSize];
     LL[RGap + GapSize] = 0;
     RCount--;
