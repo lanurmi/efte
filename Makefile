@@ -10,7 +10,7 @@ all:	fte
 	(cd src ; make unix)
 
 install: all
-	sh install
+	sh ./install
 
 fte: fte.in Makefile
 	sed < fte.in >$@ \
