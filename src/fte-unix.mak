@@ -85,7 +85,7 @@ SINCDIR   = -I/usr/include/slang
 #UOS  = -DIRIX
 #CC   = CC
 #LD   = CC
-#COPTIONS = -xc++
+#COPTIONS = -DNO_NEW_CPP_FEATURES -OPT:Olimit=3000 # -xc++
 
 #######################################################################
 # SunOS (Solaris)
