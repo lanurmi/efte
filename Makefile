@@ -13,7 +13,7 @@ install: all
 	sh install
 
 fte: fte.in Makefile fte.spec
-	sed <$< >$@ \
+	sed < fte.in >$@ \
 	    -e "s|@@CONFIGDIR@@|$(CONFIGDIR)|g" \
 	    -e "s|@@BINDIR@@|$(BINDIR)|g"
 	chmod a+x $@
