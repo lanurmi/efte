@@ -67,9 +67,13 @@ void EDirectory::DrawLine(PCell B, int Line, int Col, ChColor color, int Width) 
         sprintf(s, " %04d/%02d/%02d %02d:%02d:%02d %8ld ",
                 Year, Mon, Day, Hour, Min, Sec, Files[Line]->Size());
 
-        strcat(s, Files[Line]->Name());
-        s[strlen(s) + 1] = '\0';
-        s[strlen(s)] = (Files[Line]->Type() == fiDIRECTORY)? SLASH : ' ';
+        strlcat(s, Files[Line]->Name(), sizeof(s));
+
+        if ((strlen(s) + 2) < sizeof(s))
+        {
+            s[strlen(s) + 1] = '\0';
+            s[strlen(s)] = (Files[Line]->Type() == fiDIRECTORY)? SLASH : ' ';
+        }
 
         if (Col < int(strlen(s)))
             MoveStr(B, 0, Width, s + Col, color, Width);
@@ -169,7 +173,7 @@ int EDirectory::isDir(int No) {
 
     JustDirectory(Path, FilePath, sizeof(FilePath));
     Slash(FilePath, 1);
-    strcat(FilePath, Files[No]->Name());
+    strlcat(FilePath, Files[No]->Name(), sizeof(FilePath));
     return IsDirectory(FilePath);
 }
 
@@ -286,12 +290,18 @@ void EDirectory::HandleEvent(TEvent &Event) {
         case kbBackSp:
             LOG << "Got backspace" << ENDLINE;
             resetSearch = 0;
+
             if (SearchLen > 0) {
                 SearchName[--SearchLen] = 0;
+            }
+
+            if (SearchLen > 0) {
                 Row = SearchPos[SearchLen];
                 Msg(S_INFO, "Search: [%s]", SearchName);
             } else
+            {
                 Msg(S_INFO, "");
+            }
             break;
         case kbEsc:
             Msg(S_INFO, "");
@@ -304,6 +314,9 @@ void EDirectory::HandleEvent(TEvent &Event) {
                 int Found;
 
                 LOG << " -> " << BinChar(Ch) << ENDLINE;
+
+                if (SearchLen == 0)
+                    Row = 0;
 
                 SearchPos[SearchLen] = Row;
                 SearchName[SearchLen] = Ch;
