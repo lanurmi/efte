@@ -11,7 +11,7 @@ use IO::File;
 # vars:
 my $name = 'fte';
 my $version = '0.49.13';
-my $release = '2';
+my $release = '4';
 my $buildroot = File::Spec->canonpath($FindBin::Bin . '/rpmsrc');
 my $bindir  = '/usr/local/bin';
 my $configdir = '/usr/local/lib/fte/config';
@@ -97,10 +97,10 @@ sub copy_all_files
     chdir File::Spec->catdir($FindBin::Bin, File::Spec->updir);
     copy_bin_file('fte', $bindir, 0555);
     chdir 'src';
-    copy_bin_file('[cx]fte', $bindir, 0555);
+    copy_bin_file('[a-z]fte', $bindir, 0555);
     chdir File::Spec->catdir(File::Spec->updir, 'config');
     copy_bin_file('*', $configdir);
-    make_path(File::Spec->catdir($buildroot, $configdir, 'localconfig'));
+    make_path(File::Spec->catdir($buildroot, $configdir, '../localconfig'));
 
     chdir $FindBin::Bin;
 }
@@ -118,7 +118,7 @@ sub create_source_tar_gz
     } glob '*';
     push @srcs, grep { 
         ! /CVS/ and
-            ! /.o(?:bj)?$/ and
+            ! /\.o(?:bj)?$/ and
             ! /~$/ and
             /\./ and
             1

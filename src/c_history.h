@@ -51,6 +51,8 @@ int AddInputHistory(int Id, char *String);
 int CountInputHistory(int Id);
 int GetInputHistory(int Id, char *String, int maxlen, int Nth);
 
+// some platforms don't know about EBuffer yet
+class EBuffer;
 /*
  * Get bookmarks for given Buffer (file) from history.
  */
