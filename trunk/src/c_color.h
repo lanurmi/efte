@@ -19,8 +19,9 @@ extern ChColor hcPlain_Selected;
 extern ChColor hcPlain_Markers;
 extern ChColor hcPlain_Found;
 extern ChColor hcPlain_Keyword;
-extern ChColor hcPlain_Folds;
+extern ChColor hcPlain_Folds[5];
 extern ChColor hcPlain_HilitWord;
+extern ChColor hcPlain_Bookmark;
 
 extern ChColor hcEntry_Field;
 extern ChColor hcEntry_Prompt;
@@ -30,6 +31,12 @@ extern ChColor hcEntry_Selection;
 extern ChColor hcList_Status;
 extern ChColor hcList_Normal;
 extern ChColor hcList_Selected;
+extern ChColor hcList_Hilited;
+extern ChColor hcList_HilitSelect;
+extern ChColor hcList_Marked;
+extern ChColor hcList_MarkSelect;
+extern ChColor hcList_MarkHilit;
+extern ChColor hcList_MarkHilitSel;
 
 extern ChColor hcScrollBar_Arrows;
 extern ChColor hcScrollBar_Back;

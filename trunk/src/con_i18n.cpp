@@ -165,7 +165,7 @@ static int I18NKeyAnalyze(XKeyEvent * keyEvent, KeySym * key, /*fold00*/
  * but as I only need ISO-8859 encoding support,
  * I don't care about this (for now).
  */
-static int I18NKeyAnalyze(XKeyEvent * keyEvent, KeySym * key, /*fold00*/
+static int I18NKeyAnalyze(XKeyEvent * /*keyEvent*/, KeySym * key, /*fold00*/
 			  char *keyName, int nbytes)
 {
     KeySym t = (unsigned char) keyName[0];

@@ -989,6 +989,24 @@ int EBuffer::GetBookmark(char *Name, EPoint &P) {
     return 0;
 }
 
+/*
+ * Searches bookmark list starting at given index (searchFrom) for next
+ * bookmark for line searchForLine. It then returns its name and position
+ * and index (used for next search) or -1 if none found. Name is pointer
+ * directly into bookmark structure (not copied!). If searchForLine is -1,
+ * this function returns any next bookmark -> can be used to enumerate
+ * bookmarks.
+ */
+int EBuffer::GetBookmarkForLine(int searchFrom, int searchForLine, char *&Name, EPoint &P) {
+    for (int i = searchFrom; i < BMCount; i++)
+        if (searchForLine==-1||BMarks[i].BM.Row==searchForLine) {
+            Name = BMarks[i].Name;
+            P = BMarks[i].BM;
+            return i+1;
+        }
+    return -1;
+}
+
 int EBuffer::GotoBookmark(char *Name) {
     for (int i = 0; i < BMCount; i++)
         if (strcmp(Name, BMarks[i].Name) == 0) {
@@ -1081,10 +1099,11 @@ int EBuffer::HilitMatchBracket() {
         return 0;
 
     int Min = VToR(GetVPort()->TP.Row);
-    int Max = VToR(GetVPort()->TP.Row);
-    Max += GetVPort()->Rows;
-    if (Max >= RCount)
+    int Max = GetVPort()->TP.Row + GetVPort()->Rows;
+    if (Max >= VCount)
         Max = RCount;
+    else
+        Max = VToR(Max);
     if (Min < 0)
         Min = 0;
     if (Max < Min)

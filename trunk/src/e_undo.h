@@ -40,4 +40,7 @@
 #define ucFoldOpen         15
 #define ucFoldClose        16
 
+#define ucPlaceUserBookmark  17
+#define ucRemoveUserBookmark 18
+
 #endif

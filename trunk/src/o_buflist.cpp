@@ -15,6 +15,7 @@ BufferView::BufferView(int createFlags, EModel **ARoot): EList(createFlags, ARoo
     ModelNo = 0; // trick
     BList = 0;
     BCount = 0;
+    SearchLen = 0;
 }
 
 BufferView::~BufferView() {
@@ -94,11 +95,13 @@ EModel *BufferView::GetBufferById(int No) {
 }
     
 int BufferView::ExecCommand(int Command, ExState &State) {
+
     switch (Command) {
     case ExCloseActivate:
         {
             EModel *B;
 
+            CancelSearch();
             B = GetBufferById(Row);
             if (B && B != this) {
                 View->SwitchToModel(B);
@@ -111,6 +114,7 @@ int BufferView::ExecCommand(int Command, ExState &State) {
         {
             EModel *B = GetBufferById(Row);
 
+            CancelSearch();
             if (B && B != this && Count > 1) {
                 if (B->ConfQuit(View->MView->Win)) {
                     View->DeleteModel(B);
@@ -134,19 +138,106 @@ int BufferView::ExecCommand(int Command, ExState &State) {
         {
             EModel *B = GetBufferById(Row);
 
+            CancelSearch();
             if (B) {
                 View->Next->SwitchToModel(B);
                 return ErOK;
             }
         }
         return ErFAIL;
+    case ExBufListSearchCancel:
+        CancelSearch();
+        return ErOK;
+    case ExBufListSearchNext:
+        // Find next matching line
+        if (SearchLen) {
+            int i = Row + 1;
+            i = getMatchingLine(i == BCount ? 0 : i, 1);
+            // Never returns -1 since something already found before call
+            Row = SearchPos[SearchLen] = i;
+        }
+        return ErOK;
+    case ExBufListSearchPrev:
+        // Find prev matching line
+        if (SearchLen) {
+            int i = Row - 1;
+            i = getMatchingLine(i == -1 ? BCount - 1 : i, -1);
+            // Never returns -1 since something already found before call
+            Row = SearchPos[SearchLen] = i;
+        }
+        return ErOK;
     }
+
     return EList::ExecCommand(Command, State);
+}
+
+void BufferView::HandleEvent(TEvent &Event) {
+    int resetSearch = 1;
+    EModel::HandleEvent(Event);
+    switch (Event.What) {
+        case evKeyUp:
+            resetSearch = 0;
+            break;
+        case evKeyDown:
+            switch (kbCode(Event.Key.Code)) {
+                case kbBackSp:
+                    resetSearch = 0;
+                    if (SearchLen > 0) {
+                        SearchString[--SearchLen] = 0;
+                        Row = SearchPos[SearchLen];
+                        Msg(S_INFO, "Search: [%s]", SearchString);
+                    } else
+                        Msg(S_INFO, "");
+                    break;
+                case kbEsc:
+                    Msg(S_INFO, "");
+                    break;
+                default:
+                    resetSearch = 0;
+                    if (isAscii(Event.Key.Code) && (SearchLen < MAXISEARCH)) {
+                        char Ch = (char) Event.Key.Code;
+
+                        SearchPos[SearchLen] = Row;
+                        SearchString[SearchLen] = Ch;
+                        SearchString[++SearchLen] = 0;
+                        int i = getMatchingLine(Row, 1);
+                        if (i == -1)
+                            SearchString[--SearchLen] = 0;
+                        else
+                            Row = i;
+                        Msg(S_INFO, "Search: [%s]", SearchString);
+                    }
+                    break;
+            }
+    }
+    if (resetSearch) {
+        SearchLen = 0;
+    }
+}
+
+/**
+ * Search for next line containing SearchString starting from line 'start'.
+ * Direction should be 1 for ascending and -1 for descending.
+ * Returns line found or -1 if none.
+ */
+int BufferView::getMatchingLine (int start, int direction) {
+    int i = start;
+    do {
+        // Find SearchString at any place in string for line i
+        for(int j = 0; BList[i][j]; j++)
+            if (BList[i][j] == SearchString[0] && strnicmp(SearchString, BList[i]+j, SearchLen) == 0) {
+                return i;
+            }
+        i += direction;
+        if (i == BCount) i = 0; else if (i == -1) i = BCount - 1;
+    } while (i != start);
+    return -1;
 }
 
 int BufferView::Activate(int No) {
     EModel *B;
-    
+
+    CancelSearch();
     B = GetBufferById(No);
     if (B) {
         View->SwitchToModel(B);
@@ -155,7 +246,12 @@ int BufferView::Activate(int No) {
     return 0;
 }
 
-void BufferView::GetInfo(char *AInfo, int MaxLen) {
+void BufferView::CancelSearch() {
+    SearchLen = 0;
+    Msg(S_INFO, "");
+}
+
+void BufferView::GetInfo(char *AInfo, int /*MaxLen*/) {
     sprintf(AInfo, "%2d %04d/%03d Buffers", ModelNo, Row + 1, Count);
 }
 

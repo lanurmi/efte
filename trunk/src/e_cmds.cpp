@@ -1280,6 +1280,8 @@ int EBuffer::ToggleIndentWithTabs() { TOGGLE(IndentWithTabs); }
 int EBuffer::ToggleBackSpUnindents() { TOGGLE(BackSpUnindents); }
 int EBuffer::ToggleTrim() { TOGGLE(Trim); }
 int EBuffer::ToggleShowMarkers() { TOGGLE_R(ShowMarkers); }
+int EBuffer::ToggleHilitTags() { TOGGLE_R(HilitTags); }
+int EBuffer::ToggleShowBookmarks() { TOGGLE_R(ShowBookmarks); }
 
 int EBuffer::ToggleWordWrap() { 
     BFI(this, BFI_WordWrap) = (BFI(this, BFI_WordWrap) + 1) % 3;

@@ -154,8 +154,8 @@ void ExComplete::HandleEvent(TEvent &Event)
 	    DoQuit = 1;
 	    break;
 	default:
-	    if (CheckASCII(Event.Key.Code)) {
-		char *s = new char[WordFixed + 2];
+            if (CheckASCII(Event.Key.Code&~kfShift)) {
+                char *s = new char[WordFixed + 2];
 		if (s != NULL) {
 		    if (WordFixed > 0)
 			strncpy(s, Words[WordPos], WordFixed);

@@ -31,6 +31,7 @@ public:
     
     virtual void DrawLine(PCell B, int Line, int Col, ChColor color, int Width);
     virtual char *FormatLine(int Line);
+    virtual int IsHilited(int Line);
 
     virtual void RescanList();
 //    virtual void UpdateList();

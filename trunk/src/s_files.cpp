@@ -146,8 +146,17 @@ int IsDirectory(const char *Path) {
         else
 #endif
             if (!ISSLASH(Path[len - 1])) {
+                int res;
                 struct stat statbuf;
-                if (stat(Path, &statbuf) == 0) {
+#if PATHTYPE == PT_UNIXISH
+                if (Path[0] == '~') {
+                    char Expanded[MAXPATH];
+                    if (ExpandPath(Path, Expanded) == -1) return 0;
+                    res = stat(Expanded, &statbuf);
+                } else
+#endif
+                    res = stat(Path, &statbuf);
+                if (res == 0) {
                     if (S_ISDIR(statbuf.st_mode)) {
                         return 1;
                     }
@@ -466,4 +475,25 @@ char *SepRChr(char *Dir)
                 return p-1;
     }
     return NULL;
+}
+
+// Returns relative path of Path with respect to Dir
+// Ex: Dir = /home/martin/src/ Path = /home/martin/src/Fte/s_files.cpp -> Fte/s_files.cpp
+int RelativePathName(const char *Dir, const char *Path, char *RelPath) {
+    char d[MAXPATH], p[MAXPATH], c;
+    int dl, pl;
+
+    if (ExpandPath(Dir, d) == -1) return -1;
+    if (ExpandPath(Path, p) == -1) return -1;
+    dl = strlen (d); pl = strlen (p);
+
+    if (dl <= pl) {
+        c = p[dl]; p[dl] = 0;
+        if (filecmp(d, p) == 0) {
+            p[dl] = c;
+            strcpy(RelPath, p + dl);
+            return 0;
+        }
+    }
+    return -1;
 }

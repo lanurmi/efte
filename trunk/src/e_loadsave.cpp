@@ -215,11 +215,11 @@ int EBuffer::LoadFrom(char *AFileName) {
                     LL[l]->Count--;
         }
     }
-    if ((BFI(this, BFI_SaveFolds) != 0)) {
+    if ((BFI(this, BFI_SaveFolds) != 0) || BFI(this, BFI_SaveBookmarks) == 1 || BFI(this, BFI_SaveBookmarks) == 2) {
         int len_start = 0, len_end = 0;
         int level = 0, open = 0;
         int l;
-        int pos = -1;
+        int pos = -1, startpos;
         char foldnum[3] = "00";
 
         if (BFS(this, BFS_CommentStart) == 0) len_start = 0;
@@ -229,42 +229,120 @@ int EBuffer::LoadFrom(char *AFileName) {
 
 	for (l = RCount - 1; l >= 0; l--) {
 	    if (LL[l]->Count >= len_start + len_end + 6) {
-                open = -1;
-                level = -1;
-                if (BFI(this, BFI_SaveFolds) == 1) {
-                    pos = 0;
-                } else if (BFI(this, BFI_SaveFolds) == 2) {
-                    pos = LL[l]->Count - len_start - 6 - len_end;
-                }
-                if (((len_start == 0) ||
-                     (memcmp(LL[l]->Chars + pos,
-                             BFS(this, BFS_CommentStart), len_start) == 0)
-                    ) &&
-                    ((len_end == 0) ||
-                     (memcmp(LL[l]->Chars + pos + len_start + 6,
-                             BFS(this, BFS_CommentEnd), len_end) == 0))
-                   )
-                {
-                    if (memcmp(LL[l]->Chars + pos + len_start,
-                               "FOLD",4) == 0)
-                    {
-                        open = 1;
-                    } else if (memcmp(LL[l]->Chars + pos + len_start,
-                                      "fold", 4) == 0) {
-                        open = 0;
-                    } else
-                        open = -1;
+                for (int where = 1; where < 3; where++) {
+                    // where == 1 - start-of-line
+                    // where == 2 - end-of-line
+                    open = -1;
+                    level = -1;
+                    if (BFI(this, BFI_SaveFolds) != where && BFI(this, BFI_SaveBookmarks) != where) continue;
+                    if (where == 1) {
+                        pos = 0;
+                    } else {
+                        pos = LL[l]->Count - len_end;
+                        // Check if line ends with end comment (if defined)
+                        if (len_end != 0 && memcmp(LL[l]->Chars + pos, BFS(this, BFS_CommentEnd), len_end) != 0) continue;
+                        if (BFI(this, BFI_SaveBookmarks) == 2 && pos - 10 >= 0 && LL[l]->Chars[pos-1] == 'b') { // Bookmarks can be at end
+                            char numbuf[5];
+                            int i;
 
-                    foldnum[0] = LL[l]->Chars[pos + len_start + 4];
-                    foldnum[1] = LL[l]->Chars[pos + len_start + 4 + 1];
-                    if (1 != sscanf(foldnum, "%2d", &level))
-                        level = -1;
+                            memcpy(numbuf, LL[l]->Chars + pos - 5, 4); numbuf[4] = 0;
+                            if (1 != sscanf(numbuf, "%x", &i)) continue;
+                            pos -= i + 6;
+                            if (pos < 0) continue;
+                        }
+                        if (BFI(this, BFI_SaveFolds) == 2 && pos - 6 >= 0 &&
+                            (memcmp(LL[l]->Chars + pos - 6, "FOLD", 4) == 0 ||
+                             memcmp(LL[l]->Chars + pos - 6, "fold", 4) == 0)) pos -= 6;
+                        pos -= len_start;
+                    }
+                    // Check comment start
+                    if (pos < 0 || (len_start != 0 && memcmp(LL[l]->Chars + pos, BFS(this, BFS_CommentStart), len_start) != 0)) continue;
+                    startpos = pos;
+                    pos += len_start;
+                    // We have starting position after comment start
+                    // Now we will read fold and/or bookmark info and check
+                    // for end of comment (if where == 2, it must end at EOLN)
 
-                    if (!isdigit(LL[l]->Chars[pos + len_start + 4]) ||
-                        !isdigit(LL[l]->Chars[pos + len_start + 5]))
-                        level = -1;
+                    // This code is not very good, since on error we stop
+                    // parsing comments (and leave it in file), but everything
+                    // already done is not undone (e.g. bookmarks, folds)
 
-                    if (open != -1 && level != -1 && open < 100) {
+                    // Folds come always first
+                    if (BFI(this, BFI_SaveFolds) == where && (pos + len_end + 6 <= LL[l]->Count)) {
+                        if (memcmp(LL[l]->Chars + pos, "FOLD", 4) == 0) {
+                            open = 1;
+                        } else if (memcmp(LL[l]->Chars + pos, "fold", 4) == 0) {
+                            open = 0;
+                        } else
+                            open = -1;
+                    }
+                    if (open != -1) {
+                        foldnum[0] = LL[l]->Chars[pos + 4];
+                        foldnum[1] = LL[l]->Chars[pos + 4 + 1];
+                        if (1 != sscanf(foldnum, "%2d", &level))
+                            level = -1;
+
+                        if (!isdigit(LL[l]->Chars[pos + 4]) ||
+                            !isdigit(LL[l]->Chars[pos + 5]))
+                            level = -1;
+
+                        if (level == -1 || open >= 100) continue;
+                        pos += 6;
+                    }
+
+                    // Now get bookmarks
+                    if (BFI(this, BFI_SaveBookmarks) == where && (pos + len_end + 10 <= LL[l]->Count) && memcmp(LL[l]->Chars + pos, "BOOK", 4) == 0) {
+                        int error = 0;
+                        int i, col, startBook;
+                        char numbuf[5], buf[256];
+
+                        startBook = pos; pos += 4;
+                        while (pos + len_end + 6 + 6 <= LL[l]->Count) {
+                            // Read column
+                            memcpy(numbuf, LL[l]->Chars + pos, 4); numbuf[4] = 0;
+                            pos += 4;
+                            if (1 != sscanf(numbuf, "%x", &col)) {
+                                error = 1; break;
+                            }
+                            // Read length
+                            memcpy(numbuf, LL[l]->Chars + pos, 2); numbuf[2] = 0;
+                            pos += 2;
+                            if (1 != sscanf(numbuf, "%x", &i)) {
+                                error = 1; break;
+                            }
+                            if (pos + i + 6 + len_end > LL[l]->Count || i == 0) {
+                                error = 1; break;
+                            }
+                            if (i) {
+                                memcpy(buf, LL[l]->Chars + pos, i);
+                                pos += i;
+                                if (PlaceUserBookmark(buf, EPoint(l, col)) == 0) goto fail;
+                            }
+                            if (LL[l]->Chars[pos] == 'x') {
+                                // Read total length (just test for correctness)
+                                memcpy(numbuf, LL[l]->Chars + pos + 1, 4);
+                                numbuf[4] = 0;
+                                if (1 != sscanf(numbuf, "%x", &i)) {
+                                    error = 1; break;
+                                }
+                                if (i != pos - startBook || LL[l]->Chars[pos + 5] != 'b') error = 1;
+                                else pos += 6;
+                                break;
+                            }
+                        }
+                        // Stop parsing this comment if error occured
+                        if (error) continue;
+                    }
+
+                    // And last: check, if comment is properly terminated
+                    if (pos + len_end > LL[l]->Count) continue;
+                    if (len_end != 0 && memcmp(LL[l]->Chars + pos, BFS(this, BFS_CommentEnd), len_end) != 0) continue;
+                    // Not at EOLN, but should be (comment at EOLN)
+                    if (where == 2 && LL[l]->Count != pos + len_end) continue;
+                    pos += len_end;
+
+                    // Create fold if whole comment was successfully parsed
+                    if (open != -1) {
                         int f;
 
                         if (FoldCreate(l) == 0) goto fail;
@@ -273,11 +351,12 @@ int EBuffer::LoadFrom(char *AFileName) {
                         FF[f].level = (char)(level & 0xFF);
                         if (open == 0)
                             if (FoldClose(l) == 0) goto fail;
-                        memmove(LL[l]->Chars + pos,
-                                LL[l]->Chars + pos + len_start + len_end + 6,
-                                LL[l]->Count - pos - len_start - len_end - 6);
-                        LL[l]->Count -= len_start + len_end + 6;
                     }
+                    // Now remove parsed comment from line
+                    memmove(LL[l]->Chars + startpos,
+                            LL[l]->Chars + pos,
+                            LL[l]->Count - pos);
+                    LL[l]->Count -= pos - startpos;
                 }
             }
         }
@@ -327,6 +406,13 @@ int EBuffer::SaveTo(char *AFileName) {
     char fold[64];
     unsigned int foldlen = 0;
 
+    int bindex;
+    unsigned int blen = 0;
+    char *bname, book[1024] = "BOOK";
+    EPoint bpos;
+
+    unsigned int len_start = 0, len_end = 0;
+
     if (FileOk && (stat(FileName, &StatBuf) == 0)) {
         if (FileStatus.st_size != StatBuf.st_size ||
             FileStatus.st_mtime != StatBuf.st_mtime)
@@ -372,40 +458,69 @@ int EBuffer::SaveTo(char *AFileName) {
 
     setvbuf(fp, FileBuffer, _IOFBF, sizeof(FileBuffer));
 
+    // Some initializations (to speed-up saving)
+    if (BFS(this, BFS_CommentStart)) len_start = strlen(BFS(this, BFS_CommentStart));
+    if (BFS(this, BFS_CommentEnd)) len_end = strlen(BFS(this, BFS_CommentEnd));
+
     for (l = 0; l < RCount; l++) {
         L = RLine(l);
         f = FindFold(l);
 
+        foldlen = 0;
         // format fold
         if ((f != -1) && (BFI(this, BFI_SaveFolds) != 0)) {
-            foldlen = 0;
-            if (BFS(this, BFS_CommentStart) != 0) {
-                strcpy(fold + foldlen, BFS(this, BFS_CommentStart));
-                foldlen += strlen(BFS(this, BFS_CommentStart));
-            }
-            foldlen += sprintf(fold + foldlen,
-                               FF[f].open ? "FOLD%02d" : "fold%02d",
-                               FF[f].level);
-            if (BFS(this, BFS_CommentEnd) != 0) {
-                strcpy(fold + foldlen, BFS(this, BFS_CommentEnd));
-                foldlen += strlen(BFS(this, BFS_CommentEnd));
-            }
-            ByteCount += foldlen;
+            foldlen = sprintf(fold,
+                              FF[f].open ? "FOLD%02d" : "fold%02d",
+                              FF[f].level);
         }
 
-        // write bol fold
-        if (f != -1 && BFI(this, BFI_SaveFolds) == 1)
-            if (fwrite(fold, 1, foldlen, fp) != foldlen) goto fail;
+        bindex = 0; blen = 0;
+#ifdef CONFIG_BOOKMARKS
+        if (BFI(this, BFI_SaveBookmarks) == 1 || BFI(this, BFI_SaveBookmarks) == 2) {
+            blen = 4;     // Just after "BOOK"
+            while ((bindex = GetUserBookmarkForLine(bindex, l, bname, bpos)) != -1) {
+                // Skip too long bookmarks
+                if (strlen(bname) > 256 || blen + strlen(bname) + 6 + 6 > sizeof(book)) continue;
+                blen += sprintf(book + blen, "%04x%02x%s", bpos.Col, strlen(bname), bname);
+            }
+            if (blen != 4) {
+                blen += sprintf(book + blen, "x%04xb", blen);
+            } else blen = 0;      // Signal, that no bookmarks were saved
+        }
+#endif
 
-        // write data
-        if ((int)(fwrite(L->Chars, 1, L->Count, fp)) != L->Count)
-            goto fail;
-        ByteCount += L->Count;
+        // what - write at 1 = beginning / 2 = end of line
+        for (int what = 1; what < 3; what++) {
+            if ((BFI(this, BFI_SaveFolds) == what && foldlen) ||
+                (BFI(this, BFI_SaveBookmarks) == what && blen)
+               ) {
 
-        // write eof fold
-        if (f != -1 && BFI(this, BFI_SaveFolds) == 2)
-            if (fwrite(fold, 1, foldlen, fp) != foldlen) goto fail;
-
+                if (len_start) {
+                    if (fwrite(BFS(this, BFS_CommentStart), 1, len_start, fp) != len_start) goto fail;
+                    ByteCount += len_start;
+                }
+                if (BFI(this, BFI_SaveFolds) == what && foldlen) {
+                    if (fwrite(fold, 1, foldlen, fp) != foldlen) goto fail;
+                    ByteCount += foldlen;
+                }
+#ifdef CONFIG_BOOKMARKS
+                if (BFI(this, BFI_SaveBookmarks) == what && blen) {
+                    if (fwrite(book, 1, blen, fp) != blen) goto fail;
+                    ByteCount += blen;
+                }
+#endif
+                if (len_end) {
+                    if (fwrite(BFS(this, BFS_CommentEnd), 1, len_end, fp) != len_end) goto fail;
+                    ByteCount += len_end;
+                }
+            }
+            if (what == 1) {
+                // write data
+                if ((int)(fwrite(L->Chars, 1, L->Count, fp)) != L->Count)
+                    goto fail;
+                ByteCount += L->Count;
+            }
+        }
         // write eol
         if ((l < RCount - 1) || BFI(this, BFI_ForceNewLine)) {
             if (BFI(this, BFI_AddCR) == 1) {
@@ -431,7 +546,12 @@ int EBuffer::SaveTo(char *AFileName) {
         goto fail;
     }
     Msg(S_INFO, "Wrote %s.", AFileName);
-    if (BFI(this, BFI_KeepBackups) == 0) {
+    if (BFI(this, BFI_KeepBackups) == 0
+#ifdef CONFIG_OBJ_CVS
+        // No backups for CVS logs
+        || this == CvsLogView
+#endif
+       ) {
         unlink(ABackupName);
     }
     return 1;

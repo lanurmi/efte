@@ -42,6 +42,8 @@
 #ifdef HPUX
 #include </usr/include/X11R5/X11/HPkeysym.h>
 #endif
+#include "sysdep.h"
+#include "c_config.h"
 #include "console.h"
 #include "gui.h"
 
@@ -726,11 +728,11 @@ int ConHideCursor(void) {
 int ConCursorVisible(void) {
     return 1;
 }
-int ConSetCursorSize(int Start, int End) {
+int ConSetCursorSize(int /*Start*/, int /*End*/) {
     return 1;
 }
 
-int ConSetMousePos(int X, int Y) {
+int ConSetMousePos(int /*X*/, int /*Y*/) {
     return 0;
 }
 
@@ -902,7 +904,7 @@ static struct {
     { 0,                 0 }
 };
 
-void ConvertKeyToEvent(KeySym key, KeySym key1, char *keyname, char *keyname1, int etype, int state, TEvent *Event) {
+void ConvertKeyToEvent(KeySym key, KeySym key1, char */*keyname*/, char */*keyname1*/, int etype, int state, TEvent *Event) {
     unsigned int myState = 0;
 
     Event->What = evNone;
@@ -1369,7 +1371,7 @@ int ConFlush(void) {
     return 0;
 }
 
-int ConGrabEvents(TEventMask EventMask) {
+int ConGrabEvents(TEventMask /*EventMask*/) {
     return 0;
 }
 
@@ -1652,8 +1654,11 @@ int GUI::RunProgram(int mode, char *Command) {
 }
 
 char ConGetDrawChar(int index) {
-    static char tab[] = "\x0D\x0C\x0E\x0B\x12\x19____+>\x1F\x01\x12 ";
+    static const char *tab=NULL;
 
+    if (!tab) {
+        tab=GetGUICharacters ("X11","\x0D\x0C\x0E\x0B\x12\x19____+>\x1F\x01\x12 ");
+    }
     assert(index >= 0 && index < (int) strlen(tab));
 
     return tab[index];

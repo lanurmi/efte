@@ -80,8 +80,12 @@ EBuffer::EBuffer(int createFlags, EModel **ARoot, const char * /*AName*/)
 
 EBuffer::~EBuffer() {
 #ifdef CONFIG_HISTORY
-    if (FileName != 0 && Loaded)
+    if (FileName != 0 && Loaded) {
         UpdateFPos(FileName, VToR(CP.Row), CP.Col);
+#ifdef CONFIG_BOOKMARKS
+        if (BFI (this,BFI_SaveBookmarks)==3) StoreBookmarks(this);
+#endif
+    }
 #endif
     if (FileName && Loaded)
         markIndex.storeForBuffer(this);

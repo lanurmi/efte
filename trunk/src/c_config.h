@@ -38,7 +38,12 @@ extern int LoadDesktopMode;
 extern char HelpCommand[128];
 extern char *ConfigSourcePath;
 extern char ConfigFileName[MAXPATH];
+extern int IgnoreBufferList;
+extern char CvsCommand[256];
+extern char CvsLogMode[32];
+extern int ReassignModelIds;
 
+const char *GetGUICharacters(const char *which, const char *defChars);
 int LoadConfig(int argc, char **argv, char *CfgFileName);
 int GetIndentMode(const char *Str);
 int GetHilitMode(const char *Str);

@@ -21,6 +21,7 @@
 
 #include "sysdep.h"
 #include "console.h"
+#include "c_config.h"
 #include "gui.h"
 
 #include <stdlib.h>
@@ -1133,13 +1134,13 @@ int ConPutEvent(TEvent Event)
 }
 
 char ConGetDrawChar(int index) {
-    // static char tab[] = "Ú¿ÀÙÄ³ÂÃ´ÁÅ\x1AúÄ±°";
-    static const char tab[] = "Ú¿ÀÙÄ³ÂÃ´ÁÅ\x1Aú\x04Ä\x18\x19±°\x1B\x1A";
-    
-    assert(strlen(tab) > 20);
-    assert(index >= 0);
+    static const char *tab = NULL;
 
-    assert(index >= 0 && index < (int)strlen(tab));
+    if (!tab) {
+        //tab = GetGUICharacters ("DOS","Ú¿ÀÙÄ³ÂÃ´ÁÅ\x1AúÄ±°");
+        tab = GetGUICharacters ("DOS","Ú¿ÀÙÄ³ÂÃ´ÁÅ\x1Aú\x04Ä\x18\x19±°\x1B\x1A");
+    }
+    assert(index >= 0 && index < (int)strlen(tab) && strlen(tab) > 20);
 
     return tab[index];
 }

@@ -141,6 +141,21 @@ public:
     int CompileNextError(ExState &State);
     int ConfigRecompile(ExState &State);
 #endif
+#ifdef CONFIG_OBJ_CVS
+    int Cvs(ExState &State);
+    int RunCvs(ExState &State);
+    int ViewCvs(ExState &State);
+    int Cvs(char *Options);
+    int ClearCvsMessages(ExState &State);
+    int CvsDiff(ExState &State);
+    int RunCvsDiff(ExState &State);
+    int ViewCvsDiff(ExState &State);
+    int CvsDiff(char *Options);
+    int CvsCommit(ExState &State);
+    int RunCvsCommit(ExState &State);
+    int CvsCommit(char *Options);
+    int ViewCvsLog(ExState &State);
+#endif
 #ifdef CONFIG_OBJ_DIRECTORY
     int DirOpen(ExState &State);
     int OpenDir(char *Directory);

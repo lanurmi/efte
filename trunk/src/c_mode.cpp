@@ -67,7 +67,10 @@ EBufferFlags DefaultBufferFlags = {
 #else
         1,
 #endif
-        0                   // trim on save
+        0,                  // trim on save
+        0,                  // save bookmarks
+        1,                  // HilitTags
+        0,                  // ShowBookmarks
     },
     {
         0,                  // Routine Regexp

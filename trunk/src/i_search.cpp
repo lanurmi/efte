@@ -125,7 +125,7 @@ void ExISearch::HandleEvent(TEvent &Event) {
             if (isAscii(Event.Key.Code) && (len < MAXISEARCH)) {
                 char Ch = (char) Event.Key.Code;
                 
-                stack[stacklen] = Buffer->CP;
+                stack[stacklen++] = Buffer->CP;
                 ISearchStr[len++] = Ch;
                 ISearchStr[len] = 0;
                 if (Buffer->FindStr(ISearchStr, len, Case | Direction) == 0) {

@@ -16,6 +16,7 @@ typedef struct {
     int line;
     char *msg;
     char *text;
+    int hilit;
     EBuffer *Buf;
 } Error;
 
@@ -57,7 +58,7 @@ public:
     virtual int ExecCommand(int Command, ExState &State);
 
     void AddError(Error *p);
-    void AddError(char *file, int line, char *msg, const char *text);
+    void AddError(char *file, int line, char *msg, const char *text, int hilit=0);
     
     void FreeErrors();
     int GetLine(char *Line, int maxim);
@@ -66,6 +67,7 @@ public:
     void ShowError(EView *V, int err);
     void DrawLine(PCell B, int Line, int Col, ChColor color, int Width);
     char* FormatLine(int Line);
+    int IsHilited(int Line);
     void UpdateList();
     int Activate(int No);
     int CanActivate(int Line);

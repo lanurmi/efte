@@ -147,11 +147,12 @@ int Hilit_SH(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, 
                     j++;
                     if (p[2] == '-') j++;
                     Color = Colors[CLR_Control];
-                    while (len > j && isspace(p[j]))
+                    while (len > j && (isspace(p[j]) || p[j] == '\'' || p[j] == '"'))
                         j++;
                     if( p[j] == '\\' ) j++;
-                    while (len > j && !isspace(p[j]))
+                    while (len > j && !(isspace(p[j]) || p[j] == '\'' || p[j] == '"'))
                         *s++ = p[j++];
+                    if (len > j && (p[j] == '\'' || p[j] == '"')) j++;
                     *s = 0;
                     State = hsSH_EOF;
                     break;

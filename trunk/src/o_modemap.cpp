@@ -158,7 +158,7 @@ void EventMapView::GetName(char *AName, int MaxLen) {
     strncpy(AName, "EventMapView", MaxLen);
 }
 
-void EventMapView::GetInfo(char *AInfo, int MaxLen) {
+void EventMapView::GetInfo(char *AInfo, int /*MaxLen*/) {
     sprintf(AInfo, 
             "%2d %04d/%03d EventMapView (%s)",
             ModelNo,
@@ -166,7 +166,7 @@ void EventMapView::GetInfo(char *AInfo, int MaxLen) {
             EMap->Name);
 }
 
-void EventMapView::GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen) {
+void EventMapView::GetTitle(char *ATitle, int /*MaxLen*/, char *ASTitle, int SMaxLen) {
     sprintf(ATitle, "EventMapView: %s", EMap->Name);
     strncpy(ASTitle, "EventMapView", SMaxLen);
     ASTitle[SMaxLen - 1] = 0;

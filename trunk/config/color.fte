@@ -31,9 +31,15 @@ object Entry {
 
 object LIST {
     color {
-        { 'Status',     'List_Status' },
-        { 'Normal',     'List_Normal' },
-        { 'Selected',   'List_Selected' },
+        { 'Status',       'List_Status' },
+        { 'Normal',       'List_Normal' },
+        { 'Selected',     'List_Selected' },
+        { 'Hilited',      'List_Hilited' },
+        { 'HilitSelect',  'List_HilitSelect' },
+        { 'Marked',       'List_Marked' },
+        { 'MarkSelect',   'List_MarkSelect' },
+        { 'MarkHilit',    'List_MarkHilit' },
+        { 'MarkHilitSel', 'List_MarkHilitSel' },
     };
 }
 
@@ -72,7 +78,11 @@ object PLAIN {
         { 'Markers',    'Editor_Markers' },
         { 'Found',      'Editor_FoundText' },
         { 'Keyword',    'Editor_Keywords' },
-        { 'Folds',      'Editor_Folds' },
+        { 'Folds0',     'Editor_Folds0' },
+        { 'Folds1',     'Editor_Folds1' },
+        { 'Folds2',     'Editor_Folds2' },
+        { 'Folds3',     'Editor_Folds3' },
+        { 'Folds4',     'Editor_Folds4' },
         { 'HilitWord',  'Editor_HilitWord' },
     };
 }

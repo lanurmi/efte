@@ -9,6 +9,12 @@
 
 #include "fte.h"
 
+typedef struct _GUICharactersEntry {
+    struct _GUICharactersEntry *next;
+    char *name;
+    char *chars;
+} GUICharactersEntry;
+
 typedef struct _CurPos {
     int sz;
     const char *a;
@@ -75,6 +81,60 @@ int WeirdScroll = 0;
 int LoadDesktopMode = 0;
 char HelpCommand[128] = "man -a";
 char *ConfigSourcePath = 0;
+int IgnoreBufferList = 0;
+GUICharactersEntry *GUICharacters = NULL;
+char CvsCommand[256] = "cvs";
+char CvsLogMode[32] = "PLAIN";
+int ReassignModelIds = 0;
+
+// Which characters to get. defaultCharacters if not set, rest filled
+// with defaultCharacters if too short
+// List of GUICharacters is freed, only one item remains
+const char *GetGUICharacters(const char *which, const char *defChars) {
+    GUICharactersEntry *g, *gg, *found = NULL;
+    char *s;
+    unsigned int i;
+
+    for (g = GUICharacters; g; g=gg) {
+        gg = g->next;
+        if (strcmp(g->name, which) == 0) {
+            if ((i = strlen(g->chars)) < strlen(defChars)) {
+                s = new char [strlen(defChars) + 1];
+                assert(s != NULL);
+                strcpy(s, g->chars);
+                strcpy(s + i, defChars + i);
+                delete g->chars;
+                g->chars = s;
+            }
+            if (found) {
+                free(found->chars); free(found->name); free(found);
+            }
+            found = g;
+        } else {
+            free(g->name); free(g->chars); free(g);
+        }
+    }
+    GUICharacters = found;
+    if (found) return found->chars; else return defChars;
+}
+
+void AppendGUICharacters(const char *string) {
+    char *s;
+    GUICharactersEntry *g;
+
+    s = strchr(string, ':');
+    if (s) {
+        g = new GUICharactersEntry;
+        assert(g != NULL);
+        *s++ = 0;
+        g->name = strdup(string);
+        assert(g->name != NULL);
+        g->chars = strdup(s);
+        assert(g->chars != NULL);
+        g->next = GUICharacters;
+        GUICharacters = g;
+    }
+}
 
 #ifdef CONFIG_SYNTAX_HILIT
 int AddKeyword(ColorKeywords *tab, char color, const char *keyword) {
@@ -203,6 +263,8 @@ int SetGlobalNumber(int what, int number) {
     case FLAG_SevenBit:          SevenBit = number; break;
     case FLAG_WeirdScroll:       WeirdScroll = number; break;
     case FLAG_LoadDesktopMode:   LoadDesktopMode = number; break;
+    case FLAG_IgnoreBufferList:  IgnoreBufferList = number; break;
+    case FLAG_ReassignModelIds:  ReassignModelIds = number; break;
     default:
         return -1;
     }
@@ -217,6 +279,9 @@ int SetGlobalString(long what, const char *string) {
     case FLAG_CompileCommand: strcpy(CompileCommand, string); break;
     case FLAG_WindowFont: strcpy(WindowFont, string); break;
     case FLAG_HelpCommand: strcpy(HelpCommand, string); break;
+    case FLAG_GUICharacters: AppendGUICharacters (string); break;
+    case FLAG_CvsCommand: strcpy(CvsCommand, string); break;
+    case FLAG_CvsLogMode: strcpy(CvsLogMode, string); break;
     default:
         return -1;
     }
@@ -869,6 +934,18 @@ int ReadObject(CurPos &cp, const char *ObjName) {
                 if ((regexp = GetCharStr(cp, len)) == 0) return -1;
 
                 if (AddCRegexp(file, line, msg, regexp) == 0) return -1;
+            }
+            break;
+#endif
+#ifdef CONFIG_OBJ_CVS
+        case CF_CVSIGNRX:
+            {
+                const char *regexp;
+
+                if (GetObj(cp, len) != CF_REGEXP) return -1;
+                if ((regexp = GetCharStr(cp, len)) == 0) return -1;
+
+                if (AddCvsIgnoreRegexp(regexp) == 0) return -1;
             }
             break;
 #endif
