@@ -286,7 +286,7 @@ int ECvsBase::ContinuePipe () {
     {
         char s[sizeof (RealCommand)+32];
 
-        sprintf (s,"[continueing: '%s']",RealCommand);
+        sprintf (s,"[continuing: '%s']",RealCommand);
         AddLine (0,-1,s);
     }
 
