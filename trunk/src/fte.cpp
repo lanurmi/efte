@@ -200,7 +200,7 @@ static int CmdLoadConfiguration(int &argc, char **argv) {
             } else if (argv[Arg][1] == 'c' || argv[Arg][1] == 'C') {
                 if (argv[Arg][2])
                 {
-                    strcpy(ConfigFileName, argv[Arg] + 2);
+                    ExpandPath(argv[Arg] + 2, ConfigFileName);
                     haveConfig = 1;
                 }
                 else

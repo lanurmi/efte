@@ -800,7 +800,8 @@ int EGUI::CmdLoadFiles(int &argc, char **argv) {
     for (int Arg = 1; Arg < argc; Arg++) {
         if (!QuoteAll && !QuoteNext && (argv[Arg][0] == '-')) {
             if (argv[Arg][1] == '-') {
-                QuoteAll = 1;
+                if (strncmp(argv[Arg], "--debug", 7) != 0)
+                    QuoteAll = 1;
             } else if (argv[Arg][1] == '!') {
                 // handled before
             } else if (argv[Arg][1] == 'c' || argv[Arg][1] == 'C') {
