@@ -79,6 +79,8 @@ int ExComplete::DoCompleteWord()
     int rc = 0;
     int l = strlen(Words[WordPos]);
 
+    if (WordsLast <= 0) return rc;
+
     if (Buffer->InsText(Buffer->VToR(Orig.Row), Orig.Col, l, Words[WordPos], 1)
         && Buffer->SetPos(Orig.Col + l, Orig.Row)) {
         Buffer->Draw(Buffer->VToR(Orig.Row), Buffer->VToR(Orig.Row));
