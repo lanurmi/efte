@@ -22,9 +22,10 @@ colorize UNREALSCRIPT {
         'struct', 'config', 'for', 'else', 'event', 'exec', 'state', 'while',
         'break', 'continue', 'native', 'simulated', 'abstract', 'native',
         'nativereplication', 'const', 'final', 'iterator', 'static', 'color',
-        'simulated', 'replication', 'unreliable', 'foreach', 'vector',
-        'optional', 'out', 'switch', 'transient', 'name', 'export', 'delegate',
-        'cpptext', 'globalconfig', 'self',
+        'simulated', 'replication', 'unreliable', 'foreach', 'optional',
+        'out', 'switch', 'transient', 'name', 'export', 'delegate', 'cpptext',
+        'globalconfig', 'self', 'preoperator', 'postoperator', 'operator',
+        'coerce', 'noexport', 'ignores',
     };
 }
 
@@ -43,4 +44,3 @@ mode UNREALSCRIPT: C {      # UScript Mode
     CommentStart        = ' /*';
     CommentEnd          = '*/';
 }
-
