@@ -13,8 +13,8 @@
 <LI><A HREF="#cmd_bookmark">Bookmarks</A>
 <LI><A HREF="#cmd_trans">Character Translation</A>
 <LI><A HREF="#cmd_file">File Commands</A>
-<LI><A HREF="#cmd_search"></A>
-<LI><A HREF="#cmd_search"></A>
+<LI><A HREF="#cmd_directory">Directory Commands</A>
+<LI><A HREF="#cmd_search">Search and Replace</A>
 <LI><A HREF="#cmd_window">Window Commands</A>
 <LI><A HREF="#cmd_compile">Compiler Support</A>
 <LI><A HREF="#cmd_tags">TAGS Commands</A>
@@ -37,6 +37,14 @@
 <LI><A HREF="#ec.MoveWordEndRight">MoveWordEndRight</A>
 <LI><A HREF="#ec.MoveWordEndPrev">MoveWordEndPrev</A>
 <LI><A HREF="#ec.MoveWordEndNext">MoveWordEndNext</A>
+<LI><A HREF="#ec.MoveWordOrCapLeft">MoveWordOrCapLeft</A>
+<LI><A HREF="#ec.MoveWordOrCapRight">MoveWordOrCapRight</A>
+<LI><A HREF="#ec.MoveWordOrCapPrev">MoveWordOrCapPrev</A>
+<LI><A HREF="#ec.MoveWordOrCapNext">MoveWordOrCapNext</A>
+<LI><A HREF="#ec.MoveWordOrCapEndLeft">MoveWordOrCapEndLeft</A>
+<LI><A HREF="#ec.MoveWordOrCapEndRight">MoveWordOrCapEndRight</A>
+<LI><A HREF="#ec.MoveWordOrCapEndPrev">MoveWordOrCapEndPrev</A>
+<LI><A HREF="#ec.MoveWordOrCapEndNext">MoveWordOrCapEndNext</A>
 <LI><A HREF="#ec.MoveLineStart">MoveLineStart</A>
 <LI><A HREF="#ec.MoveLineEnd">MoveLineEnd</A>
 <LI><A HREF="#ec.MovePageStart">MovePageStart</A>
@@ -79,7 +87,7 @@
 <LI><A HREF="#ec.MovePrevPos">MovePrevPos</A>
 </UL>
 <P><B>SEE ALSO:</B>
-<A HREF="modes.html#ms.CursorTroughTabs">CursorTroughTabs</A>, <A HREF="#cmd_cursor">Cursor Movement</A>, <A HREF="#cmd_delete">Deleting Text</A>, <A HREF="#cmd_line">Line Commands</A>, <A HREF="#cmd_block">Block Commands</A>, <A HREF="#cmd_edit">Text Editing and Insertion</A>, <A HREF="#cmd_fold">Folding Text</A>, <A HREF="#cmd_bookmark">Bookmarks</A>, <A HREF="#cmd_trans">Character Translation</A>, <A HREF="#cmd_file">File Commands</A>, <A HREF="#cmd_search"></A>, <A HREF="#cmd_search"></A>, <A HREF="#cmd_window">Window Commands</A>, <A HREF="#cmd_compile">Compiler Support</A>, <A HREF="#cmd_tags">TAGS Commands</A>, <A HREF="#cmd_option">Option commands</A>, <A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.MoveDown">MoveDown</A></H2>
+<A HREF="modes.html#ms.CursorTroughTabs">CursorTroughTabs</A>, <A HREF="#cmd_cursor">Cursor Movement</A>, <A HREF="#cmd_delete">Deleting Text</A>, <A HREF="#cmd_line">Line Commands</A>, <A HREF="#cmd_block">Block Commands</A>, <A HREF="#cmd_edit">Text Editing and Insertion</A>, <A HREF="#cmd_fold">Folding Text</A>, <A HREF="#cmd_bookmark">Bookmarks</A>, <A HREF="#cmd_trans">Character Translation</A>, <A HREF="#cmd_file">File Commands</A>, <A HREF="#cmd_directory">Directory Commands</A>, <A HREF="#cmd_search">Search and Replace</A>, <A HREF="#cmd_window">Window Commands</A>, <A HREF="#cmd_compile">Compiler Support</A>, <A HREF="#cmd_tags">TAGS Commands</A>, <A HREF="#cmd_option">Option commands</A>, <A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.MoveDown">MoveDown</A></H2>
 Move cursor to next line.
 <P><B>SEE ALSO:</B>
 <A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MoveUp">MoveUp</A></H2>
@@ -122,6 +130,31 @@ Move cursor to the end of the previous word.
 <P><B>SEE ALSO:</B>
 <A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MoveWordEndNext">MoveWordEndNext</A></H2>
 Move cursor to the end of the next word.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MoveWordOrCapLeft">MoveWordOrCapLeft</A></H2>
+Move cursor to the beginning of the word or capital letter on the right.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MoveWordOrCapRight">MoveWordOrCapRight</A></H2>
+Move cursor to the beginning of the word or capital letter on the left.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MoveWordOrCapPrev">MoveWordOrCapPrev</A></H2>
+Move cursor to the beginning of the previous word or to previous
+capital letter.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MoveWordOrCapNext">MoveWordOrCapNext</A></H2>
+Move cursor to the beginning of the next word or to next capital letter.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MoveWordOrCapEndLeft">MoveWordOrCapEndLeft</A></H2>
+Move cursor to the end of the word or capitals on the left.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MoveWordOrCapEndRight">MoveWordOrCapEndRight</A></H2>
+Move cursor to the end of the word or capitals on the right.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MoveWordOrCapEndPrev">MoveWordOrCapEndPrev</A></H2>
+Move cursor to the end of the previous word or capitals.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MoveWordOrCapEndNext">MoveWordOrCapEndNext</A></H2>
+Move cursor to the end of the next word or capitals.
 <P><B>SEE ALSO:</B>
 <A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MoveLineStart">MoveLineStart</A></H2>
 Move cursor to the beginning of line.
@@ -254,6 +287,8 @@ Move to last cursor position
 <LI><A HREF="#ec.KillCharPrev">KillCharPrev</A>
 <LI><A HREF="#ec.KillWord">KillWord</A>
 <LI><A HREF="#ec.KillWordPrev">KillWordPrev</A>
+<LI><A HREF="#ec.KillWordOrCap">KillWordOrCap</A>
+<LI><A HREF="#ec.KillWordOrCapPrev">KillWordOrCapPrev</A>
 <LI><A HREF="#ec.KillToLineStart">KillToLineStart</A>
 <LI><A HREF="#ec.KillToLineEnd">KillToLineEnd</A>
 <LI><A HREF="#ec.KillBlock">KillBlock</A>
@@ -263,7 +298,7 @@ Move to last cursor position
 <LI><A HREF="#ec.BackSpace">BackSpace</A>
 </UL>
 <P><B>SEE ALSO:</B>
-<A HREF="#cmd_cursor">Cursor Movement</A>, <A HREF="#cmd_delete">Deleting Text</A>, <A HREF="#cmd_line">Line Commands</A>, <A HREF="#cmd_block">Block Commands</A>, <A HREF="#cmd_edit">Text Editing and Insertion</A>, <A HREF="#cmd_fold">Folding Text</A>, <A HREF="#cmd_bookmark">Bookmarks</A>, <A HREF="#cmd_trans">Character Translation</A>, <A HREF="#cmd_file">File Commands</A>, <A HREF="#cmd_search"></A>, <A HREF="#cmd_search"></A>, <A HREF="#cmd_window">Window Commands</A>, <A HREF="#cmd_compile">Compiler Support</A>, <A HREF="#cmd_tags">TAGS Commands</A>, <A HREF="#cmd_option">Option commands</A>, <A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.KillLine">KillLine</A></H2>
+<A HREF="#cmd_cursor">Cursor Movement</A>, <A HREF="#cmd_delete">Deleting Text</A>, <A HREF="#cmd_line">Line Commands</A>, <A HREF="#cmd_block">Block Commands</A>, <A HREF="#cmd_edit">Text Editing and Insertion</A>, <A HREF="#cmd_fold">Folding Text</A>, <A HREF="#cmd_bookmark">Bookmarks</A>, <A HREF="#cmd_trans">Character Translation</A>, <A HREF="#cmd_file">File Commands</A>, <A HREF="#cmd_directory">Directory Commands</A>, <A HREF="#cmd_search">Search and Replace</A>, <A HREF="#cmd_window">Window Commands</A>, <A HREF="#cmd_compile">Compiler Support</A>, <A HREF="#cmd_tags">TAGS Commands</A>, <A HREF="#cmd_option">Option commands</A>, <A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.KillLine">KillLine</A></H2>
 Delete current line. If the line is the last line in the file,
 only the text is deleted.
 <P><B>SEE ALSO:</B>
@@ -278,6 +313,12 @@ Delete the word after cursor.
 <P><B>SEE ALSO:</B>
 <A HREF="#cmd_delete">Deleting Text</A>.<HR><H2><A NAME="ec.KillWordPrev">KillWordPrev</A></H2>
 Delete the word before cursor.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_delete">Deleting Text</A>.<HR><H2><A NAME="ec.KillWordOrCap">KillWordOrCap</A></H2>
+Delete word or capitals after cursor.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_delete">Deleting Text</A>.<HR><H2><A NAME="ec.KillWordOrCapPrev">KillWordOrCapPrev</A></H2>
+Delete word or capitals before cursor.
 <P><B>SEE ALSO:</B>
 <A HREF="#cmd_delete">Deleting Text</A>.<HR><H2><A NAME="ec.KillToLineStart">KillToLineStart</A></H2>
 Delete characters to the beginning of line.
@@ -313,7 +354,7 @@ Delete character before cursor.
 <LI><A HREF="#ec.LineCenter">LineCenter</A>
 </UL>
 <P><B>SEE ALSO:</B>
-<A HREF="#cmd_cursor">Cursor Movement</A>, <A HREF="#cmd_delete">Deleting Text</A>, <A HREF="#cmd_line">Line Commands</A>, <A HREF="#cmd_block">Block Commands</A>, <A HREF="#cmd_edit">Text Editing and Insertion</A>, <A HREF="#cmd_fold">Folding Text</A>, <A HREF="#cmd_bookmark">Bookmarks</A>, <A HREF="#cmd_trans">Character Translation</A>, <A HREF="#cmd_file">File Commands</A>, <A HREF="#cmd_search"></A>, <A HREF="#cmd_search"></A>, <A HREF="#cmd_window">Window Commands</A>, <A HREF="#cmd_compile">Compiler Support</A>, <A HREF="#cmd_tags">TAGS Commands</A>, <A HREF="#cmd_option">Option commands</A>, <A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.LineInsert">LineInsert</A></H2>
+<A HREF="#cmd_cursor">Cursor Movement</A>, <A HREF="#cmd_delete">Deleting Text</A>, <A HREF="#cmd_line">Line Commands</A>, <A HREF="#cmd_block">Block Commands</A>, <A HREF="#cmd_edit">Text Editing and Insertion</A>, <A HREF="#cmd_fold">Folding Text</A>, <A HREF="#cmd_bookmark">Bookmarks</A>, <A HREF="#cmd_trans">Character Translation</A>, <A HREF="#cmd_file">File Commands</A>, <A HREF="#cmd_directory">Directory Commands</A>, <A HREF="#cmd_search">Search and Replace</A>, <A HREF="#cmd_window">Window Commands</A>, <A HREF="#cmd_compile">Compiler Support</A>, <A HREF="#cmd_tags">TAGS Commands</A>, <A HREF="#cmd_option">Option commands</A>, <A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.LineInsert">LineInsert</A></H2>
 Insert a new line before the current one.
 <P><B>SEE ALSO:</B>
 <A HREF="#cmd_line">Line Commands</A>.<HR><H2><A NAME="ec.LineAdd">LineAdd</A></H2>
@@ -381,7 +422,7 @@ Center the current line
 <LI><A HREF="#ec.BlockTrim">BlockTrim</A>
 </UL>
 <P><B>SEE ALSO:</B>
-<A HREF="#cmd_cursor">Cursor Movement</A>, <A HREF="#cmd_delete">Deleting Text</A>, <A HREF="#cmd_line">Line Commands</A>, <A HREF="#cmd_block">Block Commands</A>, <A HREF="#cmd_edit">Text Editing and Insertion</A>, <A HREF="#cmd_fold">Folding Text</A>, <A HREF="#cmd_bookmark">Bookmarks</A>, <A HREF="#cmd_trans">Character Translation</A>, <A HREF="#cmd_file">File Commands</A>, <A HREF="#cmd_search"></A>, <A HREF="#cmd_search"></A>, <A HREF="#cmd_window">Window Commands</A>, <A HREF="#cmd_compile">Compiler Support</A>, <A HREF="#cmd_tags">TAGS Commands</A>, <A HREF="#cmd_option">Option commands</A>, <A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.BlockBegin">BlockBegin</A></H2>
+<A HREF="#cmd_cursor">Cursor Movement</A>, <A HREF="#cmd_delete">Deleting Text</A>, <A HREF="#cmd_line">Line Commands</A>, <A HREF="#cmd_block">Block Commands</A>, <A HREF="#cmd_edit">Text Editing and Insertion</A>, <A HREF="#cmd_fold">Folding Text</A>, <A HREF="#cmd_bookmark">Bookmarks</A>, <A HREF="#cmd_trans">Character Translation</A>, <A HREF="#cmd_file">File Commands</A>, <A HREF="#cmd_directory">Directory Commands</A>, <A HREF="#cmd_search">Search and Replace</A>, <A HREF="#cmd_window">Window Commands</A>, <A HREF="#cmd_compile">Compiler Support</A>, <A HREF="#cmd_tags">TAGS Commands</A>, <A HREF="#cmd_option">Option commands</A>, <A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.BlockBegin">BlockBegin</A></H2>
 Set block beginning to current position.
 <P><B>SEE ALSO:</B>
 <A HREF="#cmd_block">Block Commands</A>.<HR><H2><A NAME="ec.BlockEnd">BlockEnd</A></H2>
@@ -502,7 +543,7 @@ Trim end-of-line whitespace
 <LI><A HREF="#ec.Redo">Redo</A>
 </UL>
 <P><B>SEE ALSO:</B>
-<A HREF="#cmd_cursor">Cursor Movement</A>, <A HREF="#cmd_delete">Deleting Text</A>, <A HREF="#cmd_line">Line Commands</A>, <A HREF="#cmd_block">Block Commands</A>, <A HREF="#cmd_edit">Text Editing and Insertion</A>, <A HREF="#cmd_fold">Folding Text</A>, <A HREF="#cmd_bookmark">Bookmarks</A>, <A HREF="#cmd_trans">Character Translation</A>, <A HREF="#cmd_file">File Commands</A>, <A HREF="#cmd_search"></A>, <A HREF="#cmd_search"></A>, <A HREF="#cmd_window">Window Commands</A>, <A HREF="#cmd_compile">Compiler Support</A>, <A HREF="#cmd_tags">TAGS Commands</A>, <A HREF="#cmd_option">Option commands</A>, <A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.Undo">Undo</A></H2>
+<A HREF="#cmd_cursor">Cursor Movement</A>, <A HREF="#cmd_delete">Deleting Text</A>, <A HREF="#cmd_line">Line Commands</A>, <A HREF="#cmd_block">Block Commands</A>, <A HREF="#cmd_edit">Text Editing and Insertion</A>, <A HREF="#cmd_fold">Folding Text</A>, <A HREF="#cmd_bookmark">Bookmarks</A>, <A HREF="#cmd_trans">Character Translation</A>, <A HREF="#cmd_file">File Commands</A>, <A HREF="#cmd_directory">Directory Commands</A>, <A HREF="#cmd_search">Search and Replace</A>, <A HREF="#cmd_window">Window Commands</A>, <A HREF="#cmd_compile">Compiler Support</A>, <A HREF="#cmd_tags">TAGS Commands</A>, <A HREF="#cmd_option">Option commands</A>, <A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.Undo">Undo</A></H2>
 Undo last operation
 <P><B>SEE ALSO:</B>
 <A HREF="#cmd_edit">Text Editing and Insertion</A>.<HR><H2><A NAME="ec.Redo">Redo</A></H2>
@@ -525,7 +566,7 @@ Redo last undone operation.
 <LI><A HREF="#ec.FoldToggleOpenClose">FoldToggleOpenClose</A>
 </UL>
 <P><B>SEE ALSO:</B>
-<A HREF="#cmd_cursor">Cursor Movement</A>, <A HREF="#cmd_delete">Deleting Text</A>, <A HREF="#cmd_line">Line Commands</A>, <A HREF="#cmd_block">Block Commands</A>, <A HREF="#cmd_edit">Text Editing and Insertion</A>, <A HREF="#cmd_fold">Folding Text</A>, <A HREF="#cmd_bookmark">Bookmarks</A>, <A HREF="#cmd_trans">Character Translation</A>, <A HREF="#cmd_file">File Commands</A>, <A HREF="#cmd_search"></A>, <A HREF="#cmd_search"></A>, <A HREF="#cmd_window">Window Commands</A>, <A HREF="#cmd_compile">Compiler Support</A>, <A HREF="#cmd_tags">TAGS Commands</A>, <A HREF="#cmd_option">Option commands</A>, <A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.FoldCreate">FoldCreate</A></H2>
+<A HREF="#cmd_cursor">Cursor Movement</A>, <A HREF="#cmd_delete">Deleting Text</A>, <A HREF="#cmd_line">Line Commands</A>, <A HREF="#cmd_block">Block Commands</A>, <A HREF="#cmd_edit">Text Editing and Insertion</A>, <A HREF="#cmd_fold">Folding Text</A>, <A HREF="#cmd_bookmark">Bookmarks</A>, <A HREF="#cmd_trans">Character Translation</A>, <A HREF="#cmd_file">File Commands</A>, <A HREF="#cmd_directory">Directory Commands</A>, <A HREF="#cmd_search">Search and Replace</A>, <A HREF="#cmd_window">Window Commands</A>, <A HREF="#cmd_compile">Compiler Support</A>, <A HREF="#cmd_tags">TAGS Commands</A>, <A HREF="#cmd_option">Option commands</A>, <A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.FoldCreate">FoldCreate</A></H2>
 Create fold
 <P><B>SEE ALSO:</B>
 <A HREF="#cmd_fold">Folding Text</A>.<HR><H2><A NAME="ec.FoldCreateByRegexp">FoldCreateByRegexp</A></H2>
@@ -576,7 +617,7 @@ Toggle open/close current fold.
 <LI><A HREF="#ec.PopGlobalBookmark">PopGlobalBookmark</A>
 </UL>
 <P><B>SEE ALSO:</B>
-<A HREF="#cmd_cursor">Cursor Movement</A>, <A HREF="#cmd_delete">Deleting Text</A>, <A HREF="#cmd_line">Line Commands</A>, <A HREF="#cmd_block">Block Commands</A>, <A HREF="#cmd_edit">Text Editing and Insertion</A>, <A HREF="#cmd_fold">Folding Text</A>, <A HREF="#cmd_bookmark">Bookmarks</A>, <A HREF="#cmd_trans">Character Translation</A>, <A HREF="#cmd_file">File Commands</A>, <A HREF="#cmd_search"></A>, <A HREF="#cmd_search"></A>, <A HREF="#cmd_window">Window Commands</A>, <A HREF="#cmd_compile">Compiler Support</A>, <A HREF="#cmd_tags">TAGS Commands</A>, <A HREF="#cmd_option">Option commands</A>, <A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.PlaceBookmark">PlaceBookmark</A></H2>
+<A HREF="#cmd_cursor">Cursor Movement</A>, <A HREF="#cmd_delete">Deleting Text</A>, <A HREF="#cmd_line">Line Commands</A>, <A HREF="#cmd_block">Block Commands</A>, <A HREF="#cmd_edit">Text Editing and Insertion</A>, <A HREF="#cmd_fold">Folding Text</A>, <A HREF="#cmd_bookmark">Bookmarks</A>, <A HREF="#cmd_trans">Character Translation</A>, <A HREF="#cmd_file">File Commands</A>, <A HREF="#cmd_directory">Directory Commands</A>, <A HREF="#cmd_search">Search and Replace</A>, <A HREF="#cmd_window">Window Commands</A>, <A HREF="#cmd_compile">Compiler Support</A>, <A HREF="#cmd_tags">TAGS Commands</A>, <A HREF="#cmd_option">Option commands</A>, <A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.PlaceBookmark">PlaceBookmark</A></H2>
 Place a file-local bookmark.
 <P><B>SEE ALSO:</B>
 <A HREF="#cmd_bookmark">Bookmarks</A>.<HR><H2><A NAME="ec.RemoveBookmark">RemoveBookmark</A></H2>
@@ -631,7 +672,7 @@ Pop global bookmark from stack.
 <LI><A HREF="#ec.SwitchTo">SwitchTo</A>
 </UL>
 <P><B>SEE ALSO:</B>
-<A HREF="#cmd_cursor">Cursor Movement</A>, <A HREF="#cmd_delete">Deleting Text</A>, <A HREF="#cmd_line">Line Commands</A>, <A HREF="#cmd_block">Block Commands</A>, <A HREF="#cmd_edit">Text Editing and Insertion</A>, <A HREF="#cmd_fold">Folding Text</A>, <A HREF="#cmd_bookmark">Bookmarks</A>, <A HREF="#cmd_trans">Character Translation</A>, <A HREF="#cmd_file">File Commands</A>, <A HREF="#cmd_search"></A>, <A HREF="#cmd_search"></A>, <A HREF="#cmd_window">Window Commands</A>, <A HREF="#cmd_compile">Compiler Support</A>, <A HREF="#cmd_tags">TAGS Commands</A>, <A HREF="#cmd_option">Option commands</A>, <A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.CharCaseUp">CharCaseUp</A></H2>
+<A HREF="#cmd_cursor">Cursor Movement</A>, <A HREF="#cmd_delete">Deleting Text</A>, <A HREF="#cmd_line">Line Commands</A>, <A HREF="#cmd_block">Block Commands</A>, <A HREF="#cmd_edit">Text Editing and Insertion</A>, <A HREF="#cmd_fold">Folding Text</A>, <A HREF="#cmd_bookmark">Bookmarks</A>, <A HREF="#cmd_trans">Character Translation</A>, <A HREF="#cmd_file">File Commands</A>, <A HREF="#cmd_directory">Directory Commands</A>, <A HREF="#cmd_search">Search and Replace</A>, <A HREF="#cmd_window">Window Commands</A>, <A HREF="#cmd_compile">Compiler Support</A>, <A HREF="#cmd_tags">TAGS Commands</A>, <A HREF="#cmd_option">Option commands</A>, <A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.CharCaseUp">CharCaseUp</A></H2>
 Convert current character to uppercase
 <P><B>SEE ALSO:</B>
 <A HREF="#cmd_trans">Character Translation</A>.<HR><H2><A NAME="ec.CharCaseDown">CharCaseDown</A></H2>
@@ -728,7 +769,7 @@ Switch to numbered buffer given as argument
 <LI><A HREF="#ec.FileTrim">FileTrim</A>
 </UL>
 <P><B>SEE ALSO:</B>
-<A HREF="#cmd_cursor">Cursor Movement</A>, <A HREF="#cmd_delete">Deleting Text</A>, <A HREF="#cmd_line">Line Commands</A>, <A HREF="#cmd_block">Block Commands</A>, <A HREF="#cmd_edit">Text Editing and Insertion</A>, <A HREF="#cmd_fold">Folding Text</A>, <A HREF="#cmd_bookmark">Bookmarks</A>, <A HREF="#cmd_trans">Character Translation</A>, <A HREF="#cmd_file">File Commands</A>, <A HREF="#cmd_search"></A>, <A HREF="#cmd_search"></A>, <A HREF="#cmd_window">Window Commands</A>, <A HREF="#cmd_compile">Compiler Support</A>, <A HREF="#cmd_tags">TAGS Commands</A>, <A HREF="#cmd_option">Option commands</A>, <A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.FileOpen">FileOpen</A></H2>
+<A HREF="#cmd_cursor">Cursor Movement</A>, <A HREF="#cmd_delete">Deleting Text</A>, <A HREF="#cmd_line">Line Commands</A>, <A HREF="#cmd_block">Block Commands</A>, <A HREF="#cmd_edit">Text Editing and Insertion</A>, <A HREF="#cmd_fold">Folding Text</A>, <A HREF="#cmd_bookmark">Bookmarks</A>, <A HREF="#cmd_trans">Character Translation</A>, <A HREF="#cmd_file">File Commands</A>, <A HREF="#cmd_directory">Directory Commands</A>, <A HREF="#cmd_search">Search and Replace</A>, <A HREF="#cmd_window">Window Commands</A>, <A HREF="#cmd_compile">Compiler Support</A>, <A HREF="#cmd_tags">TAGS Commands</A>, <A HREF="#cmd_option">Option commands</A>, <A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.FileOpen">FileOpen</A></H2>
 Open file
 <P><B>SEE ALSO:</B>
 <A HREF="#cmd_file">File Commands</A>.<HR><H2><A NAME="ec.FileOpenInMode">FileOpenInMode</A></H2>
@@ -761,37 +802,31 @@ Close all open files
 <A HREF="#cmd_file">File Commands</A>.<HR><H2><A NAME="ec.FileTrim">FileTrim</A></H2>
 Trim end-of-line whitespace
 <P><B>SEE ALSO:</B>
-<A HREF="#cmd_file">File Commands</A>.<HR><H1><A NAME="cmd_directory"></A></H1>
+<A HREF="#cmd_file">File Commands</A>.<HR><H1><A NAME="cmd_directory">Directory Commands</A></H1>
 <UL>
-<LI><A HREF="#ec.IncrementalSearch">IncrementalSearch</A>
-<LI><A HREF="#ec.Find">Find</A>
-<LI><A HREF="#ec.FindReplace">FindReplace</A>
-<LI><A HREF="#ec.FindRepeat">FindRepeat</A>
-<LI><A HREF="#ec.FindRepeatOnce">FindRepeatOnce</A>
-<LI><A HREF="#ec.FindRepeatReverse">FindRepeatReverse</A>
-<LI><A HREF="#ec.MatchBracket">MatchBracket</A>
-<LI><A HREF="#ec.HilitWord">HilitWord</A>
-<LI><A HREF="#ec.SearchWordPrev">SearchWordPrev</A>
-<LI><A HREF="#ec.SearchWordNext">SearchWordNext</A>
-<LI><A HREF="#ec.HilitMatchBracket">HilitMatchBracket</A>
+<LI><A HREF="#ec.DirOpen">DirOpen</A>
+<LI><A HREF="#ec.DirGoUp">DirGoUp</A>
+<LI><A HREF="#ec.DirGoDown">DirGoDown</A>
+<LI><A HREF="#ec.DirGoRoot">DirGoRoot</A>
+<LI><A HREF="#ec.DirGoto">DirGoto</A>
 </UL>
 <P><B>SEE ALSO:</B>
-<A HREF="#cmd_cursor">Cursor Movement</A>, <A HREF="#cmd_delete">Deleting Text</A>, <A HREF="#cmd_line">Line Commands</A>, <A HREF="#cmd_block">Block Commands</A>, <A HREF="#cmd_edit">Text Editing and Insertion</A>, <A HREF="#cmd_fold">Folding Text</A>, <A HREF="#cmd_bookmark">Bookmarks</A>, <A HREF="#cmd_trans">Character Translation</A>, <A HREF="#cmd_file">File Commands</A>, <A HREF="#cmd_search"></A>, <A HREF="#cmd_search"></A>, <A HREF="#cmd_window">Window Commands</A>, <A HREF="#cmd_compile">Compiler Support</A>, <A HREF="#cmd_tags">TAGS Commands</A>, <A HREF="#cmd_option">Option commands</A>, <A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.DirOpen">DirOpen</A></H2>
+<A HREF="#cmd_cursor">Cursor Movement</A>, <A HREF="#cmd_delete">Deleting Text</A>, <A HREF="#cmd_line">Line Commands</A>, <A HREF="#cmd_block">Block Commands</A>, <A HREF="#cmd_edit">Text Editing and Insertion</A>, <A HREF="#cmd_fold">Folding Text</A>, <A HREF="#cmd_bookmark">Bookmarks</A>, <A HREF="#cmd_trans">Character Translation</A>, <A HREF="#cmd_file">File Commands</A>, <A HREF="#cmd_directory">Directory Commands</A>, <A HREF="#cmd_search">Search and Replace</A>, <A HREF="#cmd_window">Window Commands</A>, <A HREF="#cmd_compile">Compiler Support</A>, <A HREF="#cmd_tags">TAGS Commands</A>, <A HREF="#cmd_option">Option commands</A>, <A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.DirOpen">DirOpen</A></H2>
 Open directory browser
 <P><B>SEE ALSO:</B>
-<A HREF="#cmd_search"></A>.<HR><H2><A NAME="ec.DirGoUp">DirGoUp</A></H2>
+<A HREF="#cmd_directory">Directory Commands</A>.<HR><H2><A NAME="ec.DirGoUp">DirGoUp</A></H2>
 Change to parent directory
 <P><B>SEE ALSO:</B>
-<A HREF="#cmd_search"></A>.<HR><H2><A NAME="ec.DirGoDown">DirGoDown</A></H2>
+<A HREF="#cmd_directory">Directory Commands</A>.<HR><H2><A NAME="ec.DirGoDown">DirGoDown</A></H2>
 Change to currently selected directory
 <P><B>SEE ALSO:</B>
-<A HREF="#cmd_search"></A>.<HR><H2><A NAME="ec.DirGoRoot">DirGoRoot</A></H2>
+<A HREF="#cmd_directory">Directory Commands</A>.<HR><H2><A NAME="ec.DirGoRoot">DirGoRoot</A></H2>
 Change to root directory
 <P><B>SEE ALSO:</B>
-<A HREF="#cmd_search"></A>.<HR><H2><A NAME="ec.DirGoto">DirGoto</A></H2>
+<A HREF="#cmd_directory">Directory Commands</A>.<HR><H2><A NAME="ec.DirGoto">DirGoto</A></H2>
 Change to directory given as argument
 <P><B>SEE ALSO:</B>
-<A HREF="#cmd_search"></A>.<HR><H1><A NAME="cmd_search"></A></H1>
+<A HREF="#cmd_directory">Directory Commands</A>.<HR><H1><A NAME="cmd_search">Search and Replace</A></H1>
 <UL>
 <LI><A HREF="#ec.IncrementalSearch">IncrementalSearch</A>
 <LI><A HREF="#ec.Find">Find</A>
@@ -806,40 +841,40 @@ Change to directory given as argument
 <LI><A HREF="#ec.HilitMatchBracket">HilitMatchBracket</A>
 </UL>
 <P><B>SEE ALSO:</B>
-<A HREF="#cmd_cursor">Cursor Movement</A>, <A HREF="#cmd_delete">Deleting Text</A>, <A HREF="#cmd_line">Line Commands</A>, <A HREF="#cmd_block">Block Commands</A>, <A HREF="#cmd_edit">Text Editing and Insertion</A>, <A HREF="#cmd_fold">Folding Text</A>, <A HREF="#cmd_bookmark">Bookmarks</A>, <A HREF="#cmd_trans">Character Translation</A>, <A HREF="#cmd_file">File Commands</A>, <A HREF="#cmd_search"></A>, <A HREF="#cmd_search"></A>, <A HREF="#cmd_window">Window Commands</A>, <A HREF="#cmd_compile">Compiler Support</A>, <A HREF="#cmd_tags">TAGS Commands</A>, <A HREF="#cmd_option">Option commands</A>, <A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.IncrementalSearch">IncrementalSearch</A></H2>
+<A HREF="#cmd_cursor">Cursor Movement</A>, <A HREF="#cmd_delete">Deleting Text</A>, <A HREF="#cmd_line">Line Commands</A>, <A HREF="#cmd_block">Block Commands</A>, <A HREF="#cmd_edit">Text Editing and Insertion</A>, <A HREF="#cmd_fold">Folding Text</A>, <A HREF="#cmd_bookmark">Bookmarks</A>, <A HREF="#cmd_trans">Character Translation</A>, <A HREF="#cmd_file">File Commands</A>, <A HREF="#cmd_directory">Directory Commands</A>, <A HREF="#cmd_search">Search and Replace</A>, <A HREF="#cmd_window">Window Commands</A>, <A HREF="#cmd_compile">Compiler Support</A>, <A HREF="#cmd_tags">TAGS Commands</A>, <A HREF="#cmd_option">Option commands</A>, <A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.IncrementalSearch">IncrementalSearch</A></H2>
 Incremental search
 <P><B>SEE ALSO:</B>
-<A HREF="#cmd_search"></A>.<HR><H2><A NAME="ec.Find">Find</A></H2>
+<A HREF="#cmd_search">Search and Replace</A>.<HR><H2><A NAME="ec.Find">Find</A></H2>
 Find
 <P><B>SEE ALSO:</B>
-<A HREF="#cmd_search"></A>.<HR><H2><A NAME="ec.FindReplace">FindReplace</A></H2>
+<A HREF="#cmd_search">Search and Replace</A>.<HR><H2><A NAME="ec.FindReplace">FindReplace</A></H2>
 Find and replace
 <P><B>SEE ALSO:</B>
-<A HREF="#cmd_search"></A>.<HR><H2><A NAME="ec.FindRepeat">FindRepeat</A></H2>
+<A HREF="#cmd_search">Search and Replace</A>.<HR><H2><A NAME="ec.FindRepeat">FindRepeat</A></H2>
 Repeat last find/replace operation
 <P><B>SEE ALSO:</B>
-<A HREF="#cmd_search"></A>.<HR><H2><A NAME="ec.FindRepeatOnce">FindRepeatOnce</A></H2>
+<A HREF="#cmd_search">Search and Replace</A>.<HR><H2><A NAME="ec.FindRepeatOnce">FindRepeatOnce</A></H2>
 Repeat last find/replace operation only once
 <P><B>SEE ALSO:</B>
-<A HREF="#cmd_search"></A>.<HR><H2><A NAME="ec.FindRepeatReverse">FindRepeatReverse</A></H2>
+<A HREF="#cmd_search">Search and Replace</A>.<HR><H2><A NAME="ec.FindRepeatReverse">FindRepeatReverse</A></H2>
 Repeat last find/replace operation in reverse
 <P><B>SEE ALSO:</B>
-<A HREF="#cmd_search"></A>.<HR><H2><A NAME="ec.MatchBracket">MatchBracket</A></H2>
+<A HREF="#cmd_search">Search and Replace</A>.<HR><H2><A NAME="ec.MatchBracket">MatchBracket</A></H2>
 Find matching bracket ([{&lt;&gt;}])
 <P><B>SEE ALSO:</B>
-<A HREF="#cmd_search"></A>.<HR><H2><A NAME="ec.HilitWord">HilitWord</A></H2>
+<A HREF="#cmd_search">Search and Replace</A>.<HR><H2><A NAME="ec.HilitWord">HilitWord</A></H2>
 Highlight current word everywhere in the file
 <P><B>SEE ALSO:</B>
-<A HREF="#cmd_search"></A>.<HR><H2><A NAME="ec.SearchWordPrev">SearchWordPrev</A></H2>
+<A HREF="#cmd_search">Search and Replace</A>.<HR><H2><A NAME="ec.SearchWordPrev">SearchWordPrev</A></H2>
 Search for previous occurence of word under cursor
 <P><B>SEE ALSO:</B>
-<A HREF="#cmd_search"></A>.<HR><H2><A NAME="ec.SearchWordNext">SearchWordNext</A></H2>
+<A HREF="#cmd_search">Search and Replace</A>.<HR><H2><A NAME="ec.SearchWordNext">SearchWordNext</A></H2>
 Search for next occurence of word under cursor
 <P><B>SEE ALSO:</B>
-<A HREF="#cmd_search"></A>.<HR><H2><A NAME="ec.HilitMatchBracket">HilitMatchBracket</A></H2>
+<A HREF="#cmd_search">Search and Replace</A>.<HR><H2><A NAME="ec.HilitMatchBracket">HilitMatchBracket</A></H2>
 Highlight matching bracket
 <P><B>SEE ALSO:</B>
-<A HREF="#cmd_search"></A>.<HR><H1><A NAME="cmd_window">Window Commands</A></H1>
+<A HREF="#cmd_search">Search and Replace</A>.<HR><H1><A NAME="cmd_window">Window Commands</A></H1>
 <UL>
 <LI><A HREF="#ec.WinHSplit">WinHSplit</A>
 <LI><A HREF="#ec.WinNext">WinNext</A>
@@ -853,7 +888,7 @@ Highlight matching bracket
 <LI><A HREF="#ec.ShowEntryScreen">ShowEntryScreen</A>
 </UL>
 <P><B>SEE ALSO:</B>
-<A HREF="#cmd_cursor">Cursor Movement</A>, <A HREF="#cmd_delete">Deleting Text</A>, <A HREF="#cmd_line">Line Commands</A>, <A HREF="#cmd_block">Block Commands</A>, <A HREF="#cmd_edit">Text Editing and Insertion</A>, <A HREF="#cmd_fold">Folding Text</A>, <A HREF="#cmd_bookmark">Bookmarks</A>, <A HREF="#cmd_trans">Character Translation</A>, <A HREF="#cmd_file">File Commands</A>, <A HREF="#cmd_search"></A>, <A HREF="#cmd_search"></A>, <A HREF="#cmd_window">Window Commands</A>, <A HREF="#cmd_compile">Compiler Support</A>, <A HREF="#cmd_tags">TAGS Commands</A>, <A HREF="#cmd_option">Option commands</A>, <A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.WinHSplit">WinHSplit</A></H2>
+<A HREF="#cmd_cursor">Cursor Movement</A>, <A HREF="#cmd_delete">Deleting Text</A>, <A HREF="#cmd_line">Line Commands</A>, <A HREF="#cmd_block">Block Commands</A>, <A HREF="#cmd_edit">Text Editing and Insertion</A>, <A HREF="#cmd_fold">Folding Text</A>, <A HREF="#cmd_bookmark">Bookmarks</A>, <A HREF="#cmd_trans">Character Translation</A>, <A HREF="#cmd_file">File Commands</A>, <A HREF="#cmd_directory">Directory Commands</A>, <A HREF="#cmd_search">Search and Replace</A>, <A HREF="#cmd_window">Window Commands</A>, <A HREF="#cmd_compile">Compiler Support</A>, <A HREF="#cmd_tags">TAGS Commands</A>, <A HREF="#cmd_option">Option commands</A>, <A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.WinHSplit">WinHSplit</A></H2>
 Split window horizontally
 <P><B>SEE ALSO:</B>
 <A HREF="#cmd_window">Window Commands</A>.<HR><H2><A NAME="ec.WinNext">WinNext</A></H2>
@@ -893,7 +928,7 @@ View external program output if available
 <LI><A HREF="#ec.RunProgram">RunProgram</A>
 </UL>
 <P><B>SEE ALSO:</B>
-<A HREF="#cmd_cursor">Cursor Movement</A>, <A HREF="#cmd_delete">Deleting Text</A>, <A HREF="#cmd_line">Line Commands</A>, <A HREF="#cmd_block">Block Commands</A>, <A HREF="#cmd_edit">Text Editing and Insertion</A>, <A HREF="#cmd_fold">Folding Text</A>, <A HREF="#cmd_bookmark">Bookmarks</A>, <A HREF="#cmd_trans">Character Translation</A>, <A HREF="#cmd_file">File Commands</A>, <A HREF="#cmd_search"></A>, <A HREF="#cmd_search"></A>, <A HREF="#cmd_window">Window Commands</A>, <A HREF="#cmd_compile">Compiler Support</A>, <A HREF="#cmd_tags">TAGS Commands</A>, <A HREF="#cmd_option">Option commands</A>, <A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.Compile">Compile</A></H2>
+<A HREF="#cmd_cursor">Cursor Movement</A>, <A HREF="#cmd_delete">Deleting Text</A>, <A HREF="#cmd_line">Line Commands</A>, <A HREF="#cmd_block">Block Commands</A>, <A HREF="#cmd_edit">Text Editing and Insertion</A>, <A HREF="#cmd_fold">Folding Text</A>, <A HREF="#cmd_bookmark">Bookmarks</A>, <A HREF="#cmd_trans">Character Translation</A>, <A HREF="#cmd_file">File Commands</A>, <A HREF="#cmd_directory">Directory Commands</A>, <A HREF="#cmd_search">Search and Replace</A>, <A HREF="#cmd_window">Window Commands</A>, <A HREF="#cmd_compile">Compiler Support</A>, <A HREF="#cmd_tags">TAGS Commands</A>, <A HREF="#cmd_option">Option commands</A>, <A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.Compile">Compile</A></H2>
 Ask for compile command and run compiler
 <P><B>SEE ALSO:</B>
 <A HREF="#cmd_compile">Compiler Support</A>.<HR><H2><A NAME="ec.RunCompiler">RunCompiler</A></H2>
@@ -924,7 +959,7 @@ Run external program
 </UL>
 fte supports TAGS files generated by programs like ctags.
 <P><B>SEE ALSO:</B>
-<A HREF="#cmd_cursor">Cursor Movement</A>, <A HREF="#cmd_delete">Deleting Text</A>, <A HREF="#cmd_line">Line Commands</A>, <A HREF="#cmd_block">Block Commands</A>, <A HREF="#cmd_edit">Text Editing and Insertion</A>, <A HREF="#cmd_fold">Folding Text</A>, <A HREF="#cmd_bookmark">Bookmarks</A>, <A HREF="#cmd_trans">Character Translation</A>, <A HREF="#cmd_file">File Commands</A>, <A HREF="#cmd_search"></A>, <A HREF="#cmd_search"></A>, <A HREF="#cmd_window">Window Commands</A>, <A HREF="#cmd_compile">Compiler Support</A>, <A HREF="#cmd_tags">TAGS Commands</A>, <A HREF="#cmd_option">Option commands</A>, <A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.TagFind">TagFind</A></H2>
+<A HREF="#cmd_cursor">Cursor Movement</A>, <A HREF="#cmd_delete">Deleting Text</A>, <A HREF="#cmd_line">Line Commands</A>, <A HREF="#cmd_block">Block Commands</A>, <A HREF="#cmd_edit">Text Editing and Insertion</A>, <A HREF="#cmd_fold">Folding Text</A>, <A HREF="#cmd_bookmark">Bookmarks</A>, <A HREF="#cmd_trans">Character Translation</A>, <A HREF="#cmd_file">File Commands</A>, <A HREF="#cmd_directory">Directory Commands</A>, <A HREF="#cmd_search">Search and Replace</A>, <A HREF="#cmd_window">Window Commands</A>, <A HREF="#cmd_compile">Compiler Support</A>, <A HREF="#cmd_tags">TAGS Commands</A>, <A HREF="#cmd_option">Option commands</A>, <A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.TagFind">TagFind</A></H2>
 Find word argumen in tag files.
 <P><B>SEE ALSO:</B>
 <A HREF="#cmd_tags">TAGS Commands</A>.<HR><H2><A NAME="ec.TagFindWord">TagFindWord</A></H2>
@@ -974,7 +1009,7 @@ Clear loaded tags
 <LI><A HREF="#ec.ChangeRightMargin">ChangeRightMargin</A>
 </UL>
 <P><B>SEE ALSO:</B>
-<A HREF="#cmd_cursor">Cursor Movement</A>, <A HREF="#cmd_delete">Deleting Text</A>, <A HREF="#cmd_line">Line Commands</A>, <A HREF="#cmd_block">Block Commands</A>, <A HREF="#cmd_edit">Text Editing and Insertion</A>, <A HREF="#cmd_fold">Folding Text</A>, <A HREF="#cmd_bookmark">Bookmarks</A>, <A HREF="#cmd_trans">Character Translation</A>, <A HREF="#cmd_file">File Commands</A>, <A HREF="#cmd_search"></A>, <A HREF="#cmd_search"></A>, <A HREF="#cmd_window">Window Commands</A>, <A HREF="#cmd_compile">Compiler Support</A>, <A HREF="#cmd_tags">TAGS Commands</A>, <A HREF="#cmd_option">Option commands</A>, <A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.ToggleAutoIndent">ToggleAutoIndent</A></H2>
+<A HREF="#cmd_cursor">Cursor Movement</A>, <A HREF="#cmd_delete">Deleting Text</A>, <A HREF="#cmd_line">Line Commands</A>, <A HREF="#cmd_block">Block Commands</A>, <A HREF="#cmd_edit">Text Editing and Insertion</A>, <A HREF="#cmd_fold">Folding Text</A>, <A HREF="#cmd_bookmark">Bookmarks</A>, <A HREF="#cmd_trans">Character Translation</A>, <A HREF="#cmd_file">File Commands</A>, <A HREF="#cmd_directory">Directory Commands</A>, <A HREF="#cmd_search">Search and Replace</A>, <A HREF="#cmd_window">Window Commands</A>, <A HREF="#cmd_compile">Compiler Support</A>, <A HREF="#cmd_tags">TAGS Commands</A>, <A HREF="#cmd_option">Option commands</A>, <A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.ToggleAutoIndent">ToggleAutoIndent</A></H2>
 <P><B>SEE ALSO:</B>
 <A HREF="#cmd_option">Option commands</A>.<HR><H2><A NAME="ec.ToggleInsert">ToggleInsert</A></H2>
 <P><B>SEE ALSO:</B>
@@ -1037,6 +1072,7 @@ Clear loaded tags
 <LI><A HREF="#ec.Rescan">Rescan</A>
 <LI><A HREF="#ec.CloseActivate">CloseActivate</A>
 <LI><A HREF="#ec.ActivateInOtherWindow">ActivateInOtherWindow</A>
+<LI><A HREF="#ec.DeleteFile">DeleteFile</A>
 <LI><A HREF="#ec.ASCIITable">ASCIITable</A>
 <LI><A HREF="#ec.DesktopSave">DesktopSave</A>
 <LI><A HREF="#ec.ClipClear">ClipClear</A>
@@ -1061,9 +1097,10 @@ Clear loaded tags
 <LI><A HREF="#ec.ShowHelp">ShowHelp</A>
 <LI><A HREF="#ec.ConfigRecompile">ConfigRecompile</A>
 <LI><A HREF="#ec.SetCIndentStyle">SetCIndentStyle</A>
+<LI><A HREF="#ec.SetIndentWithTabs">SetIndentWithTabs</A>
 </UL>
 <P><B>SEE ALSO:</B>
-<A HREF="#cmd_cursor">Cursor Movement</A>, <A HREF="#cmd_delete">Deleting Text</A>, <A HREF="#cmd_line">Line Commands</A>, <A HREF="#cmd_block">Block Commands</A>, <A HREF="#cmd_edit">Text Editing and Insertion</A>, <A HREF="#cmd_fold">Folding Text</A>, <A HREF="#cmd_bookmark">Bookmarks</A>, <A HREF="#cmd_trans">Character Translation</A>, <A HREF="#cmd_file">File Commands</A>, <A HREF="#cmd_search"></A>, <A HREF="#cmd_search"></A>, <A HREF="#cmd_window">Window Commands</A>, <A HREF="#cmd_compile">Compiler Support</A>, <A HREF="#cmd_tags">TAGS Commands</A>, <A HREF="#cmd_option">Option commands</A>, <A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.ShowPosition">ShowPosition</A></H2>
+<A HREF="#cmd_cursor">Cursor Movement</A>, <A HREF="#cmd_delete">Deleting Text</A>, <A HREF="#cmd_line">Line Commands</A>, <A HREF="#cmd_block">Block Commands</A>, <A HREF="#cmd_edit">Text Editing and Insertion</A>, <A HREF="#cmd_fold">Folding Text</A>, <A HREF="#cmd_bookmark">Bookmarks</A>, <A HREF="#cmd_trans">Character Translation</A>, <A HREF="#cmd_file">File Commands</A>, <A HREF="#cmd_directory">Directory Commands</A>, <A HREF="#cmd_search">Search and Replace</A>, <A HREF="#cmd_window">Window Commands</A>, <A HREF="#cmd_compile">Compiler Support</A>, <A HREF="#cmd_tags">TAGS Commands</A>, <A HREF="#cmd_option">Option commands</A>, <A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.ShowPosition">ShowPosition</A></H2>
 Show internal position information on status line
 <P><B>SEE ALSO:</B>
 <A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.ShowVersion">ShowVersion</A></H2>
@@ -1102,6 +1139,8 @@ Change option flags for current buffer
 <A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.CloseActivate">CloseActivate</A></H2>
 <P><B>SEE ALSO:</B>
 <A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.ActivateInOtherWindow">ActivateInOtherWindow</A></H2>
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.DeleteFile">DeleteFile</A></H2>
 <P><B>SEE ALSO:</B>
 <A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.ASCIITable">ASCIITable</A></H2>
 Display ASCII selector in status line.
@@ -1181,6 +1220,8 @@ C_CommentDelta = 1;
 C_FirstLevelWidth = -1;
 C_FirstLevelIndent = 4;
 C_Continuation = 4;
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.SetIndentWithTabs">SetIndentWithTabs</A></H2>
 Set value of indent-with-tabs to argument
 <P><B>SEE ALSO:</B>
 <A HREF="#cmd_other">Other commands</A>.</BODY>

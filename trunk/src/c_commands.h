@@ -434,7 +434,7 @@ typedef enum {
     ExFileTrim,
     /// Trim end-of-line whitespace
 
-    //<cmd_directory>
+    //<cmd_directory> Directory Commands
     ExDirOpen,
     /// Open directory browser
     ExDirGoUp,
@@ -446,7 +446,7 @@ typedef enum {
     ExDirGoto,
     /// Change to directory given as argument
 
-    //<cmd_search>
+    //<cmd_search> Search and Replace
     ExIncrementalSearch,
     /// Incremental search
     ExFind,
