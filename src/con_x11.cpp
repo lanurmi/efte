@@ -1609,13 +1609,19 @@ int GUI::ClosePipe(int id) {
 int GUI::RunProgram(int mode, char *Command) {
     char Cmd[1024];
 
+    char* xterm = getenv("TERM");
+    if (NULL == xterm || 0 == *xterm)
+        xterm = "xterm";
+
+    strcpy(Cmd, xterm);
+
     if (*Command == 0)  // empty string = shell
-        strcpy(Cmd, "xterm &");
+        strcat(Cmd, " -ls &");
     else {
-	// buffer overflow fix
-	strcpy(Cmd, "xterm -e ");
-	strncat(Cmd, Command, 1000);
-        Cmd[1000] = 0;
+        strcat(Cmd, " -e ");
+        // buffer overflow problem: -2 for possible async.
+	strncat(Cmd, Command, sizeof(Cmd) - strlen(Cmd) - 2);
+        Cmd[sizeof(Cmd) - 3] = 0;
         if (mode == RUN_ASYNC)
             strcat(Cmd, " &");
     }
