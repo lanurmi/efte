@@ -148,7 +148,7 @@ int EBuffer::FindStr(char *Data, int Len, int Options) {
     C = CharOffset(X, C);
 
     if (Options & SEARCH_NEXT) {
-        int CC = MatchCount ? MatchCount : 1;
+        int CC = MatchCount ? 1 : 0;
 
         if (Options & SEARCH_BACK) {
             C -= CC;
