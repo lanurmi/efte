@@ -1267,12 +1267,8 @@ void EBuffer::GetInfo(char *AInfo, int MaxLen) {
     char winTitle[256] = {0};
 
     JustFileName(FileName, buf);
-    printf("-> %s\n1. %s\n", FileName, buf);
     if (buf[0] == '\0') // if there is no filename, try the directory name.
-    {
         JustLastDirectory(FileName, buf);
-        printf("2. %s\n", buf);
-    }
 
     if (buf[0] != 0) // if there is a file/dir name, stick it in here.
     {
