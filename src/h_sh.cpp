@@ -52,7 +52,7 @@ int Hilit_SH(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, 
                            || ((CommandStr == 1)
                                && (*p == '/' || *p == '.'))) {
                     while (len > j
-                           && (isalnum(p[j]) || p[j] == '_' || p[j] == '-'
+                           && (isalnum(p[j]) || strchr("_-[]$", p[j]) != NULL
                                || ((CommandStr == 1)
                                    && (p[j] == '/' || p[j] == '.'))))
                         j++;
@@ -199,8 +199,8 @@ int Hilit_SH(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, 
                     while (b && len > 0 &&
                            (isalnum(*p) ||
                             (strchr("{}[]_", *p) != NULL) ||
-                            (b == 2 && (strchr("#%:-=?+/_", *p) != NULL)) ||
-                            (b == 1 && (strchr("*@#?-$!_", *p) != NULL) /*&& (b = 0, 1) ????? */)
+                            (b == 2 && (strchr("#%:-=?+/", *p) != NULL)) ||
+                            (b == 1 && (strchr("*@#?-$!", *p) != NULL) /*&& (b = 0, 1) ????? */)
                            )
                           )
                     { // !!!!! ?????
