@@ -165,17 +165,15 @@ int EBuffer::LoadFrom(char *AFileName) {
                 lm = 0;
                 m = NULL;
                 Lines++;
-            } else
-            {
-                delete m;
-                m = NULL;
             }
+
             p = e;
             if (lchar != -1) // skip LINE terminator/separator
                 p++;
         } while (lf);
         Msg(S_INFO, "Loading: %d lines, %d bytes.", Lines, numChars);
     }
+
     if ((RCount == 0) || (lm > 0) || !BFI(this, BFI_ForceNewLine)) {
         if (lm == 0 && m == NULL && (m = (char *)malloc(CHAR_TRESHOLD)) == 0)
             goto fail;
@@ -188,6 +186,8 @@ int EBuffer::LoadFrom(char *AFileName) {
         RGap = RCount;
     }
 
+    delete m;
+    m = NULL;
 
     // initialize folding array.
     // TODO: allocate only when folds are actually used.
