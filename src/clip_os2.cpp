@@ -38,7 +38,10 @@ int GetPMClip() {
             if ((i > 0) && (cd.fChar[i-1] == 0x0D)) dx++;
             SSBuffer->InsText(P.Row, P.Col, i - j - dx, cd.fChar + j);
             j = i + 1;
-        }
+	}
+
+	// now that we don't need cd.fChar anymore, free it
+	free(cd.fChar);
     }
     return 0;
 }
