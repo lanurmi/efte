@@ -403,11 +403,31 @@ void EDirectory::GetPath(char *APath, int MaxLen) {
 }
 
 void EDirectory::GetInfo(char *AInfo, int MaxLen) {
+    char buf[256] = {0};
+    char winTitle[256] = {0};
+
+    JustFileName(Path, buf);
+    if (buf[0] == '\0') // if there is no filename, try the directory name.
+        JustLastDirectory(Path, buf);
+
+    if (buf[0] != 0) // if there is a file/dir name, stick it in here.
+    {
+        strncat(winTitle, buf, sizeof(winTitle) - 1 - strlen(winTitle));
+        strncat(winTitle, "/ - ", sizeof(winTitle) - 1 - strlen(winTitle));
+    }
+    strncat(winTitle, Path, sizeof(winTitle) - 1 - strlen(winTitle));
+    winTitle[sizeof(winTitle) - 1] = 0;
+
     sprintf(AInfo,
             "%2d %04d/%03d %-150s",
             ModelNo,
             Row + 1, FCount,
-            Path);
+            winTitle);
+/*    sprintf(AInfo,
+            "%2d %04d/%03d %-150s",
+            ModelNo,
+            Row + 1, FCount,
+            Path);*/
 }
 
 void EDirectory::GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen) {
