@@ -32,7 +32,8 @@ sub find_sources
     grep { ! /\.o$/ and
             ! -d $_ and
             ! -x _ and
-            ! /defcfg\.(?:cnf|h)/
+            ! /defcfg\.(?:cnf|h)/ and
+            ! /~$/
     } map { 
         glob "fte/$_"
     } qw( 
@@ -48,11 +49,13 @@ sub find_sources
 sub find_common
 {
     grep { 
-        1
+        ! -d $_ and
+            $_ !~ /Makefile$/and
+            ! /~$/
     } map {
         glob "fte/$_"
     } qw(
-    [A-LN-Z]*
+    [A-Z]*
     file_id.diz
     doc/*
     config/*
