@@ -955,23 +955,30 @@ int EBuffer::InsertSpace() {
     return TypeChar(32);
 }
 
-int EBuffer::LineIndented(int Row) {
-    int P;
-    char *PC;
-    int I;
-    int Ind = 0;
+int EBuffer::LineIndented(int Row, const char *indentchars) {
+    ELine *l;
     
     if (Row < 0) return 0;
     if (Row >= RCount) return 0;
-    P = RLine(Row)->Count;
-    PC = RLine(Row)->Chars;
-    
-    for (I = 0; I < P; I++) {
-        if (PC[I] == ' ') Ind++;
-        else if ((PC[I] == 9) && (BFI(this, BFI_ExpandTabs) == 1)) Ind = NextTab(Ind, BFI(this, BFI_TabSize));
-        else break;
+    l = RLine(Row);
+    return ScreenPos(l, LineIndentedCharCount(l, indentchars));
+}
+
+int EBuffer::LineIndentedCharCount(ELine *l, const char *indentchars) {
+    char *PC;
+    int CC, i;
+
+    if (! l)
+        return 0;
+    if (! indentchars)
+        indentchars = " \t";
+    CC = l->Count;
+    PC = l->Chars;
+    for(i = 0; i < CC; i++) {
+        if (! strchr(indentchars, PC[i]))
+            break;
     }
-    return Ind;
+    return i;
 }
 
 int EBuffer::IndentLine(int Row, int Indent) {
