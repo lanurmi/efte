@@ -44,6 +44,7 @@
 #include "c_config.h"
 #include "c_mode.h"
 #include "c_color.h"
+#include "s_files.h"
 
 #define PM_STACK_SIZE (96 * 1024)
 
@@ -338,7 +339,7 @@ ToolBarItem tools[] =
 HWND CreateToolBar(HWND parent, HWND owner, int id) {
     static int reged = 0;
     HPS hps;
-    int i;
+    unsigned int i;
 
     if (!reged) {
         RegisterToolBarClass(hab);
@@ -368,7 +369,7 @@ HWND CreatePMMenu(HWND parent, HWND owner, int menu, int id, int style) {
     char *p;
     
     hmenu = WinCreateWindow(parent, 
-                            WC_MENU, "menu", style & ~MS_CONDITIONALCASCADE,
+                            WC_MENU, (PUCHAR)"menu", style & ~MS_CONDITIONALCASCADE,
                             0, 0, 0, 0, 
                             owner, HWND_TOP, id, 0, 0);
     
@@ -461,31 +462,31 @@ MRESULT EXPENTRY FileDlgProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
         
         InsertHistory(WinWindowFromID(hwnd, DID_FILENAME_ED), HIST_PATH, MAXPATH);
         WinInvalidateRect(hwnd, 0, TRUE);
-        WinRestoreWindowPos("FTEPM",
-                            (dlg->fl & FDS_SAVEAS_DIALOG) ? "FileSaveDlg" : "FileOpenDlg",
+        WinRestoreWindowPos((PUCHAR)"FTEPM",
+                            (PUCHAR)((dlg->fl & FDS_SAVEAS_DIALOG) ? "FileSaveDlg" : "FileOpenDlg"),
                             hwnd);
         break;
     case WM_COMMAND:
         switch (SHORT1FROMMP(mp1)) {
         case DID_OK:
             WinShowWindow(hwnd, FALSE);
-            WinStoreWindowPos("FTEPM",
-                              (dlg->fl & FDS_SAVEAS_DIALOG) ? "FileSaveDlg" : "FileOpenDlg",
+            WinStoreWindowPos((PUCHAR)"FTEPM",
+                              (PUCHAR)((dlg->fl & FDS_SAVEAS_DIALOG) ? "FileSaveDlg" : "FileOpenDlg"),
                               hwnd);
             break;
             
         case DID_CANCEL:
             WinShowWindow(hwnd, FALSE);
-            WinStoreWindowPos("FTEPM",
-                              (dlg->fl & FDS_SAVEAS_DIALOG) ? "FileSaveDlg" : "FileOpenDlg",
+            WinStoreWindowPos((PUCHAR)"FTEPM",
+                              (PUCHAR)((dlg->fl & FDS_SAVEAS_DIALOG) ? "FileSaveDlg" : "FileOpenDlg"),
                               hwnd);
             break;
         }
         break;
     case WM_CLOSE:
         WinShowWindow(hwnd, FALSE);
-        WinStoreWindowPos("FTEPM",
-                          (dlg->fl & FDS_SAVEAS_DIALOG) ? "FileSaveDlg" : "FileOpenDlg",
+        WinStoreWindowPos((PUCHAR)"FTEPM",
+                          (PUCHAR)((dlg->fl & FDS_SAVEAS_DIALOG) ? "FileSaveDlg" : "FileOpenDlg"),
                           hwnd);
         break;
     }
@@ -529,7 +530,7 @@ typedef struct {
 
 static int DoChoice(HWND hwndFrame, ChoiceInfo *choice) {
     char msg[1024];
-    char Prompt[1024];
+    unsigned char Prompt[1024];
     char *fmt;
     char *p;
     int rc;
@@ -556,7 +557,7 @@ static int DoChoice(HWND hwndFrame, ChoiceInfo *choice) {
                                  WS_VISIBLE,
                                  &flFrame,
                                  0,
-                                 choice->Title,
+                                 (PUCHAR)choice->Title,
                                  0,
                                  0,
                                  0, 0);
@@ -577,7 +578,7 @@ static int DoChoice(HWND hwndFrame, ChoiceInfo *choice) {
         hwndButton[i] =
             WinCreateWindow(hwndDlg,
                             WC_BUTTON,
-                            button,
+                            (PUCHAR)button,
                             WS_VISIBLE | BS_PUSHBUTTON | BS_AUTOSIZE | ((i == 0) ? BS_DEFAULT | WS_TABSTOP | WS_GROUP: 0),
                             cxBorder + x, SPC + cyBorder, 0, 0,
                             hwndDlg, ((i == 0) ? HWND_TOP: hwndButton[i - 1]),
@@ -590,7 +591,7 @@ static int DoChoice(HWND hwndFrame, ChoiceInfo *choice) {
     
     fmt = va_arg(choice->ap, char *);
     vsprintf(msg, fmt, choice->ap);
-    strncpy(Prompt, msg, sizeof(Prompt));
+    strncpy((PCHAR)Prompt, msg, sizeof(Prompt));
     Prompt[sizeof(Prompt) - 1] = 0;
     
     hwndStatic = WinCreateWindow(hwndDlg,
@@ -602,7 +603,7 @@ static int DoChoice(HWND hwndFrame, ChoiceInfo *choice) {
                                  100,
                                  NULL, NULL);
     
-    WinRestoreWindowPos("FTEPM", msgbox, hwndDlg);
+    WinRestoreWindowPos((PUCHAR)"FTEPM", (PUCHAR)msgbox, hwndDlg);
     
     xw = cxScreen / 2;
     if (x - SPC > xw)
@@ -618,7 +619,7 @@ static int DoChoice(HWND hwndFrame, ChoiceInfo *choice) {
         tr.yTop = cyScreen / 2;
         tr.yBottom = 0;
         
-        cd = WinDrawText(ps, -1, Prompt + cp,
+        cd = WinDrawText(ps, -1, (PUCHAR)(Prompt + cp),
                          &tr,
                          0, 0,
                          DT_LEFT | DT_TOP | DT_WORDBREAK | DT_TEXTATTRS |
@@ -2925,7 +2926,17 @@ int GFramePeer::ConQuerySize(int *X, int *Y) {
 }   
 
 int GFramePeer::ConSetTitle(char *Title, char *STitle) {
-    WinSetWindowText(hwndFrame, Title);
+    char szTitle[256] = {0};
+
+    JustFileName(Title, szTitle);
+    if (szTitle[0] == '\0') // if there is no filename, try the directory name.
+        JustLastDirectory(Title, szTitle);
+
+    if (szTitle[0] != '\0') // if there is something...
+        strncat(szTitle, " - ", sizeof(szTitle) - 1 - strlen(szTitle));
+    strncat(szTitle, Title, sizeof(szTitle) - 1 - strlen(szTitle));
+
+    WinSetWindowText(hwndFrame, szTitle);
     return 1;
 }
 
@@ -3525,8 +3536,8 @@ static int CreatePipeChild(ULONG *sid, PID *pid, HPIPE &hfPipe, char *Command) {
     ULONG ulAction;
     //ULONG ulNew;
     HPIPE hfChildPipe;
-    HFILE hfNewStdOut = -1, hfNewStdErr = -1;
-    HFILE hfStdOut = 1, hfStdErr = 2;
+    HFILE hfNewStdOut = (HFILE)-1, hfNewStdErr = (HFILE)-1;
+    HFILE hfStdOut = (HFILE)1, hfStdErr = (HFILE)2;
     int rc;
     
     sprintf(szPipe, "\\PIPE\\FTE%d\\CHILD%d", getpid(), PCount);
@@ -3846,25 +3857,25 @@ int GUI::multiFrame() {
 
 void DieError(int rc, const char *msg, ...) {
     va_list ap;
-    char str[1024];
+    unsigned char str[1024];
     
     va_start(ap, msg);
-    vsprintf(str, msg, ap);
+    vsprintf((PCHAR)str, msg, ap);
     va_end(ap);
     if (hab == 0)
         hab = WinInitialize(0);
     if (hmq == 0)
         hmq = WinCreateMsgQueue(hab, 0);
-    WinMessageBox(HWND_DESKTOP, HWND_DESKTOP, str, "FTE", 0, MB_OK | MB_ERROR);
+    WinMessageBox(HWND_DESKTOP, HWND_DESKTOP, str, (PUCHAR)"FTE", 0, MB_OK | MB_ERROR);
     WinDestroyMsgQueue(hmq);
     WinTerminate(hab);
     exit(rc);
 }
 
 char ConGetDrawChar(int index) {
-    static char tab[] = "Ú¿ÀÙÄ³ÂÃ´ÁÅ\x1AúÄ±°\x1B\x1A";
+    static char tab[] = "’“”•‘˜–—™š\x1A·‘œ›\x1B\x1A";
     
-    assert(index >= 0 && index < strlen(tab));
+    assert(index >= 0 && index < (signed)strlen(tab));
     
     return tab[index];
 }
