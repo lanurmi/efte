@@ -340,6 +340,7 @@ int IsState(hsState *Buf, hsState State, int Len) {
 }
 
 int LookAt(EBuffer *B, int Row, unsigned int Pos, const char *What, hsState State, int NoWord) {
+    STARTFUNC("LookAt{h_c.cpp}");
     char *P;
     unsigned int L;
     //int StateLen;
