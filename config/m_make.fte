@@ -83,7 +83,7 @@ colorize MAKE {
 }
 
 mode MAKE: PLAIN {
-    FileNameRx          = /\c{makefile}|{\.{MAK}|{MK}|{MIF}$}/;
+    FileNameRx          = /\c{makefile}|{\.{MAK}|{MAKE}|{MK}|{MIF}$}/;
     FirstLineRx         = /^\#\!.*make\s+-f/;
     HilitOn             = 1;
     Colorizer           = 'MAKE';
