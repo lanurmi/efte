@@ -84,8 +84,10 @@ colorize MAKE {
 
 mode MAKE: PLAIN {
     FileNameRx          = /\c{makefile}|{\.{MAK}|{MK}|{MIF}$}/;
+    FirstLineRx         = /^\#\!.*make\s+-f/;
     HilitOn             = 1;
     Colorizer           = 'MAKE';
+    IndentWithTabs      = 1;         # use tabs for auto-indent
 
     RoutineRegexp       = '^[^:\#]+:';
 
