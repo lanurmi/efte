@@ -1,5 +1,15 @@
-fte (0.49.13-16) unstable; urgency=low
-  * Fixed spelling (Closes 12468, 12469)
+fte (0.50.0-1) unstable; urgency=low
+  * CVS 2003/07/10
+  * fixed spelling (Closes: 12468, 12469)
+  * applied patch (Closes: 118734)
+  * added linda override file
+  * add mini-edit.xpm fte icon based on icons/fte16x16.xpm with reduced
+    colors (Closes: #127877)
+  * if user has set DISPLAY it's correct it will open xfte
+    even over ssh - it's correct behaviour - not bug (Closes: 118734)
+  * actualized README.Debian (Closes: 151674)
+
+ -- Zdenek Kabelac <kabi@debian.org>  Thu,  7 Jul 2003 14:04:21 +0200
 
 fte (0.49.13-15) unstable; urgency=low
 
