@@ -37,8 +37,8 @@ FILE *output = 0;
 int lntotal = 0;
 long offset = -1;
 long pos = 0;
-char XTarget[256] = "";
-
+char XTarget[MAXPATH] = "";
+char StartDir[MAXPATH] = "";
 
 #include "c_commands.h"
 #include "c_cmdtab.h"
@@ -114,7 +114,6 @@ void PutNumber(CurPos &cp, int xtag, long num) {
 }
 
 int main(int argc, char **argv) {
-    char Cur[MAXPATH];
     char Source[MAXPATH];
     char Target[MAXPATH];
     char *p = argv[1];
@@ -122,7 +121,11 @@ int main(int argc, char **argv) {
 
     fprintf(stderr, PROG_CFTE " " VERSION " " COPYRIGHT "\n");
     if (argc < 2 || argc > 4) {
-        fprintf(stderr, "Usage: " PROG_CFTE " [-o<offset>] config/main.fte [fte-new.cnf]\n");
+        fprintf(stderr, "Usage: " PROG_CFTE " [-o<offset>] "
+#ifndef UNIX
+                "config/"
+#endif
+                "main.fte [fte-new.cnf]\n");
         exit(1);
     }
 
@@ -184,8 +187,15 @@ int main(int argc, char **argv) {
     pos = 2 * 4;
 
     fprintf(stderr, "Compiling to '%s'\n", Target);
-    ExpandPath(".", Cur);
-    Slash(Cur, 1);
+    {
+        char PrevDir[MAXPATH];
+        sprintf(PrevDir, "%s/..", Target);
+        ExpandPath(PrevDir, StartDir);
+        Slash(StartDir, 1);
+    }
+
+    //ExpandPath(".", StartDir);
+    //Slash(StartDir, 1);
 
     {
         CurPos cp;
@@ -206,7 +216,7 @@ int main(int argc, char **argv) {
         PutString(cp, CF_STRING, FSource);
     }
 
-    if (LoadFile(Cur, Source, 0) != 0) {
+    if (LoadFile(StartDir, Source, 0) != 0) {
         fprintf(stderr, "\nCompile failed\n");
         cleanup(1);
     }
@@ -1666,8 +1676,8 @@ int LoadFile(const char *WhereName, const char *CfgName, int Level) {
     char *buffer = 0;
     struct stat statbuf;
     CurPos cp;
-    char last[256];
-    char Cfg[256];
+    char last[MAXPATH];
+    char Cfg[MAXPATH];
 
     //fprintf(stderr, "Loading file %s %s\n", WhereName, CfgName);
 
@@ -1676,9 +1686,54 @@ int LoadFile(const char *WhereName, const char *CfgName, int Level) {
     if (IsFullPath(CfgName)) {
         strcpy(Cfg, CfgName);
     } else {
+        // here we will try relative to a number of places.
+        // 1. User's .fte directory.
+        // 2. System's "local config" directory.
+        // 3. Initial file's directory.
+        // 4. Current directory.
+        // This means that a user's directory will always win out,
+        // allowing a given user to always be able to override everything,
+        // followed by a system standard to override anything.
+
+        // #'s 1 and 2 are unix-only.
+#ifdef UNIX
+        // 1. User's .fte directory.
+        char tmp[MAXPATH];
+        sprintf(tmp, "~/.fte/%s", CfgName);
+        ExpandPath(tmp, Cfg);
+        //fprintf(stderr, "Looking for %s\n", Cfg);
+        if (!FileExists(Cfg))
+        {
+            // Okay, now try "local config".
+            sprintf(tmp, "%slocalconfig/%s", StartDir, CfgName);
+            ExpandPath(tmp, Cfg);
+            //fprintf(stderr, "Looking for %s\n", Cfg);
+            if (!FileExists(Cfg))
+            {
+                sprintf(tmp, "%sconfig/%s", StartDir, CfgName);
+                ExpandPath(tmp, Cfg);
+                //fprintf(stderr, "Looking for %s\n", Cfg);
+                if (!FileExists(Cfg))
+                {
+                    sprintf(tmp, "./%s", CfgName);
+                    ExpandPath(tmp, Cfg);
+                    //fprintf(stderr, "Looking for %s\n", Cfg);
+                    if (!FileExists(Cfg))
+                    {
+                        fprintf(stderr, "Cannot find '%s' in:\n"
+                                "\t~/.fte,\n""\t%slocalconfig,\n"
+                                "\t%sconfig, or\n"
+                                "\t.",
+                                CfgName, StartDir, StartDir);
+                    }
+                }
+            }
+        }
+#else // UNIX
         SlashDir(last);
         strcat(last, CfgName);
         ExpandPath(last, Cfg);
+#endif // UNIX
     }
     // puts(Cfg);
 

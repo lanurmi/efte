@@ -10,17 +10,7 @@ all:	fte
 	(cd src ; make unix)
 
 install: all
-	-rm -rf $(CONFIGDIR)
-	mkdir -p $(BINDIR)
-	mkdir -p $(LIBDIR)
-	cp fte $(BINDIR)
-	cp src/xfte $(BINDIR)
-	cp src/cfte $(BINDIR)
-	src/cfte config/main.fte $(LIBDIR)/system.fterc
-	cp -r config $(LIBDIR)
-	chmod a+r $(CONFIGDIR)/*
-	chmod a+r $(CONFIGDIR)/*/*
-	find $(CONFIGDIR) -type d ! -name CVS | while read dir; do echo chmod a+x $$dir; done
+	sh install
 
 fte: fte.in Makefile fte.spec
 	sed <$< >$@ \
