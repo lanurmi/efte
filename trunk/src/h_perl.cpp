@@ -299,9 +299,10 @@ int Hilit_PERL(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
                     else
                     {
                         while ((len > 0) && (isalnum(*p) ||
-                                             (first == '{' && *p == '^' || *p == '}') ||
+                                             (first == '{' && (*p == '^' || *p == '}')) ||
                                              *p == '_' ||
-                                             *p == '\''))
+                                             *p == '\'')
+                              )
                             ColorNext();
                     }
                     State = hsPerl_Normal | X_BIT;
