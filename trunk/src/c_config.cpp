@@ -859,7 +859,12 @@ static int ReadColorize(CurPos &cp, EColorize *Colorize, const char *ModeName) {
                         Col <<= 4;
                         Col |= (hcPlain_Background & 0x0F);
                     } else {
-                        if (sscanf(Value, "%2X", &Col) != 1) return -1;
+                        unsigned int ColBg, ColFg;
+
+                        if (sscanf(colorstr, "%1X %1X", &ColFg, &ColBg) != 2)
+                            return 0;
+
+                        Col = ColFg | (ColBg << 4);
                     }
                     color = Col;
                 }
