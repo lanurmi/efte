@@ -1,0 +1,185 @@
+# This Config is mostly just for colour syntax highlighting, there is
+# no auto-indent support in this mode.
+#
+# My python miscellany page is: http://www.vex.net/~x/python_stuff.html
+# Edited by Bastian Kleineidam <calvin@users.sourceforge.net>
+#
+# Small changes/fixes by Jon Svendsen (jsvendsen@bergen.frisurf.no)
+
+colorize PYTHON {
+    SyntaxParser = 'SIMPLE';
+
+    color {
+        { 'Normal',        'Lang_Default' },
+        { 'Number',        'Lang_DecimalNumber' },
+        { 'HexNumber',     'Lang_Number' },
+        { 'Punctuation',   'Lang_Punctuation' },
+        { 'String',        'Lang_String' },
+        { 'Comment',       'Lang_Comment' },
+        { 'CPreprocessor', 'Lang_Preprocessor' },
+        { 'Function',      'Lang_Function' },
+        { 'Label',         'Lang_Label' },
+        { 'Keyword',       'Editor_Keywords'},
+        { 'Command',       'Lang_Command' }, # assembler
+    };
+
+    keyword "Editor_Keywords" { # reserved words
+        "and", "assert", "break", "class", "continue", "def", "del",
+        "elif", "else", "except", "exec", "finally", "for", "from",
+        "global", "if", "import", "in", "is", "lambda", "not", "None",
+        "or", "pass", "print", "raise", "return", "try", "while",
+    };
+
+    keyword "Editor_Keywords2" {  # build-ins
+        "abs", "apply", "buffer", "callable", "chr", "cmp", "coerce",
+        "compile", "complex", "delattr", "dir", "divmod", "eval",
+        "execfile", "filter", "float", "getattr", "globals", "hasattr",
+        "hash", "hex", "id", "input", "intern", "int", "isinstance",
+        "issubclass", "len", "list", "locals", "long", "map", "max",
+        "min", "oct", "open", "ord", "pow", "range", "raw_input",
+        "reduce", "reload", "repr", "round", "setattr", "slice",
+        "str", "tupple", "vars", "xrange"
+    };
+
+    keyword "Editor_Keywords3" { # standard modules
+        "__builtin__", "__main__", "__doc__", "__name__", "__debug__",
+        "aifc", "AL", "al", "anydbm", "array", "audioop", "base64",
+        "BaseHTTPServer", "Bastion", "binascii", "binhex", "bisect",
+        "bsddb", "calendar", "cd", "cgi", "cmath", "cmd", "code",
+        "colorsys", "commands", "compileall", "ConfigParser", "copy",
+        "copy_reg", "cPickle", "crypt", "cStringIO", "ctb", "dbhash",
+        "dbm", "DEVICE", "dis", "dumbdbm", "EasyDialogs", "errno",
+        "exceptions", "fcntl", "fileinput", "findertools", "FL",
+        "fl", "flp", "fm", "fnmatch", "formatter", "FrameWork", "ftplib",
+        "gdbm", "getopt", "getpass", "GL", "gl", "glob", "gopherlib", "grp",
+        "gzip", "htmllib", "httplib", "ic", "imageop", "imaplib", "imgfile",
+        "imghdr", "imp", "jpeg", "keyword", "locale", "mac", "macconsole",
+        "macdnr", "macfs", "MacOS", "macostools", "macpath", "macspeech",
+        "mactcp", "mailbox", "mailcap", "marshal", "math", "md5", "mhlib",
+        "mimetools", "mimetypes", "MimeWriter", "mimify", "MiniAEFrame",
+        "mpz", "msvcrt", "multifile", "netrc", "nntplib", "operator",
+        "os", "os.path", "parser", "pdb", "pickle", "popen2",  "poplib",
+        "posix", "posixfile", "pprint", "profile", "pstats", "pwd",
+        "py_compile", "pyclbr", "Queue", "quopri", "random", "re",
+        "regex", "regsub", "repr", "resource", "rexec", "rfc822",
+        "rgbimg", "rotor", "select", "sgmllib", "sha", "shelve", "shlex",
+        "shutil", "signal", "site", "smtplib", "sndhdr", "socket",
+        "SocketServer", "stat", "string", "StringIO", "struct",
+        "sunaudiodev", "symbol", "sys", "syslog", "telnetlib", "tempfile",
+        "TERMIOS", "termios", "thread", "threading", "time", "token",
+        "tokenize", "traceback", "types", "urllib", "urlparse", "user",
+        "UserDict", "UserList", "uu", "whichdb", "whrandom", "winsound",
+        "xdrlib", "xmllib", "zlib",
+    };
+
+    keyword "Editor_Keywords4" { # build in exceptions
+        "Exception", "StandardError", "ArithmeticError",
+        "LookupError", "EnvironmentError", "AssertionError",
+        "AttributeError", "EOFError", "FloatingPointError",
+        "IOError", "ImportError", "IndexError",
+        "KeyError", "KeywordError", "MemoryError",
+        "NameError", "NotImplementedError", "OSError",
+        "OverflowError", "RuntimeError", "SyntaxError",
+        "SystemError", "SystemExit", "TypeError",
+        "ValueError", "ZeroDivisionError",
+    };
+
+    keyword "Lang_Assembler" {
+        "self", "spam", "monty", "python", "lemon_curry",
+        "silly_walks", "Chapman", "Cleese", "Gilliam", "Idle",
+        "Jones", "Palin",
+    };
+
+    h_state 0 { 'Normal' }
+    h_trans { 8, '', 'def ', 'Keyword' }
+    h_trans { 9, '', 'class ', 'Keyword' }
+    h_trans { 1, '<', '#', 'Comment' }
+    h_trans { 2, '<i', 'u"""', 'String' }    
+    h_trans { 2, '<i', 'r"""', 'String' }    
+    h_trans { 2, '<', '"""', 'String' }
+    h_trans { 10, '<i', 'u\'\'\'', 'String' }
+    h_trans { 10, '<i', 'r\'\'\'', 'String' }
+    h_trans { 10, '<', '\'\'\'', 'String' }
+    h_trans { 3, '<i', 'u"', 'String' }
+    h_trans { 3, '<i', 'r"', 'String' }
+    h_trans { 3, '<', '"', 'String' }
+    h_trans { 4, '<i', 'u\'', 'String' }
+    h_trans { 4, '<i', 'r\'', 'String' }
+    h_trans { 4, '<', '\'', 'String' }
+    h_trans { 5, '-s', 'a-zA-Z_', 'Normal' }
+    h_trans { 6, '<', '0x', 'HexNumber' }
+    h_trans { 7, '<s', '0-9', 'Number' }
+    h_trans { 0, 'S', '_a-zA-Z0-9', 'Punctuation' }
+
+    h_state 1 { 'Comment' }
+    h_trans { 0, '$', '', 'Normal' }
+
+    h_state 2 { 'String' }
+    h_trans { 2, '>', '\\\\', 'String' }
+    h_trans { 2, '>', '\\"', 'String' }
+    h_trans { 0, '>', '"""', 'String' }
+
+    h_state 3 { 'String' }
+    h_trans { 3, '>', '\\\\', 'String' } #special case for strings like "\\"
+    h_trans { 3, '>', '\\"', 'String' }
+    h_trans { 0, '>', '"', 'String' }
+    h_trans { 0, '$', '', 'String' }
+
+    h_state 4 { 'String' }
+    h_trans { 4, '>', '\\\\', 'String' } #special case for strings like '\\'
+    h_trans { 4, '>', '\\\'', 'String' }
+    h_trans { 0, '>', '\'', 'String' }
+    h_trans { 0, '$', '', 'String' }
+
+    h_state 5 { 'Normal' }
+    h_trans { 0, '$', '', 'Normal' }
+    h_wtype { 0, 0, 0, 'i', 'a-zA-Z0-9_' }
+
+    h_state 6 { 'HexNumber' }
+    h_trans { 0, '-S', '0-9A-Fa-f', 'Normal' }
+    h_trans { 0, '$', '', 'Normal' }
+
+    h_state 7 { 'Number' }
+    h_trans { 0, '-S', '0-9', 'Normal' }
+    h_trans { 0, '$', '', 'Normal' }
+
+    h_state 8 { 'Command' }
+    h_trans { 0, '', '(', 'Punctuation' }
+
+    h_state 9 { 'Command' }
+    h_trans { 0, '', ':', 'Punctuation' }
+
+    h_state 10 { 'String' }
+    h_trans { 10, '>', '\\\\', 'String' }
+    h_trans { 10, '>', '\\\'', 'String' }
+    h_trans { 0, '>', '\'\'\'', 'String' }
+}
+
+mode PYTHON: PLAIN {
+    FileNameRx          = /\.\cPY$/;
+    HilitOn             = 1;
+    Colorizer           = "PYTHON";
+    IndentMode          = "PLAIN";
+    AutoIndent          = 1;
+    MultiLineHilit      = 1;
+    AutoHilitParen      = 1;
+    Trim                = 1;
+    SpaceTabs           = 1;
+    MatchCase           = 1;
+#    WordWrap            = 0;
+#    ToggleAutoIndent    = 1;
+
+    FirstLineRx         = /^\#\!.*python/;
+    RoutineRegexp       = /def[ ]+[^ ]/;
+
+    SaveFolds           = 2;      # save fold info at end of line
+
+    CommentStart        = " #";
+    CommentEnd          = "";
+}
+
+
+# problems...
+#     we have no indent support at all )-:
+#     is block comment/uncomment possible via macro?
+

@@ -1,0 +1,42 @@
+# c language templates
+
+eventmap C {
+    # these work well for default indentation settings
+    # changes may be necessary if you use different indentation
+    
+    # typical usage would be typing ifx and <space>.
+    # useful command here is <A+Enter> which adds 
+    # a new line after the current one, and indents it properly.
+    # in cmode defined as LineAdd; LineIndent;
+    abbrev 'ifx' {
+        KillWordPrev; InsertString 'if () {'; LineIndent; LineNew; 
+        InsertString '}'; LineIndent; 
+        MoveUp; MoveLineEnd; 3:MoveLeft; 
+        Fail; # do not insert typed character
+    }
+    abbrev 'whx' { 
+        KillWordPrev; InsertString 'while () {'; LineIndent; LineNew;
+        InsertString '}'; LineIndent; 
+        MoveUp; MoveLineEnd; 3:MoveLeft;
+        Fail;
+    }
+    abbrev 'swx' { 
+        KillWordPrev; InsertString 'switch () {'; LineIndent; LineNew;
+        InsertString '}'; LineIndent; 
+        MoveUp; MoveLineEnd; 3:MoveLeft; 
+        Fail;
+    }
+    abbrev 'cax' {
+        KillWordPrev; InsertString 'case :'; LineIndent; LineNew;
+        InsertString 'break;'; LineIndent;
+        MoveUp; MoveLineEnd; MovePrev;
+        Fail;
+    }
+    abbrev 'dex' {
+        KillWordPrev; InsertString 'default:'; LineIndent; 2:LineNew;
+        InsertString 'break;'; LineIndent;
+        MoveUp; LineIndent;
+        Fail;
+    }
+}
+
