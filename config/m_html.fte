@@ -10,7 +10,7 @@ sub HTML_Base {
     2:LineNew;
     InsertString "<html>"; 2:LineNew;
     InsertString "<head>"; LineNew;
-    InsertString "<meta name=\"Generator\" content=\"FTE 0.49.1\">";
+    InsertString "<meta name=\"Generator\" content=\"FTE 0.49.2\">";
     LineNew;
     InsertString "<meta name=\"Keywords\" content=\"\">"; LineNew;
     InsertString "<meta name=\"Description\" content=\"\">";
