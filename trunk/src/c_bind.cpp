@@ -221,6 +221,14 @@ EMode::EMode(EMode *aMode, EEventMap *Map, const char *aName) {
         fColorize = aMode->fColorize;
 #endif
         Flags = aMode->Flags;
+
+        // duplicate strings in flags to allow them be freed
+        for (int i=0; i<BFS_COUNT; i++)
+        {
+            if (aMode->Flags.str[i] != 0)
+                Flags.str[i] = strdup(aMode->Flags.str[i]);
+        }
+
         MatchName = 0;
         MatchLine = 0;
         MatchNameRx = 0;
@@ -242,6 +250,8 @@ EMode::EMode(EMode *aMode, EEventMap *Map, const char *aName) {
         fColorize = 0;
 #endif
         Flags = DefaultBufferFlags;
+
+        // there is no strings in default settings...
     }
 }
 
@@ -250,8 +260,6 @@ EMode::~EMode() {
     // fEventMap is just pointer to EventMaps list, so do not destroy it
     // fColorize is also just a pointer
 
-    // information on Flags can't be freed here.
-
     free(fName);
 
     free(MatchName);
@@ -259,6 +267,10 @@ EMode::~EMode() {
 
     free(MatchLine);
     RxFree(MatchLineRx);
+
+    // free strings from flags
+    for (int i=0; i<BFS_COUNT; i++)
+        free(Flags.str[i]);
 }
 
 EKeyMap::EKeyMap() {
