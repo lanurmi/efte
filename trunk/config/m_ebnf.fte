@@ -29,7 +29,6 @@ mode EBNF: PLAIN {
     HilitOn             = 1;
     AutoIndent          = 1;
     IndentMode          = 'PLAIN';
-    #TabSize             = 8;
     MultiLineHilit      = 1;
     AutoHilitParen      = 1;
 }

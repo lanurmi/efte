@@ -62,8 +62,6 @@ mode PERL: PLAIN { # PERL
     Colorizer           = 'PERL';
     AutoIndent          = 1;
     IndentMode          = 'C';
-    #TabSize             = 8;
-    SpaceTabs           = 1;
     MatchCase           = 1;
     MultiLineHilit      = 1;
     AutoHilitParen      = 1;

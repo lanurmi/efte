@@ -42,10 +42,6 @@ mode C: PLAIN {      # C/C++ Mode
     Colorizer           = 'C';
     AutoIndent          = 1;
     IndentMode          = 'C';
-    #TabSize             = 8; # think twice before changing this, historically
-    #                         # it's been known to cause a mess in sources ;-)
-    # Thought twice about the above - let's get real, 8-space tabs are too much.
-    SpaceTabs           = 1;
     MatchCase           = 1;
     Trim                = 1;
     MultiLineHilit      = 1;

@@ -71,8 +71,6 @@ mode PASCAL: PLAIN {      # Pascal Mode
     Colorizer           = 'PASCAL';
     AutoIndent          = 1;
     IndentMode          = 'PLAIN';
-    #TabSize             = 8;
-    SpaceTabs           = 1;
     MatchCase           = 1;
     Trim                = 1;
     MultiLineHilit      = 1;
