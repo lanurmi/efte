@@ -1139,10 +1139,10 @@ void ProcessXEvents(TEvent *Event) {
         ConvertClickToEvent(event.type, buttonEvent->x, buttonEvent->y, buttonEvent->button, buttonEvent->state, Event, motionEvent->time);
         break;
     case FocusIn:
-        i18n_focus_in(i18n_ctx->xic);
+        i18n_focus_in(i18n_ctx);
         break;
     case FocusOut:
-        i18n_focus_out(i18n_ctx->xic);
+        i18n_focus_out(i18n_ctx);
         break;
     case KeyPress:
         // case KeyRelease:

@@ -287,11 +287,15 @@ i18n_context_t* i18n_open(Display * display, Window win, unsigned long *mask) /*
 	    ctx->input_style = (XIMPreeditNothing | XIMStatusNothing);
 
 	for (i = 0; (unsigned short) i < ctx->xim_styles->count_styles; i++)
-            if (ctx->xim_styles->supported_styles[i] & (XIMPreeditNothing | XIMPreeditNone) &&
-                ctx->xim_styles->supported_styles[i] & (XIMStatusNothing  | XIMStatusNone)
-               ) {
-                found = True;
-                ctx->input_style = ctx->xim_styles->supported_styles[i];
+	    if (ctx->input_style == ctx->xim_styles->supported_styles[i])
+	    //if (ctx->xim_styles->supported_styles[i] & (XIMPreeditNothing | XIMPreeditNone) &&
+            //    ctx->xim_styles->supported_styles[i] & (XIMStatusNothing  | XIMStatusNone))
+	    {
+		found = True;
+		/* do not modify this!
+		 * unless consulted with kabi@users.sf.net
+		 */
+		//ctx->input_style = ctx->xim_styles->supported_styles[i];
 		break;
 	    }
 	s = ns;
@@ -305,12 +309,12 @@ i18n_context_t* i18n_open(Display * display, Window win, unsigned long *mask) /*
 	return NULL;
     }
     /* This program only understand the Root preedit_style yet */
-    /*if (input_style != (XIMPreeditNothing | XIMStatusNothing)) {
+    if (ctx->input_style != (XIMPreeditNothing | XIMStatusNothing)) {
 	fprintf(stderr, "I18N error: This program only supports the "
 		"'Root' preedit type\n");
-	XCloseIM(xim);
+        i18n_destroy(ctx);
 	return NULL;
-    }*/
+    }
     ctx->xic = XCreateIC(ctx->xim, XNInputStyle, ctx->input_style,
 			 XNClientWindow, win,
 			 XNFocusWindow, win,
@@ -340,20 +344,20 @@ void i18n_destroy(i18n_context_t* ctx)
 }
 
 
-void i18n_focus_in(XIC xic) /*FOLD00*/
+void i18n_focus_in(i18n_context_t* ctx) /*FOLD00*/
 {
 #if XlibSpecificationRelease >= 6
-    if (xic != NULL)
-	XSetICFocus(xic);
+    if (ctx->xic != NULL)
+	XSetICFocus(ctx->xic);
 #endif
 }
  /*FOLD00*/
 
-void i18n_focus_out(XIC xic) /*FOLD00*/
+void i18n_focus_out(i18n_context_t* ctx) /*FOLD00*/
 {
 #if XlibSpecificationRelease >= 6
-    if (xic != NULL)
-	XUnsetICFocus(xic);
+    if (ctx->xic != NULL)
+	XUnsetICFocus(ctx->xic);
 #endif
 }
  /*FOLD00*/
