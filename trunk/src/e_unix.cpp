@@ -53,7 +53,11 @@ int EView::SysShowHelp(ExState &State, const char *word) {
             //dup(1); // ignore error output
             close(0);
             assert(open("/dev/null", O_RDONLY) == 0);
-            execlp("man", "man", "-a", word, NULL);
+            execlp("man", "man",
+#ifndef AIX // current AIX's don't like the -a.
+                   "-a",
+#endif
+                   word, NULL);
             // execlp("/bin/sh", "sh", "-c", command, NULL);
         }
         perror("Can't Exec Command\n");
