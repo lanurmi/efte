@@ -617,7 +617,7 @@ int EBuffer::BlockSelectPara() {
     return 1;
 }
 
-int EBuffer::BlockWriteTo(char *AFileName, int Append) {
+int EBuffer::BlockWriteTo(const char *AFileName, int Append) {
     //int error = 0;
     EPoint B, E;
     int L;
@@ -709,7 +709,7 @@ error:
     return 0;
 }
 
-int EBuffer::BlockReadFrom(char *AFileName, int blockMode) {
+int EBuffer::BlockReadFrom(const char *AFileName, int blockMode) {
     EBuffer *B;
     int savesys;
     int rc;

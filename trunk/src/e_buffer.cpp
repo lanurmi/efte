@@ -232,7 +232,7 @@ int EBuffer::LoadRegion(EPoint * /*A*/, int /*FH*/, int /*StripChar*/, int /*Lin
     return 0;
 }
 
-int EBuffer::InsertLine(EPoint Pos, int ACount, char *AChars) {
+int EBuffer::InsertLine(EPoint Pos, int ACount, const char *AChars) {
     if (InsLine(Pos.Row, 0) == 0) return 0;
     if (InsText(Pos.Row, Pos.Col, ACount, AChars) == 0) return 0;
     return 1;
@@ -732,7 +732,7 @@ int EBuffer::DelChars(int Row, int Ofs, int ACount) {
     return 1;
 }
 
-int EBuffer::InsChars(int Row, int Ofs, int ACount, char *Buffer) {
+int EBuffer::InsChars(int Row, int Ofs, int ACount, const char *Buffer) {
     PELine L;
     
 //    printf("InsChars: %d:%d %d\n", Row, Ofs, ACount);
@@ -790,7 +790,7 @@ int EBuffer::UnTabPoint(int Row, int Col) {
     return 1;
 }
 
-int EBuffer::ChgChars(int Row, int Ofs, int ACount, char * /*Buffer*/) {
+int EBuffer::ChgChars(int Row, int Ofs, int ACount, const char * /*Buffer*/) {
     PELine L;
     
     assert(Row >= 0 && Row < RCount && Ofs >= 0);
@@ -848,7 +848,7 @@ int EBuffer::DelText(int Row, int Col, int ACount, int DoMark) {
     return 1;
 }
 
-int EBuffer::InsText(int Row, int Col, int ACount, char *ABuffer, int DoMark) {
+int EBuffer::InsText(int Row, int Col, int ACount, const char *ABuffer, int DoMark) {
     int B, L;
     
 //    printf("InsText: %d:%d %d\n", Row, Col, ACount);

@@ -29,11 +29,11 @@ ECvsLog::ECvsLog (int createFlags,EModel **ARoot,char *Directory,char *OnFiles):
     SetFileName (msgFile,CvsLogMode);
 
     // Preload buffer with info
-    InsertLine (0,0,(char *)"");
-    InsertLine (1,60,(char *)"CVS: -------------------------------------------------------");
-    InsertLine (2,59,(char *)"CVS: Enter log. Lines beginning with 'CVS:' will be removed");
-    InsertLine (3,4,(char *)"CVS:");
-    InsertLine (4,18,(char *)"CVS: Commiting in ");
+    InsertLine (0,0, "");
+    InsertLine (1,60, "CVS: -------------------------------------------------------");
+    InsertLine (2,59, "CVS: Enter log. Lines beginning with 'CVS:' will be removed");
+    InsertLine (3,4, "CVS:");
+    InsertLine (4,18, "CVS: Commiting in ");
     InsText (4,18,strlen (Directory),Directory);
     if (OnFiles[0]) {
         p=5;
@@ -81,12 +81,12 @@ ECvsLog::ECvsLog (int createFlags,EModel **ARoot,char *Directory,char *OnFiles):
         ListFiles (p,fOther,"Other",cnt,position,len,status,OnFiles,"AaRrMm",1);
         delete position;delete len;delete status;
     } else {
-        InsertLine (5,4,(char *)"CVS:");
-        InsertLine (6,30,(char *)"CVS: Commiting whole directory");
+        InsertLine (5,4, "CVS:");
+        InsertLine (6,30, "CVS: Commiting whole directory");
         p=7;
     }
-    InsertLine (p,4,(char *)"CVS:");
-    InsertLine (p+1,60,(char *)"CVS: -------------------------------------------------------");
+    InsertLine (p,4, "CVS:");
+    InsertLine (p+1,60, "CVS: -------------------------------------------------------");
     SetPos (0,0);
     FreeUndo ();
     Modified=0;
@@ -99,20 +99,20 @@ ECvsLog::~ECvsLog () {
 void ECvsLog::ListFiles (int &p,const int fCount,const char *title,const int cnt,const int *position,
                          const int *len,const char *status,const char *list,const char *excinc,const int exc) {
     if (fCount) {
-        InsertLine (p++,4,(char *)"CVS:");
+        InsertLine (p++,4, "CVS:");
         int i=strlen (title);
-        InsertLine (p,5,(char *)"CVS: ");
-        InsText (p,5,i,(char *)title);
-        InsText (p,i+=5,5,(char *)" file");
+        InsertLine (p,5, "CVS: ");
+        InsText (p,5,i, title);
+        InsText (p,i+=5,5, " file");
         i+=5;
-        if (fCount!=1) InsText (p,i++,1,(char *)"s");
-        InsText (p++,i,1,(char *)":");
+        if (fCount!=1) InsText (p,i++,1, "s");
+        InsText (p++,i,1, ":");
         for (i=0;i<cnt;i++)
             if (!!strchr (excinc,status[i])^!!exc) {
                 // Should be displayed
-                InsertLine (p,9,(char *)"CVS:     ");
-                InsText (p,9,1,(char *)status+i);InsText (p,10,1,(char *)" ");
-                InsText (p++,11,len[i],(char *)list+position[i]);
+                InsertLine (p,9, "CVS:     ");
+                InsText (p,9,1, status+i);InsText (p,10,1, " ");
+                InsText (p++,11,len[i], list+position[i]);
             }
     }
 }

@@ -868,7 +868,7 @@ int EBuffer::TypeChar(char aCh) { // does abbrev expansion if appropriate
     return InsertString(&aCh, 1);
 }
 
-int EBuffer::InsertString(char *aStr, int aCount) {
+int EBuffer::InsertString(const char *aStr, int aCount) {
     int P;
     int C, L;
     int Y = VToR(CP.Row);
