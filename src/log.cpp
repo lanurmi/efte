@@ -9,11 +9,18 @@ any of its derivitives.
 
 #include <time.h>
 #include <ctype.h>
+#include "sysdep.h"
 #include "log.h"
+
+#if defined(NO_NEW_CPP_FEATURES)
+#include <iomanip.h>
+#include <iostream.h>
+#else
 #include <iomanip>
 #include <iostream>
 
 using namespace std;
+#endif
 
 #ifndef FTE_NO_LOGGING
 
