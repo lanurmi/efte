@@ -21,6 +21,7 @@ menu MOpenInMode {
     item "TE&X"        { FileOpenInMode 'TEX' }
     item "&BIN"        { FileOpenInMode 'BIN' }
     item "4&GL"        { FileOpenInMode 'GL' }
+    item "PHP"         { FileOpenInMode 'PHP' }
 }
 
 menu Object {
@@ -107,6 +108,7 @@ menu MChangeMode {
     item "TE&X"        { ChangeMode 'TEX' }
     item "&BIN"        { ChangeMode 'BIN' }
     item "4&GL"        { ChangeMode 'GL' }
+    item "PHP"         { ChangeMode 'PHP' }
 }
 
 menu File {
