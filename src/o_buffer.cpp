@@ -1391,7 +1391,8 @@ int EBuffer::InsertUid() {
     if (p == 0) p = getenv("USERNAME");
     if (p == 0) {
         Msg(S_INFO, "User ID not set ($USER).");
-        return 0;
+        //return 0;
+        p = "UNKNOWN USER";
     }
     return InsertString(p, strlen(p));
 }

@@ -339,7 +339,7 @@ int IsState(hsState *Buf, hsState State, int Len) {
     return 1;
 }
 
-int LookAt(EBuffer *B, int Row, unsigned int Pos, const char *What, hsState State, int NoWord) {
+int LookAt(EBuffer *B, int Row, unsigned int Pos, const char *What, hsState State, int NoWord, int CaseInsensitive) {
     STARTFUNC("LookAt{h_c.cpp}");
 
     int Len = strlen(What);
@@ -357,7 +357,10 @@ int LookAt(EBuffer *B, int Row, unsigned int Pos, const char *What, hsState Stat
         ENDFUNCRC(0);
     }
     LOG << "Check against [" << What << ']' << ENDLINE;
-    if (memcmp(pLine + Pos, What, Len) == 0)
+    if (
+        (CaseInsensitive && memicmp(pLine + Pos, What, Len) == 0) ||
+        (!CaseInsensitive && memcmp(pLine + Pos, What, Len) == 0)
+       )
     {
         ENDFUNCRC(1);
     }

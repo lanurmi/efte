@@ -314,9 +314,9 @@ static int IndentNormal(EBuffer *B, int Line, int /*StateLen*/, hsState * /*Stat
 
     if (CheckLabel(B, Line)) {
         return 0;
-    } else if (LookAt(B, Line, 0, "end", hsREXX_Keyword)) {
+    } else if (LookAtNoCase(B, Line, 0, "end", hsREXX_Keyword)) {
         return SearchMatch(-1, B, Line - 1, 1);
-    } else if (LookAt(B, Line, 0, "else", hsREXX_Keyword)) {
+    } else if (LookAtNoCase(B, Line, 0, "else", hsREXX_Keyword)) {
         return SearchMatch(-1, B, Line - 1, 2);
     } else {
         char ChFind;
@@ -326,7 +326,7 @@ static int IndentNormal(EBuffer *B, int Line, int /*StateLen*/, hsState * /*Stat
             return 0;
         switch (ChFind) {
         case 'p':
-            if (LookAt(B, Line, 0, "return", hsREXX_Keyword))
+            if (LookAtNoCase(B, Line, 0, "return", hsREXX_Keyword))
                 return I;
             else
                 return I + REXX_BASE_INDENT;
@@ -336,7 +336,7 @@ static int IndentNormal(EBuffer *B, int Line, int /*StateLen*/, hsState * /*Stat
         case 't':
         case 'e':
         case 'o':
-            if (LookAt(B, Line, 0, "do", hsREXX_Keyword))
+            if (LookAtNoCase(B, Line, 0, "do", hsREXX_Keyword))
                 return I + REXX_DO_OFFSET;
             else
                 return I + REXX_BASE_INDENT;
