@@ -206,6 +206,7 @@ typedef struct {
     unsigned long Options;
     //
     int resCount;
+    int lastInsertLen;
 } SearchReplaceOptions;
 
 int DLGGetFind(GView *View, SearchReplaceOptions &sr);

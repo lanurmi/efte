@@ -440,7 +440,8 @@ public:
     int GetMap(int Row, int *StateLen, hsState **StateMap);
 #endif
     int FindStr(char *Data, int Len, int Options);
-    int FindRx(RxNode *Rx, int Options);
+    int FindStr(char *Data, int Len, SearchReplaceOptions &opt);
+    int FindRx(RxNode *Rx, SearchReplaceOptions &opt);
     int Find(SearchReplaceOptions &opt);
     int IsLineBlank(int Row);
     int TrimLine(int Row);
