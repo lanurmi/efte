@@ -38,7 +38,7 @@ colorize PERL {
         'index', 'int', 'ioctl', 'join', 'keys', 'kill', 'last', 'lc',
         'lcfirst', 'length', 'link', 'listen', 'local', 'localtime', 'log',
         'lstat', 'map', 'mkdir', 'msgctl', 'msgget', 'msgsnd', 'msgrcv', 'my',
-        'next', 'no', 'oct', 'open', 'opendir', 'ord', 'pack', 'pipe', 'pop',
+        'next', 'no', 'oct', 'open', 'opendir', 'ord', 'our', 'pack', 'pipe', 'pop',
         'pos', 'print', 'printf', 'push', 'quotemeta', 'rand', 'read',
         'readdir', 'readlink', 'recv', 'redo', 'ref', 'rename', 'require',
         'reset', 'return', 'reverse', 'rewinddir', 'rindex', 'rmdir', 'scalar',
