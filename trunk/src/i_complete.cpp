@@ -77,9 +77,10 @@ bool ExComplete::IsSimpleCase()
 int ExComplete::DoCompleteWord()
 {
     int rc = 0;
-    int l = strlen(Words[WordPos]);
 
-    if (WordsLast <= 0) return rc;
+    if (WordsLast <= 0 || !Words[WordPos]) return rc;
+
+    int l = strlen(Words[WordPos]);
 
     if (Buffer->InsText(Buffer->VToR(Orig.Row), Orig.Col, l, Words[WordPos], 1)
         && Buffer->SetPos(Orig.Col + l, Orig.Row)) {
