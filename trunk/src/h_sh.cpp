@@ -145,6 +145,7 @@ int Hilit_SH(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, 
                     char *s = seof;
 
                     j++;
+                    if (p[2] == '-') j++;
                     Color = Colors[CLR_Control];
                     while (len > j && isspace(p[j]))
                         j++;
