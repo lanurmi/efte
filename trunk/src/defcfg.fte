@@ -107,6 +107,8 @@ menu Options {
 }                    
 
 menu Help {
+    item "&Show key" { ShowKey }
+    item;
     item "&About..."  { ShowVersion }
 }
 
@@ -490,6 +492,7 @@ eventmap DIRECTORY: MLIST {
     
     key     [A+D]       { MainMenu 'D' }
     key     [A+N]       { MainMenu 'N' }
+    key     [A+T]       { MainMenu 'T' }
     key     [A+W]       { MainMenu 'W' }
 }
 
