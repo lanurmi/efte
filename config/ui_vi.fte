@@ -197,7 +197,7 @@ eventmap MESSAGES: MLIST {
 # Editor - Editing Modes #FOLD00
 # PLAIN #FOLD01
 # menus  #FOLD02
-menu MChangeMode { #fold03
+menu MChangeMode { #FOLD03
     item "&Plain"      { ChangeMode 'PLAIN' }
     item "&Text"       { ChangeMode 'TEXT' }
     item "&C"          { ChangeMode 'C' }
@@ -211,7 +211,7 @@ menu MChangeMode { #fold03
     item "Resource"    { ChangeMode 'RESOURCE' }
     item "&DIFF"       { ChangeMode 'DIFF' }
     item "&MERGE"      { ChangeMode 'MERGE' }
-    item "SH"          { ChangeMode 'SH' }
+    item "&SH"         { ChangeMode 'SH' }
     item "PER&L"       { ChangeMode 'PERL' }
     item "PASCAL"      { ChangeMode 'PASCAL' }
     item "&JAVA"       { ChangeMode 'JAVA' }
@@ -219,7 +219,7 @@ menu MChangeMode { #fold03
     item "&BIN"        { ChangeMode 'BIN' }
 }
 
-menu MOpenInMode { #fold03
+menu MOpenInMode { #FOLD03
     item "&Plain"      { FileOpenInMode 'PLAIN' }
     item "&Text"       { FileOpenInMode 'TEXT' }
     item "&C"          { FileOpenInMode 'C' }
@@ -233,7 +233,7 @@ menu MOpenInMode { #fold03
     item "Resource"    { FileOpenInMode 'RESOURCE' }
     item "&DIFF"       { FileOpenInMode 'DIFF' }
     item "&MERGE"      { FileOpenInMode 'MERGE' }
-    item "SH"          { FileOpenInMode 'SH' }
+    item "&SH"         { FileOpenInMode 'SH' }
     item "PER&L"       { FileOpenInMode 'PERL' }
     item "PASCAL"      { FileOpenInMode 'PASCAL' }
     item "&JAVA"       { FileOpenInMode 'JAVA' }

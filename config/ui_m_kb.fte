@@ -14,7 +14,7 @@ menu MOpenInMode {
     item "Win Resource" { FileOpenInMode 'RESOURCE' }
     item "&DIFF"       { FileOpenInMode 'DIFF' }
     item "&MERGE"      { FileOpenInMode 'MERGE' }
-    item "SH"          { FileOpenInMode 'SH' }
+    item "&SH"         { FileOpenInMode 'SH' }
     item "PER&L"       { FileOpenInMode 'PERL' }
     item "PASCAL"      { FileOpenInMode 'PASCAL' }
     item "&JAVA"       { FileOpenInMode 'JAVA' }
@@ -117,7 +117,7 @@ menu MChangeMode {
     item "Win Resource" { ChangeMode 'RESOURCE' }
     item "&DIFF"       { ChangeMode 'DIFF' }
     item "&MERGE"      { ChangeMode 'MERGE' }
-    item "SH"          { ChangeMode 'SH' }
+    item "&SH"         { ChangeMode 'SH' }
     item "PER&L"       { ChangeMode 'PERL' }
     item "PASCAL"      { ChangeMode 'PASCAL' }
     item "&JAVA"       { ChangeMode 'JAVA' }

@@ -1,25 +1,3 @@
-menu MOpenInMode {
-    item "&Plain"      { FileOpenInMode 'PLAIN' }
-    item "&Text"       { FileOpenInMode 'TEXT' }
-    item "&C"          { FileOpenInMode 'C' }
-    item "&EMail"      { FileOpenInMode 'MSG' }
-    item "&HTML"       { FileOpenInMode 'HTML' }
-    item "&IPF"        { FileOpenInMode 'IPF' }
-    item "&Ada"        { FileOpenInMode 'Ada' }
-    item "&REXX"       { FileOpenInMode 'REXX' }
-    item "MAKE"        { FileOpenInMode 'MAKE' }
-    item "&FTE"        { FileOpenInMode 'FTE' }
-    item "Resource"    { FileOpenInMode 'RESOURCE' }
-    item "&DIFF"       { FileOpenInMode 'DIFF' }
-    item "&MERGE"      { FileOpenInMode 'MERGE' }
-    item "SH"          { FileOpenInMode 'SH' }
-    item "PER&L"       { FileOpenInMode 'PERL' }
-    item "PASCAL"      { FileOpenInMode 'PASCAL' }
-    item "&JAVA"       { FileOpenInMode 'JAVA' }
-    item "TE&X"        { FileOpenInMode 'TEX' }
-    item "&BIN"        { FileOpenInMode 'BIN' }
-}
-
 menu Object {
     item    "&Open...\tF3"              { FileOpen }
     submenu "Open in &Mode...\tCtrl+F3", MOpenInMode;
@@ -116,7 +94,7 @@ menu MChangeMode {
     item "Resource"    { ChangeMode 'RESOURCE' }
     item "&DIFF"       { ChangeMode 'DIFF' }
     item "&MERGE"      { ChangeMode 'MERGE' }
-    item "SH"          { ChangeMode 'SH' }
+    item "&SH"         { ChangeMode 'SH' }
     item "PER&L"       { ChangeMode 'PERL' }
     item "PASCAL"      { ChangeMode 'PASCAL' }
     item "&JAVA"       { ChangeMode 'JAVA' }
@@ -138,7 +116,7 @@ menu MOpenInMode {
     item "Resource"    { FileOpenInMode 'RESOURCE' }
     item "&DIFF"       { FileOpenInMode 'DIFF' }
     item "&MERGE"      { FileOpenInMode 'MERGE' }
-    item "SH"          { FileOpenInMode 'SH' }
+    item "&SH"         { FileOpenInMode 'SH' }
     item "PER&L"       { FileOpenInMode 'PERL' }
     item "PASCAL"      { FileOpenInMode 'PASCAL' }
     item "&JAVA"       { FileOpenInMode 'JAVA' }
