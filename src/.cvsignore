@@ -4,3 +4,5 @@ defcfg.cnf
 compkeys
 fte.cnf
 [c]fte.exe
+.depend
+fte-new.cnf
