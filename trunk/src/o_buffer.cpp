@@ -1608,9 +1608,96 @@ int EBuffer::GetStrVar(int var, char *str, int buflen) {
         return 1;
 
     case mvChar:
+        {
+            PELine L;
+            int P;
+
+            L = RLine(CP.Row);
+            P = CharOffset(L, CP.Col);
+
+            strlcpy(str, "", buflen);
+
+            if (ChClass(L->Chars[P]))
+            {
+                char tmp[2];
+
+                // make copy of character
+                tmp[0] = L->Chars[P];
+                tmp[1] = 0;
+
+                strlcat(str, tmp, buflen);
+            }
+        }
+        return 1;
+
     case mvWord:
+        {
+            PELine L;
+            int P, C;
+            int wordBegin, wordEnd;
+
+            L = RLine(CP.Row);
+            P = CharOffset(L, CP.Col);
+
+            strlcpy(str, "", buflen);
+
+            if (ChClass(L->Chars[P]))
+            {
+                C = ChClassK(L->Chars[P]);
+
+                // search start of word
+                while ((P>0) && (C == ChClassK(L->Chars[P-1]))) P--;
+
+                wordBegin = P;
+
+                // search end of word
+                while ((P< L->Count) && (C == ChClassK(L->Chars[P]))) P++;
+
+                wordEnd = P;
+
+                // calculate total length for buffer copy
+                int length = wordEnd - wordBegin;
+
+                if ((length + 1) < buflen)
+                {
+                    length++;
+                } else
+                {
+                    length = buflen;
+                }
+
+                // copy word to buffer
+                strlcpy(str, &L->Chars[wordBegin], length);
+            }
+        }
+        return 1;
+
     case mvLine:
-        return 0;
+        {
+            PELine L;
+
+            L = RLine(CP.Row);
+
+            strlcpy(str, "", buflen);
+
+            if (L->Count > 0)
+            {
+                // calculate total length for buffer copy
+                int length = L->Count;
+
+                if ((length + 1) < buflen)
+                {
+                    length++;
+                } else
+                {
+                    length = buflen;
+                }
+
+                // copy word to buffer
+                strlcpy(str, L->Chars, length);
+            }
+        }
+        return 1;
 
     case mvFTEVer:
         strlcpy(str, VERSION, buflen);
