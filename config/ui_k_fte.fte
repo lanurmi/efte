@@ -133,7 +133,9 @@ eventmap MESSAGES: MLIST {
     MainMenu = "MessagesMain";
     LocalMenu = "MessagesLocal";
     
-    key     [C+C]       { ChildClose } # does NOT kill, just closes pipe
+    key  [C+C]    { ChildClose } # does NOT kill, just closes pipe
+    key  [G-Home] { MoveLineStart }
+    key  [G-End]  { MoveLineEnd }
 }
 
 # Event Map View

@@ -67,6 +67,7 @@ public:
 
     int SetPos(int ARow, int ACol);
     void FixPos();
+    virtual int GetRowLength(int ARow) { return 0; };
 
     virtual void RescanList();
     virtual void UpdateList();

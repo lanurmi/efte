@@ -76,6 +76,8 @@ public:
     virtual void GetInfo(char *AInfo, int MaxLen);
     virtual void GetPath(char *APath, int MaxLen);
     virtual void GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen);
+    virtual int GetRowLength(int ARow);
+
 
     int RunPipe(char *Dir, char *Command);
     
