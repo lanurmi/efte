@@ -634,4 +634,16 @@ void EMessages::GetTitle(char *ATitle, int /*MaxLen*/, char *ASTitle, int SMaxLe
     strncpy(ASTitle, "Messages", SMaxLen);
     ASTitle[SMaxLen - 1] = 0;
 }
+
+// get row length for specified row, used in MoveLineEnd to get actual row length
+int EMessages::GetRowLength(int ARow)
+{
+    if ((ARow >= 0) && (ARow < ErrCount))
+    {
+	return strlen(ErrList[ARow]->text);
+    }
+
+    return 0;
+}
+
 #endif

@@ -477,13 +477,26 @@ int EList::MoveLineStart() {
     return ErOK;
 }
 
+// Move current column position to end of line, if line is shorter, stay at
+// begining of line, if it is long enough move it to end and subtract
+// screen width / 2 from actual length
 int EList::MoveLineEnd() {
-    int W, H;
+    int W, H, len;
     
     View->MView->Win->ConQuerySize(&W, &H);
     H--;
-    if (LeftCol != H / 2) {
-        LeftCol = H / 2;
+
+    len = GetRowLength(Row);
+    if (len < W)
+    {
+	if (LeftCol != 0)
+	{
+	    LeftCol = 0;
+	    NeedsUpdate = 1;
+	}
+    } else
+    if (LeftCol != len - W/2) {
+        LeftCol = len - W/2;
         NeedsUpdate = 1;
     }
     return ErOK;
