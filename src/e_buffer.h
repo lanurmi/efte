@@ -796,4 +796,8 @@ int DoneEditor();
 
 EBuffer *FindFile(char *FileName);
 
+int ParseSearchOption(int replace, char c, unsigned long &opt);
+int ParseSearchOptions(int replace, const char *str, unsigned long &Options);
+int ParseSearchReplace(EBuffer *B, const char *str, int replace, SearchReplaceOptions &opt);
+
 #endif

@@ -44,6 +44,7 @@
 #include "o_list.h"
 #include "e_tags.h"
 #include "s_util.h"
+#include "s_string.h"
 #include "i_search.h"
 #include "i_complete.h"
 #include "o_directory.h"

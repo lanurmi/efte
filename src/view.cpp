@@ -535,7 +535,7 @@ int EView::OpenDir(char *Path) {
     char XPath[MAXPATH];
     EDirectory *dir = 0;
 
-    if (ExpandPath(Path, XPath) == -1)
+    if (ExpandPath(Path, XPath, sizeof(XPath)) == -1)
         return 0;
     {
         EModel *x = Model;
@@ -685,12 +685,12 @@ int EView::TagLoad(ExState &State) {
     {
         pTagFile = "tags";
     }
-    if (ExpandPath(pTagFile, Tag) == -1)
+    if (ExpandPath(pTagFile, Tag, sizeof(Tag)) == -1)
         return 0;
     if (State.GetStrParam(this, Tag, sizeof(Tag)) == 0)
         if (MView->Win->GetFile("Load tags", sizeof(Tag), Tag, HIST_TAGFILES, GF_OPEN) == 0) return 0;
 
-    if (ExpandPath(Tag, FullTag) == -1)
+    if (ExpandPath(Tag, FullTag, sizeof(FullTag)) == -1)
         return 0;
 
     if (!FileExists(FullTag)) {
@@ -817,7 +817,7 @@ int EView::Cvs(char *Options) {
 
     switch (Model->GetContext()) {
         case CONTEXT_FILE:
-            if (JustFileName(((EBuffer *)Model)->FileName, OnFiles) != 0) return 0;
+            if (JustFileName(((EBuffer *)Model)->FileName, OnFiles, sizeof(buf)) != 0) return 0; // OnFiles points to buf
             break;
         case CONTEXT_CVSDIFF:
             OnFiles = strdup(CvsDiffView->OnFiles);
@@ -909,7 +909,7 @@ int EView::CvsDiff(char *Options) {
 
     switch (Model->GetContext()) {
         case CONTEXT_FILE:
-            if (JustFileName(((EBuffer *)Model)->FileName, OnFiles) != 0) return 0;
+            if (JustFileName(((EBuffer *)Model)->FileName, OnFiles, sizeof(buf)) != 0) return 0; // OnFiles points to buf
             break;
         case CONTEXT_CVSDIFF:
             OnFiles = strdup(CvsDiffView->OnFiles);
@@ -987,7 +987,7 @@ int EView::CvsCommit(char *Options) {
 
     switch (Model->GetContext()) {
         case CONTEXT_FILE:
-            if (JustFileName(((EBuffer *)Model)->FileName, OnFiles) != 0) return 0;
+            if (JustFileName(((EBuffer *)Model)->FileName, OnFiles, sizeof(buf)) != 0) return 0; // OnFiles points to buf
             break;
         case CONTEXT_CVSDIFF:
             OnFiles = strdup(CvsDiffView->OnFiles);

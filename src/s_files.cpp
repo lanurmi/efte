@@ -9,6 +9,8 @@
 
 #include "sysdep.h"
 #include "s_files.h"
+#include "s_util.h"
+#include "s_string.h"
 
 #if defined(OS2)
 #define INCL_DOS
@@ -151,7 +153,7 @@ int IsDirectory(const char *Path) {
 #if PATHTYPE == PT_UNIXISH
                 if (Path[0] == '~') {
                     char Expanded[MAXPATH];
-                    if (ExpandPath(Path, Expanded) == -1) return 0;
+                    if (ExpandPath(Path, Expanded, sizeof(Expanded)) == -1) return 0;
                     res = stat(Expanded, &statbuf);
                 } else
 #endif
@@ -265,7 +267,7 @@ int RemoveDots(char *Source, char *Dest) {
 }
 #endif
 
-int ExpandPath(const char *Path, char *Expand) {
+int ExpandPath(const char *Path, char *Expand, int ExpandSize) {
     char Name[MAXPATH];
 
     if (Path[0] == 0) {
@@ -275,7 +277,7 @@ int ExpandPath(const char *Path, char *Expand) {
 #if PATHTYPE == PT_DOSISH
     int slashed = 0;
 
-    strcpy(Name, Path);
+    strlcpy(Name, Path, sizeof(Name));
     if (Name[0] != 0)
         slashed = ISSLASH(Name[strlen(Name)-1]);
     Slash(Name, 0);
@@ -365,24 +367,24 @@ int ExpandPath(const char *Path, char *Expand) {
 int IsSameFile(const char *Path1, const char *Path2) {
     char p1[MAXPATH], p2[MAXPATH];
 
-    if (ExpandPath(Path1, p1) == -1) return -1;
-    if (ExpandPath(Path2, p2) == -1) return -1;
+    if (ExpandPath(Path1, p1, sizeof(p1)) == -1) return -1;
+    if (ExpandPath(Path2, p2, sizeof(p2)) == -1) return -1;
     if (filecmp(p1, p2) == 0) return 1;
     return 0;
 }
 
-int JustDirectory(const char *Path, char *Dir) {
+int JustDirectory(const char *Path, char *Dir, int DirSize) {
     char *p;
 
-    if (ExpandPath(Path, Dir) == -1)
-        strcpy(Dir, Path);
+    if (ExpandPath(Path, Dir, DirSize) == -1)
+        strlcpy(Dir, Path, DirSize);
     p = SepRChr(Dir);
     if (p) { p[1] = 0; }
     else Dir[0] = 0;
     return 0;
 }
 
-int JustLastDirectory(const char *Path, char *Dir) {
+int JustLastDirectory(const char *Path, char *Dir, int DirSize) {
     int lastSlash = strlen(Path);
     while (lastSlash > 0 && !ISSEP(Path[lastSlash])) lastSlash--;
 
@@ -395,20 +397,23 @@ int JustLastDirectory(const char *Path, char *Dir) {
     return 0;
 }
 
-int JustFileName(const char *Path, char *Name) {
+int JustFileName(const char *Path, char *Name, int NameSize) {
     int len = strlen(Path);
 
     while (len > 0 && !ISSEP(Path[len - 1])) len--;
-    strcpy(Name, Path + len);
+    strlcpy(Name, Path + len, NameSize);
     return 0;
 }
 
-int JustRoot(const char *Path, char *Root) {
+int JustRoot(const char *Path, char *Root, int RootSize) {
 #if PATHTYPE == PT_UNIXISH
-    strcpy(Root, SSLASH);
+    strlcpy(Root, SSLASH, RootSize);
 #else
-    strncpy(Root, Path, 3);
-    Root[3] = 0;
+    if (RootSize >= 4)
+    {
+        strncpy(Root, Path, 3);
+        Root[3] = 0;
+    }
 #endif
     return 0;
 }
@@ -434,10 +439,12 @@ const char *ShortFName(const char *Path, int len) {
     int l1;
 
     if (len < 10) len = 10;
-    if (ExpandPath(Path, p1) == -1) return Path;
+    if (len > (sizeof(P) - 1)) len = sizeof(P) - 1;
+
+    if (ExpandPath(Path, p1, sizeof(p1)) == -1) return Path;
     l1 = strlen(p1);
     if (l1 < len) {
-        strcpy(P, p1);
+        strlcpy(P, p1, sizeof(P));
     } else {
         strncpy(P, p1, 3);
         strcpy(P + 3, "...");
@@ -479,19 +486,19 @@ char *SepRChr(char *Dir)
 
 // Returns relative path of Path with respect to Dir
 // Ex: Dir = /home/martin/src/ Path = /home/martin/src/Fte/s_files.cpp -> Fte/s_files.cpp
-int RelativePathName(const char *Dir, const char *Path, char *RelPath) {
+int RelativePathName(const char *Dir, const char *Path, char *RelPath, int RelPathSize) {
     char d[MAXPATH], p[MAXPATH], c;
     int dl, pl;
 
-    if (ExpandPath(Dir, d) == -1) return -1;
-    if (ExpandPath(Path, p) == -1) return -1;
+    if (ExpandPath(Dir, d, sizeof(d)) == -1) return -1;
+    if (ExpandPath(Path, p, sizeof(p)) == -1) return -1;
     dl = strlen (d); pl = strlen (p);
 
     if (dl <= pl) {
         c = p[dl]; p[dl] = 0;
         if (filecmp(d, p) == 0) {
             p[dl] = c;
-            strcpy(RelPath, p + dl);
+            strlcpy(RelPath, p + dl, RelPathSize);
             return 0;
         }
     }

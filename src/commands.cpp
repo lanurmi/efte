@@ -13,7 +13,7 @@ int GetDefaultDirectory(EModel *M, char *Path, int MaxLen) {
     if (M) 
         M->GetPath(Path, MaxLen);
     if (!M || Path[0] == 0)
-        if (ExpandPath(".", Path) == -1)
+        if (ExpandPath(".", Path, MaxLen) == -1)
             return 0;
     SlashDir(Path);
     return 1;

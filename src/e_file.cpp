@@ -46,7 +46,7 @@ int FileLoad(int createFlags, const char *FileName, const char *Mode, EView *Vie
 
     assert(View != 0);
     
-    if (ExpandPath(FileName, Name) == -1) {
+    if (ExpandPath(FileName, Name, sizeof(Name)) == -1) {
         View->MView->Win->Choice(GPC_ERROR, "Error", 1, "O&K", "Invalid path: %s.", FileName);
         return 0;
     }
@@ -75,10 +75,10 @@ int MultiFileLoad(int createFlags, const char *FileName, const char *Mode, EView
 
     assert(View != 0);
 
-    JustDirectory(FileName, fX);
+    JustDirectory(FileName, fX, sizeof (fX));
     if (fX[0] == 0) strcpy(fX, ".");
-    JustFileName(FileName, FName);
-    if (ExpandPath(fX, FPath) == -1) return 0;
+    JustFileName(FileName, FName, sizeof(FName));
+    if (ExpandPath(fX, FPath, sizeof(FPath)) == -1) return 0;
     Slash(FPath, 1);
 
     ff = new FileFind(FPath, FName, ffHIDDEN | ffFULLPATH);

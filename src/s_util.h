@@ -19,6 +19,7 @@
 
 class EView;
 class EBuffer;
+class EModel;
 
 char* MakeBackup(char *FileName, char *NewName);
 
@@ -27,19 +28,7 @@ int PutPMClip(int clipboard);
 
 int FileLoad(int createFlags, const char *FileName, const  char *Mode, EView *View);
 int MultiFileLoad(int createFlags, const char *FileName, const char *Mode, EView *View);
-int ParseSearchOption(int replace, char c, unsigned long &opt);
-int ParseSearchOptions(int replace, const char *str, unsigned long &Options);
-int ParseSearchReplace(EBuffer *B, const char *str, int replace, SearchReplaceOptions &opt);
 int SetDefaultDirectory(EModel *M);
 int GetDefaultDirectory(EModel *M, char *Path, int MaxLen);
-int UnTabStr(char *dest, int maxlen, const char *source, int slen);
-
-#if !defined(HAVE_STRLCPY)
-size_t strlcpy(char *dst, const char *src, size_t size);
-#endif // !HAVE_STRLCPY
-
-#if !defined(HAVE_STRLCAT)
-size_t strlcat(char *dst, const char *src, size_t size);
-#endif // !HAVE_STRLCAT
 
 #endif
