@@ -222,6 +222,8 @@ include 'ab_c.fte';
 include 'ab_c_os2.fte';
 %endif
 include 'ab_rexx.fte';
+include 'ab_sh.fte';
+include 'ab_java.fte';
 
 # some customizations
 

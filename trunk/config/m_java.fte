@@ -1,3 +1,24 @@
+
+sub JAVA_Base {
+    MoveFileStart;
+    InsertString "package /* package name */;";
+    2:LineNew;
+    InsertString "import java.util.*;"; LineNew;
+    InsertString "import javax.swing.*;"; 2:LineNew;
+    InsertString "public class ";
+    InsertString $FileBaseName;
+    LineNew;
+    InsertString "{"; LineIndent;
+    2:LineNew;
+    InsertString "public ";
+    InsertString $FileBaseName;
+    InsertString "()"; LineIndent; LineNew;
+    InsertString "{"; LineIndent; 2:LineNew;
+    InsertString "}"; LineIndent; 2:LineNew;
+    InsertString "}"; LineIndent; LineNew;
+    MoveFileStart; 8:MoveRight;
+}
+
 colorize JAVA {
     SyntaxParser        = 'C';
     
