@@ -86,7 +86,8 @@ int AddKeyword(ColorKeywords *tab, char color, const char *keyword) {
         int lx = strlen(tab->key[len]);
         char *key;
 
-        assert((key = (char *)realloc(tab->key[len], lx + len + 1 + 1)) != NULL);
+        key = (char *)realloc(tab->key[len], lx + len + 1 + 1);
+        assert(key != NULL);
 
         tab->key[len] = key;
         assert(tab->key[len] != 0);
@@ -676,7 +677,8 @@ int ReadColorize(CurPos &cp, EColorize *Colorize, const char *ModeName) {
                     (newTrans.matchFlags & MATCH_NOTSET))
                 {
                     newTrans.matchLen = 1;
-                    assert((newTrans.match = (char *)malloc(256/8)) != 0);
+                    newTrans.match = (char *)malloc(256/8)
+                    assert(newTrans.match != NULL);
                     SetWordChars(newTrans.match, match);
                 } else {
                     newTrans.match = strdup(match);
@@ -726,7 +728,8 @@ int ReadColorize(CurPos &cp, EColorize *Colorize, const char *ModeName) {
                 Colorize->hm->LastState()->nextKwdNoCharState = nextKwdNoCharState;
 
                 if (wordChars && *wordChars) {
-                    assert((Colorize->hm->LastState()->wordChars = (char *)malloc(256/8)) != 0);
+                    Colorize->hm->LastState()->wordChars = (char *)malloc(256/8);
+                    assert(Colorize->hm->LastState()->wordChars != NULL);
                     SetWordChars(Colorize->hm->LastState()->wordChars, wordChars);
                 }
             }
