@@ -23,10 +23,11 @@
 #include "console.h"
 #include "c_config.h"
 #include "gui.h"
+#include "s_string.h"
 
 #include <stdlib.h>
 #include <process.h>
-#include	"port.h"                // DOS portability calls,
+#include "port.h"                // DOS portability calls,
 
 #define MAX_PIPES 4
 #define PIPE_BUFLEN 4096
@@ -1118,8 +1119,8 @@ int ConSetTitle(char *Title, char *STitle) {
 }
 
 int ConGetTitle(char *Title, int MaxLen, char *STitle, int SMaxLen) {
-	strcpy(Title, "FTE");
-	strcpy(STitle, "FTE");
+	strlcpy(Title, "FTE", MaxLen);
+	strlcpy(STitle, "FTE", SMaxLen);
 	return 0;
 }
 

@@ -1,6 +1,7 @@
 CFTE_OBJS = \
 cfte.$(OEXT) \
-s_files.$(OEXT)
+s_files.$(OEXT) \
+s_string.$(OEXT)
 
 OBJS = \
 indent.$(OEXT) \
@@ -66,6 +67,7 @@ o_cvsdiff.$(OEXT) \
 s_files.$(OEXT) \
 s_direct.$(OEXT) \
 s_util.$(OEXT) \
+s_string.$(OEXT) \
 view.$(OEXT) \
 gui.$(OEXT) \
 egui.$(OEXT) \

@@ -44,6 +44,7 @@
 #include "console.h"
 #include "gui.h"
 #include "s_files.h"
+#include "s_string.h"
 #include "c_config.h"
 
 #define True    1
@@ -384,6 +385,37 @@ int ReadConsoleEvent(TEvent *E) /*FOLD00*/
         E->Mouse.Count = 1;
         if (inp.Event.MouseEvent.dwEventFlags & DOUBLE_CLICK)
             E->Mouse.Count = 2;
+
+        if (inp.Event.MouseEvent.dwEventFlags == MOUSE_WHEELED)
+        {
+            E->What        = evCommand;
+            E->Msg.View    = 0;
+            E->Msg.Model   = 0;
+            E->Msg.Param2  = 0;
+
+            // Scroll:
+            // (The SDK does not tell how to determine whether the wheel
+            // was scrolled up or down. Found an example on:
+            // http://www.adrianxw.dk/SoftwareSite/Consoles/Consoles5.html
+            if (inp.Event.MouseEvent.dwButtonState & 0xFF000000) {  // Wheel down
+                if (flg & kfShift) { // Translate to horizontal scroll.
+                    E->Msg.Command = (flg & kfCtrl) ? cmHScrollPgRt : cmHScrollRight;
+                } else { // Translate to vertical scroll.
+                    E->Msg.Command = (flg & kfCtrl) ? cmVScrollPgDn : cmVScrollDown;
+                }
+            } else { // Wheel up
+                if (flg & kfShift) { // Translate to horizontal scroll.
+                    E->Msg.Command = (flg & kfCtrl) ? cmHScrollPgLt : cmHScrollLeft;
+                } else { // Translate to vertical scroll.
+                    E->Msg.Command = (flg & kfCtrl) ? cmVScrollPgUp : cmVScrollUp;
+                }
+            }
+
+            E->Msg.Param1 = (flg & kfCtrl) ? 1 : 3; // 1 page / 3 lines
+
+            return True;
+        }
+
         if (inp.Event.MouseEvent.dwEventFlags == MOUSE_MOVED)
         {
             E->What = evMouseMove;
@@ -514,89 +546,132 @@ public:
 
 int ConPutBox(int X, int Y, int W, int H, PCell Cell) /*FOLD00*/
 {
-    int             I;
+    int             i, j;
     PCell           p = Cell;
     COORD           corg, csize;
     SMALL_RECT      rcl;
     BOOL            rc;
+    CHAR_INFO       *B;
 
-    for (I = 0; I < H; I++)
+    B = new CHAR_INFO[W];
+
+    for (i = 0; i < H; i++)
     {
+        for (j = 0; j < W; j++)
+        {
+            B[j].Char.AsciiChar = (char)p->Ch;
+            B[j].Attributes = p->Attr;
+            p++;
+        }
+
         corg.X  = corg.Y = 0;
         csize.X = W;
         csize.Y = 1;
         rcl.Left= X;
-        rcl.Top = I + Y;
-        rcl.Bottom = I + Y;// + (isWin95 ? 1 : 0);
+        rcl.Top = i + Y;
+        rcl.Bottom = i + Y;// + (isWin95 ? 1 : 0);
         rcl.Right = X + W - 1;// + (isWin95 ? 1 : 0);
 
-        rc = WriteConsoleOutput(OurConOut, (PCHAR_INFO)p, csize, corg, &rcl);
+        rc = WriteConsoleOutput(OurConOut, B, csize, corg, &rcl);
         if (rc != TRUE) {
             //("WriteConsoleOutput %d\n", rc);
         }
-        p += W;
+        //p += W;
     }
+
+    delete [] B;
+
     return 0;
 }
 
 int ConGetBox(int X, int Y, int W, int H, PCell Cell) /*FOLD00*/
 {
-    int             I;
+    int             i, j;
     USHORT          WW = W << 1;
     PCell           p = Cell;
     COORD           corg, csize;
     SMALL_RECT      rcl;
+    CHAR_INFO       *B;
 
-    for (I = 0; I < H; I++)
+    B = new CHAR_INFO[W];
+
+    for (i = 0; i < H; i++)
     {
         corg.X = corg.Y = 0;
         csize.X = W;
         csize.Y = 1;
         rcl.Left = X;
-        rcl.Top = I + Y;
-        rcl.Bottom = I + Y;// + (isWin95 ? 1 : 0);
+        rcl.Top = i + Y;
+        rcl.Bottom = i + Y;// + (isWin95 ? 1 : 0);
         rcl.Right = X + W - 1;// + (isWin95 ? 1 : 0);
 
-        ReadConsoleOutput(OurConOut, (PCHAR_INFO)p, csize, corg, &rcl);
+        ReadConsoleOutput(OurConOut, B, csize, corg, &rcl);
+
+        for (j = 0; j < W; j++)
+        {
+            p[j].Ch = B[j].Char.AsciiChar;
+            p[j].Attr = (TAttr)(B[j].Attributes);
+        }
+
         p += W;
     }
+
+    delete [] B;
+
     return 0;
 }
 
 int ConPutLine(int X, int Y, int W, int H, PCell Cell) /*FOLD00*/
 {
-    int             I;
+    int             i, j;
     COORD           corg, csize;
     SMALL_RECT      rcl;
     BOOL rc;
+    CHAR_INFO       *B;
 
-    for (I = 0; I < H; I++)
+    B = new CHAR_INFO[W];
+
+    for (j = 0; j < W; j++)
+    {
+        B[j].Char.AsciiChar = (char)(Cell[j].Ch);
+        B[j].Attributes = Cell[j].Attr;
+    }
+
+    for (i = 0; i < H; i++)
     {
         corg.X = corg.Y = 0;
         csize.X = W;
         csize.Y = 1;
         rcl.Left = X;
-        rcl.Top = I + Y;
-        rcl.Bottom = I + Y;// + (isWin95 ? 1 : 0);
+        rcl.Top = i + Y;
+        rcl.Bottom = i + Y;// + (isWin95 ? 1 : 0);
         rcl.Right = X + W - 1;// + (isWin95 ? 1 : 0);
 
-        rc = WriteConsoleOutput(OurConOut, (PCHAR_INFO)Cell, csize, corg, &rcl);
+        rc = WriteConsoleOutput(OurConOut, B, csize, corg, &rcl);
         if (rc != TRUE) {
             //printf("WriteConsoleOutput %d\n", rc);
         }
     }
+
+    delete [] B;
+
     return 0;
 }
 
-int ConSetBox(int X, int Y, int W, int H, TCell Cell) /*FOLD00*/
+int ConSetBox(const int X, const int Y, const int W, const int H, TCell Cell) /*FOLD00*/
 {
     int             I;
     COORD           corg, csize;
     SMALL_RECT      rcl;
-    TDrawBuffer B;
+    //TDrawBuffer B;
+    CHAR_INFO *B = new CHAR_INFO[W];
 
     I = W;
-    while (I-- > 0) B[I] = Cell;
+    while (I-- > 0)
+    {
+        B[I].Char.AsciiChar = (char)(Cell.Ch);
+        B[I].Attributes = Cell.Attr;
+    }
 
     for (I = 0; I < H; I++)
     {
@@ -608,8 +683,11 @@ int ConSetBox(int X, int Y, int W, int H, TCell Cell) /*FOLD00*/
         rcl.Bottom = I + Y;// - (isWin95 ? 1 : 0);
         rcl.Right = X + W - 1;// - (isWin95 ? 1 : 0);
 
-        WriteConsoleOutput(OurConOut, (PCHAR_INFO)B, csize, corg, &rcl);
+        WriteConsoleOutput(OurConOut, B, csize, corg, &rcl);
     }
+
+    delete [] B;
+
     return 0;
 }
 
@@ -618,8 +696,12 @@ int ConScroll(int Way, int X, int Y, int W, int H, TAttr Fill, int Count) /*FOLD
     TCell           FillCell;
     SMALL_RECT      rect, clip;
     COORD           dest;
+    CHAR_INFO       fillCharInfo;
 
     MoveCh(&FillCell, ' ', Fill, 1);
+
+    fillCharInfo.Char.AsciiChar = ' ';
+    fillCharInfo.Attributes = FillCell.Attr;
 
     clip.Left = X;
     clip.Top = Y;
@@ -647,7 +729,7 @@ int ConScroll(int Way, int X, int Y, int W, int H, TAttr Fill, int Count) /*FOLD
         break;
     }
 
-    ScrollConsoleScreenBuffer(OurConOut, &rect, &clip, dest, (PCHAR_INFO)&FillCell);
+    ScrollConsoleScreenBuffer(OurConOut, &rect, &clip, dest, &fillCharInfo);
     return 0;
 }
 
@@ -866,9 +948,9 @@ int GUI::RunProgram(int mode, char *Command) { /*FOLD00*/
 
 int ConSetTitle(char *Title, char *STitle) { /*FOLD00*/
     char buf[sizeof(winTitle)] = {0};
-    JustFileName(Title, buf);
+    JustFileName(Title, buf, sizeof(buf));
     if (buf[0] == '\0') // if there is no filename, try the directory name.
-        JustLastDirectory(Title, buf);
+        JustLastDirectory(Title, buf, sizeof(buf));
 
     strncpy(winTitle, "FTE - ", sizeof(winTitle) - 1);
     if (buf[0] != 0) // if there is a file/dir name, stick it in here.
@@ -1152,20 +1234,21 @@ int GPipe::runCommand() /*FOLD00*/
         //** It's 4DOS all right..
         args = getenv("SystemRoot");
         if(args== 0) return -1;
-        strcpy(tbuf, args);                 // Get to c:\winnt
-        strcat(tbuf, "\\system32\\cmd.exe");
+        strlcpy(tbuf, args, sizeof(tbuf));                 // Get to c:\winnt
+        strlcat(tbuf, "\\system32\\cmd.exe", sizeof(tbuf));
         comspec = tbuf;
     }
 
-    args    = (char *)malloc(strlen(comspec) + strlen(p_command) + 120);
+    int argslen = strlen(comspec) + strlen(p_command) + 120;
+    args    = (char *)malloc(argslen);
     if(args == 0)
         dbm("malloc() failed for command line..");
     else
     {
         //** Form a command line for the process;
-        strcpy(args, comspec);
-        strcat(args, " /c ");
-        strcat(args, p_command);
+        strlcpy(args, comspec, argslen);
+        strlcat(args, " /c ", argslen);
+        strlcat(args, p_command, argslen);
 
         //** Dup the child handle to get separate handles for stdout and err,
         if (DuplicateHandle(GetCurrentProcess(), p_child_ph, // Source,
@@ -1582,20 +1665,21 @@ static int CreatePipeChild(HANDLE &child, HANDLE &hPipe, char *Command) {
         //** It's 4DOS all right..
         args = getenv("SystemRoot");
         if(args== 0) return -1;
-        strcpy(tbuf, args);                 // Get to c:\winnt
-        strcat(tbuf, "\\system32\\cmd.exe");
+        strlcpy(tbuf, args, sizeof(tbuf));                 // Get to c:\winnt
+        strlcat(tbuf, "\\system32\\cmd.exe", sizeof(tbuf));
         comspec = tbuf;
     }
 
-    args    = (char *)malloc(strlen(comspec) + strlen(Command) + 120);
+    int argslen = strlen(comspec) + strlen(Command) + 120;
+    args    = (char *)malloc(argslen);
     if(args == 0)
         dbm("malloc() failed for command line..");
     else
     {
         //** Form a command line for the process;
-        strcpy(args, comspec);
-        strcat(args, " /c ");
-        strcat(args, Command);
+        strlcpy(args, comspec, argslen);
+        strlcat(args, " /c ", argslen);
+        strlcat(args, Command, argslen);
 
         //** Dup the child handle to get separate handles for stdout and err,
         /*if (DuplicateHandle(GetCurrentProcess(), hChildPipe,

@@ -326,10 +326,19 @@ int GxView::ICompleteWord(EView *View) {
     if (View->GetContext() == CONTEXT_FILE) {
         ExComplete *c = new ExComplete((EBuffer *)View->Model);
         if (c != NULL) {
-            PushView(c);
-            rc = Execute();
-            PopView();
+
+            if (c->IsSimpleCase())
+            {
+                rc = c->DoCompleteWord();
+            } else
+            {
+                PushView(c);
+                rc = Execute();
+                PopView();
+            }
+
             Repaint();
+
             delete c;
         }
     }

@@ -50,6 +50,7 @@
 #include "con_i18n.h"
 #include "s_files.h"
 #include "s_util.h"
+#include "s_string.h"
 
 i18n_context_t* i18n_ctx = NULL;
 
@@ -96,11 +97,16 @@ static int CursorVisible = 1;
 static unsigned char *ScreenBuffer = NULL;
 static int Refresh = 0;
 
+// res_name can be set with -name switch
+static char res_name[20] = "fte";
+static char res_class[] = "Fte";
+
 static Display *display;
 static Colormap colormap;
 static Atom wm_protocols;
 static Atom wm_delete_window;
 static Atom targets;
+static Atom XA_CLIPBOARD = 0;
 static Window win;
 static Atom selection_buffer;
 static XSizeHints sizeHints;
@@ -121,10 +127,35 @@ static GC GCs[256];
 static char winTitle[256] = "FTE";
 static char winSTitle[256] = "FTE";
 
-static unsigned char *CurSelectionData = 0;
-static int CurSelectionLen = 0;
-static int CurSelectionOwn = 0;
+static unsigned char* CurSelectionData[3] = {NULL,NULL,NULL};
+static int CurSelectionLen[3] = {0,0,0};
+static int CurSelectionOwn[3] = {0,0,0};
 static Time now;
+
+static Atom GetXClip (int clipboard) {
+    if (clipboard==1) {
+        return XA_PRIMARY;
+    }
+    if (clipboard==2) {
+        return XA_SECONDARY;
+    }
+    return XA_CLIPBOARD;
+}
+
+
+static int GetFTEClip (Atom clip) {
+    if (clip==XA_CLIPBOARD) {
+        return 0;
+    }
+    if (clip==XA_PRIMARY) {
+        return 1;
+    }
+    if (clip==XA_SECONDARY) {
+        return 2;
+    }
+    return -1;
+}
+
 
 static int AllocBuffer() {
     unsigned char *p;
@@ -353,7 +384,7 @@ static int SetupXWindow(int argc, char **argv)
 #else
     char *ds;
     if ((ds = getenv("DISPLAY")) == NULL)
-	DieError(1, "$DISPLAY not set?");
+	DieError(1, "$DISPLAY not set? This version of fte must be run under X11.");
     if ((display = XOpenDisplay(ds)) == NULL)
 	DieError(1, "XFTE Fatal: could not open display: %s!", ds);
 #endif
@@ -398,6 +429,8 @@ static int SetupXWindow(int argc, char **argv)
     assert(selection_buffer != None);
     targets = XInternAtom(display, "TARGETS", False);
     assert(targets != None);
+    XA_CLIPBOARD = XInternAtom(display, "CLIPBOARD", False);
+    assert(XA_CLIPBOARD != None);
 
     sizeHints.flags = PResizeInc | PMinSize | PBaseSize | PWinGravity;
     sizeHints.width_inc = FontCX;
@@ -410,8 +443,6 @@ static int SetupXWindow(int argc, char **argv)
         sizeHints.flags |= USPosition;
 
     XClassHint classHints;
-    static char res_name[] = "fte";
-    static char res_class[] = "Fte";
     classHints.res_name = res_name;
     classHints.res_class = res_class;
     XSetClassHint(display, win, &classHints);
@@ -463,9 +494,9 @@ int ConClear(void) {
 
 int ConSetTitle(char *Title, char *STitle) {
     char buf[sizeof(winTitle)] = {0};
-    JustFileName(Title, buf);
+    JustFileName(Title, buf, sizeof(buf));
     if (buf[0] == '\0') // if there is no filename, try the directory name.
-        JustLastDirectory(Title, buf);
+        JustLastDirectory(Title, buf, sizeof(buf));
 
     strncpy(winTitle, "FTE - ", sizeof(winTitle) - 1);
     if (buf[0] != 0) // if there is a file/dir name, stick it in here.
@@ -482,10 +513,8 @@ int ConSetTitle(char *Title, char *STitle) {
 }
 
 int ConGetTitle(char *Title, int MaxLen, char *STitle, int SMaxLen) {
-    strncpy(Title, winTitle, MaxLen);
-    Title[MaxLen - 1] = 0;
-    strncpy(STitle, winSTitle, SMaxLen);
-    STitle[SMaxLen - 1] = 0;
+    strlcpy(Title, winTitle, MaxLen);
+    strlcpy(STitle, winSTitle, SMaxLen);
     return 0;
 }
 
@@ -997,15 +1026,20 @@ void ConvertClickToEvent(int type, int xx, int yy, int button, int state, TEvent
             if (type == ButtonPress) {
                 Event->What = evCommand;
                 if (state & ShiftMask) {
+                    Event->Msg.Param1 = 1;
+
                     if (button == Button4)
-                        Event->Msg.Command = cmHScrollPgLt; // fix core to use count
+                        Event->Msg.Command = cmVScrollUp; // fix core to use count
                     else
-                        Event->Msg.Command = cmHScrollPgRt;
-                } else {
+                        Event->Msg.Command = cmVScrollDown;
+                }
+                else
+                {
+                    Event->Msg.Param1 = 3;
                     if (button == Button4)
-                        Event->Msg.Command = cmVScrollPgUp;
+                        Event->Msg.Command = cmVScrollUp;
                     else
-                        Event->Msg.Command = cmVScrollPgDn;
+                        Event->Msg.Command = cmVScrollDown;
                 }
             }
             return ;
@@ -1179,21 +1213,22 @@ void ProcessXEvents(TEvent *Event) {
         break;
     case SelectionClear:
         {
-            Window owner;
-
-            owner = XGetSelectionOwner(display, XA_PRIMARY);
-            if (owner != win) {
-                if (CurSelectionData != 0)
-                    free(CurSelectionData);
-                CurSelectionData = 0;
-                CurSelectionLen = 0;
-                CurSelectionOwn = 0;
+            for (int i=0; i<3; i++) {
+                Window owner = XGetSelectionOwner(display, GetXClip(i));
+                if (owner != win) {
+                    if (CurSelectionData[i] != NULL)
+                        free(CurSelectionData[i]);
+                    CurSelectionData[i] = NULL;
+                    CurSelectionLen[i] = 0;
+                    CurSelectionOwn[i] = 0;
+                }
             }
         }
         break;
     case SelectionRequest:
         {
             XEvent notify;
+            unsigned int clip = GetFTEClip(event.xselectionrequest.selection);
 
             notify.type = SelectionNotify;
             notify.xselection.requestor = event.xselectionrequest.requestor;
@@ -1201,8 +1236,7 @@ void ProcessXEvents(TEvent *Event) {
             notify.xselection.target = event.xselectionrequest.target;
             notify.xselection.time = event.xselectionrequest.time;
 
-            if (event.xselectionrequest.selection == XA_PRIMARY &&
-                event.xselectionrequest.target == XA_STRING)
+            if (clip<=2 && event.xselectionrequest.target == XA_STRING)
 	    {
                 static unsigned char empty[] = "";
                 XChangeProperty(display,
@@ -1210,11 +1244,10 @@ void ProcessXEvents(TEvent *Event) {
                                 event.xselectionrequest.property,
                                 event.xselectionrequest.target,
                                 8, PropModeReplace,
-                                (CurSelectionData ? CurSelectionData : empty),
-                                CurSelectionLen);
+                                (CurSelectionData[clip] ? CurSelectionData[clip] : empty),
+                                CurSelectionLen[clip]);
                 notify.xselection.property = event.xselectionrequest.property;
-            } else if (event.xselectionrequest.selection == XA_PRIMARY &&
-                       event.xselectionrequest.target == targets)
+            } else if (clip<=2 && event.xselectionrequest.target == targets)
             {
                 Atom type = XA_STRING;
 
@@ -1376,16 +1409,17 @@ int ConGrabEvents(TEventMask /*EventMask*/) {
     return 0;
 }
 
-int GetXSelection(int *len, char **data) {
-    if (CurSelectionOwn) {
-        *data = (char *) malloc(CurSelectionLen);
+int GetXSelection(int *len, char **data, int clipboard) {
+    if (CurSelectionOwn[clipboard]) {
+        *data = (char *) malloc(CurSelectionLen[clipboard]);
         if (*data == 0)
             return -1;
-        memcpy(*data, CurSelectionData, CurSelectionLen);
-        *len = CurSelectionLen;
+        memcpy(*data, CurSelectionData[clipboard], CurSelectionLen[clipboard]);
+        *len = CurSelectionLen[clipboard];
         return 0;
     } else {
-        if (XGetSelectionOwner(display, XA_PRIMARY) != None) {
+        Atom clip = GetXClip(clipboard);
+        if (XGetSelectionOwner(display, clip) != None) {
             XEvent event;
             Atom type;
             long extra;
@@ -1395,8 +1429,7 @@ int GetXSelection(int *len, char **data) {
 
             assert(selection_buffer != None);
 
-            XConvertSelection(display,
-                              XA_PRIMARY, XA_STRING,
+            XConvertSelection(display, clip, XA_STRING,
                               selection_buffer, win, now);
 
             time_started = time(NULL);
@@ -1448,24 +1481,25 @@ int GetXSelection(int *len, char **data) {
         return 0;
 }
 
-int SetXSelection(int len, char *data) {
-    if (CurSelectionData != 0)
-        free(CurSelectionData);
+int SetXSelection(int len, char *data, int clipboard) {
+    Atom clip = GetXClip(clipboard);
+    if (CurSelectionData[clipboard] != NULL)
+        free(CurSelectionData[clipboard]);
 
-    CurSelectionData = (unsigned char *)malloc(len);
-    if (CurSelectionData == 0) {
-	CurSelectionLen = 0;
-	return -1;
+    CurSelectionData[clipboard] = (unsigned char *)malloc(len);
+    if (CurSelectionData[clipboard] == NULL) {
+        CurSelectionLen[clipboard] = 0;
+        return -1;
     }
-    CurSelectionLen = len;
-    memcpy(CurSelectionData, data, CurSelectionLen);
-    if (CurSelectionLen < 64 * 1024) {
+    CurSelectionLen[clipboard] = len;
+    memcpy(CurSelectionData[clipboard], data, CurSelectionLen[clipboard]);
+    if (CurSelectionLen[clipboard] < 64 * 1024) {
         XStoreBytes(display, data, len);
-        XSetSelectionOwner(display, XA_PRIMARY, win, CurrentTime);
-        if (XGetSelectionOwner(display, XA_PRIMARY) == win)
-            CurSelectionOwn = 1;
+        XSetSelectionOwner(display, clip, win, CurrentTime);
+        if (XGetSelectionOwner(display, clip) == win)
+            CurSelectionOwn[clipboard] = 1;
     } else {
-        XSetSelectionOwner(display, XA_PRIMARY, None, CurrentTime);
+        XSetSelectionOwner(display, clip, None, CurrentTime);
     }
     return 0;
 }
@@ -1496,7 +1530,12 @@ GUI::GUI(int &argc, char **argv, int XSize, int YSize) {
         } else if ((strcmp(argv[c], "-noxmb") == 0)
                    || (strcmp(argv[c], "--noxmb") == 0))
             useXMB = 0;
-        else
+        else if (strcmp(argv[c], "-name") == 0) {
+            if (c + 1 < argc) {
+                strncpy (res_name, argv [++c], sizeof (res_name));
+                res_name[sizeof(res_name)-1] = '\0'; // ensure termination
+	    }
+        } else
             argv[o++] = argv[c];
     }
     argc = o;
@@ -1519,8 +1558,11 @@ GUI::~GUI() {
     XDestroyWindow(display, win);
     XCloseDisplay(display);
 
-    if (CurSelectionData != 0)
-        free(CurSelectionData);
+    for (int i=0; i<3; i++) {
+        if (CurSelectionData[i] != NULL) {
+            free(CurSelectionData[i]);
+        }
+    }
 
     ::ConDone();
 }

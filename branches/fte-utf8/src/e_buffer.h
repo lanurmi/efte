@@ -440,7 +440,8 @@ public:
     int GetMap(int Row, int *StateLen, hsState **StateMap);
 #endif
     int FindStr(char *Data, int Len, int Options);
-    int FindRx(RxNode *Rx, int Options);
+    int FindStr(char *Data, int Len, SearchReplaceOptions &opt);
+    int FindRx(RxNode *Rx, SearchReplaceOptions &opt);
     int Find(SearchReplaceOptions &opt);
     int IsLineBlank(int Row);
     int TrimLine(int Row);
@@ -616,8 +617,8 @@ public:
     int     BlockEnd();
     int     BlockUnmark();
     int     BlockCut(int Append);
-    int     BlockCopy(int Append);
-    int     BlockPaste();
+    int     BlockCopy(int Append, int clipboard=0);
+    int     BlockPaste(int clipboard=0);
     int     BlockKill();
     int     BlockIndent();
     int     BlockUnindent();
@@ -631,16 +632,16 @@ public:
     int     BlockExtendEnd();
     int     BlockReIndent();
     int     BlockIsMarked();
-    int     BlockPasteStream();
-    int     BlockPasteLine();
-    int     BlockPasteColumn();
-    int     BlockPasteOver();
+    int     BlockPasteStream(int clipboard=0);
+    int     BlockPasteLine(int clipboard=0);
+    int     BlockPasteColumn(int clipboard=0);
+    int     BlockPasteOver(int clipboard=0);
     int     BlockSelectWord();
     int     BlockSelectLine();
     int     BlockSelectPara();
     int     BlockPrint();
     int     BlockSort(int Reverse);
-    int     ClipClear();
+    int     ClipClear(int clipboard=0);
     int     BlockUnTab();
     int     BlockEnTab();
 
@@ -794,5 +795,9 @@ extern int suspendLoads;
 int DoneEditor();
 
 EBuffer *FindFile(char *FileName);
+
+int ParseSearchOption(int replace, char c, unsigned long &opt);
+int ParseSearchOptions(int replace, const char *str, unsigned long &Options);
+int ParseSearchReplace(EBuffer *B, const char *str, int replace, SearchReplaceOptions &opt);
 
 #endif

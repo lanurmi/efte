@@ -22,6 +22,7 @@
 #include "sysdep.h"
 #include "c_fconfig.h"
 #include "s_files.h"
+#include "s_string.h"
 #include "c_mode.h"
 #include "console.h"
 #include "c_hilit.h"
@@ -182,11 +183,11 @@ int main(int argc, char **argv) {
 	    switch(n)
 	    {
 	    case 0:
-		strcpy(Source, argv[i]);
+		strlcpy(Source, argv[i], sizeof(Source));
 		break;
 
 	    case 1:
-                strcpy(Target, argv[i]);
+                strlcpy(Target, argv[i], sizeof(Target));
 		break;
 
 	    default:
@@ -202,22 +203,8 @@ int main(int argc, char **argv) {
 	fprintf(stderr, "No configuration file specified\n");
 	exit(1);
     }
-/*    if (strncmp(p, "-o", 2) == 0) {
-        p += 2;
-        offset = atol(p);
-        n++;
-    }
-    if (n == 1 && argc == 4) {
-        fprintf(stderr, "Invalid option '%s'\n", argv[1]);
-        exit(1);
-    }
-    strcpy(Source, argv[n++]);
-    strcpy(Target, "fte-new.cnf");
-    if (n < argc)
-        strcpy(Target, argv[n++]);
-	*/
 
-    JustDirectory(Target, XTarget);
+    JustDirectory(Target, XTarget, sizeof(XTarget));
     Slash(XTarget, 1);
 
     if (preprocess_only == false)
@@ -265,7 +252,7 @@ int main(int argc, char **argv) {
 #ifdef UNIX
                "."
 #endif
-               , StartDir);
+               , StartDir, sizeof(StartDir));
     Slash(StartDir, 1);
 
     if (preprocess_only == false)
@@ -273,7 +260,7 @@ int main(int argc, char **argv) {
         CurPos cp;
         char FSource[MAXPATH];
 
-        if (ExpandPath(Source, FSource) != 0) {
+        if (ExpandPath(Source, FSource, sizeof(FSource)) != 0) {
             fprintf(stderr, "Could not expand path %s\n", Source);
             exit(1);
         }
@@ -1872,10 +1859,10 @@ static int LoadFile(const char *WhereName, const char *CfgName, int Level) {
 
     //fprintf(stderr, "Loading file %s %s\n", WhereName, CfgName);
 
-    JustDirectory(WhereName, last);
+    JustDirectory(WhereName, last, sizeof(last));
 
     if (IsFullPath(CfgName)) {
-        strcpy(Cfg, CfgName);
+        strlcpy(Cfg, CfgName, sizeof(Cfg));
     } else {
         // here we will try relative to a number of places.
         // 1. User's .fte directory.
@@ -1891,23 +1878,23 @@ static int LoadFile(const char *WhereName, const char *CfgName, int Level) {
         // 1. User's .fte directory.
         char tmp[MAXPATH];
         sprintf(tmp, "~/.fte/%s", CfgName);
-        ExpandPath(tmp, Cfg);
+        ExpandPath(tmp, Cfg, sizeof(Cfg));
         //fprintf(stderr, "Looking for %s\n", Cfg);
         if (!FileExists(Cfg))
         {
             // Okay, now try "local config".
             sprintf(tmp, "%slocalconfig/%s", StartDir, CfgName);
-            ExpandPath(tmp, Cfg);
+            ExpandPath(tmp, Cfg, sizeof(Cfg));
             //fprintf(stderr, "Looking for %s\n", Cfg);
             if (!FileExists(Cfg))
             {
                 sprintf(tmp, "%sconfig/%s", StartDir, CfgName);
-                ExpandPath(tmp, Cfg);
+                ExpandPath(tmp, Cfg, sizeof(Cfg));
                 //fprintf(stderr, "Looking for %s\n", Cfg);
                 if (!FileExists(Cfg))
                 {
                     sprintf(tmp, "./%s", CfgName);
-                    ExpandPath(tmp, Cfg);
+                    ExpandPath(tmp, Cfg, sizeof(Cfg));
                     //fprintf(stderr, "Looking for %s\n", Cfg);
                     if (!FileExists(Cfg))
                     {
@@ -1922,8 +1909,8 @@ static int LoadFile(const char *WhereName, const char *CfgName, int Level) {
         }
 #else // UNIX
         SlashDir(last);
-        strcat(last, CfgName);
-        ExpandPath(last, Cfg);
+        strlcat(last, CfgName, sizeof(last));
+        ExpandPath(last, Cfg, sizeof(Cfg));
 #endif // UNIX
     }
     // puts(Cfg);

@@ -10,11 +10,15 @@
 #include "fte.h"
 #include "clip.h"
 
-int GetPMClip() {
+int GetPMClip(int clipboard) {
     ClipData cd;
     unsigned int i,j, l, dx;
     EPoint P;
 
+    if (clipboard!=0) {
+        // only one clipboard supported
+        return 0;
+    }
     if (GetClipText(&cd) == 0) {
         SSBuffer->Clear();
         j = 0;
@@ -46,7 +50,7 @@ int GetPMClip() {
     return 0;
 }
 
-int PutPMClip() {
+int PutPMClip(int clipboard) {
     char *p = 0;
     int l = 0;
     PELine L;
@@ -54,6 +58,10 @@ int PutPMClip() {
     ClipData cd;
     int rc;
 
+    if (clipboard!=0) {
+        // only one clipboard supported
+        return 0;
+    }
     for (int i = 0; i < SSBuffer->RCount; i++) {
         L = SSBuffer->RLine(i);
         p = (char *)realloc(p, l + (Len = L->Count) + 2);

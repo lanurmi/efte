@@ -919,6 +919,7 @@ static void HandleVScroll(GView *view, TEvent &E) {
             E1.What = evCommand;
             E1.Msg.View = view;
             E1.Msg.Command = cmVScrollUp;
+            E1.Msg.Param1 = 1;
             gui->DispatchEvent(frames, view, E1);
             frames->Update();
             do {
@@ -933,6 +934,7 @@ static void HandleVScroll(GView *view, TEvent &E) {
             E1.What = evCommand;
             E1.Msg.View = view;
             E1.Msg.Command = cmVScrollDown;
+            E1.Msg.Param1 = 1;
             gui->DispatchEvent(frames, view, E1);
             frames->Update();
             do {
@@ -1006,6 +1008,7 @@ static void HandleHScroll(GView *view, TEvent &E) {
             E1.What = evCommand;
             E1.Msg.View = view;
             E1.Msg.Command = cmHScrollLeft;
+            E1.Msg.Param1 = 1;
             gui->DispatchEvent(frames, view, E1);
             frames->Update();
             do {
@@ -1020,6 +1023,7 @@ static void HandleHScroll(GView *view, TEvent &E) {
             E1.What = evCommand;
             E1.Msg.View = view;
             E1.Msg.Command = cmHScrollRight;
+            E1.Msg.Param1 = 1;
             gui->DispatchEvent(frames, view, E1);
             frames->Update();
             do {

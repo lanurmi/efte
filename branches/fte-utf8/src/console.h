@@ -10,6 +10,8 @@
 #ifndef __CONSOLE_H__
 #define __CONSOLE_H__
 
+#include "sysdep.h"
+
 /* don't change these, used as index */
 #define DCH_C1 0
 #define DCH_C2 1
@@ -87,11 +89,21 @@
 typedef unsigned char TAttr;
 typedef TAttr *PAttr;
 
-#ifdef NTCONSOLE 
-typedef unsigned long TCell;
+#if defined(USE_UNICODE_INTERNALS)
+typedef unsigned long TChar;
 #else
-typedef unsigned short TCell;
+typedef unsigned char TChar;
 #endif
+
+//#ifdef NTCONSOLE
+//typedef unsigned long TCell;
+//#else
+//typedef unsigned short TCell;
+//#endif
+typedef struct {
+    TAttr Attr;
+    TChar Ch;
+} TCell;
 
 typedef TCell *PCell;
 typedef TCell TDrawBuffer[ConMaxCols];
@@ -163,10 +175,10 @@ int ConSetTitle(char *Title, char *STitle);
 int ConGetTitle(char *Title, int MaxLen, char *STitle, int SMaxLen);
 
 int ConClear();
-int ConPutBox(int X, int Y, int W, int H, PCell Cell);
-int ConGetBox(int X, int Y, int W, int H, PCell Cell);
-int ConPutLine(int X, int Y, int W, int H, PCell Cell);
-int ConSetBox(int X, int Y, int W, int H, TCell Cell);
+int ConPutBox(const int X, const int Y, const int W, const int H, PCell Cell);
+int ConGetBox(const int X, const int Y, const int W, const int H, PCell Cell);
+int ConPutLine(const int X, const int Y, const int W, const int H, PCell Cell);
+int ConSetBox(const int X, const int Y, const int W, const int H, TCell Cell);
 int ConScroll(int Way, int X, int Y, int W, int H, TAttr Fill, int Count);
 
 int ConSetSize(int X, int Y);

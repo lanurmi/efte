@@ -81,30 +81,18 @@ int Indent_REXX(EBuffer *B, int Line, int PosCursor);
 int Indent_SIMPLE(EBuffer *B, int Line, int PosCursor);
 #endif
 
- /*
-  * NT has 2-byte charcode and attribute... Following is not portable to non-
-  * intel; should be replaced by formal TCell definition' usage instead of
-  * assumed array.. (Jal)
-  */
-#ifdef NTCONSOLE 
-#    define PCLI unsigned short
-#else
-#    define PCLI unsigned char
-#endif
-
 #define HILIT_CLRD() \
     ((Color < COUNT_CLR) ? Colors[Color] : Color - COUNT_CLR)
 
 #define ColorChar() \
     do {\
-    BPos = C - Pos; \
-    if (B) \
-    if (BPos >= 0 && BPos < Width) { \
-    BPtr = (PCLI *) (B + BPos); \
-    BPtr[0] = *p; \
-    BPtr[1] = HILIT_CLRD(); \
-    } \
-    if (StateMap) StateMap[i] = (hsState)(State & 0xFF); \
+      BPos = C - Pos; \
+      if (B) \
+        if (BPos >= 0 && BPos < Width) { \
+          B[BPos].Ch = *p; \
+          B[BPos].Attr = HILIT_CLRD(); \
+        } \
+      if (StateMap) StateMap[i] = (hsState)(State & 0xFF); \
     } while (0)
 
 // MoveChar(B, C - Pos, Width, *p, Color, 1); 
@@ -152,7 +140,6 @@ int Indent_SIMPLE(EBuffer *B, int Line, int PosCursor);
     } while (0)
 
 #define HILIT_VARS(ColorTable, Line) \
-    PCLI *BPtr; \
     int BPos; \
     ChColor *Colors = ColorTable; \
     ChColor Color = CLR_Normal; \

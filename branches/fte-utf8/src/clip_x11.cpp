@@ -9,16 +9,16 @@
 
 #include "fte.h"
 
-int GetXSelection(int *len, char **data);
-int SetXSelection(int len, char *data);
+int GetXSelection(int *len, char **data, int clipboard);
+int SetXSelection(int len, char *data, int clipboard);
 
-int GetPMClip() {
+int GetPMClip(int clipboard) {
     char *data;
     int len;
     int i,j, l, dx;
     EPoint P;
 
-    if (GetXSelection(&len, &data) == 0) {
+    if (GetXSelection(&len, &data, clipboard) == 0) {
         SSBuffer->Clear();
         j = 0;
         l = 0;
@@ -48,7 +48,7 @@ int GetPMClip() {
     return 0;
 }
 
-int PutPMClip() {
+int PutPMClip(int clipboard) {
     PELine L;
     char *p = NULL;
     int rc = 0;
@@ -76,7 +76,7 @@ int PutPMClip() {
     if (p != NULL) {
         // remove some 'UNWANTED' characters - sequence XX 0x08 YY -> YY
         // this makes usable cut&paste from manpages
-        rc = (SetXSelection(l, p) == 0);
+        rc = (SetXSelection(l, p, clipboard) == 0);
         free(p);
     }
     return (rc)?1:0;
