@@ -269,7 +269,7 @@ int Hilit_PERL(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
                     Color = CLR_Punctuation;
                     ColorNext();
                     Color = CLR_Variable;
-                    while (*p != ')')
+                    while (*p != ')' && len)
                         ColorNext();
                     State = hsPerl_Normal;
                     continue;
