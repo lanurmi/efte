@@ -1,3 +1,8 @@
+# FTE menus for editing HTML files
+# enhanced from the original by Michael DeBusk
+# debu4335@eclipsetel.com
+# Revision June 29, 2001
+
 # HTML
 
 menu HTML_Physical {
@@ -43,6 +48,25 @@ menu HTML_Table {
     item    "&Data     <TD>\tC-E A-D" { HTML_TD }
 }
 
+menu HTML_Colors {
+    item    "&Black" { InsertString "#000000" }
+    item    "Bl&ue" { InsertString "#0000FF" }
+    item    "&Cyan" { InsertString "#00FFFF" }
+    item    "&Gray" { InsertString "#808080" }
+    item    "Gr&een" { InsertString "#008000" }
+    item    "&Lime" { InsertString "#00FF00" }
+    item    "&Magenta" { InsertString "#FF00FF" }
+    item    "M&aroon" { InsertString "#800000" }
+    item    "&Navy" { InsertString "#000080" }
+    item    "&Olive" { InsertString "#808000" }
+    item    "&Purple" { InsertString "#800080" }
+    item    "&Red" { InsertString "#FF0000" }
+    item    "&Silver" { InsertString "#C0C0C0" }
+    item    "&Teal" { InsertString "#008080" }
+    item    "&White" { InsertString "#FFFFFF" }
+    item    "&Yellow" { InsertString "#FFFF00" }
+}
+
 menu HTMLTags {
     item    "&Paragraph     <P>\tC-E C-P  " { HTML_P }
     item    "Line brea&k    <BR>\tC-E Enter" { HTML_BR }
@@ -50,9 +74,10 @@ menu HTMLTags {
     item;
     submenu "P&hysical styles                  ", HTML_Physical;
     submenu "Logical &styles                   ", HTML_Logical;
-    submenu "&Header                           ", HTML_Header;
+    submenu "Hea&der                           ", HTML_Header;
     submenu "&Lists                            ", HTML_List;
     submenu "&Tables                           ", HTML_Table;
+    submenu "C&olors                           ", HTML_Colors;
     item;
     item    "Pre&formatted  <PRE>\tC-E C-F  " { HTML_PRE }
     item    "&Centered      <CENTER>\tC-E .    " { HTML_CENTER }
@@ -61,6 +86,7 @@ menu HTMLTags {
     item    "Anchor H&Ref   <A HREF>\tC-E C-H  " { HTML_AHREF }
     item;
     item    "Basic document\tC-E &0   " { HTML_Base }
+    item    "Convert Text File\tC-E &x   " { HTML_TXT }
 }
 
 menu Main_HTML {
