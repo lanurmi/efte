@@ -1,0 +1,102 @@
+<HTML>
+<HEAD><TITLE>Installation</TITLE></HEAD>
+<BODY>
+This section covers installation and configuration of editor.
+<H1><A NAME="install-os2">OS/2</A></H1>
+<H2><A NAME="install-os2-files">Files</A></H2>
+<P>
+The following files are included in the archive:
+<DL>
+<DT><TT>README</TT>
+<DD>Release notes, read first!
+<DT><TT>fte.exe</TT>
+<DD>Text-mode executable
+<DT><TT>ftepm.exe</TT>
+<DD>Presentation Manager executable
+<DT><TT>fte-def.cnf</TT>
+<DD>Default compiled configuration file.
+<DT><TT>fte.inf</TT>, <TT>fte.ipf</TT>, <TT>fte.html</TT>, <TT>fte.txt</TT>
+<DD>This file, in various formats.
+<DT><TT>config\*.fte</TT>
+<DD>Configuration files in source form.
+<DT><TT>clipserv.exe</TT>
+<DD>Clipboard server (required for PM clipboard support in text-mode version).
+<DT><TT>cliputil.exe</TT>
+<DD>Utility to copy/paste to/from clipboard from command line.
+<DT><TT>HISTORY</TT>
+<DD>Revision history.
+<DT><TT>TODO</TT>
+<DD>Todo list.
+<DT><TT>file_id.diz</TT>
+<DD>Program description for BBS upload.
+</DL>
+<H2><A NAME="install-os2-requires">Required files</A></H2>
+<P> The default configuration files are precompiled into
+<TT>fte-def.cnf</TT>. This file should be copied to <TT>fte.cnf</TT>
+for text-mode version, and  to <TT>ftepm.cnf</TT> for PM version. Or,
+you may want to compile your own configuration from source using
+<I>cfte</I> configuration file compiler.
+
+<P> For minimal installation of the text mode version, only
+<TT>fte.exe</TT> and <TT>fte.cnf</TT> are required. For PM clipboard
+support <TT>clipserv.EXE</TT> is needed and must be running whenever
+you wish to use PM clipboard from FTE.
+
+<P> To install PM version, <TT>ftepm.exe</TT> and <TT>ftepm.cnf</TT>
+are needed.
+
+<P> To recompile source files, <TT>cfte.exe</TT> and
+<TT>config\*.fte</TT> files are needed. <P>
+
+<P> Place executable files somewhere on your <B>PATH</B>. Compiled
+configuration files should be located in the same directory as
+executable and have the same basename with extension <TT>.CNF</TT>.
+
+<HR>
+<H1><A NAME="install-unix">Unix</A></H1>
+
+The following files are included in the archive:
+<DL>
+<DT><TT>README</TT>
+<DD>Readme file.
+<DT><TT>fte</TT>
+<DD>Linux console-only executable
+<DT><TT>Xfte</TT>
+<DD>X11 Xlib executable.
+<DT><TT>fte-def.cnf</TT>
+<DD>Default compiled configuration file
+<DT><TT>fte.html</TT>
+<DD>Reference manual
+<DT><TT>config\*.fte</TT>
+<DD>Configuration files in source form.
+<DT><TT>HISTORY</TT>
+<DD>History of changes.
+<DT><TT>TODO</TT>
+<DD>Todo list.
+<DT><TT>file_id.diz</TT>
+<DD>Program description for BBS upload.
+<DT><TT>fte-0.38.lsm</TT>
+<DD>LSM entry for FTE.
+</DL>
+
+<P> The default configuration files are precompiled into
+<TT>fte-def.cnf</TT>. This file should be copied to <TT>~/.fterc</TT>
+to be automatically loaded by FTE. You may want to compile your own
+configuration from source using <I>cfte</I> configuration file
+compiler.
+
+<P> Suggested installation directories:
+<PRE>
+    /usr/local/bin/fte
+    /usr/local/bin/Xfte
+    /usr/local/bin/cfte
+    /usr/local/etc/fte/system.fterc
+    /usr/local/lib/fte/etc/*.fte
+    /usr/local/lib/fte/lib/fte.html
+    /usr/local/lib/fte/lib/TODO
+    /usr/local/lib/fte/lib/HISTORY
+    /usr/local/lib/fte/lib/README
+</PRE>
+
+</BODY>
+</HTML>

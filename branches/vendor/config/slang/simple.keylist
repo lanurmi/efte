@@ -1,0 +1,81 @@
+# This is a simple keymap file for the SLang-based FTE on Linux
+# Compile it with 'compkeys simple.keylist slangkbd.map'.
+# A Linux keymap is generated into "slangkbd.map" containing
+# escape sequences for each of the keys listed here, which
+# should be loaded using "loadkeys slangkbd.map" to
+# be able to use the keys.
+
+A+0
+A+-
+C+.
+C+I
+C+M
+C+]
+C+S+]
+C+[
+A+[
+A+,
+A+.
+A+/
+
+C+G++
+A+G++
+S+G++
+
+C+G+-
+A+G+-
+S+G+-
+
+C+G+*
+A+G+*
+
+A+G+/
+C+G+/
+
+F11
+F12
+
+S+F2
+C+F2
+
+S+F3
+C+F3
+
+C+F4
+C+A+F4
+
+S+F6
+
+A+F9
+C+F9
+S+F9
+
+S+Up
+S+Down
+
+A+BackSp
+A+S+BackSp
+C+S+BackSp
+
+C+Ins
+S+Ins
+A+Ins
+
+S+Del
+C+Del
+
+S+Home
+S+C+Home
+C+Home
+
+S+End
+S+C+End
+C+End
+A+End
+
+S+PgUp
+S+PgDn
+
+S+Enter
+# A+Enter
+C+Enter

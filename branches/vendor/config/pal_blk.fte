@@ -1,0 +1,135 @@
+# color palette (black background)
+
+# the color palette is the definition of the symbolic colors
+# that are used everywhere else in the configuration files
+
+# syntax of the color specification is:
+#
+#   fore back
+# or 
+#   symbolic_fore:symbolic_back
+# or
+#   symbolic
+
+color_palette {
+    # map system colors to symbolic
+    
+    { 'black',                        '0 0' },
+    { 'darkBlue',                     '1 1' },
+    { 'darkGreen',                    '2 2' },
+    { 'darkCyan',                     '3 3' },
+    { 'darkRed',                      '4 4' },
+    { 'darkMagenta',                  '5 5' },
+    { 'brown',                        '6 6' },
+    { 'gray',                         '7 7' },
+    { 'darkGray',                     '8 8' },
+    { 'blue',                         '9 9' },
+    { 'green',                        'A A' },
+    { 'cyan',                         'B B' },
+    { 'red',                          'C C' },
+    { 'magenta',                      'D D' },
+    { 'yellow',                       'E E' },
+    { 'white',                        'F F' },
+        
+    { 'ScrollBar_Arrows',             'black:gray' },
+    { 'ScrollBar_Background',         'gray:black' },
+    { 'ScrollBar_Slider',             'black:gray' },
+
+    { 'Status_Normal',                'black:darkCyan' },
+    { 'Status_Active',                'black:gray' },
+
+    { 'Message_Normal',               'cyan:darkBlue' },
+    { 'Message_Error',                'white:darkBlue' },
+    { 'Message_Bold',                 'white:darkRed' },
+
+    { 'EntryField_Field',             'cyan:darkBlue' },
+    { 'EntryField_Prompt',            'white:darkBlue' },
+    { 'EntryField_Selection',         'black:darkGreen' },
+
+    { 'List_Status',                  'black:gray' },
+    { 'List_Normal',                  'gray:black' },
+    { 'List_Selected',                'cyan:darkBlue' },
+
+    { 'ASCII_Chars',                  'gray:black' },
+
+    { 'Menu_Background',              'black:gray' },
+    { 'Menu_ActiveItem',              'white:darkBlue' },
+    { 'Menu_ActiveChar',              'red:darkBlue' },
+    { 'Menu_NormalItem',              'black:gray' },
+    { 'Menu_NormalChar',              'red:gray' },
+
+    { "Choice_Title",                 'white:darkBlue' },
+    { "Choice_Param",                 'cyan:darkBlue' },
+    { "Choice_Background",            'gray:darkBlue' },
+    { "Choice_ActiveItem",            'black:darkGreen' },
+    { "Choice_ActiveChar",            'white:darkGreen' },
+    { "Choice_NormalItem",            'white:darkBlue' },
+    { "Choice_NormalChar",            'yellow:darkBlue' },
+
+    { "bg",                           'gray:black' }, # background
+    { "fg",                           'gray:black' }, # foreground
+    
+    { 'Editor_Selected',              'black:darkCyan' },
+    { 'Editor_Markers',               'darkCyan:bg' },
+    { 'Editor_FoundText',             'white:darkRed' },
+    { 'Editor_Folds',                 'green:bg' },
+    { 'Editor_HilitWord',             'red:bg' },
+
+    { 'Editor_Default',               'fg:bg' },
+    { 'Editor_Bold',                  'cyan:bg' },
+    { 'Editor_Keywords',              'white:bg' },
+    { 'Editor_Keywords2',             'cyan:bg' },
+    { 'Editor_Keywords3',             'green:bg' },
+    { 'Editor_Keywords4',             'yellow:bg' },
+    { 'Editor_Keywords5',             'blue:bg' },
+
+    { 'Msg_Header',                   'darkCyan:bg' },
+    { 'Msg_Quotes',                   'green:bg' },
+    { 'Msg_Tag',                      'white:bg' },
+    { 'Msg_Signature',                'darkCyan:bg' },
+
+    { 'Comment',                      'brown:bg' },
+    { 'String',                       'yellow:bg' },
+
+    { 'Lang_Default',                 'Editor_Default' },
+    { 'Lang_Number',                  'red:bg' },
+    { 'Lang_DecimalNumber',           'Lang_Number' },
+    { 'Lang_HexNumber',               'magenta:bg' },
+    { 'Lang_OctalNumber',             'magenta:bg' },
+    { 'Lang_BinaryNumber',            'magenta:bg' },
+    { 'Lang_Punctuation',             'darkCyan:bg' },
+    { 'Lang_String',                  'String' },
+    { 'Lang_Comment',                 'Comment' },
+    { 'Lang_Preprocessor',            'green:bg' },
+    { 'Lang_Function',                'cyan:bg' },
+    { 'Lang_Label',                   'red:bg' },
+    { 'Lang_Command',                 'cyan:bg' },
+    { 'Lang_Regexp',                  'magenta:bg' },
+    { 'Lang_Variable',                'gray:bg' },
+    { 'Lang_Control',                 'darkCyan:bg' },
+    { 'Lang_Assembler',               'blue:bg' }, # embedded assembler (Pascal)
+
+    { 'Markup_Default',               'gray:bg' },
+    { 'Markup_Punctuation',           'darkCyan:bg' },
+    { 'Markup_String',                'String' },
+    { 'Markup_Symbol',                'green:bg' },
+    { 'Markup_Tag',                   'cyan:bg' },
+    { 'Markup_Comment',               'Comment' },
+    { 'Markup_Special',               'red:bg' },
+    { 'Markup_Control',               'magenta:bg' },
+    { 'Markup_Quotes',                'yellow:bg' },
+    { 'Markup_Math',                  'red:bg' },
+
+    # diff/diff3
+    { 'DIFF_Default',                 'Editor_Default' },
+    { 'DIFF_Old',                     'brown:bg' },
+    { 'DIFF_New',                     'yellow:bg' },
+    { 'DIFF_Changed',                 'darkCyan:bg' },
+
+    # rcsmerge
+    { 'MERGE_Default',                'Editor_Default' },
+    { 'MERGE_Changed',                'white:bg' },
+    { 'MERGE_Old',                    'gray:bg' },
+    { 'MERGE_New',                    'red:bg' },
+    { 'MERGE_Control',                'yellow:bg' },
+}

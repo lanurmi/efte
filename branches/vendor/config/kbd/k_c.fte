@@ -1,0 +1,15 @@
+eventmap C {
+    key [Tab]   { LineIndent; LineTrim }
+    key [G-Enter]      { LineIndent; LineNew }
+    key [{]     { SelfInsert; ?LineIndent }
+    key [}]     { SelfInsert; ?LineIndent; MoveLeft; ?HilitMatchBracket; MoveRight }
+    key [)]     { SelfInsert; MoveLeft; ?HilitMatchBracket; MoveRight }
+    key [\]]    { SelfInsert; MoveLeft; ?HilitMatchBracket; MoveRight }
+    key [:]     { SelfInsert; ?LineIndent }
+    key [#]     { SelfInsert; ?LineIndent }
+    key [A+\\]  { BlockReIndent; FileTrim; WinRefresh }
+    
+    # do some smart indents
+    key [A+G-Enter]     { LineAdd; LineIndent }
+    key [S+G-Enter]     { LineInsert; LineIndent }
+}

@@ -1,0 +1,75 @@
+colorize REXX {
+    SyntaxParser = 'REXX';
+    
+    color {
+        { 'Normal',      'Lang_Default' },
+        { 'Number',      'Lang_Number' },
+        { 'Punctuation', 'Lang_Punctuation' },
+        { 'String',      'Lang_String' },
+        { 'Comment',     'Lang_Comment' },
+        { 'Function',    'Lang_Function' },
+    };
+
+    keyword 'Editor_Keywords' {
+        'ADDRESS', 'ARG', 'CALL', 'DO', 'DROP', 'EXIT', 'IF', 'INTERPRET',
+        'ITERATE', 'LEAVE', 'NOP', 'NUMERIC', 'OPTIONS', 'PARSE', 'PROCEDURE',
+        'PULL', 'PUSH', 'QUEUE', 'RETURN', 'SAY', 'SELECT', 'OTHERWISE',
+        'SIGNAL', 'TRACE', 'END', 'WHEN', 'ELSE', 'WITH', 'TO', 'BY', 'ON',
+        'END', 'FOR', 'OFF', 'VAR', 'THEN', 'HALT', 'NAME', 'FORM', 'FUZZ',
+        'VALUE', 'WHILE', 'UNTIL', 'ERROR', 'UPPER', 'WITH', 'EXPOSE', 'DIGITS',
+        'FOREVER', 'FAILURE', 'VERSION', 'NOVALUE', 'SOURCE', 'SYNTAX',
+        'NOTREADY', 'SCIENTIFIC', 'ENGINEERING',
+    };
+}
+
+mode REXX: PLAIN {                    # REXX mode
+    FileNameRx          = /\.\c{CMD}$/;
+    HilitOn             = 1;
+    Colorizer           = 'REXX';
+    TabSize             = 8;
+    AutoIndent          = 1;
+    IndentMode          = 'REXX';
+    MultiLineHilit      = 1;
+    AutoHilitParen      = 1;
+
+    SaveFolds           = 2;      # save fold info at end of line
+    CommentStart        = ' /*';
+    CommentEnd          = '*/';
+
+    RoutineRegexp       = /^[\w_]+:/;
+}
+
+colorize NETREXX: REXX {
+    SyntaxParser = 'REXX';
+
+    color {
+        { 'Normal',      'Lang_Default' },
+        { 'Number',      'Lang_Number' },
+        { 'Punctuation', 'Lang_Punctuation' },
+        { 'String',      'Lang_String' },
+        { 'Comment',     'Lang_Comment' },
+        { 'Function',    'Lang_Function' },
+    };
+
+    # keywords don't inherit? they probably should...
+    keyword 'Editor_Keywords' {
+        'ADDRESS', 'ARG', 'CALL', 'DO', 'DROP', 'EXIT', 'IF', 'INTERPRET',
+        'ITERATE', 'LEAVE', 'NOP', 'NUMERIC', 'OPTIONS', 'PARSE', 'PROCEDURE',
+        'PULL', 'PUSH', 'QUEUE', 'RETURN', 'SAY', 'SELECT', 'OTHERWISE',
+        'SIGNAL', 'TRACE', 'END', 'WHEN', 'ELSE', 'WITH', 'TO', 'BY', 'ON',
+        'END', 'FOR', 'OFF', 'VAR', 'THEN', 'HALT', 'NAME', 'FORM', 'FUZZ',
+        'VALUE', 'WHILE', 'UNTIL', 'ERROR', 'UPPER', 'WITH', 'EXPOSE', 'DIGITS',
+        'FOREVER', 'FAILURE', 'VERSION', 'NOVALUE', 'SOURCE', 'SYNTAX',
+        'NOTREADY', 'SCIENTIFIC', 'ENGINEERING',
+        
+        'METHOD', 'CLASS', 'NULL', 'LOOP', 'CATCH', 'RETURNS', 
+        'EXTENDS', 'IMPLEMENTS',
+        'CHAR', 'BOOLEAN',
+        # more ...
+    };
+}
+
+mode NETREXX: REXX {
+    FileNameRx          = /\.\c{NRX}$/;
+    Colorizer           = 'NETREXX';
+}
