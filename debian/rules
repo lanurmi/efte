@@ -41,7 +41,7 @@ allpackages=\
 
 build:
 	$(checkdir)
-	$(MAKE) -C src/ -f fte-unix.mak
+	$(MAKE) -C -j 4 src/ -f fte-unix.mak
 	touch build
 
 cleanB:
