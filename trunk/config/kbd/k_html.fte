@@ -1,3 +1,8 @@
+# FTE keybindings for editing HTML files
+# enhanced from the original by Michael DeBusk
+# debu4335@eclipsetel.com
+# Revision June 29, 2001
+
 # this file defines additional keybindings for HTML mode.
 # HTML_* macros are defined in ../m_html.fte
 # menus are defined in ../menu/m_html.fte
@@ -5,6 +10,7 @@
 
 eventmap HTML {
     key [C+E_0]     { HTML_Base }
+    key [C+E_x]     { HTML_TXT }
     
 # headers
     
