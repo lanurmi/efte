@@ -43,6 +43,7 @@
 #include "console.h"
 #include "gui.h"
 #include "s_files.h"
+#include "c_config.h"
 
 #define True    1
 #define False   0

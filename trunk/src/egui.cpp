@@ -437,7 +437,7 @@ int EGUI::WinHSplit(GxView *View) {
     return 1;
 }
 
-int EGUI::WinClose(GxView */*V*/) {
+int EGUI::WinClose(GxView * /*V*/) {
     EView *View = ActiveView;
 
     if (View->Next == View) {
@@ -641,7 +641,7 @@ int EGUI::FrameClose(GxView *View) {
     return 1;
 }
 
-int EGUI::FrameNext(GxView */*View*/) {
+int EGUI::FrameNext(GxView * /*View*/) {
     if (!frames->isLastFrame()) {
         frames->Next->Activate();
         return 1;
@@ -649,7 +649,7 @@ int EGUI::FrameNext(GxView */*View*/) {
     return 0;
 }
 
-int EGUI::FramePrev(GxView */*View*/) {
+int EGUI::FramePrev(GxView * /*View*/) {
     if (!frames->isLastFrame()) {
         frames->Prev->Activate();
         return 1;
@@ -747,7 +747,7 @@ void EGUI::EditorInit() {
     ActiveModel = 0;
 }
 
-int EGUI::InterfaceInit(int &/*argc*/, char **/*argv*/) {
+int EGUI::InterfaceInit(int &/*argc*/, char ** /*argv*/) {
     if (FrameNew() == 0)
         DieError(1, "Failed to create window\n");
     return 0;
