@@ -45,6 +45,7 @@
 #include "c_mode.h"
 #include "c_color.h"
 #include "s_files.h"
+#include "s_string.h"
 #include "log.h"
 
 #define PM_STACK_SIZE (96 * 1024)
@@ -2942,13 +2943,13 @@ int GFramePeer::ConQuerySize(int *X, int *Y) {
 int GFramePeer::ConSetTitle(char *Title, char *STitle) {
     char szTitle[256] = {0};
 
-    JustFileName(Title, szTitle);
+    JustFileName(Title, szTitle, sizeof(szTitle));
     if (szTitle[0] == '\0') // if there is no filename, try the directory name.
-        JustLastDirectory(Title, szTitle);
+        JustLastDirectory(Title, szTitle, sizeof(szTitle));
 
     if (szTitle[0] != '\0') // if there is something...
-        strncat(szTitle, " - ", sizeof(szTitle) - 1 - strlen(szTitle));
-    strncat(szTitle, Title, sizeof(szTitle) - 1 - strlen(szTitle));
+        strlcat(szTitle, " - ", sizeof(szTitle));
+    strlcat(szTitle, Title, sizeof(szTitle));
 
     WinSetWindowText(hwndFrame, szTitle);
     return 1;
