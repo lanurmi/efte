@@ -1,8 +1,8 @@
 INCDIR    =
 LIBDIR    =
 
-OPTIMIZE  = -g
-#OPTIMIZE  = -O -s
+#OPTIMIZE  = -g
+OPTIMIZE  = -O -s
 #OPTIMIZE   = -O2 -s
 
 MT        = -Zmt
