@@ -166,6 +166,7 @@ static int CmdLoadConfiguration(int &argc, char **argv) {
                 }
                 int debug_clean = strcmp(argv[Arg], "--debugclean") == 0;
                 if (debug_clean || strcmp(argv[Arg], "--debug") == 0) {
+#ifndef FTE_NO_LOGGING
                     char path[MAXPATH];
 #ifdef UNIX
                     ExpandPath("~/.fte", path);
@@ -178,6 +179,9 @@ static int CmdLoadConfiguration(int &argc, char **argv) {
 
                     globalLog.SetLogFile(path);
                     printf("Trace Log in: %s\n", path);
+#else
+                    printf("--debug, --debugclean disabled\n");
+#endif
                 }
                 else
                     QuoteAll = 1;
