@@ -17,9 +17,9 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
+#include "feature.h"
 #include "ftever.h"
 #include "sysdep.h"
-#include "feature.h"
 #include "c_fconfig.h"
 #include "s_files.h"
 #include "c_mode.h"
@@ -30,15 +30,15 @@ typedef struct {
     char *Name;
 } ExMacro;
 
-unsigned int CMacros = 0;
-ExMacro *Macros = 0;
+static unsigned int CMacros = 0;
+static ExMacro *Macros = 0;
 
-FILE *output = 0;
-int lntotal = 0;
-long offset = -1;
-long pos = 0;
-char XTarget[MAXPATH] = "";
-char StartDir[MAXPATH] = "";
+static FILE *output = 0;
+static int lntotal = 0;
+static long offset = -1;
+static long pos = 0;
+static char XTarget[MAXPATH] = "";
+static char StartDir[MAXPATH] = "";
 
 #include "c_commands.h"
 #include "c_cmdtab.h"
@@ -52,7 +52,7 @@ typedef struct _CurPos {
     const char *name; // filename
 } CurPos;
 
-void cleanup(int xerrno) {
+static void cleanup(int xerrno) {
     if (output)
         fclose(output);
     if (XTarget[0] != 0)
@@ -60,7 +60,7 @@ void cleanup(int xerrno) {
     exit (xerrno);
 }
 
-void Fail(CurPos &cp, const char *s, ...) {
+static void Fail(CurPos &cp, const char *s, ...) {
     va_list ap;
     char msgbuf[1024];
 
@@ -72,9 +72,10 @@ void Fail(CurPos &cp, const char *s, ...) {
     cleanup(1);
 }
 
-int LoadFile(const char *WhereName, const char *CfgName, int Level = 1);
-void DefineWord(const char *w);
-void PutObject(CurPos &cp, int xtag, int xlen, void *obj) {
+static int LoadFile(const char *WhereName, const char *CfgName, int Level = 1);
+static void DefineWord(const char *w);
+
+static void PutObject(CurPos &cp, int xtag, int xlen, void *obj) {
     unsigned char tag = (unsigned char)xtag;
     unsigned short len = (unsigned short)xlen;
     unsigned char l[2];
@@ -94,15 +95,15 @@ void PutObject(CurPos &cp, int xtag, int xlen, void *obj) {
     }
 }
 
-void PutNull(CurPos &cp, int xtag) {
+static void PutNull(CurPos &cp, int xtag) {
     PutObject(cp, xtag, 0, 0);
 }
 
-void PutString(CurPos &cp, int xtag, char *str) {
+static void PutString(CurPos &cp, int xtag, char *str) {
     PutObject(cp, xtag, slen(str), str);
 }
 
-void PutNumber(CurPos &cp, int xtag, long num) {
+static void PutNumber(CurPos &cp, int xtag, long num) {
     unsigned long l = num;
     unsigned char b[4];
 
@@ -262,7 +263,7 @@ typedef struct _OrdLookup {
     int num;
 } OrdLookup;
 
-OrdLookup mode_num[] = {
+static const OrdLookup mode_num[] = {
 MODE_BFI(AutoIndent),
 MODE_BFI(Insert),
 MODE_BFI(DrawOn),
@@ -312,7 +313,7 @@ MODE_BFI(ShowBookmarks),
 { 0, 0 },
 };
 
-OrdLookup mode_string[] = {
+static const OrdLookup mode_string[] = {
 MODE_BFI(Colorizer),
 MODE_BFI(IndentMode),
 MODE_BFS(RoutineRegexp),
@@ -329,7 +330,7 @@ MODE_BFI(EventMap),
 { 0, 0 },
 };
 
-OrdLookup global_num[] = {
+static const OrdLookup global_num[] = {
 #ifdef CONFIG_INDENT_C
 MODE_FLG(C_Indent),
 MODE_FLG(C_BraceOfs),
@@ -382,7 +383,7 @@ MODE_FLG(ReassignModelIds),
 { 0, 0 },
 };
 
-OrdLookup global_string[] = {
+static const OrdLookup global_string[] = {
 MODE_FLG(DefaultModeName),
 MODE_FLG(CompletionFilter),
 MODE_FLG(PrintDevice),
@@ -395,18 +396,18 @@ MODE_FLG(CvsLogMode),
 { 0, 0 },
 };
 
-OrdLookup event_string[] = {
+static const OrdLookup event_string[] = {
 EVENT_FLG(MainMenu),
 EVENT_FLG(LocalMenu),
 { 0, 0 },
 };
 
-OrdLookup colorize_string[] = {
+static const OrdLookup colorize_string[] = {
 COLORIZE_FLG(SyntaxParser),
 { 0, 0 },
 };
 
-OrdLookup hilit_colors[] = {
+static const OrdLookup hilit_colors[] = {
 HILIT_CLR(Normal),
 HILIT_CLR(Keyword),
 HILIT_CLR(String),
@@ -438,7 +439,7 @@ HILIT_CLR(RegexpDelim),
 { 0, 0 },
 };
 
-int Lookup(OrdLookup *where, char *what) {
+static int Lookup(const OrdLookup *where, char *what) {
     int i;
 
     for (i = 0; where[i].Name != 0; i++) {
@@ -491,7 +492,7 @@ int Lookup(OrdLookup *where, char *what) {
 
 typedef char Word[64];
 
-OrdLookup CfgKW[] = {
+static const OrdLookup CfgKW[] = {
 { "mode", K_MODE },
 { "eventmap", K_EVENTMAP },
 { "key", K_KEY },
@@ -517,7 +518,7 @@ OrdLookup CfgKW[] = {
 { 0, 0 },
 };
 
-OrdLookup CfgVar[] = {
+static const OrdLookup CfgVar[] = {
     { "FilePath", mvFilePath },
     { "FileName", mvFileName },
     { "FileDirectory", mvFileDirectory },
@@ -532,10 +533,10 @@ OrdLookup CfgVar[] = {
     { 0, 0 },
 };
 
-char **words = 0;
-unsigned int wordCount = 0;
+static char **words = 0;
+static unsigned int wordCount = 0;
 
-int DefinedWord(const char *w) {
+static int DefinedWord(const char *w) {
     if (words == 0 || wordCount == 0)
         return 0;
     for (unsigned int i = 0; i < wordCount; i++)
@@ -544,7 +545,7 @@ int DefinedWord(const char *w) {
     return 0;
 }
 
-void DefineWord(const char *w) {
+static void DefineWord(const char *w) {
     if (!w || !w[0])
         return ;
     if (!DefinedWord(w)) {
@@ -556,13 +557,13 @@ void DefineWord(const char *w) {
     }
 }
 
-int colorCount;
-struct _color {
+static int colorCount;
+static struct _color {
     char *colorName;
     char *colorValue;
 } *colors;
 
-int DefineColor(char *name, char *value) {
+static int DefineColor(char *name, char *value) {
     if (!name || !value)
         return 0;
     colors = (struct _color *)realloc(colors, sizeof (struct _color) * (colorCount + 1));
@@ -576,7 +577,7 @@ int DefineColor(char *name, char *value) {
     return 1;
 }
 
-char *DefinedColor(char *name) {
+static char *DefinedColor(char *name) {
     if (colors == 0 || colorCount == 0)
         return 0;
     for (int i = 0; i < colorCount; i++)
@@ -585,7 +586,7 @@ char *DefinedColor(char *name) {
     return 0;
 }
 
-char *GetColor(CurPos &cp, char *name) {
+static char *GetColor(CurPos &cp, char *name) {
     char *c;
     static char color[4];
 
@@ -617,7 +618,7 @@ char *GetColor(CurPos &cp, char *name) {
     return name;
 }
 
-int GetWord(CurPos &cp, char *w) {
+static int GetWord(CurPos &cp, char *w) {
     char *p = w;
     int len = 0;
 
@@ -636,7 +637,7 @@ int GetWord(CurPos &cp, char *w) {
 }
 
 
-int Parse(CurPos &cp) {
+static int Parse(CurPos &cp) {
     while (cp.c < cp.z) {
         switch (*cp.c) {
 #ifndef UNIX
@@ -770,7 +771,7 @@ int Parse(CurPos &cp) {
     return P_EOF;
 }
 
-void GetOp(CurPos &cp, int what) {
+static void GetOp(CurPos &cp, int what) {
     switch (what) {
     case P_COMMA:
     case P_OPENBRACE:
@@ -786,7 +787,7 @@ void GetOp(CurPos &cp, int what) {
     }
 }
 
-char *GetString(CurPos &cp) {
+static char *GetString(CurPos &cp) {
     char c = *cp.c;
     char *p = cp.c;
     char *d = cp.c;
@@ -842,7 +843,7 @@ char *GetString(CurPos &cp) {
     return 0;
 }
 
-int GetNumber(CurPos &cp) {
+static int GetNumber(CurPos &cp) {
     int value = 0;
     int neg = 0;
 
@@ -857,7 +858,7 @@ int GetNumber(CurPos &cp) {
     return neg ? -value : value;
 }
 
-int CmdNum(const char *Cmd) {
+static int CmdNum(const char *Cmd) {
     unsigned int i;
 
     for (i = 0;
@@ -880,7 +881,7 @@ int NewCommand(const char *Name) {
     return CMacros - 1;
 }
 
-int ParseCommands(CurPos &cp, char *Name) {
+static int ParseCommands(CurPos &cp, char *Name) {
     //if (!Name)
     //    return 0;
     Word cmd;
@@ -945,7 +946,7 @@ int ParseCommands(CurPos &cp, char *Name) {
     return 0;
 }
 
-int ParseConfigFile(CurPos &cp) {
+static int ParseConfigFile(CurPos &cp) {
     Word w = "";
     char *s = 0;
     int p = 0;
@@ -1723,7 +1724,7 @@ int ParseConfigFile(CurPos &cp) {
     }
 }
 
-int LoadFile(const char *WhereName, const char *CfgName, int Level) {
+static int LoadFile(const char *WhereName, const char *CfgName, int Level) {
     int fd, rc;
     char *buffer = 0;
     struct stat statbuf;
