@@ -46,7 +46,7 @@
 #include "gui.h"
 
 #include "con_i18n.h"
-
+#include "s_files.h"
 
 XIC xic = NULL;
 
@@ -460,7 +460,17 @@ int ConClear(void) {
 }
 
 int ConSetTitle(char *Title, char *STitle) {
+    char buf[sizeof(winTitle)] = {0};
+    JustFileName(Title, buf);
+    if (buf[0] == '\0') // if there is no filename, try the directory name.
+        JustLastDirectory(Title, buf);
+
     strncpy(winTitle, "FTE - ", sizeof(winTitle) - 1);
+    if (buf[0] != 0) // if there is a file/dir name, stick it in here.
+    {
+        strncat(winTitle, buf, sizeof(winTitle) - 1 - strlen(winTitle));
+        strncat(winTitle, " - ", sizeof(winTitle) - 1 - strlen(winTitle));
+    }
     strncat(winTitle, Title, sizeof(winTitle) - 1 - strlen(winTitle));
     winTitle[sizeof(winTitle) - 1] = 0;
     strncpy(winSTitle, STitle, sizeof(winSTitle) - 1);

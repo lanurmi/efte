@@ -372,6 +372,19 @@ int JustDirectory(const char *Path, char *Dir) {
     return 0;
 }
 
+int JustLastDirectory(const char *Path, char *Dir) {
+    int lastSlash = strlen(Path);
+    while (lastSlash > 0 && !ISSEP(Path[lastSlash])) lastSlash--;
+
+    int secondLastSlash = lastSlash;
+    while (secondLastSlash > 0 && !ISSEP(Path[secondLastSlash - 1])) secondLastSlash--;
+
+    strncpy(Dir, Path + secondLastSlash, lastSlash - secondLastSlash);
+    Dir[lastSlash - secondLastSlash] = 0;
+
+    return 0;
+}
+
 int JustFileName(const char *Path, char *Name) {
     int len = strlen(Path);
 
