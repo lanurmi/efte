@@ -7,7 +7,7 @@
 # uncomment for appropriate keybindings and menus
 
 %define(UI_KB)
-#%define(UI_FTE)
+%define(UI_FTE)
 #%define(UI_WS)
 #%define(UI_NE)
 #%define(UI_BRIEF)
@@ -205,12 +205,8 @@ include 'uicstyle.fte';
 
 # ui*.fte -files define all keyboard bindings and menus.
 # pick only one file.
-%if(UI_KB)
-include 'ui_kb.fte'; # kabi settings
-%endif
 %if(UI_FTE)
 include 'ui_fte.fte'; # fte CUA style bindings
-##include 'ui_fte2.fte'; # fte CUA style bindings with conditional cascade menus
 %endif
 %if(UI_WS)
 include 'ui_ws.fte';  # wordstar like
