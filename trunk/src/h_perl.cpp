@@ -144,8 +144,13 @@ int Hilit_PERL(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
                 hilit:
                     ColorNext();
                     continue;
-                } else if (i == 0 && X_NOT(State) && (*p == '=') && len > 4 &&
-                    p[1] == 'h' && p[2] == 'e' && p[3] == 'a' && p[4] == 'd')
+                } else if (
+                           i == 0 && X_NOT(State) && (*p == '=') && len > 4 &&
+                           (
+                            strncmp(p+1, "head", 4) == 0 ||
+                            strncmp(p+1, "item", 4) == 0
+                           )
+                          )
                 {
                     State = hsPerl_Docs;
                     Color = Colors[CLR_Comment];
