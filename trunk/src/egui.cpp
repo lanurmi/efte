@@ -603,7 +603,7 @@ int EGUI::FrameNew() {
     if (!multiFrame() && frames)
         return 0;
 
-    new EFrame(ScreenSizeX, ScreenSizeY);
+    (void)new EFrame(ScreenSizeX, ScreenSizeY);
     assert(frames != 0);
 
     //frames->SetMenu("Main"); //??
@@ -611,7 +611,7 @@ int EGUI::FrameNew() {
     view = new GxView(frames);
     assert(view != 0);
 
-    new EView(ActiveModel);
+    (void)new EView(ActiveModel);
     assert(ActiveView != 0);
 
     edit = new ExModelView(ActiveView);

@@ -133,7 +133,7 @@ int FileFind::FindFirst(FileInfo **fi) {
     else
         JoinDirFile(fullpattern, Directory, "*");
 
-    if ((rc = DosFindFirst(fullpattern,
+    if ((rc = DosFindFirst((PUCHAR)fullpattern,
                            &hdir,
                            attr,
                            &find, sizeof(find),

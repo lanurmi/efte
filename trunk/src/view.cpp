@@ -623,7 +623,7 @@ int EView::ViewModeMap(ExState &/*State*/) {
     if (TheEventMapView != 0)
         TheEventMapView->ViewMap(GetEventMap());
     else
-        new EventMapView(0, &ActiveModel, GetEventMap());
+        (void)new EventMapView(0, &ActiveModel, GetEventMap());
     if (TheEventMapView != 0)
         SwitchToModel(TheEventMapView);
     else
