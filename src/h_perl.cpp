@@ -121,13 +121,14 @@ int Hilit_PERL(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
     C = 0;
     NC = 0;
     int isEOHereDoc = 0;
+    if ((State & X_MASK) == hsPerl_HereDoc)
+    {
+        isEOHereDoc = strlen(hereDocKey) == (size_t)len &&
+            strncmp(hereDocKey, Line->Chars, len) == 0;
+        if (isEOHereDoc) State = hsPerl_Normal | (State & X_BIT);
+    }
     for(i = 0; i < Line->Count;) {
         if (*p != ' ' && *p != 9) firstnw++;
-        if ((State & X_MASK) == hsPerl_HereDoc && 0 == i)
-        {
-            isEOHereDoc = strlen(hereDocKey) == (size_t)len &&
-                strncmp(hereDocKey, Line->Chars, len) == 0;
-        }
         if (*p == '{' && inSub)
             inSub = 0;
         IF_TAB() else {
