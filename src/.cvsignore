@@ -1,6 +1,6 @@
 defcfg.h
 defcfg.cnf
-[xsvc]fte
+[xsvnc]fte
 compkeys
 fte.cnf
 [c]fte.exe
