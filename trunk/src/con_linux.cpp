@@ -997,7 +997,8 @@ int ConSetCursorSize(int Start, int End) {
     return 0;
 }
 
-static PCell SavedScreen = 0;
+static PCell
+SavedScreen = 0;
 static int SavedX, SavedY, SaveCursorPosX, SaveCursorPosY;
 
 int SaveScreen() {
@@ -1034,6 +1035,13 @@ GUI::GUI(int &argc, char **argv, int XSize, int YSize) {
 GUI::~GUI() {
     RestoreScreen();
     ::ConDone();
+
+    if(SavedScreen)
+    {
+        free(SavedScreen);
+        SavedScreen = 0;
+    }
+
     gui = 0;
 }
 

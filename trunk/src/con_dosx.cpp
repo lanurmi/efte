@@ -977,7 +977,14 @@ GUI::GUI(int &argc, char **argv, int XSize, int YSize) {
 GUI::~GUI() {
 	RestoreScreen();
 	::ConDone();
-	gui = 0;
+
+        if(SavedScreen)
+        {
+            free(SavedScreen);
+            SavedScreen = 0;
+        }
+
+        gui = 0;
 }
 
 int GUI::ConSuspend(void) {
