@@ -89,7 +89,7 @@ SINCDIR   = -I/usr/include/slang
 
 #######################################################################
 # SunOS (Solaris)
-#UOS      = -DSUNOS
+#UOS      = -DSUNOS -DNO_NEW_CPP_FEATURES
 #CC = CC -noex
 #LD = CC -noex
 #COPTIONS =
