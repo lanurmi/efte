@@ -120,7 +120,7 @@ const char *GetGUICharacters(const char *which, const char *defChars) {
 }
 
 void AppendGUICharacters(const char *string) {
-    char *s;
+    const char *s;
     GUICharactersEntry *g;
 
     s = strchr(string, ':');

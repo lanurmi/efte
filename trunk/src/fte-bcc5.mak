@@ -21,7 +21,7 @@ OEXT      = obj
 
 DEFS      = -DNT -DNTCONSOLE -DBCPP
 
-CCFLAGS   = $(OPTIMIZE) -w-aus -w-par -tWC $(DEFS) -I$(INCDIR)
+CCFLAGS   = $(OPTIMIZE) -w-aus -w-par -w-inl -tWC $(DEFS) -I$(INCDIR)
 LDFLAGS   = -ap -Tpe -c -x -Gn -L$(LIBDIR) -j$(LIBDIR)
 LDOBJS    = c0x32.obj
 LDLIBS    = import32.lib cw32.lib
