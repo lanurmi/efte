@@ -638,8 +638,7 @@ int ConGetEvent(TEventMask /*EventMask */ ,
 	Event->What = evKeyDown;
 	KEvent->Code = 0;
 
-#if 0
-	if(ch > 127 && ch < 256)
+	if(SevenBit && ch > 127 && ch < 256)
 	{
 		KEvent->Code |= kfAlt;
 		ch -= 128;
@@ -648,7 +647,6 @@ int ConGetEvent(TEventMask /*EventMask */ ,
 			ch-=0x20;
 		}
 	}
-#endif
 
 	if(ch < 0)
 	{
