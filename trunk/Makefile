@@ -10,7 +10,7 @@ all:	fte
 	(cd src ; make unix)
 
 install: all
-	-rm -rf $(LIBDIR)
+	-rm -rf $(CONFIGDIR)
 	mkdir -p $(BINDIR)
 	mkdir -p $(LIBDIR)
 	cp fte $(BINDIR)
