@@ -80,7 +80,7 @@ colorize PASCAL {
     h_wtype { 0, 0, 0, 'i', 'a-zA-Z0-9_' }
 
     h_state 6 { 'HexNumber' }
-    h_trans { 0, '-S', '0-9A-Fa-f', 'Normal' }
+    h_trans { 6, 'S', '0-9A-Fa-f', 'Normal' }
     h_trans { 0, '$', '', 'Normal' }
 
     h_state 7 { 'Number' }
