@@ -250,8 +250,8 @@ static long MouseAutoDelay = 400;
 static long MouseAutoRepeat = 5;
 static long MouseMultiClick = 300;
 
-static Initialized = 0;
-static MousePresent = 0;
+static int Initialized = 0;
+static int MousePresent = 0;
 static int CursorVisible = 1; /* 1 means visible */
 static int MouseVisible = 0; /* 0 means hidden */
 static TEvent MouseEv = { evNone };
