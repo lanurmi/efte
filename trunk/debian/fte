@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# simple shell script which selects appropriate fte executable
+# simple wrapper shell script which selects appropriate fte executable
 #
 
 if [ -n "$DISPLAY" ]; then
@@ -12,7 +12,7 @@ if [ -n "$DISPLAY" ]; then
 		echo "Only Console version installed!"
 	fi
 else
-	if [ "$TERM"=linux ] && which vfte >/dev/null; then
+	if [ "$TERM" = linux ] && which vfte >/dev/null; then
 		exec vfte "$@"
 	elif which sfte >/dev/null; then
 		exec sfte "$@"
