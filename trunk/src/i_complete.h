@@ -43,5 +43,8 @@ public:
     virtual void RepaintView();
     virtual void UpdateStatus();
     virtual void RepaintStatus();
+
+    virtual bool IsSimpleCase();
+    virtual int DoCompleteWord();
 };
 #endif

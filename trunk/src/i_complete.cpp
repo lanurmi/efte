@@ -67,6 +67,27 @@ int ExComplete::BeginMacro()
     return 1;
 }
 
+bool ExComplete::IsSimpleCase()
+{
+    if (WordsLast < 2) return true;
+
+    return false;
+}
+
+int ExComplete::DoCompleteWord()
+{
+    int rc = 0;
+    int l = strlen(Words[WordPos]);
+
+    if (Buffer->InsText(Buffer->VToR(Orig.Row), Orig.Col, l, Words[WordPos], 1)
+        && Buffer->SetPos(Orig.Col + l, Orig.Row)) {
+        Buffer->Draw(Buffer->VToR(Orig.Row), Buffer->VToR(Orig.Row));
+        rc = 1;
+    }
+
+    return rc;
+}
+
 void ExComplete::HandleEvent(TEvent &Event)
 {
     unsigned long kb = kbCode(Event.Key.Code);
@@ -179,15 +200,19 @@ void ExComplete::HandleEvent(TEvent &Event)
     }
 
     if (DoQuit) {
-	int rc = 0;
+/*	int rc = 0;
 	int l = strlen(Words[WordPos]);
 
 	if (Buffer->InsText(Buffer->VToR(Orig.Row), Orig.Col, l, Words[WordPos], 1)
 	    && Buffer->SetPos(Orig.Col + l, Orig.Row)) {
 	    Buffer->Draw(Buffer->VToR(Orig.Row), Buffer->VToR(Orig.Row));
 	    rc = 1;
-	}
-	EndExec(rc);
+        }*/
+
+        int rc = DoCompleteWord();
+
+        EndExec(rc);
+
 	Event.What = evNone;
     }
 
