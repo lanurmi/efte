@@ -8,6 +8,7 @@
  */
 
 #include "fte.h"
+#include "o_modemap.h"
 
 EventMapView *TheEventMapView = 0;
 
@@ -47,10 +48,17 @@ void EventMapView::DumpKey(const char *aPrefix, EKey *Key) {
             sprintf(p, "%ld ", Macros[id].cmds[i].u.num);
         } else if (Macros[id].cmds[i].type == CT_STRING) {
             sprintf(p, "'%s' ", Macros[id].cmds[i].u.string);
+        } else if (Macros[id].cmds[i].type == CT_CONCAT) {
+            strcat(p, ". ");
+        } else if (Macros[id].cmds[i].type == CT_VARIABLE) {
+            sprintf(p, "$(%ld) ", Macros[id].cmds[i].u.num);
         }
-        if (strlen(Entry) > 1950) {
-            strcat(Entry, "...");
-            break;
+        if (strlen(Entry) > 70) {
+            if (i != Macros[id].Count - 1) {
+                // not the last entry
+                AddLine(Entry);
+                sprintf(Entry, "%13s   ", "");
+            }
         }
     }
     AddLine(Entry);
