@@ -19,6 +19,7 @@ fte: fte.in Makefile
 	chmod a+x $@
 
 dist: fte
+	scripts/mkbuildlvl.pl
 
 clean:
 	rm -f fte
