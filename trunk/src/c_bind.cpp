@@ -181,9 +181,10 @@ static void InitWordChars() {
     if (init == 0) {
 	for (int i = 0; i < 256; i++)
             // isalnum???
-	    if (isdigit(i) || isalpha(i)
-		|| (i >= 'A' && i <= 'Z')
-		|| (i >= 'a' && i <= 'z') || (i == '_')) {
+	    //if (isdigit(i) || isalpha(i)
+	    //    || (i >= 'A' && i <= 'Z')
+            //    || (i >= 'a' && i <= 'z') || (i == '_')) {
+            if (isalnum(i) || (i == '_')) {
                 WSETBIT(DefaultBufferFlags.WordChars, i, 1);
                 if ((i >= 'A' && i <= 'Z') || isupper(i))
                     WSETBIT(DefaultBufferFlags.CapitalChars, i, 1);

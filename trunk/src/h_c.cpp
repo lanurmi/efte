@@ -552,9 +552,6 @@ static int FindPrevIndent(EBuffer *B, int &RowP, int &ColP, char &CharP, int Fla
         0, // if/else (one if for each else)
     };
 
-#define TEST_ZERO (Count[0] == 0 && Count[1] == 0 && Count[2] == 0\
-    && Count[3] == 0)
-
     assert(RowP >= 0 && RowP < B->RCount);
     L = B->RLine(RowP)->Count;
     if (ColP >= L)

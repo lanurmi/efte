@@ -285,7 +285,7 @@ int Hilit_PERL(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
                     // the following are one-character-ONLY
                     if (
                         (var_type == '$' && strchr("_&`'+*.!/|,\\\";#%=-~:?$<>()[]", first) != NULL) ||
-                        (var_type == '@' && strchr("-", first) != NULL)
+                        (var_type == '@' && strchr("_", first) != NULL)
                        )
                     {
                         // nothing.
@@ -295,6 +295,42 @@ int Hilit_PERL(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
                     {
                         if (len > 0 && isalpha(*p))
                             ColorNext();
+                    }
+                    else if (first == '{')
+                    {
+                        int Count[] = {
+                            1, // { } - we're starting with one.
+                            0, // ( )
+                            0, // [ ]
+                        };
+
+                        while (len > 0)
+                        {
+                            switch (*p) {
+                            case '{':
+                                ++Count[0];
+                                break;
+                            case '}':
+                                --Count[0];
+                                break;
+                            case '[':
+                                ++Count[1];
+                                break;
+                            case ']':
+                                --Count[1];
+                                break;
+                            case '(':
+                                ++Count[2];
+                                break;
+                            case ')':
+                                --Count[2];
+                                break;
+                            }
+                            ColorNext();
+                            if (TEST_ZERO)
+                                break;
+                        }
+
                     }
                     else
                     {
