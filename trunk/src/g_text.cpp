@@ -13,6 +13,9 @@
 #include <assert.h>
 #include <signal.h>
 #include <stdarg.h>
+#if defined(MSVC)
+#include <malloc.h>
+#endif
 
 #include "console.h"
 #include "gui.h"

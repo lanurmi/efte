@@ -12,6 +12,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#if defined(MSVC)
+#include <malloc.h>
+#endif
 #include "e_regex.h"
 
 //#define DEBUG
