@@ -361,7 +361,7 @@ int ConPutBox(int X, int Y, int W, int H, PCell Cell)
     return 0;
 }
 
-int ConPutBoxRaw(int X, int Y, int W, int H, unsigned short *box)
+static int ConPutBoxRaw(int X, int Y, int W, int H, unsigned short *box)
 {
     int CurX, CurY;
 
@@ -402,7 +402,7 @@ int ConGetBox(int X, int Y, int W, int H, PCell Cell)
 
 }
 
-int ConGetBoxRaw(int X, int Y, int W, int H, unsigned short *box)
+static int ConGetBoxRaw(int X, int Y, int W, int H, unsigned short *box)
 {
     int CurX, CurY;
 
@@ -467,7 +467,7 @@ int ConScroll(int Way, int X, int Y, int W, int H, TAttr Fill, int Count)
 	ConSetBox(X, Y, W, Count, fill);
     }
 
-    delete(box);
+    delete [] (box);
 
     return 0;
 }
