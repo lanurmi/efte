@@ -912,11 +912,11 @@ int RxReplace(const char *rep, const char *Src, int /*len*/, RxMatchRes match, c
                     int N = 0;
                     int A = 0;
 
-                    if (*rep == 0) return 0;
+                    if (*rep == 0) { free(dest); return 0; }
                     N = toupper(*rep) - 48; if (N > 9) N = N + 48 - 65 + 10; if (N > 15) return 0;
                     rep++;
                     A = N << 4;
-                    if (*rep == 0) return 0;
+                    if (*rep == 0) { free(dest); return 0; }
                     N = toupper(*rep) - 48; if (N > 9) N = N + 48 - 65 + 10; if (N > 15) return 0;
                     rep++;
                     A = A + N;
@@ -929,16 +929,16 @@ int RxReplace(const char *rep, const char *Src, int /*len*/, RxMatchRes match, c
                     int N = 0;
                     int A = 0;
 
-                    if (*rep == 0) return 0;
-                    N = toupper(*rep) - 48; if (N > 9) return 0;
+                    if (*rep == 0) { free(dest); return 0; }
+                    N = toupper(*rep) - 48; if (N > 9) { free(dest); return 0; }
                     rep++;
                     A = N * 100;
-                    if (*rep == 0) return 0;
-                    N = toupper(*rep) - 48; if (N > 9) return 0;
+                    if (*rep == 0) { free(dest); return 0; }
+                    N = toupper(*rep) - 48; if (N > 9) { free(dest); return 0; }
                     rep++;
                     A = N * 10;
-                    if (*rep == 0) return 0;
-                    N = toupper(*rep) - 48; if (N > 9) return 0;
+                    if (*rep == 0) { free(dest); return 0; }
+                    N = toupper(*rep) - 48; if (N > 9) { free(dest); return 0; }
                     rep++;
                     A = A + N;
                     Ch = (char)A;
@@ -950,16 +950,16 @@ int RxReplace(const char *rep, const char *Src, int /*len*/, RxMatchRes match, c
                     int N = 0;
                     int A = 0;
 
-                    if (*rep == 0) return 0;
-                    N = toupper(*rep) - 48; if (N > 7) return 0;
+                    if (*rep == 0) { free(dest); return 0; }
+                    N = toupper(*rep) - 48; if (N > 7) { free(dest); return 0; }
                     rep++;
                     A = N * 64;
-                    if (*rep == 0) return 0;
-                    N = toupper(*rep) - 48; if (N > 7) return 0;
+                    if (*rep == 0) { free(dest); return 0; }
+                    N = toupper(*rep) - 48; if (N > 7) { free(dest); return 0; }
                     rep++;
                     A = N * 8;
-                    if (*rep == 0) return 0;
-                    N = toupper(*rep) - 48; if (N > 7) return 0;
+                    if (*rep == 0) { free(dest); return 0; }
+                    N = toupper(*rep) - 48; if (N > 7) { free(dest); return 0; }
                     rep++;
                     A = A + N;
                     Ch = (char)A;
