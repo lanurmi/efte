@@ -82,6 +82,7 @@ color_palette {
     { 'Comment',                      'brown:bg' },
     { 'String',                       'yellow:bg' },
 
+    { 'Lang_Default',                 'Editor_Default' },
     { 'Lang_Number',                  'red:bg' },
     { 'Lang_DecimalNumber',           'Lang_Number' },
     { 'Lang_HexNumber',               'magenta:bg' },
@@ -101,8 +102,10 @@ color_palette {
 
     { 'Markup_Default',               'gray:bg' },
     { 'Markup_Punctuation',           'darkCyan:bg' },
+    { 'Markup_String',                'String' },
     { 'Markup_Symbol',                'green:bg' },
     { 'Markup_Tag',                   'cyan:bg' },
+    { 'Markup_Comment',               'Comment' },
     { 'Markup_Special',               'red:bg' },
     { 'Markup_Control',               'magenta:bg' },
     { 'Markup_Quotes',                'yellow:bg' },
