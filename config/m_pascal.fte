@@ -89,6 +89,8 @@ colorize PASCAL {
 
     h_state 8 { 'Command' }
     h_trans { 0, '', 'end', 'Command' }
+    h_trans { 12, '<', '(*', 'Comment' }
+    h_trans { 13, '<', '{', 'Comment' }
     
     h_state 9 { 'CPreprocessor' }
     h_trans { 0, '>', '}', 'CPreprocessor' }
@@ -99,6 +101,11 @@ colorize PASCAL {
     h_state 11 { 'Comment' }
     h_trans { 0, '$', '', 'Comment' }
     
+    h_state 12 { 'Comment' }
+    h_trans { 8, '>', '*)', 'Comment' }
+
+    h_state 13 { 'Comment' }
+    h_trans { 8, '>', '}', 'Comment' }
     
 }
 
