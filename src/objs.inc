@@ -33,7 +33,6 @@ g_menu.$(OEXT) \
 h_ada.$(OEXT) \
 h_c.$(OEXT) \
 h_fte.$(OEXT) \
-h_html.$(OEXT) \
 h_ipf.$(OEXT) \
 h_make.$(OEXT) \
 h_pascal.$(OEXT) \

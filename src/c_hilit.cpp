@@ -22,20 +22,11 @@ static const struct {
 #ifdef CONFIG_HILIT_REXX
 { "REXX", HILIT_REXX, Hilit_REXX },
 #endif
-#ifdef CONFIG_HILIT_HTML
-{ "HTML", HILIT_HTML, Hilit_HTML },
-#endif
 #ifdef CONFIG_HILIT_PERL
 { "PERL", HILIT_PERL, Hilit_PERL },
 #endif
 #ifdef CONFIG_HILIT_MAKE
 { "MAKE", HILIT_MAKE, Hilit_MAKE },
-#endif
-#ifdef CONFIG_HILIT_DIFF
-//{ "DIFF", HILIT_DIFF, Hilit_DIFF },
-#endif
-#ifdef CONFIG_HILIT_MERGE
-//{ "MERGE", HILIT_MERGE, Hilit_MERGE },
 #endif
 #ifdef CONFIG_HILIT_IPF
 { "IPF", HILIT_IPF, Hilit_IPF },
