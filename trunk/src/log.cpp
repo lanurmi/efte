@@ -70,7 +70,7 @@ ostream& GlobalLog::operator()()
     return m_ofsLog;
 }
 
-FunctionLog::FunctionLog(GlobalLog& gl, char* funcName, unsigned long line)
+FunctionLog::FunctionLog(GlobalLog& gl, const char* funcName, unsigned long line)
     : log(gl), func(funcName), myIndentLevel(++log.indent), indentChar('+')
 {
     OutputLine(line) << "Entered function" << ENDLINE;
