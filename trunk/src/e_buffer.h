@@ -758,7 +758,7 @@ public:
     int FoldCreateAtRoutines();
 };
 
-extern EBuffer *SS;
+extern EBuffer *SSBuffer;
 extern SearchReplaceOptions LSearch;
 
 extern int suspendLoads;

@@ -735,9 +735,9 @@ void EGUI::DoLoadDesktopOnEntry(int &/*argc*/, char **argv) {
 #endif
 
 void EGUI::EditorInit() {
-    SS = new EBuffer(0, (EModel **)&SS, "Scrap");
-    assert(SS != 0);
-    BFI(SS, BFI_Undo) = 0; // disable undo for clipboard
+    SSBuffer = new EBuffer(0, (EModel **)&SSBuffer, "Scrap");
+    assert(SSBuffer != 0);
+    BFI(SSBuffer, BFI_Undo) = 0; // disable undo for clipboard
     ActiveModel = 0;
 }
 
@@ -936,8 +936,8 @@ void EGUI::EditorCleanup() {
     }
     ActiveModel = 0;
 
-    delete SS;
-    SS = 0;
+    delete SSBuffer;
+    SSBuffer = 0;
 
     if (ActiveView) {
         EView *BW, *NW, *AW;
