@@ -49,6 +49,7 @@
 
 #include "con_i18n.h"
 #include "s_files.h"
+#include "s_util.h"
 
 i18n_context_t* i18n_ctx = NULL;
 
