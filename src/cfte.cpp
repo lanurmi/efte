@@ -168,7 +168,7 @@ int main(int argc, char **argv) {
 
     b[0] = b[1] = b[2] = b[3] = 0;
 
-    if (fwrite(&b, 4, 1, output) != 1) {
+    if (fwrite(b, sizeof(b), 1, output) != 1) {
         fprintf(stderr, "Disk full!");
         cleanup(1);
     }
@@ -1754,6 +1754,7 @@ int LoadFile(const char *WhereName, const char *CfgName, int Level) {
     }
     if (read(fd, buffer, statbuf.st_size) != statbuf.st_size) {
         close(fd);
+        free(buffer);
         return -1;
     }
     close(fd);

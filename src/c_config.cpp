@@ -1047,6 +1047,7 @@ int LoadConfig(int /*argc*/, char ** /*argv*/, char *CfgFileName) {
     }
     if (read(fd, buffer, statbuf.st_size) != statbuf.st_size) {
         close(fd);
+        free(buffer);
         return -1;
     }
     close(fd);
@@ -1058,6 +1059,7 @@ int LoadConfig(int /*argc*/, char ** /*argv*/, char *CfgFileName) {
     ln = (l[3] << 24) + (l[2] << 16) + (l[1] << 8) + l[0];
 
     if (ln != CONFIG_ID) {
+        free(buffer);
         DieError(0, "Bad .CNF signature");
         return -1;
     }
@@ -1066,6 +1068,7 @@ int LoadConfig(int /*argc*/, char ** /*argv*/, char *CfgFileName) {
     ln = (l[3] << 24) + (l[2] << 16) + (l[1] << 8) + l[0];
 
     if (ln != VERNUM) {
+        free(buffer);
         DieError(0, "Bad .CNF version.");
         return -1;
     }
