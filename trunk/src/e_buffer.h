@@ -433,7 +433,8 @@ public:
 // Utility Routines
 /////////////////////////////////////////////////////////////////////////////
     
-    int LineIndented(int Row);
+    int LineIndented(int Row, const char *indentchars = NULL);
+    int LineIndentedCharCount(ELine *l, const char *indentchars);
     int IndentLine(int Row, int Indent);
 #ifdef CONFIG_SYNTAX_HILIT
     int GetMap(int Row, int *StateLen, hsState **StateMap);
