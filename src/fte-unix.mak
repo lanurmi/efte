@@ -52,6 +52,8 @@ UOS      = -DLINUX
 XINCDIR  = -I/usr/X11R6/include
 XLIBDIR  = -L/usr/X11R6/lib -lstdc++
 
+export LANG = C
+
 #######################################################################
 # HP/UX
 #UOS      = -DHPUX -D_HPUX_SOURCE -DCAST_FD_SET_INT
