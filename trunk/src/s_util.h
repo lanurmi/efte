@@ -17,6 +17,9 @@
 #define S_BOLD     2
 #define S_ERROR    3
 
+class EView;
+class EBuffer;
+
 char* MakeBackup(char *FileName, char *NewName);
 
 int GetPMClip();
