@@ -3873,7 +3873,7 @@ void DieError(int rc, const char *msg, ...) {
 }
 
 char ConGetDrawChar(int index) {
-    static char tab[] = "’“”•‘˜–—™š\x1A·‘œ›\x1B\x1A";
+    static char tab[] = "\xDA\xBF\xC0\xD9\xC4\xB3\xC2\xC3\xB4\xC1\xC5\x1A\xFA\x04\xC4\x18\x19\xB1\xB0\x1B\x1A";
     
     assert(index >= 0 && index < (signed)strlen(tab));
     
