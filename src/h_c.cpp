@@ -70,8 +70,7 @@ int Hilit_C(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, h
 			} else if ((x < Line->Count)
 				   && (Line->Chars[x] == ':'
 				       && (x == Line->Count - 1
-					   || Line->Chars[x + 1] != ':'))
-				   && firstnw == 1) {
+                                           || Line->Chars[x + 1] != ':'))) {
                             Color = Colors[CLR_Label];
                         } else {
                             Color = Colors[CLR_Normal];
