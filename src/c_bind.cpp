@@ -180,9 +180,8 @@ void InitWordChars() {
     static int init = 0;
     if (init == 0) {
         for (int i = 0; i < 256; i++)
-            if ((i >= '0' && i <= '9') ||
-                (i >= 'A' && i <= 'Z') ||
-                (i >= 'a' && i <= 'z') || (i == '_')) {
+	    if (isdigit(i) || (i >= 'A' && i <= 'Z')
+		|| (i >= 'a' && i <= 'z') || (i == '_')) {
                 WSETBIT(DefaultBufferFlags.WordChars, i, 1);
                 if ((i >= 'A' && i <= 'Z'))
                     WSETBIT(DefaultBufferFlags.CapitalChars, i, 1);
@@ -568,15 +567,17 @@ int NewCommand(const char *Name) {
     Macros = (ExMacro *) realloc(Macros, sizeof(ExMacro) * (1 + CMacros));
     Macros[CMacros].Count = 0;
     Macros[CMacros].cmds = 0;
-    Macros[CMacros].Name = Name ? strdup(Name) : 0;
+    Macros[CMacros].Name = (Name != NULL) ? strdup(Name) : 0;
     CMacros++;
     return CMacros - 1;
 }
 
 int ExState::GetStrParam(EView *view, char *str, int maxlen) {
     assert(maxlen >= 0);
-    if (Macro == -1 || Pos == -1) return 0;
-    if (Pos >= Macros[Macro].Count) return 0;
+    if (Macro == -1
+	|| Pos == -1
+	|| Pos >= Macros[Macro].Count)
+	return 0;
     if (Macros[Macro].cmds[Pos].type == CT_STRING) {
         if (maxlen > 0) {
             strncpy(str, Macros[Macro].cmds[Pos].u.string, maxlen);
@@ -607,8 +608,10 @@ int ExState::GetStrParam(EView *view, char *str, int maxlen) {
 }
 
 int ExState::GetIntParam(EView *view, int *value) {
-    if (Macro == -1 || Pos == -1) return 0;
-    if (Pos >= Macros[Macro].Count) return 0;
+    if (Macro == -1
+	|| Pos == -1
+	|| Pos >= Macros[Macro].Count)
+	return 0;
     if (Macros[Macro].cmds[Pos].type == CT_NUMBER) {
         *value = Macros[Macro].cmds[Pos].u.num;
         Pos++;

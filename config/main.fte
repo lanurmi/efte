@@ -142,7 +142,10 @@ include 'm_msg.fte';
 %if(UI_KB)
 include 'm_c_kb.fte';
 %endif
+%if(!UI_KB)
 include 'm_c.fte';
+%endif
+include 'm_idl.fte';
 include 'm_fte.fte';
 include 'm_ada.fte';
 include 'm_html.fte';
@@ -173,6 +176,7 @@ include 'm_sql.fte';
 include 'm_bin.fte';
 include 'm_4gl.fte';
 include 'm_sgml.fte';
+include 'm_php.fte';
 
 # C indentation style menu
 include 'uicstyle.fte';
@@ -266,11 +270,13 @@ eventmap PLAIN {
     #    InsertString $CurDirectory
     #}
     key [C+A+U] {
-        MoveLineStart; ?FindReplace /^(\s*)\/\// /\1/ "xnc"; MoveDown
+        MoveLineStart; ?FindReplace /^\/\/  / // "xnc"; MoveDown
+        #MoveLineStart; ?FindReplace /^(\s*)\/\// /\1/ "xnc"; MoveDown
     }
     key [C+A+C] {
-        MoveLineStart; ?FindReplace /^(\s*)\/\// /\1/ "xnc";
-        MoveLineStart; ?FindReplace /^(\s*)/ /\1\/\// "xnc"; MoveDown
+        MoveLineStart; ?FindReplace /^(\s*)/ /\/\/  \1/ "xnc"; MoveDown
+        #MoveLineStart; ?FindReplace /^(\s*)\/\// /\1/ "xnc";
+        #MoveLineStart; ?FindReplace /^(\s*)/ /\1\/\// "xnc"; MoveDown
     }
     key [G-Home] { MoveBeginOrNonWhite }
     key [C+G-Up] { PopGlobalBookmark }

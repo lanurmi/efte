@@ -51,7 +51,7 @@ mode CLARION: PLAIN {       # CLARION mode
     HilitOn             = 1;
     AutoIndent          = 1;
     IndentMode          = 'PLAIN';
-    TabSize             = 8;
+    #TabSize             = 8;
     SpaceTabs           = 1;
     MatchCase           = 1;
     Trim                = 1;

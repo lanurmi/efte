@@ -985,7 +985,10 @@ int GUI::RunProgram(int /*mode */ , char *Command)
 
 char ConGetDrawChar(int index)
 {
-    static char tab[] =
+    static const char * use_tab = NULL;
+    static int use_tab_size = 0;
+
+    static const char tab[] =
     {
 	DCH_SLANG_C1,
 	DCH_SLANG_C2,
@@ -1010,7 +1013,45 @@ char ConGetDrawChar(int index)
 	DCH_SLANG_ARIGHT
     };
 
-    assert(index >= 0 && index < (int) sizeof(tab));
+    static const char tab_linux[] =
+    {
+	DCH_SLANG_C1,
+	DCH_SLANG_C2,
+	DCH_SLANG_C3,
+	DCH_SLANG_C4,
+	DCH_SLANG_H,
+	DCH_SLANG_V,
+	DCH_SLANG_M1,
+	DCH_SLANG_M2,
+	DCH_SLANG_M3,
+	DCH_SLANG_M4,
+	DCH_SLANG_X,
+	' ',
+	'.',
+	DCH_SLANG_EOF,
+	DCH_SLANG_END,
+	DCH_SLANG_AUP,
+	DCH_SLANG_ADOWN,
+	DCH_SLANG_HFORE,
+	DCH_SLANG_HBACK,
+	DCH_SLANG_ALEFT,
+	DCH_SLANG_ARIGHT
+    };
+    //static const char tab_linux1[] =
+    //{
+    //    '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+    //    'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'j', 'k',
+    //    'l', 'm', 'n', 'o', 'p', 'q'
+    //};
 
-    return tab[index];
+    if (use_tab == NULL) {
+	char *c = getenv("TERM");
+	use_tab = ((c == NULL) || strcmp(c, "linux") != 0) ? tab : tab_linux;
+	use_tab_size = (use_tab == tab)
+	    ? sizeof(tab) : sizeof(tab_linux);
+    }
+
+    assert(index >= 0 && index < use_tab_size);
+
+    return use_tab[index];
 }

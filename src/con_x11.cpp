@@ -12,18 +12,19 @@
 #include <assert.h>
 #include <stdarg.h>
 #ifdef WINNT
+#include <winsock.h>
 #define NO_PIPES
 #define NO_SIGNALS
 #else
 #include <unistd.h>
 #include <sys/wait.h>
+#include <sys/time.h>
 #endif
 
 #include <time.h>
 #include <stdio.h>
 #include <fcntl.h>
 #include <sys/types.h>
-#include <sys/time.h>
 #include <stdlib.h>
 #include <signal.h>
 #if defined(AIX)
@@ -35,6 +36,9 @@
 #include <X11/Xutil.h>
 #include <X11/keysym.h>
 #include <X11/Xos.h>
+#ifdef USE_XTINIT
+#include <X11/Intrinsic.h>
+#endif
 #ifdef HPUX
 #include </usr/include/X11R5/X11/HPkeysym.h>
 #endif
@@ -43,13 +47,14 @@
 
 #include "con_i18n.h"
 
+
 XIC xic = NULL;
 
 #ifdef WINHCLX
 #include <X11/XlibXtra.h>    /* HCL - HCLXlibInit */
 #endif
 
-#ifdef HPUX
+#ifdef CAST_FD_SET_INT
 #define FD_SET_CAST() (int *)
 #else
 #define FD_SET_CAST()
@@ -97,7 +102,7 @@ static Window win;
 static Atom selection_buffer;
 static XSizeHints sizeHints;
 // program now contains both modes if available
-// some older Xserver doesn't like XmbDraw...
+// some older Xservers don't like XmbDraw...
 static XFontStruct *fontStruct;
 #ifdef USE_XMB
 static int useXMB = 1; // default is yes
@@ -329,20 +334,28 @@ static int InitXFonts(void)
     return 0;
 }
 
-static int SetupXWindow() {
+static int SetupXWindow(int argc, char **argv) {
     unsigned long mask;
-    char *ds;
     XSetWindowAttributes setWindowAttributes;
-
-    if ((ds = getenv("DISPLAY")) == NULL)
-        DieError(1, "$DISPLAY not set?");
 
 #ifdef WINHCLX
     HCLXlibInit(); /* HCL - Initialize the X DLL */
 #endif
 
+#ifdef USE_XTINIT
+    XtAppContext  	app_context;
+    XtToolkitInitialize();
+    app_context = XtCreateApplicationContext();
+    if (( display = XtOpenDisplay(app_context, NULL, argv[0], "xfte",
+                            NULL, 0, &argc, argv)) == NULL)
+       DieError(1, "%s:  Can't open display\n", argv[0]);
+#else
+    char *ds;
+    if ((ds = getenv("DISPLAY")) == NULL)
+       DieError(1, "$DISPLAY not set?");
     if ((display = XOpenDisplay(ds)) == NULL)
 	DieError(1, "XFTE Fatal: could not open display: %s!", ds);
+#endif
 
     colormap = DefaultColormap(display, DefaultScreen(display));
 
@@ -419,7 +432,6 @@ int ConInit(int XSize, int YSize) {
     if (YSize != -1)
         ScreenRows = YSize;
     if (AllocBuffer() == -1) return -1;
-    if (SetupXWindow() == -1) return -1;
 #ifndef NO_SIGNALS
     signal(SIGALRM, SIG_IGN);
     signal(SIGPIPE, SIG_IGN);
@@ -1477,13 +1489,13 @@ GUI::GUI(int &argc, char **argv, int XSize, int YSize) {
     argc = o;
     argv[argc] = 0;
 
-    fArgc = argc;
-    fArgv = argv;
-
-    if (::ConInit(XSize, YSize) == 0)
+    if (SetupXWindow(argc, argv) == 0 &&
+       ::ConInit(XSize, YSize) == 0)
         gui = this;
     else
         gui = NULL;
+    fArgc = argc;
+    fArgv = argv;
 }
 
 GUI::~GUI() {
@@ -1609,7 +1621,7 @@ int GUI::ClosePipe(int id) {
 int GUI::RunProgram(int mode, char *Command) {
     char Cmd[1024];
 
-    char* xterm = getenv("TERM");
+    char const* xterm = getenv("TERM");
     if (NULL == xterm || 0 == *xterm)
         xterm = "xterm";
 

@@ -132,9 +132,9 @@ eventmap PLAIN: MODEL {
 colorize PLAIN {
     SyntaxParser = 'PLAIN';
 
-    color {
-	{ 'Normal',     '-7' },
-    };
+#    color {
+#	{ 'Normal',     '-7' },
+#    };
 }
 
 mode PLAIN {

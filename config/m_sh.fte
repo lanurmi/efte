@@ -45,7 +45,7 @@ colorize SH {
 
 mode SH: PLAIN { # *sh
     FileNameRx          = /\.\cSH$/;
-    FirstLineRx         = /^\#\![^ ]*sh>/;
+    FirstLineRx         = /^\#\![ ]*[^ ]*sh>/;
     HilitOn             = 1;
     Colorizer           = 'SH';
     MultiLineHilit      = 1;
