@@ -105,7 +105,7 @@ void EModel::SelectView(EView *V) {
     AddView(V);
 }
 
-EViewPort *EModel::CreateViewPort(EView */*V*/) {
+EViewPort *EModel::CreateViewPort(EView * /*V*/) {
     return 0;
 }
 
@@ -134,7 +134,7 @@ int EModel::CanQuit() {
     return 1;
 }
 
-int EModel::ConfQuit(GxView */*V*/, int /*multiFile*/) {
+int EModel::ConfQuit(GxView * /*V*/, int /*multiFile*/) {
     return 1;
 }
 
@@ -147,7 +147,7 @@ void EModel::GetInfo(char *AInfo, int /*MaxLen*/) { *AInfo = 0; }
 void EModel::GetTitle(char *ATitle, int /*MaxLen*/, char *ASTitle, int /*SMaxLen*/) { *ATitle = 0; *ASTitle = 0; }
 void EModel::NotifyPipe(int /*PipeId*/) { }
 
-void EModel::NotifyDelete(EModel */*Deleted*/) {
+void EModel::NotifyDelete(EModel * /*Deleted*/) {
 }
 void EModel::DeleteRelated() {
 }
@@ -186,6 +186,6 @@ int EModel::GetStrVar(int var, char *str, int buflen) {
     return 0;
 }
 
-int EModel::GetIntVar(int /*var*/, int */*value*/) {
+int EModel::GetIntVar(int /*var*/, int * /*value*/) {
     return 0;
 }

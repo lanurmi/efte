@@ -129,12 +129,14 @@ int ECvsLog::CanQuit () {
 }
 
 int ECvsLog::ConfQuit (GxView *V,int /*multiFile*/) {
+    int i;
+
     switch (V->Choice (GPC_ERROR,"CVS commit pending",3,"C&ommit","&Discard","&Cancel","")) {
         case 0: // Commit
             // First save - this is just try
             if (Save ()==0) return 0;
             // Now remove CVS: lines and really save
-            for (int i=0;i<RCount;) {
+            for (i=0;i<RCount;) {
                 PELine l=RLine (i);
                 if (l->Count>=4&&strncmp (l->Chars,"CVS:",4)==0) DelLine (i);else i++;
             }
