@@ -912,9 +912,9 @@ char ConGetDrawChar(int index) { /*FOLD00*/
     return tab[index];
 }
 
-
 int GUI::RunProgram(int mode, char *Command) { /*FOLD00*/
     int rc, W, H, W1, H1;
+    sighandler_t sigBreak, sigInt;
 
     ConQuerySize(&W, &H);
     ConHideMouse();
@@ -926,14 +926,14 @@ int GUI::RunProgram(int mode, char *Command) { /*FOLD00*/
                         );
 
     // we don't want ctrl-c or ctrl-break to exit our editor...
-    signal(SIGBREAK, SIG_IGN);
-    signal(SIGINT, SIG_IGN);
+    sigBreak = signal(SIGBREAK, SIG_IGN);
+    sigInt = signal(SIGINT, SIG_IGN);
 
     rc = system(Command);
 
     // restore handlers back to default handlers
-    signal(SIGBREAK, SIG_DFL);
-    signal(SIGINT, SIG_DFL);
+    signal(SIGBREAK, sigBreak);
+    signal(SIGINT, sigInt);
 
     ConContinue();
     ConShowMouse();
