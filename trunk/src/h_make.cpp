@@ -17,44 +17,43 @@
 #define hsMAKE_Command 3
 
 int Hilit_MAKE(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, hlState &State, hsState *StateMap, int *ECol) {
-    ChColor *Colors = BF->Mode->fColorize->Colors;
-    HILIT_VARS(Colors[CLR_Normal], Line);
+    HILIT_VARS(BF->Mode->fColorize->Colors, Line);
     int len1 = len;
     char *last = p + len1 - 1;
     
     for(i = 0; i < Line->Count;) {
         if (i == 0 && *p == 9) {
             State = hsMAKE_Command;
-            Color = Colors[CLR_Command];
+            Color = CLR_Command;
         }
         IF_TAB() else {
             if (i == 0) {
                 if (*p == '.') {
                     State = hsMAKE_DotCmd;
-                    Color = Colors[CLR_Directive];
+                    Color = CLR_Directive;
                     goto hilit;
                 } else if (*p == '#') {
                     State = hsMAKE_Comment;
-                    Color = Colors[CLR_Comment];
+                    Color = CLR_Comment;
                     goto hilit;
                 }
             }
             switch(State) {
             case hsMAKE_Comment:
-                Color = Colors[CLR_Comment];
+                Color = CLR_Comment;
                 goto hilit;
 
             case hsMAKE_DotCmd:
-                Color = Colors[CLR_Directive];
+                Color = CLR_Directive;
                 goto hilit;
                 
             case hsMAKE_Command:
-                Color = Colors[CLR_Command];
+                Color = CLR_Command;
                 goto hilit;
                 
             default:
                 State = hsMAKE_Normal;
-                Color = Colors[CLR_Normal];
+                Color = CLR_Normal;
             hilit:
                 ColorNext();
                 continue;

@@ -11,19 +11,20 @@
 
 #ifdef CONFIG_HILIT_FTE
 
-#define hsFTE_Normal       0
-#define hsFTE_Comment      1
-#define hsFTE_Keyword      4
-#define hsFTE_String1     10
-#define hsFTE_String2     11
-#define hsFTE_CPP         12
-#define hsFTE_Regexp      15
-#define hsFTE_KeySpec     16
+enum {
+    hsFTE_Normal = 200,
+    hsFTE_Comment,
+    hsFTE_Keyword,
+    hsFTE_String1,
+    hsFTE_String2,
+    hsFTE_CPP,
+    hsFTE_Regexp,
+    hsFTE_KeySpec
+};
 
 int Hilit_FTE(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, hlState &State, hsState *StateMap, int *ECol) {
-    ChColor *Colors = BF->Mode->fColorize->Colors;
     int j = 0;
-    HILIT_VARS(Colors[CLR_Normal], Line);
+    HILIT_VARS(BF->Mode->fColorize->Colors, Line);
     int len1 = len;
     char *last = p + len1 - 1;
 
@@ -44,13 +45,13 @@ int Hilit_FTE(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line,
                     if (BF->GetHilitWord(j, &Line->Chars[i], Color)) {
                         State = hsFTE_Keyword;
                     } else {
-                        Color = Colors[CLR_Normal];
+                        Color = CLR_Normal;
                         State = hsFTE_Normal;
                     }
                     if (StateMap)
                         memset(StateMap + i, State, j);
                     if (B)
-                        MoveMem(B, C - Pos, Width, Line->Chars + i, Color, j);
+                        MoveMem(B, C - Pos, Width, Line->Chars + i, HILIT_CLRD(), j);
                     i += j;
                     len -= j;
                     p += j;
@@ -59,14 +60,14 @@ int Hilit_FTE(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line,
                     continue;
                 } else if (*p == '#') {
                     State = hsFTE_Comment;
-                    Color = Colors[CLR_Comment];
+                    Color = CLR_Comment;
                     goto hilit;
                 } else if (*p == '%') {
                     State = hsFTE_CPP;
-                    Color = Colors[CLR_CPreprocessor];
+                    Color = CLR_CPreprocessor;
                     goto hilit;
                 } else if (isdigit(*p)) {
-                    Color = Colors[CLR_Number];
+                    Color = CLR_Number;
                     ColorNext();
                     while (len && (isdigit(*p) || *p == 'e' || *p == 'E' || *p == '.')) ColorNext();
                     if (len && (toupper(*p) == 'U')) ColorNext();
@@ -74,36 +75,36 @@ int Hilit_FTE(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line,
                     continue;
                 } else if (*p == '\'') {
                     State = hsFTE_String1;
-                    Color = Colors[CLR_String];
+                    Color = CLR_String;
                     goto hilit;
                 } else if (*p == '[') {
                     State = hsFTE_KeySpec;
-                    Color = Colors[CLR_Command];
+                    Color = CLR_Command;
                     goto hilit;
                 } else if (*p == '"') {
                     State = hsFTE_String2;
-                    Color = Colors[CLR_String];
+                    Color = CLR_String;
                     goto hilit;
                 } else if (*p == '/') {
                     State = hsFTE_Regexp;
-                    Color = Colors[CLR_Regexp];
+                    Color = CLR_Regexp;
                     goto hilit;
                 } else if (ispunct(*p)) {
-                    Color = Colors[CLR_Punctuation];
+                    Color = CLR_Punctuation;
                     ColorNext();
                     continue;
                 }
-                Color = Colors[CLR_Normal];
+                Color = CLR_Normal;
                 ColorNext();
                 continue;
             case hsFTE_Comment:
-                Color = Colors[CLR_Comment];
+                Color = CLR_Comment;
                 goto hilit;
             case hsFTE_CPP:
-                Color = Colors[CLR_CPreprocessor];
+                Color = CLR_CPreprocessor;
                 goto hilit;
             case hsFTE_String1:
-                Color = Colors[CLR_String];
+                Color = CLR_String;
                 if ((len >= 2) && (*p == '\\')) {
                 hilit2:
                     ColorNext();
@@ -117,7 +118,7 @@ int Hilit_FTE(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line,
                 }
                 goto hilit;
             case hsFTE_String2:
-                Color = Colors[CLR_String];
+                Color = CLR_String;
                 if ((len >= 2) && (*p == '\\')) {
                     goto hilit2;
                 } else if (*p == '"') {
@@ -127,7 +128,7 @@ int Hilit_FTE(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line,
                 }
                 goto hilit;
             case hsFTE_KeySpec:
-                Color = Colors[CLR_Command];
+                Color = CLR_Command;
                 if ((len >= 2) && (*p == '\\')) {
                     goto hilit2;
                 } else if (*p == ']') {
@@ -137,7 +138,7 @@ int Hilit_FTE(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line,
                 }
                 goto hilit;
             case hsFTE_Regexp:
-                Color = Colors[CLR_Regexp];
+                Color = CLR_Regexp;
                 if ((len >= 2) && (*p == '\\')) {
                     goto hilit2;
                 } else if (*p == '/') {

@@ -13,9 +13,8 @@
 
 int Hilit_SIMPLE(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, hlState &State, hsState *StateMap, int *ECol) {
     EColorize *col = BF->Mode->fColorize;
-    ChColor *Colors = col->Colors;
     HMachine *hm = col->hm;
-    HILIT_VARS(Colors[CLR_Normal], Line);
+    HILIT_VARS(col->Colors, Line);
     HState *st = 0;
     HTrans *tr = 0;
     int t, cc;
@@ -25,13 +24,13 @@ int Hilit_SIMPLE(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Li
     int nextState;
     char *match;
 
-    if (hm == 0 || col == 0 || hm->stateCount == 0)
+    if (hm == 0 || hm->stateCount == 0)
         return 0;
 
     if (State >= hm->stateCount)
         State = 0;
     st = hm->state + State;
-    Color = Colors[st->color];
+    Color = st->color;
 
     /*{
         fprintf(stderr, "ColMode:%s, State:%d\n", col->Name, State);
@@ -112,7 +111,7 @@ int Hilit_SIMPLE(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Li
                             State = 0;
                         st = hm->state + State;
                     }
-                    Color = Colors[tr->color];
+                    Color = tr->color;
                     for (cc = 0; cc < matchLen; cc++)
                         IF_TAB()
                         else
@@ -144,7 +143,7 @@ int Hilit_SIMPLE(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Li
                        (WGETBIT(st->wordChars, Line->Chars[i + j]))) j++;
 
                 //GP (fix)
-                Color = Colors[st->color];
+                Color = st->color;
 
                 if (j == 0) {
                     if (st->nextKwdNoCharState != -1) {
@@ -152,7 +151,7 @@ int Hilit_SIMPLE(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Li
                         if (State >= hm->stateCount)
                             State = 0;
                         st = hm->state + State;
-                        Color = Colors[st->color];
+                        Color = st->color;
                         goto next_state;
                     }
                 } else {
@@ -168,7 +167,7 @@ int Hilit_SIMPLE(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Li
                                 if (State >= hm->stateCount)
                                     State = 0;
                                 st = hm->state + State;
-                                Color = Colors[st->color];
+                                Color = st->color;
                                 goto next_state;
                             }
                         }
@@ -181,13 +180,13 @@ int Hilit_SIMPLE(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Li
                     if (st->options & STATE_TAGASNEXT) {
                         MState = State;
                         st = hm->state + State;
-                        Color = Colors[st->color];
+                        Color = st->color;
                     }
                     
                     if (StateMap)
                         memset(StateMap + i, MState, j);
                     if (B)
-                        MoveMem(B, C - Pos, Width, Line->Chars + i, Color, j);
+                        MoveMem(B, C - Pos, Width, Line->Chars + i, HILIT_CLRD(), j);
                     i += j;
                     len -= j;
                     p += j;
@@ -195,13 +194,13 @@ int Hilit_SIMPLE(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Li
 
                     if (!(st->options & STATE_TAGASNEXT)) {
                         st = hm->state + State;
-                        Color = Colors[st->color];
+                        Color = st->color;
                     }
                     goto next_state;
                 }
             }
         }
-        Color = Colors[st->color];
+        Color = st->color;
         IF_TAB()
         else
             ColorNext();

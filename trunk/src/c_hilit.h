@@ -99,6 +99,9 @@ int Indent_SIMPLE(EBuffer *B, int Line, int PosCursor);
 #    define PCLI unsigned char
 #endif
 
+#define HILIT_CLRD() \
+    ((Color < COUNT_CLR) ? Colors[Color] : Color - COUNT_CLR)
+
 #define ColorChar() \
     do {\
     BPos = C - Pos; \
@@ -106,7 +109,7 @@ int Indent_SIMPLE(EBuffer *B, int Line, int PosCursor);
     if (BPos >= 0 && BPos < Width) { \
     BPtr = (PCLI *) (B + BPos); \
     BPtr[0] = *p; \
-    BPtr[1] = Color; \
+    BPtr[1] = HILIT_CLRD(); \
     } \
     if (StateMap) StateMap[i] = (hsState)(State & 0xFF); \
     } while (0)
@@ -117,10 +120,11 @@ int Indent_SIMPLE(EBuffer *B, int Line, int PosCursor);
 #define NextChar() do { i++; p++; len--; C++; } while (0)
 #define ColorNext() do { ColorChar(); NextChar(); } while (0)
 
-#define HILIT_VARS(ColorNormal, Line) \
+#define HILIT_VARS(ColorTable, Line) \
     PCLI *BPtr; \
     int BPos; \
-    ChColor Color = ColorNormal; \
+    ChColor *Colors = ColorTable; \
+    ChColor Color = CLR_Normal; \
     int i; \
     int len = Line->Count; \
     char *p = Line->Chars; \

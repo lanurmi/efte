@@ -13,14 +13,13 @@
 
 enum { hsSH_Normal, hsSH_SQuote, hsSH_DQuote, hsSH_BQuote,
 hsSH_DBQuote, hsSH_Control, hsSH_Keyword, hsSH_Comment,
-hsSH_Variable, hsSH_EOF };
+hsSH_Variable, hsSH_EOF, hsSH_InOpt };
 
 #define MAXSEOF 100
 static char seof[MAXSEOF];
 
 int Hilit_SH(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, hlState &State, hsState *StateMap, int *ECol) {
-    ChColor *Colors = BF->Mode->fColorize->Colors;
-    HILIT_VARS(Colors[CLR_Normal], Line);
+    HILIT_VARS(BF->Mode->fColorize->Colors, Line);
     int CommandStr = 0;
 
     int isEOF = 0;
@@ -43,36 +42,34 @@ int Hilit_SH(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, 
 
             if (!isspace(*p))
                 CommandStr++;
-            Color = Colors[CLR_Normal];
+            Color = CLR_Normal;
             switch (State) {
             case hsSH_Normal:
                 if (CommandStr == 1 && len > 2 && *p == '.' && isspace(p[1])) {
-                    Color = Colors[CLR_Keyword];
+                    Color = CLR_Keyword;
                 } else if (isalpha(*p) || *p == '_'
                            || ((CommandStr == 1)
                                && (*p == '/' || *p == '.'))) {
                     while (len > j
-                           && (isalnum(p[j]) || strchr("_-[]$", p[j]) != NULL
+			   && (isalnum(p[j]) || strchr("_-[]$", p[j]) != NULL
                                || ((CommandStr == 1)
                                    && (p[j] == '/' || p[j] == '.'))))
                         j++;
                     if (p[j] == '=')
-                        Color = Colors[CLR_Variable];
+                        Color = CLR_Variable;
                     else if (p[j] == '*' || p[j] == ')')
-                        Color = Colors[CLR_Normal];
+                        Color = CLR_Normal;
                     else {
                         if (!BF->GetHilitWord(j, p, Color, 0)) {
                             // Color for good match is set by this function
-                            Color = (CommandStr == 1) ?
-                                Colors[CLR_Command]:
-                                Colors[CLR_Normal];
+                            Color = (CommandStr == 1) ? CLR_Command : CLR_Normal;
                             //printf("Command %d %c%c\n",
                             //CommandStr,
                             //Line->Chars[i],Line->Chars[i+1]);
-                        } else {
+			} else {
                             if (i > 0 && p[-1] != ';' && p[-1] != '('
                                 && !isspace(p[-1]))
-                                Color = Colors[CLR_Normal];
+                                Color = CLR_Normal;
                             else {
                                 int s;
                                 switch(j) {
@@ -97,14 +94,15 @@ int Hilit_SH(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, 
                                 }
                                 if (s)
                                     CommandStr = 0;
-                            }
+			    }
+                            printf("XYZ  %s\n", p);
                         }
                     }
                     break;
                 } else if (*p == '[' || *p == ']' ||
                            (CommandStr == 1 && *p == '!')) {
                     CommandStr = 0;
-                    Color = Colors[CLR_Keyword]; //Colors[CLR_Control];
+                    Color = CLR_Keyword; //Colors[CLR_Control];
                     //static a=0;
                     //if (!a) {for(int i=0;i<COUNT_CLR;i++)
                     //printf("%d   %d\n", i, Colors[i]);
@@ -112,29 +110,29 @@ int Hilit_SH(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, 
                     //same state
                 } else if (*p == '\'') {
                     State = hsSH_SQuote;
-                    Color = Colors[CLR_String];
+                    Color = CLR_String;
                 } else if (*p == '"') {
                     State = hsSH_DQuote;
-                    Color = Colors[CLR_String];
+                    Color = CLR_String;
                 } else if ( len >= 2 && *p == '\\' && p[1] == '\'' ) {
-                    Color = Colors[CLR_String];
+                    Color = CLR_String;
                     ColorNext();
                 } else if ( len >= 2 && *p == '\\' && p[1] == '"' ) {
-                    Color = Colors[CLR_String];
+                    Color = CLR_String;
                     ColorNext();
                 } else if (*p == '`') {
                     State = hsSH_BQuote;
-                    Color = Colors[CLR_Command];
+                    Color = CLR_Command;
                 } else if (*p == '~') {
-                    Color = Colors[CLR_Variable];
+                    Color = CLR_Variable;
                 } else if (*p == '$') {
                     State = hsSH_Variable;
-                    Color = Colors[CLR_Variable];
+                    Color = CLR_Variable;
                 } else if (*p == '#') {
                     State = hsSH_Comment;
-                    Color = Colors[CLR_Comment];
+                    Color = CLR_Comment;
                     //} else if (isdigit(*p)) {
-                    //Color = Colors[CLR_Number];
+                    //Color = CLR_Number;
                     //while (len > 0 && (isdigit(*p)))
                     //ColorNext();
                     //continue;
@@ -146,7 +144,7 @@ int Hilit_SH(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, 
 
                     j++;
                     if (p[2] == '-') j++;
-                    Color = Colors[CLR_Control];
+                    Color = CLR_Control;
                     while (len > j && (isspace(p[j]) || p[j] == '\'' || p[j] == '"'))
                         j++;
                     if( p[j] == '\\' ) j++;
@@ -158,46 +156,46 @@ int Hilit_SH(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, 
                     break;
                 } else if (*p == '=' || *p == '\\' || *p == '>' ||
                            *p == '<' || *p == '!' /*|| *p == ':'*/) {
-                    Color = Colors[CLR_Control];
+                    Color = CLR_Control;
                 } else if (strchr(";|&(){}", *p) != NULL) {
                     CommandStr = 0;
-                    Color = Colors[CLR_Control];
+                    Color = CLR_Control;
                 }
                 break;
             case hsSH_SQuote:
-                Color = Colors[CLR_String];
+                Color = CLR_String;
                 if ((len >= 2) && (*p == '\\'))
                     j++;
                 else if (*p == '\'')
                     State = hsSH_Normal;
                 break;
             case hsSH_DQuote:
-                Color = Colors[CLR_String];
+                Color = CLR_String;
                 if ((len >= 2) && (*p == '\\'))
                     j++;
                 else if (*p == '"')
                     State = hsSH_Normal;
                 else if (*p == '`') {
-                    Color = Colors[CLR_Command];
+                    Color = CLR_Command;
                     State = hsSH_DBQuote;
                 }
                 break;
             case hsSH_BQuote:
-                Color = Colors[CLR_Command];
+                Color = CLR_Command;
                 if ((len >= 2) && (*p == '\\'))
                     j++;
                 else if (*p == '`')
                     State = hsSH_Normal;
                 break;
             case hsSH_DBQuote:
-                Color = Colors[CLR_Command];
+                Color = CLR_Command;
                 if ((len >= 2) && (*p == '\\'))
                     j++;
                 else if (*p == '`')
                     State = hsSH_DQuote;
                 break;
             case hsSH_Variable:
-                Color = Colors[CLR_Variable];
+                Color = CLR_Variable;
                 State = hsSH_Normal;
                 if (!isdigit(*p)) {
                     int b = 1;
@@ -223,27 +221,27 @@ int Hilit_SH(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, 
                 }
                 break;
             case hsSH_Comment:
-                Color = Colors[CLR_Comment];
+                Color = CLR_Comment;
                 break;
             case hsSH_EOF:
-                Color = Colors[CLR_String];
+                Color = CLR_String;
 
                 if (isEOF)
                 {
-                    Color = Colors[CLR_Control];
+                    Color = CLR_Control;
                     State = hsSH_Normal;
                     j += len - 1;
                 }
                 break;
             default:
                 State = hsSH_Normal;
-                Color = Colors[CLR_Normal];
+                Color = CLR_Normal;
             }
 
             if (StateMap)
                 memset(StateMap + i, State, j);
             if (B)
-                MoveMem(B, C - Pos, Width, p, Color, j);
+                MoveMem(B, C - Pos, Width, p, HILIT_CLRD(), j);
             i += j;
             len -= j;
             p += j;

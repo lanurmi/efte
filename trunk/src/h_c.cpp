@@ -31,10 +31,9 @@
 #define hsC_CPP_ABrace  16
 
 int Hilit_C(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, hlState &State, hsState *StateMap, int *ECol) {
-    ChColor *Colors = BF->Mode->fColorize->Colors;
     int j = 0;
     int firstnw = 0;
-    HILIT_VARS(Colors[CLR_Normal], Line);
+    HILIT_VARS(BF->Mode->fColorize->Colors, Line);
     int len1 = len;
     char *last = p + len1 - 1;
     int was_include = 0;
@@ -47,11 +46,11 @@ int Hilit_C(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, h
             case hsC_Normal:
                 if (toupper(*p) == 'L' && p[1] == '"') {
                     State = hsC_String2;
-                    Color = Colors[CLR_String];
+                    Color = CLR_String;
                     goto hilit2;
                 } else if (toupper(*p) == 'L' && p[1] == '\'') {
                     State = hsC_String1;
-                    Color = Colors[CLR_String];
+                    Color = CLR_String;
                     goto hilit2;
                 } else if (isalpha(*p) || *p == '_') {
                     j = 0;
@@ -67,22 +66,22 @@ int Hilit_C(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, h
 			while (x < Line->Count && isspace(Line->Chars[x]))
 			    x++;
 			if (x < Line->Count && Line->Chars[x] == '(') {
-                            Color = Colors[CLR_Function];
+                            Color = CLR_Function;
 			} else if ((x < Line->Count)
 				   && (Line->Chars[x] == ':'
 				       && (x == Line->Count - 1
                                            || Line->Chars[x + 1] != ':'))
                                    && firstnw == 1) {
-                            Color = Colors[CLR_Label];
+                            Color = CLR_Label;
                         } else {
-                            Color = Colors[CLR_Normal];
+                            Color = CLR_Normal;
                         }
                         State = hsC_Normal;
                     }
                     if (StateMap)
                         memset(StateMap + i, State, j);
                     if (B)
-                        MoveMem(B, C - Pos, Width, Line->Chars + i, Color, j);
+                        MoveMem(B, C - Pos, Width, Line->Chars + i, HILIT_CLRD(), j);
                     i += j;
                     len -= j;
                     p += j;
@@ -91,34 +90,34 @@ int Hilit_C(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, h
                     continue;
                 } else if ((len >= 2) && (*p == '/') && (*(p+1) == '*')) {
                     State = hsC_Comment;
-                    Color = Colors[CLR_Comment];
+                    Color = CLR_Comment;
                     goto hilit2;
                 } else if ((len >= 2) && (*p == '/') && (p[1] == '/')) {
                     State = hsC_CommentL;
-                    Color = Colors[CLR_Comment];
+                    Color = CLR_Comment;
                     goto hilit2;
 		} else if (isdigit(*p)) {
                     // check if it is not floating point number 0.08!
                     if ((len >= 2) && (*p == '0') && p[1] != '.') {
                         if (toupper(*(p+1)) == 'X') {
-                            Color = Colors[CLR_HexNumber];
+                            Color = CLR_HexNumber;
                             ColorNext();
                             ColorNext();
                             while (len && isxdigit(*p)) ColorNext();
                         } else /* assume it's octal */ {
-                            Color = Colors[CLR_Number];
+                            Color = CLR_Number;
                             ColorNext();
                             while (len && ('0' <= *p && *p <= '7')) ColorNext();
                             // if we hit a non-octal, stop hilighting it.
                             if (len && ('8' <= *p && *p <= '9'))
                             {
-                                Color = Colors[CLR_Normal];
+                                Color = CLR_Normal;
                                 while (len && !isspace(*p)) ColorNext();
                                 continue;
                             }
                         }
                     } else /* assume it's decimal/floating */ {
-                        Color = Colors[CLR_Number];
+                        Color = CLR_Number;
                         ColorNext();
                         while (len && (isdigit(*p) || *p == 'e' || *p == 'E' || *p == '.')) ColorNext();
                         // if it ends with 'f', the number can't have more extras.
@@ -141,24 +140,24 @@ int Hilit_C(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, h
                     continue;
                 } else if (*p == '\'') {
                     State = hsC_String1;
-                    Color = Colors[CLR_String];
+                    Color = CLR_String;
                     goto hilit;
                 } else if (*p == '"') {
                     State = hsC_String2;
-                    Color = Colors[CLR_String];
+                    Color = CLR_String;
                     goto hilit;
                 } else if (firstnw == 1 && *p == '#') {
                     State = hsC_CPP;
-                    Color = Colors[CLR_CPreprocessor];
+                    Color = CLR_CPreprocessor;
                     goto hilit;
                 } else if (ispunct(*p) && *p != '_') {
-                    Color = Colors[CLR_Punctuation];
+                    Color = CLR_Punctuation;
                     goto hilit;
                 }
-                Color = Colors[CLR_Normal];
+                Color = CLR_Normal;
                 goto hilit;
             case hsC_Comment:
-                Color = Colors[CLR_Comment];
+                Color = CLR_Comment;
                 if ((len >= 2) && (*p == '*') && (*(p+1) == '/')) {
                     ColorNext();
                     ColorNext();
@@ -167,7 +166,7 @@ int Hilit_C(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, h
                 }
                 goto hilit;
             case hsC_CPP_Comm:
-                Color = Colors[CLR_Comment];
+                Color = CLR_Comment;
                 if ((len >= 2) && (*p == '*') && (*(p+1) == '/')) {
                     ColorNext();
                     ColorNext();
@@ -176,17 +175,17 @@ int Hilit_C(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, h
                 }
                 goto hilit;
             case hsC_CPP_ABrace:
-                Color = Colors[CLR_String];
+                Color = CLR_String;
                 if (*p == '>') {
-                    Color = Colors[CLR_CPreprocessor];
+                    Color = CLR_CPreprocessor;
                     State = hsC_CPP;
                 }
                 goto hilit;
             case hsC_CommentL:
-                Color = Colors[CLR_Comment];
+                Color = CLR_Comment;
                 goto hilit;
             case hsC_String1:
-                Color = Colors[CLR_String];
+                Color = CLR_String;
                 if ((len >= 2) && (*p == '\\')) {
                     goto hilit2;
                 } else if (*p == '\'') {
@@ -196,7 +195,7 @@ int Hilit_C(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, h
                 }
                 goto hilit;
             case hsC_String2:
-                Color = Colors[CLR_String];
+                Color = CLR_String;
                 if ((len >= 2) && (*p == '\\')) {
                     goto hilit2;
                 } else if (*p == '"') {
@@ -206,7 +205,7 @@ int Hilit_C(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, h
                 }
                 goto hilit;
             case hsC_CPP_String1:
-                Color = Colors[CLR_String];
+                Color = CLR_String;
                 if ((len >= 2) && (*p == '\\')) {
                     goto hilit2;
                 } else if (*p == '\'') {
@@ -216,7 +215,7 @@ int Hilit_C(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, h
                 }
                 goto hilit;
             case hsC_CPP_String2:
-                Color = Colors[CLR_String];
+                Color = CLR_String;
                 if ((len >= 2) && (*p == '\\')) {
                     goto hilit2;
                 } else if (*p == '"') {
@@ -228,7 +227,7 @@ int Hilit_C(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, h
             case hsC_CPP:
                 if (ISNAME(*p)) {
                     j = 0;
-                    Color = Colors[CLR_CPreprocessor];
+                    Color = CLR_CPreprocessor;
                     while (((i + j) < Line->Count) &&
                            (isalnum(Line->Chars[i+j]) ||
                             (Line->Chars[i + j] == '_'))
@@ -238,7 +237,7 @@ int Hilit_C(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, h
                     if (StateMap)
                         memset(StateMap + i, State, j);
                     if (B)
-                        MoveMem(B, C - Pos, Width, Line->Chars + i, Color, j);
+                        MoveMem(B, C - Pos, Width, Line->Chars + i, HILIT_CLRD(), j);
                     i += j;
                     len -= j;
                     p += j;
@@ -246,11 +245,11 @@ int Hilit_C(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, h
                     continue;
                 } else if ((len >= 2) && (*p == '/') && (*(p+1) == '*')) {
                     State = hsC_CPP_Comm;
-                    Color = Colors[CLR_Comment];
+                    Color = CLR_Comment;
                     goto hilit2;
                 } else if ((len >= 2) && (*p == '/') && (*(p+1) == '/')) {
                     State = hsC_CommentL;
-                    Color = Colors[CLR_Comment];
+                    Color = CLR_Comment;
                 hilit2:
                     ColorNext();
                 hilit:
@@ -259,24 +258,24 @@ int Hilit_C(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, h
                 } else if (isdigit(*p)) {
                     if ((len >= 2) && (*p == '0')) {
                         if (toupper(*(p+1)) == 'X') {
-                            Color = Colors[CLR_HexNumber];
+                            Color = CLR_HexNumber;
                             ColorNext();
                             ColorNext();
                             while (len && isxdigit(*p)) ColorNext();
                         } else /* assume it's octal */ {
-                            Color = Colors[CLR_Number];
+                            Color = CLR_Number;
                             ColorNext();
                             while (len && ('0' <= *p && *p <= '7')) ColorNext();
                             // if we hit a non-octal, stop hilighting it.
                             if (len && ('8' <= *p && *p <= '9'))
                             {
-                                Color = Colors[CLR_Normal];
+                                Color = CLR_Normal;
                                 while (len && !isspace(*p)) ColorNext();
                                 continue;
                             }
                         }
                     } else /* assume it's decimal/floating */ {
-                        Color = Colors[CLR_Number];
+                        Color = CLR_Number;
                         ColorNext();
                         while (len && (isdigit(*p) || *p == 'e' || *p == 'E' || *p == '.')) ColorNext();
                         // if it ends with 'f', the number can't have more extras.
@@ -299,18 +298,18 @@ int Hilit_C(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, h
                     continue;
                 } else if (*p == '\'') {
                     State = hsC_CPP_String1;
-                    Color = Colors[CLR_String];
+                    Color = CLR_String;
                     goto hilit;
                 } else if (*p == '"') {
                     State = hsC_CPP_String2;
-                    Color = Colors[CLR_String];
+                    Color = CLR_String;
                     goto hilit;
                 } else if (*p == '<' && was_include) {
                     ColorNext();
                     State = hsC_CPP_ABrace;
                     continue;
                 } else {
-                    Color = Colors[CLR_CPreprocessor];
+                    Color = CLR_CPreprocessor;
                     goto hilit;
                 }
             }
@@ -360,8 +359,8 @@ int LookAt(EBuffer *B, int Row, unsigned int Pos, const char *What, hsState Stat
     }
     LOG << "Check against [" << What << ']' << ENDLINE;
     if (
-        (CaseInsensitive && memicmp(pLine + Pos, (char *)What, Len) == 0) ||
-        (!CaseInsensitive && memcmp(pLine + Pos, (char *)What, Len) == 0)
+        (CaseInsensitive && memicmp(pLine + Pos, What, Len) == 0) ||
+        (!CaseInsensitive && memcmp(pLine + Pos, What, Len) == 0)
        )
     {
         ENDFUNCRC(1);
@@ -458,6 +457,7 @@ static int CheckLabel(EBuffer *B, int Line) {
 
     while ((P < L->Count) &&
            (L->Chars[P] == ' ' || L->Chars[P] == 9)) P++;
+
     while (P < L->Count) {
         if (Cnt > 0)
             if (L->Chars[P] == ':' && (Cnt == 1 || L->Chars[P + 1] != ':')) return 1;
@@ -538,7 +538,8 @@ static int SearchBackMatch(int Count, EBuffer *B, int Row, hsState State, const 
     return -1;
 }
 
-static int FindPrevIndent(EBuffer *B, int &RowP, int &ColP, char &CharP, int Flags) {
+static int FindPrevIndent(EBuffer *B, int &RowP, int &ColP, char &CharP, int Flags)
+{
     STARTFUNC("FindPrevIndent{h_c.cpp}");
     LOG << "Flags: " << hex << Flags << dec << ENDLINE;
     int StateLen;
@@ -572,7 +573,8 @@ static int FindPrevIndent(EBuffer *B, int &RowP, int &ColP, char &CharP, int Fla
             LOG << "Can't get state maps" << ENDLINE;
             ENDFUNCRC(0);
         }
-        if (L > 0) while (ColP >= 0) {
+	if (L > 0)
+	    while (ColP >= 0) {
             LOG << "ColP: " << ColP << " State: " << (int)StateMap[ColP] << ENDLINE;
             if (StateMap[ColP] == hsC_Normal) {
                 LOG << "CharP: " << BinChar(P[ColP]) << " BolChar: " << BinChar(BolChar) <<
@@ -1008,7 +1010,7 @@ static int IndentNormal(EBuffer *B, int Line, int /*StateLen*/, hsState * /*Stat
                 I += C_FIRST_INDENT;
             else
                 I += C_INDENT;
-            PRINTF(("'{' indent : Line=%d, RowP=%d, ColP=%d, CharP=%c\n", Line, RowP, ColP, CharP));
+	    PRINTF(("'{' indent : Line=%d, RowP=%d, ColP=%d, CharP=%c\n", Line, RowP, ColP, CharP));
 
             if (LookAt(B, Line, 0, "{", hsC_Normal, 0))
                 I -= C_BRACE_OFS;
@@ -1095,8 +1097,12 @@ static int IndentNormal(EBuffer *B, int Line, int /*StateLen*/, hsState * /*Stat
             return I + ContinuationIndent;
 
         case ':':
-            ColP--;
-            if (FindPrevIndent(B, RowP, ColP, CharP, FIND_SEMICOLON | FIND_COLON | FIND_QUESTION | FIND_CLASS | FIND_CASE) != 1) {
+	    ColP--;
+            PRINTF(("COL-- %d\n", ColP));
+	    if (FindPrevIndent(B, RowP, ColP, CharP,
+			       FIND_SEMICOLON | FIND_COLON | FIND_QUESTION
+			       | FIND_CLASS | FIND_CASE) != 1) {
+		PRINTF(("FOUNPRE \n"));
                 if (FirstRowP != PrevRowP)
                     ContinuationIndent = C_CONTINUATION;
                 return 0 + ContinuationIndent;

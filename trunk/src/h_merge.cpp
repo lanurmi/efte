@@ -18,8 +18,7 @@
 #define hsMERGE_Control    4
 
 int Hilit_MERGE(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine* Line, hlState& State, hsState *StateMap, int *ECol) {
-    ChColor *Colors = BF->Mode->fColorize->Colors;
-    HILIT_VARS(Colors[CLR_Normal], Line);
+    HILIT_VARS(BF->Mode->fColorize->Colors, Line);
     hlState StateO = State;
     hlState StateN = State;
 
@@ -40,11 +39,11 @@ int Hilit_MERGE(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine* Lin
     for (i = 0; i < Line->Count; ) {
         IF_TAB() else {
             switch(State) {
-            case hsMERGE_Control:  Color = Colors[CLR_Control]; break;
-            case hsMERGE_Modified: Color = Colors[CLR_Changed]; break;
-            case hsMERGE_Original: Color = Colors[CLR_Old];     break;
-            case hsMERGE_New:      Color = Colors[CLR_New];     break;
-            default:               Color = Colors[CLR_Normal];  break;
+            case hsMERGE_Control:  Color = CLR_Control; break;
+            case hsMERGE_Modified: Color = CLR_Changed; break;
+            case hsMERGE_Original: Color = CLR_Old;     break;
+            case hsMERGE_New:      Color = CLR_New;     break;
+            default:               Color = CLR_Normal;  break;
 
             }
             ColorNext();

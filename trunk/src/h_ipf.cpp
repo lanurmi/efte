@@ -18,8 +18,7 @@
 #define hsIPF_String  4
 
 int Hilit_IPF(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, hlState &State, hsState *StateMap, int *ECol) {
-    ChColor *Colors = BF->Mode->fColorize->Colors;
-    HILIT_VARS(Colors[CLR_Normal], Line);
+    HILIT_VARS(BF->Mode->fColorize->Colors, Line);
     int j;
 
     C = 0;
@@ -28,20 +27,20 @@ int Hilit_IPF(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line,
         IF_TAB() else {
             switch (State) {
             case hsIPF_Normal:
-                Color = Colors[CLR_Normal];
+                Color = CLR_Normal;
                 if (i == 0 && *p == '.') {
                     State = hsIPF_Control;
-                    Color = Colors[CLR_Control];
+                    Color = CLR_Control;
                 } else if (*p == ':') {
                     State = hsIPF_Tag;
-                    Color = Colors[CLR_Tag];
+                    Color = CLR_Tag;
                 } else if (*p == '&') {
                     State = hsIPF_Symbol;
-                    Color = Colors[CLR_Symbol];
+                    Color = CLR_Symbol;
                 }
                 goto hilit;
             case hsIPF_Tag:
-                Color = Colors[CLR_Tag];
+                Color = CLR_Tag;
                 if (isalpha(*p) || *p == '_') {
                     j = 0;
                     while (((i + j) < Line->Count) &&
@@ -53,16 +52,16 @@ int Hilit_IPF(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line,
                     if (StateMap)
                         memset(StateMap + i, State, j);
                     if (B)
-                        MoveMem(B, C - Pos, Width, Line->Chars + i, Color, j);
+                        MoveMem(B, C - Pos, Width, Line->Chars + i, HILIT_CLRD(), j);
                     i += j;
                     len -= j;
                     p += j;
                     C += j;
-                    Color = Colors[CLR_Tag];
+                    Color = CLR_Tag;
                     continue;
                 } else if (*p == '\'') {
                     State = hsIPF_String;
-                    Color = Colors[CLR_String];
+                    Color = CLR_String;
                     goto hilit;
                 } else if (*p == '.') {
                     ColorNext();
@@ -71,7 +70,7 @@ int Hilit_IPF(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line,
                 }
                 goto hilit;
             case hsIPF_String:
-                Color = Colors[CLR_String];
+                Color = CLR_String;
                 if (*p == '\'') {
                     ColorNext();
                     State = hsIPF_Tag;
@@ -79,7 +78,7 @@ int Hilit_IPF(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line,
                 }
                 goto hilit;
             case hsIPF_Symbol:
-                Color = Colors[CLR_Symbol];
+                Color = CLR_Symbol;
                 if (*p == '.') {
                     ColorNext();
                     State = hsIPF_Normal;
@@ -88,11 +87,11 @@ int Hilit_IPF(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line,
                 goto hilit;
             case hsIPF_Control:
                 State = hsIPF_Control;
-                Color = Colors[CLR_Control];
+                Color = CLR_Control;
                 goto hilit;
             default:
                 State = hsIPF_Normal;
-                Color = Colors[CLR_Normal];
+                Color = CLR_Normal;
             hilit:
                 ColorNext();
                 continue;

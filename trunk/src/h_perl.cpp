@@ -98,9 +98,8 @@
 #define opTR 7
 
 int Hilit_PERL(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, hlState &State, hsState *StateMap, int *ECol) {
-    ChColor *Colors = BF->Mode->fColorize->Colors;
     int j;
-    HILIT_VARS(Colors[CLR_Normal], Line);
+    HILIT_VARS(BF->Mode->fColorize->Colors, Line);
     int firstnw = 0;
     int op;
     int setHereDoc = 0;
@@ -132,7 +131,7 @@ int Hilit_PERL(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
                     p[6] == '_')
                 {
                     State = hsPerl_Data;
-                    Color = Colors[CLR_Comment];
+                    Color = CLR_Comment;
                 hilit5:
                     ColorNext();
                 //hilit4:
@@ -153,7 +152,7 @@ int Hilit_PERL(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
                           )
                 {
                     State = hsPerl_Docs;
-                    Color = Colors[CLR_Comment];
+                    Color = CLR_Comment;
                     goto hilit5;
                 } else if (isalpha(*p) || *p == '_') {
                     op = -1;
@@ -172,9 +171,9 @@ int Hilit_PERL(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
                         while ((x < Line->Count) && 
                                ((Line->Chars[x] == ' ') || (Line->Chars[x] == 9))) x++;
                         if ((x < Line->Count) && (Line->Chars[x] == '(')) {
-                            Color = Colors[CLR_Function];
+                            Color = CLR_Function;
                         } else {
-                            Color = Colors[CLR_Normal];
+                            Color = CLR_Normal;
                         }
                         State = hsPerl_Normal;
                     }
@@ -192,7 +191,7 @@ int Hilit_PERL(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
                     if (StateMap)
                         memset(StateMap + i, State, j);
                     if (B) 
-                        MoveMem(B, C - Pos, Width, Line->Chars + i, Color, j);
+                        MoveMem(B, C - Pos, Width, Line->Chars + i, HILIT_CLRD(), j);
                     i += j;
                     len -= j;
                     p += j;
@@ -201,29 +200,29 @@ int Hilit_PERL(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
                     switch (op) {
                     case opQ:
                         State = hsPerl_Quote1Op;   // q{} operator
-                        Color = Colors[CLR_Punctuation];
+                        Color = CLR_Punctuation;
                         continue;
                         
                     case opQQ:
                     case opQW:
                     case opQX:
                         State = hsPerl_Quote1Op;   // qq{} qx{} qw{} operators
-                        Color = Colors[CLR_Punctuation];
+                        Color = CLR_Punctuation;
                         continue;
                         
                     case opM:
                         State = hsPerl_Regexp1Op;   // m{} operator
-                        Color = Colors[CLR_Punctuation];
+                        Color = CLR_Punctuation;
                         continue;
                         
                     case opTR:
                         State = hsPerl_Regexp2Op;   // tr{} operators
-                        Color = Colors[CLR_RegexpDelim];
+                        Color = CLR_RegexpDelim;
                         continue;
                         
                     case opS:
                         State = hsPerl_Regexp2Op;   // s{}{} operator
-                        Color = Colors[CLR_Punctuation];
+                        Color = CLR_Punctuation;
                         continue;
                         
                     default:
@@ -233,21 +232,21 @@ int Hilit_PERL(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
                 } else if (len >= 2 && ((*p == '-' && p[1] == '-') || (*p == '+' && p[1] == '+'))) {
                     hlState s = State;
                     State = hsPerl_Punct;
-                    Color = Colors[CLR_Punctuation];
+                    Color = CLR_Punctuation;
                     ColorNext();
                     ColorNext();
                     State = s;
                     continue;
                 } else if (len >= 2 && *p == '&' && (p[1] == '&' || isspace(p[1]))) {
                     State = hsPerl_Punct;
-                    Color = Colors[CLR_Punctuation];
+                    Color = CLR_Punctuation;
                     ColorNext();
                     ColorNext();
                     State = hsPerl_Normal;
                     continue;
                 } else if (*p == '&' && (len < 2 || p[1] != '&') && X_NOT(State)) {
                     State = hsPerl_Function;
-                    Color = Colors[CLR_Function];
+                    Color = CLR_Function;
                     ColorNext();
                     while ((len > 0) && (*p == '$' ||
                                          *p == '@' ||
@@ -264,7 +263,7 @@ int Hilit_PERL(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
                 } else if ((*p == '$') && (len > 1) &&
                            ((p[1] == '$') || p[1] == '"')) {
                     State = hsPerl_Variable;
-                    Color = Colors[CLR_Variable];
+                    Color = CLR_Variable;
                     ColorNext();
                     ColorNext();
                     State = hsPerl_Normal | X_BIT;
@@ -272,7 +271,7 @@ int Hilit_PERL(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
                 } else if (*p == '$' || *p == '@' || *p == '\\' || (len > 2 && (*p == '%' || *p == '*') && X_NOT(State))) {
                     char var_type = *p;
                     State = hsPerl_Variable;
-                    Color = Colors[CLR_Variable];
+                    Color = CLR_Variable;
                     ColorNext();
                     while ((len > 0) && ((*p == ' ') || (*p == '\t'))) {
                         IF_TAB() else
@@ -350,7 +349,7 @@ int Hilit_PERL(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
                     continue;
                 } else if ((len >= 2) && (*p == '0') && (*(p+1) == 'x')) {
                     State = hsPerl_Number;
-                    Color = Colors[CLR_Number];
+                    Color = CLR_Number;
                     ColorNext();
                     ColorNext();
                     while (len && (isxdigit(*p) || *p == '_')) ColorNext();
@@ -360,7 +359,7 @@ int Hilit_PERL(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
                     continue;
                 } else if (isdigit(*p)) {
                     State = hsPerl_Number;
-                    Color = Colors[CLR_Number];
+                    Color = CLR_Number;
                     ColorNext();
                     while (len && (isdigit(*p) || (*p == 'e' || *p == 'E' || *p == '_'))) ColorNext();
                     //                    if (len && (toupper(*p) == 'U')) ColorNext();
@@ -369,11 +368,11 @@ int Hilit_PERL(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
                     continue;
                 } else if (*p == '\'') {
                     State = QSET(hsPerl_String1, '\'');
-                    Color = Colors[CLR_String];
+                    Color = CLR_String;
                     goto hilit;
                 } else if (*p == '"') {
                     State = QSET(hsPerl_String2, '"');
-                    Color = Colors[CLR_String];
+                    Color = CLR_String;
                     goto hilit;
                 } else if (*p == '<' && len > 2 && p[1] == '<' &&
                            (p[2] == '"' || p[2] == '\'' || p[2] == '_' || (toupper(p[2]) >= 'A' && toupper(p[2]) <= 'Z')))
@@ -394,37 +393,37 @@ int Hilit_PERL(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
                     }
                     hereDocKey[hereDocKeyLen] = '\0';
                     State = hsPerl_Punct;
-                    Color = Colors[CLR_Punctuation];
+                    Color = CLR_Punctuation;
                     ColorNext();
                     State = hsPerl_Normal;
                     continue;
                 } else if (*p == '`') {
                     State = QSET(hsPerl_StringBk, '`');
-                    Color = Colors[CLR_String];
+                    Color = CLR_String;
                     goto hilit;
                 } else if (*p == '#') {
                     State = hsPerl_Comment | (State & X_BIT);
                     continue;
                 } else if (X_NOT(State) && *p == '/') {
                     State = QSET(hsPerl_Regexp1, '/');
-                    Color = Colors[CLR_RegexpDelim];
+                    Color = CLR_RegexpDelim;
                     goto hilit;
                 } else if (X_NOT(State) &&
                            *p == '-' &&
                            len >= 2 &&
                            isalpha(p[1])
                           ) {
-                    Color = Colors[CLR_Normal]; // default.
+                    Color = CLR_Normal; // default.
                     if (strchr("wrxoRWXOezsfdlpSbctugkTB", p[1]) != NULL) {
-                        Color = Colors[CLR_Punctuation]; // new default.
+                        Color = CLR_Punctuation; // new default.
                         if (len > 2) {
                             switch(p[2]) {
                             case '_': // there may be others...
-                                Color = Colors[CLR_Normal];
+                                Color = CLR_Normal;
                                 break;
                             default:
                                 if (isalnum(p[2]))
-                                    Color = Colors[CLR_Normal];
+                                    Color = CLR_Normal;
                                 break;
                             }
                         }
@@ -435,18 +434,18 @@ int Hilit_PERL(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
                     continue;
                 } else if (*p == ')' || *p == ']') {
                     State = hsPerl_Punct;
-                    Color = Colors[CLR_Punctuation];
+                    Color = CLR_Punctuation;
                     ColorNext();
                     State = hsPerl_Normal | X_BIT;
                     continue;
                 } else if (ispunct(*p)) {
                     State = hsPerl_Punct;
-                    Color = Colors[CLR_Punctuation];
+                    Color = CLR_Punctuation;
                     ColorNext();
                     State = hsPerl_Normal;
                     continue;
                 }
-                Color = Colors[CLR_Normal];
+                Color = CLR_Normal;
                 goto hilit;
             case hsPerl_Quote1Op:
                 if (*p != ' ' && !kwd(*p)) {
@@ -455,27 +454,27 @@ int Hilit_PERL(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
                                      (1U << 2) | NUM_BRACE(*p));
                     else
                         State = QSET(hsPerl_Quote1, *p);
-                    Color = Colors[CLR_QuoteDelim];
+                    Color = CLR_QuoteDelim;
                     goto hilit;
                 } else if (kwd(*p)) {
                     State = hsPerl_Normal | X_BIT;
                     continue;
                 }
-                Color = Colors[CLR_Punctuation];
+                Color = CLR_Punctuation;
                 goto hilit;
             case hsPerl_Quote1:
-                Color = Colors[CLR_String];
+                Color = CLR_String;
                 if ((len >= 2) && (*p == '\\')) {
                     goto hilit2;
                 } else if (*p == QCHAR(State)) {
-                    Color = Colors[CLR_QuoteDelim];
+                    Color = CLR_QuoteDelim;
                     ColorNext();
                     State = hsPerl_Normal | X_BIT;
                     continue;
                 }
                 goto hilit;
             case hsPerl_Quote1M:
-                Color = Colors[CLR_String];
+                Color = CLR_String;
                 if ((len >= 2) && (*p == '\\')) {
                     goto hilit2;
                 } else if (GET_BRACE(QCHAR(State) & 3) == *p) {
@@ -484,7 +483,7 @@ int Hilit_PERL(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
                 } else if (IS_MBRACE(GET_BRACE(QCHAR(State) & 3), *p)) {
                     State -= 1 << (2 + 8);
                     if ((QCHAR(State) >> 2) == 0) {
-                        Color = Colors[CLR_QuoteDelim];
+                        Color = CLR_QuoteDelim;
                         ColorNext();
                         State = hsPerl_Normal | X_BIT;
                     } else
@@ -499,22 +498,22 @@ int Hilit_PERL(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
                                      (1U << 2) | NUM_BRACE(*p));
                     else
                         State = QSET(hsPerl_Regexp1, *p);
-                    Color = Colors[CLR_RegexpDelim];
+                    Color = CLR_RegexpDelim;
                     goto hilit;
                 } else if (kwd(*p)) {
                     State = hsPerl_Normal | X_BIT;
                     continue;
                 }
-                Color = Colors[CLR_Regexp];
+                Color = CLR_Regexp;
                 goto hilit;
             case hsPerl_Regexp1:
-                Color = Colors[CLR_Regexp];
+                Color = CLR_Regexp;
                 if ((len >= 2) && (*p == '\\')) {
                     goto hilit2;
                 } else if (*p == QCHAR(State)) {
-                    Color = Colors[CLR_RegexpDelim];
+                    Color = CLR_RegexpDelim;
                     ColorNext();
-                    Color = Colors[CLR_Punctuation];
+                    Color = CLR_Punctuation;
                     while (len > 0 && isalpha(*p))
                         ColorNext();
                     State = hsPerl_Normal | X_BIT;
@@ -522,7 +521,7 @@ int Hilit_PERL(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
                 }
                 goto hilit;
             case hsPerl_Regexp1M:
-                Color = Colors[CLR_Regexp];
+                Color = CLR_Regexp;
                 if ((len >= 2) && (*p == '\\')) {
                     goto hilit2;
                 } else if (GET_BRACE(QCHAR(State) & 3) == *p) {
@@ -531,9 +530,9 @@ int Hilit_PERL(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
                 } else if (IS_MBRACE(GET_BRACE(QCHAR(State) & 3), *p)) {
                     State -= 1 << (2 + 8);
                     if ((QCHAR(State) >> 2) == 0) {
-                        Color = Colors[CLR_RegexpDelim];
+                        Color = CLR_RegexpDelim;
                         ColorNext();
-                        Color = Colors[CLR_Punctuation];
+                        Color = CLR_Punctuation;
                         while (len > 0 && isalpha(*p))
                             ColorNext();
                         State = hsPerl_Normal | X_BIT;
@@ -549,20 +548,20 @@ int Hilit_PERL(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
                                      (1U << 2) | NUM_BRACE(*p));
                     else
                         State = QSET(hsPerl_Regexp2, *p);
-                    Color = Colors[CLR_RegexpDelim];
+                    Color = CLR_RegexpDelim;
                     goto hilit;
                 } else if (kwd(*p)) {
                     State = hsPerl_Normal | X_BIT;
                     continue;
                 }
-                Color = Colors[CLR_Regexp];
+                Color = CLR_Regexp;
                 goto hilit;
             case hsPerl_Regexp2:
-                Color = Colors[CLR_Regexp];
+                Color = CLR_Regexp;
                 if ((len >= 2) && (*p == '\\')) {
                     goto hilit2;
                 } else if (*p == QCHAR(State)) {
-                    Color = Colors[CLR_RegexpDelim];
+                    Color = CLR_RegexpDelim;
                     ColorNext();
                     /*State = hsPerl_Normal | X_BIT;*/
                     State = QSET(hsPerl_Regexp1, QCHAR(State));
@@ -570,7 +569,7 @@ int Hilit_PERL(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
                 }
                 goto hilit;
             case hsPerl_Regexp2M:
-                Color = Colors[CLR_Regexp];
+                Color = CLR_Regexp;
                 if ((len >= 2) && (*p == '\\')) {
                     goto hilit2;
                 } else if (GET_BRACE(QCHAR(State) & 3) == *p) {
@@ -579,7 +578,7 @@ int Hilit_PERL(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
                 } else if (IS_MBRACE(GET_BRACE(QCHAR(State) & 3), *p)) {
                     State -= 1 << (2 + 8);
                     if ((QCHAR(State) >> 2) == 0) {
-                        Color = Colors[CLR_RegexpDelim];
+                        Color = CLR_RegexpDelim;
                         ColorNext();
                         /*State = hsPerl_Normal | X_BIT;*/
                         State = hsPerl_Regexp1Op;
@@ -589,22 +588,22 @@ int Hilit_PERL(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
                 }
                 goto hilit;
             case hsPerl_Data:
-                Color = Colors[CLR_Comment];
+                Color = CLR_Comment;
                 goto hilit;
             case hsPerl_HereDoc:
                 if (!isEOHereDoc)
                 {
-                    Color = Colors[CLR_String];
+                    Color = CLR_String;
                     goto hilit;
                 }
-                Color = Colors[CLR_Punctuation];
+                Color = CLR_Punctuation;
                 setHereDoc = QCHAR(State);
                 while (len > 0)
                     ColorNext();
                 State = hsPerl_Normal | (State & X_BIT);
                 continue;
             case hsPerl_Docs:
-                Color = Colors[CLR_Comment];
+                Color = CLR_Comment;
                 if (i == 0 && *p == '=' && len > 3 &&
                     p[1] == 'c' && p[2] == 'u' && p[3] == 't')
                 {
@@ -613,15 +612,15 @@ int Hilit_PERL(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
                     ColorNext();
                     ColorNext();
                     State = hsPerl_Normal;
-                    Color = Colors[CLR_Normal];
+                    Color = CLR_Normal;
                     continue;
                 }
                 goto hilit;
             case hsPerl_Comment:
-                Color = Colors[CLR_Comment];
+                Color = CLR_Comment;
                 goto hilit;
             case hsPerl_String1:
-                Color = Colors[CLR_String];
+                Color = CLR_String;
                 if ((len >= 2) && (*p == '\\')) {
                     goto hilit2;
                 } else if (*p == QCHAR(State)) {
@@ -631,7 +630,7 @@ int Hilit_PERL(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
                 }
                 goto hilit;
             case hsPerl_String2:
-                Color = Colors[CLR_String];
+                Color = CLR_String;
                 if ((len >= 2) && (*p == '\\')) {
                     goto hilit2;
                 } else if (*p == QCHAR(State)) {
@@ -641,7 +640,7 @@ int Hilit_PERL(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
                 }
                 goto hilit;
             case hsPerl_StringBk:
-                Color = Colors[CLR_String];
+                Color = CLR_String;
                 if ((len >= 2) && (*p == '\\')) {
                     goto hilit2;
                 } else if (*p == QCHAR(State)) {

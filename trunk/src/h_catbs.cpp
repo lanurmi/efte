@@ -16,8 +16,7 @@
 // this is for viewing only, do not try to edit or anything.
 
 int Hilit_CATBS(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, hlState &State, hsState *StateMap, int *ECol) {
-    ChColor *Colors = BF->Mode->fColorize->Colors;
-    HILIT_VARS(Colors[CLR_Normal], Line);
+    HILIT_VARS(BF->Mode->fColorize->Colors, Line);
     int CL = 0; //(LN == BF->VToR(BF->CP.Row)) ? 1 : 0;
     
     for (i = 0; i < Line->Count;) {
@@ -25,15 +24,15 @@ int Hilit_CATBS(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Lin
             switch (State) {
             default:
             case hsBS_Normal:
-                Color = Colors[CLR_Normal];
+                Color = CLR_Normal;
                 while (!CL && len >= 2 && p[1] == '\b') {
                     if (len > 2 && p[0] == p[2]) { // bold
-                        Color = Colors[CLR_Keyword];
+                        Color = CLR_Keyword;
                         NextChar();
                         NextChar();
                         C -= 2;
                     } else if (p[0] == '_') { // underline
-                        Color = Colors[CLR_Symbol];
+                        Color = CLR_Symbol;
                         NextChar();
                         NextChar();
                         C -= 2;
