@@ -181,6 +181,7 @@ include 'm_bin.fte';
 include 'm_4gl.fte';
 include 'm_sgml.fte';
 include 'm_php.fte';
+include 'm_py.fte';
 
 # C indentation style menu
 include 'uicstyle.fte';

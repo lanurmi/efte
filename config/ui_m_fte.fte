@@ -22,6 +22,7 @@ menu MOpenInMode {
     item "&BIN"        { FileOpenInMode 'BIN' }
     item "4&GL"        { FileOpenInMode 'GL' }
     item "PHP"         { FileOpenInMode 'PHP' }
+    item "P&ython"     { FileOpenInMode 'PYTHON' }
 }
 
 menu Object {
@@ -109,6 +110,7 @@ menu MChangeMode {
     item "&BIN"        { ChangeMode 'BIN' }
     item "4&GL"        { ChangeMode 'GL' }
     item "PHP"         { ChangeMode 'PHP' }
+    item "P&ython"     { ChangeMode 'PYTHON' }
 }
 
 menu File {
