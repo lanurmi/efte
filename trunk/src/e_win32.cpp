@@ -11,6 +11,9 @@
 
 #include "fte.h"
 
+// Silence warnings about redefinition, we don't need this here anyway.
+#undef SEARCH_ALL
+
 #include <windows.h>
 
 int EView::SysShowHelp(ExState &State, const char *word) {
