@@ -160,7 +160,7 @@ int AddString(int no, const char *Command);
 int AddNumber(int no, long number);
 int AddVariable(int no, int number);
 int AddConcat(int no);
-int HashStr(const char *str, int max);
+int HashStr(const char *str, int maxim);
 void SetWordChars(char *w, const char *s);
 
 #endif

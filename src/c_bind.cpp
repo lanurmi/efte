@@ -701,12 +701,12 @@ int ExState::GetIntParam(EView *view, int *value) {
     return 1;
 }
 
-int HashStr(const char *p, int max) {
+int HashStr(const char *p, int maxim) {
     unsigned int i = 1;
 
     while (p && *p) {
         i += i ^ (i << 3) ^ (unsigned int)(*p) ^ (i >> 3);
         p++;
     }
-    return i % max;
+    return i % maxim;
 }
