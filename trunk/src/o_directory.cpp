@@ -59,11 +59,8 @@ void EDirectory::DrawLine(PCell B, int Line, int Col, ChColor color, int Width) 
             Year = Mon = Day = Hour = Min = Sec = 0;
         }
 
-        sprintf(s,
-                " %04d/%02d/%02d %02d:%02d:%02d %8ld ",
-                Year, Mon, Day, Hour, Min, Sec,
-                Files[Line]->Size());
-
+        sprintf(s, " %04d/%02d/%02d %02d:%02d:%02d %8ld ",
+                Year, Mon, Day, Hour, Min, Sec, Files[Line]->Size());
 
         strcat(s, Files[Line]->Name());
         s[strlen(s) + 1] = '\0';
@@ -79,8 +76,8 @@ int EDirectory::IsHilited(int Line) {
 }
 
 int _LNK_CONV FileNameCmp(const void *a, const void *b) {
-    FileInfo *A = *(FileInfo **)a;
-    FileInfo *B = *(FileInfo **)b;
+    const FileInfo *A = *(const FileInfo **)a;
+    const FileInfo *B = *(const FileInfo **)b;
 
     if (!(A->Type() == fiDIRECTORY) && (B->Type() == fiDIRECTORY))
         return 1;
@@ -416,7 +413,7 @@ int EDirectory::FmRmDir(char const* Name)
     }
 }
 
-int EDirectory::FmLoad(char *Name, EView *XView) {
+int EDirectory::FmLoad(const char *Name, EView *XView) {
     char FilePath[256];
 
     JustDirectory(Path, FilePath);

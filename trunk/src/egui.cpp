@@ -45,22 +45,22 @@ void EFrame::UpdateMenu() {
         Map = V->GetEventMap();
 
     if (Map != CMap || CMap == 0) {
-        const char *Menu = 0;
+        const char *NMenu = 0;
         const char *OMenu = 0;
         // set menu
 
         if (CMap)
             OMenu = CMap->GetMenu(EM_MainMenu);
         if (Map)
-            Menu = Map->GetMenu(EM_MainMenu);
-        if (Menu == 0)
-            Menu = "Main";
+            NMenu = Map->GetMenu(EM_MainMenu);
+        if (NMenu == 0)
+            NMenu = "Main";
         CMap = Map;
 
-        if (OMenu && strcmp(OMenu, Menu) == 0) {
+        if (OMenu && strcmp(OMenu, NMenu) == 0) {
             // ok
         } else {
-            SetMenu(Menu);
+            SetMenu(NMenu);
         }
     } /*else if (CMap == 0 && Map == 0) {
         SetMenu("Main");

@@ -25,7 +25,7 @@ static int CmpStr(const void *p1, const void *p2) {
 #endif
     //printf("%s  %s  %d\n", *(char **)p1, *(char **)p2,
     //	   strcoll(*(char **)p1, *(char **)p2));
-    return strcoll(*(char **)p1, *(char **)p2);
+    return strcoll(*(const char **)p1, *(const char **)p2);
 }
 #endif
 
