@@ -22,8 +22,8 @@ class EBuffer;
 
 char* MakeBackup(char *FileName, char *NewName);
 
-int GetPMClip();
-int PutPMClip();
+int GetPMClip(int clipboard);
+int PutPMClip(int clipboard);
 
 int FileLoad(int createFlags, const char *FileName, const  char *Mode, EView *View);
 int MultiFileLoad(int createFlags, const char *FileName, const char *Mode, EView *View);

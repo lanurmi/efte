@@ -241,6 +241,7 @@ void EEditPort::HandleMouse(TEvent &Event) {
             View->MView->MouseMoved = 0;
 
             if (Event.Mouse.Buttons == 1) {
+                // left mouse button down
                 Buffer->SetNearPos(xx, yy);
                 switch (Event.Mouse.Count % 5) {
                 case 1:
@@ -257,11 +258,13 @@ void EEditPort::HandleMouse(TEvent &Event) {
                 }
                 //            Window->Buffer->Redraw();
                 if (SystemClipboard) {
+                    // note: copy to second clipboard
                     Buffer->NextCommand();
-                    Buffer->BlockCopy(0);
+                    Buffer->BlockCopy(0, 1);
                 }
                 Event.What = evNone;
             } else if (Event.Mouse.Buttons == 2) {
+                // right mouse button down
                 Buffer->SetNearPos(xx, yy);
             }
             break;
@@ -269,6 +272,7 @@ void EEditPort::HandleMouse(TEvent &Event) {
         case evMouseMove:
             if (View->MView->MouseCaptured) {
                 if (Event.Mouse.Buttons == 1) {
+                    // left mouse button move
                     if (!View->MView->MouseMoved) {
                         if (Event.Mouse.KeyMask == kfCtrl) Buffer->BlockMarkColumn();
                         else if (Event.Mouse.KeyMask == kfAlt) Buffer->BlockMarkLine();
@@ -281,6 +285,7 @@ void EEditPort::HandleMouse(TEvent &Event) {
                     Buffer->SetNearPos(xx, yy);
                     Buffer->BlockExtendEnd();
                 } else if (Event.Mouse.Buttons == 2) {
+                    // right mouse button move
                     if (Event.Mouse.KeyMask == kfAlt) {
                     } else {
                         Buffer->SetNearPos(xx, yy);
@@ -302,13 +307,16 @@ void EEditPort::HandleMouse(TEvent &Event) {
                 break;
             View->MView->MouseCaptured = 0;
             if (Event.Mouse.Buttons == 1) {
+                // left mouse button up
                 if (View->MView->MouseMoved)
                     if (SystemClipboard) {
+                        // note: copy to second clipboard
                         Buffer->NextCommand();
-                        Buffer->BlockCopy(0);
+                        Buffer->BlockCopy(0, 1);
                     }
             }
             if (Event.Mouse.Buttons == 2) {
+                // right mouse button up
                 if (!View->MView->MouseMoved) {
                     EEventMap *Map = View->MView->Win->GetEventMap();
                     const char *MName = 0;
@@ -321,14 +329,16 @@ void EEditPort::HandleMouse(TEvent &Event) {
                 }
             }
             if (Event.Mouse.Buttons == 4) {
+                // middle mouse button up
                 if (SystemClipboard) {
+                    // note: copy to second clipboard
                     Buffer->NextCommand();
                     if (Event.Mouse.KeyMask == 0)
-                        Buffer->BlockPasteStream();
+                        Buffer->BlockPasteStream(1);
                     else if (Event.Mouse.KeyMask == kfCtrl)
-                        Buffer->BlockPasteColumn();
+                        Buffer->BlockPasteColumn(1);
                     else if (Event.Mouse.KeyMask == kfAlt)
-                        Buffer->BlockPasteLine();
+                        Buffer->BlockPasteLine(1);
                 }
             }
             Event.What = evNone;

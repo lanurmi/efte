@@ -105,6 +105,7 @@ static Colormap colormap;
 static Atom wm_protocols;
 static Atom wm_delete_window;
 static Atom targets;
+static Atom XA_CLIPBOARD = 0;
 static Window win;
 static Atom selection_buffer;
 static XSizeHints sizeHints;
@@ -125,10 +126,35 @@ static GC GCs[256];
 static char winTitle[256] = "FTE";
 static char winSTitle[256] = "FTE";
 
-static unsigned char *CurSelectionData = 0;
-static int CurSelectionLen = 0;
-static int CurSelectionOwn = 0;
+static unsigned char* CurSelectionData[3] = {NULL,NULL,NULL};
+static int CurSelectionLen[3] = {0,0,0};
+static int CurSelectionOwn[3] = {0,0,0};
 static Time now;
+
+static Atom GetXClip (int clipboard) {
+    if (clipboard==1) {
+        return XA_PRIMARY;
+    }
+    if (clipboard==2) {
+        return XA_SECONDARY;
+    }
+    return XA_CLIPBOARD;
+}
+
+
+static int GetFTEClip (Atom clip) {
+    if (clip==XA_CLIPBOARD) {
+        return 0;
+    }
+    if (clip==XA_PRIMARY) {
+        return 1;
+    }
+    if (clip==XA_SECONDARY) {
+        return 2;
+    }
+    return -1;
+}
+
 
 static int AllocBuffer() {
     unsigned char *p;
@@ -402,6 +428,8 @@ static int SetupXWindow(int argc, char **argv)
     assert(selection_buffer != None);
     targets = XInternAtom(display, "TARGETS", False);
     assert(targets != None);
+    XA_CLIPBOARD = XInternAtom(display, "CLIPBOARD", False);
+    assert(XA_CLIPBOARD != None);
 
     sizeHints.flags = PResizeInc | PMinSize | PBaseSize | PWinGravity;
     sizeHints.width_inc = FontCX;
@@ -1186,21 +1214,22 @@ void ProcessXEvents(TEvent *Event) {
         break;
     case SelectionClear:
         {
-            Window owner;
-
-            owner = XGetSelectionOwner(display, XA_PRIMARY);
-            if (owner != win) {
-                if (CurSelectionData != 0)
-                    free(CurSelectionData);
-                CurSelectionData = 0;
-                CurSelectionLen = 0;
-                CurSelectionOwn = 0;
+            for (int i=0; i<3; i++) {
+                Window owner = XGetSelectionOwner(display, GetXClip(i));
+                if (owner != win) {
+                    if (CurSelectionData[i] != NULL)
+                        free(CurSelectionData[i]);
+                    CurSelectionData[i] = NULL;
+                    CurSelectionLen[i] = 0;
+                    CurSelectionOwn[i] = 0;
+                }
             }
         }
         break;
     case SelectionRequest:
         {
             XEvent notify;
+            unsigned int clip = GetFTEClip(event.xselectionrequest.selection);
 
             notify.type = SelectionNotify;
             notify.xselection.requestor = event.xselectionrequest.requestor;
@@ -1208,8 +1237,7 @@ void ProcessXEvents(TEvent *Event) {
             notify.xselection.target = event.xselectionrequest.target;
             notify.xselection.time = event.xselectionrequest.time;
 
-            if (event.xselectionrequest.selection == XA_PRIMARY &&
-                event.xselectionrequest.target == XA_STRING)
+            if (clip<=2 && event.xselectionrequest.target == XA_STRING)
 	    {
                 static unsigned char empty[] = "";
                 XChangeProperty(display,
@@ -1217,11 +1245,10 @@ void ProcessXEvents(TEvent *Event) {
                                 event.xselectionrequest.property,
                                 event.xselectionrequest.target,
                                 8, PropModeReplace,
-                                (CurSelectionData ? CurSelectionData : empty),
-                                CurSelectionLen);
+                                (CurSelectionData[clip] ? CurSelectionData[clip] : empty),
+                                CurSelectionLen[clip]);
                 notify.xselection.property = event.xselectionrequest.property;
-            } else if (event.xselectionrequest.selection == XA_PRIMARY &&
-                       event.xselectionrequest.target == targets)
+            } else if (clip<=2 && event.xselectionrequest.target == targets)
             {
                 Atom type = XA_STRING;
 
@@ -1383,16 +1410,17 @@ int ConGrabEvents(TEventMask /*EventMask*/) {
     return 0;
 }
 
-int GetXSelection(int *len, char **data) {
-    if (CurSelectionOwn) {
-        *data = (char *) malloc(CurSelectionLen);
+int GetXSelection(int *len, char **data, int clipboard) {
+    if (CurSelectionOwn[clipboard]) {
+        *data = (char *) malloc(CurSelectionLen[clipboard]);
         if (*data == 0)
             return -1;
-        memcpy(*data, CurSelectionData, CurSelectionLen);
-        *len = CurSelectionLen;
+        memcpy(*data, CurSelectionData[clipboard], CurSelectionLen[clipboard]);
+        *len = CurSelectionLen[clipboard];
         return 0;
     } else {
-        if (XGetSelectionOwner(display, XA_PRIMARY) != None) {
+        Atom clip = GetXClip(clipboard);
+        if (XGetSelectionOwner(display, clip) != None) {
             XEvent event;
             Atom type;
             long extra;
@@ -1402,8 +1430,7 @@ int GetXSelection(int *len, char **data) {
 
             assert(selection_buffer != None);
 
-            XConvertSelection(display,
-                              XA_PRIMARY, XA_STRING,
+            XConvertSelection(display, clip, XA_STRING,
                               selection_buffer, win, now);
 
             time_started = time(NULL);
@@ -1455,24 +1482,25 @@ int GetXSelection(int *len, char **data) {
         return 0;
 }
 
-int SetXSelection(int len, char *data) {
-    if (CurSelectionData != 0)
-        free(CurSelectionData);
+int SetXSelection(int len, char *data, int clipboard) {
+    Atom clip = GetXClip(clipboard);
+    if (CurSelectionData[clipboard] != NULL)
+        free(CurSelectionData[clipboard]);
 
-    CurSelectionData = (unsigned char *)malloc(len);
-    if (CurSelectionData == 0) {
-	CurSelectionLen = 0;
-	return -1;
+    CurSelectionData[clipboard] = (unsigned char *)malloc(len);
+    if (CurSelectionData[clipboard] == NULL) {
+        CurSelectionLen[clipboard] = 0;
+        return -1;
     }
-    CurSelectionLen = len;
-    memcpy(CurSelectionData, data, CurSelectionLen);
-    if (CurSelectionLen < 64 * 1024) {
+    CurSelectionLen[clipboard] = len;
+    memcpy(CurSelectionData[clipboard], data, CurSelectionLen[clipboard]);
+    if (CurSelectionLen[clipboard] < 64 * 1024) {
         XStoreBytes(display, data, len);
-        XSetSelectionOwner(display, XA_PRIMARY, win, CurrentTime);
-        if (XGetSelectionOwner(display, XA_PRIMARY) == win)
-            CurSelectionOwn = 1;
+        XSetSelectionOwner(display, clip, win, CurrentTime);
+        if (XGetSelectionOwner(display, clip) == win)
+            CurSelectionOwn[clipboard] = 1;
     } else {
-        XSetSelectionOwner(display, XA_PRIMARY, None, CurrentTime);
+        XSetSelectionOwner(display, clip, None, CurrentTime);
     }
     return 0;
 }
@@ -1531,8 +1559,11 @@ GUI::~GUI() {
     XDestroyWindow(display, win);
     XCloseDisplay(display);
 
-    if (CurSelectionData != 0)
-        free(CurSelectionData);
+    for (int i=0; i<3; i++) {
+        if (CurSelectionData[i] != NULL) {
+            free(CurSelectionData[i]);
+        }
+    }
 
     ::ConDone();
 }

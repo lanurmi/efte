@@ -1928,7 +1928,8 @@ int GUI::ClosePipe(int id) {
     return WEXITSTATUS(status);
 }
 
-int GetXSelection(int *len, char **data) {
+int GetXSelection(int *len, char **data, int clipboard) {
+    // XXX use clipboard?
     *data = XFetchBytes(display, len);
     if (*data == 0)
         return -1;
@@ -1936,9 +1937,24 @@ int GetXSelection(int *len, char **data) {
         return 0;
 }
 
-int SetXSelection(int len, char *data) {
+int SetXSelection(int len, char *data, int clipboard) {
+    Atom clip;
     XStoreBytes(display, data, len);
-    XSetSelectionOwner (display, XA_PRIMARY, None, CurrentTime);
+    switch (clipboard) {
+    case 0:
+        clip =  XA_CLIPBOARD;
+        break;
+    case 1:
+        clip = XA_PRIMARY;
+        break;
+    case 2:
+        clip = XA_SECONDARY;
+        break;
+    default:
+        // not supported
+        return -1;
+    }
+    XSetSelectionOwner(display, clip, None, CurrentTime);
     return 1;
 }
 
