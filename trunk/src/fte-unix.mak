@@ -5,7 +5,7 @@
 
 #  vfte - for Linux console directly (with limitations, see con_linux.cpp)
 
-TARGETS = xfte vfte sfte
+TARGETS = xfte vfte sfte nfte
 #TARGETS = xfte
 
 PRIMARY = xfte
@@ -155,6 +155,7 @@ XLIBS    = -lX11 $(SOCKETLIB)
 #-lmpatrol -lelf
 VLIBS    = -lgpm -lncurses
 # -ltermcap outdated by ncurses
+NLIBS    = -lncurses
 SLIBS    = -lslang
 QLIBS    = -lqt
 #MLIBS    = -lXm -lXp -lXt -lXpm -lXext
@@ -198,6 +199,9 @@ vfte: $(OBJS) $(VOBJS)
 
 sfte: $(OBJS) $(SOBJS) compkeys
 	$(LD) -o $@ $(LDFLAGS) $(OBJS) $(SOBJS) $(SLIBS)
+
+nfte: $(OBJS) $(NOBJS) compkeys
+	$(LD) -o $@ $(LDFLAGS) $(OBJS) $(NOBJS) $(NLIBS)
 
 compkeys: compkeys.o
 	$(LD) $(LDFLAGS) compkeys.o -o compkeys

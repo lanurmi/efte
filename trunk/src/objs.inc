@@ -112,6 +112,14 @@ con_slang.$(OEXT) \
 clip_no.$(OEXT) \
 g_nodlg.$(OEXT)
 
+NOBJS = $(UNIXOBJS) \
+g_text.$(OEXT) \
+menu_text.$(OEXT) \
+con_ncurses.$(OEXT) \
+g_unix_pipe.$(OEXT) \
+clip_no.$(OEXT) \
+g_nodlg.$(OEXT)
+
 VOBJS = $(UNIXOBJS) \
 g_text.$(OEXT) \
 menu_text.$(OEXT) \
