@@ -37,8 +37,8 @@ char FileBuffer[RWBUFSIZE];
 int EBuffer::LoadFrom(char *AFileName) {
     int fd;
     int len = 0, partLen;
-    unsigned long Chars = 0, Lines = 0;
-    char *p, *e, *m = 0;
+    unsigned long numChars = 0, Lines = 0;
+    char *p, *e, *m = NULL;
     int lm = 0;
     int lf;
     int SaveUndo, SaveReadOnly;
@@ -113,7 +113,7 @@ int EBuffer::LoadFrom(char *AFileName) {
         do {
             if (lchar != -1) {     // do we have a LINE delimiter
                 e = (char *)memchr((void *)p, lchar, FileBuffer - p + len);
-                if (e == 0) {
+                if (e == NULL) {
                     e = FileBuffer + len;
                     lf = 0;
                 } else
@@ -132,16 +132,16 @@ int EBuffer::LoadFrom(char *AFileName) {
             }
             partLen = e - p; // # of chars in buffer for current line
             m = (char *)realloc((void *)m, (lm + partLen) | CHAR_TRESHOLD);
-            if (m == 0)
+            if (m == NULL)
                 goto fail;
             memcpy((void *)(m + lm), p, partLen);
             lm += partLen;
-            Chars += partLen;
+            numChars += partLen;
 
             if (lf) {
                 // there is a new line, add it to buffer
 
-                if (lm == 0 && m == 0 && (m = (char *)malloc(CHAR_TRESHOLD)) == 0)
+                if (lm == 0 && m == NULL && (m = (char *)malloc(CHAR_TRESHOLD)) == 0)
                     goto fail;
 #if 0
                 { // support for VIM tabsize commands
@@ -163,23 +163,27 @@ int EBuffer::LoadFrom(char *AFileName) {
                 RGap = RCount;
 
                 lm = 0;
-                m = 0;
+                m = NULL;
                 Lines++;
+            } else
+            {
+                delete m;
+                m = NULL;
             }
             p = e;
             if (lchar != -1) // skip LINE terminator/separator
                 p++;
         } while (lf);
-        Msg(S_INFO, "Loading: %d lines, %d bytes.", Lines, Chars);
+        Msg(S_INFO, "Loading: %d lines, %d bytes.", Lines, numChars);
     }
     if ((RCount == 0) || (lm > 0) || !BFI(this, BFI_ForceNewLine)) {
-        if (lm == 0 && m == 0 && (m = (char *)malloc(CHAR_TRESHOLD)) == 0)
+        if (lm == 0 && m == NULL && (m = (char *)malloc(CHAR_TRESHOLD)) == 0)
             goto fail;
         // Grow the line table if required,
         if (RCount == RAllocated)
             if (Allocate(RCount ? (RCount * 2) : 1) == 0)
                 goto fail;
-        if ((LL[RCount++] = new ELine(m, lm)) == 0)
+        if ((LL[RCount++] = new ELine(m, lm)) == NULL)
             goto fail;
         RGap = RCount;
     }
