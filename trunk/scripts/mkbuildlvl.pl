@@ -22,6 +22,7 @@ print "sources => $sources\ncommon => $common\n";
 my @src_files = find_sources();
 my @cmn_files = find_common();
 
+unlink $sources, $common;
 system qw(zip -9), $sources, @src_files;
 system qw(zip -9), $common, @cmn_files;
 
@@ -37,6 +38,7 @@ sub find_sources
     } qw( 
     Makefile
     fte.in
+    install
     src/*
     src/bmps/*
     src/icons/*
