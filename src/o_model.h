@@ -116,7 +116,7 @@ public:
     virtual void RepaintStatus();
 
     void Msg(int level, const char *s, ...);
-    void SetMsg(char *Msg);
+    void SetMsg(const char *msg);
 
     int SwitchTo(ExState &State);
     int FilePrev();
