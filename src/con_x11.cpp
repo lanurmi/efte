@@ -50,6 +50,7 @@
 #include "con_i18n.h"
 #include "s_files.h"
 #include "s_util.h"
+#include "s_string.h"
 
 i18n_context_t* i18n_ctx = NULL;
 
@@ -493,9 +494,9 @@ int ConClear(void) {
 
 int ConSetTitle(char *Title, char *STitle) {
     char buf[sizeof(winTitle)] = {0};
-    JustFileName(Title, buf);
+    JustFileName(Title, buf, sizeof(buf));
     if (buf[0] == '\0') // if there is no filename, try the directory name.
-        JustLastDirectory(Title, buf);
+        JustLastDirectory(Title, buf, sizeof(buf));
 
     strncpy(winTitle, "FTE - ", sizeof(winTitle) - 1);
     if (buf[0] != 0) // if there is a file/dir name, stick it in here.
@@ -512,10 +513,8 @@ int ConSetTitle(char *Title, char *STitle) {
 }
 
 int ConGetTitle(char *Title, int MaxLen, char *STitle, int SMaxLen) {
-    strncpy(Title, winTitle, MaxLen);
-    Title[MaxLen - 1] = 0;
-    strncpy(STitle, winSTitle, SMaxLen);
-    STitle[SMaxLen - 1] = 0;
+    strlcpy(Title, winTitle, MaxLen);
+    strlcpy(STitle, winSTitle, SMaxLen);
     return 0;
 }
 
