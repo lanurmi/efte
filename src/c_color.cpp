@@ -96,6 +96,7 @@ static const struct {
     { "PLAIN.Markers",     &hcPlain_Markers },
     { "PLAIN.Found",       &hcPlain_Found },
     { "PLAIN.Keyword",     &hcPlain_Keyword },
+    { "PLAIN.Folds",       &hcPlain_Folds[0] }, // added some backwards compatibility
     { "PLAIN.Folds0",      &hcPlain_Folds[0] },
     { "PLAIN.Folds1",      &hcPlain_Folds[1] },
     { "PLAIN.Folds2",      &hcPlain_Folds[2] },
