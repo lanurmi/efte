@@ -1,8 +1,8 @@
 # MSDOS makefile for djgpp v2 and GNU make
 # Contributed by Markus F.X.J. Oberhumer <markus.oberhumer@jk.uni-linz.ac.at>
 
-CC        = gcc
-LD        = gcc
+CC        = gxx
+LD        = gxx
 
 INCDIR    =
 LIBDIR    =
@@ -29,12 +29,12 @@ CFTE_OBJS += memicmp.$(OEXT)
 .c.$(OEXT):
 	$(CC) $(CCFLAGS) -c $<
 
-.PHONY: defaul all clean
+.PHONY: default all clean
 
 default all: cfte.exe fte.exe
 
 clean:
-	-$(RM) *.o bin2c.exe cfte.exe fte.exe
+	-$(RM) *.o bin2c.exe cfte.exe fte.exe defcfg.cnf defcfg.h
 
 cfte.exe: $(CFTE_OBJS)
 	$(LD) $(LDFLAGS) $(CFTE_OBJS) -o $@
