@@ -69,10 +69,12 @@ SINCDIR   = -I/usr/include/slang
 
 #######################################################################
 # AIX
-#UOS      = -DAIX -D_BSD_INCLUDES # not recently tested (it did work)
+#UOS      = -DAIX -D_BSD_INCLUDES
 
 #CC   = xlC
 #LD   = xlC
+#COPTIONS =
+#TARGETS = xfte
 
 #######################################################################
 # Irix
