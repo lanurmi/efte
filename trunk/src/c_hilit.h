@@ -32,9 +32,6 @@ HILIT_P(Hilit_Plain);
 #ifdef CONFIG_HILIT_C
 HILIT_P(Hilit_C);
 #endif
-#ifdef CONFIG_HILIT_HTML
-HILIT_P(Hilit_HTML);
-#endif
 #ifdef CONFIG_HILIT_PERL
 HILIT_P(Hilit_PERL);
 #endif
@@ -43,12 +40,6 @@ HILIT_P(Hilit_MAKE);
 #endif
 #ifdef CONFIG_HILIT_REXX
 HILIT_P(Hilit_REXX);
-#endif
-#ifdef CONFIG_HILIT_DIFF
-HILIT_P(Hilit_DIFF);
-#endif
-#ifdef CONFIG_HILIT_MERGE
-HILIT_P(Hilit_MERGE);
 #endif
 #ifdef CONFIG_HILIT_IPF
 HILIT_P(Hilit_IPF);
