@@ -1798,19 +1798,24 @@ int GUI::ShowEntryScreen() {
 
 int GUI::RunProgram(int mode, char *Command) {
     char Cmd[1024];
-    int rc;
+
+    char* xterm = getenv("TERM");
+    if (NULL == xterm || 0 == *xterm)
+        xterm = "xterm";
+
+    strcpy(Cmd, xterm);
 
     if (*Command == 0)  // empty string = shell
-        strcpy(Cmd, "xterm &");
+        strcat(Cmd, " -ls &");
     else {
-        strcpy(Cmd, "xterm -e ");
-        strcat(Cmd, Command);
+        strcat(Cmd, " -e ");
+        // buffer overflow problem: -2 for possible async.
+	strncat(Cmd, Command, sizeof(Cmd) - strlen(Cmd) - 2);
+        Cmd[sizeof(Cmd) - 3] = 0;
         if (mode == RUN_ASYNC)
             strcat(Cmd, " &");
     }
-
     rc = system(Cmd);
-
     return rc;
 }
 
