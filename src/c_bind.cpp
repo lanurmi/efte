@@ -245,9 +245,38 @@ EMode::EMode(EMode *aMode, EEventMap *Map, const char *aName) {
     }
 }
 
+EMode::~EMode() {
+
+    // fEventMap is just pointer to EventMaps list, so do not destroy it
+    // fColorize is also just a pointer
+
+    // information on Flags can't be freed here.
+
+    free(fName);
+
+    free(MatchName);
+    RxFree(MatchNameRx);
+
+    free(MatchLine);
+    RxFree(MatchLineRx);
+}
+
 EKeyMap::EKeyMap() {
-    fKeys = 0;
-    fParent = 0;
+    fKeys = NULL;
+    fParent = NULL;
+}
+
+EKeyMap::~EKeyMap() {
+    // free keys
+    {
+        EKey *e;
+
+        while((e = fKeys) != NULL)
+        {
+            fKeys = fKeys->fNext;
+            delete e;
+        }
+    }
 }
 
 void EKeyMap::AddKey(EKey *aKey) {
@@ -302,11 +331,40 @@ EEventMap::EEventMap(const char *AName, EEventMap *AParent) {
     KeyMap = 0;
     Next = EventMaps;
     EventMaps = this;
-    Menu[0] = Menu[1] = 0;
+    memset(Menu, 0, sizeof(Menu));
     memset(abbrev, 0, sizeof(abbrev));
 }
 
 EEventMap::~EEventMap() {
+    free(Name);
+
+    // free menu[]
+    {
+        for (int i = 0; i < EM_MENUS; i++)
+        {
+            free(Menu[i]);
+        }
+    }
+
+    // free Abbrev's
+    {
+        EAbbrev *ab;
+
+        for (int i = 0; i < ABBREV_HASH; i++)
+        {
+            while((ab = abbrev[i]) != NULL)
+            {
+                abbrev[i] = abbrev[i]->next;
+                delete ab;
+            }
+        }
+    }
+
+    // free keymap's
+    {
+        delete KeyMap;
+    }
+
 }
 
 void EEventMap::SetMenu(int which, const char *What) {
@@ -486,6 +544,17 @@ EKey::EKey(char *aKey, EKeyMap *aKeyMap) {
     Cmd = -1;
     ParseKey(aKey, fKey);
     fKeyMap = aKeyMap;
+}
+
+EKey::~EKey()
+{
+    if (fKeyMap)
+    {
+        if (fKeyMap->fKeys == this)
+        {
+            fKeyMap->fKeys = fNext;
+        }
+    }
 }
 
 #ifdef CONFIG_ABBREV

@@ -41,7 +41,7 @@ public:
     char filename[256];
     
     EMode(EMode *aMode, EEventMap *Map, const char *aName);
-    ~EMode() {}
+    ~EMode();
     EAbbrev *FindAbbrev(const char *string);
 };
 
@@ -51,7 +51,7 @@ public:
     EKey *fKeys;
     
     EKeyMap();
-    ~EKeyMap() {};
+    ~EKeyMap();
     
     void AddKey(EKey *aKey);
     EKey *FindKey(TKeyCode aKey);
@@ -64,7 +64,7 @@ public:
     char *Name;
     
     EKeyMap *KeyMap;
-    char *Menu[2]; // main + local
+    char *Menu[EM_MENUS]; // main + local
     
     EAbbrev *abbrev[ABBREV_HASH];
     
@@ -108,7 +108,7 @@ public:
     
     EKey(char *aKey);
     EKey(char *aKey, EKeyMap *aKeyMap);
-    ~EKey() {}
+    ~EKey();
 };
 
 #ifdef CONFIG_ABBREV
