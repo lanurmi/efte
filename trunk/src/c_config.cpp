@@ -1195,6 +1195,7 @@ int LoadConfig(int /*argc*/, char ** /*argv*/, char *CfgFileName) {
     ln = (l[3] << 24) + (l[2] << 16) + (l[1] << 8) + l[0];
 
     if (ln != VERNUM) {
+        LOG << hex << ln << " != " << VERNUM << ENDLINE;
         free(buffer);
         DieError(0, "Bad .CNF version.");
         ENDFUNCRC(-1);

@@ -200,20 +200,22 @@ sub HTML_PRE {
 }
 
 sub HTML_CODE {
-    ?MoveBlockStart; InsertString "<code>"; LineNew;
-    ?MoveBlockEnd; SavePos; BlockUnmark; LineNew;
-    InsertString "</code>"; MoveSavedPos;
+    ?MoveBlockStart; InsertString "<code>"; #LineNew;
+    ?MoveBlockEnd; #SavePos;
+    BlockUnmark; #LineNew;
+    InsertString "</code>"; 7:MoveLeft; #MoveSavedPos;
 }
 
 sub HTML_TT {
-    ?MoveBlockStart; InsertString "<tt>"; LineNew;
-    ?MoveBlockEnd; SavePos; BlockUnmark; LineNew;
-    InsertString "</tt>"; MoveSavedPos;
+    ?MoveBlockStart; InsertString "<tt>"; #LineNew;
+    ?MoveBlockEnd; #SavePos;
+    BlockUnmark; #LineNew;
+    InsertString "</tt>"; 5:MoveLeft; #MoveSavedPos;
 }
 
 sub HTML_KBD {
-    ?MoveBlockStart; InsertString "<kbd>"; LineNew;
-    ?MoveBlockEnd; SavePos; BlockUnmark; LineNew;
+    ?MoveBlockStart; InsertString "<kbd>"; #LineNew;
+    ?MoveBlockEnd; SavePos; BlockUnmark; #LineNew;
     InsertString "</kbd>"; MoveSavedPos;
 }
 
@@ -525,7 +527,9 @@ sub HTML_Base {
     InsertString "<head>"; LineNew;
     InsertString "<!-- copyright (c)  -->"; 4:MoveLeft;
     InsertDate "%Y"; InsertString " by "; InsertUid; MoveLineEnd; LineNew;
-    InsertString "<meta name=\"generator\" content=\"FTE 0.49.1\" />";
+    InsertString "<meta name=\"generator\" content=\"FTE ";
+    InsertString $FTEVer;
+    InsertString "\" />";
     LineNew;
     InsertString "<meta name=\"revised\" content=\"\" />"; 4:MoveLeft;
     InsertUid; InsertString ","; InsertDate "%Y-%m-%d"; MoveLineEnd;

@@ -1600,7 +1600,13 @@ int EBuffer::GetStrVar(int var, char *str, int buflen) {
     case mvWord:
     case mvLine:
         return 0;
+
+    case mvFTEVer:
+        strncpy(str, VERSION, buflen);
+        str[buflen - 1] = 0;
+        return 1;
     }
+
     return EModel::GetStrVar(var, str, buflen);
 }
 

@@ -269,7 +269,8 @@ typedef enum {
     mvCurCol,
     mvChar,
     mvWord,
-    mvLine
+    mvLine,
+    mvFTEVer,
 } MacroVariable;
 
 #endif
