@@ -6,13 +6,13 @@ colorize GL {
 
     color {
         { 'Normal',        'Editor_Default' },
+        { 'Keyword',       'Editor_Keywords' },
         { 'Number',        'Lang_DecimalNumber' },
         { 'HexNumber',     'Lang_HexNumber' },
         { 'Punctuation',   'Lang_Punctuation' },
         { 'String',        'Lang_String' },
         { 'Comment',       'Lang_Comment' },
         { 'Function',      'Lang_Function' },
-        { 'Keyword',       'Editor_Keywords' },
 #       { 'CPreprocessor', 'Lang_Preprocessor' },
 #       { 'Label',         'Lang_Label' },
     };

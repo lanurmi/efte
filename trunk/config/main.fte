@@ -6,8 +6,8 @@
 
 # uncomment for appropriate keybindings and menus
 
-#%define(UI_KB)
-%define(UI_FTE)
+%define(UI_KB)
+#%define(UI_FTE)
 #%define(UI_WS)
 #%define(UI_NE)
 #%define(UI_BRIEF)
@@ -147,48 +147,51 @@ eventmap TEX: PLAIN {
     }
 }
 
-include 'm_text.fte';
-include 'm_msg.fte';
 %if(UI_KB)
 include 'm_c_kb.fte';
 %endif
 %if(!UI_KB)
 include 'm_c.fte';
 %endif
-include 'm_idl.fte';
-include 'm_fte.fte';
+
+include 'm_4gl.fte';
+include 'm_a51.fte';
 include 'm_ada.fte';
-include 'm_html.fte';
-include 'm_ldsgml.fte';
-include 'm_ipf.fte';
-include 'm_make.fte';
-include 'm_resdlg.fte';
+include 'm_asm.fte';
+include 'm_asm370.fte';
+include 'm_bin.fte';
+include 'm_catbs.fte';
+include 'm_clario.fte';
 include 'm_diff.fte';
-include 'm_sh.fte';
+include 'm_ebnf.fte';
+include 'm_fort90.fte';
+include 'm_fte.fte';
+include 'm_html.fte';
+include 'm_idl.fte';
+include 'm_ipf.fte';
+include 'm_java.fte';
+include 'm_ldsgml.fte';
+include 'm_make.fte';
+include 'm_merge.fte';
+include 'm_mod3.fte';
+include 'm_msg.fte';
 include 'm_pascal.fte';
 include 'm_perl.fte';
-include 'm_rexx.fte';
-include 'm_java.fte';
-include 'm_tex.fte';
-include 'm_asm.fte';
-include 'm_tcl.fte';
-include 'm_fort90.fte';
-include 'm_clario.fte';
-include 'm_ebnf.fte';
-include 'm_texi.fte';
-include 'm_asm370.fte';
-include 'm_a51.fte';
-include 'm_siod.fte';
-include 'm_sml.fte';
-include 'm_mod3.fte';
-include 'm_sl.fte';
-include 'm_sql.fte';
-include 'm_bin.fte';
-include 'm_4gl.fte';
-include 'm_sgml.fte';
 include 'm_php.fte';
 include 'm_py.fte';
+include 'm_resdlg.fte';
+include 'm_rexx.fte';
 include 'm_ruby.fte';
+include 'm_sgml.fte';
+include 'm_sh.fte';
+include 'm_siod.fte';
+include 'm_sl.fte';
+include 'm_sml.fte';
+include 'm_sql.fte';
+include 'm_tcl.fte';
+include 'm_tex.fte';
+include 'm_texi.fte';
+include 'm_text.fte';
 include 'm_xml.fte';
 
 # C indentation style menu
@@ -203,7 +206,7 @@ include 'uicstyle.fte';
 # ui*.fte -files define all keyboard bindings and menus.
 # pick only one file.
 %if(UI_KB)
-include 'ui_kb.fte'; # kabi settinigs
+include 'ui_kb.fte'; # kabi settings
 %endif
 %if(UI_FTE)
 include 'ui_fte.fte'; # fte CUA style bindings

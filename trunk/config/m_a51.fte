@@ -4,7 +4,7 @@ colorize ASM51 {
     SyntaxParser = 'SIMPLE';
     
     color {
-        { 'Normal',        'Lang_Default' },
+        { 'Normal',        'Editor_Default' },
         { 'Keyword',       'Editor_Keywords' },
         { 'Number',        'Lang_DecimalNumber' },
         { 'HexNumber',     'Lang_HexNumber' },
@@ -13,19 +13,7 @@ colorize ASM51 {
         { 'Comment',       'Lang_Comment' },
         { 'Function',      'Lang_Function' },
         { 'Label',         'Lang_Label' },
-        
-        #{ 'Normal',        '1E' },
-        #{ 'Keyword',       '1F' },
-        #{ 'Number',        '1D' },
-        #{ 'HexNumber',     '1D' },
-        #{ 'Punctuation',   '13' },
-        #{ 'String',        '1E' },
-        #{ 'Comment',       '17' },
-        #{ 'Function',      '1B' },
-        #{ 'Label',         '1C' },
     };
-
-#keyword '1F' {
 
     keyword 'Editor_Keywords' {
         'mov', 'push', 'pop', 'movc', 'movx',
@@ -35,7 +23,6 @@ colorize ASM51 {
         'inc', 'dec', 'rl', 'rlc', 'rrc',
     };
 
-#    keyword '1B' {
     keyword 'Editor_Keywords3' {
         'a', 'acc', 'b', 'dpl', 'dph', 'dptr',
         'R0', 'R1', 'R2', 'R3',
@@ -47,25 +34,25 @@ colorize ASM51 {
         'T2CON', 'TH2', 'TL2', 'RCAP2H', 'RCAP2L',
     };
 
-keyword 'Editor_Keywords4' {
-    'SM0', 'SM1', 'SM2', 'REN', 'TB8',
-    'RB8', 'TI', 'RI', 'E0', 'E1', 'E2',
-    'E3', 'E4', 'E5', 'E6', 'E7', 'F0',
-    'F1', 'F2', 'F3', 'F4', 'F5', 'F6',
-    'F7', 'EA', 'ES', 'ET1', 'EX1', 'ET0',
-    'EX0', 'T2', 'T2EX', 'TF1', 'TR1',
-    'TF0', 'TR0', 'IE1', 'IT1', 'IE0',
-    'IT0', 'TF2', 'EXF2', 'RCLK', 'TCLK',
-    'EXEN2', 'TR2', 'C/T2', 'CP/RL2',
-    'P0.0', 'P0.1', 'P0.2', 'P0.3',
-    'P0.4', 'P0.5', 'P0.6', 'P0.7',
-    'P1.0', 'P1.1', 'P1.2', 'P1.3',
-    'P1.4', 'P1.5', 'P1.6', 'P1.7',
-    'P2.0', 'P2.1', 'P2.2', 'P2.3',
-    'P2.4', 'P2.5', 'P2.6', 'P2.7',
-    'P3.0', 'P3.1', 'P3.2', 'P3.3',
-    'P3.4', 'P3.5', 'P3.6', 'P3.7',
-};
+     keyword 'Editor_Keywords4' {
+       'SM0', 'SM1', 'SM2', 'REN', 'TB8',
+       'RB8', 'TI', 'RI', 'E0', 'E1', 'E2',
+       'E3', 'E4', 'E5', 'E6', 'E7', 'F0',
+       'F1', 'F2', 'F3', 'F4', 'F5', 'F6',
+       'F7', 'EA', 'ES', 'ET1', 'EX1', 'ET0',
+       'EX0', 'T2', 'T2EX', 'TF1', 'TR1',
+       'TF0', 'TR0', 'IE1', 'IT1', 'IE0',
+       'IT0', 'TF2', 'EXF2', 'RCLK', 'TCLK',
+       'EXEN2', 'TR2', 'C/T2', 'CP/RL2',
+       'P0.0', 'P0.1', 'P0.2', 'P0.3',
+       'P0.4', 'P0.5', 'P0.6', 'P0.7',
+       'P1.0', 'P1.1', 'P1.2', 'P1.3',
+       'P1.4', 'P1.5', 'P1.6', 'P1.7',
+       'P2.0', 'P2.1', 'P2.2', 'P2.3',
+       'P2.4', 'P2.5', 'P2.6', 'P2.7',
+       'P3.0', 'P3.1', 'P3.2', 'P3.3',
+       'P3.4', 'P3.5', 'P3.6', 'P3.7',
+     };
 
 #    keyword '1C' {
     keyword 'Editor_Keywords2' {
@@ -77,7 +64,6 @@ keyword 'Editor_Keywords4' {
         'cjne', 'djnz',
     };
 
-#    keyword '1E' {
     keyword 'Editor_Keywords5' {
         'cseg', 'dseg',
         'dw', 'db',

@@ -3,10 +3,10 @@ colorize IPF {
     
     color {
         { 'Normal',     'Editor_Default' },
+        { 'String',     'Lang_String' },
         { 'Symbol',     'Markup_Symbol' },
         { 'Tag',        'Markup_Tag' },
         { 'Control',    'Markup_Control' },
-        { 'String',     'Markup_String' },
     };
 
     keyword 'Editor_Keywords' {

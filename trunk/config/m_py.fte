@@ -10,7 +10,8 @@ colorize PYTHON {
     SyntaxParser = 'SIMPLE';
 
     color {
-        { 'Normal',        'Lang_Default' },
+        { 'Normal',        'Editor_Default' },
+        { 'Keyword',       'Editor_Keywords'},
         { 'Number',        'Lang_DecimalNumber' },
         { 'HexNumber',     'Lang_Number' },
         { 'Punctuation',   'Lang_Punctuation' },
@@ -19,7 +20,6 @@ colorize PYTHON {
         { 'CPreprocessor', 'Lang_Preprocessor' },
         { 'Function',      'Lang_Function' },
         { 'Label',         'Lang_Label' },
-        { 'Keyword',       'Editor_Keywords'},
         { 'Command',       'Lang_Command' }, # assembler
     };
 

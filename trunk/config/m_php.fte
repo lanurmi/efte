@@ -2,13 +2,13 @@ colorize PHP {
     SyntaxParser       = 'SIMPLE';
 
     color {
-        { 'Normal',        'Lang_Default' },
+        { 'Normal',        'Editor_Default' },
         { 'Number',        'Lang_DecimalNumber' },
         { 'HexNumber',     'Lang_HexNumber' },
         { 'Punctuation',   'Lang_Punctuation' },
         { 'String',        'Lang_String' },
         { 'Comment',       'Lang_Comment' },
-        { 'Special', 'Lang_Preprocessor' },
+        { 'Special',	   'Lang_Preprocessor' },
         { 'Variable',      'Lang_Variable' },
     };
 

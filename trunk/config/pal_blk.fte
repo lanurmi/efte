@@ -19,7 +19,7 @@ color_palette {
     { 'Status_Normal',                'black:darkCyan' },
     { 'Status_Active',                'black:gray' },
 
-    { 'Message_Normal',               'cyan:darkBlue' },
+    { 'Message_Normal',               'Status_Normal' },
     { 'Message_Error',                'white:darkBlue' },
     { 'Message_Bold',                 'white:darkRed' },
 
@@ -82,7 +82,6 @@ color_palette {
     { 'Comment',                      'brown:bg' },
     { 'String',                       'yellow:bg' },
 
-    { 'Lang_Default',                 'Editor_Default' },
     { 'Lang_Number',                  'red:bg' },
     { 'Lang_DecimalNumber',           'Lang_Number' },
     { 'Lang_HexNumber',               'magenta:bg' },
@@ -102,23 +101,19 @@ color_palette {
 
     { 'Markup_Default',               'gray:bg' },
     { 'Markup_Punctuation',           'darkCyan:bg' },
-    { 'Markup_String',                'String' },
     { 'Markup_Symbol',                'green:bg' },
     { 'Markup_Tag',                   'cyan:bg' },
-    { 'Markup_Comment',               'Comment' },
     { 'Markup_Special',               'red:bg' },
     { 'Markup_Control',               'magenta:bg' },
     { 'Markup_Quotes',                'yellow:bg' },
     { 'Markup_Math',                  'red:bg' },
 
     # diff/diff3
-    { 'DIFF_Default',                 'Editor_Default' },
     { 'DIFF_Old',                     'brown:bg' },
     { 'DIFF_New',                     'yellow:bg' },
     { 'DIFF_Changed',                 'darkCyan:bg' },
 
     # rcsmerge
-    { 'MERGE_Default',                'Editor_Default' },
     { 'MERGE_Changed',                'white:bg' },
     { 'MERGE_Old',                    'gray:bg' },
     { 'MERGE_New',                    'red:bg' },

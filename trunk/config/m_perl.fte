@@ -5,7 +5,7 @@ colorize PERL {
     SyntaxParser = 'PERL';
     
     color {
-        { 'Normal',      'Lang_Default' },
+        { 'Normal',      'Editor_Default' },
         { 'Comment',     'Lang_Comment' },
         { 'Function',    'Lang_Function' },
         { 'Variable',    'Lang_Variable' },

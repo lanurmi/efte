@@ -2,7 +2,7 @@ colorize MAKE {
     SyntaxParser        = 'SIMPLE';
 
     color {
-        { 'Normal',        'Lang_Default' },
+        { 'Normal',        'Editor_Default' },
         { 'Comment',       'Lang_Comment' },
         { 'Directive',     'Lang_Control' },
         { 'Command',       'Lang_Command' },

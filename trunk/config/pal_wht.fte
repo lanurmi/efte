@@ -112,13 +112,11 @@ color_palette {
     { 'Markup_Math',                  'red:bg' },
 
     # diff/diff3
-    { 'DIFF_Default',                 'Editor_Default' },
     { 'DIFF_Old',                     'gray:bg' },
     { 'DIFF_New',                     'white:bg' },
     { 'DIFF_Changed',                 'darkCyan:bg' },
 
     # rcsmerge
-    { 'MERGE_Default',                'Editor_Default' },
     { 'MERGE_Changed',                'white:bg' },
     { 'MERGE_Old',                    'gray:bg' },
     { 'MERGE_New',                    'red:bg' },

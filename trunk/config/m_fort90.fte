@@ -20,7 +20,7 @@ colorize FORTRAN {
     SyntaxParser = 'SIMPLE';
 
     color {
-        { 'Normal',        'Lang_Default' },
+        { 'Normal',        'Editor_Default' },
         { 'Number',        'Lang_DecimalNumber' },
         { 'HexNumber',     'Lang_HexNumber' },
         { 'Punctuation',   'Lang_Punctuation' },

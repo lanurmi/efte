@@ -2,14 +2,13 @@ colorize TEX {
     SyntaxParser        = 'SIMPLE';
 
     color {
-        { 'Normal',      'Markup_Default' },
+        { 'Normal',      'Editor_Default' },
+        { 'Comment',     'Lang_Comment' },
         { 'Tag',         'Markup_Tag' },
-        { 'Comment',     'Markup_Comment' },
         { 'Special',     'Markup_Special' },
         { 'Symbol',      'Markup_Symbol' },
         { 'Quotes',      'Markup_Quotes' },
         { 'Function',    'Markup_Math' },
-        { 'Keyword',     'Editor_Keywords' },
     };
 
     keyword 'Editor_Keywords' {

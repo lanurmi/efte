@@ -100,7 +100,6 @@ color_palette {
     { 'Lang_Control',                 'cyan:bg' },
     { 'Lang_Assembler',               'darkBlue:bg' }, # embedded assembler (Pascal)
 
-    { 'Markup_Default',               'black:bg' },
     { 'Markup_Punctuation',           'darkCyan:bg' },
     { 'Markup_String',                'String' },
     { 'Markup_Symbol',                'green:bg' },
@@ -112,13 +111,11 @@ color_palette {
     { 'Markup_Math',                  'red:bg' },
 
     # diff/diff3
-    { 'DIFF_Default',                 'Editor_Default' },
     { 'DIFF_Old',                     'darkGray:bg' },
     { 'DIFF_New',                     'white:bg' },
     { 'DIFF_Changed',                 'darkRed:bg' },
 
     # rcsmerge
-    { 'MERGE_Default',                'Editor_Default' },
     { 'MERGE_Changed',                'white:bg' },
     { 'MERGE_Old',                    'darkGray:bg' },
     { 'MERGE_New',                    'red:bg' },

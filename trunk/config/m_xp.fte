@@ -6,17 +6,17 @@ colorize XPE {
     SyntaxParser = 'SIMPLE';
     
     color {
-        { 'Normal',        '-7' },
-        { 'Keyword',       '-F' },
-        { 'Number',        '-C' },
-        { 'HexNumber',     '-D' },
-        { 'OctalNumber',   '-C' },
-        { 'Punctuation',   '-3' },
-        { 'String',        '-E' },
-        { 'Comment',       '-6' },
-        { 'CPreprocessor', '-A' },
-        { 'Function',      '-B' },
-        { 'Label',         '-C' },
+        { 'Normal',        'Editor_Default' },
+        { 'Keyword',       'Editor_Keywords' },
+        { 'Number',        'Lang_Number' },
+        { 'HexNumber',     'Lang_HexNumber' },
+        { 'OctalNumber',   'Lang_OctalNumber' },
+        { 'Punctuation',   'Lang_Punctuation' },
+        { 'String',        'Lang_String' },
+        { 'Comment',       'Lang_Comment' },
+        { 'CPreprocessor', 'Lang_Preprocessor' },
+        { 'Function',      'Lang_Function' },
+        { 'Label',         'Lang_Label' },
     };
 
     h_state 0 { 'Normal' }
