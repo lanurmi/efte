@@ -1,6 +1,3 @@
-# touched this one up a bit.
-#  should be pretty much up to speed with most recent implementations
-#                                      jsvendsen-24-07-2001
 
 colorize PASCAL {
     SyntaxParser       = 'SIMPLE';
@@ -14,6 +11,8 @@ colorize PASCAL {
         { 'Comment',       'Lang_Comment' },
         { 'Command',       'Lang_Assembler' }, # assembler
         { 'CPreprocessor', 'Lang_Preprocessor' },
+        { 'Function',      'Lang_Function' },
+        { 'Keyword',       'Editor_Keywords' },
     };
 
     keyword 'Editor_Keywords' {
@@ -35,13 +34,17 @@ colorize PASCAL {
         'near', 'forward', 'implements', 'index', 'message', 'name',
         'nodefault', 'overload', 'override', 'package', 'pascal', 'read',
         'readonly', 'register', 'reintroduce', 'requires', 'resident',
-        'safecall', 'stdcall', 'stored', 'write', 'writeonly',
+        'safecall', 'stdcall', 'stored', 'write', 'writeonly', 'result',
         
         'integer', 'cardinal', 'shortint', 'smallint', 'longint', 'int64',
         'byte', 'word', 'longword', 'char', 'boolean', 'bytebool',
-        'wordbool', 'longbool', 'true', 'false', 'real48', 'single',
+        'wordbool', 'longbool', 'real48', 'single', 'smallword',
         'double', 'extended', 'comp', 'currency', 'real',
         'shortstring', 'ansistring', 'widestring',
+    };
+
+    keyword 'Lang_DecimalNumber' {
+        'true', 'false',
     };
 
     h_state 0 { 'Normal' }
@@ -50,6 +53,12 @@ colorize PASCAL {
     h_trans { 9, '<', '{&', 'CPreprocessor' }    
     h_trans { 9, '<', '{$', 'CPreprocessor' }
     h_trans { 8, '', 'asm', 'Command' }
+
+    # workaround for bug 854418
+    h_trans { 17, '<-x', /\c{while}|{if}|{until}|{not}|{and}|{or}|{xor}|{div}|{mod}\s*\(/, 'Keyword' }
+
+    h_trans { 16, '<-x', /[_a-zA-Z0-9]+\s*\(/, 'Function' }
+
     h_trans { 5, '-s', 'a-zA-Z_', 'Normal' }
     h_trans { 11, '<', '//', 'Comment' }
     h_trans { 1, '<', '(*', 'Comment' }
@@ -117,6 +126,11 @@ colorize PASCAL {
     h_trans { 0, '-S', '0-9A-Fa-f', 'Normal' }
     h_trans { 0, '$', '', 'Normal' }
 
+    h_state 16 { 'Function' }
+    h_trans { 0, '->', '(', 'Normal' }
+
+    h_state 17 { 'Keyword' }
+    h_trans { 0, '->', '(', 'Normal' }
 }
 
 mode PASCAL: PLAIN {      # Pascal Mode
@@ -134,5 +148,5 @@ mode PASCAL: PLAIN {      # Pascal Mode
     CommentStart        = ' (*';
     CommentEnd          = '*)';
 
-    RoutineRegexp       = '^{procedure}|{function}';
+    RoutineRegexp       = '^{procedure}|{function}>';
 }
