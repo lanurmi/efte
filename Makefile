@@ -7,7 +7,7 @@ CONFIGDIR=$(LIBDIR)/config
 .PHONY: all install
 
 all:	fte
-	(cd src ; make unix)
+	$(MAKE) -C src unix
 
 install: all
 	sh ./install
@@ -22,5 +22,6 @@ dist: fte
 	scripts/mkbuildlvl.pl
 
 clean:
-	rm -f fte
-	(cd src ; make -f fte-unix.mak clean)
+	-rm -f core `find . -name '#*' -o -name 'fte-new.cnf'\
+	       -o -name '.\#*' -o -name '.*~' -o -name '*~' -o -name 'core*'`
+	$(MAKE) -C src -f fte-unix.mak clean
