@@ -905,7 +905,7 @@ static inline int scrollBreak(TEvent &E)
 #endif
 }
 
-void HandleVScroll(GView *view, TEvent &E) {
+static void HandleVScroll(GView *view, TEvent &E) {
     int y; //, x
     int wY, wH;
     TEvent E1;
@@ -992,7 +992,7 @@ void HandleVScroll(GView *view, TEvent &E) {
     E.What = evNone;
 }
 
-void HandleHScroll(GView *view, TEvent &E) {
+static void HandleHScroll(GView *view, TEvent &E) {
     int x; //, x
     int wX, wW;
     TEvent E1;

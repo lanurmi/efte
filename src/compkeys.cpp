@@ -211,7 +211,7 @@ static keymapper speckeymap[]={
         { kbCenter, "Center" },
 };
 
-TKeyCode   ftesl_getkeycode(const char* key)
+static TKeyCode ftesl_getkeycode(const char* key)
 {
         TKeyCode        kcode = 0;
 
@@ -274,7 +274,7 @@ TKeyCode   ftesl_getkeycode(const char* key)
         return 0;
 }
 
-int ftesl_get_ctrlcode(TKeyCode key)
+static int ftesl_get_ctrlcode(TKeyCode key)
 {
         TKeyCode        kcode = keyCode(key);
 
