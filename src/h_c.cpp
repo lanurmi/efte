@@ -358,8 +358,8 @@ int LookAt(EBuffer *B, int Row, unsigned int Pos, const char *What, hsState Stat
     }
     LOG << "Check against [" << What << ']' << ENDLINE;
     if (
-        (CaseInsensitive && memicmp(pLine + Pos, What, Len) == 0) ||
-        (!CaseInsensitive && memcmp(pLine + Pos, What, Len) == 0)
+        (CaseInsensitive && memicmp(pLine + Pos, (char *)What, Len) == 0) ||
+        (!CaseInsensitive && memcmp(pLine + Pos, (char *)What, Len) == 0)
        )
     {
         ENDFUNCRC(1);

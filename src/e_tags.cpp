@@ -82,7 +82,11 @@ static int AddTag(int Tag, int FileName, int TagBase, int Line, int StrFind) { /
     return 0;
 }
 
-int cmptags(const void *p1, const void *p2) { /*FOLD00*/
+#if defined(__IBMCPP__)
+int _LNK_CONV cmptags(const void *p1, const void *p2) {
+#else
+int cmptags(const void *p1, const void *p2) {
+#endif
     return strcmp(TagMem + TagD[*(int *)p1].Tag,
                   TagMem + TagD[*(int *)p2].Tag);
 }

@@ -30,7 +30,7 @@ HEV hevPut;
 HEV hevEnd;
 HMUX hmuxWait;
 
-void clipsrv(void *foo) {
+void _LNK_CONV clipsrv(void *foo) {
     HAB hab;
     HMQ hmq;
     

@@ -26,9 +26,11 @@ int EBuffer::BlockPrint() {
     B = BB;
     E = BE;
     Msg(S_INFO, "Printing to %s...", PrintDevice);
+#if !defined(__IBMCPP__) && !defined(__WATCOMC__)
     if (PrintDevice[0] == '|')
         fp = popen(PrintDevice + 1, "w");
     else
+#endif
         fp = fopen(PrintDevice, "w");
     if (fp == NULL) {
         Msg(S_INFO, "Failed to write to %s", PrintDevice);
@@ -100,16 +102,20 @@ int EBuffer::BlockPrint() {
     }
     if (!error) {
         fwrite("\f\n", 2, 1, fp);
+#if !defined(__IBMCPP__) && !defined(__WATCOMC__)
         if (PrintDevice[0] == '|')
             pclose(fp);
         else
+#endif
             fclose(fp);
         Msg(S_INFO, "Printing %d lines, %d bytes.", lc, bc);
         return 1;
     }
+#if !defined(__IBMCPP__) && !defined(__WATCOMC__)
     if (PrintDevice[0] == '|')
         pclose(fp);
     else
+#endif
         fclose(fp);
     Msg(S_INFO, "Failed to write to %s", PrintDevice);
     return 0;
@@ -125,9 +131,11 @@ int EBuffer::FilePrint() {
     int BChars;
   
     Msg(S_INFO, "Printing %s to %s...", FileName, PrintDevice);
+#if !defined(__IBMCPP__) && !defined(__WATCOMC__)
     if (PrintDevice[0] == '|')
         fp = popen(PrintDevice + 1, "w");
     else
+#endif
         fp = fopen(PrintDevice, "w");
     if (fp == NULL) {
         Msg(S_ERROR, "Error printing %s to %s.", FileName, PrintDevice);
@@ -164,17 +172,21 @@ int EBuffer::FilePrint() {
         if ((int)(fwrite(FileBuffer, 1, BChars, fp)) != BChars) goto fail;
     }
     BChars = 0;
+#if !defined(__IBMCPP__) && !defined(__WATCOMC__)
     if (PrintDevice[0] == '|')
         pclose(fp);
     else
+#endif
         fclose(fp);
     Msg(S_INFO, "Printed %s.", FileName);
     return 1;
 fail:
     if (fp != NULL) {
+#if !defined(__IBMCPP__) && !defined(__WATCOMC__)
         if (PrintDevice[0] == '|')
             pclose(fp);
         else
+#endif
             fclose(fp);
     }
     Msg(S_ERROR, "Error printing %s to %s.", FileName, PrintDevice);

@@ -320,6 +320,10 @@ int main(int argc, char **argv) {
     _CrtSetDbgFlag((_CRTDBG_LEAK_CHECK_DF) | _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG));
 #endif //_DEBUG && MSVC && MSVCDEBUG
 
+#if defined(__DEBUG_ALLOC__)
+    _dump_allocated(64);
+#endif
+
     ENDFUNCRC(0);
     //return 0;
 }

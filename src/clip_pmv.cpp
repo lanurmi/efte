@@ -277,15 +277,15 @@
 #error Prototypes are for 32-bit compiler only
 #endif
 
-HAB    APIENTRY (*p_WinInitialize)(ULONG flOptions);
-BOOL   APIENTRY (*p_WinTerminate)(HAB hab);
-HMQ    APIENTRY (*p_WinCreateMsgQueue)(HAB hab, LONG cmsg);
-BOOL   APIENTRY (*p_WinDestroyMsgQueue)(HMQ hmq);
-BOOL   APIENTRY (*p_WinEmptyClipbrd)(HAB hab);
-BOOL   APIENTRY (*p_WinOpenClipbrd)(HAB hab);
-BOOL   APIENTRY (*p_WinCloseClipbrd)(HAB hab);
-BOOL   APIENTRY (*p_WinSetClipbrdData)(HAB hab, ULONG ulData, ULONG fmt, ULONG rgfFmtInfo);
-ULONG  APIENTRY (*p_WinQueryClipbrdData)(HAB hab, ULONG fmt);
+HAB    (APIENTRY *p_WinInitialize)(ULONG flOptions);
+BOOL   (APIENTRY *p_WinTerminate)(HAB hab);
+HMQ    (APIENTRY *p_WinCreateMsgQueue)(HAB hab, LONG cmsg);
+BOOL   (APIENTRY *p_WinDestroyMsgQueue)(HMQ hmq);
+BOOL   (APIENTRY *p_WinEmptyClipbrd)(HAB hab);
+BOOL   (APIENTRY *p_WinOpenClipbrd)(HAB hab);
+BOOL   (APIENTRY *p_WinCloseClipbrd)(HAB hab);
+BOOL   (APIENTRY *p_WinSetClipbrdData)(HAB hab, ULONG ulData, ULONG fmt, ULONG rgfFmtInfo);
+ULONG  (APIENTRY *p_WinQueryClipbrdData)(HAB hab, ULONG fmt);
 
 static struct impentry {
     ULONG ordinal;
@@ -308,24 +308,27 @@ static struct impentry {
  */
 
 static BOOL loadDLL(void) {
-    static BOOL loaded;
-    static BOOL loaded_ok;
+    static BOOL loaded = FALSE;
+    static BOOL loaded_ok = FALSE;
     static HMODULE pmwin;
 
     char error[200];
 
-    if (loaded)
+    if (loaded == TRUE)
         return loaded_ok;
+
     loaded = TRUE;
 
     if (DosLoadModule((PSZ)error, sizeof(error), (PSZ)"PMWIN.DLL", &pmwin) == 0) {
         struct impentry *imp;
+
         for (imp = imported_functions; imp->ordinal; imp++)
             if (DosQueryProcAddr(pmwin, imp->ordinal, NULL, imp->pointer) != 0)
-                goto byebye;
+                return FALSE;
+
         loaded_ok = TRUE;
     }
-    byebye:
+
     return loaded_ok;
 }
 

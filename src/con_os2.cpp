@@ -794,6 +794,10 @@ GUI::GUI(int &argc, char **argv, int XSize, int YSize) {
 
 GUI::~GUI() {
     RestoreScreen();
+
+    if (SavedScreen)
+        free(SavedScreen);
+
     ::ConDone();
     gui = 0;
 }
@@ -838,7 +842,7 @@ static int CreatePipeChild(PID &pid, HPIPE &hfPipe, char *Command) {
     sprintf(szPipe, "\\PIPE\\FTE%d\\CHILD%d", getpid(), PCount);
     PCount++;
 
-    rc = DosCreateNPipe((PUCHAR)szPipe, &hfPipe,
+    rc = DosCreateNPipe(szPipe, &hfPipe,
                          NP_NOINHERIT | NP_ACCESS_INBOUND,
                          NP_NOWAIT | NP_TYPE_BYTE | NP_READMODE_BYTE | 1,
                          0, 4096, 0);
@@ -857,7 +861,7 @@ static int CreatePipeChild(PID &pid, HPIPE &hfPipe, char *Command) {
         return -1;
     }
 
-    rc = DosOpen ((PUCHAR)szPipe, &hfChildPipe, &ulAction, 0,
+    rc = DosOpen (szPipe, &hfChildPipe, &ulAction, 0,
                   FILE_NORMAL,
                   OPEN_ACTION_OPEN_IF_EXISTS | OPEN_ACTION_FAIL_IF_NEW,
                   OPEN_ACCESS_WRITEONLY | OPEN_SHARE_DENYREADWRITE,
@@ -898,10 +902,10 @@ static int CreatePipeChild(PID &pid, HPIPE &hfPipe, char *Command) {
 
     rc = DosExecPgm(FailBuf, sizeof(FailBuf),
                     EXEC_ASYNCRESULT, // | EXEC_BACKGROUND,
-                    (PUCHAR)Args,
+                    Args,
                     0,
                     &rc_code,
-                    (PUCHAR)Prog);
+                    Prog);
 
     free(Args);
 
@@ -1002,7 +1006,10 @@ int GUI::OpenPipe(char *Command, EModel *notify) {
             Pipes[i].notify = notify;
             Pipes[i].DoTerm = 0;
             if ((Pipes[i].buffer = (char *)malloc(PIPE_BUFLEN)) == 0)
+            {
+                free(Pipes[i].Command);
                 return -1;
+            }
 
             if (0 != DosCreateMutexSem(0, &Pipes[i].Access, 0, 0)) {
                 free(Pipes[i].Command);
