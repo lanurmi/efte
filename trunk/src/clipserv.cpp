@@ -14,6 +14,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <process.h>
+#include "sysdep.h"
 
 #define SEM_PREFIX  "\\SEM32\\PMCLIPS\\"
 #define MEM_PREFIX  "\\SHAREMEM\\PMCLIPS\\"
