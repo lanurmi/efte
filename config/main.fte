@@ -193,6 +193,7 @@ include 'm_sql.fte';
 include 'm_tcl.fte';
 include 'm_tex.fte';
 include 'm_texi.fte';
+include 'm_unrealscript.fte';
 include 'm_xml.fte';
 
 # C indentation style menu
