@@ -483,6 +483,55 @@ static int ConGetMouseEvent(TEvent * Event)
 static TEvent Prev =
 {evNone};
 
+/* read sequence in the form: C, vvvC, vvv;mmmC. */
+static void get_esc_seq(unsigned char *val, unsigned char *mod, char *endch)
+{
+    char buf[4];
+    char ch;
+    unsigned char count = 0;
+
+    *val = 0;
+    *mod = 0;
+    *endch = '\0';
+
+    while(1)
+    {
+        ch = getch();
+        if(ch == ERR)
+        {
+            *endch = '\0';
+            break;
+        }
+        if(ch >= '0' && ch <= '9')
+        {
+            if(count == 3)
+            {
+                //fprintf(stderr, "invalid sequence number\n");
+                break;
+            }
+            buf[count++] = ch;
+        }
+        else
+        {
+            if(count)
+            {
+                buf[count] = '\0';
+                if(*endch)
+                    *mod = atoi(buf);
+                else
+                    *val = atoi(buf);
+                count = 0;
+            }
+            if((ch != ';') || (*endch))
+            {
+                *endch = ch;
+                break;
+            }
+            *endch = ch;
+        }
+    }
+}
+
 static int ConGetEscEvent(TEvent *Event)
 {
     char ch;
@@ -507,23 +556,22 @@ static int ConGetEscEvent(TEvent *Event)
     }
     else if(ch == '[' || ch == 'O')
     {
-        char ch1 = getch();
-        char ch2 = '\0';
-        if(ch1 >= '1' &&  ch1 <= '8')
-        {
-            ch2 = getch();
-            if(ch2 == ERR) ch2 = '\0';
-        }
+        unsigned char val,mod;
+        char endch;
+        get_esc_seq(&val, &mod, &endch);
 
-        if(ch1 == ERR) /* translate to Alt-[ or Alt-O */
+        if(endch == '\0') /* translate to Alt-[ or Alt-O */
         {
             KEvent->Code |= (kfAlt| ch);
         }
-        else if(ch2 == '~' || ch2 == '$')
+        else if(endch == '~' || endch == '$')
         {
-            if(ch2 == '$')
+            if(mod == 2)
                 KEvent->Code |= kfShift;
-            switch(ch1 - '0')
+            if(endch == '$')
+                KEvent->Code |= kfShift;
+
+            switch(val)
             {
             case 1: KEvent->Code |= kbHome; break;
             case 2: KEvent->Code |= kbIns; break;
@@ -538,15 +586,12 @@ static int ConGetEscEvent(TEvent *Event)
         }
         else
         {
-            if(ch2)
+            if(val && ! mod) // 2A, 2B,...
             {
-                int ctAlSh = ch2 - '1';
-                if(ctAlSh & 0x4) KEvent->Code |= kfCtrl;
-                if(ctAlSh & 0x2) KEvent->Code |= kfAlt;
-                if(ctAlSh & 0x1) KEvent->Code |= kfShift;
+                mod = val;
             }
 
-            switch(ch1)
+            switch(endch)
             {
             case 'A':
                 KEvent->Code |= kbUp; break;
@@ -573,6 +618,14 @@ static int ConGetEscEvent(TEvent *Event)
                 Event->What = evNone;
                 break;
             }
+        }
+
+        if(mod)
+        {
+            int ctAlSh = mod - 1;
+            if(ctAlSh & 0x4) KEvent->Code |= kfCtrl;
+            if(ctAlSh & 0x2) KEvent->Code |= kfAlt;
+            if(ctAlSh & 0x1) KEvent->Code |= kfShift;
         }
     }
     else
