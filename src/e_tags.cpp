@@ -414,6 +414,7 @@ int TagFind(EBuffer *B, EView *View, char *Tag) { /*FOLD00*/
             if (PushPos(B) == 0)
                 return 0;
 
+            free(CurrentTag);
             CurrentTag = strdup(Tag);
             if (CurrentTag == 0)
                 return 0;
@@ -439,6 +440,7 @@ int TagFind(EBuffer *B, EView *View, char *Tag) { /*FOLD00*/
             if (GotoTag(M, View) == 0)
                 return 0;
 
+            free(CurrentTag); // in case it already exists.
             CurrentTag = strdup(Tag);
             TagPosition = M;
 
@@ -572,7 +574,7 @@ int TagPop(EView *View) { /*FOLD00*/
 
         if (CurrentTag)
             free(CurrentTag);
-        CurrentTag = T->CurrentTag;
+        CurrentTag = strdup(T->CurrentTag);
         TagPosition = T->TagPos;
 
         if (GotoFilePos(View, T->FileName, T->Line, T->Col) == 0) {
