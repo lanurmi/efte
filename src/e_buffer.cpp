@@ -106,6 +106,7 @@ EBuffer::~EBuffer() {
         free(rlst.Lines);
         rlst.Lines = 0;
     }
+    DeleteRelated();
 #endif
 }
 
