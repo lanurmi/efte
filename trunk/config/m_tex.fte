@@ -257,7 +257,9 @@ mode TEX: PLAIN {
     HilitOn             = 1;
     Colorizer           = 'TEX';
     MultiLineHilit      = 1;
-
+    
+    RoutineRegexp	= /^\s*\\(title)|(section)|(subsection)\s*\{/;
+    
     SaveFolds           = 2;      # save fold info at end of line
     CommentStart        = '%';
     CommentEnd          = '';
