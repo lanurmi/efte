@@ -214,6 +214,7 @@ int FileFind::FindFirst(FileInfo **fi) {
     char *name;
     struct tm t;
     SYSTEMTIME st;
+    FILETIME localft;                   // needed for time conversion
     int rc;
 
     if (dir)
@@ -243,10 +244,16 @@ int FileFind::FindFirst(FileInfo **fi) {
         name = fullpath;
     }
 
-    FileTimeToSystemTime(&find.ftLastWriteTime, &st);
+    /*
+     * since filetime is in UTC format we need to convert it first to
+     * localtime and when we have "correct" time we can use it.
+     */
+
+    FileTimeToLocalFileTime(&find.ftLastWriteTime, &localft);
+    FileTimeToSystemTime(&localft, &st);
 
     t.tm_year = st.wYear - 1900;
-    t.tm_mon = st.wMonth;
+    t.tm_mon = st.wMonth - 1;           // in system time january is 1...
     t.tm_mday = st.wDay;
     t.tm_hour = st.wHour;
     t.tm_min = st.wMinute;
@@ -385,6 +392,7 @@ again:
     char *name;
     struct tm t;
     SYSTEMTIME st;
+    FILETIME localft;                   // needed for time conversion
     int rc;
 
     if ((rc = FindNextFile((HANDLE)dir,
@@ -400,10 +408,16 @@ again:
         name = fullpath;
     }
 
-    FileTimeToSystemTime(&find.ftLastWriteTime, &st);
+    /*
+     * since filetime is in UTC format we need to convert it first to
+     * localtime and when we have "correct" time we can use it.
+     */
+
+    FileTimeToLocalFileTime(&find.ftLastWriteTime, &localft);
+    FileTimeToSystemTime(&localft, &st);
 
     t.tm_year = st.wYear - 1900;
-    t.tm_mon = st.wMonth;
+    t.tm_mon = st.wMonth - 1;           // in system time january is 1...
     t.tm_mday = st.wDay;
     t.tm_hour = st.wHour;
     t.tm_min = st.wMinute;
