@@ -1,0 +1,47 @@
+colorize JAVA {
+    SyntaxParser        = 'C';
+    
+    color {
+        { 'Normal',        'Lang_Default' },
+        { 'Number',        'Lang_DecimalNumber' },
+        { 'HexNumber',     'Lang_HexNumber' },
+        { 'Punctuation',   'Lang_Punctuation' },
+        { 'String',        'Lang_String' },
+        { 'Comment',       'Lang_Comment' },
+        { 'CPreprocessor', 'Lang_Preprocessor' },
+        { 'Function',      'Lang_Function' },
+        { 'Label',         'Lang_Label' },
+    };
+    
+    keyword 'Editor_Keywords' {
+        'abstract',  'default',  'goto',       'null',      'synchronized',
+        'boolean',   'do',       'if',         'package',   'this',
+        'break',     'double',   'implements', 'private',   'threadsafe', 
+        'byte',      'else',     'import',     'protected', 'throw', 
+        'byvalue',   'extends',  'instanceof', 'public',    'transient',
+        'case',      'false',    'int',        'return',    'true',
+        'catch',     'final',    'interface',  'short',     'try',
+        'char',      'finally',  'long',       'static',    'void',
+        'class',     'float',    'native',     'super',     'while',
+        'const',     'for',      'new',        'switch',    'continue', 
+        'throws'
+    };
+}
+
+mode JAVA: PLAIN {      # JAVA Mode
+    FileNameRx          = /\.\c{JAVA}$/;
+    HilitOn             = 1;
+    Colorizer           = 'JAVA';
+    AutoIndent          = 1;
+    IndentMode          = 'C';
+    TabSize             = 8;
+    SpaceTabs           = 1;
+    MatchCase           = 1;
+    Trim                = 1;
+    MultiLineHilit      = 1;
+    AutoHilitParen      = 1;
+    
+    SaveFolds           = 2;      # save fold info at end of line
+    CommentStart        = ' /*';
+    CommentEnd          = '*/';
+}

@@ -1,0 +1,86 @@
+colorize PASCAL {
+    SyntaxParser       = 'SIMPLE';
+
+    color {
+        { 'Normal',      'Lang_Default' },
+        { 'Number',      'Lang_DecimalNumber' },
+        { 'HexNumber',   'Lang_HexNumber' },
+        { 'Punctuation', 'Lang_Punctuation' },
+        { 'String',      'Lang_String' },
+        { 'Comment',     'Lang_Comment' },
+        { 'Command',     'Lang_Assembler' }, # assembler
+    };
+
+    keyword 'Editor_Keywords' {
+        'program', 'const', 'type', 'var', 
+        'begin', 'end', 'array', 'set', 'record', 'string', 
+        'if', 'then', 'else', 'while', 'for', 'to', 'downto', 'do', 'with',
+        'repeat', 'until', 'case', 'of', 'goto', 'exit', 'label',
+        'procedure', 'function', 'nil', 'file', 'and', 'or', 'not', 'xor',
+        'div', 'mod',
+        
+        'unit', 'uses', 'implementation', 'interface', 'external', 
+        'asm', 'inline', 'object', 'constructor', 'destructor',
+        'virtual', 'far', 'assembler', 'near', 'inherited', 
+    };
+
+    h_state 0 { 'Normal' }
+    h_trans { 8, '', 'asm', 'Command' }
+    h_trans { 5, '-s', 'a-zA-Z_', 'Normal' }
+    h_trans { 1, '<', '(*', 'Comment' }
+    h_trans { 2, '<', '{', 'Comment' }
+    h_trans { 3, '<', '"', 'String' }
+    h_trans { 4, '<', '\'', 'String' }
+    h_trans { 6, '<', '0x', 'HexNumber' }
+    h_trans { 7, '<s', '0-9', 'Number' }
+    h_trans { 0, 'S', '_a-zA-Z0-9', 'Punctuation' }
+
+    h_state 1 { 'Comment' }
+    h_trans { 0, '>', '*)', 'Comment' }
+
+    h_state 2 { 'Comment' }
+    h_trans { 0, '>', '}', 'Comment' }
+
+    h_state 3 { 'String' }
+    h_trans { 0, '>', '"', 'String' }
+    h_trans { 0, '$', '', 'String' }
+
+    h_state 4 { 'String' }
+    h_trans { 0, '>', '\'', 'String' }
+    h_trans { 0, '$', '', 'String' }
+
+    h_state 5 { 'Normal' }
+    h_trans { 0, '$', '', 'Normal' }
+    h_wtype { 0, 0, 0, 'i', 'a-zA-Z0-9_' }
+
+    h_state 6 { 'HexNumber' }
+    h_trans { 0, '-S', '0-9A-Fa-f', 'Normal' }
+    h_trans { 0, '$', '', 'Normal' }
+
+    h_state 7 { 'Number' }
+    h_trans { 0, '-S', '0-9', 'Normal' }
+    h_trans { 0, '$', '', 'Normal' }
+
+    h_state 8 { 'Command' }
+    h_trans { 0, '', 'end', 'Command' }
+}
+
+mode PASCAL: PLAIN {      # Pascal Mode
+    FileNameRx          = /\.\cPAS$/;
+    HilitOn             = 1;
+    Colorizer           = 'PASCAL';
+    AutoIndent          = 1;
+    IndentMode          = 'PLAIN';
+    TabSize             = 8;
+    SpaceTabs           = 1;
+    MatchCase           = 1;
+    Trim                = 1;
+    MultiLineHilit      = 1;
+    AutoHilitParen      = 1;
+
+    SaveFolds           = 2;      # save fold info at end of line
+    CommentStart        = ' (*';
+    CommentEnd          = '*)';
+
+    RoutineRegexp       = '^{procedure}|{function}';
+}

@@ -1,0 +1,28 @@
+CHANGES since last release (0.46b5):
+
+- Version numbering changed.
+- Readonly files are not editable when loaded.
+- Author email/homepage changed
+- updated some modes (HTML)
+- new modes (sml, mod3, sl, sql, 4gl, sgml)
+- source code cleanups (warnings, const correct)
+- new commands:
+  - RunProgramAsync
+- new macro expansion variables:
+  - FileDirectory
+  - FileBaseName
+  - FileExtension
+- X11: support for I18N, XMB
+- bug fixes:
+  - crash on bookmark handling (pop/push)
+  - crash when restored position outside valid file
+  - win95 compiler execution should work again
+  - run compiler (sync) in dosx version
+  - linux console version fixes:
+    - crash on cols/rows > 127
+  - crash in SaveAll if non-visible file requires interaction
+- java indentation fix (private/protected methods)
+- Shift+Ins support in input lines
+- X11: support for mouse wheel :)
+- ability to save All files on exit
+- portability fixes

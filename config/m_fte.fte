@@ -1,0 +1,36 @@
+colorize FTE {
+    SyntaxParser        = 'FTE';
+
+    color {
+        { 'Normal',      'Editor_Default' },
+        { 'Number',      'Lang_DecimalNumber' },
+        { 'String',      'Lang_String' },
+        { 'Comment',     'Lang_Comment' },
+        { 'Regexp',      'Lang_Regexp' },
+        { 'Punctuation', 'Lang_Punctuation' },
+        { 'Command',     'Lang_Command' },
+        { 'CPreprocessor', 'Lang_Preprocessor' },
+    };
+
+    keyword 'Editor_Keywords' {
+        'mode', 'object', 'key', 'keyword', 'color', 'menu', 'submenu', 'item',
+        'extern', 'include', 'sub', 'eventmap', 'abbrev', 'colorize',
+        'h_state', 'h_trans', 'h_words', 'h_wtype', 'submenucond',
+        'color_palette',
+    };
+}
+
+mode FTE: PLAIN {
+    FileNameRx          = /\.\cfte$/;
+    HilitOn             = 1;
+    Colorizer           = 'FTE';
+    IndentMode          = 'C';
+    MultiLineHilit      = 1;
+    AutoHilitParen      = 1;
+    
+    SaveFolds           = 2;      # save fold info at end of line
+    CommentStart        = ' #';
+    CommentEnd          = '';
+
+    RoutineRegexp       = /^{mode}|{sub}|{menu}|{object}|{eventmap}|{colorize} /;
+}

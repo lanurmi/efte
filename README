@@ -1,0 +1,43 @@
+
+                           FTE Kit, Version 0.49.13
+
+                     Copyright 1994-1998 by Marko Macek.
+			    All rights reserved.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of either:
+
+	a) the GNU General Public License as published by the Free
+	Software Foundation; either version 2, or (at your option) any
+	later version, or
+
+	b) the "Artistic License" which comes with this Kit.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See either
+    the GNU General Public License or the Artistic License for more details.
+
+    You should have received a copy of the Artistic License with this
+    Kit, in the file named "Artistic".  If not, I'll be glad to provide one.
+
+    You should also have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+-----------------------------------------------------------------------
+
+Email: Marko.Macek@gmx.net or mark@hermes.si
+WWW:   http://www.kiss.uni-lj.si/~k4fr0235/fte/
+
+See file HISTORY for a list of recent changes.
+See file TODO for a list of possible future additions.
+See file FTE.HTML/FTE.INF for installation instructions.
+See file BUGS for a list of unresolved problems.
+
+Contributors:
+  - F.Jalvingh
+    NT/Win95/DOS port.
+  - Markus F.X.J. Oberhumer <markus.oberhumer@jk.uni-linz.ac.at>
+    DOS port (DJGPP)
+

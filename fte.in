@@ -1,0 +1,7 @@
+#!/bin/sh
+
+if [ ! -f $HOME/.fterc ] ; then 
+	@@BINDIR@@/cfte @@CONFIGDIR@@/main.fte $HOME/.fterc || exit 1
+fi
+
+exec @@BINDIR@@/xfte "$@"
