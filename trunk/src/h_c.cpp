@@ -92,12 +92,13 @@ int Hilit_C(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, h
                     State = hsC_Comment;
                     Color = Colors[CLR_Comment];
                     goto hilit2;
-                } else if ((len >= 2) && (*p == '/') && (*(p+1) == '/')) {
+                } else if ((len >= 2) && (*p == '/') && (p[1] == '/')) {
                     State = hsC_CommentL;
                     Color = Colors[CLR_Comment];
                     goto hilit2;
-                } else if (isdigit(*p)) {
-                    if ((len >= 2) && (*p == '0')) {
+		} else if (isdigit(*p)) {
+                    // check if it is not floating point number 0.08!
+                    if ((len >= 2) && (*p == '0') && p[1] != '.') {
                         if (toupper(*(p+1)) == 'X') {
                             Color = Colors[CLR_HexNumber];
                             ColorNext();
