@@ -372,7 +372,10 @@ HWND CreateToolBar(HWND parent,
         return 0;
     td->pItems = (ToolBarItem *)malloc(sizeof(ToolBarItem) * count);
     if (td->pItems == 0)
+    {
+        free(td);
         return 0;
+    }
 
     td->cb = sizeof(ToolBarData);
     td->ulCount = count;
@@ -389,5 +392,7 @@ HWND CreateToolBar(HWND parent,
                            id,
                            td,
                            0);
+
+    free(td);
     return hwnd;
 }
