@@ -31,4 +31,7 @@ int SetDefaultDirectory(EModel *M);
 int GetDefaultDirectory(EModel *M, char *Path, int MaxLen);
 int UnTabStr(char *dest, int maxlen, const char *source, int slen);
 
+// if maxlen wasn't specified, this call is identical to strncpy except it adds NUL after copying characters
+char *safe_strncpy(char *dst, const char *str, int count, int maxlen = -1);
+
 #endif
