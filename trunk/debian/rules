@@ -84,7 +84,7 @@ binary-arch: cleanB checkroot checkscripts build
 	@ln -s ../../../share/man/man1/fte.1.gz debian/$(xwindow)/usr/X11R6/man/man1/xfte.1.gz
 	@ln -s fte.1.gz debian/$(console)/usr/share/man/man1/vfte.1.gz
 	@ln -s fte.1.gz debian/$(terminal)/usr/share/man/man1/sfte.1.gz
-	@cp -a debian/fte-console.lintian debian/$(console)/usr/share/lintian/overrides
+	@cp -a debian/fte-console.lintian debian/$(console)/usr/share/lintian/overrides/fte-console
 
 #	@cp -a debian/cfte.1 debian/$(docs)/usr/share/man/man1
 #	@find doc -type f | grep -v INDEX >debian/$(docs).docs
