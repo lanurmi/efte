@@ -172,8 +172,8 @@ QLIBS    = -lqt
 all:    cfte $(TARGETS)
 #rm -f fte ; ln -s $(PRIMARY) fte
 
-cfte: cfte.o s_files.o
-	$(LD) $(LDFLAGS) cfte.o s_files.o -o cfte
+cfte: cfte.o s_files.o s_string.o
+	$(LD) $(LDFLAGS) cfte.o s_files.o s_string.o -o cfte
 
 c_config.o: defcfg.h
 
