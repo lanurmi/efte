@@ -147,7 +147,7 @@ private:
     char        indentChar;
 public:
     // Enter:
-    FunctionLog(GlobalLog& gl, char* funcName, unsigned long line);
+    FunctionLog(GlobalLog& gl, const char* funcName, unsigned long line);
 
     // Exit:
     ~FunctionLog();
