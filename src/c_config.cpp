@@ -145,8 +145,8 @@ int SetModeString(EMode *mode, int what, const char *string) {
             mode->MatchLine = strdup(string);
             mode->MatchLineRx = RxCompile(string);
         } else {
-            // old mode->Flags.str[] should be freed before new is assigned
-            // but it can't be done with current EMode class behauviour
+            if (mode->Flags.str[j & 0xFF])
+                free(mode->Flags.str[j & 0xFF]);
             mode->Flags.str[j & 0xFF] = strdup(string);
         }
     return 0;
