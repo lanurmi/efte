@@ -144,6 +144,7 @@ TAB(MoveToColumn),
 TAB(BlockPasteStream),
 TAB(BlockPasteLine),
 TAB(BlockPasteColumn),
+TAB(BlockPasteOver),
 TAB(ShowPosition),
 
 TAB(FoldCreate),

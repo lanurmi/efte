@@ -263,6 +263,8 @@ typedef enum {
     /// Paste clipboard to current position as line block.
     ExBlockPasteColumn,
     /// Paste clipboard to current position as column block.
+    ExBlockPasteOver,
+    /// Delete content's of selection and paste clipboard to current position
     ExBlockPrint,
     /// Print a block to configured device.
     ExBlockRead,

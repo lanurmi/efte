@@ -26,7 +26,7 @@ colorize FTE {
         'BlockCutAppend', 'BlockEnd', 'BlockEnTab', 'BlockExtendBegin',
         'BlockExtendEnd', 'BlockIndent', 'BlockKill', 'BlockMarkColumn',
         'BlockMarkFunction', 'BlockMarkLine', 'BlockMarkStream', 'BlockPaste',
-        'BlockPasteColumn', 'BlockPasteLine', 'BlockPasteStream','BlockPrint',
+        'BlockPasteColumn', 'BlockPasteLine', 'BlockPasteStream', 'BlockPasteOver', 'BlockPrint',
         'BlockRead', 'BlockReadColumn', 'BlockReadLine', 'BlockReadStream',
         'BlockReIndent', 'BlockSelectLine', 'BlockSelectPara',
         'BlockSelectWord', 'BlockSort', 'BlockSortReverse', 'BlockTrans',

@@ -521,6 +521,7 @@ int EBuffer::ExecCommand(int Command, ExState &State) {
     case ExBlockPasteStream:      return BlockPasteStream();
     case ExBlockPasteLine:        return BlockPasteLine();
     case ExBlockPasteColumn:      return BlockPasteColumn();
+    case ExBlockPasteOver:        return BlockPasteOver();
     case ExShowPosition:          return ShowPosition();
     case ExFoldCreate:            return FoldCreate(VToR(CP.Row));
     case ExFoldDestroy:           return FoldDestroy(VToR(CP.Row));
