@@ -19,6 +19,14 @@
 #include "c_mode.h"
 #include "c_color.h"
 
+#if defined(_DEBUG) && defined(MSVC) && defined(MSVCDEBUG)
+#include <crtdbg.h>
+
+#define new new( _CLIENT_BLOCK, __FILE__, __LINE__)
+
+#endif //_DEBUG && MSVC && MSVCDEBUG
+
+
 int ShowVScroll = 1;
 int ShowHScroll = 1;
 int ShowMenuBar = 1;
