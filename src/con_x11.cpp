@@ -255,6 +255,33 @@ static int InitXGCs()
     return 0;
 }
 
+#ifdef USE_XMB
+static void try_fontset_load(const char *fs)
+{
+    char *def = NULL;
+    char **miss = NULL;
+    int nMiss = 0;
+
+    if (fontSet)
+	return;
+
+    if (!fs || !*fs)
+	return;
+
+    fontSet = XCreateFontSet(display, fs, &miss, &nMiss,
+			     &def);
+
+    if (fontSet == NULL) {
+	fprintf(stderr, "XFTE Warning: unable to open font \"%s\":\n"
+		" Missing count: %d\n", fs, nMiss);
+	for(int i = 0; i < nMiss; i++)
+	    fprintf(stderr, "  %s\n", miss[i]);
+	if (def != NULL)
+	    fprintf(stderr, " def_ret: %s\n", def);
+    }
+}
+#endif
+
 static int InitXFonts(void)
 {
     char *fs;
@@ -286,45 +313,14 @@ static int InitXFonts(void)
     }
 #ifdef USE_XMB
     else {
-	const char *def = " ";
-        const char *fs1 = "-misc-*-r-normal-*";
-        const char *fs2 = "*fixed*";
-        char **miss;
-        int nMiss;
-
-        // test font fixed font:
-        // fs="*-fixed-bold-*-15-*";
-	if (fs != NULL)
-            fontSet = XCreateFontSet(display, fs, &miss, &nMiss,
-				     (char **) &def);
-
-	// try any fixed localized font */
-	if (fontSet == NULL) {
-	    fprintf(stderr, "XFTE Warning: unable to open font: '%s'\n"
-		    " using '%s' instead\n", fs, fs1);
-	    fontSet = XCreateFontSet(display, fs1, &miss, &nMiss,
-				     (char **) &def);
-	}
-
-        // try plain fixed font
-	if (fontSet == NULL) {
-	    fprintf(stderr, "XFTE Warning: unable to open font: '%s'\n"
-		    " using '%s' instead\n", fs1, fs2);
-	    fontSet = XCreateFontSet(display, fs2, &miss, &nMiss,
-				     (char **) &def);
-	}
-
-        if (fontSet == NULL) {
-	    fprintf(stderr, "XFTE Warning: unable to open \"base\" font: "
-		    "'%s'\n Missing count: %d\n", fs2, nMiss);
-            for(int i = 0; i < nMiss; i++)
-                fprintf(stderr, "  %s\n", miss[i]);
-            if (def != NULL)
-                fprintf(stderr, " def_ret: %s\n", def);
-        }
+	try_fontset_load(getenv("VIOFONT"));
+	try_fontset_load(WindowFont);
+	try_fontset_load("-misc-*-r-normal-*");
+	try_fontset_load("*fixed*");
 
 	if (fontSet == NULL)
-            return -1;
+	    return -1;
+
         XFontSetExtents *xE = XExtentsOfFontSet(fontSet);
 
         FontCX = xE->max_logical_extent.width;
