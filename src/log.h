@@ -2,6 +2,15 @@
 // General Logging... IN A CLASS!  :-)
 //
 
+/********************************************************************
+
+The author, Darin McBride, explicitly places this module under the
+LGPL license.  This module must remain free for use, but will not
+cause software that uses it to be required to be under the GPL or
+any of its derivitives.
+
+********************************************************************/
+
 /**
 
 Class-based, OO-based logging
@@ -187,6 +196,19 @@ DESCRIPTION
     dot.
 **********************************************************************
 FUNCTION
+    FillChar(char, length)
+
+CLASS
+    IO Manipulator
+
+SAMPLE
+    LOG << FillChar('*', 50) << ENDLINE;
+
+DESCRIPTION
+    FillChar is available for pretty-printing.  Use sparingly, if at
+    all.
+**********************************************************************
+FUNCTION
     LOGBINARYDATA(char*, int len)
 
 CLASS
@@ -215,11 +237,32 @@ DESCRIPTION
     inline ostream& operator <<(ostream& os, ostream_func1_##type1 const& ofunc) \
     { return ofunc(os); }
 
+#define DECLARE_OSTREAM_FUNC2(type1,type2) \
+    class ostream_func2_##type1##_##type2 { \
+    private: \
+        ostream& (*osfunc)(ostream&, type1 const&, type2 const&); \
+        type1 const& o1; \
+        type2 const& o2; \
+    public: \
+        ostream_func2_##type1##_##type2(ostream& (*osfunc_)(ostream&, type1 const&, type2 const&), \
+                                        type1 const& o1_, type2 const& o2_) : \
+                                            osfunc(osfunc_), o1(o1_), o2(o2_) {} \
+        ostream& operator()(ostream& os) const { return osfunc(os, o1, o2); } \
+    }; \
+    inline ostream& operator <<(ostream& os, ostream_func2_##type1##_##type2 const& ofunc) \
+    { return ofunc(os); }
+
 DECLARE_OSTREAM_FUNC1(char);
+DECLARE_OSTREAM_FUNC2(char, size_t);
 
 ostream& Log__osBinChar(ostream&, char const&);
 inline ostream_func1_char BinChar(char c)
 { return ostream_func1_char(Log__osBinChar, c); }
+
+ostream& Log__osFillChar(ostream&, char const&, size_t const&);
+inline ostream_func2_char_size_t FillChar(char c, size_t num)
+{ return ostream_func2_char_size_t(Log__osFillChar, c, num); }
+
 
 void Log__BinaryData(FunctionLog&, void* bin_data, size_t len);
 #define LOGBINARYDATA(bin_data,len) Log__BinaryData(LOGOBJNAME,bin_data,len)
