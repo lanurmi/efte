@@ -177,6 +177,10 @@
 #define HAVE_BOOL
 #endif
 
+#if defined __BORLANDC__ && __BORLANDC__ >= 0x0500
+#define HAVE_BOOL
+#endif
+
 #ifndef HAVE_BOOL
 #define bool  int
 #define true  1
