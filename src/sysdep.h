@@ -126,6 +126,7 @@
 #    define filecmp stricmp
 #    define popen _popen
 #    define pclose _pclose
+typedef void (*sighandler_t)(int);
 #endif
 
 #ifndef MAXPATH
