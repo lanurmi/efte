@@ -36,7 +36,6 @@ h_fte.$(OEXT) \
 h_html.$(OEXT) \
 h_ipf.$(OEXT) \
 h_make.$(OEXT) \
-h_merge.$(OEXT) \
 h_pascal.$(OEXT) \
 h_perl.$(OEXT) \
 h_plain.$(OEXT) \
@@ -44,7 +43,6 @@ h_msg.$(OEXT) \
 h_rexx.$(OEXT) \
 h_sh.$(OEXT) \
 h_tex.$(OEXT) \
-h_diff.$(OEXT) \
 h_catbs.$(OEXT) \
 h_simple.$(OEXT) \
 i_complete.$(OEXT) \
