@@ -130,8 +130,8 @@ int EBuffer::LoadFrom(char *AFileName) {
                 e = FileBuffer + len;
                 lf = 0;
             }
-            partLen = e - p; // # of chars in buffer for current line
-            m = (char *)realloc((void *)m, (lm + partLen) | CHAR_TRESHOLD);
+	    partLen = e - p; // # of chars in buffer for current line
+            m = (char *)realloc((void *)m, (lm + partLen) + CHAR_TRESHOLD);
             if (m == NULL)
                 goto fail;
             memcpy((void *)(m + lm), p, partLen);
@@ -157,7 +157,7 @@ int EBuffer::LoadFrom(char *AFileName) {
                 // Grow the line table if required,
                 if (RCount == RAllocated)
                     if (Allocate(RCount ? (RCount * 2) : 1) == 0)
-                        goto fail;
+			goto fail;
                 if ((LL[RCount++] = new ELine((char *)m, lm)) == 0)
                     goto fail;
                 RGap = RCount;
@@ -181,12 +181,20 @@ int EBuffer::LoadFrom(char *AFileName) {
         if (RCount == RAllocated)
             if (Allocate(RCount ? (RCount * 2) : 1) == 0)
                 goto fail;
-        if ((LL[RCount++] = new ELine(m, lm)) == NULL)
-            goto fail;
+        if ((LL[RCount++] = new ELine(m, lm)) == 0)
+	    goto fail;
+        m = NULL;
         RGap = RCount;
     }
 
-    delete m;
+    // Next time when you introduce something like this
+    // check all code paths - as the whole memory management
+    // is broken - you have forget to clear 'm' two line above comment!
+    // kabi@users.sf.net
+    // this bug has caused serious text corruption which is the worst
+    // thing for text editor
+    if (m)
+	free(m);
     m = NULL;
 
     // initialize folding array.
@@ -219,8 +227,8 @@ int EBuffer::LoadFrom(char *AFileName) {
         if (BFS(this, BFS_CommentEnd) == 0) len_end = 0;
         else len_end = strlen(BFS(this, BFS_CommentEnd));
 
-        for (l = RCount - 1; l >= 0; l--) {
-            if (LL[l]->Count >= len_start + len_end + 6) {
+	for (l = RCount - 1; l >= 0; l--) {
+	    if (LL[l]->Count >= len_start + len_end + 6) {
                 open = -1;
                 level = -1;
                 if (BFI(this, BFI_SaveFolds) == 1) {
