@@ -337,6 +337,7 @@ void QEView::sbHmoveLeft() {
     NextEvent.What = evCommand;
     NextEvent.Msg.View = view->View;
     NextEvent.Msg.Command = cmHScrollLeft;
+    NextEvent.Msg.Param1 = 1;
     ActiveEvent(NextEvent);
 }
 
@@ -344,6 +345,7 @@ void QEView::sbHmoveRight() {
     NextEvent.What = evCommand;
     NextEvent.Msg.View = view->View;
     NextEvent.Msg.Command = cmHScrollRight;
+    NextEvent.Msg.Param1 = 1;
     ActiveEvent(NextEvent);
 }
 
@@ -373,6 +375,7 @@ void QEView::sbVmoveUp() {
     NextEvent.What = evCommand;
     NextEvent.Msg.View = view->View;
     NextEvent.Msg.Command = cmVScrollUp;
+    NextEvent.Msg.Param1 = 1;
     ActiveEvent(NextEvent);
 }
 
@@ -380,6 +383,7 @@ void QEView::sbVmoveDown() {
     NextEvent.What = evCommand;
     NextEvent.Msg.View = view->View;
     NextEvent.Msg.Command = cmVScrollDown;
+    NextEvent.Msg.Param1 = 1;
     ActiveEvent(NextEvent);
 }
 

@@ -150,11 +150,11 @@ void EEditPort::HandleEvent(TEvent &Event) {
     case evCommand:
         switch (Event.Msg.Command) {
         case cmVScrollUp:
-            Buffer->ScrollDown(1);
+            Buffer->ScrollDown(Event.Msg.Param1);
             Event.What = evNone;
             break;
         case cmVScrollDown:
-            Buffer->ScrollUp(1);
+            Buffer->ScrollUp(Event.Msg.Param1);
             Event.What = evNone;
             break;
         case cmVScrollPgUp:
@@ -178,11 +178,11 @@ void EEditPort::HandleEvent(TEvent &Event) {
             Event.What = evNone;
             break;
         case cmHScrollLeft:
-            Buffer->ScrollRight(1);
+            Buffer->ScrollRight(Event.Msg.Param1);
             Event.What = evNone;
             break;
         case cmHScrollRight:
-            Buffer->ScrollLeft(1);
+            Buffer->ScrollLeft(Event.Msg.Param1);
             Event.What = evNone;
             break;
         case cmHScrollPgLt:

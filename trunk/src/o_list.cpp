@@ -47,11 +47,11 @@ void EListPort::HandleEvent(TEvent &Event) {
     case evCommand:
         switch (Event.Msg.Command) {
         case cmVScrollUp:
-            List->ScrollDown(1);
+            List->ScrollDown(Event.Msg.Param1);
             Event.What = evNone;
             break;
         case cmVScrollDown:
-            List->ScrollUp(1);
+            List->ScrollUp(Event.Msg.Param1);
             Event.What = evNone;
             break;
         case cmVScrollPgUp:
@@ -73,11 +73,11 @@ void EListPort::HandleEvent(TEvent &Event) {
             Event.What = evNone;
             break;
         case cmHScrollLeft:
-            List->ScrollRight(1);
+            List->ScrollRight(Event.Msg.Param1);
             Event.What = evNone;
             break;
         case cmHScrollRight:
-            List->ScrollLeft(1);
+            List->ScrollLeft(Event.Msg.Param1);
             Event.What = evNone;
             break;
         case cmHScrollPgLt:
