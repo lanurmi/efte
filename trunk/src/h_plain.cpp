@@ -61,12 +61,12 @@ int Hilit_Plain(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine* Lin
         if (Pos < Line->Count) {
             if (Pos + Width < Line->Count) {
                 if (B) 
-                    MoveMem(B, 0, Width, Line->Chars + Pos, Color, Width);
+                    MoveMem(B, 0, Width, Line->Chars + Pos, HILIT_CLRD(), Width);
                 if (StateMap)
                     memset(StateMap, State, Line->Count);
             } else {
                 if (B) 
-                    MoveMem(B, 0, Width, Line->Chars + Pos, Color, Line->Count - Pos);
+                    MoveMem(B, 0, Width, Line->Chars + Pos, HILIT_CLRD(), Line->Count - Pos);
                 if (StateMap)
                     memset(StateMap, State, Line->Count);
             }

@@ -58,7 +58,7 @@ int Hilit_C(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, h
 			   && ISNAME(Line->Chars[i + j]))
 			j++;
                     if (BF->GetHilitWord(j, &Line->Chars[i], Color)) {
-                        //                        Color = hcC_Keyword;
+			//Color = hcC_Keyword;
 			State = hsC_Keyword;
                     } else {
                         int x;

@@ -577,7 +577,7 @@ int EBuffer::GetHilitWord(int len, char *str, ChColor &clr, int IgnCase) {
         memcpy(s, str, len);
         s[len] = 0;
         if (HilitFindWord(s)) {
-            clr = COUNT_CLR + hcPlain_HilitWord;
+	    clr = COUNT_CLR + hcPlain_HilitWord;
             return 1;
         }
     }
@@ -587,7 +587,7 @@ int EBuffer::GetHilitWord(int len, char *str, ChColor &clr, int IgnCase) {
     if (IgnCase) {
         while (p && *p) {
             if (strnicmp(p, str, len) == 0) {
-		clr = COUNT_CLR + p[len];
+		clr = COUNT_CLR + ((unsigned char*)p)[len];
                 return 1;
             }
             p += len + 1;
@@ -595,8 +595,9 @@ int EBuffer::GetHilitWord(int len, char *str, ChColor &clr, int IgnCase) {
     } else {
         while (p && *p) {
             if (memcmp(p, str, len) == 0) {
-                clr = COUNT_CLR + p[len];
-                return 1;
+                clr = COUNT_CLR + ((unsigned char*)p)[len];
+                //printf("PLEN %d  %d\n", p[len], COUNT_CLR);
+		return 1;
             }
             p += len + 1;
         }
