@@ -33,10 +33,10 @@ typedef struct {
 /*
  * prototypes for I18N functions
  */
-void i18n_focus_out(XIC);
-void i18n_focus_in(XIC);
+void i18n_focus_out(i18n_context_t*);
+void i18n_focus_in(i18n_context_t*);
 int i18n_lookup_sym(XKeyEvent *, char *, int, KeySym *, XIC);
 i18n_context_t* i18n_open(Display *, Window, unsigned long *);
-void i18n_destroy(i18n_context_t* ctx);
+void i18n_destroy(i18n_context_t*);
 
 #endif
