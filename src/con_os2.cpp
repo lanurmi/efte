@@ -85,7 +85,7 @@ static void DrawCursor(int Show) {
     if (Show == 1)
         vci.attr = 1;
     else
-        vci.attr = -1;
+        vci.attr = (SHORT)-1;
     VioSetCurType(&vci, 0);
 }
 
@@ -831,14 +831,14 @@ static int CreatePipeChild(PID &pid, HPIPE &hfPipe, char *Command) {
     ULONG ulAction;
     //ULONG ulNew;
     HPIPE hfChildPipe;
-    HFILE hfNewStdOut = -1, hfNewStdErr = -1;
+    HFILE hfNewStdOut = (HFILE)-1, hfNewStdErr = (HFILE)-1;
     HFILE hfStdOut = 1, hfStdErr = 2;
     int rc;
 
     sprintf(szPipe, "\\PIPE\\FTE%d\\CHILD%d", getpid(), PCount);
     PCount++;
 
-    rc = DosCreateNPipe(szPipe, &hfPipe,
+    rc = DosCreateNPipe((PUCHAR)szPipe, &hfPipe,
                          NP_NOINHERIT | NP_ACCESS_INBOUND,
                          NP_NOWAIT | NP_TYPE_BYTE | NP_READMODE_BYTE | 1,
                          0, 4096, 0);
@@ -857,7 +857,7 @@ static int CreatePipeChild(PID &pid, HPIPE &hfPipe, char *Command) {
         return -1;
     }
 
-    rc = DosOpen (szPipe, &hfChildPipe, &ulAction, 0,
+    rc = DosOpen ((PUCHAR)szPipe, &hfChildPipe, &ulAction, 0,
                   FILE_NORMAL,
                   OPEN_ACTION_OPEN_IF_EXISTS | OPEN_ACTION_FAIL_IF_NEW,
                   OPEN_ACCESS_WRITEONLY | OPEN_SHARE_DENYREADWRITE,
@@ -898,10 +898,10 @@ static int CreatePipeChild(PID &pid, HPIPE &hfPipe, char *Command) {
 
     rc = DosExecPgm(FailBuf, sizeof(FailBuf),
                     EXEC_ASYNCRESULT, // | EXEC_BACKGROUND,
-                    Args,
+                    (PUCHAR)Args,
                     0,
                     &rc_code,
-                    Prog);
+                    (PUCHAR)Prog);
 
     free(Args);
 
@@ -1210,7 +1210,7 @@ char ConGetDrawChar(int index) {
     static char tab[] =  "Ú¿ÀÙÄ³ÂÃ´ÁÅ\x1AúÄ±°\x1B\x1A";
     static char tab7[] = "++++-|+++++\x1A.-++#+\x1B\x1A";
 
-    assert(index >= 0 && index < strlen(tab));
+    assert(index >= 0 && index < (int)strlen(tab));
 
     if (SevenBit)
         return tab7[index];

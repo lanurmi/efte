@@ -10,17 +10,17 @@ MT        = -Zmt
 CC        = gcc
 LD        = gcc
 
-XTYPE      = -Zomf
-XLTYPE     = -Zomf -Zsys -Zlinker /map -Zlinker /runfromvdm
-OEXT=obj
-#OEXT=o
+XTYPE      = # -Zomf
+XLTYPE     = #-Zsys -Zlinker /map -Zlinker /runfromvdm # -Zomf
+#OEXT=obj
+OEXT=o
 
 #DEFS       = -DDEBUG_EDITOR -DCHECKHEAP
 #LIBS      = -lmalloc1
 #DEFS      = -DDEBUG_EDITOR -DDBMALLOC -I/src/dbmalloc
 #LIBS      = -L/src/dbmalloc -ldbmalloc
 
-DEFS=-DINCL_32  -DUSE_OS2_TOOLKIT_HEADERS
+DEFS=-DINCL_32  #-DUSE_OS2_TOOLKIT_HEADERS
 
 CCFLAGS   = $(OPTIMIZE) $(MT) $(XTYPE) -x c++ -Wall -DOS2 -DEMX $(DEFS) $(INCDIR) -pipe
 LDFLAGS   = $(OPTIMIZE) $(MT) -Zmap $(XLTYPE) $(LIBDIR)
@@ -60,7 +60,7 @@ c_config.$(OEXT): defcfg.h
 fte.exe: $(OBJS) $(VIOOBJS) fte.def
 	$(LD) $(LDFLAGS) $(OBJS) $(VIOOBJS) fte.def -o fte.exe $(LIBS)
 
-ftepm.res: ftepm.rc pmdlg.rc
+ftepm.res: ftepm.rc pmdlg.rc bmps/*.bmp
 	rc -r -i \emx\include ftepm.rc ftepm.res
 
 ftepm.exe: $(OBJS) $(PMOBJS) ftepm.def ftepm.res
