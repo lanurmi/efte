@@ -12,7 +12,7 @@ colorize MSG {
 }
 
 mode MSG: TEXT {                       # EMail messages
-    FileNameRx          = /\c{\.{MSG}|{YEP}|{SND}}|{^SLRN.\d+}$/;
+    FileNameRx          = /\c{\.{MSG}|{YEP}|{SND}}|{^SLRN.\d+}|{{\.{article}|{letter}}|{snd}\.\d+}$/;
 # try also 1
     WordWrap            = 1;       # automagic wordwrap
     HilitOn             = 1;       # enable highlight
