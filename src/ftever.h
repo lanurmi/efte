@@ -7,5 +7,5 @@
 #define VERSION    "0.49.13"
 #define VERNUM     0x00490402UL
 #define COPYRIGHT  "Copyright (c) 1994-1998 Marko Macek\n" \
-                   "Copyright (c) 2000-2001 Others"
+                   "Copyright (c) 2000-2003 Others"
 #endif
