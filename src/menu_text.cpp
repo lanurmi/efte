@@ -30,7 +30,7 @@ public:
     int x, y, w, h;
 };
 
-int GetHOfsItem(int id, int cur) {
+static int GetHOfsItem(int id, int cur) {
     int pos = 2;
     int i, len;
     
@@ -45,7 +45,7 @@ int GetHOfsItem(int id, int cur) {
     return -1;
 }
 
-int GetHPosItem(int id, int X) {
+static int GetHPosItem(int id, int X) {
     int pos = 1;
     int i, len;
     
@@ -60,7 +60,7 @@ int GetHPosItem(int id, int X) {
     return -1;
 }
 
-int DrawHMenu(int x, int y, int id, int active) {
+static int DrawHMenu(int x, int y, int id, int active) {
     int pos = 1;
     TDrawBuffer B;
     int i, len;
@@ -95,14 +95,14 @@ int DrawHMenu(int x, int y, int id, int active) {
     return 1;
 }
 
-int GetVPosItem(int id, int w, int X, int Y) {
+static int GetVPosItem(int id, int w, int X, int Y) {
     if (Y <= 0 || Y > Menus[id].Count) return -1;
     if (Menus[id].Items[Y - 1].Name == 0) return -1;
     if (X <= 0 || X >= w - 1) return -1;
     return Y - 1;
 }
 
-int GetVSize(int id, int &X, int &Y) {
+static int GetVSize(int id, int &X, int &Y) {
     int xsize = 0;
     int len;
     
@@ -119,7 +119,7 @@ int GetVSize(int id, int &X, int &Y) {
 }
 
 
-int DrawVMenu(int x, int y, int id, int active) {
+static int DrawVMenu(int x, int y, int id, int active) {
     TDrawBuffer B;
     int i, len;
     TAttr color1, color2;
