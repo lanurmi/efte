@@ -862,6 +862,7 @@ static int SkipWhite(EBuffer *B, int Bottom, int &Row, int &Col, int Flags) {
 
 
 static int IndentNormal(EBuffer *B, int Line, int /*StateLen*/, hsState * /*StateMap*/) {
+    STARTFUNC("IndentNormal{h_c.cpp}");
     int I = 0;
     int Pos, L;
 

@@ -103,7 +103,7 @@ char *getProgramName(char *name) {
 
 static int GetConfigFileName(int argc, char **argv, char *ConfigFileName) {
     char CfgName[MAXPATH] = "";
-    
+
     if (ConfigFileName[0] == 0) {
 #if defined(UNIX)
         // ? use ./.fterc if by current user ?
@@ -164,7 +164,23 @@ static int CmdLoadConfiguration(int &argc, char **argv) {
                     Usage();
                     return 0;
                 }
-                QuoteAll = 1;
+                int debug_clean = strcmp(argv[Arg], "--debugclean") == 0;
+                if (debug_clean || strcmp(argv[Arg], "--debug") == 0) {
+                    char path[MAXPATH];
+#ifdef UNIX
+                    ExpandPath("~/.fte", path);
+#else
+                    JustDirectory(argv[0], path);
+#endif
+                    Slash(path,1);
+                    strcat(path, "fte.log");
+                    if (debug_clean) unlink(path);
+
+                    globalLog.SetLogFile(path);
+                    printf("Trace Log in: %s\n", path);
+                }
+                else
+                    QuoteAll = 1;
             } else if (argv[Arg][1] == '!') {
                 ign = 1;
             } else if (argv[Arg][1] == '+') {
@@ -177,8 +193,8 @@ static int CmdLoadConfiguration(int &argc, char **argv) {
                     strcpy(ConfigFileName, argv[Arg] + 2);
                 else
                     ign = 1;
-            } 
-        } 
+            }
+        }
     }
     if (GetConfigFileName(argc, argv, ConfigFileName) == 0) {
         // should we default to internal
@@ -198,7 +214,7 @@ static int CmdLoadConfiguration(int &argc, char **argv) {
     }
     for (Arg = 1; Arg < argc; Arg++) {
         if (!QuoteAll && !QuoteNext && (argv[Arg][0] == '-')) {
-            if (argv[Arg][1] == '-') {
+            if (argv[Arg][1] == '-' && argv[Arg][2] == '\0') {
                 QuoteAll = 1;
             } else if (argv[Arg][1] == '+') {
                 QuoteNext = 1;
@@ -258,10 +274,12 @@ int main(int argc, char **argv) {
     if (CmdLoadConfiguration(argc, argv) == 0)
         return 1;
 
+    STARTFUNC("main");
+
     EGUI *g = new EGUI(argc, argv, ScreenSizeX, ScreenSizeY);
     if (gui == 0 || g == 0)
         DieError(1, "Failed to initialize display\n");
-    
+
     gui->Run();
 
 #if defined(OS2) && !defined(DBMALLOC) && defined(CHECKHEAP)
@@ -275,10 +293,11 @@ int main(int argc, char **argv) {
 #if defined(EMX)
     free(argv[0]);
 #endif
-    
+
 #if defined(OS2) && !defined(DBMALLOC) && defined(CHECKHEAP)
     if (_heapchk() != _HEAPOK)
         DieError(0, "Heap memory is corrupt.");
 #endif
-    return 0;
+    ENDFUNCRC(0);
+    //return 0;
 }
