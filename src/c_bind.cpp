@@ -176,15 +176,16 @@ EKey *SetKey(EEventMap *aMap, const char *aKey) {
     return 0;
 }
 
-void InitWordChars() {
+static void InitWordChars() {
     static int init = 0;
     if (init == 0) {
 	for (int i = 0; i < 256; i++)
             // isalnum???
-	    if (isdigit(i) || (i >= 'A' && i <= 'Z')
+	    if (isdigit(i) || isalpha(i)
+		|| (i >= 'A' && i <= 'Z')
 		|| (i >= 'a' && i <= 'z') || (i == '_')) {
                 WSETBIT(DefaultBufferFlags.WordChars, i, 1);
-                if ((i >= 'A' && i <= 'Z'))
+                if ((i >= 'A' && i <= 'Z') || isupper(i))
                     WSETBIT(DefaultBufferFlags.CapitalChars, i, 1);
             }
         init = 1;

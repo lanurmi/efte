@@ -8,6 +8,9 @@
  */
 #define NEED_LOG_H
 #include "fte.h"
+#ifdef USE_LOCALE
+#include <locale.h>
+#endif
 
 #if defined(UNIX)
 /* default locations for the configuration files */
@@ -287,6 +290,11 @@ int main(int argc, char **argv) {
         seteuid(getuid());
     if (getgid() != effgid)
         setegid(getgid());
+#endif
+
+#ifdef USE_LOCALE
+    // setup locale from environment
+    setlocale(LC_ALL, "");
 #endif
 
     if (CmdLoadConfiguration(argc, argv) == 0)
