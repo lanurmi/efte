@@ -8,6 +8,7 @@
  */
 
 #include "fte.h"
+#include "log.h"
 
 typedef struct _GUICharactersEntry {
     struct _GUICharactersEntry *next;
@@ -215,6 +216,9 @@ int SetModeString(EMode *mode, int what, const char *string) {
 }
 
 int SetGlobalNumber(int what, int number) {
+    STARTFUNC("SetGlobalNumber");
+    LOG << "What: " << what << " Number: " << number << ENDLINE;
+
     switch (what) {
 #ifdef CONFIG_INDENT_C
     case FLAG_C_Indent:          C_Indent = number; break;
@@ -266,12 +270,16 @@ int SetGlobalNumber(int what, int number) {
     case FLAG_IgnoreBufferList:  IgnoreBufferList = number; break;
     case FLAG_ReassignModelIds:  ReassignModelIds = number; break;
     default:
-        return -1;
+        //printf("Unknown global number: %d\n", what);
+        ENDFUNCRC(-1);
     }
-    return 0;
+    ENDFUNCRC(0);
 }
 
 int SetGlobalString(long what, const char *string) {
+    STARTFUNC("SetGlobalString");
+    LOG << "What: " << what << " String: " << string << ENDLINE;
+
     switch (what) {
     case FLAG_DefaultModeName: strcpy(DefaultModeName, string); break;
     case FLAG_CompletionFilter: if ((CompletionFilter = RxCompile(string)) == NULL) return -1; break;
@@ -283,33 +291,38 @@ int SetGlobalString(long what, const char *string) {
     case FLAG_CvsCommand: strcpy(CvsCommand, string); break;
     case FLAG_CvsLogMode: strcpy(CvsLogMode, string); break;
     default:
-        return -1;
+        //printf("Unknown global string: %ld\n", what);
+        ENDFUNCRC(-1);
     }
-    return 0;
+    ENDFUNCRC(0);
 }
 
 int SetEventString(EEventMap *Map, long what, const char *string) {
+    STARTFUNC("SetEventString");
+    LOG << "What: " << what << " String: " << string << ENDLINE;
     switch (what) {
     case EM_MainMenu:
     case EM_LocalMenu:
         Map->SetMenu(what, string);
         break;
     default:
-        return -1;
+        ENDFUNCRC(-1);
     }
-    return 0;
+    ENDFUNCRC(0);
 }
 
 #ifdef CONFIG_SYNTAX_HILIT
 int SetColorizeString(EColorize *Colorize, long what, const char *string) {
+    STARTFUNC("SetColorizeString");
+    LOG << "What: " << what << " String: " << string << ENDLINE;
     switch (what) {
     case COL_SyntaxParser:
         Colorize->SyntaxParser = GetHilitMode(string);
         break;
     default:
-        return -1;
+        ENDFUNCRC(-1);
     }
-    return 0;
+    ENDFUNCRC(0);
 }
 #endif
 
@@ -328,11 +341,17 @@ unsigned char GetObj(CurPos &cp, unsigned short &len) {
 }
 
 const char *GetCharStr(CurPos &cp, unsigned short len) {
+    STARTFUNC("GetCharStr");
+    LOG << "Length: " << len << ENDLINE;
+
     const char *p = cp.c;
     if (cp.c + len > cp.z)
-        return 0;
+    {
+        LOG << "End of config file in GetCharStr" << ENDLINE;
+        ENDFUNCRC(0);
+    }
     cp.c += len;
-    return p;
+    ENDFUNCRC(p);
 }
 
 int GetNum(CurPos &cp, long &num) {
@@ -352,16 +371,19 @@ int GetNum(CurPos &cp, long &num) {
 }
 
 int ReadCommands(CurPos &cp, const char *Name) {
+    STARTFUNC("ReadCommands");
+    LOG << "Name = " << Name << ENDLINE;
+
     unsigned char obj;
     unsigned short len;
     long Cmd = NewCommand(Name);
     long cmdno;
 
-    if (GetObj(cp, len) != CF_INT) return-1;
-    if (GetNum(cp, cmdno) == 0) return -1;
+    if (GetObj(cp, len) != CF_INT) ENDFUNCRC(-1);
+    if (GetNum(cp, cmdno) == 0) ENDFUNCRC(-1);
     if (cmdno != (Cmd | CMD_EXT)) {
         fprintf(stderr, "Bad Command map %s -> %ld != %ld\n", Name, Cmd, cmdno);
-        return -1;
+        ENDFUNCRC(-1);
     }
 
     while ((obj = GetObj(cp, len)) != 0xFF) {
@@ -374,11 +396,11 @@ int ReadCommands(CurPos &cp, const char *Name) {
                 long cmd;
 
                 //                if ((s = GetCharStr(cp, len)) == 0) return -1;
-                if (GetNum(cp, cmd) == 0) return -1;
-                if (GetObj(cp, len) != CF_INT) return -1;
-                if (GetNum(cp, cnt) == 0) return -1;
-                if (GetObj(cp, len) != CF_INT) return -1;
-                if (GetNum(cp, ign) == 0) return -1;
+                if (GetNum(cp, cmd) == 0) ENDFUNCRC(-1);
+                if (GetObj(cp, len) != CF_INT) ENDFUNCRC(-1);
+                if (GetNum(cp, cnt) == 0) ENDFUNCRC(-1);
+                if (GetObj(cp, len) != CF_INT) ENDFUNCRC(-1);
+                if (GetNum(cp, ign) == 0) ENDFUNCRC(-1);
 
                 //                if (cmd != CmdNum(s)) {
                 //                    fprintf(stderr, "Bad Command Id: %s -> %d\n", s, cmd);
@@ -388,7 +410,7 @@ int ReadCommands(CurPos &cp, const char *Name) {
                 if (AddCommand(Cmd, cmd, cnt, ign) == 0) {
                     if (Name == 0 || strcmp(Name, "xx") != 0) {
                         fprintf(stderr, "Bad Command Id: %ld\n", cmd);
-                        return -1;
+                        ENDFUNCRC(-1);
                     }
                 }
             }
@@ -397,36 +419,36 @@ int ReadCommands(CurPos &cp, const char *Name) {
             {
                 const char *s = GetCharStr(cp, len);
 
-                if (s == 0) return -1;
-                if (AddString(Cmd, s) == 0) return -1;
+                if (s == 0) ENDFUNCRC(-1);
+                if (AddString(Cmd, s) == 0) ENDFUNCRC(-1);
             }
             break;
         case CF_INT:
             {
                 long num;
 
-                if (GetNum(cp, num) == 0) return -1;
-                if (AddNumber(Cmd, num) == 0) return -1;
+                if (GetNum(cp, num) == 0) ENDFUNCRC(-1);
+                if (AddNumber(Cmd, num) == 0) ENDFUNCRC(-1);
             }
             break;
         case CF_VARIABLE:
             {
                 long num;
 
-                if (GetNum(cp, num) == 0) return -1;
-                if (AddVariable(Cmd, num) == 0) return -1;
+                if (GetNum(cp, num) == 0) ENDFUNCRC(-1);
+                if (AddVariable(Cmd, num) == 0) ENDFUNCRC(-1);
             }
             break;
         case CF_CONCAT:
-            if (AddConcat(Cmd) == 0) return -1;
+            if (AddConcat(Cmd) == 0) ENDFUNCRC(-1);
             break;
         case CF_END:
-            return Cmd;
+            ENDFUNCRC(Cmd);
         default:
-            return -1;
+            ENDFUNCRC(-1);
         }
     }
-    return -1;
+    ENDFUNCRC(-1);
 }
 
 int ReadMenu(CurPos &cp, const char *MenuName) {
@@ -1121,26 +1143,29 @@ int ReadConfigFile(CurPos &cp) {
 }
 
 int LoadConfig(int /*argc*/, char ** /*argv*/, char *CfgFileName) {
+    STARTFUNC("LoadConfig");
+    LOG << "Config file: " << CfgFileName << ENDLINE;
+
     int fd, rc;
     char *buffer = 0;
     struct stat statbuf;
     CurPos cp;
 
     if ((fd = open(CfgFileName, O_RDONLY | O_BINARY)) == -1)
-        return -1;
+        ENDFUNCRC(-1);
     if (fstat(fd, &statbuf) != 0) {
         close(fd);
-        return -1;
+        ENDFUNCRC(-1);
     }
     buffer = (char *) malloc(statbuf.st_size);
     if (buffer == 0) {
         close(fd);
-        return -1;
+        ENDFUNCRC(-1);
     }
     if (read(fd, buffer, statbuf.st_size) != statbuf.st_size) {
         close(fd);
         free(buffer);
-        return -1;
+        ENDFUNCRC(-1);
     }
     close(fd);
 
@@ -1153,7 +1178,7 @@ int LoadConfig(int /*argc*/, char ** /*argv*/, char *CfgFileName) {
     if (ln != CONFIG_ID) {
         free(buffer);
         DieError(0, "Bad .CNF signature");
-        return -1;
+        ENDFUNCRC(-1);
     }
 
     memcpy(l, buffer + 4, 4);
@@ -1162,7 +1187,7 @@ int LoadConfig(int /*argc*/, char ** /*argv*/, char *CfgFileName) {
     if (ln != VERNUM) {
         free(buffer);
         DieError(0, "Bad .CNF version.");
-        return -1;
+        ENDFUNCRC(-1);
     }
 
     cp.name = CfgFileName;
@@ -1179,7 +1204,7 @@ int LoadConfig(int /*argc*/, char ** /*argv*/, char *CfgFileName) {
     if (rc == -1) {
         DieError(1, "Error %s offset %d\n", CfgFileName, cp.c - cp.a);
     }
-    return rc;
+    ENDFUNCRC(rc);
 }
 
 #include "defcfg.h"
