@@ -114,7 +114,7 @@ static int GetConfigFileName(int /*argc*/, char **argv, char *ConfigFileName) {
     if (ConfigFileName[0] == 0) {
 #if defined(UNIX)
         // ? use ./.fterc if by current user ?
-        ExpandPath("~/.fterc", CfgName);
+        ExpandPath("~/.fterc", CfgName, sizeof(CfgName));
 #elif defined(DOS) || defined(DOSP32)
         strlcpy(CfgName, argv[0], sizeof(CfgName));
 
