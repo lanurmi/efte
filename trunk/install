@@ -34,7 +34,7 @@ else
 fi
 
 # Ensure everything is made.
-make all
+make -e all
 if [ $? -ne 0 ]
 then
 	echo "Not everything could be made - not going to install it."
