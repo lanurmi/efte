@@ -710,14 +710,16 @@ int EView::ConfigRecompile(ExState &/*State*/) {
 
     char command[1024];
 
-    strcpy(command, "cfte ");
+    strcpy(command, "cfte \"");
     strcat(command, ConfigSourcePath);
-    strcat(command, " ");
+    strcat(command, "\" ");
 #ifdef UNIX
     if (ExpandPath("~/.fterc", command + strlen(command)) != 0)
         return 0;
 #else
+    strcat(command, "\"");
     strcat(command, ConfigFileName);
+    strcat(command, "\"");
 #endif
     return Compile(command);
 }
