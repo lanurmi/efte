@@ -1,10 +1,16 @@
-//
-// Logging data:
-//
+/********************************************************************
+
+The author, Darin McBride, explicitly places this module under the
+LGPL license.  This module must remain free for use, but will not
+cause software that uses it to be required to be under the GPL or
+any of its derivitives.
+
+********************************************************************/
 
 #include <time.h>
 #include "log.h"
 #include <iomanip.h>
+#include <ctype.h>
 
 /*********************************************************************
  *
@@ -88,4 +94,50 @@ ostream& FunctionLog::OutputIndent(ostream& os)
     os << indentChar << ' ';
     indentChar = '|'; // reset it to |'s.
     return os;
+}
+
+ostream& Log__osBinChar(ostream& os, char const& c)
+{
+    return os << (isprint(c) ? c : '.') <<
+        " [0x" << hex << (int)c << dec << "]";
+}
+
+#define LINE_LENGTH 8
+void Log__BinaryData(FunctionLog& LOGOBJNAME, void* bin_data, size_t len)
+{
+    for (size_t i = 0; i < len; i += LINE_LENGTH)
+    {
+        ostream& os = LOG;
+        // as characters
+        for (size_t j = i; j < i + LINE_LENGTH; ++j)
+        {
+            if (j < len)
+            {
+                char const c = ((char*)bin_data)[i+j];
+                os << (isprint(c) ? c : '.');
+            }
+            else
+            {
+                os << ' ';
+            }
+        }
+        os << "  [";
+        // as hex values
+        char cOldFill = os.fill('0');
+        for (size_t j = i; j < i + LINE_LENGTH; ++j)
+        {
+            if (j < len)
+            {
+                int const c = ((char*)bin_data)[i+j];
+                if (j != i) os << ',';
+                os << hex << setw(2) << c << dec;
+            }
+            else
+            {
+                os << "   ";
+            }
+        }
+        os.fill(cOldFill);
+        os << ']' << ENDLINE;
+    }
 }
