@@ -1221,7 +1221,7 @@ int GUI::RunProgram(int /*mode*/, char *Command) {
     return rc;
 }
 
-char ConGetDrawChar(int idx) {
+TChar ConGetDrawChar(int idx) {
     static const char *tab=NULL;
 
     if (!tab) {

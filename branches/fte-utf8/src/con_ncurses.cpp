@@ -772,7 +772,7 @@ int ConGetEvent(TEventMask /*EventMask */ ,
     return 1;
 }
 
-char ConGetDrawChar(int idx)
+TChar ConGetDrawChar(int idx)
 {
     //    return 128+idx;
     return idx;

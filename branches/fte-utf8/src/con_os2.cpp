@@ -1213,7 +1213,7 @@ int ConPutEvent(TEvent Event) {
 
 extern int SevenBit;
 
-char ConGetDrawChar(int index) {
+TChar ConGetDrawChar(int index) {
     static char tab[] =  "Ú¿ÀÙÄ³ÂÃ´ÁÅ\x1AúÄ±°\x1B\x1A";
     static char tab7[] = "++++-|+++++\x1A.-++#+\x1B\x1A";
 

@@ -1759,7 +1759,7 @@ int GUI::RunProgram(int mode, char *Command) {
     return system(Cmd);
 }
 
-char ConGetDrawChar(int idx) {
+TChar ConGetDrawChar(int idx) {
     static const char *tab=NULL;
 
     if (!tab) {
