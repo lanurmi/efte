@@ -677,7 +677,7 @@ int ReadColorize(CurPos &cp, EColorize *Colorize, const char *ModeName) {
                     (newTrans.matchFlags & MATCH_NOTSET))
                 {
                     newTrans.matchLen = 1;
-                    newTrans.match = (char *)malloc(256/8)
+                    newTrans.match = (char *)malloc(256/8);
                     assert(newTrans.match != NULL);
                     SetWordChars(newTrans.match, match);
                 } else {

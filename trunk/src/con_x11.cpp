@@ -1013,9 +1013,9 @@ void ConvertClickToEvent(int type, int xx, int yy, int button, int state, TEvent
     if (state & ShiftMask) myState |= kfShift;
     if (state & ControlMask) myState |= kfCtrl;
     if (state & Mod1Mask) myState |= kfAlt;
-    if (state & Mod2Mask) myState |= kfAlt;
-    if (state & Mod3Mask) myState |= kfAlt;
-    if (state & Mod4Mask) myState |= kfAlt;
+//    if (state & Mod2Mask) myState |= kfAlt;
+//    if (state & Mod3Mask) myState |= kfAlt;
+//    if (state & Mod4Mask) myState |= kfAlt;
     Event->Mouse.KeyMask = myState;
 
     if (Event->What == evMouseDown) {
