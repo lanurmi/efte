@@ -10,7 +10,7 @@
 #include "fte.h"
 
 int ParseSearchOption(int replace, char c, unsigned long &opt) {
-    switch (c) {
+    switch (tolower(c)) {
     case 'a': opt |= SEARCH_ALL; break;      // search all occurances
     case 'b': opt |= SEARCH_BLOCK; break;    // search in block only
     case 'c': opt &= ~SEARCH_NEXT; break;    // search from current position
