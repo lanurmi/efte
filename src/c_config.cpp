@@ -372,7 +372,7 @@ int GetNum(CurPos &cp, long &num) {
 
 int ReadCommands(CurPos &cp, const char *Name) {
     STARTFUNC("ReadCommands");
-    LOG << "Name = " << Name << ENDLINE;
+    LOG << "Name = " << (Name != NULL ? Name : "(null)") << ENDLINE;
 
     unsigned char obj;
     unsigned short len;
