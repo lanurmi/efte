@@ -119,6 +119,9 @@ int Hilit_SH(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, 
                 } else if ( len >= 2 && *p == '\\' && p[1] == '"' ) {
                     Color = CLR_String;
                     ColorNext();
+                } else if ( len >= 2 && *p == '\\' && p[1] == '`' ) {
+                    Color = CLR_Command;
+                    ColorNext();
                 } else if (*p == '`') {
                     State = hsSH_BQuote;
                     Color = CLR_Command;
