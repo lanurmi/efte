@@ -298,7 +298,7 @@ static int InitXFonts(void)
 	// try any fixed localized font */
 	if (fontSet == NULL) {
 	    fprintf(stderr, "XFTE Warning: unable to open font: '%s'\n"
-		    " using '\%s' instead\n", fs, fs1);
+		    " using '%s' instead\n", fs, fs1);
 	    fontSet = XCreateFontSet(display, fs1, &miss, &nMiss,
 				     (char **) &def);
 	}
@@ -306,7 +306,7 @@ static int InitXFonts(void)
         // try plain fixed font
 	if (fontSet == NULL) {
 	    fprintf(stderr, "XFTE Warning: unable to open font: '%s'\n"
-		    " using '\%s' instead\n", fs1, fs2);
+		    " using '%s' instead\n", fs1, fs2);
 	    fontSet = XCreateFontSet(display, fs2, &miss, &nMiss,
 				     (char **) &def);
 	}
