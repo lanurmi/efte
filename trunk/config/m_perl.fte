@@ -21,6 +21,7 @@ colorize PERL {
         'q', 'qq', 'qw', 'qx', 'qr', 'm', 's', 'y', 'tr',
         'if', 'sub', 'return', 'while', 'for', 'elsif', 'foreach', 'else',
         'unless', 'eq', 'not', 'and', 'or', 'ne', 'until', 'abs', 'accept',
+        'lt', 'gt', 'le', 'ge', 'cmp',
         'alarm', 'atan2', 'bind', 'binmode', 'bless', 'caller', 'chdir',
         'chmod', 'chomp', 'chop', 'chown', 'chr', 'chroot', 'close',
         'closedir', 'connect', 'cos', 'crypt', 'dbmclose', 'dbmopen',

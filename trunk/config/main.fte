@@ -173,6 +173,7 @@ include 'm_diff.fte';
 include 'm_ebnf.fte';
 include 'm_fort90.fte';
 include 'm_fte.fte';
+include 'm_gawk.fte';
 include 'm_html.fte';
 include 'm_idl.fte';
 include 'm_ipf.fte';
