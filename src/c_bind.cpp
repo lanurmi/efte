@@ -560,13 +560,8 @@ EKey::EKey(char *aKey, EKeyMap *aKeyMap) {
 
 EKey::~EKey()
 {
-    if (fKeyMap)
-    {
-        if (fKeyMap->fKeys == this)
-        {
-            fKeyMap->fKeys = fNext;
-        }
-    }
+    // if there is child keymaps delete them
+    delete fKeyMap;
 }
 
 #ifdef CONFIG_ABBREV
