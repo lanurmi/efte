@@ -96,6 +96,10 @@ static int CursorVisible = 1;
 static unsigned char *ScreenBuffer = NULL;
 static int Refresh = 0;
 
+// res_name can be set with -name switch
+static char res_name[20] = "fte";
+static char res_class[] = "Fte";
+
 static Display *display;
 static Colormap colormap;
 static Atom wm_protocols;
@@ -410,8 +414,6 @@ static int SetupXWindow(int argc, char **argv)
         sizeHints.flags |= USPosition;
 
     XClassHint classHints;
-    static char res_name[] = "fte";
-    static char res_class[] = "Fte";
     classHints.res_name = res_name;
     classHints.res_class = res_class;
     XSetClassHint(display, win, &classHints);
@@ -1496,7 +1498,12 @@ GUI::GUI(int &argc, char **argv, int XSize, int YSize) {
         } else if ((strcmp(argv[c], "-noxmb") == 0)
                    || (strcmp(argv[c], "--noxmb") == 0))
             useXMB = 0;
-        else
+        else if (strcmp(argv[c], "-name") == 0) {
+            if (c + 1 < argc) {
+                strncpy (res_name, argv [++c], sizeof (res_name));
+                res_name[sizeof(res_name)-1] = '\0'; // ensure termination
+	    }
+        } else
             argv[o++] = argv[c];
     }
     argc = o;
