@@ -9,9 +9,9 @@ menu MOpenInMode {
     item "&IPF"        { FileOpenInMode 'IPF' }
     item "&Ada"        { FileOpenInMode 'Ada' }
     item "&REXX"       { FileOpenInMode 'REXX' }
-    item "MAKE"        { FileOpenInMode 'MAKE' }
+    item "MA&KE"        { FileOpenInMode 'MAKE' }
     item "&FTE"        { FileOpenInMode 'FTE' }
-    item "Win Resource" { FileOpenInMode 'RESOURCE' }
+    item "&Win Resource" { FileOpenInMode 'RESOURCE' }
     item "&DIFF"       { FileOpenInMode 'DIFF' }
     item "&MERGE"      { FileOpenInMode 'MERGE' }
     item "&SH"         { FileOpenInMode 'SH' }
@@ -31,10 +31,11 @@ menu MOpenInModeMore {
     item "Fortran 90"		{ FileOpenInMode 'FORTRAN' }
     item "IPF"			{ FileOpenInMode 'IPF' }
     item "A51"			{ FileOpenInMode 'A51' }
+    item "&PHP"			{ FileOpenInMode 'PHP' }
     item "CLARION (.CLW)"	{ FileOpenInMode 'CLARION' }
     item "EBFN"			{ FileOpenInMode 'EBFN' }
     item "SIOD (.cscm)"		{ FileOpenInMode 'SIOD' }
-    item "SLang"		{ FileOpenInMode 'sl' }
+    item "S&Lang"		{ FileOpenInMode 'sl' }
     item "Module 3"		{ FileOpenInMode 'MODULA3' }
     item "Tex Info"		{ FileOpenInMode 'TEXINFO' }
 }
@@ -135,10 +136,11 @@ menu MChangeModeMore {
     item "Fortran 90"		{ ChangeMode 'FORTRAN' }
     item "IPF"			{ ChangeMode 'IPF' }
     item "A51"			{ ChangeMode 'A51' }
+    item "&PHP"			{ FileOpenInMode 'PHP' }
     item "CLARION (.CLW)"	{ ChangeMode 'CLARION' }
     item "EBFN"			{ ChangeMode 'EBFN' }
     item "SIOD (.cscm)"		{ ChangeMode 'SIOD' }
-    item "SLang"		{ ChangeMode 'sl' }
+    item "S&Lang"		{ ChangeMode 'sl' }
     item "Module 3"		{ ChangeMode 'MODULA3' }
     item "Tex Info"		{ ChangeMode 'TEXINFO' }
 }
