@@ -86,4 +86,7 @@ object GLOBAL {
     CompileRx = { 1, 2, 3, /^([\w:._\-\/\\]+)\((\d+)\)\s*:\s*(.*)$/ };
     CompileRx = { 2, 3, 1, /^([^\t]+)\t([^\t]+)\t(\d+)$/ };
     CompileRx = { 2, 3, 1, /^\s*at\s*([^\(]+)\(([^\:]+)\:(\d+)\)$/ };  # PAF@design.ru
+
+# Ant (javac)
+    CompileRx = { 1, 2, 3, /^.*\s([\w:._\-\/\\]+):(\d+):\s(.*)$/ };
 }
