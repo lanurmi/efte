@@ -2097,11 +2097,23 @@ int GUI::ClosePipe(int id) {
 
 int GUI::multiFrame() { return 1; }
 
-int GetXSelection(int *len, char **data) {
+int GetXSelection(int *len, char **data, int clipboard) {
     QClipboard *cb = QApplication::clipboard();
     const char *text;
+    Mode mode;
+    switch (clipboard) {
+    case 0:
+        mode = QClipboard::Clipboard;
+        break;
+    case 1:
+        mode = QClipboard::Selection;
+        break;
+    default:
+        // not supported
+        return -1;
+    }
 
-    text = cb->text();
+    text = cb->text(mode);
     if (text == 0)
         return -1;
 
@@ -2113,13 +2125,26 @@ int GetXSelection(int *len, char **data) {
     return 0;
 }
 
-int SetXSelection(int len, char *data) {
+int SetXSelection(int len, char *data, int clipboard) {
     QClipboard *cb = QApplication::clipboard();
     char *text = (char *)malloc(len + 1);
+    Mode mode;
     if (text == 0)
         return -1;
+    switch (clipboard) {
+    case 0:
+        mode = QClipboard::Clipboard;
+        break;
+    case 1:
+        mode = QClipboard::Selection;
+        break;
+    default:
+        // not supported
+        return -1;
+    }
     memcpy(text, data, len);
     text[len] = 0;
+    cb.setText(text, mode);
     free(text);
     return 0;
 }
