@@ -10,13 +10,13 @@
  */
 
 
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
+#include <X11/keysym.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
-#include <X11/keysym.h>
 
 #include "con_i18n.h"
 
@@ -40,7 +40,7 @@
  * Quite a complex function to convert normal keys
  * to dead-keys and remapped keys
  */
-static int I18NKeyAnalyze(XKeyEvent * keyEvent, KeySym * key, /*fold00*/
+static int i18n_key_analyze(XKeyEvent * keyEvent, KeySym * key, /*FOLD00*/
 			  char *keyName, int nbytes)
 {
     static long prev_state = 0, local_switch = 0,
@@ -165,8 +165,8 @@ static int I18NKeyAnalyze(XKeyEvent * keyEvent, KeySym * key, /*fold00*/
  * but as I only need ISO-8859 encoding support,
  * I don't care about this (for now).
  */
-static int I18NKeyAnalyze(XKeyEvent * /*keyEvent*/, KeySym * key, /*fold00*/
-			  char *keyName, int nbytes)
+static int i18n_key_analyze(XKeyEvent * /*keyEvent*/, KeySym * key, /*FOLD00*/
+			    char *keyName, int nbytes)
 {
     KeySym t = (unsigned char) keyName[0];
 
@@ -204,13 +204,12 @@ static int I18NKeyAnalyze(XKeyEvent * /*keyEvent*/, KeySym * key, /*fold00*/
  * is using Xt Toolkit some things have to be made
  * different
  */
-XIC I18NInit(Display * display, Window win, unsigned long *mask) /*FOLD00*/
+i18n_context_t* i18n_open(Display * display, Window win, unsigned long *mask) /*FOLD00*/
 {
-    XIC xic = (XIC) NULL;
+    i18n_context_t* ctx = (i18n_context_t*) malloc(sizeof(i18n_context_t));
+    memset(ctx, 0, sizeof(i18n_context_t));
+
 #if XlibSpecificationRelease >= 6
-    XIM xim = (XIM) NULL;
-    XIMStyles *xim_styles;
-    XIMStyle input_style = 0;
     char *s, tmp[256];
     int found = False;
 
@@ -230,17 +229,18 @@ XIC I18NInit(Display * display, Window win, unsigned long *mask) /*FOLD00*/
 	fprintf(stderr, "I18N warning: X locale modifiers not supported, "
 		"using default\n");
 
-    xim = XOpenIM(display, NULL, NULL, NULL);
-    if (xim == NULL) {
+    ctx->xim = XOpenIM(display, NULL, NULL, NULL);
+    if (ctx->xim == NULL) {
         // there are languages without Input Methods ????
 	fprintf(stderr, "I18N warning: Input method not specified\n");
+	i18n_destroy(ctx);
 	return NULL;
     }
 
-    if (XGetIMValues(xim, XNQueryInputStyle, &xim_styles, NULL)
-	|| xim_styles == NULL) {
+    if (XGetIMValues(ctx->xim, XNQueryInputStyle, &ctx->xim_styles, NULL)
+	|| ctx->xim_styles == NULL) {
 	fprintf(stderr, "I18N error: Input method doesn't support any style\n");
-	XCloseIM(xim);
+        i18n_destroy(ctx);
 	return NULL;
     }
 
@@ -248,9 +248,9 @@ XIC I18NInit(Display * display, Window win, unsigned long *mask) /*FOLD00*/
      * This is some kind of debugging message to inform user
      * that something is wrong with his system
      */
-    if (s != NULL && (strstr(s, XLocaleOfIM(xim)) == NULL))
+    if (s != NULL && (strstr(s, XLocaleOfIM(ctx->xim)) == NULL))
 	fprintf(stderr, "I18N warning: System locale: \"%s\" differs from "
-		"IM locale: \"%s\"...\n", s, XLocaleOfIM(xim));
+		"IM locale: \"%s\"...\n", s, XLocaleOfIM(ctx->xim));
 
     /*
      * This part is cut&paste from other sources
@@ -280,28 +280,28 @@ XIC I18NInit(Display * display, Window win, unsigned long *mask) /*FOLD00*/
 	*end = '\0';
 
 	if (!strcmp(s, "OverTheSpot"))
-	    input_style = (XIMPreeditPosition | XIMStatusArea);
+	    ctx->input_style = (XIMPreeditPosition | XIMStatusArea);
 	else if (!strcmp(s, "OffTheSpot"))
-	    input_style = (XIMPreeditArea | XIMStatusArea);
+	    ctx->input_style = (XIMPreeditArea | XIMStatusArea);
 	else if (!strcmp(s, "Root"))
-	    input_style = (XIMPreeditNothing | XIMStatusNothing);
+	    ctx->input_style = (XIMPreeditNothing | XIMStatusNothing);
 
-	for (i = 0; (unsigned short) i < xim_styles->count_styles; i++)
-            if (xim_styles->supported_styles[i] & (XIMPreeditNothing | XIMPreeditNone) &&
-                xim_styles->supported_styles[i] & (XIMStatusNothing  | XIMStatusNone)
+	for (i = 0; (unsigned short) i < ctx->xim_styles->count_styles; i++)
+            if (ctx->xim_styles->supported_styles[i] & (XIMPreeditNothing | XIMPreeditNone) &&
+                ctx->xim_styles->supported_styles[i] & (XIMStatusNothing  | XIMStatusNone)
                ) {
                 found = True;
-                input_style = xim_styles->supported_styles[i];
+                ctx->input_style = ctx->xim_styles->supported_styles[i];
 		break;
 	    }
 	s = ns;
     }
-    XFree(xim_styles);
+    XFree(ctx->xim_styles);
 
     if (!found) {
 	fprintf(stderr, "I18N error: Input method doesn't support my "
 		"preedit type\n");
-	XCloseIM(xim);
+        i18n_destroy(ctx);
 	return NULL;
     }
     /* This program only understand the Root preedit_style yet */
@@ -311,23 +311,36 @@ XIC I18NInit(Display * display, Window win, unsigned long *mask) /*FOLD00*/
 	XCloseIM(xim);
 	return NULL;
     }*/
-    xic = XCreateIC(xim, XNInputStyle, input_style,
-		    XNClientWindow, win,
-		    XNFocusWindow, win,
-		    NULL);
-    if (xic == NULL) {
+    ctx->xic = XCreateIC(ctx->xim, XNInputStyle, ctx->input_style,
+			 XNClientWindow, win,
+			 XNFocusWindow, win,
+			 NULL);
+    if (ctx->xic == NULL) {
 	fprintf(stderr, "I18N error: Failed to create input context\n");
-	XCloseIM(xim);
-    } else if (XGetICValues(xic, XNFilterEvents, mask, NULL))
+        i18n_destroy(ctx);
+    } else if (XGetICValues(ctx->xic, XNFilterEvents, mask, NULL))
 	fprintf(stderr, "I18N error: Can't get Event Mask\n");
 #else
     *mask = 0;
 #endif
-    return xic;
+    return ctx;
 }
  /*FOLD00*/
 
-void I18NFocusIn(XIC xic) /*fold00*/
+void i18n_destroy(i18n_context_t* ctx)
+{
+    if (ctx)
+    {
+        if (ctx->xic)
+	    XDestroyIC(ctx->xic);
+	if (ctx->xim)
+	    XCloseIM(ctx->xim);
+        free(ctx);
+    }
+}
+
+
+void i18n_focus_in(XIC xic) /*FOLD00*/
 {
 #if XlibSpecificationRelease >= 6
     if (xic != NULL)
@@ -336,7 +349,7 @@ void I18NFocusIn(XIC xic) /*fold00*/
 }
  /*FOLD00*/
 
-void I18NFocusOut(XIC xic) /*fold00*/
+void i18n_focus_out(XIC xic) /*FOLD00*/
 {
 #if XlibSpecificationRelease >= 6
     if (xic != NULL)
@@ -348,7 +361,7 @@ void I18NFocusOut(XIC xic) /*fold00*/
 /*
  * Lookup correct keysymbol from keymap event
  */
-int I18NLookupString(XKeyEvent * keyEvent, char *keyName, int keySize, /*FOLD00*/
+int i18n_lookup_sym(XKeyEvent * keyEvent, char *keyName, int keySize, /*FOLD00*/
 		     KeySym * key, XIC xic)
 {
     static int showKeys = 0;
@@ -395,6 +408,6 @@ int I18NLookupString(XKeyEvent * keyEvent, char *keyName, int keySize, /*FOLD00*
 	&& (keyEvent->type == KeyPress))
 	showKeys = !showKeys;
 
-    return I18NKeyAnalyze(keyEvent, key, keyName, nbytes);
+    return i18n_key_analyze(keyEvent, key, keyName, nbytes);
 }
  /*FOLD00*/

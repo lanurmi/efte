@@ -21,12 +21,22 @@ struct keyboardRec {
     short next;
 };
 
+typedef struct {
+    XIC xic;
+#if XlibSpecificationRelease >= 6
+    XIM xim;
+    XIMStyles* xim_styles;
+    XIMStyle input_style;
+#endif
+} i18n_context_t;
+
 /*
  * prototypes for I18N functions
  */
-extern void I18NFocusOut(XIC);
-extern void I18NFocusIn(XIC);
-extern int I18NLookupString(XKeyEvent *, char *, int, KeySym *, XIC);
-extern XIC I18NInit(Display *, Window, unsigned long *);
+void i18n_focus_out(XIC);
+void i18n_focus_in(XIC);
+int i18n_lookup_sym(XKeyEvent *, char *, int, KeySym *, XIC);
+i18n_context_t* i18n_open(Display *, Window, unsigned long *);
+void i18n_destroy(i18n_context_t* ctx);
 
 #endif
