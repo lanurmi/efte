@@ -480,7 +480,7 @@ eventmap PLAIN: MODEL { #FOLD02
 #---- The TOOLS menu
 #---- The WINDOW menu
 #---- The HELP menu
-    
+    key     [C+O_C+V]   { ShowMenu 'MCvs' }
 #-------------------------------------------------------------------
     
     key   [A+S-F2]      { FileSave; FileClose }
