@@ -50,7 +50,7 @@ mkdir -p $LIBDIR
 mkdir -p $LOCALCONFIGDIR
 
 # Set up our binaries.
-for file in fte xfte cfte sfte vfte
+for file in fte xfte cfte sfte vfte nfte
 do
     # each binary is either in . or in src (if it exists at all on this platform)
     for dir in . src
