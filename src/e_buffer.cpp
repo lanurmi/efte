@@ -121,6 +121,15 @@ int EBuffer::Clear() {
 #ifdef CONFIG_SYNTAX_HILIT
     EndHilit = -1;
     StartHilit = 0;
+
+    while (WordCount--)
+    {
+        free(WordList[WordCount]);
+    }
+    free(WordList);
+
+    WordCount = 0;
+    WordList = 0;
 #endif
 #ifdef CONFIG_OBJ_ROUTINE
     rlst.Count = 0;
