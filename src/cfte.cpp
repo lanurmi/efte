@@ -1690,7 +1690,8 @@ static int ParseConfigFile(CurPos &cp) {
                         if (Parse(cp) != P_STRING) Fail(cp, "String expected");
                         svalue = GetString(cp);
                         svalue = GetColor(cp, svalue);
-                        assert(DefineColor(sname, svalue) == 1);
+                        if (DefineColor(sname, svalue) != 1)
+                            Fail(cp, "DefineColor failed\n");
                         if (Parse(cp) != P_CLOSEBRACE) Fail(cp, "'}' expected");
                         GetOp(cp, P_CLOSEBRACE);
                         if (Parse(cp) != P_COMMA)
