@@ -127,11 +127,21 @@ void AppendGUICharacters(const char *string) {
     if (s) {
         g = new GUICharactersEntry;
         assert(g != NULL);
-        *s++ = 0;
-        g->name = strdup(string);
+
+        // allocate memory for name
+        g->name = (char *)malloc((s-string) + 1);
         assert(g->name != NULL);
-        g->chars = strdup(s);
+
+        // make sure we have zero at start of string
+        *(g->name) = 0;
+
+        // strncat makes sure that we have zero at the end...
+        strncat(g->name, string, (s-string));
+
+        // copy text after ':' to chars...
+        g->chars = strdup(s+1);
         assert(g->chars != NULL);
+
         g->next = GUICharacters;
         GUICharacters = g;
     }
