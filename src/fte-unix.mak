@@ -135,8 +135,8 @@ MOC      = moc
 LIBDIR   = 
 INCDIR   =
 
-#OPTIMIZE = -g # -O -g
-OPTIMIZE = -O2
+OPTIMIZE = -g # -O -g
+#OPTIMIZE = -O2
 #OPTIMIZE = -O2 -s
 
 CCFLAGS  = $(OPTIMIZE) $(I18NOPTIONS) $(APPOPTIONS) $(COPTIONS) -DUNIX $(UOS) $(INCDIR) $(XINCDIR) $(QINCDIR) $(MINCDIR) $(SINCDIR)
@@ -147,9 +147,11 @@ OEXT     = o
 .SUFFIXES: .cpp .o .moc
 
 include objs.inc
+SRCS = $(OBJS:.o=.cpp)
 
 # Need -lXt below if USE_XTINIT is defined
-XLIBS    = -lX11 $(SOCKETLIB)
+XLIBS    = -lX11 $(SOCKETLIB) 
+#-lmpatrol -lelf
 VLIBS    = -lgpm -lncurses
 # -ltermcap outdated by ncurses
 SLIBS    = -lslang
@@ -206,5 +208,15 @@ g_qt.obj: g_qt.moc
 
 g_qt_dlg.obj: g_qt_dlg.moc
 
+depend: 
+	$(CC) -MM $(CCFLAGS) $(SRCS) 1>.depend
+
 clean:
-	rm -f core *.o $(TARGETS) defcfg.h defcfg.cnf cfte fte vfte compkeys
+	rm -f core *.o .depend $(TARGETS) defcfg.h defcfg.cnf cfte fte vfte compkeys
+
+#
+# include dependency files if they exist
+#
+ifneq ($(wildcard .depend),)
+include .depend
+endif
