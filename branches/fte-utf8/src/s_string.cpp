@@ -119,6 +119,18 @@ TChar *tstrdup(const TChar *src)
     return newstr;
 }
 
+size_t tstrpos(const TChar *src, TChar ch)
+{
+    size_t len = tstrlen(src);
+
+    for (size_t i = 0; i < len; i++)
+    {
+        if (src[i] == ch) return i;
+    }
+
+    return -1;
+}
+
 #if defined(USE_UNICODE_INTERNALS)
 size_t tstrlcpy(TChar *dst, const char *src, size_t size)
 {
@@ -182,6 +194,18 @@ TChar *tstrdup(const char *src)
     }
 
     return newstr;
+}
+
+size_t tstrpos(const char *src, TChar ch)
+{
+    size_t len = tstrlen(src);
+
+    for (size_t i = 0; i < len; i++)
+    {
+        if (src[i] == ch) return i;
+    }
+
+    return -1;
 }
 
 #endif

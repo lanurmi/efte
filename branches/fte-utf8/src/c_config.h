@@ -45,7 +45,7 @@ extern int ReassignModelIds;
 extern int RecheckReadOnly;
 extern char XShellCommand[256];
 
-const char *GetGUICharacters(const char *which, const char *defChars);
+const TChar *GetGUICharacters(const char *which, const TChar *defChars);
 int LoadConfig(int argc, char **argv, char *CfgFileName);
 int GetIndentMode(const char *Str);
 int GetHilitMode(const char *Str);

@@ -375,56 +375,79 @@ int ConClear() {
 }
 
 int ConPutBox(int X, int Y, int W, int H, PCell Cell) {
-    int I;
+    int i, j;
     int MX, MY;
     int MouseHidden = 0;
-    unsigned char *p = (unsigned char *) Cell;
+    unsigned short *p;// = (unsigned char *) Cell;
+
+    p = new unsigned short[W*2];
+
     if (MouseVisible)
         ConQueryMousePos(&MX, &MY);
 
-    for (I = 0; I < H; I++) {
+    for (i = 0; i < H; i++) {
+
+        for (j = 0; j < W; j++)
+        {
+            p[j] = (Cell[j].Ch & 0xFF) | (Cell[j].Attr << 8);
+        }
+
         if (MouseVisible)
-            if (Y + I == MY)
+            if (Y + i == MY)
                 if ((MX >= X) && (MX <= X + W)) {
                     DrawMouse(0);
                     MouseHidden = 1;
                 }
-        VioWrtCellStr((PCH)p, (USHORT)(W << 1), (USHORT)(Y + I), (USHORT)X, 0);
+        VioWrtCellStr((PCH)p, (USHORT)(W << 1), (USHORT)(Y + i), (USHORT)X, 0);
 
         if (MouseHidden) {
             DrawMouse(1);
             MouseHidden = 0;
         }
-        p += W << 1;
+
+        Cell += W;
     }
+
+    delete [] p;
     return 0;
 }
 
 int ConGetBox(int X, int Y, int W, int H, PCell Cell) {
-    int I;
+    int i, j;
     int MX, MY;
     int MouseHidden = 0;
     USHORT WW = (USHORT)(W << 1);
-    unsigned char *p = (unsigned char *) Cell;
+    unsigned short *p;
+
+    p = new unsigned short[W];
 
     if (MouseVisible)
         ConQueryMousePos(&MX, &MY);
 
-    for (I = 0; I < H; I++) {
+    for (i = 0; i < H; i++) {
         if (MouseVisible)
-            if (Y + I == MY)
+            if (Y + i == MY)
                 if (MX >= X && MX < X + W) {
                     DrawMouse(0);
                     MouseHidden = 1;
                 }
-        VioReadCellStr((PCH)p, &WW, (USHORT)(Y + I), (USHORT)X, 0);
+        VioReadCellStr((PCH)p, &WW, (USHORT)(Y + i), (USHORT)X, 0);
+
+        for (j = 0; j < W; j++)
+        {
+            Cell[j].Ch = p[j] & 0xFF;
+            Cell[j].Attr = p[j] >> 8;
+        }
 
         if (MouseHidden) {
             DrawMouse(1);
             MouseHidden = 0;
         }
-        p += W << 1;
+        Cell += W;
     }
+
+    delete [] p;
+
     return 0;
 }
 
@@ -432,17 +455,27 @@ int ConPutLine(int X, int Y, int W, int H, PCell Cell) {
     int I;
     int MX, MY;
     int MouseHidden = 0;
-    unsigned char *p = (unsigned char *) Cell;
+    unsigned short *p;
+
+    p = new unsigned short[W];
+
+    for (j = 0; j < W; j++)
+    {
+        p[j] = (Cell[j].Ch & 0xFF) | (Cell[j].Attr << 8);
+    }
+
     if (MouseVisible)
         ConQueryMousePos(&MX, &MY);
 
     for (I = 0; I < H; I++) {
-    if (MouseVisible)
-        if (Y + I == MY)
-            if (MX >= X && MX < X + W) {
-                DrawMouse(0);
-                MouseHidden = 1;
-            }
+
+        if (MouseVisible)
+            if (Y + I == MY)
+                if (MX >= X && MX < X + W) {
+                    DrawMouse(0);
+                    MouseHidden = 1;
+                }
+
         VioWrtCellStr((PCH)p, (USHORT)(W << 1), (USHORT)(Y + I), (USHORT)X, 0);
 
         if (MouseHidden) {
@@ -450,6 +483,9 @@ int ConPutLine(int X, int Y, int W, int H, PCell Cell) {
             MouseHidden = 0;
         }
     }
+
+    delete [] p;
+
     return 0;
 }
 
@@ -457,7 +493,15 @@ int ConSetBox(int X, int Y, int W, int H, TCell Cell) {
     int I;
     int MX, MY;
     int MouseHidden = 0;
-    unsigned char *p = (unsigned char *) &Cell;
+    unsigned short *p;
+
+    p = new unsigned short[W];
+
+    for (i = 0; i < W; i++)
+    {
+        p[i] = (Cell.Ch & 0xFF) | (Cell.Attr << 8);
+    }
+
     if (MouseVisible)
         ConQueryMousePos(&MX, &MY);
 
@@ -475,13 +519,16 @@ int ConSetBox(int X, int Y, int W, int H, TCell Cell) {
             MouseHidden = 0;
         }
     }
+
+    delete [] p;
+
     return 0;
 }
 
 int ConScroll(int Way, int X, int Y, int W, int H, TAttr Fill, int Count) {
     int MX, MY;
     int MouseHidden = 0;
-    TCell FillCell = (TCell)(Fill << 8);
+    TCell FillCell = {' ', Fill};
 
     if (MousePresent && MouseVisible) {
         ConQueryMousePos(&MX, &MY);
@@ -758,7 +805,7 @@ int ConGetEvent(TEventMask EventMask, TEvent *Event, int WaitTime, int Delete) {
     return -1;
 }
 
-static PCell SavedScreen = 0;
+static PCell SavedScreen = NULL;
 static int SavedX, SavedY, SaveCursorPosX, SaveCursorPosY;
 
 int SaveScreen() {
@@ -1197,8 +1244,8 @@ int ConSetTitle(char *Title, char *STitle) {
 }
 
 int ConGetTitle(char *Title, int MaxLen, char *STitle, int SMaxLen) {
-    strcpy(Title, "FTE");
-    strcpy(STitle, "FTE");
+    strlcpy(Title, "FTE", MaxLen);
+    strlcpy(STitle, "FTE", SMaxLen);
     return 0;
 }
 
@@ -1214,10 +1261,10 @@ int ConPutEvent(TEvent Event) {
 extern int SevenBit;
 
 TChar ConGetDrawChar(int index) {
-    static char tab[] =  "Ú¿ÀÙÄ³ÂÃ´ÁÅ\x1AúÄ±°\x1B\x1A";
-    static char tab7[] = "++++-|+++++\x1A.-++#+\x1B\x1A";
+    static TChar tab[] =  "Ú¿ÀÙÄ³ÂÃ´ÁÅ\x1AúÄ±°\x1B\x1A";
+    static TChar tab7[] = "++++-|+++++\x1A.-++#+\x1B\x1A";
 
-    assert(index >= 0 && index < (int)strlen(tab));
+    assert(index >= 0 && index < (int)tstrlen(tab));
 
     if (SevenBit)
         return tab7[index];

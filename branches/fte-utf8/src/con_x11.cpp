@@ -1760,12 +1760,36 @@ int GUI::RunProgram(int mode, char *Command) {
 }
 
 TChar ConGetDrawChar(int idx) {
-    static const char *tab=NULL;
+    static const TChar *tab=NULL;
+    static const TChar defChars[] = {
+        '\x0D',
+        '\x0C',
+        '\x0E',
+        '\x0B',
+        '\x12',
+        '\x19',
+        '_',
+        '_',
+        '_',
+        '_',
+        '+',
+        '>',
+        '\x1F',
+        '\x01',
+        '\x12',
+        '',
+        '',
+        ' ',
+        '',
+        '',
+        '',
+        0
+    };
 
     if (!tab) {
-        tab=GetGUICharacters ("X11","\x0D\x0C\x0E\x0B\x12\x19____+>\x1F\x01\x12 ");
+        tab=GetGUICharacters ("X11", defChars);
     }
-    assert(idx >= 0 && idx < (int) strlen(tab));
+    assert(idx >= 0 && idx < (int) tstrlen(tab));
 
     return tab[idx];
 }
