@@ -52,4 +52,11 @@
 #include "c_commands.h"
 #include "c_history.h"
 
+#if defined(_DEBUG) && defined(MSVC) && defined(MSVCDEBUG)
+#include <crtdbg.h>
+
+#define new new( _CLIENT_BLOCK, __FILE__, __LINE__)
+
+#endif //_DEBUG && MSVC && MSVCDEBUG
+
 #endif
