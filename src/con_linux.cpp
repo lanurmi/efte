@@ -61,6 +61,7 @@ extern "C" {
 #include "c_config.h"
 #include "console.h"
 #include "gui.h"
+#include "s_string.h"
 
 #define MAX_PIPES 4
 //#define PIPE_BUFLEN 4096

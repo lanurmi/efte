@@ -16,14 +16,14 @@ size_t tstrlcpy(TChar *dst, const TChar *src, size_t size);
 size_t tstrlcat(TChar *dst, const TChar *src, size_t size);
 size_t tstrlen(const TChar *src);
 TChar *tstrdup(const TChar *src);
-size_t tstrpos(const TChar *src, TChar ch);
+int tstrpos(const TChar *src, TChar ch);
 
 #if defined(USE_UNICODE_INTERNALS)
 size_t tstrlcpy(TChar *dst, const char *src, size_t size);
 size_t tstrlcat(TChar *dst, const char *src, size_t size);
 size_t tstrlen(const char *src);
 TChar *tstrdup(const char *src);
-size_t tstrpos(const char *src, TChar ch);
+int tstrpos(const char *src, TChar ch);
 #endif
 
 #endif

@@ -28,6 +28,7 @@ static int use_esc_hack = 0;
 #include "console.h"
 // #include "slangkbd.h"
 #include "gui.h"
+#include "s_string.h"
 
 #define MAX_PIPES 4
 //#define PIPE_BUFLEN 4096
