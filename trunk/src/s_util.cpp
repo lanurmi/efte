@@ -238,22 +238,17 @@ int UnTabStr(char *dest, int maxlen, const char *source, int slen) {
     return pos;
 }
 
-char *safe_strncpy(char *dst, const char *src, int count, int maxlen)
+char *safe_strncpy(char *dst, const char *src, int maxlen)
 {
-    // if maxlen was specificed, clear array with NUL's
-    if (maxlen != -1)
-    {
-        // make sure we are not trying to copy too much data
-        if (count >= (maxlen - 1)) return NULL;
+    // some sanity checks
+    if ((dst == NULL) || (src == NULL)) return dst;
+    if (maxlen <= 0) return dst;
 
-        memset(dst, 0, maxlen);
-    }
+    // make sure we have clean destination buffer
+    memset(dst, 0, maxlen);
 
     // use normal strncpy to copy actual data
-    strncpy(dst, src, count);
-
-    // make sure there is NUL at the end
-    dst[count] = 0;
+    strncpy(dst, src, maxlen - 1);
 
     return dst;
 }
