@@ -88,7 +88,7 @@ public:
     int MoveFileEnd();
     int Activate();
 
-    int UpdateRows(int min, int max);
+    int UpdateRows(int minim, int maxim);
 };
 
 #endif
