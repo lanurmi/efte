@@ -1,0 +1,111 @@
+# need to add all assembler commands
+colorize ASM {
+    SyntaxParser = 'SIMPLE';
+    
+    color {
+        { 'Normal',        'Lang_Default' },
+        { 'Keyword',       'Editor_Keywords' },
+        { 'Number',        'Lang_DecimalNumber' },
+        { 'HexNumber',     'Lang_HexNumber' },
+        { 'Punctuation',   'Lang_Punctuation' },
+        { 'String',        'Lang_String' },
+        { 'Comment',       'Lang_Comment' },
+        { 'CPreprocessor', 'Lang_Preprocessor' },
+        { 'Function',      'Lang_Function' },
+        { 'Label',         'Lang_Label' },
+    };
+
+    keyword 'Editor_Keywords' {
+        'mov', 'push', 'pop', 'popad', 'movzx', 'movsx', 'lea',
+        'shl', 'shr', 'and', 'or', 'xor', 'not',
+        'add', 'adc', 'adb', 'sub', 'sbb', 'neg',
+        'mul', 'div', 'idiv', 'imul',
+        'test', 'cmp',
+        'inc', 'dec',
+        'out', 'outsd', 'outsw', 'outsb',
+        'in', 'insd', 'insw', 'insb', 
+        'int', 'nop', 'repz', 
+        'cld', 'clc', 'stc',
+        'enter', 'leave',
+    };
+
+    keyword 'Editor_Keywords3' {
+        'eax', 'ax', 'ah', 'al',
+        'ebx', 'bx', 'bh', 'bl',
+        'ecx', 'cx', 'ch', 'cl',
+        'edx', 'dx', 'dh', 'dl',
+        'si', 'di', 'esi', 'edi',
+        'cs', 'ss', 'ds', 'es', 'fs', 'gs',
+        'bp', 'ebp', 'sp', 'esp',
+        'ip', 'eip',
+    };
+
+    keyword 'Editor_Keywords2' {
+        'call', 'ret', 'retf', 'retn',
+        'jmp',
+        'je', 'jne',
+        'jz', 'jnz',
+        'jl', 'jle', 'jg', 'jge',
+        'jnge', 'jng', 'jnle', 'jnl',
+        'jb', 'jbe', 'ja', 'jae',
+        'jnae', 'jna', 'jnbe', 'jnb',
+        'jo', 'jns',
+    };
+
+    keyword 'Editor_Keywords4' {
+        'near', 'far', 'short', 'seg', 'offset',
+        'ptr', 'word', 'byte', 'dword', 'dup',
+    };
+    
+    keyword 'Editor_Keywords5' {
+        'assume', 'label', 'group',
+        'if', 'ifdef', 'ifndef', 'endif', 'else',
+        'public', 'extrn',
+        'macro', 'endm',
+        'end',
+        'proc', 'endp', 'equ', 'define',
+        'segment','ends', 'use32', 'use16',
+        'db', 'dw', 'dd',
+
+        'model', 'ideal', 'codeseg', 'dataseg', 'stack', 'include', 'locals',
+    };
+
+    h_state 0 { 'Normal' }
+    h_trans { 5, '-s', 'a-zA-Z_$@', 'Normal' }
+    h_trans { 1, '<', ';', 'Comment' }
+    h_trans { 2, '<', '\'', 'String' }
+    h_trans { 3, '<', '"', 'String' }
+    h_trans { 4, '-s', '0-9', 'Number' }
+    h_trans { 0, 'S', 'a-zA-Z0-9_$@', 'Punctuation' }
+
+    h_state 1 { 'Comment' }
+    h_trans { 0, '$', '', 'Comment' }
+
+    h_state 2 { 'String' }
+    h_trans { 0, '$', '', 'Normal' }
+    h_trans { 0, '', '\'', 'String' }
+
+    h_state 3 { 'String' }
+    h_trans { 0, '$', '', 'Normal' }
+    h_trans { 0, '', '"', 'String' }
+
+    h_state 4 { 'Number' }
+    h_trans { 0, '$', '', 'Normal' }
+    h_trans { 0, 's', 'Hh', 'Number' }
+    h_trans { 0, '-S', '0-9A-Fa-f', 'Number' }
+
+    h_state 5 { 'Normal' }
+    h_trans { 0, '$', '', 'Normal' }
+    h_wtype { 0, 0, 0, 'i', 'a-zA-Z0-9_$@' }
+}
+
+mode ASM: PLAIN {
+    FileNameRx          = /\.\cASM$/;
+    HilitOn             = 1;
+    Colorizer           = 'ASM';
+    AutoHilitParen      = 1;
+    
+    SaveFolds           = 2;      # save fold info at end of line
+    CommentStart        = ' ;';
+    CommentEnd          = '';
+}

@@ -1,0 +1,58 @@
+<HTML>
+<HEAD><TITLE>Configuration Files</TITLE></HEAD>
+<BODY>
+FTE configuration files are version specific, and must be recompiled
+with each new version of the editor.
+
+<P>On startup, editor will attempt to load a configuration file with
+the basename as the executable and extension <TT>.CNF</TT>. The
+configuration file is produced by compiling source files with <I>CFTE</I>.
+
+<P>If the command line option <TT>-!</TT> is used, editor will not
+attempt to load a configuration file and will use default built-in
+settings.
+
+<H1><A NAME="config-compiling">Compiling configuration</A></H1>
+<P>Configuration files are compiled using <I>CFTE</I> program.
+
+<P> <I>cfte</I> should be invoked on <TT>main.fte</TT>, for example:
+<PRE>
+[C:\FTE] cfte config\main.fte
+$ cfte config/main.fte
+</PRE>
+
+<P>This will automatically compile all <TT>*.fte</TT> files included
+from <TT>main.fte</TT> and produce <TT>fte-new.cnf</TT> if there
+are no errors in source files.
+
+<P>When configuration source files are sucessfully compiled, the resulting file <TT>fte-new.cnf</TT> should be copied to
+<TT>fte.cnf</TT> and <TT>ftepm.cnf</TT>, or under Unix to <TT>~/.fterc</TT>
+
+<P>After FTE is properly configured with the above procedure, you can
+select Options/Recompile Configuration from FTE menu bar, and FTE will
+invoke <I>CFTE</I> to recompile the configuration.
+
+<H1><A NAME="config-syntax">Configuration file syntax</A></H1>
+<P> Comments start with character <TT>#</TT> and last until the end
+of line.
+<P> Strings can be specified using any of <TT>' " /</TT> characters.
+
+<P> Single quoted strings perform no substitution. To enter  <TT>'</TT>
+or <TT>\</TT> into a string precede it with a backslash. 
+
+<P> Double quoted strings perform the following substitutions:
+<PRE>
+    \t  ->  ^I, tab character
+    \r  ->  ^M, CR 
+    \n  ->  ^J, LF
+    \e  ->  ^[, escape character
+    \v  ->  ^L, vertical tab
+    \b  ->  ^H, backspace
+    \a  ->  ^G, bell
+</PRE>
+<P> Strings started by <TT>/</TT> character require no escaping (except
+for '/'). Mostly useful for specifying <A HREF="regexp.html">regular
+expressions</A> without double backslashes that are necessary in single
+and double quoted strings. 
+</BODY>
+</HTML>

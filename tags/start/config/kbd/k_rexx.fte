@@ -1,0 +1,8 @@
+# keybindings for REXX mode
+
+eventmap REXX {
+    key      [Tab]      { LineIndent; LineTrim }
+    key      [G-Enter]  { LineIndent; LineNew }
+    key      [:]        { SelfInsert; LineIndent }
+    key      [A+\\]     { BlockReIndent }
+}

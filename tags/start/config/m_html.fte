@@ -1,0 +1,339 @@
+# basic document
+
+sub HTML_Base {
+    InsertString "<HTML><HEAD></HEAD><BODY></BODY></HTML>";
+    LineSplit; 7:MoveLeft;
+    LineSplit; 7:MoveLeft;
+    LineSplit; 6:MoveLeft;
+    LineSplit; 7:MoveLeft;
+    LineSplit; 6:MoveLeft;
+    LineSplit; 2:MoveDown;
+    MoveLineStart; InsertString "<TITLE></TITLE>";
+    LineSplit; 8:MoveLeft;
+}
+
+# headers
+
+sub HTML_H1 {
+    ?MoveBlockStart; InsertString "<H1>";
+    ?MoveBlockEnd; InsertString "</H1>"; 5:MoveLeft; BlockUnmark;
+}
+
+sub HTML_H2 {
+    ?MoveBlockStart; InsertString "<H2>";
+    ?MoveBlockEnd; InsertString "</H2>"; 5:MoveLeft; BlockUnmark;
+}
+
+sub HTML_H3 {
+    ?MoveBlockStart; InsertString "<H3>";
+    ?MoveBlockEnd; InsertString "</H3>"; 5:MoveLeft; BlockUnmark;
+}
+
+sub HTML_H4 {
+    ?MoveBlockStart; InsertString "<H4>";
+    ?MoveBlockEnd; InsertString "</H4>"; 5:MoveLeft; BlockUnmark;
+}
+
+sub HTML_H5 {
+    ?MoveBlockStart; InsertString "<H5>";
+    ?MoveBlockEnd; InsertString "</H5>"; 5:MoveLeft; BlockUnmark;
+}
+
+sub HTML_H6 {
+    ?MoveBlockStart; InsertString "<H6>";
+    ?MoveBlockEnd; InsertString "</H6>"; 5:MoveLeft; BlockUnmark;
+}
+
+# physical styles
+
+sub HTML_B {
+    ?MoveBlockStart; InsertString "<B>";
+    ?MoveBlockEnd; InsertString "</B>"; 4:MoveLeft; BlockUnmark;
+}
+
+sub HTML_I {
+    ?MoveBlockStart; InsertString "<I>";
+    ?MoveBlockEnd; InsertString "</I>"; 4:MoveLeft; BlockUnmark;
+}
+
+sub HTML_TT {
+    ?MoveBlockStart; InsertString "<TT>";
+    ?MoveBlockEnd; InsertString "</TT>"; 5:MoveLeft; BlockUnmark;
+}
+
+# logical styles
+
+sub HTML_DFN {
+    ?MoveBlockStart; InsertString "<DFN>";
+    ?MoveBlockEnd; InsertString "</DFN>"; 6:MoveLeft; BlockUnmark;
+}
+
+sub HTML_EM {
+    ?MoveBlockStart; InsertString "<EM>";
+    ?MoveBlockEnd; InsertString "</EM>"; 5:MoveLeft; BlockUnmark;
+}
+
+sub HTML_CITE {
+    ?MoveBlockStart; InsertString "<CITE>";
+    ?MoveBlockEnd; InsertString "</CITE>"; 7:MoveLeft; BlockUnmark;
+}
+
+sub HTML_CODE {
+    ?MoveBlockStart; InsertString "<CODE>";
+    ?MoveBlockEnd; InsertString "</CODE>"; 7:MoveLeft; BlockUnmark;
+}
+
+sub HTML_KBD {
+    ?MoveBlockStart; InsertString "<KBD>";
+    ?MoveBlockEnd; InsertString "</KBD>"; 6:MoveLeft; BlockUnmark;
+}
+
+sub HTML_SAMP {
+    ?MoveBlockStart; InsertString "<SAMP>";
+    ?MoveBlockEnd; InsertString "</SAMP>"; 7:MoveLeft; BlockUnmark;
+}
+
+sub HTML_STRONG {
+    ?MoveBlockStart; InsertString "<STRONG>";
+    ?MoveBlockEnd; InsertString "</STRONG>"; 9:MoveLeft; BlockUnmark;
+}
+
+sub HTML_VAR {
+    ?MoveBlockStart; InsertString "<VAR>";
+    ?MoveBlockEnd; InsertString "</VAR>"; 6:MoveLeft; BlockUnmark;
+}
+
+# lists
+
+sub HTML_LI   { InsertString "<LI>"; }
+sub HTML_DT   { InsertString "<DT>"; }
+sub HTML_DD   { InsertString "<DD>"; }
+
+sub HTML_UL { 
+    ?MoveBlockStart; InsertString "<UL>";
+    ?MoveBlockEnd; InsertString "</UL>"; 5:MoveLeft; BlockUnmark;
+}
+
+sub HTML_OL { 
+    ?MoveBlockStart; InsertString "<OL>";
+    ?MoveBlockEnd; InsertString "</OL>"; 5:MoveLeft; BlockUnmark;
+}
+
+sub HTML_DL { 
+    ?MoveBlockStart; InsertString "<DL>";
+    ?MoveBlockEnd; InsertString "</DL>"; 5:MoveLeft; BlockUnmark;
+}
+
+sub HTML_BR   { InsertString "<BR>"; }
+sub HTML_HR   { InsertString "<HR>"; }
+sub HTML_P    { InsertString "<P>"; }
+
+sub HTML_PRE {
+    ?MoveBlockStart; InsertString "<PRE>";
+    ?MoveBlockEnd; InsertString "</PRE>"; 6:MoveLeft;
+}
+
+sub HTML_CENTER {
+    ?MoveBlockStart; InsertString "<CENTER>";
+    ?MoveBlockEnd; InsertString "</CENTER>"; 9:MoveLeft;
+}
+
+sub HTML_IMG {
+    InsertString "<IMG SRC=\"\">"; 2:MoveLeft 
+}
+
+# anchors
+
+sub HTML_ANAME {
+    ?MoveBlockStart; InsertString "<A NAME=\"\">"; 2:MoveLeft; SavePos; 2:MoveRight;
+    ?MoveBlockEnd; InsertString "</A>";
+    BlockUnmark; MoveSavedPos;
+}
+
+sub HTML_AHREF {
+    ?MoveBlockStart; InsertString "<A HREF=\"\">"; 2:MoveLeft; SavePos; 2:MoveRight;
+    ?MoveBlockEnd; InsertString "</A>";
+    BlockUnmark; MoveSavedPos;
+}
+
+# tables
+
+sub HTML_TABLE { 
+    ?MoveBlockStart; InsertString "<TABLE>";
+    ?MoveBlockEnd; InsertString "</TABLE>"; 8:MoveLeft; BlockUnmark;
+}
+
+sub HTML_CAPTION { 
+    ?MoveBlockStart; InsertString "<CAPTION>";
+    ?MoveBlockEnd; InsertString "</CAPTION>"; 11:MoveLeft; BlockUnmark;
+}
+
+sub HTML_TH { 
+    ?MoveBlockStart; InsertString "<TH>";
+    ?MoveBlockEnd; InsertString "</TH>"; 5:MoveLeft; BlockUnmark;
+}
+
+sub HTML_TR { 
+    ?MoveBlockStart; InsertString "<TR>";
+    ?MoveBlockEnd; InsertString "</TR>"; 5:MoveLeft; BlockUnmark;
+}
+
+sub HTML_TD { 
+    ?MoveBlockStart; InsertString "<TD>";
+    ?MoveBlockEnd; InsertString "</TD>"; 5:MoveLeft; BlockUnmark;
+}
+
+sub HTML_NOFRAMES {
+    ?MoveBlockStart; InsertString "<NOFRAMES>";
+    ?MoveBlockEnd; InsertString "</NOFRAMES>"; 11:MoveLeft; BlockUnmark;
+}
+
+sub HTML_FRAMESET {
+    ?MoveBlockStart; InsertString "<FRAMESET>";
+    ?MoveBlockEnd; InsertString "</FRAMESET>"; 11:MoveLeft; BlockUnmark;
+}
+
+colorize HTML {
+    SyntaxParser = 'SIMPLE';
+    
+    color {
+        { 'Normal',     'Editor_Default' },
+        { 'Command',    'Markup_Punctuation' },
+        { 'String',     'Markup_String' },
+        { 'Symbol',     'Markup_Symbol' },
+        { 'Tag',        'Markup_Tag' },
+        { 'Comment',    'Markup_Comment' },
+        { 'Special',    'Markup_Special' },
+    };
+
+    keyword "Editor_Keywords" { # should be HTML 3.2 complete
+        # HEAD section
+        "HEAD",
+        "TITLE", "ISINDEX", "META", "LINK", "BASE", "SCRIPT", "STYLE",
+        # BODY section
+        "BODY",
+        # headings
+        "H1", "H2", "H3", "H4", "H5", "H6",
+        # lists
+        "UL", "OL", "DIR", "MENU", "LI", "DL", "DT", "DD",
+        # text containers
+        "P", "PRE", "BLOCKQUOTE", "ADDRESS",
+        # others
+        "DIV", "CENTER", "HR", "FORM", "TABLE", "LEFT", "RIGHT", "TOP",
+        # logical markup
+        "EM", "STRONG", "DFN", "CODE", "SAMP", "KBD", "VAR", "CITE",
+        # physical markup
+        "TT", "I", "B", "U", "STRIKE", "BIG", "SMALL", "SUB", "SUP",
+        # special markup
+        "A", "BASEFONT", "IMG", "APPLET", "PARAM", "FONT", "BR", "MAP", "AREA",
+        # forms
+        "INPUT", "SELECT", "OPTION", "TEXTAREA", "ONCLICK",
+        # tables
+        "CAPTION", "TR", "TH", "TD",
+        # oops, almost forgot this one ;-)
+        "HTML",
+        #
+        "DOCTYPE", "PUBLIC", "FRAME", "FRAMESET", "NOFRAMES",
+    };
+    keyword "Editor_Keywords2" {
+        "ACTION",
+        "ALIGN",
+        "ALINK",
+        "BACKGROUND",
+        "BGCOLOR",
+        "COLOR",
+        "COMPACT",
+        "CONTENT",
+        "ENCTYPE",
+        "FACE",
+        "HEIGHT",
+        "HREF", #"TITLE",
+        "HTTP-EQUIV",
+        "LINK",
+        "METHOD",
+        "NAME",
+        "PROMPT",
+        "REL",
+        "REV",
+        "START",
+        "TEXT",
+        "TYPE",
+        "VALUE",
+        "VLINK",
+        "WIDTH",
+        "ADD_DATE",
+        "ALT",
+        "BORDER",
+        "CELLPADDING",
+        "CELLSPACING",
+        "CHECKED",
+        "CLEAR",
+        "CODE",
+        "CODEBASE",
+        "COLS",
+        "COLSPAN",
+        "COORDS",
+        "FOLDED",
+        "HSPACE",
+        "ISMAP",
+        "LAST_MODIFIED",
+        "LAST_VISIT",
+        "MAXLENGTH",
+        "MULTIPLE",
+        "NORESIZE",
+        "NOSHADE",
+        "NOWRAP",
+        "ROWS",
+        "ROWSPAN",
+        "SELECTED",
+        "SHAPE",
+        "SIZE",
+        "SRC",
+        "TARGET",
+        "USEMAP",
+        "VALIGN",
+        "VSPACE",
+    };
+
+    h_state 0 { 'Normal' }
+    h_trans { 5, '<', '<!--', 'Comment' }
+    h_trans { 1, '<', '<', 'Command' }
+    h_trans { 2, '<', '&', 'Symbol' }
+
+    h_state 1 { 'Command' }
+    h_trans { 0, '>', '>', 'Command' }
+    h_trans { 3, '<', '\'', 'String' }
+    h_trans { 4, '<', '"', 'String' }
+    h_wtype { -1, -1, -1, 'i', 'a-zA-Z0-9_\-' }
+
+    h_state 2 { 'Symbol' }
+    h_trans { 0, '>', ';', 'Symbol' }
+    h_trans { 0, '-S', '#a-zA-Z0-9', 'Symbol' }
+
+    h_state 3 { 'String' }
+    h_trans { 1, '>', '\'', 'String' }
+
+    h_state 4 { 'String' }
+    h_trans { 1, '>', '"', 'String' }
+
+    h_state 5 { 'Comment' }
+    h_trans { 6, '>', '--', 'Comment' }
+
+    h_state 6 { 'Special' }
+    h_trans { 5, '>', '--', 'Comment' }
+    h_trans { 0, '>', '>', 'Comment' }
+}
+
+mode HTML: PLAIN {
+    FileNameRx          = /\.\c{S?HTML?}$/;
+    HilitOn             = 1;
+    Colorizer           = "HTML";
+    MultiLineHilit      = 1;
+    AutoHilitParen      = 1;
+
+    RoutineRegexp       = /\<[Hh]\d\>/;
+
+    SaveFolds           = 2;      # save fold info at end of line
+    CommentStart        = " <!--";
+    CommentEnd          = "-->";
+}

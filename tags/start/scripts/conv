@@ -1,0 +1,5 @@
+cd ..
+cd doc
+
+perl ../scripts/mkcmds.pl ../src/c_commands.h >command.html
+perl ../scripts/mkcontents.pl >contents.html

@@ -1,0 +1,51 @@
+.TH CFTE 1 
+.SH NAME
+cfte \- Compiles fte config files
+.SH SYNOPSIS
+.BI cfte " sourcefile [destfile]"
+.SH "DESCRIPTION"
+This manual page documents briefly the
+.BR "cfte".
+
+This manual page was written for the Debian GNU/Linux distribution
+(but may be used by others), because the original program does not
+have a manual page. Instead, it has documentation in html format; see below.
+.PP
+.B cfte
+compiles the 
+.I .fterc
+binary for
+.BR "fte"(1)
+from human readable sources. Example of these source files can be found at 
+\fB/usr/share/doc/\fP\fIfte/config-example.tar.gz\fP.
+.SH EXAMPLES
+.TP
+.BI cfte " /usr/share/doc/fte/config/main.fte"
+compiles the example config tree to
+.IR fte-new.cnf
+.TP
+.BI cfte " main.fte ~/.fterc"
+compiles the main.fte (in current directory) to
+.IR ~/.fterc
+.SH FILES
+.TP
+.IR ~/.fterc
+Default Configuration file. Includes All keybinding and menus
+compiled with
+.B cfte
+from config files in \fB/usr/share/doc/\fP\fIfte/config/main.fte\fP.
+There is a sample \fI.fterc\fP in \fB/etc/\fP\fIfte/system.fterc\fP.
+.TP
+.I *.fte
+Configuration sources. The syntax of these files is explained 
+in \fB/usr/share/doc/\fP\fIfte/contents.html\fP.
+.SH "SEE ALSO"
+.BR xfte (1),
+.BR vfte (1),
+.BR sfte (1),
+.BI /usr/share/doc/ fte/contents.html
+.SH AUTHORS
+This manual page was written by Riku Voipio and Zdenek Kabelac
+<riku.voipio@iki.fi> <kabi@debian.org> for the Debian GNU/Linux system.
+.SH DATE
+28 Sep 1999

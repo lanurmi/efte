@@ -1,0 +1,22 @@
+
+# color palette (black background)
+
+# different colors prefered by kabi
+
+# some values must be predefined here - 
+# as only the first setting is used
+
+color_palette {
+    # map system colors to symbolic
+    
+    { 'black',			'0 0' },
+    { 'gray',			'7 7' },
+    { 'green',			'A A' },
+    { 'cyan',			'B B' },
+
+    { "bg",			'gray:black' }, # background
+
+    { 'Lang_Punctuation',	'cyan:bg' },
+    { 'Lang_Preprocessor',	'cyan:bg' },
+    { 'Lang_Function',		'green:bg' },
+}
