@@ -327,7 +327,9 @@ int Hilit_PERL(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
                     goto hilit;
                 } else if (X_NOT(State) &&
                            *p == '-' &&
-                           len >= 2) {
+                           len >= 2 &&
+                           isalpha(p[1])
+                          ) {
                     Color = Colors[CLR_Normal]; // default.
                     if (strchr("wrxoRWXOezsfdlpSbctugkTB", p[1]) != NULL) {
                         Color = Colors[CLR_Punctuation]; // new default.
