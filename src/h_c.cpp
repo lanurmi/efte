@@ -341,20 +341,17 @@ int IsState(hsState *Buf, hsState State, int Len) {
 
 int LookAt(EBuffer *B, int Row, unsigned int Pos, const char *What, hsState State, int NoWord) {
     STARTFUNC("LookAt{h_c.cpp}");
-    char *pLine;
-    unsigned int uLineLength;
-    //int StateLen;
-    //hsState *StateMap;
+
     int Len = strlen(What);
 
     if (Row < 0 || Row >= B->RCount) {
         LOG << "Row out of range: " << Row << " vs " << B->RCount << ENDLINE;
         ENDFUNCRC(0);
     }
-    pLine       = B->RLine(Row)->Chars;
-    uLineLength = B->RLine(Row)->Count;
+    char*        pLine       = B->RLine(Row)->Chars;
+    unsigned int uLineLength = B->RLine(Row)->Count;
     Pos = B->CharOffset(B->RLine(Row), Pos);
-    if (Pos + strlen(What) > uLineLength) return 0;
+    if (Pos + strlen(What) > uLineLength) { ENDFUNCRC(0); }
     if (NoWord && uLineLength > Pos + Len && isalnum(pLine[Pos + Len]))
     {
         ENDFUNCRC(0);
@@ -536,6 +533,8 @@ static int SearchBackMatch(int Count, EBuffer *B, int Row, hsState State, const 
 }
 
 static int FindPrevIndent(EBuffer *B, int &RowP, int &ColP, char &CharP, int Flags) {
+    STARTFUNC("FindPrevIndent{h_c.cpp}");
+    LOG << "Flags: " << hex << Flags << dec << ENDLINE;
     int StateLen;
     hsState *StateMap = 0;
     char *P;
@@ -566,10 +565,17 @@ static int FindPrevIndent(EBuffer *B, int &RowP, int &ColP, char &CharP, int Fla
         L = B->RLine(RowP)->Count;
         StateMap = NULL;
         if (B->GetMap(RowP, &StateLen, &StateMap) == 0)
-            return 0;
+        {
+            LOG << "Can't get state maps" << ENDLINE;
+            ENDFUNCRC(0);
+        }
         if (L > 0) while (ColP >= 0) {
-
-	    if (StateMap[ColP] == hsC_Normal) {
+            LOG << "ColP: " << ColP << " State: " << (int)StateMap[ColP] << ENDLINE;
+            if (StateMap[ColP] == hsC_Normal) {
+                LOG << "CharP: " << BinChar(P[ColP]) << " BolChar: " << BinChar(BolChar) <<
+                    " BolRow: " << BolRow <<
+                    " BolCol: " << BolCol <<
+                    ENDLINE;
                 switch (CharP = P[ColP]) {
                 case '{':
                     if (BolChar == ':' || BolChar == ',') {
@@ -577,11 +583,11 @@ static int FindPrevIndent(EBuffer *B, int &RowP, int &ColP, char &CharP, int Fla
                         ColP = BolCol;
                         RowP = BolRow;
                         free(StateMap);
-                        return 1;
+                        ENDFUNCRC(1);
                     }
 		    if (TEST_ZERO) {
                         free(StateMap);
-                        return 1;
+                        ENDFUNCRC(1);
                     }
                     Count[0]--;
                     break;
@@ -591,22 +597,27 @@ static int FindPrevIndent(EBuffer *B, int &RowP, int &ColP, char &CharP, int Fla
                         ColP = BolCol;
                         RowP = BolRow;
                         free(StateMap);
-                        return 1;
+                        ENDFUNCRC(1);
+                    }
+                    if (BolChar == ';') {
+                        CharP = BolChar;
+                        ColP = BolCol;
+                        RowP = BolRow;
                     }
                     if (ColP == 0) { /* speed optimization */
                         free(StateMap);
-                        return 1;
+                        ENDFUNCRC(1);
                     }
 		    if (TEST_ZERO && (Flags & FIND_ENDBLOCK)) {
                         free(StateMap);
-                        return 1;
+                        ENDFUNCRC(1);
                     }
                     Count[0]++;
                     break;
                 case '(':
 		    if (TEST_ZERO) {
                         free(StateMap);
-                        return 1;
+                        ENDFUNCRC(1);
                     }
                     Count[1]--;
                     break;
@@ -616,7 +627,7 @@ static int FindPrevIndent(EBuffer *B, int &RowP, int &ColP, char &CharP, int Fla
                 case '[':
                     if (TEST_ZERO) {
                         free(StateMap);
-                        return 1;
+                        ENDFUNCRC(1);
                     }
                     Count[2]--;
                     break;
@@ -655,7 +666,7 @@ static int FindPrevIndent(EBuffer *B, int &RowP, int &ColP, char &CharP, int Fla
                         ColP = BolCol;
                         RowP = BolRow;
                         free(StateMap);
-                        return 1;
+                        ENDFUNCRC(1);
                     }
                     break;
                 case '?':
@@ -680,7 +691,7 @@ static int FindPrevIndent(EBuffer *B, int &RowP, int &ColP, char &CharP, int Fla
                         if (TEST_ZERO) {
                             CharP = 'i';
                             free(StateMap);
-                            return 1;
+                            ENDFUNCRC(1);
                         }
                     }
                 }
@@ -693,7 +704,7 @@ static int FindPrevIndent(EBuffer *B, int &RowP, int &ColP, char &CharP, int Fla
 			if (TEST_ZERO) {
                             CharP = 'e';
                             free(StateMap);
-                            return 1;
+                            ENDFUNCRC(1);
                         }
                     }
                     Count[3]++;
@@ -707,7 +718,7 @@ static int FindPrevIndent(EBuffer *B, int &RowP, int &ColP, char &CharP, int Fla
                     {
                         CharP = 'f';
                         free(StateMap);
-                        return 1;
+                        ENDFUNCRC(1);
                     }
                     if ((Flags & FIND_WHILE) &&
                         L - ColP >= 5 &&
@@ -716,7 +727,7 @@ static int FindPrevIndent(EBuffer *B, int &RowP, int &ColP, char &CharP, int Fla
                     {
                         CharP = 'w';
                         free(StateMap);
-                        return 1;
+                        ENDFUNCRC(1);
                     }
                     if ((Flags & FIND_SWITCH) &&
                         L - ColP >= 6 &&
@@ -725,7 +736,7 @@ static int FindPrevIndent(EBuffer *B, int &RowP, int &ColP, char &CharP, int Fla
                     {
                         CharP = 's';
                         free(StateMap);
-                        return 1;
+                        ENDFUNCRC(1);
                     }
                     if (((Flags & FIND_CASE) || (BolChar == ':')) &&
                         (L - ColP >= 4 &&
@@ -742,7 +753,7 @@ static int FindPrevIndent(EBuffer *B, int &RowP, int &ColP, char &CharP, int Fla
                             RowP = BolRow;
                         }
                         free(StateMap);
-                        return 1;
+                        ENDFUNCRC(1);
                     }
                     if (((Flags & FIND_CLASS) || (BolChar == ':')) &&
                         (L - ColP >= 5 &&
@@ -756,7 +767,7 @@ static int FindPrevIndent(EBuffer *B, int &RowP, int &ColP, char &CharP, int Fla
                             RowP = BolRow;
                         }
                         free(StateMap);
-                        return 1;
+                        ENDFUNCRC(1);
                     }
                     if (((Flags & FIND_CLASS) || (BolChar == ':')) &&
                         ((L - ColP >= 6 &&
@@ -776,7 +787,7 @@ static int FindPrevIndent(EBuffer *B, int &RowP, int &ColP, char &CharP, int Fla
                             RowP = BolRow;
                         }
                         free(StateMap);
-                        return 1;
+                        ENDFUNCRC(1);
                     }
                 }
             }
@@ -786,7 +797,7 @@ static int FindPrevIndent(EBuffer *B, int &RowP, int &ColP, char &CharP, int Fla
         if (BolChar != ' ' && BolChar != ':' && BolChar != ',') {
             CharP = BolChar;
             ColP = BolCol;
-            return 1;
+            ENDFUNCRC(1);
         }
         RowP--;
         if (RowP >= 0) {
@@ -794,7 +805,8 @@ static int FindPrevIndent(EBuffer *B, int &RowP, int &ColP, char &CharP, int Fla
             ColP = L - 1;
         }
     }
-    return 0;
+#undef TEST_ZERO
+    ENDFUNCRC(0);
 }
 
 #define SKIP_FORWARD  0
@@ -921,7 +933,7 @@ static int IndentNormal(EBuffer *B, int Line, int /*StateLen*/, hsState * /*Stat
             return 0;
 
         PrevColP++;
-        PRINTF(("\nPrevRowP=%d, PrevColP=%d\n", PrevRowP, PrevColP));
+        LOG << "PrevRowP=" << PrevRowP << ", PrevColP=" << PrevColP << ENDLINE;
 
         if (FindPrevIndent(B, RowP, ColP, CharP,
                            FIND_IF |
@@ -950,7 +962,8 @@ static int IndentNormal(EBuffer *B, int Line, int /*StateLen*/, hsState * /*Stat
         FirstColP = ColP;
         // FirstCharP = CharP;
 
-        PRINTF(("\nFirstRowP=%d, FirstColP=%d, CharP=%c\n", FirstRowP, FirstColP, CharP));
+        LOG << "FirstRowP=" << FirstRowP << ", FirstColP=" << FirstColP <<
+            ", CharP=" << BinChar(CharP) << ENDLINE;
 
         switch (CharP) {
         case 'c':
@@ -1016,6 +1029,7 @@ static int IndentNormal(EBuffer *B, int Line, int /*StateLen*/, hsState * /*Stat
             }
             PRINTF(("';' Line=%d, RowP=%d, ColP=%d, CharP=%c\n", Line, RowP, ColP, CharP));
 
+            LOG << "  CharP now: " << BinChar(CharP) << ENDLINE;
             switch (CharP) {
             case ',':
             case ';':

@@ -70,10 +70,10 @@ ostream& GlobalLog::operator()()
     return m_ofsLog;
 }
 
-FunctionLog::FunctionLog(GlobalLog& gl, char* funcName)
+FunctionLog::FunctionLog(GlobalLog& gl, char* funcName, unsigned long line)
     : log(gl), func(funcName), myIndentLevel(++log.indent), indentChar('+')
 {
-    OutputLine() << "Entered function" << ENDLINE;
+    OutputLine(line) << "Entered function" << ENDLINE;
 }
 
 FunctionLog::~FunctionLog()
@@ -116,11 +116,11 @@ ostream& Log__osFillChar(ostream& os, char const& c, size_t const& len)
 }
 
 #define LINE_LENGTH 8
-void Log__BinaryData(FunctionLog& LOGOBJNAME, void* bin_data, size_t len)
+void Log__BinaryData(FunctionLog& LOGOBJNAME, void* bin_data, size_t len, unsigned long line)
 {
     for (size_t i = 0; i < len; i += LINE_LENGTH)
     {
-        ostream& os = LOG;
+        ostream& os = LOGOBJNAME.OutputLine(line);
         size_t j;
 
         // as characters
