@@ -294,15 +294,15 @@ static int SetGlobalString(long what, const char *string) {
     LOG << "What: " << what << " String: " << string << ENDLINE;
 
     switch (what) {
-    case FLAG_DefaultModeName: safe_strncpy(DefaultModeName, string, sizeof(DefaultModeName) - 1); break;
+    case FLAG_DefaultModeName: safe_strncpy(DefaultModeName, string, sizeof(DefaultModeName)); break;
     case FLAG_CompletionFilter: if ((CompletionFilter = RxCompile(string)) == NULL) return -1; break;
-    case FLAG_PrintDevice: safe_strncpy(PrintDevice, string, sizeof(PrintDevice) - 1); break;
-    case FLAG_CompileCommand: safe_strncpy(CompileCommand, string, sizeof(CompileCommand) - 1); break;
-    case FLAG_WindowFont: safe_strncpy(WindowFont, string, sizeof(WindowFont) - 1); break;
-    case FLAG_HelpCommand: safe_strncpy(HelpCommand, string, sizeof(HelpCommand) - 1); break;
+    case FLAG_PrintDevice: safe_strncpy(PrintDevice, string, sizeof(PrintDevice)); break;
+    case FLAG_CompileCommand: safe_strncpy(CompileCommand, string, sizeof(CompileCommand)); break;
+    case FLAG_WindowFont: safe_strncpy(WindowFont, string, sizeof(WindowFont)); break;
+    case FLAG_HelpCommand: safe_strncpy(HelpCommand, string, sizeof(HelpCommand)); break;
     case FLAG_GUICharacters: AppendGUICharacters (string); break;
-    case FLAG_CvsCommand: safe_strncpy(CvsCommand, string, sizeof(CvsCommand) - 1); break;
-    case FLAG_CvsLogMode: safe_strncpy(CvsLogMode, string, sizeof(CvsLogMode) - 1); break;
+    case FLAG_CvsCommand: safe_strncpy(CvsCommand, string, sizeof(CvsCommand)); break;
+    case FLAG_CvsLogMode: safe_strncpy(CvsLogMode, string, sizeof(CvsLogMode)); break;
     default:
         //printf("Unknown global string: %ld\n", what);
         ENDFUNCRC(-1);
