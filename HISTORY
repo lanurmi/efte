@@ -1,5 +1,11 @@
 Revision history
 -----------------------------------------------------------------------
+0.50.0 -- <fill month here> 2003
+  - Many internal and some external changes
+  - Some bugs fixed in this release
+  + cfte: added -p[reprocess] command line paramter, it can be used to debug configuration files.
+  ! X11: XShellCommand is used to specify used shell under X11. $TERM is no longer used as shell.
+
 0.46
   ! bug fixes
   ! coredump when $DISPLAY not set fixed
