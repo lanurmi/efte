@@ -204,7 +204,7 @@ static int I18NKeyAnalyze(XKeyEvent * /*keyEvent*/, KeySym * key, /*fold00*/
  * is using Xt Toolkit some things have to be made
  * different
  */
-XIC I18NInit(Display * display, Window win, unsigned long *mask) /*fold00*/
+XIC I18NInit(Display * display, Window win, unsigned long *mask) /*FOLD00*/
 {
     XIC xic = (XIC) NULL;
 #if XlibSpecificationRelease >= 6
@@ -290,7 +290,8 @@ XIC I18NInit(Display * display, Window win, unsigned long *mask) /*fold00*/
             if (xim_styles->supported_styles[i] & (XIMPreeditNothing | XIMPreeditNone) &&
                 xim_styles->supported_styles[i] & (XIMStatusNothing  | XIMStatusNone)
                ) {
-		found = True;
+                found = True;
+                input_style = xim_styles->supported_styles[i];
 		break;
 	    }
 	s = ns;

@@ -169,4 +169,15 @@
 #define PATHTYPE   PT_UNIXISH
 #endif
 
+#if defined __cplusplus && __cplusplus >= 199707L
+#define HAVE_BOOL
+#endif
+
+#ifndef HAVE_BOOL
+#define bool  int
+#define true  1
+#define false 0
+#endif
+
+
 #endif

@@ -269,8 +269,8 @@ int RetrieveFPos(char *FileName, int &Row, int &Col) { /*FOLD00*/
     return 0;
 }
 
-int AddInputHistory(int Id, char *String) { /*fold00*/
-    char *s;
+int AddInputHistory(int Id, char *String) { /*FOLD00*/
+    char *s = NULL; // get rid of a "might not be initialised" warning
     int i;
     // First check if it is already in list
     for (i = 0; i < inputHistory.Count; i++) {
