@@ -354,7 +354,7 @@ int LookAt(EBuffer *B, int Row, unsigned int Pos, const char *What, hsState Stat
     unsigned int uLineLength = B->RLine(Row)->Count;
     Pos = B->CharOffset(B->RLine(Row), Pos);
     if (Pos + strlen(What) > uLineLength) { ENDFUNCRC(0); }
-    if (NoWord && uLineLength > Pos + Len && isalnum(pLine[Pos + Len]))
+    if (NoWord && uLineLength > Pos + Len && ISNAME(pLine[Pos + Len]))
     {
         ENDFUNCRC(0);
     }
