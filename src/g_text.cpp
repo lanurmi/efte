@@ -308,15 +308,15 @@ int GViewPeer::DrawScrollBar() {
     TDrawBuffer B;
     int NRows, NCols, I;
     int W, H;
-    char fore = ConGetDrawChar(DCH_HFORE);
-    char back = ConGetDrawChar(DCH_HBACK);
+    TChar fore = ConGetDrawChar(DCH_HFORE);
+    TChar back = ConGetDrawChar(DCH_HBACK);
     
     ConQuerySize(&W, &H);
 
     if (ShowVScroll) {
-        MoveCh(B, ConGetDrawChar(DCH_AUP), hcScrollBar_Arrows, 1);
+        MoveTCh(B, ConGetDrawChar(DCH_AUP), hcScrollBar_Arrows, 1);
         ConPutBox(W, 0, 1, 1, B);
-        MoveCh(B, ConGetDrawChar(DCH_ADOWN), hcScrollBar_Arrows, 1);
+        MoveTCh(B, ConGetDrawChar(DCH_ADOWN), hcScrollBar_Arrows, 1);
         ConPutBox(W, H - 1, 1, 1, B);
         
         NRows = H - 2;
@@ -331,16 +331,16 @@ int GViewPeer::DrawScrollBar() {
         
         for (I = 0; I < NRows; I++) {
             if (I >= SbVBegin && I <= SbVEnd)
-                MoveCh(B, fore, hcScrollBar_Fore, 1);
+                MoveTCh(B, fore, hcScrollBar_Fore, 1);
             else
-                MoveCh(B, back, hcScrollBar_Back, 1);
+                MoveTCh(B, back, hcScrollBar_Back, 1);
             ConPutBox(W, I + 1, 1, 1, B);
         }
     }
     if (ShowHScroll) {
-        MoveCh(B, ConGetDrawChar(DCH_ALEFT), hcScrollBar_Arrows, 1);
+        MoveTCh(B, ConGetDrawChar(DCH_ALEFT), hcScrollBar_Arrows, 1);
         ConPutBox(0, H, 1, 1, B);
-        MoveCh(B, ConGetDrawChar(DCH_ARIGHT), hcScrollBar_Arrows, 1);
+        MoveTCh(B, ConGetDrawChar(DCH_ARIGHT), hcScrollBar_Arrows, 1);
         ConPutBox(W - 1, H, 1, 1, B);
         
         NCols = W - 2;
@@ -356,9 +356,9 @@ int GViewPeer::DrawScrollBar() {
         // could be made faster
         for (I = 0; I < NCols; I++) {
             if (I >= SbHBegin && I <= SbHEnd)
-                MoveCh(B, fore, hcScrollBar_Fore, 1);
+                MoveTCh(B, fore, hcScrollBar_Fore, 1);
             else
-                MoveCh(B, back, hcScrollBar_Back, 1);
+                MoveTCh(B, back, hcScrollBar_Back, 1);
             ConPutBox(I + 1, H, 1, 1, B);
         }
     }
@@ -389,11 +389,10 @@ GView::~GView() {
 
 int GView::ConClear() {
     int W, H;
-    TDrawBuffer B;
+    TCell fill = {' ', 0x07};
     
     ConQuerySize(&W, &H);
-    MoveChar(B, 0, W, ' ', 0x07, 1);
-    ConSetBox(0, 0, W, H, B[0]);
+    ConSetBox(0, 0, W, H, fill);
     return 1;
 }
 

@@ -164,7 +164,7 @@ void EBuffer::DrawLine(TDrawBuffer B, int VRow, int C, int W, int &HilitX) {
             L->StateE = State;
         }
         if (BFI(this, BFI_ShowMarkers)) {
-            MoveChar(B, ECol - C, W, ConGetDrawChar((Row == RCount - 1) ? DCH_EOF : DCH_EOL), hcPlain_Markers, 1);
+            MoveTChar(B, ECol - C, W, ConGetDrawChar((Row == RCount - 1) ? DCH_EOF : DCH_EOL), hcPlain_Markers, 1);
             ECol += 1;
         }
         if (Row < RCount) {
@@ -258,7 +258,7 @@ void EBuffer::DrawLine(TDrawBuffer B, int VRow, int C, int W, int &HilitX) {
         }
     } else if (VRow == VCount) {
         if (BFI(this, BFI_ShowMarkers))
-            MoveChar(B, 0, W, ConGetDrawChar(DCH_END), hcPlain_Markers, W);
+            MoveTChar(B, 0, W, ConGetDrawChar(DCH_END), hcPlain_Markers, W);
     }
 }
 
