@@ -53,6 +53,12 @@
 
 include 'global.fte';
 
+include 'pal_base.fte';
+
+#color_palette {
+#    { 'Comment', 'green:black' },
+#}
+
 %if(COLORS_BLACK_BG)
 %if(UI_KB)
 include 'pal_b_kb.fte';
