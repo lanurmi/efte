@@ -6,7 +6,7 @@
 # from http://www.nextgeneration.dk/gnu/
 #
 # The author, Jon Svendsen, explicitly places this module 
-# in the Public Domain.
+# in the Public Domain
 #
 
 INCDIR    =
@@ -45,10 +45,10 @@ cfte.exe: $(CFTE_OBJS)
 	$(LD) $(LDFLAGS) $(CFTE_OBJS) -o cfte.exe $(LIBS)
 
 defcfg.cnf: defcfg.fte cfte.exe
-	cfte defcfg.fte defcfg.cnf
+	-"./cfte.exe" defcfg.fte defcfg.cnf
 
 defcfg.h: defcfg.cnf bin2c.exe
-	bin2c defcfg.cnf >defcfg.h
+	-"./bin2c.exe" defcfg.cnf >defcfg.h
 
 bin2c.exe: bin2c.cpp
 	$(CC) $(CCFLAGS) bin2c.cpp -o bin2c.exe
@@ -56,7 +56,7 @@ bin2c.exe: bin2c.cpp
 c_config.$(OEXT): defcfg.h
 
 fte.exe: $(OBJS) $(NTOBJS)
-	$(LD) $(LDFLAGS) $(OBJS) $(NTOBJS) -o fte.exe $(LIBS)
+	-$(LD) $(LDFLAGS) $(OBJS) $(NTOBJS) -o fte.exe $(LIBS)
 
 clean:
-	$(RM) fte.exe cfte.exe bin2c.exe defcfg.cnf defcfg.h $(OBJS) $(NTOBJS) $(CFTE_OBJS)
+	-$(RM) fte.exe cfte.exe bin2c.exe defcfg.cnf defcfg.h $(OBJS) $(NTOBJS) $(CFTE_OBJS)
