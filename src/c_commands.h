@@ -263,8 +263,6 @@ typedef enum {
     /// Paste clipboard to current position as line block.
     ExBlockPasteColumn,
     /// Paste clipboard to current position as column block.
-    ExBlockPasteOver,
-    /// Delete content's of selection and paste clipboard to current position
     ExBlockPrint,
     /// Print a block to configured device.
     ExBlockRead,
@@ -744,9 +742,11 @@ typedef enum {
     /// Mark all lines in list
     ExListUnmarkAll,
     /// Unmark all lines in list
-    ExListToggleMarkAll
+    ExListToggleMarkAll,
     /// Toggle marking of all lines in list
 
+    ExBlockPasteOver
+    /// Delete content's of selection and paste clipboard to current position
 } ExCommands;
 
 #endif
