@@ -29,7 +29,7 @@ Depends: ${shlibs:Depends}, fte (= ${Source-Version})
 Replaces: fte (<< 0.49.2-1)
 Description: Text editor for X Window System with I18N support. (for programmers)
  Color syntax highlighting for many more languages.
- Smart indention for C, C++, Java, Perl.
+ Smart indentation for C, C++, Java, Perl.
  Multiple file/window editing, Column blocks, configurable menus and
  keyboard bindings, mouse support, undo/redo, regular expression search
  and replace, folding, background compiler execution.
@@ -41,7 +41,7 @@ Depends: ${shlibs:Depends}, fte (= ${Source-Version})
 Conflicts: suidmanager (<< 0.50)
 Description: Text editor for console (no I18N support). (for programmers)
  Color syntax highlighting for many more languages.
- Smart indention for C, C++, Java, Perl.
+ Smart indentation for C, C++, Java, Perl.
  Multiple file/window editing, Column blocks, configurable menus and
  keyboard bindings, mouse support, undo/redo, regular expression search
  and replace, folding, background compiler execution.

@@ -1,3 +1,6 @@
+fte (0.49.13-16) unstable; urgency=low
+  * Fixed spelling (Closes 12468, 12469)
+
 fte (0.49.13-15) unstable; urgency=low
 
   * fixed bug in o_message.cpp causing unexpected crash
