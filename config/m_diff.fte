@@ -48,7 +48,7 @@ colorize MERGE {
 }
 
 mode DIFF: PLAIN {        # unix/gnu diff
-    FileNameRx          = /\.\c{DIFF?}$/;
+    FileNameRx          = /\c{DIFF?}$/;
     FirstLineRx         = /^diff /;
     HilitOn             = 1;
     Colorizer           = 'DIFF';                     
