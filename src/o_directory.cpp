@@ -231,12 +231,16 @@ int EDirectory::Activate(int No) {
 }
 
 void EDirectory::HandleEvent(TEvent &Event) {
-    int resetSearch = 1;
+    STARTFUNC("EDirectory::HandleEvent");
+    int resetSearch = 0;
     EModel::HandleEvent(Event);
     switch (Event.What) {
     case evKeyDown:
+        LOG << "Key Code: " << kbCode(Event.Key.Code) << ENDLINE;
+        resetSearch = 1;
         switch (kbCode(Event.Key.Code)) {
         case kbBackSp:
+            LOG << "Got backspace" << ENDLINE;
             resetSearch = 0;
             if (SearchLen > 0) {
                 SearchName[--SearchLen] = 0;
@@ -255,11 +259,15 @@ void EDirectory::HandleEvent(TEvent &Event) {
                 char Ch = (char) Event.Key.Code;
                 int Found;
 
+                LOG << " -> " << BinChar(Ch) << ENDLINE;
+
                 SearchPos[SearchLen] = Row;
                 SearchName[SearchLen] = Ch;
                 SearchName[++SearchLen] = 0;
                 Found = 0;
+                LOG << "Comparing " << SearchName << ENDLINE;
                 for (int i = Row; i < FCount; i++) {
+                    LOG << "  to -> " << Files[i]->Name() << ENDLINE;
                     if (strnicmp(SearchName, Files[i]->Name(), SearchLen) == 0) {
                         Row = i;
                         Found = 1;
@@ -276,6 +284,7 @@ void EDirectory::HandleEvent(TEvent &Event) {
     if (resetSearch) {
         SearchLen = 0;
     }
+    LOG << "SearchLen = " << SearchLen << ENDLINE;
 }
 
 int EDirectory::RescanDir() {
