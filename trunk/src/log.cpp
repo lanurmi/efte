@@ -89,8 +89,9 @@ ostream& FunctionLog::RC()
 
 ostream& FunctionLog::OutputIndent(ostream& os)
 {
-    for (int i = 1; i < myIndentLevel; ++i)
-        os << '|';
+    os << FillChar('|', myIndentLevel - 1);
+    //for (int i = 1; i < myIndentLevel; ++i)
+    //    os << '|';
     os << indentChar << ' ';
     indentChar = '|'; // reset it to |'s.
     return os;
@@ -98,8 +99,18 @@ ostream& FunctionLog::OutputIndent(ostream& os)
 
 ostream& Log__osBinChar(ostream& os, char const& c)
 {
-    return os << (isprint(c) ? c : '.') <<
+    char const cOldFill = os.fill('0');
+    os << (isprint(c) ? c : '.') <<
         " [0x" << hex << (int)c << dec << "]";
+    os.fill(cOldFill);
+    return os;
+}
+
+ostream& Log__osFillChar(ostream& os, char const& c, size_t const& len)
+{
+    for (size_t i = 0; i < len; ++i)
+        os << c;
+    return os;
 }
 
 #define LINE_LENGTH 8
@@ -123,7 +134,7 @@ void Log__BinaryData(FunctionLog& LOGOBJNAME, void* bin_data, size_t len)
         }
         os << "  [";
         // as hex values
-        char cOldFill = os.fill('0');
+        char const cOldFill = os.fill('0');
         for (size_t j = i; j < i + LINE_LENGTH; ++j)
         {
             if (j < len)
