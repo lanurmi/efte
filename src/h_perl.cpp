@@ -104,11 +104,19 @@ int Hilit_PERL(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
     int firstnw = 0;
     int op;
     int setHereDoc = 0;
+#define MAXSEOF 100
+    char hereDocKey[MAXSEOF];
 
     C = 0;
     NC = 0;
+    int isEOHereDoc = 0;
     for(i = 0; i < Line->Count;) {
         if (*p != ' ' && *p != 9) firstnw++;
+        if ((State & X_MASK) == hsPerl_HereDoc && 0 == i)
+        {
+            isEOHereDoc = strlen(hereDocKey) == (size_t)len &&
+                strncmp(hereDocKey, Line->Chars, len) == 0;
+        }
         IF_TAB() else {
             //         printf("State = %d pos = %d", State, i); fflush(stdout);
             switch (State & X_MASK) {
@@ -306,9 +314,20 @@ int Hilit_PERL(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
                     Color = Colors[CLR_String];
                     goto hilit;
                 } else if (*p == '<' && len > 2 && p[1] == '<' &&
-                           (p[2] == '"' || p[2] == '\'' || p[2] == '_' || (p[2] >= 'A' && p[2] <= 'Z')))
+                           (p[2] == '"' || p[2] == '\'' || p[2] == '_' || (toupper(p[2]) >= 'A' && toupper(p[2]) <= 'Z')))
                 {
+                    int hereDocKeyLen;
                     setHereDoc++;
+                    for (hereDocKeyLen = 0;
+                         hereDocKeyLen < len && (
+                                                 p[2 + hereDocKeyLen] == '_' ||
+                                                 (toupper(p[2 + hereDocKeyLen]) >= 'A' && toupper(p[2 + hereDocKeyLen]) <= 'Z')
+                                                );
+                         ++hereDocKeyLen)
+                    {
+                        hereDocKey[hereDocKeyLen] = p[2 + hereDocKeyLen];
+                    }
+                    hereDocKey[len] = '\0';
                     State = hsPerl_Punct;
                     Color = Colors[CLR_Punctuation];
                     ColorNext();
@@ -508,20 +527,17 @@ int Hilit_PERL(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
                 Color = Colors[CLR_Comment];
                 goto hilit;
             case hsPerl_HereDoc:
-                if (i == 0) {
-                    for (int xx = 0; xx < len; xx++)
-                        if (p[xx] != '_' && (p[xx] < 'A' || p[xx] > 'Z'))
-                            goto not_end;
-                    Color = Colors[CLR_Punctuation];
-                    setHereDoc = QCHAR(State);
-                    while (len > 0)
-                        ColorNext();
-                    State = hsPerl_Normal | (State & X_BIT);
-                    continue;
+                if (!isEOHereDoc)
+                {
+                    Color = Colors[CLR_String];
+                    goto hilit;
                 }
-            not_end:
-                Color = Colors[CLR_String];
-                goto hilit;
+                Color = Colors[CLR_Punctuation];
+                setHereDoc = QCHAR(State);
+                while (len > 0)
+                    ColorNext();
+                State = hsPerl_Normal | (State & X_BIT);
+                continue;
             case hsPerl_Docs:
                 Color = Colors[CLR_Comment];
                 if (i == 0 && *p == '=' && len > 3 &&
