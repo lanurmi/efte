@@ -169,7 +169,7 @@ int main() {
     hab = WinInitialize(0);
     
     hmq = WinCreateMsgQueue(hab, 0);
-#if defined(EMX) || defined(__TOS_OS2__)
+#if defined(__EMX__) || defined(__TOS_OS2__)
     _beginthread(clipsrv, NULL, 8192, 0);
 #else
     _beginthread(clipsrv, 8192, 0);

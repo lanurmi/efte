@@ -81,7 +81,7 @@ char *getProgramName(char *name) {
 }
 #endif
 
-#if defined(OS2) && defined(EMX)
+#if defined(OS2) && defined(__EMX__)
 
 // argv[0] on emx does not contain full path
 
@@ -273,7 +273,7 @@ int main(int argc, char **argv) {
    _CrtSetReportFile( _CRT_ASSERT, _CRTDBG_FILE_STDERR );
 #endif //_DEBUG && MSVC && MSVCDEBUG
 
-#if defined(EMX) || (defined(NT) && defined(MSVC))
+#if defined(__EMX__) || (defined(NT) && defined(MSVC))
     argv[0] = getProgramName(argv[0]);
 #endif
 
@@ -307,7 +307,7 @@ int main(int argc, char **argv) {
     delete gui;
     gui = 0;
 
-#if defined(EMX)
+#if defined(__EMX__)
     free(argv[0]);
 #endif
 

@@ -77,7 +77,7 @@ static char *findPathExt(char *filename) {
     return sps;
 }
 
-#if defined(OS2) && defined(EMX)
+#if defined(OS2) && defined(__EMX__)
 
 // argv[0] on emx does not contain full path
 
@@ -471,7 +471,7 @@ static void InterfaceCleanup() {
 }
 
 int main(int argc, char **argv) {
-#if defined(EMX)
+#if defined(__EMX__)
     argv[0] = getProgramName(argv[0]);
 #endif
     

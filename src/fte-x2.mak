@@ -44,7 +44,7 @@ PRIMARY = xfte
 
 #######################################################################
 # XFree86OS/2
-UOS      = -DOS2 -DEMX
+UOS      = -DOS2
 XINCDIR  = -I$(X11ROOT)/XFree86/include
 XLIBDIR  = -L$(X11ROOT)/XFree86/lib
 
