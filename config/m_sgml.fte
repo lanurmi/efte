@@ -43,7 +43,7 @@ sub SGML_PA {
 }
 
 sub SGML_MRF {
-    InsertString "<manref name=\"\" section=\"\">;
+    InsertString "<manref name=\"\" section=\"\">";
 }
 
 sub SGML_EML {
