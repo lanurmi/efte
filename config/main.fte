@@ -183,6 +183,7 @@ include 'm_sgml.fte';
 include 'm_php.fte';
 include 'm_py.fte';
 include 'm_ruby.fte';
+include 'm_xml.fte';
 
 # C indentation style menu
 include 'uicstyle.fte';
