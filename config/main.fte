@@ -6,7 +6,7 @@
 
 # uncomment for appropriate keybindings and menus
 
-%define(UI_KB)
+#%define(UI_KB)
 %define(UI_FTE)
 #%define(UI_WS)
 #%define(UI_NE)
@@ -147,6 +147,9 @@ eventmap TEX: PLAIN {
     }
 }
 
+include 'm_text.fte';
+include 'm_msg.fte';
+
 %if(UI_KB)
 include 'm_c_kb.fte';
 %endif
@@ -174,7 +177,6 @@ include 'm_ldsgml.fte';
 include 'm_make.fte';
 include 'm_merge.fte';
 include 'm_mod3.fte';
-include 'm_msg.fte';
 include 'm_pascal.fte';
 include 'm_perl.fte';
 include 'm_php.fte';
@@ -191,7 +193,6 @@ include 'm_sql.fte';
 include 'm_tcl.fte';
 include 'm_tex.fte';
 include 'm_texi.fte';
-include 'm_text.fte';
 include 'm_xml.fte';
 
 # C indentation style menu
