@@ -617,8 +617,8 @@ public:
     int     BlockEnd();
     int     BlockUnmark();
     int     BlockCut(int Append);
-    int     BlockCopy(int Append);
-    int     BlockPaste();
+    int     BlockCopy(int Append, int clipboard=0);
+    int     BlockPaste(int clipboard=0);
     int     BlockKill();
     int     BlockIndent();
     int     BlockUnindent();
@@ -632,16 +632,16 @@ public:
     int     BlockExtendEnd();
     int     BlockReIndent();
     int     BlockIsMarked();
-    int     BlockPasteStream();
-    int     BlockPasteLine();
-    int     BlockPasteColumn();
-    int     BlockPasteOver();
+    int     BlockPasteStream(int clipboard=0);
+    int     BlockPasteLine(int clipboard=0);
+    int     BlockPasteColumn(int clipboard=0);
+    int     BlockPasteOver(int clipboard=0);
     int     BlockSelectWord();
     int     BlockSelectLine();
     int     BlockSelectPara();
     int     BlockPrint();
     int     BlockSort(int Reverse);
-    int     ClipClear();
+    int     ClipClear(int clipboard=0);
     int     BlockUnTab();
     int     BlockEnTab();
 
