@@ -1,0 +1,201 @@
+#! /usr/bin/perl -w
+
+use strict;
+use FindBin;
+use File::Basename;
+use File::Copy;
+use File::Path;
+use File::Spec;
+use IO::File;
+
+# vars:
+my $name = 'fte';
+my $version = '0.49.13';
+my $release = '1';
+my $buildroot = File::Spec->canonpath($FindBin::Bin . '/rpmsrc');
+my $bindir  = '/usr/local/bin';
+my $configdir = '/usr/local/lib/fte/config';
+my $specfile_name = $FindBin::Bin . "/$name-$version-$release.spec";
+my $target = 'i386';
+my $SOURCE_dir = '/usr/src/redhat/SOURCES';
+my $source_file = "$FindBin::Bin/fte-$version-$release.src.tar.gz";
+
+copy_all_files();
+make_specfile();
+create_source_tar_gz();
+create_rpm();
+
+#cleanup();
+
+sub create_rpm
+{
+    my @cmd = (qw( rpm -ba ), $specfile_name, "--target=$target" );
+    system(@cmd);
+}
+
+sub make_path
+{
+    foreach my $path (@_)
+    {
+        chown 0, 3, mkpath($path, 0, 0555);
+    }
+}
+
+sub copy_file
+{
+    my ($src, $dst, $perm) = @_;
+    $perm ||= 0444;
+    foreach my $f (glob $src)
+    {
+        next if $f =~ /~$/ or $f =~ /CVS$/;
+        if (-d $f)
+        {
+            copy_file("$f/*", $dst);
+            next;
+        }
+
+        my $dst_file = "$dst/$f";
+        my $dst_dir = dirname($dst_file);
+        if (! -d $dst_dir)
+        {
+            # make the directories, and make them owned by root/sys
+            make_path($dst_dir);
+        }
+        copy($f, $dst_file);
+        chown 0, 3, $dst_file;
+        chmod $perm, $dst_file;
+    }
+}
+
+sub copy_bin_file
+{
+    copy_file(shift, File::Spec->canonpath($buildroot . '/' . shift), shift);
+}
+
+sub copy_src_file
+{
+    copy_file(shift, File::Spec->canonpath($SOURCE_dir . '/' . (shift||'.')), shift);
+}
+
+sub copy_all_files
+{
+    chdir $FindBin::Bin;
+    system("rm -rf $buildroot");
+
+    # copy from our root.
+    chdir $FindBin::Bin . '/..';
+    copy_bin_file('fte', $bindir, 0555);
+    chdir 'src';
+    copy_bin_file('[cx]fte', $bindir, 0555);
+    chdir '../config';
+    copy_bin_file('*', $configdir);
+    make_path($buildroot . $configdir . '/localconfig');
+
+    chdir $FindBin::Bin;
+}
+
+sub create_source_tar_gz
+{
+    chdir $FindBin::Bin . '/..';
+    my @srcs;
+
+    @srcs = grep { 
+        ! -d $_ and
+            $_ !~ /~$/ and
+            $_ ne 'fte' and
+            $_ ne 'make.snapshot'
+    } glob '*';
+    push @srcs, grep { 
+        ! /CVS/ and
+            ! /.o(?:bj)?$/ and
+            ! /~$/ and
+            /\./ and
+            1
+    } (glob('config/*'),
+       glob('src/*'),
+       glob('src/bmps/*'),
+       glob('src/icons/*'),
+      );
+
+    my @cmd = (qw(tar cvzf), $source_file, @srcs);
+    unlink $source_file;
+    system(@cmd);
+}
+
+sub make_specfile
+{
+    my $fh = IO::File->new(">$specfile_name");
+    print $fh (specfile());
+    $fh->close();
+    $specfile_name;
+}
+
+sub specfile
+{
+    my $spec = <<HERE;
+Summary: FTE Text Editor (programmer oriented)
+Name: $name
+Version: $version
+Release: $release
+Copyright: GPL, Artistic
+Group: Applications/Editors
+BuildRoot: $buildroot
+Source: $source_file
+
+%description
+FTE Text Editor
+
+Folding.
+Color syntax highlighting for many languages.
+Smart indentation for C,C++,Java,Perl.
+Fast. No mouse required :)
+File/line size limited by virtual memory.
+
+%prep
+
+if [ ! -d fte-$version ]
+then
+    mkdir fte-$version
+fi
+cd fte-$version
+tar xvzf $source_file
+
+%install
+exit 0
+%clean
+rm -rf \$RPM_BUILD_ROOT
+
+
+%files
+%defattr(-,root,sys)
+HERE
+
+    my $file_list = IO::File->new("find $buildroot|");
+    while (<$file_list>)
+    {
+        chomp;
+        #next if $_ eq "$buildroot";
+
+        # if the directory is not empty, don't include it.
+        if ( -d $_ )
+        {
+            my @dir_cont = glob("$_/*");
+            next if scalar @dir_cont;
+        }
+
+        s@^$buildroot@@;
+        $spec .= $_;
+        $spec .= "\n";
+    }
+    $file_list->close();
+    $spec;
+}
+
+sub cleanup
+{
+    chdir $FindBin::Bin;
+
+    unlink $specfile_name;
+    system("rm -rf $buildroot");
+}
+
