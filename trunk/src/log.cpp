@@ -8,9 +8,12 @@ any of its derivitives.
 ********************************************************************/
 
 #include <time.h>
-#include "log.h"
-#include <iomanip.h>
 #include <ctype.h>
+#include "log.h"
+#include <iomanip>
+#include <iostream>
+
+using namespace std;
 
 #ifndef FTE_NO_LOGGING
 
@@ -35,8 +38,8 @@ bool GlobalLog::OpenLogFile()
         else
         {
             m_bOpened = true;
-            m_ofsLog.setbuf(NULL, 0);
-        }
+	    //no way with gcc3.0 m_ofsLog.setbuf(NULL, 0);
+	}
     }
     return m_bOpened;
 }
