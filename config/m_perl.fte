@@ -57,7 +57,7 @@ colorize PERL {
 
 mode PERL: PLAIN { # PERL
     FileNameRx          = /\.\cPL|M$/;
-    FirstLineRx         = /^{\#\! *}|{\cEXTPROC[ \t]+perl}[^ ]*perl/;
+    FirstLineRx         = /^{\#\! *}|{\cEXTPROC[ \t]+}[^ ]*perl/;
     HilitOn             = 1;
     Colorizer           = 'PERL';
     AutoIndent          = 1;
