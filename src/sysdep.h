@@ -117,7 +117,7 @@
 #endif
 
 #ifndef MAXPATH
-#    define MAXPATH 260
+#    define MAXPATH 1024
 #endif
 
 #ifndef O_BINARY
