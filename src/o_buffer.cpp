@@ -462,8 +462,26 @@ int EBuffer::ExecCommand(int Command, ExState &State) {
     case ExClipClear:             return ClipClear();
     case ExBlockPaste:            return BlockPaste();
     case ExBlockKill:             return BlockKill();
-    case ExBlockIndent:           return BlockIndent();
-    case ExBlockUnindent:         return BlockUnindent();
+    case ExBlockIndent:                                            
+        {
+            int saved_persistence, ret_code;
+
+            saved_persistence = BFI(this, BFI_PersistentBlocks);
+            BFI_SET(this, BFI_PersistentBlocks, 1);
+            ret_code = BlockIndent();
+            BFI_SET(this, BFI_PersistentBlocks, saved_persistence);
+            return ret_code;
+        }
+    case ExBlockUnindent:
+        {
+            int saved_persistence, ret_code;
+
+            saved_persistence = BFI(this, BFI_PersistentBlocks);
+            BFI_SET(this, BFI_PersistentBlocks, 1);
+            ret_code = BlockUnindent();
+            BFI_SET(this, BFI_PersistentBlocks, saved_persistence);
+            return ret_code;
+        }
     case ExBlockClear:            return BlockClear();
     case ExBlockMarkStream:       return BlockMarkStream();
     case ExBlockMarkLine:         return BlockMarkLine();

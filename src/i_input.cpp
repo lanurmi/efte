@@ -162,6 +162,7 @@ void ExInput::HandleEvent(TEvent &Event) {
             Event.What = evNone;
             break;
         case kbIns | kfShift:
+        case 'V'   | kfCtrl:
             {
                 int len;
 
@@ -179,7 +180,7 @@ void ExInput::HandleEvent(TEvent &Event) {
 
                 len = SS->LineChars(0);
                 if (strlen(Line) + len < MaxLen) {
-                    memmove(Line + Pos + len, Line + Pos, strlen(Line + Pos));
+                    memmove(Line + Pos + len, Line + Pos, strlen(Line + Pos) + 1);
                     memcpy(Line + Pos, SS->RLine(0)->Chars, len);
                     TabCount = 0;
                     Event.What = evNone;
