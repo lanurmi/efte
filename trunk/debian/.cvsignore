@@ -1,0 +1,8 @@
+files
+fte-console
+fte-docs
+fte-terminal
+fte-xwindow
+*substvars
+*debhelper
+tmp
