@@ -238,17 +238,34 @@ int UnTabStr(char *dest, int maxlen, const char *source, int slen) {
     return pos;
 }
 
-char *safe_strncpy(char *dst, const char *src, int maxlen)
+#if !defined(HAVE_STRLCPY)
+size_t strlcpy(char *dst, const char *src, size_t size)
 {
-    // some sanity checks
-    if ((dst == NULL) || (src == NULL)) return dst;
-    if (maxlen <= 0) return dst;
+    size_t ret = strlen(src);
 
-    // make sure we have clean destination buffer
-    memset(dst, 0, maxlen);
+    if (size) {
+        size_t len = (ret >= size) ? size-1 : ret;
+        memcpy(dst, src, len);
+        dst[len] = '\0';
+    }
 
-    // use normal strncpy to copy actual data
-    strncpy(dst, src, maxlen - 1);
-
-    return dst;
+    return ret;
 }
+#endif // !HAVE_STRLCPY
+
+#if !defined(HAVE_STRLCAT)
+size_t strlcat(char *dst, const char *src, size_t size)
+{
+    size_t dst_len = strlen(dst);
+    size_t src_len = strlen(src);
+
+    if (size) {
+        size_t len = (src_len >= size-dst_len) ? (size-dst_len-1) : src_len;
+        memcpy(&dst[dst_len], src, len);
+        dst[dst_len + len] = '\0';
+    }
+
+    return dst_len + src_len;
+}
+#endif // !HAVE_STRLCAT
+
