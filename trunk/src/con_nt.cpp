@@ -290,10 +290,13 @@ int ReadConsoleEvent(TEvent *E) /*FOLD00*/
 
         //** Distill FTE flags from the NT flags. This fails for some keys
         //** because NT has an oddity with enhanced keys (Alt-Grey-+ etc).
+
+        // from chaac: Please do not toutch RIGHT_ALT_PRESSED handling,
+        // in some keyboard ALT-GR is used for special characters.
         flags = inp.Event.KeyEvent.dwControlKeyState;
-        if (flags & (RIGHT_ALT_PRESSED | LEFT_ALT_PRESSED)) flg |= kfAlt;
+        if (flags & (/*RIGHT_ALT_PRESSED |*/ LEFT_ALT_PRESSED)) flg |= kfAlt;
         if (flags & (RIGHT_CTRL_PRESSED | LEFT_CTRL_PRESSED)) flg |= kfCtrl;
-        /*if (flags & (RIGHT_ALT_PRESSED)) flg &= ~kfCtrl;*/
+        if (flags & (RIGHT_ALT_PRESSED)) flg &= ~kfCtrl;
         if (flags & SHIFT_PRESSED) flg |= kfShift;
         if (flags & ENHANCED_KEY) flg |= kfGray;
 
