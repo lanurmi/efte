@@ -111,6 +111,44 @@ int Indent_SIMPLE(EBuffer *B, int Line, int PosCursor);
 #define NextChar() do { i++; p++; len--; C++; } while (0)
 #define ColorNext() do { ColorChar(); NextChar(); } while (0)
 
+#define UntilMatchBrace(first, cmd) \
+    do { \
+        int Count[] = { 0, 0, 0, }; \
+        switch (first) \
+        { \
+            case '{': ++Count[0]; break; \
+            case '[': ++Count[1]; break; \
+            case '(': ++Count[2]; break; \
+        } \
+\
+        while (len > 0)        \
+        {                      \
+            switch (*p) {      \
+            case '{':          \
+                ++Count[0];    \
+                break;         \
+            case '}':          \
+                --Count[0];    \
+                break;         \
+            case '[':          \
+                ++Count[1];    \
+                break;         \
+            case ']':          \
+                --Count[1];    \
+                break;         \
+            case '(':          \
+                ++Count[2];    \
+                break;         \
+            case ')':          \
+                --Count[2];    \
+                break;         \
+            }                  \
+            cmd;               \
+            if (TEST_ZERO)     \
+                break;         \
+        } \
+    } while (0)
+
 #define HILIT_VARS(ColorTable, Line) \
     PCLI *BPtr; \
     int BPos; \

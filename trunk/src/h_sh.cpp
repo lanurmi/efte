@@ -205,11 +205,20 @@ int Hilit_SH(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, 
                     while (b && len > 0 &&
                            (isalnum(*p) ||
                             (strchr("{}[]_", *p) != NULL) ||
-                            (b == 2 && (strchr("#%:-=?+/.", *p) != NULL)) ||
-                            (b == 1 && (strchr("*@#?-$!", *p) != NULL) /*&& (b = 0, 1) ????? */)
+                            (b == 2 && (strchr("#%:-=?+/", *p) != NULL)) ||
+                            (b == 1 && (strchr("*@#?-$!", *p) != NULL) /*|| (b == 0, 1) ????? */)
                            )
                           )
                     { // !!!!! ?????
+                        // in ${...}, once we hit a :, anything goes.
+                        // Ideally, we'd do normal processing inside as well,
+                        // but that'll take much, much longer to figure out
+                        // how to do.
+                        if (b == 2 && *p == ':')
+                        {
+                            UntilMatchBrace('{',ColorNext());
+                            break;
+                        }
                         if (b == 2 && *p == '}')
                             b = 0;
                         else if (b == 3 && *p == ']')

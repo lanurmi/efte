@@ -338,39 +338,7 @@ int Hilit_PERL(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
                     }
                     else if (first == '{')
                     {
-                        int Count[] = {
-                            1, // { } - we're starting with one.
-                            0, // ( )
-                            0, // [ ]
-                        };
-
-                        while (len > 0)
-                        {
-                            switch (*p) {
-                            case '{':
-                                ++Count[0];
-                                break;
-                            case '}':
-                                --Count[0];
-                                break;
-                            case '[':
-                                ++Count[1];
-                                break;
-                            case ']':
-                                --Count[1];
-                                break;
-                            case '(':
-                                ++Count[2];
-                                break;
-                            case ')':
-                                --Count[2];
-                                break;
-                            }
-                            ColorNext();
-                            if (TEST_ZERO)
-                                break;
-                        }
-
+                        UntilMatchBrace(first, ColorNext());
                     }
                     else
                     {
