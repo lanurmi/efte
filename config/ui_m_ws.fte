@@ -36,6 +36,23 @@ menu Object {
     item    "E&xit\tAlt+X"            { ExitEditor }
 }                              
 
+menu MCvs {
+    item "CVS C&heck"  { RunCvs "-n update" }
+    item "CVS &Update" { RunCvs "update -d" }
+    item "CVS &Diff"   { CvsDiff "" }
+    item "CVS &Commit" { RunCvsCommit "" }
+    item "CVS &Add"    { RunCvs "add" }
+    item "CVS &Remove" { RunCvs "remove" }
+    item "CVS S&tatus" { RunCvs "status -v" }
+    item "CV&S"        { Cvs }
+    item;
+    item "&View CVS"      { ViewCvs }
+    item "View CVS Di&ff" { ViewCvsDiff }
+    item "View CVS &log"  { ViewCvsLog }
+    item;
+    item "Cl&ear CVS messages" { ClearCvsMessages }
+}
+
 menu Tools {
     item "&Compile\tF9"               { Compile "make -k " }
     item "&Grep"                      { Compile "grep -n " }
@@ -46,6 +63,8 @@ menu Tools {
     item "Go to &next error\tF12"     { CompileNextError }
     item;
     item "&Messages\tS+F9"            { ViewMessages }
+    item;
+    submenu "C&VS\tC+O_C+V", MCvs;
 }
 
 menu Window {
@@ -251,6 +270,8 @@ menu Options {
     item "&Read only\tC+O C+R" { ToggleReadOnly }
     item "&Undo/Redo\tC+O C+U" { ToggleUndo }
     item "&Show markers\tC+O C+." { ToggleShowMarkers; WinRefresh }
+    item "Highlight tags" { ToggleHilitTags; WinRefresh }
+    item "Show &bookmarks" { ToggleShowBookmarks; WinRefresh }
     item;
     item "&Word wrap\tC+O C+W" { ToggleWordWrap }
     item "&Left margin...\tC+O A+[" { ChangeLeftMargin }

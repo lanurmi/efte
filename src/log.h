@@ -132,7 +132,7 @@ public:
             strcmp(m_strLogFile,strNewLogFile) != 0)
         {
             free((void*)m_strLogFile);
-            m_strLogFile = strNewLogFile == NULL ? NULL : strdup(strNewLogFile);
+            m_strLogFile = strNewLogFile == NULL ? (char *)NULL : strdup(strNewLogFile);
             m_bOpened    = false;
         }
     }

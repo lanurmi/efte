@@ -24,6 +24,9 @@
 #define CONTEXT_BUFFERS   9
 #define CONTEXT_ROUTINES 10
 #define CONTEXT_MAPVIEW  11
+#define CONTEXT_CVSBASE  12
+#define CONTEXT_CVS      13
+#define CONTEXT_CVSDIFF  14
 
 typedef unsigned char ChColor;
 
@@ -101,8 +104,11 @@ typedef unsigned char ChColor;
 #define BFI_UndoMoves          43
 #define BFI_DetectLineSep      44
 #define BFI_TrimOnSave         45
+#define BFI_SaveBookmarks      46
+#define BFI_HilitTags          47
+#define BFI_ShowBookmarks      48
 
-#define BFI_COUNT              46
+#define BFI_COUNT              49
 
 #define BFS_RoutineRegexp       (0 | 256)
 #define BFS_DefFindOpt          (1 | 256)
@@ -189,6 +195,11 @@ extern EBufferFlags DefaultBufferFlags;
 #define FLAG_C_Continuation     52
 #define FLAG_C_ParenDelta       53
 #define FLAG_FunctionUsesContinuation 54
+#define FLAG_IgnoreBufferList   55
+#define FLAG_GUICharacters      56
+#define FLAG_CvsCommand         57
+#define FLAG_CvsLogMode         58
+#define FLAG_ReassignModelIds   59
 
 #define EM_MENUS 2
 #define EM_MainMenu 0

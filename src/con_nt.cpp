@@ -54,7 +54,7 @@ static int CursorVisible = 1; /* 1 means visible */
 static int MouseVisible = 0; /* 0 means hidden */
 static TEvent MouseEv = { evNone };
 static TEvent EventBuf = { evNone };
-static TEventMask EventMask;
+//static TEventMask EventMask;
 
 static HANDLE ConOut;
 static HANDLE ConIn;
@@ -815,8 +815,11 @@ int GUI::ShowEntryScreen() { /*FOLD00*/
 }
 
 char ConGetDrawChar(int index) { /*FOLD00*/
-    static char tab[] = "Ú¿ÀÙÄ³ÂÃ´ÁÅ\x1AúÄ±°\x1B\x1A";
+    static const char *tab=NULL;
 
+    if (!tab) {
+        tab=GetGUICharacters ("WindowsNT","Ú¿ÀÙÄ³ÂÃ´ÁÅ\x1AúÄ±°\x1B\x1A");
+    }
     assert(index >= 0 && index < (int)strlen(tab));
 
     return tab[index];
@@ -1528,7 +1531,7 @@ static GPipe Pipes[MAX_PIPES] = {
 };
 
 static int CreatePipeChild(HANDLE &child, HANDLE &hPipe, char *Command) {
-    static int PCount = 0;
+    //static int PCount = 0;
     int arglen = 0;
     HANDLE hChildPipe;
     BOOL rc;

@@ -23,6 +23,9 @@ object GLOBAL {
     KeepHistory         = 1;   # load/save history on entry/exit
     LoadDesktopOnEntry  = 0;   # load desktop on fte start (2 = when no files)
     SaveDesktopOnExit   = 0;   # save desktop in ExitEditor
+
+    IgnoreBufferList    = 0;   # skip buffer list in FileNext/Prev/Last
+    ReassignModelIds    = 0;   # assign first empty number for newly created buffer
     
     CompletionFilter    = /^{\c.+\.o|a|{bak}|{exe}|{lib}|{class}|{jar}|{zip}|{gz}|{tar.gz}|{tgz}}|{.+~}|{CVS}$/;
     # {obj} file is also ASCII Object File Format for MAYA graphics editor
@@ -38,6 +41,7 @@ object GLOBAL {
     CompileCommand      = 'make ';
     KeepMessages        = 1;
 
+    CvsCommand          = 'cvs';
 %if(OS_UNIX)
     HelpCommand         = "man";
 %endif
@@ -97,4 +101,6 @@ object GLOBAL {
 # Python interpreter tracebacks
     CompileRx = { 1, 2, 3, /^\s*File\s+"([\w:._\-\/\\]+)",\s+line\s+(\d+)(.*)$/ };
 
+    CvsIgnoreRx = /^cvs update: Updating /;
+    CvsIgnoreRx = /^cvs server: Updating /;
 }

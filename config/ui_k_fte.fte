@@ -84,6 +84,15 @@ eventmap MLIST: MODEL {
     key     [C+R]       { Rescan }
 }
 
+eventmap CVSDIFF: MLIST {
+    key     [C+G-Ins]   { BlockCopy }
+    key         [Esc]   { FileClose }
+}
+
+eventmap CVS: MLIST {
+    LocalMenu = "MCvs";
+}
+
 eventmap DIRECTORY: MLIST {
     MainMenu = 'DirectoryMain';
     LocalMenu = 'DirectoryLocal';

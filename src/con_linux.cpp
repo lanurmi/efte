@@ -55,6 +55,8 @@ extern "C" {
 }
 #endif
 
+#include "sysdep.h"
+#include "c_config.h"
 #include "console.h"
 #include "gui.h"
 
@@ -133,7 +135,7 @@ void mouseHide() {
 #endif
 }
 
-void SigWindowChanged(int arg) {
+void SigWindowChanged(int /*arg*/) {
     signal(SIGWINCH, SigWindowChanged);
     WindowChanged = 1;
 }
@@ -147,7 +149,7 @@ static void Die(int) {
     exit(66);
 }
 
-int ConInit(int XSize, int YSize) {
+int ConInit(int /*XSize*/, int /*YSize*/) {
     int tmp;
     int mode;
     struct termios newt;
@@ -390,10 +392,10 @@ int ConClear() {
     return 0;
 }
 
-int ConSetTitle(char *Title, char *STitle) {
+int ConSetTitle(char */*Title*/, char */*STitle*/) {
     return 0;
 }
-int ConGetTitle(char *Title, int MaxLen, char *STitle, int SMaxLen) {
+int ConGetTitle(char *Title, int /*MaxLen*/, char */*STitle*/, int /*SMaxLen*/) {
     *Title = 0;
     return 0;
 }
@@ -470,7 +472,7 @@ int ConScroll(int Way, int X, int Y, int W, int H, TAttr Fill, int Count) {
     return 0;
 }
 
-int ConSetSize(int X, int Y) {
+int ConSetSize(int /*X*/, int /*Y*/) {
     return -1;
 }
 
@@ -510,7 +512,7 @@ int ConCursorVisible(void) {
     return 1;
 }
 
-int ConSetMousePos(int X, int Y) {
+int ConSetMousePos(int /*X*/, int /*Y*/) {
     return -1;
 }
 
@@ -540,7 +542,7 @@ int ConQueryMouseButtons(int *ButtonCount) {
 int GetEvent(TEvent *Event);
 static TEvent Prev = { evNone };
 
-int ConGetEvent(TEventMask EventMask, TEvent *Event, int WaitTime, int Delete) {
+int ConGetEvent(TEventMask /*EventMask*/, TEvent *Event, int WaitTime, int Delete) {
     fd_set readfds;
     struct timeval timeout;
 
@@ -608,7 +610,7 @@ int ConPutEvent(TEvent Event) {
 }
 
 int ConFlush(void) {return 0;  }
-int ConGrabEvents(TEventMask EventMask) { return 0; }
+int ConGrabEvents(TEventMask /*EventMask*/) { return 0; }
 
 int shift_state = 0;
 int lock_state = 0;
@@ -993,7 +995,7 @@ int GetMouseEvent(TEvent *Event) {
     return 0;
 }
 
-int ConSetCursorSize(int Start, int End) {
+int ConSetCursorSize(int /*Start*/, int /*End*/) {
     return 0;
 }
 
@@ -1158,7 +1160,7 @@ int GUI::ClosePipe(int id) {
     return WEXITSTATUS(status);
 }
 
-int GUI::RunProgram(int mode, char *Command) {
+int GUI::RunProgram(int /*mode*/, char *Command) {
     int rc, W, H, W1, H1;
 
     ConQuerySize(&W, &H);
@@ -1182,20 +1184,17 @@ int GUI::RunProgram(int mode, char *Command) {
 }
 
 char ConGetDrawChar(int index) {
-    static const char tab[] = "Ú¿ÀÙÄ³ÂÃ´ÁÅ\x1AúÄ±°\x1B\x1A";
-    static const char tab_iso[] = "++++-|+++++>.*-^v :[>";
-    //static char tab[] = "\x0D\x0C\x0E\x0B\x12\x19____+>\x1F\x01\x12 ";
-    static int use = 0;
+    static const char *tab=NULL;
 
-    assert(index >= 0 && index < int(strlen(tab)));
-
-    if (use == 0) {
-	char * c = getenv("ISOCONSOLE");
-	use = (c == NULL) ? 1 : 2;
+    if (!tab) {
+        if (getenv("ISOCONSOLE")) {
+            tab=GetGUICharacters ("Linux","++++-|+++++>.*-^v :[>");
+        } else {
+            tab=GetGUICharacters ("Linux","Ú¿ÀÙÄ³ÂÃ´ÁÅ\x1AúÄ±°\x1B\x1A");
+//            tab=GetGUICharacters ("Linux","\x0D\x0C\x0E\x0B\x12\x19____+>\x1F\x01\x12 ");
+        }
     }
-
-    if (use == 2)
-	return tab_iso[index];
+    assert(index >= 0 && index < int(strlen(tab)));
 
 #ifdef USE_SCRNMAP
     return fromScreen[tab[index]];

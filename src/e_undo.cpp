@@ -311,7 +311,31 @@ int EBuffer::Undo(int undo) {
 //            printf("\tModified\n");
             Modified = 0;
             break;
-            
+
+        case ucPlaceUserBookmark:
+            //puts ("ucPlaceUserBookmark");
+            UGET(rc, No, Pos, ACount); if (rc == 0) return 0;
+            if (GetUData(No, Pos, &data, ACount) == 0) return 0;
+            Pos -= ACount;
+            UGET(rc, No, Pos, Col); if (rc == 0) return 0;
+            UGET(rc, No, Pos, Line); if (rc == 0) return 0;
+            if (Col==(unsigned long)-1||Line==(unsigned long)-1) {
+                if (RemoveUserBookmark ((const char *)data)==0) return 0;
+            } else {
+                if (PlaceUserBookmark ((const char *)data,EPoint (Line,Col))==0) return 0;
+            }
+            break;
+
+        case ucRemoveUserBookmark:
+            //puts("ucRemoveUserBookmark");
+            UGET(rc, No, Pos, ACount); if (rc == 0) return 0;
+            if (GetUData(No, Pos, &data, ACount) == 0) return 0;
+            Pos -= ACount;
+            UGET(rc, No, Pos, Col); if (rc == 0) return 0;
+            UGET(rc, No, Pos, Line); if (rc == 0) return 0;
+            if (PlaceUserBookmark ((const char *)data,EPoint (Line,Col))==0) return 0;
+            break;
+
         default:
             assert(1 == "Oops: invalid undo command.\n"[0]);
         }

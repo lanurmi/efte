@@ -51,6 +51,10 @@
 #include "o_buflist.h"
 #include "o_routine.h"
 #include "o_modemap.h"
+#include "e_cvslog.h"
+#include "o_cvsbase.h"
+#include "o_cvs.h"
+#include "o_cvsdiff.h"
 #include "c_commands.h"
 #include "c_history.h"
 

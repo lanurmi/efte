@@ -40,6 +40,7 @@
 #define CF_HWTYPE   123
 #define CF_VARIABLE 124
 #define CF_CONCAT   125
+#define CF_CVSIGNRX 126
 
 #define CF_EOF      254
 

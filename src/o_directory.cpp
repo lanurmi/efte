@@ -70,10 +70,12 @@ void EDirectory::DrawLine(PCell B, int Line, int Col, ChColor color, int Width) 
         s[strlen(s)] = (Files[Line]->Type() == fiDIRECTORY)? SLASH : ' ';
 
         if (Col < int(strlen(s)))
-            MoveStr(B, 0, Width, s + Col,
-                    (Files[Line]->Type() == fiDIRECTORY) ?
-                    (TAttr)(color | (1<<3)) : (TAttr)color, Width);
+            MoveStr(B, 0, Width, s + Col, color, Width);
     }
+}
+
+int EDirectory::IsHilited(int Line) {
+    return (Line >= 0 && Line < FCount) ? Files[Line]->Type() == fiDIRECTORY : 0;
 }
 
 int _LNK_CONV FileNameCmp(const void *a, const void *b) {
@@ -214,6 +216,36 @@ int EDirectory::ExecCommand(int Command, ExState &State) {
         FmChDir(SSLASH);
         return ErOK;
 
+    case ExDirSearchCancel:
+        // Kill search when moving
+        SearchLen = 0;
+        Msg(S_INFO, "");
+        return ErOK;
+
+    case ExDirSearchNext:
+        // Find next matching file, search is case in-sensitive while sorting is sensitive
+        if (SearchLen) {
+            for (int i = Row + 1; i < FCount; i++) {
+                if (strnicmp(SearchName, Files[i]->Name(), SearchLen) == 0) {
+                    Row = i;
+                    break;
+                }
+            }
+        }
+        return ErOK;
+
+    case ExDirSearchPrev:
+        // Find prev matching file, search is case in-sensitive while sorting is sensitive
+        if (SearchLen) {
+            for (int i = Row - 1; i >= 0; i--) {
+                if (strnicmp(SearchName, Files[i]->Name(), SearchLen) == 0) {
+                    Row = i;
+                    break;
+                }
+            }
+        }
+        return ErOK;
+
     case ExDeleteFile:
         SearchLen = 0;
         Msg(S_INFO, "");
@@ -241,6 +273,9 @@ void EDirectory::HandleEvent(TEvent &Event) {
     int resetSearch = 0;
     EModel::HandleEvent(Event);
     switch (Event.What) {
+    case evKeyUp:
+        resetSearch = 0;
+        break;
     case evKeyDown:
         LOG << "Key Code: " << kbCode(Event.Key.Code) << ENDLINE;
         resetSearch = 1;
@@ -402,7 +437,7 @@ void EDirectory::GetPath(char *APath, int MaxLen) {
     Slash(APath, 0);
 }
 
-void EDirectory::GetInfo(char *AInfo, int MaxLen) {
+void EDirectory::GetInfo(char *AInfo, int /*MaxLen*/) {
     char buf[256] = {0};
     char winTitle[256] = {0};
 
@@ -430,7 +465,7 @@ void EDirectory::GetInfo(char *AInfo, int MaxLen) {
             Path);*/
 }
 
-void EDirectory::GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen) {
+void EDirectory::GetTitle(char *ATitle, int MaxLen, char *ASTitle, int /*SMaxLen*/) {
 
     strncpy(ATitle, Path, MaxLen - 1);
     ATitle[MaxLen - 1] = 0;
@@ -469,6 +504,6 @@ int EDirectory::ChangeDir(ExState &State) {
 }
 
 int EDirectory::GetContext() { return CONTEXT_DIRECTORY; }
-char *EDirectory::FormatLine(int Line) { return 0; };
-int EDirectory::CanActivate(int Line) { return 1; }
+char *EDirectory::FormatLine(int /*Line*/) { return 0; };
+int EDirectory::CanActivate(int /*Line*/) { return 1; }
 #endif

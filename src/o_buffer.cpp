@@ -23,6 +23,9 @@ EViewPort *EBuffer::CreateViewPort(EView *V) {
         if (CompilerMsgs)
             CompilerMsgs->FindFileErrors(this);
 #endif
+#ifdef CONFIG_OBJ_CVS
+        if (CvsDiffView) CvsDiffView->FindFileLines(this);
+#endif
 
         markIndex.retrieveForBuffer(this);
 
@@ -34,6 +37,10 @@ EViewPort *EBuffer::CreateViewPort(EView *V) {
         //printf("setting to c:%d r:%d f:%s", c, r, FileName);
         V->Port->GetPos();
         V->Port->ReCenter = 1;
+
+#ifdef CONFIG_BOOKMARKS
+        if (BFI (this,BFI_SaveBookmarks)==3) RetrieveBookmarks(this);
+#endif
 #endif
     }
     return V->Port;
@@ -462,7 +469,7 @@ int EBuffer::ExecCommand(int Command, ExState &State) {
     case ExClipClear:             return ClipClear();
     case ExBlockPaste:            return BlockPaste();
     case ExBlockKill:             return BlockKill();
-    case ExBlockIndent:                                            
+    case ExBlockIndent:
         {
             int saved_persistence, ret_code;
 
@@ -560,6 +567,8 @@ int EBuffer::ExecCommand(int Command, ExState &State) {
     case ExToggleWordWrap:        return ToggleWordWrap();
     case ExToggleTrim:            return ToggleTrim();
     case ExToggleShowMarkers:     return ToggleShowMarkers();
+    case ExToggleHilitTags:       return ToggleHilitTags();
+    case ExToggleShowBookmarks:   return ToggleShowBookmarks();
     case ExSetLeftMargin:         return SetLeftMargin();
     case ExSetRightMargin:        return SetRightMargin();
     case ExSetIndentWithTabs:     return SetIndentWithTabs(State);
@@ -681,6 +690,83 @@ int EBuffer::FoldCreateByRegexp(ExState &State) {
 }
 
 #ifdef CONFIG_BOOKMARKS
+int EBuffer::PlaceUserBookmark(const char *n,EPoint P) {
+    char name[256+4] = "_BMK";
+    int result;
+    EPoint prev;
+
+    strcpy (name+4,n);
+    if (GetBookmark (name,prev)==0) {
+        prev.Row=-1;prev.Col=-1;
+    }
+    result=PlaceBookmark(name, P);
+    if (result) {
+        if (BFI (this,BFI_ShowBookmarks)) {
+            FullRedraw ();
+        }
+        if (BFI (this,BFI_SaveBookmarks)==1||BFI (this,BFI_SaveBookmarks)==2) {
+            if (!Modify ()) return result;   // Never try to save to read-only
+#ifdef CONFIG_UNDOREDO
+            if (BFI(this, BFI_Undo)) {
+                if (PushULong(prev.Row) == 0) return 0;
+                if (PushULong(prev.Col) == 0) return 0;
+                if (PushUData((void *)n,strlen (n)+1) == 0) return 0;
+                if (PushULong(strlen (n)+1) == 0) return 0;
+                if (PushUChar(ucPlaceUserBookmark) == 0) return 0;
+            }
+#endif
+        }
+    }
+    return result;
+}
+
+int EBuffer::RemoveUserBookmark(const char *n) {
+    char name[256+4] = "_BMK";
+    int result;
+    EPoint p;
+
+    strcpy (name+4,n);
+    GetBookmark (name,p);       // p is valid only if remove is successful
+    result=RemoveBookmark(name);
+    if (result) {
+        if (BFI (this,BFI_ShowBookmarks)) {
+            FullRedraw ();
+        }
+        if (BFI (this,BFI_SaveBookmarks)==1||BFI (this,BFI_SaveBookmarks)==2) {
+            if (!Modify ()) return result;   // Never try to save to read-only
+#ifdef CONFIG_UNDOREDO
+            if (PushULong(p.Row) == 0) return 0;
+            if (PushULong(p.Col) == 0) return 0;
+            if (PushUData((void *)n,strlen (n)+1) == 0) return 0;
+            if (PushULong(strlen (n)+1) == 0) return 0;
+            if (PushUChar(ucRemoveUserBookmark) == 0) return 0;
+#endif
+        }
+    }
+    return result;
+}
+
+int EBuffer::GotoUserBookmark(const char *n) {
+    char name[256+4] = "_BMK";
+
+    strcpy (name+4,n);
+    return GotoBookmark(name);
+}
+
+int EBuffer::GetUserBookmarkForLine(int searchFrom, int searchForLine, char *&Name, EPoint &P) {
+    int i;
+
+    i=searchFrom;
+    while (1) {
+        i=GetBookmarkForLine(i,searchForLine,Name,P);
+        if (i==-1) return -1;
+        if (strncmp (Name,"_BMK",4)==0) {
+            Name+=4;
+            return i;
+        }
+    }
+}
+
 int EBuffer::PlaceBookmark(ExState &State) {
     char name[256] = "";
     EPoint P = CP;
@@ -689,7 +775,7 @@ int EBuffer::PlaceBookmark(ExState &State) {
 
     if (State.GetStrParam(View, name, sizeof(name)) == 0)
         if (View->MView->Win->GetStr("Place Bookmark", sizeof(name), name, HIST_BOOKMARK) == 0) return 0;
-    return PlaceBookmark(name, P);
+    return PlaceUserBookmark(name, P);
 }
 
 int EBuffer::RemoveBookmark(ExState &State) {
@@ -697,7 +783,7 @@ int EBuffer::RemoveBookmark(ExState &State) {
 
     if (State.GetStrParam(View, name, sizeof(name)) == 0)
         if (View->MView->Win->GetStr("Remove Bookmark", sizeof(name), name, HIST_BOOKMARK) == 0) return 0;
-    return RemoveBookmark(name);
+    return RemoveUserBookmark(name);
 }
 
 int EBuffer::GotoBookmark(ExState &State) {
@@ -705,7 +791,7 @@ int EBuffer::GotoBookmark(ExState &State) {
 
     if (State.GetStrParam(View, name, sizeof(name)) == 0)
         if (View->MView->Win->GetStr("Goto Bookmark", sizeof(name), name, HIST_BOOKMARK) == 0) return 0;
-    return GotoBookmark(name);
+    return GotoUserBookmark(name);
 }
 #endif
 
@@ -1258,11 +1344,11 @@ void EBuffer::GetName(char *AName, int MaxLen) {
     AName[MaxLen - 1] = 0;
 }
 
-void EBuffer::GetPath(char *APath, int MaxLen) {
+void EBuffer::GetPath(char *APath, int /*MaxLen*/) {
     JustDirectory(FileName, APath);
 }
 
-void EBuffer::GetInfo(char *AInfo, int MaxLen) {
+void EBuffer::GetInfo(char *AInfo, int /*MaxLen*/) {
     char buf[256] = {0};
     char winTitle[256] = {0};
 
@@ -1407,7 +1493,7 @@ int EBuffer::InsertUid() {
     if (p == 0) {
         Msg(S_INFO, "User ID not set ($USER).");
         //return 0;
-        p = "UNKNOWN USER";
+        p = (char *)"UNKNOWN USER";
     }
     return InsertString(p, strlen(p));
 }

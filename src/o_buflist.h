@@ -14,6 +14,9 @@ class BufferView: public EList {
 public:
     char **BList;
     int BCount;
+    int SearchLen;
+    char SearchString[MAXISEARCH];
+    int SearchPos[MAXISEARCH];
 
     BufferView(int createFlags, EModel **ARoot);
     virtual ~BufferView();
@@ -24,7 +27,10 @@ public:
     virtual void UpdateList();
     EModel *GetBufferById(int No);
     virtual int ExecCommand(int Command, ExState &State);
+    virtual void HandleEvent(TEvent &Event);
+    int getMatchingLine (int start, int direction);
     virtual int Activate(int No);
+    void CancelSearch();
     virtual void GetInfo(char *AInfo, int MaxLen);
     virtual void GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen);
 };

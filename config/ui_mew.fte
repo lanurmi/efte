@@ -370,6 +370,23 @@ menu Options { #FOLD03
     item "&Print to...               " { SetPrintDevice }
 }                    
 
+menu MCvs {
+    item "CVS C&heck"  { RunCvs "-n update" }
+    item "CVS &Update" { RunCvs "update -d" }
+    item "CVS &Diff"   { CvsDiff "" }
+    item "CVS &Commit" { RunCvsCommit "" }
+    item "CVS &Add"    { RunCvs "add" }
+    item "CVS &Remove" { RunCvs "remove" }
+    item "CVS S&tatus" { RunCvs "status -v" }
+    item "CV&S"        { Cvs }
+    item;
+    item "&View CVS"      { ViewCvs }
+    item "View CVS Di&ff" { ViewCvsDiff }
+    item "View CVS &log"  { ViewCvsLog }
+    item;
+    item "Cl&ear CVS messages" { ClearCvsMessages }
+}
+
 menu Tools {
     item "&Compile\tF9" { FileSaveAll; Compile "make" }
     item "&Grep" { Compile "grep -n " }
@@ -382,6 +399,8 @@ menu Tools {
     item "&Messages\tS+F9" { ViewMessages }
     item;
     item "&ASCII Table...\tCtrl+Shift+A" { ASCIITable }
+    item;
+    submenu "C&VS\tC+O_C+V", MCvs;
     item;
     submenu "Customi&ze", Options;
 }

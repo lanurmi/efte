@@ -28,14 +28,21 @@ ChColor hcPlain_Selected = 0x80;
 ChColor hcPlain_Markers = 0x03;
 ChColor hcPlain_Found = 0x40;
 ChColor hcPlain_Keyword = 0x0F;
-ChColor hcPlain_Folds = 0x0A;
+ChColor hcPlain_Folds[5] = { 0x0A, 0x0A, 0x0A, 0x0A, 0x0A };
 ChColor hcPlain_HilitWord = 0x0D;
+ChColor hcPlain_Bookmark = 0x20;
 
 /* LIST */
-//ChColor hcList_Border    = 0x03;
-ChColor hcList_Status    = 0x70;
-ChColor hcList_Normal    = 0x07;
-ChColor hcList_Selected  = 0x1F;
+//ChColor hcList_Border       = 0x03;
+ChColor hcList_Status       = 0x70;
+ChColor hcList_Normal       = 0x07;
+ChColor hcList_Selected     = 0x1F;
+ChColor hcList_Hilited      = 0x0F;
+ChColor hcList_HilitSelect  = 0x1F;
+ChColor hcList_Marked       = 0xB0;
+ChColor hcList_MarkSelect   = 0x1B;
+ChColor hcList_MarkHilit    = 0xB1;
+ChColor hcList_MarkHilitSel = 0x1B;
 
 ChColor hcScrollBar_Arrows = 0x70;
 ChColor hcScrollBar_Back   = 0x07;
@@ -76,6 +83,12 @@ static const struct {
     { "LIST.Status",       &hcList_Status },
     { "LIST.Normal",       &hcList_Normal },
     { "LIST.Selected",     &hcList_Selected },
+    { "LIST.Hilited",      &hcList_Hilited },
+    { "LIST.HilitSelect",  &hcList_HilitSelect },
+    { "LIST.Marked",       &hcList_Marked },
+    { "LIST.MarkSelect",   &hcList_MarkSelect },
+    { "LIST.MarkHilit",    &hcList_MarkHilit },
+    { "LIST.MarkHilitSel", &hcList_MarkHilitSel },
 
     { "PLAIN.Normal",      &hcPlain_Normal },
     { "PLAIN.Background",  &hcPlain_Background },
@@ -83,8 +96,13 @@ static const struct {
     { "PLAIN.Markers",     &hcPlain_Markers },
     { "PLAIN.Found",       &hcPlain_Found },
     { "PLAIN.Keyword",     &hcPlain_Keyword },
-    { "PLAIN.Folds",       &hcPlain_Folds },
+    { "PLAIN.Folds0",      &hcPlain_Folds[0] },
+    { "PLAIN.Folds1",      &hcPlain_Folds[1] },
+    { "PLAIN.Folds2",      &hcPlain_Folds[2] },
+    { "PLAIN.Folds3",      &hcPlain_Folds[3] },
+    { "PLAIN.Folds4",      &hcPlain_Folds[4] },
     { "PLAIN.HilitWord",   &hcPlain_HilitWord },
+    { "PLAIN.Bookmark",    &hcPlain_Bookmark },
 
     { "ScrollBar.Arrows",  &hcScrollBar_Arrows },
     { "ScrollBar.Back",    &hcScrollBar_Back },

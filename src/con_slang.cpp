@@ -23,6 +23,8 @@ static int use_esc_hack = 0;
 
 #include <slang.h>
 
+#include "sysdep.h"
+#include "c_config.h"
 #include "console.h"
 // #include "slangkbd.h"
 #include "gui.h"
@@ -1067,9 +1069,9 @@ char ConGetDrawChar(int index)
 
     if (use_tab == NULL) {
 	char *c = getenv("TERM");
-	use_tab = ((c == NULL) || strcmp(c, "linux") != 0) ? tab : tab_linux;
-	use_tab_size = (use_tab == tab)
-	    ? sizeof(tab) : sizeof(tab_linux);
+        use_tab = ((c == NULL) || strcmp(c, "linux") != 0) ? tab : tab_linux;
+        use_tab=GetGUICharacters ("Slang",use_tab);
+	use_tab_size = strlen(use_tab);
     }
 
     assert(index >= 0 && index < use_tab_size);

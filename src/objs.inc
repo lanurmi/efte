@@ -16,6 +16,7 @@ c_mode.$(OEXT) \
 e_block.$(OEXT) \
 e_buffer.$(OEXT) \
 e_cmds.$(OEXT) \
+e_cvslog.$(OEXT) \
 e_redraw.$(OEXT) \
 e_file.$(OEXT) \
 e_fold.$(OEXT) \
@@ -62,6 +63,9 @@ o_model.$(OEXT) \
 o_routine.$(OEXT) \
 o_buffer.$(OEXT) \
 o_directory.$(OEXT) \
+o_cvsbase.$(OEXT) \
+o_cvs.$(OEXT) \
+o_cvsdiff.$(OEXT) \
 s_files.$(OEXT) \
 s_direct.$(OEXT) \
 s_util.$(OEXT) \

@@ -222,7 +222,7 @@ void EMessages::AddError(Error *p) {
     UpdateList();
 }
 
-void EMessages::AddError(char *file, int line, char *msg, const char *text) {
+void EMessages::AddError(char *file, int line, char *msg, const char *text, int hilit) {
     Error *pe;
 
     pe = (Error *) malloc(sizeof(Error));
@@ -233,6 +233,7 @@ void EMessages::AddError(char *file, int line, char *msg, const char *text) {
     pe->line = line;
     pe->msg = msg ? strdup(msg) : 0;
     pe->text = text ? strdup(text) : 0;
+    pe->hilit = hilit;
 
     AddError(pe);
 }
@@ -289,7 +290,7 @@ int EMessages::GetLine(char *Line, int maxim) {
             Line[l - 1] = 0;
         BufPos = p + 1 - MsgBuf;
         //fprintf(stderr, "GetLine: Line %d\n", strlen(Line));
-    } else if (Running) {
+    } else if (Running && sizeof(MsgBuf) != BufLen) {
         memmove(MsgBuf, MsgBuf + BufPos, BufLen - BufPos);
         BufLen -= BufPos;
         BufPos = 0;
@@ -400,7 +401,7 @@ void EMessages::GetErrors() {
                     else
                         file = fn1;
                 }
-                AddError(file, atoi(ln), msg[0] ? msg : 0, line);
+                AddError(file, atoi(ln), msg[0] ? msg : 0, line, 1);
                 didmatch = 1;
                 MatchCount++;
                 break;
@@ -580,12 +581,16 @@ char* EMessages::FormatLine(int Line) {
     return p;
 }
 
+int EMessages::IsHilited(int Line) {
+    return (Line >= 0 && Line < ErrCount) ? ErrList[Line]->hilit : 0;
+}
+
 void EMessages::UpdateList() {
     Count = ErrCount;
     EList::UpdateList();
 }
 
-int EMessages::Activate(int No) {
+int EMessages::Activate(int /*No*/) {
     //assert(No == Row);
     //Row = No;
     ShowError(View, Row);
@@ -609,7 +614,7 @@ void EMessages::GetName(char *AName, int MaxLen) {
     strncpy(AName, "Messages", MaxLen);
 }
 
-void EMessages::GetInfo(char *AInfo, int MaxLen) {
+void EMessages::GetInfo(char *AInfo, int /*MaxLen*/) {
     sprintf(AInfo, 
             "%2d %04d/%03d Messages: %d (%s) ",
             ModelNo,
@@ -624,7 +629,7 @@ void EMessages::GetPath(char *APath, int MaxLen) {
     Slash(APath, 0);
 }
 
-void EMessages::GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen) {
+void EMessages::GetTitle(char *ATitle, int /*MaxLen*/, char *ASTitle, int SMaxLen) {
     sprintf(ATitle, "Messages: %s", Command);
     strncpy(ASTitle, "Messages", SMaxLen);
     ASTitle[SMaxLen - 1] = 0;

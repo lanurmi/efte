@@ -60,6 +60,10 @@ public:
     
     virtual void DrawLine(PCell B, int Line, int Col, ChColor color, int Width);
     virtual char *FormatLine(int Line);
+    virtual int IsHilited(int Line);
+    virtual int IsMarked(int Line);
+    virtual int Mark(int Line);
+    virtual int Unmark(int Line);
 
     int SetPos(int ARow, int ACol);
     void FixPos();
@@ -87,6 +91,12 @@ public:
     int MoveFileStart();
     int MoveFileEnd();
     int Activate();
+    int Mark();
+    int Unmark();
+    int ToggleMark();
+    int MarkAll();
+    int UnmarkAll();
+    int ToggleMarkAll();
 
     int UpdateRows(int minim, int maxim);
 };

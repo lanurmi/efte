@@ -47,7 +47,11 @@ extern char FileBuffer[RWBUFSIZE];
 
 #define NextTab(pos,ts) (((pos) / (ts) + 1) * (ts))
 
-#define GapLine(x,g,c,a) (((x) < (g)) ? (x) : ((x) + (a) - (c)))
+// x before gap -> x
+// x less than count -> after gap
+// count - 1 before gap -> count - 1
+// after gap -> allocated - 1
+#define GapLine(x,g,c,a) (((x) < (g)) ? (x) : (x) < (c) ? ((x) + (a) - (c)) : (c) - 1 < (g) ? (c) - 1 : (a) - 1 )
 
 typedef class ELine* PELine;
 typedef class EPoint* PEPoint;
@@ -98,7 +102,7 @@ typedef struct _RoutineList {
 #endif
 
 #ifdef CONFIG_BOOKMARKS
-typedef struct {
+typedef struct _EBookmark {
     char *Name;
     EPoint BM;
 } EBookmark;
@@ -438,6 +442,7 @@ public:
     int RemoveBookmark(char *Name);
     int GetBookmark(char *Name, EPoint &P);
     int GotoBookmark(char *Name);
+    int GetBookmarkForLine(int searchFrom, int searchForLine, char *&Name, EPoint &P);
 #endif
     
 /////////////////////////////////////////////////////////////////////////////
@@ -638,7 +643,9 @@ public:
     int     ToggleWordWrap();
     int     ToggleTrim();
     int     ToggleShowMarkers();
-    
+    int     ToggleHilitTags ();
+    int     ToggleShowBookmarks ();
+
     int     SetLeftMargin();
     int     SetRightMargin();
     
@@ -696,6 +703,10 @@ public:
     int MoveToLine(ExState &State);
     int FoldCreateByRegexp(ExState &State);
 #ifdef CONFIG_BOOKMARKS
+    int PlaceUserBookmark(const char *n,EPoint P);
+    int RemoveUserBookmark(const char *n);
+    int GotoUserBookmark(const char *n);
+    int GetUserBookmarkForLine(int searchFrom, int searchForLine, char *&Name, EPoint &P);
     int PlaceBookmark(ExState &State);
     int RemoveBookmark(ExState &State);
     int GotoBookmark(ExState &State);

@@ -105,7 +105,7 @@ char *getProgramName(char *name) {
 
 #endif
 
-static int GetConfigFileName(int argc, char **argv, char *ConfigFileName) {
+static int GetConfigFileName(int /*argc*/, char **argv, char *ConfigFileName) {
     char CfgName[MAXPATH] = "";
 
     if (ConfigFileName[0] == 0) {

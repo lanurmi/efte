@@ -233,8 +233,13 @@ void EListPort::PaintView(int PaintAll) {
         return;
     for (I = 0; I < H; I++) {
         if (PaintAll || I + TopRow == Row || I + TopRow == OldRow) {
+            int mark = List->IsMarked(I + TopRow);
+            int hilit = List->IsHilited(I + TopRow);
             color = ((Row == I + TopRow) && View->MView->Win->IsActive())
-                ? hcList_Selected : hcList_Normal;
+                ? (mark ? (hilit ? hcList_MarkHilitSel : hcList_MarkSelect ):
+                   (hilit ? hcList_HilitSelect : hcList_Selected)) :
+                (mark ? (hilit ? hcList_MarkHilit : hcList_Marked) :
+                 (hilit ? hcList_Hilited : hcList_Normal));
             MoveChar(B, 0, W, ' ', color, W);
             if (I + TopRow < List->Count)
                 List->DrawLine(B, I + TopRow, LeftCol, color, W);
@@ -353,6 +358,12 @@ int EList::ExecCommand(int Command, ExState &State) {
     case ExMoveLineEnd:          return MoveLineEnd();
     case ExRescan:               RescanList();            return ErOK;
     case ExActivate:             return Activate();
+    case ExListMark:             return Mark();
+    case ExListUnmark:           return Unmark();
+    case ExListToggleMark:       return ToggleMark();
+    case ExListMarkAll:          return MarkAll();
+    case ExListUnmarkAll:        return UnmarkAll();
+    case ExListToggleMarkAll:    return ToggleMarkAll();
     }
     return EModel::ExecCommand(Command, State);
 }
@@ -416,6 +427,10 @@ int EList::GetContext() { return CONTEXT_LIST; };
 int EList::BeginMacro() { return 1; }
 int EList::CanActivate(int /*Line*/) { return 1; }
 int EList::Activate(int /*No*/) { return 0; }
+int EList::IsHilited(int /*Line*/) { return 0; }
+int EList::IsMarked(int /*Line*/) { return 0; }
+int EList::Mark(int /*Line*/) { return 1; }
+int EList::Unmark(int /*Line*/) { return 1; }
 
 int EList::SetPos(int ARow, int ACol) {
     Row = ARow;
@@ -620,4 +635,64 @@ int EList::Activate() {
             if (Activate(Row) == 1)
                 return ErOK;
     return ErFAIL;
+}
+
+int EList::Mark() {
+    if (Count > 0 && ! IsMarked(Row) && Mark(Row) == 1) {
+        NeedsRedraw = 1;
+        return ErOK;
+    } else return ErFAIL;
+}
+
+int EList::Unmark() {
+    if (Count > 0 && IsMarked(Row) && Unmark(Row) == 1) {
+        NeedsRedraw = 1;
+        return ErOK;
+    } else return ErFAIL;
+}
+
+int EList::ToggleMark() {
+    if (Count > 0)
+        if (IsMarked(Row)) {
+            if (Unmark(Row) == 1) {
+                NeedsRedraw = 1;
+                return ErOK;
+            }
+        } else {
+            if (Mark(Row) == 1) {
+                NeedsRedraw = 1;
+                return ErOK;
+            }
+        }
+    return ErFAIL;
+}
+
+int EList::MarkAll() {
+    NeedsRedraw = 1;
+    for (int i = 0; i < Count; i++) {
+        if (! IsMarked(i))
+            if (Mark(i) != 1) return ErFAIL;
+    }
+    return ErOK;
+}
+
+int EList::UnmarkAll() {
+    NeedsRedraw = 1;
+    for (int i = 0; i < Count; i++) {
+        if (IsMarked(i))
+            if (Unmark(i) != 1) return ErFAIL;
+    }
+    return ErOK;
+}
+
+int EList::ToggleMarkAll() {
+    NeedsRedraw = 1;
+    for (int i = 0; i < Count; i++) {
+        if (IsMarked(i)) {
+            if (Unmark(i) != 1) return ErFAIL;
+        } else {
+            if (Mark(i) != 1) return ErFAIL;
+        }
+    }
+    return ErOK;
 }

@@ -30,6 +30,12 @@ color_palette {
     { 'List_Status',                  'black:darkCyan' },
     { 'List_Normal',                  'black:white' },
     { 'List_Selected',                'white:darkBlue' },
+    { 'List_Hilited',                 'white:black' },
+    { 'List_HilitSelect',             'white:darkBlue' },
+    { 'List_Marked',                  'yellow:black' },
+    { 'List_MarkSelect',              'yellow:darkBlue' },
+    { 'List_MarkHilit',               'yellow:black' },
+    { 'List_MarkHilitSel',            'yellow:darkBlue' },
 
     { 'ASCII_Chars',                  'gray:black' },
 
@@ -53,7 +59,11 @@ color_palette {
     { 'Editor_Selected',              'black:darkCyan' },
     { 'Editor_Markers',               'darkCyan:bg' },
     { 'Editor_FoundText',             'white:darkRed' },
-    { 'Editor_Folds',                 'darkGreen:bg' },
+    { 'Editor_Folds0',                'darkGreen:bg' },
+    { 'Editor_Folds1',                'darkBlue:bg' },
+    { 'Editor_Folds2',                'darkMagenta:bg' },
+    { 'Editor_Folds3',                'darkMagenta:bg' },
+    { 'Editor_Folds4',                'darkMagenta:bg' },
     { 'Editor_HilitWord',             'darkRed:bg' },
 
     { 'Editor_Default',               'fg:bg' },

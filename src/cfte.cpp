@@ -110,7 +110,7 @@ void PutNumber(CurPos &cp, int xtag, long num) {
     b[1] = (unsigned char)((l >> 8) & 0xFF);
     b[2] = (unsigned char)((l >> 16) & 0xFF);
     b[3] = (unsigned char)((l >> 24) & 0xFF);
-    PutObject(cp, xtag, 4, &b);
+    PutObject(cp, xtag, 4, b);
 }
 
 int main(int argc, char **argv) {
@@ -306,6 +306,9 @@ MODE_BFI(InsertKillBlock),
 MODE_BFI(UndoMoves),
 MODE_BFI(DetectLineSep),
 MODE_BFI(TrimOnSave),
+MODE_BFI(SaveBookmarks),
+MODE_BFI(HilitTags),
+MODE_BFI(ShowBookmarks),
 { 0, 0 },
 };
 
@@ -374,6 +377,8 @@ MODE_FLG(PMDisableAccel),
 MODE_FLG(SevenBit),
 MODE_FLG(WeirdScroll),
 MODE_FLG(LoadDesktopMode),
+MODE_FLG(IgnoreBufferList),
+MODE_FLG(ReassignModelIds),
 { 0, 0 },
 };
 
@@ -384,6 +389,9 @@ MODE_FLG(PrintDevice),
 MODE_FLG(CompileCommand),
 MODE_FLG(WindowFont),
 MODE_FLG(HelpCommand),
+MODE_FLG(GUICharacters),
+MODE_FLG(CvsCommand),
+MODE_FLG(CvsLogMode),
 { 0, 0 },
 };
 
@@ -479,6 +487,7 @@ int Lookup(OrdLookup *where, char *what) {
 #define K_SUBMENUCOND 19
 #define K_HWTYPE     20
 #define K_COLPALETTE 21
+#define K_CVSIGNRX   22
 
 typedef char Word[64];
 
@@ -504,6 +513,7 @@ OrdLookup CfgKW[] = {
 { "h_words", K_HWORDS },
 { "h_wtype", K_HWTYPE },
 { "submenucond", K_SUBMENUCOND },
+{ "CvsIgnoreRx", K_CVSIGNRX },
 { 0, 0 },
 };
 
@@ -780,6 +790,7 @@ char *GetString(CurPos &cp) {
     char c = *cp.c;
     char *p = cp.c;
     char *d = cp.c;
+    int n;
 
     if (c == '[') c = ']';
 
@@ -799,6 +810,21 @@ char *GetString(CurPos &cp) {
                 case 'b': *cp.c = '\b'; break;
                 case 'v': *cp.c = '\v'; break;
                 case 'a': *cp.c = '\a'; break;
+                case 'x':
+                    cp.c++;
+                    if (cp.c == cp.z) return 0;
+                    if (*cp.c >= '0' && *cp.c <= '9') n = *cp.c - '0';
+                    else if (*cp.c >='a' && *cp.c <= 'f') n = *cp.c - 'a' + 10;
+                    else if (*cp.c >='A' && *cp.c <= 'F') n = *cp.c - 'A' + 10;
+                    else return 0;
+                    cp.c++;
+                    if (cp.c == cp.z) cp.c--;
+                    else if (*cp.c >= '0' && *cp.c <= '9') n = n * 16 + *cp.c - '0';
+                    else if (*cp.c >= 'a' && *cp.c <= 'f') n = n * 16 + *cp.c - 'a' + 10;
+                    else if (*cp.c >= 'A' && *cp.c <= 'F') n = n * 16 + *cp.c - 'A' + 10;
+                    else cp.c--;
+                    *cp.c = n;
+                    break;
                 }
             }
         } else if (*cp.c == c) {
@@ -1583,6 +1609,20 @@ int ParseConfigFile(CurPos &cp) {
                                 PutNumber(cp, CF_INT, file);
                                 PutNumber(cp, CF_INT, line);
                                 PutNumber(cp, CF_INT, msg);
+                                PutString(cp, CF_REGEXP, regexp);
+                                if (Parse(cp) != P_EOS) Fail(cp, "';' expected");
+                                GetOp(cp, P_EOS);
+                            }
+                            break;
+                        case K_CVSIGNRX:
+                            {
+                                char *regexp;
+
+                                if (Parse(cp) != P_ASSIGN) Fail(cp, "'=' expected");
+                                GetOp(cp, P_ASSIGN);
+                                if (Parse(cp) != P_STRING) Fail(cp, "String expected");
+                                regexp = GetString(cp);
+                                PutNull(cp, CF_CVSIGNRX);
                                 PutString(cp, CF_REGEXP, regexp);
                                 if (Parse(cp) != P_EOS) Fail(cp, "';' expected");
                                 GetOp(cp, P_EOS);

@@ -44,10 +44,19 @@ int EBuffer::GetMap(int Row, int *StateLen, hsState **StateMap) {
 void EBuffer::FullRedraw() { // redraw all views
     EView *V = View;
     EEditPort *W;
+    int Min, Max;
 
     while (V) {
         W = GetViewVPort(V);
-        Draw(W->TP.Row, W->TP.Row + W->Rows);
+        // Need to use real lines, not virtual
+        // (similar to HilitMatchBracket)
+        Min = VToR(W->TP.Row);
+        Max = W->TP.Row + W->Rows;
+        if (Max >= VCount)
+            Max = RCount;
+        else
+            Max = VToR(Max);
+        Draw(Min, Max);
         V = V->Next;
         if (V == View)
             break;
@@ -166,9 +175,12 @@ void EBuffer::DrawLine(TDrawBuffer B, int VRow, int C, int W, int &HilitX) {
 
             f = FindFold(Row);
             if (f != -1) {
+                int foldColor;
+                if (FF[f].level<5) foldColor=hcPlain_Folds[FF[f].level];
+                else foldColor=hcPlain_Folds[4];
                 if (FF[f].open == 1) {
                     l = sprintf(fold, "[%d]", FF[f].level);
-                    MoveStr(B, ECol - C + 1, W, fold, hcPlain_Folds, 10);
+                    MoveStr(B, ECol - C + 1, W, fold, foldColor, 10);
                     ECol += l;
                 } else {
                     if (VRow < VCount - 1) {
@@ -177,9 +189,9 @@ void EBuffer::DrawLine(TDrawBuffer B, int VRow, int C, int W, int &HilitX) {
                         Folded = RCount - (VRow + Vis(VRow));
                     }
                     l = sprintf(fold, "(%d:%d)", FF[f].level, Folded);
-                    MoveStr(B, ECol - C + 1, W, fold, hcPlain_Folds, 10);
+                    MoveStr(B, ECol - C + 1, W, fold, foldColor, 10);
                     ECol += l;
-                    MoveAttr(B, 0, W, hcPlain_Folds, W);
+                    MoveAttr(B, 0, W, foldColor, W);
                 }
             }
         }
@@ -219,6 +231,23 @@ void EBuffer::DrawLine(TDrawBuffer B, int VRow, int C, int W, int &HilitX) {
             else
                 MoveAttr(B, StartPos, W, hcPlain_Selected, EndPos - StartPos);
         }
+#ifdef CONFIG_BOOKMARKS
+        if (BFI(this, BFI_ShowBookmarks)) {
+            int i = 0;
+            char *Name;
+            EPoint P;
+            while ((i = GetBookmarkForLine(i, Row, Name, P)) != -1) {
+                if (strncmp(Name, "_BMK", 4) == 0) {
+                    // User bookmark, hilite line
+                    if (BFI(this, BFI_SeeThruSel))
+                        MoveBgAttr(B, 0, W, hcPlain_Bookmark, W);
+                    else
+                        MoveAttr(B, 0, W, hcPlain_Bookmark, W);
+                    break;
+                }
+            }
+        }
+#endif
         if (Match.Row != -1 && Match.Col != -1) {
             if (Row == Match.Row) {
                 if (BFI(this, BFI_SeeThruSel))
@@ -572,12 +601,12 @@ int EBuffer::GetHilitWord(int len, char *str, ChColor &clr, int IgnCase) {
             p += len + 1;
         }
     }
-    if (0 && len < 128) { // disabled
+    if (len < 128) {
         char s[128];
 
         memcpy(s, str, len);
         s[len] = 0;
-        if (TagDefined(s)) {
+        if (BFI(this, BFI_HilitTags)&&TagDefined(s)) {
 	    //clr = 0x0A;
 	    clr = Mode->fColorize->Colors[CLR_HexNumber];
             return 1;

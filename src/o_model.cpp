@@ -29,6 +29,7 @@ EModel *FindModelID(EModel *Model, int ID) {
 int GetNewModelID(EModel *B) {
     static int lastid = -1;
 
+    if (ReassignModelIds) lastid = 0;   // 0 is used by buffer list
     while (FindModelID(B, ++lastid) != 0) /* */;
 
     return lastid;
@@ -104,15 +105,15 @@ void EModel::SelectView(EView *V) {
     AddView(V);
 }
 
-EViewPort *EModel::CreateViewPort(EView *V) {
+EViewPort *EModel::CreateViewPort(EView */*V*/) {
     return 0;
 }
 
-int EModel::ExecCommand(int Command, ExState &State) {
+int EModel::ExecCommand(int /*Command*/, ExState &/*State*/) {
     return ErFAIL;
 }
 
-void EModel::HandleEvent(TEvent &Event) {
+void EModel::HandleEvent(TEvent &/*Event*/) {
 }
 
 void EModel::Msg(int level, const char *s, ...) {
@@ -133,34 +134,34 @@ int EModel::CanQuit() {
     return 1;
 }
 
-int EModel::ConfQuit(GxView *V, int multiFile) {
+int EModel::ConfQuit(GxView */*V*/, int /*multiFile*/) {
     return 1;
 }
 
 int EModel::GetContext() { return CONTEXT_NONE; }
 EEventMap *EModel::GetEventMap() { return 0; }
 int EModel::BeginMacro() { return 1; }
-void EModel::GetName(char *AName, int MaxLen) { *AName = 0; }
-void EModel::GetPath(char *APath, int MaxLen) { *APath = 0; }
-void EModel::GetInfo(char *AInfo, int MaxLen) { *AInfo = 0; }
-void EModel::GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen) { *ATitle = 0; *ASTitle = 0; }
-void EModel::NotifyPipe(int PipeId) { }
+void EModel::GetName(char *AName, int /*MaxLen*/) { *AName = 0; }
+void EModel::GetPath(char *APath, int /*MaxLen*/) { *APath = 0; }
+void EModel::GetInfo(char *AInfo, int /*MaxLen*/) { *AInfo = 0; }
+void EModel::GetTitle(char *ATitle, int /*MaxLen*/, char *ASTitle, int /*SMaxLen*/) { *ATitle = 0; *ASTitle = 0; }
+void EModel::NotifyPipe(int /*PipeId*/) { }
 
-void EModel::NotifyDelete(EModel *Deleted) {
+void EModel::NotifyDelete(EModel */*Deleted*/) {
 }
 void EModel::DeleteRelated() {
 }
 
 EViewPort::EViewPort(EView *V) { View = V; ReCenter = 0; }
 EViewPort::~EViewPort() {}
-void EViewPort::HandleEvent(TEvent &Event) { }
+void EViewPort::HandleEvent(TEvent &/*Event*/) { }
 void EViewPort::UpdateView() { }
 void EViewPort::RepaintView() { }
 void EViewPort::UpdateStatus() { }
 void EViewPort::RepaintStatus() { }
 void EViewPort::GetPos() { }
 void EViewPort::StorePos() { }
-void EViewPort::Resize(int Width, int Height) {}
+void EViewPort::Resize(int /*Width*/, int /*Height*/) {}
 
 void EModel::UpdateTitle() {
     char Title[256] = ""; //fte: ";
@@ -185,6 +186,6 @@ int EModel::GetStrVar(int var, char *str, int buflen) {
     return 0;
 }
 
-int EModel::GetIntVar(int var, int *value) {
+int EModel::GetIntVar(int /*var*/, int */*value*/) {
     return 0;
 }

@@ -19,8 +19,15 @@
 #endif
 
 typedef struct {
+    char *Name;
+    int Row,Col;
+} HBookmark;
+
+typedef struct {
     char *FileName;
     int Row, Col;
+    HBookmark **Books;
+    int BookCount;
 } FPosHistory;
 
 #define MAX_INPUT_HIST 128
@@ -33,7 +40,6 @@ typedef struct {
 
 extern char HistoryFileName[256];
 
-
 void ClearHistory();
 int SaveHistory(char *FileName);
 int LoadHistory(char *FileName);
@@ -44,6 +50,15 @@ int RetrieveFPos(char *FileName, int &Row, int &Col);
 int AddInputHistory(int Id, char *String);
 int CountInputHistory(int Id);
 int GetInputHistory(int Id, char *String, int maxlen, int Nth);
+
+/*
+ * Get bookmarks for given Buffer (file) from history.
+ */
+int RetrieveBookmarks(EBuffer *buf);
+/*
+ * Store given Buffer's bookmarks to history.
+ */
+int StoreBookmarks(EBuffer *buf);
 
 /* history values */
 #define HIST_DEFAULT    0
@@ -58,6 +73,9 @@ int GetInputHistory(int Id, char *String, int maxlen, int Nth);
 #define HIST_REGEXP     9
 #define HIST_TRANS     10
 #define HIST_TAGFILES  11
+#define HIST_CVS       12
+#define HIST_CVSDIFF   13
+#define HIST_CVSCOMMIT 14
 
 #endif
 

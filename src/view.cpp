@@ -177,6 +177,30 @@ int EView::ExecCommand(int Command, ExState &State) {
     case ExCompileNextError:    return ErFAIL;
 #endif
 
+#ifdef CONFIG_OBJ_CVS
+    case ExCvs:                 return Cvs(State);
+    case ExRunCvs:              return RunCvs(State);
+    case ExViewCvs:             return ViewCvs(State);
+    case ExClearCvsMessages:    return ClearCvsMessages(State);
+    case ExCvsDiff:             return CvsDiff(State);
+    case ExRunCvsDiff:          return RunCvsDiff(State);
+    case ExViewCvsDiff:         return ViewCvsDiff(State);
+    case ExCvsCommit:           return CvsCommit(State);
+    case ExRunCvsCommit:        return RunCvsCommit(State);
+    case ExViewCvsLog:          return ViewCvsLog(State);
+#else
+    case ExCvs:                 return ErFAIL;
+    case ExRunCvs:              return ErFAIL;
+    case ExViewCvs:             return ErFAIL;
+    case ExClearCvsMessages:    return ErFAIL;
+    case ExCvsDiff:             return ErFAIL;
+    case ExRunCvsDiff:          return ErFAIL;
+    case ExViewCvsDiff:         return ErFAIL;
+    case ExCvsCommit:           return ErFAIL;
+    case ExRunCvsCommit:        return ErFAIL;
+    case ExViewCvsLog:          return ErFAIL;
+#endif
+
     case ExViewBuffers:         return ViewBuffers(State);
 
     case ExShowKey:             return ShowKey(State);
@@ -278,7 +302,9 @@ void EView::DeleteModel(EModel *M) {
 
 int EView::FilePrev() {
     if (Model) {
-        SelectModel(Model->Prev);
+        EModel *n=Model->Prev;
+        if (IgnoreBufferList&&n&&n->GetContext ()==CONTEXT_BUFFERS) n=n->Prev;
+        SelectModel(n);
         return 1;
     }
     return 0;
@@ -286,7 +312,9 @@ int EView::FilePrev() {
 
 int EView::FileNext() {
     if (Model) {
-        SelectModel(Model->Next);
+        EModel *n=Model->Next;
+        if (IgnoreBufferList&&n&&n->GetContext ()==CONTEXT_BUFFERS) n=n->Next;
+        SelectModel(n);
         return 1;
     }
     return 0;
@@ -294,7 +322,9 @@ int EView::FileNext() {
 
 int EView::FileLast() {
     if (Model) {
-        SwitchToModel(Model->Next);
+        EModel *n=Model->Next;
+        if (IgnoreBufferList&&n&&n->GetContext ()==CONTEXT_BUFFERS) n=n->Next;
+        SwitchToModel(n);
         return 1;
     }
     return 0;
@@ -307,7 +337,7 @@ int EView::SwitchTo(ExState &State) {
     if (State.GetIntParam(this, &No) == 0) {
         char str[10] = "";
 
-        if (MView->Win->GetStr("Obj.Number", sizeof(str), str, 0) == 0) return 0;
+        if (MView->Win->GetStr("Obj.Number", sizeof(str), (char *)str, 0) == 0) return 0;
         No = atoi(str);
     }
     M = Model;
@@ -375,12 +405,8 @@ int EView::FileOpenInMode(ExState &State) {
     if (State.GetStrParam(this, FName, sizeof(FName)) == 0)
         if (MView->Win->GetFile("Open file", sizeof(FName), FName, HIST_PATH, GF_OPEN) == 0) return 0;
 #ifdef CONFIG_OBJ_DIRECTORY
-    {
-        int l = strlen(FName);
-
-        if (l > 1 && ISSLASH(FName[l - 1]))
-            return OpenDir(FName);
-    }
+    if (IsDirectory(FName))
+        return OpenDir(FName);
 #endif
 
     if( strlen( FName ) == 0 ) return 0;
@@ -676,7 +702,7 @@ int EView::TagLoad(ExState &State) {
 }
 #endif
 
-int EView::ConfigRecompile(ExState &State) {
+int EView::ConfigRecompile(ExState &/*State*/) {
     if (ConfigSourcePath == 0 || ConfigFileName[0] == 0) {
         Msg(S_ERROR, "Cannot recompile (must use external configuration).");
         return 0;
@@ -738,3 +764,251 @@ int EView::GetIntVar(int var, int *value) {
     //}
     return Model->GetIntVar(var, value);
 }
+
+#ifdef CONFIG_OBJ_CVS
+
+int EView::Cvs(ExState &State) {
+    static char Opts[128] = "";
+    char Options[128] = "";
+
+    if (CvsView != 0 && CvsView->Running) {
+        Msg(S_INFO, "Already running...");
+        return 0;
+    }
+
+    if (State.GetStrParam(this, Options, sizeof(Options)) == 0) {
+        if (MView->Win->GetStr("CVS options", sizeof(Opts), Opts, HIST_CVS) == 0) return 0;
+        strcpy(Options, Opts);
+    } else {
+        if (MView->Win->GetStr("CVS options", sizeof(Options), Options, HIST_CVS) == 0) return 0;
+    }
+    return Cvs(Options);
+}
+
+int EView::RunCvs(ExState &State) {
+    char Options[128] = "";
+
+    if (CvsView != 0 && CvsView->Running) {
+        Msg(S_INFO, "Already running...");
+        return 0;
+    }
+
+    State.GetStrParam(this, Options, sizeof(Options));
+    return Cvs(Options);
+}
+
+int EView::Cvs(char *Options) {
+    char Dir[MAXPATH] = "";
+    char Command[256] = "";
+    char buf[1024] = "";
+    char *OnFiles = buf;
+    ECvs *cvs;
+
+    if (GetDefaultDirectory(Model, Dir, sizeof(Dir)) == 0) return 0;
+
+    strcpy(Command, CvsCommand);
+    strcat(Command, " ");
+    if (Options[0] != 0) {
+        strcat(Command, Options);
+        strcat(Command, " ");
+    }
+
+    switch (Model->GetContext()) {
+        case CONTEXT_FILE:
+            if (JustFileName(((EBuffer *)Model)->FileName, OnFiles) != 0) return 0;
+            break;
+        case CONTEXT_CVSDIFF:
+            OnFiles = strdup(CvsDiffView->OnFiles);
+            break;
+        case CONTEXT_CVS:
+            OnFiles = ((ECvs *)Model)->MarkedAsList();
+            if (!OnFiles) OnFiles = strdup(((ECvs *)Model)->OnFiles);
+            break;
+    }
+
+    if (CvsView != 0) {
+        CvsView->RunPipe(Dir, Command, OnFiles);
+        cvs = CvsView;
+    } else {
+        cvs = new ECvs(0, &ActiveModel, Dir, Command, OnFiles);
+    }
+    if (OnFiles != buf) free(OnFiles);
+    SwitchToModel(cvs);
+    return 1;
+}
+
+int EView::ClearCvsMessages(ExState &/*State*/) {
+    if (CvsView != 0) {
+        if (CvsView->Running) {
+            Msg(S_INFO, "Running...");
+            return 0;
+        } else {
+            CvsView->FreeLines();
+            CvsView->UpdateList();
+            return 1;
+        }
+    }
+    return 0;
+}
+
+int EView::ViewCvs(ExState &/*State*/) {
+    if (CvsView != 0) {
+        SwitchToModel(CvsView);
+        return 1;
+    }
+    return 0;
+}
+
+int EView::CvsDiff(ExState &State) {
+    static char Opts[128] = "";
+    char Options[128] = "";
+
+    if (CvsDiffView != 0 && CvsDiffView->Running) {
+        Msg(S_INFO, "Already running...");
+        return 0;
+    }
+
+    if (State.GetStrParam(this, Options, sizeof(Options)) == 0) {
+        if (MView->Win->GetStr("CVS diff options", sizeof(Opts), Opts, HIST_CVSDIFF) == 0) return 0;
+        strcpy(Options, Opts);
+    } else {
+        if (MView->Win->GetStr("CVS diff options", sizeof(Options), Options, HIST_CVSDIFF) == 0) return 0;
+    }
+    return CvsDiff(Options);
+}
+
+int EView::RunCvsDiff(ExState &State) {
+    char Options[128] = "";
+
+    if (CvsDiffView != 0 && CvsDiffView->Running) {
+        Msg(S_INFO, "Already running...");
+        return 0;
+    }
+
+    State.GetStrParam(this, Options, sizeof(Options));
+    return CvsDiff(Options);
+}
+
+int EView::CvsDiff(char *Options) {
+    char Dir[MAXPATH] = "";
+    char Command[256] = "";
+    char buf[1024] = "";
+    char *OnFiles = buf;
+    ECvsDiff *diffs;
+
+    if (GetDefaultDirectory(Model, Dir, sizeof(Dir)) == 0) return 0;
+
+    strcpy(Command, CvsCommand);
+    strcat(Command, " diff -c ");
+    if (Options[0] != 0) {
+        strcat(Command, Options);
+        strcat(Command, " ");
+    }
+
+    switch (Model->GetContext()) {
+        case CONTEXT_FILE:
+            if (JustFileName(((EBuffer *)Model)->FileName, OnFiles) != 0) return 0;
+            break;
+        case CONTEXT_CVSDIFF:
+            OnFiles = strdup(CvsDiffView->OnFiles);
+            break;
+        case CONTEXT_CVS:
+            OnFiles = ((ECvs *)Model)->MarkedAsList();
+            if (!OnFiles) OnFiles = strdup(((ECvs *)Model)->OnFiles);
+            break;
+    }
+
+    if (CvsDiffView != 0) {
+        CvsDiffView->RunPipe(Dir, Command, OnFiles);
+        diffs = CvsDiffView;
+    } else {
+        diffs = new ECvsDiff(0, &ActiveModel, Dir, Command, OnFiles);
+    }
+    if (OnFiles != buf) free(OnFiles);
+    SwitchToModel(diffs);
+    return 1;
+}
+
+int EView::ViewCvsDiff(ExState &/*State*/) {
+    if (CvsDiffView != 0) {
+        SwitchToModel(CvsDiffView);
+        return 1;
+    }
+    return 0;
+}
+
+int EView::CvsCommit(ExState &State) {
+    static char Opts[128] = "";
+    char Options[128] = "";
+
+    if (CvsView != 0 && CvsView->Running) {
+        Msg(S_INFO, "Already running...");
+        return 0;
+    }
+
+    if (State.GetStrParam(this, Options, sizeof(Options)) == 0) {
+        if (MView->Win->GetStr("CVS commit options", sizeof(Opts), Opts, HIST_CVSCOMMIT) == 0) return 0;
+        strcpy(Options, Opts);
+    } else {
+        if (MView->Win->GetStr("CVS commit options", sizeof(Options), Options, HIST_CVSCOMMIT) == 0) return 0;
+    }
+    return CvsCommit(Options);
+}
+
+int EView::RunCvsCommit(ExState &State) {
+    char Options[128] = "";
+
+    if (CvsView != 0 && CvsView->Running) {
+        Msg(S_INFO, "Already running...");
+        return 0;
+    }
+
+    State.GetStrParam(this, Options, sizeof(Options));
+    return CvsCommit(Options);
+}
+
+int EView::CvsCommit(char *Options) {
+    char Dir[MAXPATH] = "";
+    char Command[256] = "";
+    char buf[1024] = "";
+    char *OnFiles = buf;
+    ECvs *cvs;
+
+    if (GetDefaultDirectory(Model, Dir, sizeof(Dir)) == 0) return 0;
+
+    strcpy(Command, CvsCommand);
+    strcat(Command, " commit ");
+    if (Options[0] != 0) {
+        strcat(Command, Options);
+        strcat(Command, " ");
+    }
+
+    switch (Model->GetContext()) {
+        case CONTEXT_FILE:
+            if (JustFileName(((EBuffer *)Model)->FileName, OnFiles) != 0) return 0;
+            break;
+        case CONTEXT_CVSDIFF:
+            OnFiles = strdup(CvsDiffView->OnFiles);
+            break;
+        case CONTEXT_CVS:
+            OnFiles = ((ECvs *)Model)->MarkedAsList();
+            if (!OnFiles) OnFiles = strdup(((ECvs *)Model)->OnFiles);
+            break;
+    }
+
+    if (CvsView == 0) cvs = new ECvs(0, &ActiveModel);else cvs = CvsView;
+    SwitchToModel(cvs);
+    cvs->RunCommit(Dir, Command, OnFiles);
+    if (OnFiles != buf) free(OnFiles);
+    return 1;
+}
+
+int EView::ViewCvsLog(ExState &/*State*/) {
+    if (CvsLogView != 0) {
+        SwitchToModel(CvsLogView);
+        return 1;
+    }
+    return 0;
+}
+
+#endif
