@@ -352,7 +352,7 @@ static void getWord(char* dest, char*& pin)
 
 
 void EMessages::GetErrors() {
-    char line[1024];
+    char line[4096];
     RxMatchRes RM;
     //int retc;
     int i, n;
