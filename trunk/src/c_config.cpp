@@ -8,6 +8,7 @@
  */
 
 #include "fte.h"
+#include "o_cvsbase.h"
 #include "log.h"
 
 typedef struct _GUICharactersEntry {
@@ -83,7 +84,7 @@ int LoadDesktopMode = 0;
 char HelpCommand[128] = "man -a";
 char *ConfigSourcePath = 0;
 int IgnoreBufferList = 0;
-GUICharactersEntry *GUICharacters = NULL;
+static GUICharactersEntry *GUICharacters = NULL;
 char CvsCommand[256] = "cvs";
 char CvsLogMode[32] = "PLAIN";
 int ReassignModelIds = 0;
@@ -119,7 +120,7 @@ const char *GetGUICharacters(const char *which, const char *defChars) {
     if (found) return found->chars; else return defChars;
 }
 
-void AppendGUICharacters(const char *string) {
+static void AppendGUICharacters(const char *string) {
     const char *s;
     GUICharactersEntry *g;
 
@@ -148,7 +149,7 @@ void AppendGUICharacters(const char *string) {
 }
 
 #ifdef CONFIG_SYNTAX_HILIT
-int AddKeyword(ColorKeywords *tab, char color, const char *keyword) {
+static int AddKeyword(ColorKeywords *tab, char color, const char *keyword) {
     int len;
 
     len = strlen(keyword);
@@ -179,7 +180,7 @@ int AddKeyword(ColorKeywords *tab, char color, const char *keyword) {
 }
 #endif
 
-int SetModeNumber(EMode *mode, int what, int number) {
+static int SetModeNumber(EMode *mode, int what, int number) {
     int j = what;
 
     if (j == BFI_LeftMargin || j == BFI_RightMargin) number--;
@@ -187,7 +188,7 @@ int SetModeNumber(EMode *mode, int what, int number) {
     return 0;
 }
 
-int SetModeString(EMode *mode, int what, const char *string) {
+static int SetModeString(EMode *mode, int what, const char *string) {
     int j = what;
 
 #ifdef CONFIG_SYNTAX_HILIT
@@ -225,7 +226,7 @@ int SetModeString(EMode *mode, int what, const char *string) {
     return 0;
 }
 
-int SetGlobalNumber(int what, int number) {
+static int SetGlobalNumber(int what, int number) {
     STARTFUNC("SetGlobalNumber");
     LOG << "What: " << what << " Number: " << number << ENDLINE;
 
@@ -286,7 +287,7 @@ int SetGlobalNumber(int what, int number) {
     ENDFUNCRC(0);
 }
 
-int SetGlobalString(long what, const char *string) {
+static int SetGlobalString(long what, const char *string) {
     STARTFUNC("SetGlobalString");
     LOG << "What: " << what << " String: " << string << ENDLINE;
 
@@ -307,7 +308,7 @@ int SetGlobalString(long what, const char *string) {
     ENDFUNCRC(0);
 }
 
-int SetEventString(EEventMap *Map, long what, const char *string) {
+static int SetEventString(EEventMap *Map, long what, const char *string) {
     STARTFUNC("SetEventString");
     LOG << "What: " << what << " String: " << string << ENDLINE;
     switch (what) {
@@ -322,7 +323,7 @@ int SetEventString(EEventMap *Map, long what, const char *string) {
 }
 
 #ifdef CONFIG_SYNTAX_HILIT
-int SetColorizeString(EColorize *Colorize, long what, const char *string) {
+static int SetColorizeString(EColorize *Colorize, long what, const char *string) {
     STARTFUNC("SetColorizeString");
     LOG << "What: " << what << " String: " << string << ENDLINE;
     switch (what) {
@@ -336,7 +337,7 @@ int SetColorizeString(EColorize *Colorize, long what, const char *string) {
 }
 #endif
 
-unsigned char GetObj(CurPos &cp, unsigned short &len) {
+static unsigned char GetObj(CurPos &cp, unsigned short &len) {
     len = 0;
     if (cp.c + 3 <= cp.z) {
         unsigned char c;
@@ -350,7 +351,7 @@ unsigned char GetObj(CurPos &cp, unsigned short &len) {
     return 0xFF;
 }
 
-const char *GetCharStr(CurPos &cp, unsigned short len) {
+static const char *GetCharStr(CurPos &cp, unsigned short len) {
     STARTFUNC("GetCharStr");
     LOG << "Length: " << len << ENDLINE;
 
@@ -364,7 +365,7 @@ const char *GetCharStr(CurPos &cp, unsigned short len) {
     ENDFUNCRC(p);
 }
 
-int GetNum(CurPos &cp, long &num) {
+static int GetNum(CurPos &cp, long &num) {
     unsigned char n[4];
     if (cp.c + 4 > cp.z) return 0;
     memcpy(n, cp.c, 4);
@@ -380,7 +381,7 @@ int GetNum(CurPos &cp, long &num) {
     return 1;
 }
 
-int ReadCommands(CurPos &cp, const char *Name) {
+static int ReadCommands(CurPos &cp, const char *Name) {
     STARTFUNC("ReadCommands");
     LOG << "Name = " << (Name != NULL ? Name : "(null)") << ENDLINE;
 
@@ -461,7 +462,7 @@ int ReadCommands(CurPos &cp, const char *Name) {
     ENDFUNCRC(-1);
 }
 
-int ReadMenu(CurPos &cp, const char *MenuName) {
+static int ReadMenu(CurPos &cp, const char *MenuName) {
     unsigned char obj;
     unsigned short len;
 
@@ -517,7 +518,7 @@ int ReadMenu(CurPos &cp, const char *MenuName) {
     return -1;
 }
 
-int ReadColors(CurPos &cp, const char *ObjName) {
+static int ReadColors(CurPos &cp, const char *ObjName) {
     unsigned char obj;
     unsigned short len;
 
@@ -547,7 +548,7 @@ int ReadColors(CurPos &cp, const char *ObjName) {
 }
 
 #ifdef CONFIG_SYNTAX_HILIT
-int ReadHilitColors(CurPos &cp, EColorize *Colorize, const char * /*ObjName*/) {
+static int ReadHilitColors(CurPos &cp, EColorize *Colorize, const char * /*ObjName*/) {
     unsigned char obj;
     unsigned short len;
 
@@ -576,7 +577,7 @@ int ReadHilitColors(CurPos &cp, EColorize *Colorize, const char * /*ObjName*/) {
     return -1;
 }
 
-int ReadKeywords(CurPos &cp, ColorKeywords *keywords, int color) {
+static int ReadKeywords(CurPos &cp, ColorKeywords *keywords, int color) {
     unsigned char obj;
     unsigned short len;
 
@@ -599,7 +600,7 @@ int ReadKeywords(CurPos &cp, ColorKeywords *keywords, int color) {
 }
 #endif
 
-int ReadEventMap(CurPos &cp, EEventMap *Map, const char * /*MapName*/) {
+static int ReadEventMap(CurPos &cp, EEventMap *Map, const char * /*MapName*/) {
     unsigned char obj;
     unsigned short len;
 
@@ -680,7 +681,7 @@ int ReadEventMap(CurPos &cp, EEventMap *Map, const char * /*MapName*/) {
 }
 
 #ifdef CONFIG_SYNTAX_HILIT
-int ReadColorize(CurPos &cp, EColorize *Colorize, const char *ModeName) {
+static int ReadColorize(CurPos &cp, EColorize *Colorize, const char *ModeName) {
     unsigned char obj;
     unsigned short len;
 
@@ -900,7 +901,7 @@ int ReadColorize(CurPos &cp, EColorize *Colorize, const char *ModeName) {
 }
 #endif
 
-int ReadMode(CurPos &cp, EMode *Mode, const char * /*ModeName*/) {
+static int ReadMode(CurPos &cp, EMode *Mode, const char * /*ModeName*/) {
     unsigned char obj;
     unsigned short len;
 
@@ -941,7 +942,7 @@ int ReadMode(CurPos &cp, EMode *Mode, const char * /*ModeName*/) {
     return -1;
 }
 
-int ReadObject(CurPos &cp, const char *ObjName) {
+static int ReadObject(CurPos &cp, const char *ObjName) {
     unsigned char obj;
     unsigned short len;
 
@@ -1016,7 +1017,7 @@ int ReadObject(CurPos &cp, const char *ObjName) {
     return -1;
 }
 
-int ReadConfigFile(CurPos &cp) {
+static int ReadConfigFile(CurPos &cp) {
     unsigned char obj;
     unsigned short len;
 
@@ -1218,7 +1219,7 @@ int LoadConfig(int /*argc*/, char ** /*argv*/, char *CfgFileName) {
     ENDFUNCRC(rc);
 }
 
-//static const
+static //const
 #include "defcfg.h"
 
 int UseDefaultConfig() {
