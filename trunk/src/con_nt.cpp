@@ -301,14 +301,30 @@ int ReadConsoleEvent(TEvent *E) /*FOLD00*/
             inp.Event.KeyEvent.uChar.AsciiChar);
 #endif
 
-        //** Translate VK codes to FTE codes,
         Ch = 0;
-        for (I = 0; I < sizeof(VirtTab)/sizeof(VirtTab[0]); I++)
-            if (VirtTab[I].VirtCode == inp.Event.KeyEvent.wVirtualKeyCode)
+
+        // handle special case when user with scandinavian keyboard presses
+        // alt-gr + tilde and then spacebar
+        if (inp.Event.KeyEvent.bKeyDown) {
+            if ((inp.Event.KeyEvent.wVirtualKeyCode == 0x20) &&
+                (inp.Event.KeyEvent.wVirtualScanCode == 0x39) &&
+                (inp.Event.KeyEvent.uChar.AsciiChar == '~')
+               )
             {
-                Ch = VirtTab[I].KeyCode;
-                break;
+                Ch = '~';
             }
+        }
+
+        //** Translate VK codes to FTE codes,
+        if (Ch == 0)
+        {
+            for (I = 0; I < sizeof(VirtTab)/sizeof(VirtTab[0]); I++)
+                if (VirtTab[I].VirtCode == inp.Event.KeyEvent.wVirtualKeyCode)
+                {
+                    Ch = VirtTab[I].KeyCode;
+                    break;
+                }
+        }
 
         //** Not a virtual key-> do charscan translation, if needed;
         if(Ch == 0)
