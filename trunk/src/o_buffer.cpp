@@ -1387,6 +1387,8 @@ int EBuffer::InsertUid() {
     char *p = getenv("USER");
     if (p == 0) p = getenv("NAME");
     if (p == 0) p = getenv("ID");
+    // mostly for Windows.  Why they can't just be standard, I don't know...
+    if (p == 0) p = getenv("USERNAME");
     if (p == 0) {
         Msg(S_INFO, "User ID not set ($USER).");
         return 0;
