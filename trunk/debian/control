@@ -10,7 +10,7 @@ Architecture: any
 Depends: ${shlibs:Depends}, fte-xwindow | fte-terminal | fte-console
 Conflicts: fte-console (<< 0.49.13-3), fte-cfgdocs (<< 0.49.13-3)
 Suggests: fte-docs, exuberant-ctags
-Description: Text editor for programmers -  base package
+Description: Text editor for programmers - base package
  Package contains files necessary to build configuration file
  and some elementary documentation.
  There is no editor in this package.
@@ -21,7 +21,7 @@ Architecture: any
 Depends: fte (= ${Source-Version})
 Replaces: fte-cfgdocs (<< 0.49.13-3)
 Description: HTML documentation and example of configuration.
- HTML documentation and example of configuration.
+ Package constains documentation files for editor.
 
 Package: fte-xwindow
 Architecture: any
