@@ -1,3 +1,13 @@
+fte (0.49.13-11) testing unstable; urgency=low
+
+  * update after some long time
+  * fixed bug in reading to large $HOME shell variable (Closes: #68435)
+  * fixed update-alternatives for editor (Closes: #71213)
+  * fixed control file for fte-xwindow added Replaces:  (Closes: #71574)
+  * fixed bug in fte init wrapper script (Closes: #72908)
+
+ -- Zdenek Kabelac <kabi@debian.org>  Sun,  3 Jun 2001 16:04:21 +0000
+
 fte (0.49.13-10) frozen unstable; urgency=low
 
   * fixed typo in debian/rules script
