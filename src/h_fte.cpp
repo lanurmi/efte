@@ -11,16 +11,15 @@
 
 #ifdef CONFIG_HILIT_FTE
 
-enum {
-    hsFTE_Normal = 200,
-    hsFTE_Comment,
-    hsFTE_Keyword,
-    hsFTE_String1,
-    hsFTE_String2,
-    hsFTE_CPP,
-    hsFTE_Regexp,
-    hsFTE_KeySpec
-};
+// These states should match those in h_c.cpp to let autoindentation work
+#define hsFTE_Normal       0
+#define hsFTE_Comment      1
+#define hsFTE_Keyword      4
+#define hsFTE_String1     10
+#define hsFTE_String2     11
+#define hsFTE_CPP         12
+#define hsFTE_Regexp      15
+#define hsFTE_KeySpec     16
 
 int Hilit_FTE(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, hlState &State, hsState *StateMap, int *ECol) {
     int j = 0;
