@@ -30,7 +30,18 @@ create_rpm();
 sub create_rpm
 {
     my @cmd = (qw( rpm -ba ), $specfile_name, "--target=$target" );
-    system(@cmd);
+
+    # figure out which files to move back to 'here'.
+    local *PH;
+    open (PH, "-|") || exec(@cmd);
+    while (<PH>)
+    {
+        print $_;
+        if (m#^Wrote: (/usr.*rpm)#)
+        {
+            move($1, "$FindBin::Bin/" . basename($1));
+        }
+    }
 }
 
 sub make_path
