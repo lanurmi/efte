@@ -59,7 +59,7 @@ colorize FTE {
         'MoveBeginLinePageFile', 'MoveBeginOrNonWhite', 'MoveBlockEnd',
         'MoveBlockStart', 'MoveDown', 'MoveEndLinePageFile', 'MoveFileEnd',
         'MoveFileStart', 'MoveFirstNonWhite', 'MoveFoldNext', 'MoveFoldPrev',
-        'MoveFoldTop MoveFunctionNext', 'MoveFunctionPrev', 'MoveLastNonWhite',
+        'MoveFoldTop', 'MoveFunctionNext', 'MoveFunctionPrev', 'MoveLastNonWhite',
         'MoveLeft', 'MoveLineBottom', 'MoveLineCenter', 'MoveLineEnd',
         'MoveLineStart', 'MoveLineTop', 'MoveNext', 'MoveNextEqualIndent',
         'MoveNextTab', 'MovePageDown', 'MovePageEnd', 'MovePageLeft',
