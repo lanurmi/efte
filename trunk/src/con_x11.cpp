@@ -50,7 +50,7 @@
 #include "con_i18n.h"
 #include "s_files.h"
 
-XIC xic = NULL;
+i18n_context_t* i18n_ctx = NULL;
 
 #ifdef WINHCLX
 #include <X11/XlibXtra.h>    /* HCL - HCLXlibInit */
@@ -81,9 +81,9 @@ static GPipe Pipes[MAX_PIPES] = {
     { 0 },
 };
 
-static long MouseAutoDelay = 40;
-static long MouseAutoRepeat = 200;
-static long MouseMultiClick = 300;
+static const long MouseAutoDelay = 40;
+static const long MouseAutoRepeat = 200;
+static const long MouseMultiClick = 300;
 
 static int setUserPosition = 0;
 static int initX = 0, initY = 0;
@@ -116,11 +116,11 @@ static int useXMB = 0;
 static int FontCX, FontCY;
 static XColor Colors[16];
 static GC GCs[256];
-static int rc;
+//static int rc;
 static char winTitle[256] = "FTE";
 static char winSTitle[256] = "FTE";
 
-static char *CurSelectionData = 0;
+static unsigned char *CurSelectionData = 0;
 static int CurSelectionLen = 0;
 static int CurSelectionOwn = 0;
 static Time now;
@@ -235,7 +235,8 @@ static int InitXColors() {
     return 0;
 }
 
-static int InitXGCs() {
+static int InitXGCs()
+{
     unsigned int i;
     unsigned long mask = GCForeground | GCBackground;
     XGCValues gcv;
@@ -336,7 +337,8 @@ static int InitXFonts(void)
     return 0;
 }
 
-static int SetupXWindow(int argc, char **argv) {
+static int SetupXWindow(int argc, char **argv)
+{
     unsigned long mask;
     XSetWindowAttributes setWindowAttributes;
 
@@ -354,7 +356,7 @@ static int SetupXWindow(int argc, char **argv) {
 #else
     char *ds;
     if ((ds = getenv("DISPLAY")) == NULL)
-       DieError(1, "$DISPLAY not set?");
+	DieError(1, "$DISPLAY not set?");
     if ((display = XOpenDisplay(ds)) == NULL)
 	DieError(1, "XFTE Fatal: could not open display: %s!", ds);
 #endif
@@ -379,7 +381,7 @@ static int SetupXWindow(int argc, char **argv) {
                         CopyFromParent, InputOutput, CopyFromParent,
                         CWBitGravity, &setWindowAttributes);
 
-    xic = I18NInit(display, win, &mask);
+    i18n_ctx = i18n_open(display, win, &mask);
 
     if (InitXFonts() != 0)
 	DieError(1, "XFTE Fatal: could not open any font!");
@@ -411,8 +413,10 @@ static int SetupXWindow(int argc, char **argv) {
         sizeHints.flags |= USPosition;
 
     XClassHint classHints;
-    classHints.res_name = (char *)"fte";
-    classHints.res_class = (char *)"Fte";
+    static char res_name[] = "fte";
+    static char res_class[] = "Fte";
+    classHints.res_name = res_name;
+    classHints.res_class = res_class;
     XSetClassHint(display, win, &classHints);
 
     XSetStandardProperties(display, win, winTitle, winTitle, 0, NULL, 0, 0);
@@ -442,8 +446,7 @@ int ConInit(int XSize, int YSize) {
 }
 
 int ConDone(void) {
-    XDestroyWindow(display, win);
-    XCloseDisplay(display);
+    free(ScreenBuffer);
     return 0;
 }
 
@@ -962,12 +965,12 @@ static TEvent LastMouseEvent = { evNone };
 
 #define TM_DIFF(x,y) ((long)(((long)(x) < (long)(y)) ? ((long)(y) - (long)(x)) : ((long)(x) - (long)(y))))
 
-void ConvertClickToEvent(int type, int xx, int yy, int button, int state, TEvent *Event, Time time) {
+void ConvertClickToEvent(int type, int xx, int yy, int button, int state, TEvent *Event, Time mtime) {
     unsigned int myState = 0;
     static unsigned long LastClickTime = 0;
     static short LastClickCount = 0;
     static unsigned long LastClick = 0;
-    unsigned long CurTime = time;
+    unsigned long CurTime = mtime;
 
     if (type == MotionNotify) Event->What = evMouseMove;
     else if (type == ButtonPress) Event->What = evMouseDown;
@@ -1067,9 +1070,9 @@ void ProcessXEvents(TEvent *Event) {
     memset((void *)&event, 0, sizeof(event));
     Event->What = evNone;
 #ifdef WINNT
-    rc = -1;
+    //int rc = -1;
 #else
-    rc =
+    //int rc =
 #endif
         XNextEvent(display, &event);
 
@@ -1139,10 +1142,10 @@ void ProcessXEvents(TEvent *Event) {
         ConvertClickToEvent(event.type, buttonEvent->x, buttonEvent->y, buttonEvent->button, buttonEvent->state, Event, motionEvent->time);
         break;
     case FocusIn:
-        I18NFocusIn(xic);
+        i18n_focus_in(i18n_ctx->xic);
         break;
     case FocusOut:
-        I18NFocusOut(xic);
+        i18n_focus_out(i18n_ctx->xic);
         break;
     case KeyPress:
         // case KeyRelease:
@@ -1154,7 +1157,7 @@ void ProcessXEvents(TEvent *Event) {
         if (event.type == KeyRelease)
             XLookupString(keyEvent, keyName, sizeof(keyName), &key, 0);
         else {
-            I18NLookupString(keyEvent, keyName, sizeof(keyName), &key, xic);
+	    i18n_lookup_sym(keyEvent, keyName, sizeof(keyName), &key, i18n_ctx->xic);
             if (!key)
                 break;
         }
@@ -1203,13 +1206,14 @@ void ProcessXEvents(TEvent *Event) {
 
             if (event.xselectionrequest.selection == XA_PRIMARY &&
                 event.xselectionrequest.target == XA_STRING)
-            {
+	    {
+                static unsigned char empty[] = "";
                 XChangeProperty(display,
                                 event.xselectionrequest.requestor,
                                 event.xselectionrequest.property,
                                 event.xselectionrequest.target,
                                 8, PropModeReplace,
-                                (unsigned char *)(CurSelectionData ? CurSelectionData : ""),
+                                (CurSelectionData ? CurSelectionData : empty),
                                 CurSelectionLen);
                 notify.xselection.property = event.xselectionrequest.property;
             } else if (event.xselectionrequest.selection == XA_PRIMARY &&
@@ -1407,12 +1411,12 @@ int GetXSelection(int *len, char **data) {
                                            &event))
                     break;
 
-                time_t now = time(NULL);
+                time_t tnow = time(NULL);
 
-                if (time_started > now)
-                    time_started = now;
+                if (time_started > tnow)
+                    time_started = tnow;
 
-                if (now - time_started > 5000)
+                if (tnow - time_started > 5000)
                     return -1;
             }
 
@@ -1448,10 +1452,10 @@ int GetXSelection(int *len, char **data) {
 }
 
 int SetXSelection(int len, char *data) {
-    if (CurSelectionData != 0) {
+    if (CurSelectionData != 0)
         free(CurSelectionData);
-    }
-    CurSelectionData = (char *)malloc(len);
+
+    CurSelectionData = (unsigned char *)malloc(len);
     if (CurSelectionData == 0) {
 	CurSelectionLen = 0;
 	return -1;
@@ -1511,6 +1515,16 @@ GUI::GUI(int &argc, char **argv, int XSize, int YSize) {
 }
 
 GUI::~GUI() {
+
+    for (int i = 0; i < 256; i++)
+	XFreeGC(display, GCs[i]);
+
+    XDestroyWindow(display, win);
+    XCloseDisplay(display);
+
+    if (CurSelectionData != 0)
+        free(CurSelectionData);
+
     ::ConDone();
 }
 
@@ -1583,7 +1597,7 @@ int GUI::SetPipeView(int id, EModel *notify) {
 
 int GUI::ReadPipe(int id, void *buffer, int len) {
 #ifndef NO_PIPES
-    int rc;
+    int r;
 
     if (id < 0 || id > MAX_PIPES)
         return -1;
@@ -1591,18 +1605,18 @@ int GUI::ReadPipe(int id, void *buffer, int len) {
         return -1;
     //fprintf(stderr, "Pipe Read: Get %d %d\n", id, len);
 
-    rc = read(Pipes[id].fd, buffer, len);
+    r = read(Pipes[id].fd, buffer, len);
     //fprintf(stderr, "Pipe Read: Got %d %d\n", id, len);
-    if (rc == 0) {
+    if (r == 0) {
         close(Pipes[id].fd);
         Pipes[id].fd = -1;
         return -1;
     }
-    if (rc == -1) {
+    if (r == -1) {
         Pipes[id].stopped = 1;
         return 0;
     }
-    return rc;
+    return r;
 #else
     return 0;
 #endif
@@ -1649,17 +1663,16 @@ int GUI::RunProgram(int mode, char *Command) {
         if (mode == RUN_ASYNC)
             strcat(Cmd, " &");
     }
-    rc = system(Cmd);
-    return rc;
+    return system(Cmd);
 }
 
-char ConGetDrawChar(int index) {
+char ConGetDrawChar(int idx) {
     static const char *tab=NULL;
 
     if (!tab) {
         tab=GetGUICharacters ("X11","\x0D\x0C\x0E\x0B\x12\x19____+>\x1F\x01\x12 ");
     }
-    assert(index >= 0 && index < (int) strlen(tab));
+    assert(idx >= 0 && idx < (int) strlen(tab));
 
-    return tab[index];
+    return tab[idx];
 }
