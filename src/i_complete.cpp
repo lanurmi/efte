@@ -244,7 +244,7 @@ void ExComplete::RepaintStatus()
 		(WordFixedCount == 1) ? COM_ORIG : COM_HIGH, W);
 	p += l;
 	char s[100];
-	sprintf(s, "] (T:%d/%d  S:%ld)", WordPos + 1, WordsLast,
+	sprintf(s, "] (T:%d/%d  S:%d)", WordPos + 1, WordsLast,
 		WordFixedCount);
 	MoveStr(B, p, W, s, COM_NORM, W);
 	// ConSetCursorPos(cur + WordFixed, H - 1);
