@@ -540,7 +540,7 @@ int GetKeyName(char *Key, int KeySize, KeySel &ks) {
         if (c[0] == 32)
             strlcat(Key, "Space", KeySize);
         else
-            strlcat(Key, (char *)c, KeySize);
+            strlcat(Key, c, KeySize);
     } else {
         for (int i = 0; i < int(sizeof(KeyList)/sizeof(KeyList[0])); i++)
             if (KeyList[i].Key == keyCode(ks.Key)) {
