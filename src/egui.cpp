@@ -931,32 +931,39 @@ int EGUI::Start(int &argc, char **argv) {
 }
 
 void EGUI::EditorCleanup() {
-    if (ActiveModel) {
+    if (ActiveModel != NULL) {
         EModel *B, *N, *A;
-
-        B = A = ActiveModel;
+        
+       	B = A = ActiveModel;
         do {
             N = B->Next;
             delete B;
             B = N;
         } while (B != A);
     }
-    ActiveModel = 0;
+    ActiveModel = NULL;
 
     delete SSBuffer;
-    SSBuffer = 0;
+    SSBuffer = NULL;
 
-    if (ActiveView) {
-        EView *BW, *NW, *AW;
+    if (ActiveView != NULL) {
+       	EView *BW, *NW;
 
-        BW = AW = ActiveView;
-        do {
-            NW = BW->Next;
-            delete BW;
-            BW = NW;
-        } while (BW != AW);
+       	// If EView what is about to be deleted is currently ActiveView, ActiveView moves to next one
+       	// or if there is no next, it will be set as NULL.
+       	while ((BW = ActiveView) != NULL) {
+       		NW = BW->Next;
+       		delete BW;
+       	}
+        //EView *BW, *NW, *AW;
+        //BW = AW = ActiveView;
+        //do {
+        //    NW = BW->Next;
+        //    delete BW;
+        //    BW = NW;
+        //} while (BW != AW);
     }
-    ActiveView = 0;
+    ActiveView = NULL;
 }
 
 void EGUI::InterfaceCleanup() {
