@@ -119,7 +119,7 @@ TChar *tstrdup(const TChar *src)
     return newstr;
 }
 
-size_t tstrpos(const TChar *src, TChar ch)
+int tstrpos(const TChar *src, TChar ch)
 {
     size_t len = tstrlen(src);
 
@@ -196,7 +196,7 @@ TChar *tstrdup(const char *src)
     return newstr;
 }
 
-size_t tstrpos(const char *src, TChar ch)
+int tstrpos(const char *src, TChar ch)
 {
     size_t len = tstrlen(src);
 
