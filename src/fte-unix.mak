@@ -38,7 +38,7 @@ COPTIONS = -Wall -Wpointer-arith -Wconversion -Wwrite-strings \
 #LD       = g++
 # try this for smaller/faster code and less dependencies
 CC       = g++ -fno-rtti -fno-exceptions
-LD       = gcc -fno-rtti -fno-exceptions
+LD       = g++ -fno-rtti -fno-exceptions
 
 
 # choose your os here
@@ -89,10 +89,10 @@ SINCDIR   = -I/usr/include/slang
 
 #######################################################################
 # SunOS (Solaris)
-#UOS      = -DSUNOS -DNO_NEW_CPP_FEATURES
+#UOS      = -DSUNOS
 #CC = CC -noex
 #LD = CC -noex
-#COPTIONS =
+#COPTIONS = -DNO_NEW_CPP_FEATURES
 #XINCDIR  = -I/usr/openwin/include
 #XLIBDIR  = -L/usr/openwin/lib
 
