@@ -1,0 +1,9 @@
+defcfg.h
+defcfg.cnf
+[xsvnc]fte
+compkeys
+fte.cnf
+[c]fte.exe
+.depend
+fte-new.cnf
+tags

@@ -1,0 +1,68 @@
+colorize TCL {
+    SyntaxParser = 'SIMPLE';
+    
+    color {
+        { 'Normal',      'Editor_Default' },
+        { 'Comment',     'Lang_Comment' },
+        { 'String',      'Lang_String' },
+        { 'Punctuation', 'Lang_Punctuation' },
+        { 'Variable',    'Lang_Variable' },
+        { 'Directive',   'Lang_Preprocessor' },
+        { 'Special',     'Lang_Control' },
+    };
+
+    keyword 'Editor_Keywords' {
+        'case', 'do', 'done', 'elif', 'else', 'esac', 'fi', 'for',
+        'function', 'if', 'in', 'then', 'until', 'while',
+    };
+
+    h_state 0 { 'Normal' }
+    h_trans { 1, '-s', 'a-zA-Z0-9_', 'Normal' }
+    h_trans { 5, '<', '$', 'Variable' }
+    h_trans { 6, '<', '-', 'Directive' }
+    h_trans { 7, '<', '.', 'Special' }
+    h_trans { 2, '<', '#', 'Comment' }
+    h_trans { 3, '<', '"', 'String' }
+    h_trans { 4, '<', '`', 'String' }
+    h_trans { 0, 'S', 'a-zA-Z0-9_', 'Punctuation' }
+
+    h_state 1 { 'Normal' }
+    h_trans { 0, '$', '', 'Normal' }
+    h_wtype { 0, 0, 0, '', 'a-zA-Z0-9_' }
+
+    h_state 2 { 'Comment' }
+    h_trans { 0, '$', '', 'Normal' }
+
+    h_state 3 { 'String' }
+    h_trans { 0, '>', '"', 'String' }
+    h_trans { 3, 'qQ', '\\', 'String' }
+
+    h_state 4 { 'String' }
+    h_trans { 0, '>', '`', 'String' }
+    h_trans { 4, 'qQ', '\\', 'String' }
+
+    h_state 5 { 'Variable' }
+    h_trans { 0, '$', '', 'Normal' }
+    h_trans { 0, '-S',  'a-zA-Z0-9_', 'Normal' }
+
+    h_state 6 { 'Directive' }
+    h_trans { 0, '$', '', 'Normal' }
+    h_trans { 0, '-S',  'a-zA-Z0-9_', 'Normal' }
+
+    h_state 7 { 'Special' }
+    h_trans { 0, '$', '', 'Normal' }
+    h_trans { 0, '-S',  'a-zA-Z0-9_', 'Normal' }
+}
+
+mode TCL: PLAIN { # *sh
+    FileNameRx          = /\.\ctcl$/;
+    FirstLineRx         = /^\#\![^ ]*{wish>}/;
+    HilitOn             = 1;
+    Colorizer           = 'TCL';
+    MultiLineHilit      = 1;
+    AutoHilitParen      = 1;
+    
+    SaveFolds           = 2;      # save fold info at end of line
+    CommentStart        = ' #';
+    CommentEnd          = '';
+}

@@ -1,0 +1,1324 @@
+<HTML>
+<HEAD>
+<TITLE>Macro Commands</TITLE>
+</HEAD>
+<BODY>
+<UL>
+<LI><A HREF="#cmd_cursor">Cursor Movement</A>
+<LI><A HREF="#cmd_delete">Deleting Text</A>
+<LI><A HREF="#cmd_line">Line Commands</A>
+<LI><A HREF="#cmd_block">Block Commands</A>
+<LI><A HREF="#cmd_edit">Text Editing and Insertion</A>
+<LI><A HREF="#cmd_fold">Folding Text</A>
+<LI><A HREF="#cmd_bookmark">Bookmarks</A>
+<LI><A HREF="#cmd_trans">Character Translation</A>
+<LI><A HREF="#cmd_file">File Commands</A>
+<LI><A HREF="#cmd_directory">Directory Commands</A>
+<LI><A HREF="#cmd_search">Search and Replace</A>
+<LI><A HREF="#cmd_window">Window Commands</A>
+<LI><A HREF="#cmd_compile">Compiler Support</A>
+<LI><A HREF="#cmd_cvs">CVS Support</A>
+<LI><A HREF="#cmd_tags">TAGS Commands</A>
+<LI><A HREF="#cmd_option">Option commands</A>
+<LI><A HREF="#cmd_other">Other commands</A>
+</UL>
+<HR><H1><A NAME="cmd_cursor">Cursor Movement</A></H1>
+<UL>
+<LI><A HREF="#ec.MoveDown">MoveDown</A>
+<LI><A HREF="#ec.MoveUp">MoveUp</A>
+<LI><A HREF="#ec.MoveLeft">MoveLeft</A>
+<LI><A HREF="#ec.MoveRight">MoveRight</A>
+<LI><A HREF="#ec.MovePrev">MovePrev</A>
+<LI><A HREF="#ec.MoveNext">MoveNext</A>
+<LI><A HREF="#ec.MoveWordLeft">MoveWordLeft</A>
+<LI><A HREF="#ec.MoveWordRight">MoveWordRight</A>
+<LI><A HREF="#ec.MoveWordPrev">MoveWordPrev</A>
+<LI><A HREF="#ec.MoveWordNext">MoveWordNext</A>
+<LI><A HREF="#ec.MoveWordEndLeft">MoveWordEndLeft</A>
+<LI><A HREF="#ec.MoveWordEndRight">MoveWordEndRight</A>
+<LI><A HREF="#ec.MoveWordEndPrev">MoveWordEndPrev</A>
+<LI><A HREF="#ec.MoveWordEndNext">MoveWordEndNext</A>
+<LI><A HREF="#ec.MoveWordOrCapLeft">MoveWordOrCapLeft</A>
+<LI><A HREF="#ec.MoveWordOrCapRight">MoveWordOrCapRight</A>
+<LI><A HREF="#ec.MoveWordOrCapPrev">MoveWordOrCapPrev</A>
+<LI><A HREF="#ec.MoveWordOrCapNext">MoveWordOrCapNext</A>
+<LI><A HREF="#ec.MoveWordOrCapEndLeft">MoveWordOrCapEndLeft</A>
+<LI><A HREF="#ec.MoveWordOrCapEndRight">MoveWordOrCapEndRight</A>
+<LI><A HREF="#ec.MoveWordOrCapEndPrev">MoveWordOrCapEndPrev</A>
+<LI><A HREF="#ec.MoveWordOrCapEndNext">MoveWordOrCapEndNext</A>
+<LI><A HREF="#ec.MoveLineStart">MoveLineStart</A>
+<LI><A HREF="#ec.MoveLineEnd">MoveLineEnd</A>
+<LI><A HREF="#ec.MovePageStart">MovePageStart</A>
+<LI><A HREF="#ec.MovePageEnd">MovePageEnd</A>
+<LI><A HREF="#ec.MovePageUp">MovePageUp</A>
+<LI><A HREF="#ec.MovePageDown">MovePageDown</A>
+<LI><A HREF="#ec.MoveFileStart">MoveFileStart</A>
+<LI><A HREF="#ec.MoveFileEnd">MoveFileEnd</A>
+<LI><A HREF="#ec.MovePageLeft">MovePageLeft</A>
+<LI><A HREF="#ec.MovePageRight">MovePageRight</A>
+<LI><A HREF="#ec.MoveBlockStart">MoveBlockStart</A>
+<LI><A HREF="#ec.MoveBlockEnd">MoveBlockEnd</A>
+<LI><A HREF="#ec.MoveFirstNonWhite">MoveFirstNonWhite</A>
+<LI><A HREF="#ec.MoveLastNonWhite">MoveLastNonWhite</A>
+<LI><A HREF="#ec.MovePrevEqualIndent">MovePrevEqualIndent</A>
+<LI><A HREF="#ec.MoveNextEqualIndent">MoveNextEqualIndent</A>
+<LI><A HREF="#ec.MovePrevTab">MovePrevTab</A>
+<LI><A HREF="#ec.MoveNextTab">MoveNextTab</A>
+<LI><A HREF="#ec.MoveTabStart">MoveTabStart</A>
+<LI><A HREF="#ec.MoveTabEnd">MoveTabEnd</A>
+<LI><A HREF="#ec.MoveLineTop">MoveLineTop</A>
+<LI><A HREF="#ec.MoveLineCenter">MoveLineCenter</A>
+<LI><A HREF="#ec.MoveLineBottom">MoveLineBottom</A>
+<LI><A HREF="#ec.ScrollLeft">ScrollLeft</A>
+<LI><A HREF="#ec.ScrollRight">ScrollRight</A>
+<LI><A HREF="#ec.ScrollDown">ScrollDown</A>
+<LI><A HREF="#ec.ScrollUp">ScrollUp</A>
+<LI><A HREF="#ec.MoveFoldTop">MoveFoldTop</A>
+<LI><A HREF="#ec.MoveFoldPrev">MoveFoldPrev</A>
+<LI><A HREF="#ec.MoveFoldNext">MoveFoldNext</A>
+<LI><A HREF="#ec.MoveBeginOrNonWhite">MoveBeginOrNonWhite</A>
+<LI><A HREF="#ec.MoveBeginLinePageFile">MoveBeginLinePageFile</A>
+<LI><A HREF="#ec.MoveEndLinePageFile">MoveEndLinePageFile</A>
+<LI><A HREF="#ec.MoveToLine">MoveToLine</A>
+<LI><A HREF="#ec.MoveToColumn">MoveToColumn</A>
+<LI><A HREF="#ec.MoveSavedPosCol">MoveSavedPosCol</A>
+<LI><A HREF="#ec.MoveSavedPosRow">MoveSavedPosRow</A>
+<LI><A HREF="#ec.MoveSavedPos">MoveSavedPos</A>
+<LI><A HREF="#ec.SavePos">SavePos</A>
+<LI><A HREF="#ec.MovePrevPos">MovePrevPos</A>
+</UL>
+<P><B>SEE ALSO:</B>
+<A HREF="modes.html#ms.CursorTroughTabs">CursorTroughTabs</A>, <A HREF="#cmd_cursor">Cursor Movement</A>, <A HREF="#cmd_delete">Deleting Text</A>, <A HREF="#cmd_line">Line Commands</A>, <A HREF="#cmd_block">Block Commands</A>, <A HREF="#cmd_edit">Text Editing and Insertion</A>, <A HREF="#cmd_fold">Folding Text</A>, <A HREF="#cmd_bookmark">Bookmarks</A>, <A HREF="#cmd_trans">Character Translation</A>, <A HREF="#cmd_file">File Commands</A>, <A HREF="#cmd_directory">Directory Commands</A>, <A HREF="#cmd_search">Search and Replace</A>, <A HREF="#cmd_window">Window Commands</A>, <A HREF="#cmd_compile">Compiler Support</A>, <A HREF="#cmd_cvs">CVS Support</A>, <A HREF="#cmd_tags">TAGS Commands</A>, <A HREF="#cmd_option">Option commands</A>, <A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.MoveDown">MoveDown</A></H2>
+Move cursor to next line.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MoveUp">MoveUp</A></H2>
+Move cursor to previous line
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MoveLeft">MoveLeft</A></H2>
+Move cursor to previous column.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MoveRight">MoveRight</A></H2>
+Move cursor to next column.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MovePrev">MovePrev</A></H2>
+Move cursor to previous character. Moves to end of the previous
+line if cursor is at the beginning of line.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MoveNext">MoveNext</A></H2>
+Move cursor to next character. Moves to the beginning of next
+line if cursor is at the end of line.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MoveWordLeft">MoveWordLeft</A></H2>
+Move cursor to the beginning of the word on the left.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MoveWordRight">MoveWordRight</A></H2>
+Move cursor to the beginning of the word on the right.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MoveWordPrev">MoveWordPrev</A></H2>
+Move cursor to the beginning of the previous word.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MoveWordNext">MoveWordNext</A></H2>
+Move cursor to the beginning of the next word.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MoveWordEndLeft">MoveWordEndLeft</A></H2>
+Move cursor to the end of the previous word.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MoveWordEndRight">MoveWordEndRight</A></H2>
+Move cursor to the end of the word on the right.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MoveWordEndPrev">MoveWordEndPrev</A></H2>
+Move cursor to the end of the previous word.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MoveWordEndNext">MoveWordEndNext</A></H2>
+Move cursor to the end of the next word.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MoveWordOrCapLeft">MoveWordOrCapLeft</A></H2>
+Move cursor to the beginning of the word or capital letter on the right.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MoveWordOrCapRight">MoveWordOrCapRight</A></H2>
+Move cursor to the beginning of the word or capital letter on the left.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MoveWordOrCapPrev">MoveWordOrCapPrev</A></H2>
+Move cursor to the beginning of the previous word or to previous
+capital letter.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MoveWordOrCapNext">MoveWordOrCapNext</A></H2>
+Move cursor to the beginning of the next word or to next capital letter.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MoveWordOrCapEndLeft">MoveWordOrCapEndLeft</A></H2>
+Move cursor to the end of the word or capitals on the left.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MoveWordOrCapEndRight">MoveWordOrCapEndRight</A></H2>
+Move cursor to the end of the word or capitals on the right.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MoveWordOrCapEndPrev">MoveWordOrCapEndPrev</A></H2>
+Move cursor to the end of the previous word or capitals.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MoveWordOrCapEndNext">MoveWordOrCapEndNext</A></H2>
+Move cursor to the end of the next word or capitals.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MoveLineStart">MoveLineStart</A></H2>
+Move cursor to the beginning of line.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MoveLineEnd">MoveLineEnd</A></H2>
+Move cursor to the end of line.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MovePageStart">MovePageStart</A></H2>
+Move cursor to the first line on current page.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MovePageEnd">MovePageEnd</A></H2>
+Move cursor to the last line on currently page.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MovePageUp">MovePageUp</A></H2>
+Display previous page.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MovePageDown">MovePageDown</A></H2>
+Display next page.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MoveFileStart">MoveFileStart</A></H2>
+Move cursor to the beginning of file.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MoveFileEnd">MoveFileEnd</A></H2>
+Move cursor to the end of file.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MovePageLeft">MovePageLeft</A></H2>
+Scroll horizontally to display page on the left.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MovePageRight">MovePageRight</A></H2>
+Scroll horizontally to display page on the right.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MoveBlockStart">MoveBlockStart</A></H2>
+Move cursor to the beginning of block.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MoveBlockEnd">MoveBlockEnd</A></H2>
+Move cursor to end beginning of block.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MoveFirstNonWhite">MoveFirstNonWhite</A></H2>
+Move cursor to the first non-blank character on line.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MoveLastNonWhite">MoveLastNonWhite</A></H2>
+Move cursor to the last non-blank character on line.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MovePrevEqualIndent">MovePrevEqualIndent</A></H2>
+Move cursor to the previous line with equal indentation.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MoveNextEqualIndent">MoveNextEqualIndent</A></H2>
+Move cursor to the next line with equal indentation.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MovePrevTab">MovePrevTab</A></H2>
+Move cursor to the previous tab position.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MoveNextTab">MoveNextTab</A></H2>
+Move cursor to the next tab position.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MoveTabStart">MoveTabStart</A></H2>
+When cursor is on the tab characters, moves it to the beginning
+of the tab.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MoveTabEnd">MoveTabEnd</A></H2>
+When cursor is on the tab characters, moves it to the end
+of the tab.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MoveLineTop">MoveLineTop</A></H2>
+Scroll the file to make the current line appear on the top of the window.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MoveLineCenter">MoveLineCenter</A></H2>
+Scroll the file to make the current line appear on the center of the window.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MoveLineBottom">MoveLineBottom</A></H2>
+Scroll the file to make the current line appear on the bottom of the window.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.ScrollLeft">ScrollLeft</A></H2>
+Scroll screen left.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.ScrollRight">ScrollRight</A></H2>
+Scroll screen right.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.ScrollDown">ScrollDown</A></H2>
+Scroll screen down.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.ScrollUp">ScrollUp</A></H2>
+Scroll screen up.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MoveFoldTop">MoveFoldTop</A></H2>
+Move to the beginning of current fold.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MoveFoldPrev">MoveFoldPrev</A></H2>
+Move to the beginning of previous fold.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MoveFoldNext">MoveFoldNext</A></H2>
+Move to the beginning of next fold.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MoveBeginOrNonWhite">MoveBeginOrNonWhite</A></H2>
+Move to beginning of line, or to first non blank character
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MoveBeginLinePageFile">MoveBeginLinePageFile</A></H2>
+Move to the beginning of line. If there already, move to the beginning
+page. If there already, move to the beginning of file.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MoveEndLinePageFile">MoveEndLinePageFile</A></H2>
+Move to the end of line. If there already, move to the end
+page. If there already, move to the end of file.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MoveToLine">MoveToLine</A></H2>
+Move to line number given as argument
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MoveToColumn">MoveToColumn</A></H2>
+Move to column given as argument
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MoveSavedPosCol">MoveSavedPosCol</A></H2>
+Move to column from saved position
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MoveSavedPosRow">MoveSavedPosRow</A></H2>
+Move to line from saved position
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MoveSavedPos">MoveSavedPos</A></H2>
+Move to saved position
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.SavePos">SavePos</A></H2>
+Save current cursor position
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H2><A NAME="ec.MovePrevPos">MovePrevPos</A></H2>
+Move to last cursor position
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>.<HR><H1><A NAME="cmd_delete">Deleting Text</A></H1>
+<UL>
+<LI><A HREF="#ec.KillLine">KillLine</A>
+<LI><A HREF="#ec.KillChar">KillChar</A>
+<LI><A HREF="#ec.KillCharPrev">KillCharPrev</A>
+<LI><A HREF="#ec.KillWord">KillWord</A>
+<LI><A HREF="#ec.KillWordPrev">KillWordPrev</A>
+<LI><A HREF="#ec.KillWordOrCap">KillWordOrCap</A>
+<LI><A HREF="#ec.KillWordOrCapPrev">KillWordOrCapPrev</A>
+<LI><A HREF="#ec.KillToLineStart">KillToLineStart</A>
+<LI><A HREF="#ec.KillToLineEnd">KillToLineEnd</A>
+<LI><A HREF="#ec.KillBlock">KillBlock</A>
+<LI><A HREF="#ec.KillBlockOrChar">KillBlockOrChar</A>
+<LI><A HREF="#ec.KillBlockOrCharPrev">KillBlockOrCharPrev</A>
+<LI><A HREF="#ec.Delete">Delete</A>
+<LI><A HREF="#ec.BackSpace">BackSpace</A>
+</UL>
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>, <A HREF="#cmd_delete">Deleting Text</A>, <A HREF="#cmd_line">Line Commands</A>, <A HREF="#cmd_block">Block Commands</A>, <A HREF="#cmd_edit">Text Editing and Insertion</A>, <A HREF="#cmd_fold">Folding Text</A>, <A HREF="#cmd_bookmark">Bookmarks</A>, <A HREF="#cmd_trans">Character Translation</A>, <A HREF="#cmd_file">File Commands</A>, <A HREF="#cmd_directory">Directory Commands</A>, <A HREF="#cmd_search">Search and Replace</A>, <A HREF="#cmd_window">Window Commands</A>, <A HREF="#cmd_compile">Compiler Support</A>, <A HREF="#cmd_cvs">CVS Support</A>, <A HREF="#cmd_tags">TAGS Commands</A>, <A HREF="#cmd_option">Option commands</A>, <A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.KillLine">KillLine</A></H2>
+Delete current line. If the line is the last line in the file,
+only the text is deleted.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_delete">Deleting Text</A>.<HR><H2><A NAME="ec.KillChar">KillChar</A></H2>
+Delete character under (after) cursor.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_delete">Deleting Text</A>.<HR><H2><A NAME="ec.KillCharPrev">KillCharPrev</A></H2>
+Delete character before cursor.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_delete">Deleting Text</A>.<HR><H2><A NAME="ec.KillWord">KillWord</A></H2>
+Delete the word after cursor.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_delete">Deleting Text</A>.<HR><H2><A NAME="ec.KillWordPrev">KillWordPrev</A></H2>
+Delete the word before cursor.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_delete">Deleting Text</A>.<HR><H2><A NAME="ec.KillWordOrCap">KillWordOrCap</A></H2>
+Delete word or capitals after cursor.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_delete">Deleting Text</A>.<HR><H2><A NAME="ec.KillWordOrCapPrev">KillWordOrCapPrev</A></H2>
+Delete word or capitals before cursor.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_delete">Deleting Text</A>.<HR><H2><A NAME="ec.KillToLineStart">KillToLineStart</A></H2>
+Delete characters to the beginning of line.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_delete">Deleting Text</A>.<HR><H2><A NAME="ec.KillToLineEnd">KillToLineEnd</A></H2>
+Delete characters to the end of line.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_delete">Deleting Text</A>.<HR><H2><A NAME="ec.KillBlock">KillBlock</A></H2>
+Delete block.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_delete">Deleting Text</A>.<HR><H2><A NAME="ec.KillBlockOrChar">KillBlockOrChar</A></H2>
+If block is marked, delete it, otherwise delete character under cursor.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_delete">Deleting Text</A>.<HR><H2><A NAME="ec.KillBlockOrCharPrev">KillBlockOrCharPrev</A></H2>
+If block is marked, delete it, otherwise delete character before cursor.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_delete">Deleting Text</A>.<HR><H2><A NAME="ec.Delete">Delete</A></H2>
+Delete character under (after) cursor.
+<P><B>SEE ALSO:</B>
+<A HREF="modes.html#ms.DeleteKillTab">DeleteKillTab</A>, <A HREF="modes.html#ms.DeleteKillBlock">DeleteKillBlock</A>, <A HREF="#cmd_delete">Deleting Text</A>.<HR><H2><A NAME="ec.BackSpace">BackSpace</A></H2>
+Delete character before cursor.
+<P><B>SEE ALSO:</B>
+<A HREF="modes.html#ms.BackSpKillTab">BackSpKillTab</A>, <A HREF="modes.html#ms.BackSpKillBlock">BackSpKillBlock</A>, <A HREF="#cmd_delete">Deleting Text</A>.<HR><H1><A NAME="cmd_line">Line Commands</A></H1>
+<UL>
+<LI><A HREF="#ec.LineInsert">LineInsert</A>
+<LI><A HREF="#ec.LineAdd">LineAdd</A>
+<LI><A HREF="#ec.LineSplit">LineSplit</A>
+<LI><A HREF="#ec.LineJoin">LineJoin</A>
+<LI><A HREF="#ec.LineNew">LineNew</A>
+<LI><A HREF="#ec.LineIndent">LineIndent</A>
+<LI><A HREF="#ec.LineTrim">LineTrim</A>
+<LI><A HREF="#ec.LineDuplicate">LineDuplicate</A>
+<LI><A HREF="#ec.LineCenter">LineCenter</A>
+</UL>
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>, <A HREF="#cmd_delete">Deleting Text</A>, <A HREF="#cmd_line">Line Commands</A>, <A HREF="#cmd_block">Block Commands</A>, <A HREF="#cmd_edit">Text Editing and Insertion</A>, <A HREF="#cmd_fold">Folding Text</A>, <A HREF="#cmd_bookmark">Bookmarks</A>, <A HREF="#cmd_trans">Character Translation</A>, <A HREF="#cmd_file">File Commands</A>, <A HREF="#cmd_directory">Directory Commands</A>, <A HREF="#cmd_search">Search and Replace</A>, <A HREF="#cmd_window">Window Commands</A>, <A HREF="#cmd_compile">Compiler Support</A>, <A HREF="#cmd_cvs">CVS Support</A>, <A HREF="#cmd_tags">TAGS Commands</A>, <A HREF="#cmd_option">Option commands</A>, <A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.LineInsert">LineInsert</A></H2>
+Insert a new line before the current one.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_line">Line Commands</A>.<HR><H2><A NAME="ec.LineAdd">LineAdd</A></H2>
+Add a new line after the current one.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_line">Line Commands</A>.<HR><H2><A NAME="ec.LineSplit">LineSplit</A></H2>
+Split current line after cursor position
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_line">Line Commands</A>.<HR><H2><A NAME="ec.LineJoin">LineJoin</A></H2>
+Join current line with next one. If cursor is positioned beyond
+the end of line, the current line is first padded with whitespace.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_line">Line Commands</A>.<HR><H2><A NAME="ec.LineNew">LineNew</A></H2>
+Append a new line and move to the beginning of new line.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_line">Line Commands</A>.<HR><H2><A NAME="ec.LineIndent">LineIndent</A></H2>
+Reindent current line.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_line">Line Commands</A>.<HR><H2><A NAME="ec.LineTrim">LineTrim</A></H2>
+Trim whitespace at the end of current line.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_line">Line Commands</A>.<HR><H2><A NAME="ec.LineDuplicate">LineDuplicate</A></H2>
+Duplicate the current line.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_line">Line Commands</A>.<HR><H2><A NAME="ec.LineCenter">LineCenter</A></H2>
+Center the current line
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_line">Line Commands</A>.<HR><H1><A NAME="cmd_block">Block Commands</A></H1>
+<UL>
+<LI><A HREF="#ec.BlockBegin">BlockBegin</A>
+<LI><A HREF="#ec.BlockEnd">BlockEnd</A>
+<LI><A HREF="#ec.BlockUnmark">BlockUnmark</A>
+<LI><A HREF="#ec.BlockCut">BlockCut</A>
+<LI><A HREF="#ec.BlockCopy">BlockCopy</A>
+<LI><A HREF="#ec.BlockCutAppend">BlockCutAppend</A>
+<LI><A HREF="#ec.BlockCopyAppend">BlockCopyAppend</A>
+<LI><A HREF="#ec.BlockClear">BlockClear</A>
+<LI><A HREF="#ec.BlockPaste">BlockPaste</A>
+<LI><A HREF="#ec.BlockKill">BlockKill</A>
+<LI><A HREF="#ec.BlockIndent">BlockIndent</A>
+<LI><A HREF="#ec.BlockUnindent">BlockUnindent</A>
+<LI><A HREF="#ec.BlockMarkStream">BlockMarkStream</A>
+<LI><A HREF="#ec.BlockMarkLine">BlockMarkLine</A>
+<LI><A HREF="#ec.BlockMarkColumn">BlockMarkColumn</A>
+<LI><A HREF="#ec.BlockExtendBegin">BlockExtendBegin</A>
+<LI><A HREF="#ec.BlockExtendEnd">BlockExtendEnd</A>
+<LI><A HREF="#ec.BlockReIndent">BlockReIndent</A>
+<LI><A HREF="#ec.BlockSelectWord">BlockSelectWord</A>
+<LI><A HREF="#ec.BlockSelectLine">BlockSelectLine</A>
+<LI><A HREF="#ec.BlockSelectPara">BlockSelectPara</A>
+<LI><A HREF="#ec.BlockPasteStream">BlockPasteStream</A>
+<LI><A HREF="#ec.BlockPasteLine">BlockPasteLine</A>
+<LI><A HREF="#ec.BlockPasteColumn">BlockPasteColumn</A>
+<LI><A HREF="#ec.BlockPrint">BlockPrint</A>
+<LI><A HREF="#ec.BlockRead">BlockRead</A>
+<LI><A HREF="#ec.BlockReadStream">BlockReadStream</A>
+<LI><A HREF="#ec.BlockReadLine">BlockReadLine</A>
+<LI><A HREF="#ec.BlockReadColumn">BlockReadColumn</A>
+<LI><A HREF="#ec.BlockWrite">BlockWrite</A>
+<LI><A HREF="#ec.BlockSort">BlockSort</A>
+<LI><A HREF="#ec.BlockSortReverse">BlockSortReverse</A>
+<LI><A HREF="#ec.BlockUnTab">BlockUnTab</A>
+<LI><A HREF="#ec.BlockEnTab">BlockEnTab</A>
+<LI><A HREF="#ec.BlockMarkFunction">BlockMarkFunction</A>
+<LI><A HREF="#ec.BlockTrim">BlockTrim</A>
+</UL>
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>, <A HREF="#cmd_delete">Deleting Text</A>, <A HREF="#cmd_line">Line Commands</A>, <A HREF="#cmd_block">Block Commands</A>, <A HREF="#cmd_edit">Text Editing and Insertion</A>, <A HREF="#cmd_fold">Folding Text</A>, <A HREF="#cmd_bookmark">Bookmarks</A>, <A HREF="#cmd_trans">Character Translation</A>, <A HREF="#cmd_file">File Commands</A>, <A HREF="#cmd_directory">Directory Commands</A>, <A HREF="#cmd_search">Search and Replace</A>, <A HREF="#cmd_window">Window Commands</A>, <A HREF="#cmd_compile">Compiler Support</A>, <A HREF="#cmd_cvs">CVS Support</A>, <A HREF="#cmd_tags">TAGS Commands</A>, <A HREF="#cmd_option">Option commands</A>, <A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.BlockBegin">BlockBegin</A></H2>
+Set block beginning to current position.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_block">Block Commands</A>.<HR><H2><A NAME="ec.BlockEnd">BlockEnd</A></H2>
+Set block end to current position.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_block">Block Commands</A>.<HR><H2><A NAME="ec.BlockUnmark">BlockUnmark</A></H2>
+Unmark block.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_block">Block Commands</A>.<HR><H2><A NAME="ec.BlockCut">BlockCut</A></H2>
+Cut selected block to clipboard.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_block">Block Commands</A>.<HR><H2><A NAME="ec.BlockCopy">BlockCopy</A></H2>
+Copy selected block to clipboard.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_block">Block Commands</A>.<HR><H2><A NAME="ec.BlockCutAppend">BlockCutAppend</A></H2>
+Cut selected block and append it to clipboard.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_block">Block Commands</A>.<HR><H2><A NAME="ec.BlockCopyAppend">BlockCopyAppend</A></H2>
+Append selected block to clipboard.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_block">Block Commands</A>.<HR><H2><A NAME="ec.BlockClear">BlockClear</A></H2>
+Clear selected block
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_block">Block Commands</A>.<HR><H2><A NAME="ec.BlockPaste">BlockPaste</A></H2>
+Paste clipboard to current position.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_block">Block Commands</A>.<HR><H2><A NAME="ec.BlockKill">BlockKill</A></H2>
+Delete selected text.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_block">Block Commands</A>.<HR><H2><A NAME="ec.BlockIndent">BlockIndent</A></H2>
+Indent block by 1 character.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_block">Block Commands</A>.<HR><H2><A NAME="ec.BlockUnindent">BlockUnindent</A></H2>
+Unindent block by 1 character.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_block">Block Commands</A>.<HR><H2><A NAME="ec.BlockMarkStream">BlockMarkStream</A></H2>
+Start/stop marking stream block.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_block">Block Commands</A>.<HR><H2><A NAME="ec.BlockMarkLine">BlockMarkLine</A></H2>
+Start/stop marking line block.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_block">Block Commands</A>.<HR><H2><A NAME="ec.BlockMarkColumn">BlockMarkColumn</A></H2>
+Start/stop marking column block.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_block">Block Commands</A>.<HR><H2><A NAME="ec.BlockExtendBegin">BlockExtendBegin</A></H2>
+Start extending selected block.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_block">Block Commands</A>.<HR><H2><A NAME="ec.BlockExtendEnd">BlockExtendEnd</A></H2>
+Stop extending selected block.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_block">Block Commands</A>.<HR><H2><A NAME="ec.BlockReIndent">BlockReIndent</A></H2>
+Reindent entire block (C/REXX mode)
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_block">Block Commands</A>.<HR><H2><A NAME="ec.BlockSelectWord">BlockSelectWord</A></H2>
+Select word under cursor as block.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_block">Block Commands</A>.<HR><H2><A NAME="ec.BlockSelectLine">BlockSelectLine</A></H2>
+Select current line as block.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_block">Block Commands</A>.<HR><H2><A NAME="ec.BlockSelectPara">BlockSelectPara</A></H2>
+Select current paragraph (delimited by blank lines) as block.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_block">Block Commands</A>.<HR><H2><A NAME="ec.BlockPasteStream">BlockPasteStream</A></H2>
+Paste clipboard to current position as stream block.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_block">Block Commands</A>.<HR><H2><A NAME="ec.BlockPasteLine">BlockPasteLine</A></H2>
+Paste clipboard to current position as line block.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_block">Block Commands</A>.<HR><H2><A NAME="ec.BlockPasteColumn">BlockPasteColumn</A></H2>
+Paste clipboard to current position as column block.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_block">Block Commands</A>.<HR><H2><A NAME="ec.BlockPrint">BlockPrint</A></H2>
+Print a block to configured device.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_block">Block Commands</A>.<HR><H2><A NAME="ec.BlockRead">BlockRead</A></H2>
+Read block from file.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_block">Block Commands</A>.<HR><H2><A NAME="ec.BlockReadStream">BlockReadStream</A></H2>
+Read block from file as stream block
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_block">Block Commands</A>.<HR><H2><A NAME="ec.BlockReadLine">BlockReadLine</A></H2>
+Read block from file as line block
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_block">Block Commands</A>.<HR><H2><A NAME="ec.BlockReadColumn">BlockReadColumn</A></H2>
+Read block from file as column block
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_block">Block Commands</A>.<HR><H2><A NAME="ec.BlockWrite">BlockWrite</A></H2>
+Write marked block to file.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_block">Block Commands</A>.<HR><H2><A NAME="ec.BlockSort">BlockSort</A></H2>
+Sorts the marked block in ascending order.
+If mode setting MatchCase is set, characters will be compared case
+sensitively.
+When block is marked in <A HREF="modes.html#ec.BlockMarkStream">
+Stream</A> or <A HREF="#ec.BlockMarkLine">Line</A> mode,
+the entire lines in marked block will be compared.
+When block is marked in <A HREF="#ec.BlockMarkColumn">Column</A>
+mode, only characters within marked columns will be compared.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_block">Block Commands</A>.<HR><H2><A NAME="ec.BlockSortReverse">BlockSortReverse</A></H2>
+Sorts the marked block in descending order.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_block">Block Commands</A>.<HR><H2><A NAME="ec.BlockUnTab">BlockUnTab</A></H2>
+Remove tabs from marked lines.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_block">Block Commands</A>.<HR><H2><A NAME="ec.BlockEnTab">BlockEnTab</A></H2>
+Generate and optimize tabs in marked lines.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_block">Block Commands</A>.<HR><H2><A NAME="ec.BlockMarkFunction">BlockMarkFunction</A></H2>
+Mark current function as block.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_block">Block Commands</A>.<HR><H2><A NAME="ec.BlockTrim">BlockTrim</A></H2>
+Trim end-of-line whitespace
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_block">Block Commands</A>.<HR><H1><A NAME="cmd_edit">Text Editing and Insertion</A></H1>
+<UL>
+<LI><A HREF="#ec.Undo">Undo</A>
+<LI><A HREF="#ec.Redo">Redo</A>
+</UL>
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>, <A HREF="#cmd_delete">Deleting Text</A>, <A HREF="#cmd_line">Line Commands</A>, <A HREF="#cmd_block">Block Commands</A>, <A HREF="#cmd_edit">Text Editing and Insertion</A>, <A HREF="#cmd_fold">Folding Text</A>, <A HREF="#cmd_bookmark">Bookmarks</A>, <A HREF="#cmd_trans">Character Translation</A>, <A HREF="#cmd_file">File Commands</A>, <A HREF="#cmd_directory">Directory Commands</A>, <A HREF="#cmd_search">Search and Replace</A>, <A HREF="#cmd_window">Window Commands</A>, <A HREF="#cmd_compile">Compiler Support</A>, <A HREF="#cmd_cvs">CVS Support</A>, <A HREF="#cmd_tags">TAGS Commands</A>, <A HREF="#cmd_option">Option commands</A>, <A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.Undo">Undo</A></H2>
+Undo last operation
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_edit">Text Editing and Insertion</A>.<HR><H2><A NAME="ec.Redo">Redo</A></H2>
+Redo last undone operation.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_edit">Text Editing and Insertion</A>.<HR><H1><A NAME="cmd_fold">Folding Text</A></H1>
+<UL>
+<LI><A HREF="#ec.FoldCreate">FoldCreate</A>
+<LI><A HREF="#ec.FoldCreateByRegexp">FoldCreateByRegexp</A>
+<LI><A HREF="#ec.FoldCreateAtRoutines">FoldCreateAtRoutines</A>
+<LI><A HREF="#ec.FoldDestroy">FoldDestroy</A>
+<LI><A HREF="#ec.FoldDestroyAll">FoldDestroyAll</A>
+<LI><A HREF="#ec.FoldPromote">FoldPromote</A>
+<LI><A HREF="#ec.FoldDemote">FoldDemote</A>
+<LI><A HREF="#ec.FoldOpen">FoldOpen</A>
+<LI><A HREF="#ec.FoldOpenNested">FoldOpenNested</A>
+<LI><A HREF="#ec.FoldClose">FoldClose</A>
+<LI><A HREF="#ec.FoldOpenAll">FoldOpenAll</A>
+<LI><A HREF="#ec.FoldCloseAll">FoldCloseAll</A>
+<LI><A HREF="#ec.FoldToggleOpenClose">FoldToggleOpenClose</A>
+</UL>
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>, <A HREF="#cmd_delete">Deleting Text</A>, <A HREF="#cmd_line">Line Commands</A>, <A HREF="#cmd_block">Block Commands</A>, <A HREF="#cmd_edit">Text Editing and Insertion</A>, <A HREF="#cmd_fold">Folding Text</A>, <A HREF="#cmd_bookmark">Bookmarks</A>, <A HREF="#cmd_trans">Character Translation</A>, <A HREF="#cmd_file">File Commands</A>, <A HREF="#cmd_directory">Directory Commands</A>, <A HREF="#cmd_search">Search and Replace</A>, <A HREF="#cmd_window">Window Commands</A>, <A HREF="#cmd_compile">Compiler Support</A>, <A HREF="#cmd_cvs">CVS Support</A>, <A HREF="#cmd_tags">TAGS Commands</A>, <A HREF="#cmd_option">Option commands</A>, <A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.FoldCreate">FoldCreate</A></H2>
+Create fold
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_fold">Folding Text</A>.<HR><H2><A NAME="ec.FoldCreateByRegexp">FoldCreateByRegexp</A></H2>
+Create folds at lines matching a regular expression
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_fold">Folding Text</A>.<HR><H2><A NAME="ec.FoldCreateAtRoutines">FoldCreateAtRoutines</A></H2>
+Create folds at lines matching RoutineRx
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_fold">Folding Text</A>.<HR><H2><A NAME="ec.FoldDestroy">FoldDestroy</A></H2>
+Destroy fold at current line
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_fold">Folding Text</A>.<HR><H2><A NAME="ec.FoldDestroyAll">FoldDestroyAll</A></H2>
+Destroy all folds in the file
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_fold">Folding Text</A>.<HR><H2><A NAME="ec.FoldPromote">FoldPromote</A></H2>
+Promote fold to outer level
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_fold">Folding Text</A>.<HR><H2><A NAME="ec.FoldDemote">FoldDemote</A></H2>
+Demote fold to inner level
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_fold">Folding Text</A>.<HR><H2><A NAME="ec.FoldOpen">FoldOpen</A></H2>
+Open fold at current line
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_fold">Folding Text</A>.<HR><H2><A NAME="ec.FoldOpenNested">FoldOpenNested</A></H2>
+Open fold and nested folds
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_fold">Folding Text</A>.<HR><H2><A NAME="ec.FoldClose">FoldClose</A></H2>
+Close current fold
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_fold">Folding Text</A>.<HR><H2><A NAME="ec.FoldOpenAll">FoldOpenAll</A></H2>
+Open all folds in the file
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_fold">Folding Text</A>.<HR><H2><A NAME="ec.FoldCloseAll">FoldCloseAll</A></H2>
+Close all folds in the file
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_fold">Folding Text</A>.<HR><H2><A NAME="ec.FoldToggleOpenClose">FoldToggleOpenClose</A></H2>
+Toggle open/close current fold.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_fold">Folding Text</A>.<HR><H1><A NAME="cmd_bookmark">Bookmarks</A></H1>
+<UL>
+<LI><A HREF="#ec.PlaceBookmark">PlaceBookmark</A>
+<LI><A HREF="#ec.RemoveBookmark">RemoveBookmark</A>
+<LI><A HREF="#ec.GotoBookmark">GotoBookmark</A>
+<LI><A HREF="#ec.PlaceGlobalBookmark">PlaceGlobalBookmark</A>
+<LI><A HREF="#ec.RemoveGlobalBookmark">RemoveGlobalBookmark</A>
+<LI><A HREF="#ec.GotoGlobalBookmark">GotoGlobalBookmark</A>
+<LI><A HREF="#ec.PushGlobalBookmark">PushGlobalBookmark</A>
+<LI><A HREF="#ec.PopGlobalBookmark">PopGlobalBookmark</A>
+</UL>
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>, <A HREF="#cmd_delete">Deleting Text</A>, <A HREF="#cmd_line">Line Commands</A>, <A HREF="#cmd_block">Block Commands</A>, <A HREF="#cmd_edit">Text Editing and Insertion</A>, <A HREF="#cmd_fold">Folding Text</A>, <A HREF="#cmd_bookmark">Bookmarks</A>, <A HREF="#cmd_trans">Character Translation</A>, <A HREF="#cmd_file">File Commands</A>, <A HREF="#cmd_directory">Directory Commands</A>, <A HREF="#cmd_search">Search and Replace</A>, <A HREF="#cmd_window">Window Commands</A>, <A HREF="#cmd_compile">Compiler Support</A>, <A HREF="#cmd_cvs">CVS Support</A>, <A HREF="#cmd_tags">TAGS Commands</A>, <A HREF="#cmd_option">Option commands</A>, <A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.PlaceBookmark">PlaceBookmark</A></H2>
+Place a file-local bookmark.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_bookmark">Bookmarks</A>.<HR><H2><A NAME="ec.RemoveBookmark">RemoveBookmark</A></H2>
+Place a file-local bookmark.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_bookmark">Bookmarks</A>.<HR><H2><A NAME="ec.GotoBookmark">GotoBookmark</A></H2>
+Go to file-local bookmark location.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_bookmark">Bookmarks</A>.<HR><H2><A NAME="ec.PlaceGlobalBookmark">PlaceGlobalBookmark</A></H2>
+Place global (persistent) bookmark.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_bookmark">Bookmarks</A>.<HR><H2><A NAME="ec.RemoveGlobalBookmark">RemoveGlobalBookmark</A></H2>
+Remove global bookmark.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_bookmark">Bookmarks</A>.<HR><H2><A NAME="ec.GotoGlobalBookmark">GotoGlobalBookmark</A></H2>
+Go to global bookmark location.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_bookmark">Bookmarks</A>.<HR><H2><A NAME="ec.PushGlobalBookmark">PushGlobalBookmark</A></H2>
+Push global bookmark (named as #&lt;num&gt;) to stack.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_bookmark">Bookmarks</A>.<HR><H2><A NAME="ec.PopGlobalBookmark">PopGlobalBookmark</A></H2>
+Pop global bookmark from stack.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_bookmark">Bookmarks</A>.<HR><H1><A NAME="cmd_trans">Character Translation</A></H1>
+<UL>
+<LI><A HREF="#ec.CharCaseUp">CharCaseUp</A>
+<LI><A HREF="#ec.CharCaseDown">CharCaseDown</A>
+<LI><A HREF="#ec.CharCaseToggle">CharCaseToggle</A>
+<LI><A HREF="#ec.CharTrans">CharTrans</A>
+<LI><A HREF="#ec.LineCaseUp">LineCaseUp</A>
+<LI><A HREF="#ec.LineCaseDown">LineCaseDown</A>
+<LI><A HREF="#ec.LineCaseToggle">LineCaseToggle</A>
+<LI><A HREF="#ec.LineTrans">LineTrans</A>
+<LI><A HREF="#ec.BlockCaseUp">BlockCaseUp</A>
+<LI><A HREF="#ec.BlockCaseDown">BlockCaseDown</A>
+<LI><A HREF="#ec.BlockCaseToggle">BlockCaseToggle</A>
+<LI><A HREF="#ec.BlockTrans">BlockTrans</A>
+<LI><A HREF="#ec.InsertString">InsertString</A>
+<LI><A HREF="#ec.InsertSpace">InsertSpace</A>
+<LI><A HREF="#ec.InsertChar">InsertChar</A>
+<LI><A HREF="#ec.TypeChar">TypeChar</A>
+<LI><A HREF="#ec.InsertTab">InsertTab</A>
+<LI><A HREF="#ec.InsertSpacesToTab">InsertSpacesToTab</A>
+<LI><A HREF="#ec.SelfInsert">SelfInsert</A>
+<LI><A HREF="#ec.WrapPara">WrapPara</A>
+<LI><A HREF="#ec.InsPrevLineChar">InsPrevLineChar</A>
+<LI><A HREF="#ec.InsPrevLineToEol">InsPrevLineToEol</A>
+<LI><A HREF="#ec.CompleteWord">CompleteWord</A>
+<LI><A HREF="#ec.FilePrev">FilePrev</A>
+<LI><A HREF="#ec.FileNext">FileNext</A>
+<LI><A HREF="#ec.FileLast">FileLast</A>
+<LI><A HREF="#ec.SwitchTo">SwitchTo</A>
+</UL>
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>, <A HREF="#cmd_delete">Deleting Text</A>, <A HREF="#cmd_line">Line Commands</A>, <A HREF="#cmd_block">Block Commands</A>, <A HREF="#cmd_edit">Text Editing and Insertion</A>, <A HREF="#cmd_fold">Folding Text</A>, <A HREF="#cmd_bookmark">Bookmarks</A>, <A HREF="#cmd_trans">Character Translation</A>, <A HREF="#cmd_file">File Commands</A>, <A HREF="#cmd_directory">Directory Commands</A>, <A HREF="#cmd_search">Search and Replace</A>, <A HREF="#cmd_window">Window Commands</A>, <A HREF="#cmd_compile">Compiler Support</A>, <A HREF="#cmd_cvs">CVS Support</A>, <A HREF="#cmd_tags">TAGS Commands</A>, <A HREF="#cmd_option">Option commands</A>, <A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.CharCaseUp">CharCaseUp</A></H2>
+Convert current character to uppercase
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_trans">Character Translation</A>.<HR><H2><A NAME="ec.CharCaseDown">CharCaseDown</A></H2>
+Convert current character to lowercase
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_trans">Character Translation</A>.<HR><H2><A NAME="ec.CharCaseToggle">CharCaseToggle</A></H2>
+Toggle case of current character
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_trans">Character Translation</A>.<HR><H2><A NAME="ec.CharTrans">CharTrans</A></H2>
+Translate current character (like perl/sed)
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_trans">Character Translation</A>.<HR><H2><A NAME="ec.LineCaseUp">LineCaseUp</A></H2>
+Convert current line to uppercase
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_trans">Character Translation</A>.<HR><H2><A NAME="ec.LineCaseDown">LineCaseDown</A></H2>
+Convert current line to lowercase
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_trans">Character Translation</A>.<HR><H2><A NAME="ec.LineCaseToggle">LineCaseToggle</A></H2>
+Toggle case of current line
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_trans">Character Translation</A>.<HR><H2><A NAME="ec.LineTrans">LineTrans</A></H2>
+Translate characters on current line
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_trans">Character Translation</A>.<HR><H2><A NAME="ec.BlockCaseUp">BlockCaseUp</A></H2>
+Convert characters in selected block to uppercase
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_trans">Character Translation</A>.<HR><H2><A NAME="ec.BlockCaseDown">BlockCaseDown</A></H2>
+Convert characters in selected block to lowercase
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_trans">Character Translation</A>.<HR><H2><A NAME="ec.BlockCaseToggle">BlockCaseToggle</A></H2>
+Toggle case of characters in selected block
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_trans">Character Translation</A>.<HR><H2><A NAME="ec.BlockTrans">BlockTrans</A></H2>
+Translate characters in selected block.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_trans">Character Translation</A>.<HR><H2><A NAME="ec.InsertString">InsertString</A></H2>
+Insert argument string at cursor position
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_trans">Character Translation</A>.<HR><H2><A NAME="ec.InsertSpace">InsertSpace</A></H2>
+Insert space
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_trans">Character Translation</A>.<HR><H2><A NAME="ec.InsertChar">InsertChar</A></H2>
+Insert character argument at cursor position
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_trans">Character Translation</A>.<HR><H2><A NAME="ec.TypeChar">TypeChar</A></H2>
+Insert character at cursor position (expanding abbreviations)
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_trans">Character Translation</A>.<HR><H2><A NAME="ec.InsertTab">InsertTab</A></H2>
+Insert tab character at cursor position
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_trans">Character Translation</A>.<HR><H2><A NAME="ec.InsertSpacesToTab">InsertSpacesToTab</A></H2>
+Insert appropriate number of spaces to simulate a tab.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_trans">Character Translation</A>.<HR><H2><A NAME="ec.SelfInsert">SelfInsert</A></H2>
+Insert typed character
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_trans">Character Translation</A>.<HR><H2><A NAME="ec.WrapPara">WrapPara</A></H2>
+Wrap current paragraph
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_trans">Character Translation</A>.<HR><H2><A NAME="ec.InsPrevLineChar">InsPrevLineChar</A></H2>
+Insert character in previous line above cursor
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_trans">Character Translation</A>.<HR><H2><A NAME="ec.InsPrevLineToEol">InsPrevLineToEol</A></H2>
+Insert previous line from cursor to end of line
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_trans">Character Translation</A>.<HR><H2><A NAME="ec.CompleteWord">CompleteWord</A></H2>
+Complete current word to last word starting with the
+same prefix.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_trans">Character Translation</A>.<HR><H2><A NAME="ec.FilePrev">FilePrev</A></H2>
+Switch to previous file in ring.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_trans">Character Translation</A>.<HR><H2><A NAME="ec.FileNext">FileNext</A></H2>
+Switch to next file in ring.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_trans">Character Translation</A>.<HR><H2><A NAME="ec.FileLast">FileLast</A></H2>
+Exchange last two files in ring.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_trans">Character Translation</A>.<HR><H2><A NAME="ec.SwitchTo">SwitchTo</A></H2>
+Switch to numbered buffer given as argument
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_trans">Character Translation</A>.<HR><H1><A NAME="cmd_file">File Commands</A></H1>
+<UL>
+<LI><A HREF="#ec.FileOpen">FileOpen</A>
+<LI><A HREF="#ec.FileOpenInMode">FileOpenInMode</A>
+<LI><A HREF="#ec.FileReload">FileReload</A>
+<LI><A HREF="#ec.FileSave">FileSave</A>
+<LI><A HREF="#ec.FileSaveAll">FileSaveAll</A>
+<LI><A HREF="#ec.FileSaveAs">FileSaveAs</A>
+<LI><A HREF="#ec.FileWriteTo">FileWriteTo</A>
+<LI><A HREF="#ec.FilePrint">FilePrint</A>
+<LI><A HREF="#ec.FileClose">FileClose</A>
+<LI><A HREF="#ec.FileCloseAll">FileCloseAll</A>
+<LI><A HREF="#ec.FileTrim">FileTrim</A>
+</UL>
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>, <A HREF="#cmd_delete">Deleting Text</A>, <A HREF="#cmd_line">Line Commands</A>, <A HREF="#cmd_block">Block Commands</A>, <A HREF="#cmd_edit">Text Editing and Insertion</A>, <A HREF="#cmd_fold">Folding Text</A>, <A HREF="#cmd_bookmark">Bookmarks</A>, <A HREF="#cmd_trans">Character Translation</A>, <A HREF="#cmd_file">File Commands</A>, <A HREF="#cmd_directory">Directory Commands</A>, <A HREF="#cmd_search">Search and Replace</A>, <A HREF="#cmd_window">Window Commands</A>, <A HREF="#cmd_compile">Compiler Support</A>, <A HREF="#cmd_cvs">CVS Support</A>, <A HREF="#cmd_tags">TAGS Commands</A>, <A HREF="#cmd_option">Option commands</A>, <A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.FileOpen">FileOpen</A></H2>
+Open file
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_file">File Commands</A>.<HR><H2><A NAME="ec.FileOpenInMode">FileOpenInMode</A></H2>
+Open file in specified mode
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_file">File Commands</A>.<HR><H2><A NAME="ec.FileReload">FileReload</A></H2>
+Reload current file
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_file">File Commands</A>.<HR><H2><A NAME="ec.FileSave">FileSave</A></H2>
+Save current file
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_file">File Commands</A>.<HR><H2><A NAME="ec.FileSaveAll">FileSaveAll</A></H2>
+Save all modified files
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_file">File Commands</A>.<HR><H2><A NAME="ec.FileSaveAs">FileSaveAs</A></H2>
+Rename Save current file
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_file">File Commands</A>.<HR><H2><A NAME="ec.FileWriteTo">FileWriteTo</A></H2>
+Write current file into another file
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_file">File Commands</A>.<HR><H2><A NAME="ec.FilePrint">FilePrint</A></H2>
+Print current file
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_file">File Commands</A>.<HR><H2><A NAME="ec.FileClose">FileClose</A></H2>
+Close current file
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_file">File Commands</A>.<HR><H2><A NAME="ec.FileCloseAll">FileCloseAll</A></H2>
+Close all open files
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_file">File Commands</A>.<HR><H2><A NAME="ec.FileTrim">FileTrim</A></H2>
+Trim end-of-line whitespace
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_file">File Commands</A>.<HR><H1><A NAME="cmd_directory">Directory Commands</A></H1>
+<UL>
+<LI><A HREF="#ec.DirOpen">DirOpen</A>
+<LI><A HREF="#ec.DirGoUp">DirGoUp</A>
+<LI><A HREF="#ec.DirGoDown">DirGoDown</A>
+<LI><A HREF="#ec.DirGoRoot">DirGoRoot</A>
+<LI><A HREF="#ec.DirGoto">DirGoto</A>
+<LI><A HREF="#ec.DirSearchCancel">DirSearchCancel</A>
+<LI><A HREF="#ec.DirSearchNext">DirSearchNext</A>
+<LI><A HREF="#ec.DirSearchPrev">DirSearchPrev</A>
+</UL>
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>, <A HREF="#cmd_delete">Deleting Text</A>, <A HREF="#cmd_line">Line Commands</A>, <A HREF="#cmd_block">Block Commands</A>, <A HREF="#cmd_edit">Text Editing and Insertion</A>, <A HREF="#cmd_fold">Folding Text</A>, <A HREF="#cmd_bookmark">Bookmarks</A>, <A HREF="#cmd_trans">Character Translation</A>, <A HREF="#cmd_file">File Commands</A>, <A HREF="#cmd_directory">Directory Commands</A>, <A HREF="#cmd_search">Search and Replace</A>, <A HREF="#cmd_window">Window Commands</A>, <A HREF="#cmd_compile">Compiler Support</A>, <A HREF="#cmd_cvs">CVS Support</A>, <A HREF="#cmd_tags">TAGS Commands</A>, <A HREF="#cmd_option">Option commands</A>, <A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.DirOpen">DirOpen</A></H2>
+Open directory browser
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_directory">Directory Commands</A>.<HR><H2><A NAME="ec.DirGoUp">DirGoUp</A></H2>
+Change to parent directory
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_directory">Directory Commands</A>.<HR><H2><A NAME="ec.DirGoDown">DirGoDown</A></H2>
+Change to currently selected directory
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_directory">Directory Commands</A>.<HR><H2><A NAME="ec.DirGoRoot">DirGoRoot</A></H2>
+Change to root directory
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_directory">Directory Commands</A>.<HR><H2><A NAME="ec.DirGoto">DirGoto</A></H2>
+Change to directory given as argument
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_directory">Directory Commands</A>.<HR><H2><A NAME="ec.DirSearchCancel">DirSearchCancel</A></H2>
+Cancel search
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_directory">Directory Commands</A>.<HR><H2><A NAME="ec.DirSearchNext">DirSearchNext</A></H2>
+Find next matching file
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_directory">Directory Commands</A>.<HR><H2><A NAME="ec.DirSearchPrev">DirSearchPrev</A></H2>
+Find previous matching file
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_directory">Directory Commands</A>.<HR><H1><A NAME="cmd_search">Search and Replace</A></H1>
+<UL>
+<LI><A HREF="#ec.IncrementalSearch">IncrementalSearch</A>
+<LI><A HREF="#ec.Find">Find</A>
+<LI><A HREF="#ec.FindReplace">FindReplace</A>
+<LI><A HREF="#ec.FindRepeat">FindRepeat</A>
+<LI><A HREF="#ec.FindRepeatOnce">FindRepeatOnce</A>
+<LI><A HREF="#ec.FindRepeatReverse">FindRepeatReverse</A>
+<LI><A HREF="#ec.MatchBracket">MatchBracket</A>
+<LI><A HREF="#ec.HilitWord">HilitWord</A>
+<LI><A HREF="#ec.SearchWordPrev">SearchWordPrev</A>
+<LI><A HREF="#ec.SearchWordNext">SearchWordNext</A>
+<LI><A HREF="#ec.HilitMatchBracket">HilitMatchBracket</A>
+</UL>
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>, <A HREF="#cmd_delete">Deleting Text</A>, <A HREF="#cmd_line">Line Commands</A>, <A HREF="#cmd_block">Block Commands</A>, <A HREF="#cmd_edit">Text Editing and Insertion</A>, <A HREF="#cmd_fold">Folding Text</A>, <A HREF="#cmd_bookmark">Bookmarks</A>, <A HREF="#cmd_trans">Character Translation</A>, <A HREF="#cmd_file">File Commands</A>, <A HREF="#cmd_directory">Directory Commands</A>, <A HREF="#cmd_search">Search and Replace</A>, <A HREF="#cmd_window">Window Commands</A>, <A HREF="#cmd_compile">Compiler Support</A>, <A HREF="#cmd_cvs">CVS Support</A>, <A HREF="#cmd_tags">TAGS Commands</A>, <A HREF="#cmd_option">Option commands</A>, <A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.IncrementalSearch">IncrementalSearch</A></H2>
+Incremental search
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_search">Search and Replace</A>.<HR><H2><A NAME="ec.Find">Find</A></H2>
+Find
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_search">Search and Replace</A>.<HR><H2><A NAME="ec.FindReplace">FindReplace</A></H2>
+Find and replace
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_search">Search and Replace</A>.<HR><H2><A NAME="ec.FindRepeat">FindRepeat</A></H2>
+Repeat last find/replace operation
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_search">Search and Replace</A>.<HR><H2><A NAME="ec.FindRepeatOnce">FindRepeatOnce</A></H2>
+Repeat last find/replace operation only once
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_search">Search and Replace</A>.<HR><H2><A NAME="ec.FindRepeatReverse">FindRepeatReverse</A></H2>
+Repeat last find/replace operation in reverse
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_search">Search and Replace</A>.<HR><H2><A NAME="ec.MatchBracket">MatchBracket</A></H2>
+Find matching bracket ([{&lt;&gt;}])
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_search">Search and Replace</A>.<HR><H2><A NAME="ec.HilitWord">HilitWord</A></H2>
+Highlight current word everywhere in the file
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_search">Search and Replace</A>.<HR><H2><A NAME="ec.SearchWordPrev">SearchWordPrev</A></H2>
+Search for previous occurence of word under cursor
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_search">Search and Replace</A>.<HR><H2><A NAME="ec.SearchWordNext">SearchWordNext</A></H2>
+Search for next occurence of word under cursor
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_search">Search and Replace</A>.<HR><H2><A NAME="ec.HilitMatchBracket">HilitMatchBracket</A></H2>
+Highlight matching bracket
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_search">Search and Replace</A>.<HR><H1><A NAME="cmd_window">Window Commands</A></H1>
+<UL>
+<LI><A HREF="#ec.WinHSplit">WinHSplit</A>
+<LI><A HREF="#ec.WinNext">WinNext</A>
+<LI><A HREF="#ec.WinPrev">WinPrev</A>
+<LI><A HREF="#ec.WinClose">WinClose</A>
+<LI><A HREF="#ec.WinZoom">WinZoom</A>
+<LI><A HREF="#ec.WinResize">WinResize</A>
+<LI><A HREF="#ec.ViewBuffers">ViewBuffers</A>
+<LI><A HREF="#ec.ListRoutines">ListRoutines</A>
+<LI><A HREF="#ec.ExitEditor">ExitEditor</A>
+<LI><A HREF="#ec.ShowEntryScreen">ShowEntryScreen</A>
+</UL>
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>, <A HREF="#cmd_delete">Deleting Text</A>, <A HREF="#cmd_line">Line Commands</A>, <A HREF="#cmd_block">Block Commands</A>, <A HREF="#cmd_edit">Text Editing and Insertion</A>, <A HREF="#cmd_fold">Folding Text</A>, <A HREF="#cmd_bookmark">Bookmarks</A>, <A HREF="#cmd_trans">Character Translation</A>, <A HREF="#cmd_file">File Commands</A>, <A HREF="#cmd_directory">Directory Commands</A>, <A HREF="#cmd_search">Search and Replace</A>, <A HREF="#cmd_window">Window Commands</A>, <A HREF="#cmd_compile">Compiler Support</A>, <A HREF="#cmd_cvs">CVS Support</A>, <A HREF="#cmd_tags">TAGS Commands</A>, <A HREF="#cmd_option">Option commands</A>, <A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.WinHSplit">WinHSplit</A></H2>
+Split window horizontally
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_window">Window Commands</A>.<HR><H2><A NAME="ec.WinNext">WinNext</A></H2>
+Switch to next (bottom) window
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_window">Window Commands</A>.<HR><H2><A NAME="ec.WinPrev">WinPrev</A></H2>
+Switcn to previous (top) window.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_window">Window Commands</A>.<HR><H2><A NAME="ec.WinClose">WinClose</A></H2>
+Close current window
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_window">Window Commands</A>.<HR><H2><A NAME="ec.WinZoom">WinZoom</A></H2>
+Delete all windows except for current one
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_window">Window Commands</A>.<HR><H2><A NAME="ec.WinResize">WinResize</A></H2>
+Resize current window (+n,-n given as argument)
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_window">Window Commands</A>.<HR><H2><A NAME="ec.ViewBuffers">ViewBuffers</A></H2>
+View currently open buffers
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_window">Window Commands</A>.<HR><H2><A NAME="ec.ListRoutines">ListRoutines</A></H2>
+Display routines in current source file
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_window">Window Commands</A>.<HR><H2><A NAME="ec.ExitEditor">ExitEditor</A></H2>
+Exit FTE.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_window">Window Commands</A>.<HR><H2><A NAME="ec.ShowEntryScreen">ShowEntryScreen</A></H2>
+View external program output if available
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_window">Window Commands</A>.<HR><H1><A NAME="cmd_compile">Compiler Support</A></H1>
+<UL>
+<LI><A HREF="#ec.Compile">Compile</A>
+<LI><A HREF="#ec.RunCompiler">RunCompiler</A>
+<LI><A HREF="#ec.ViewMessages">ViewMessages</A>
+<LI><A HREF="#ec.CompileNextError">CompileNextError</A>
+<LI><A HREF="#ec.CompilePrevError">CompilePrevError</A>
+<LI><A HREF="#ec.RunProgram">RunProgram</A>
+</UL>
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>, <A HREF="#cmd_delete">Deleting Text</A>, <A HREF="#cmd_line">Line Commands</A>, <A HREF="#cmd_block">Block Commands</A>, <A HREF="#cmd_edit">Text Editing and Insertion</A>, <A HREF="#cmd_fold">Folding Text</A>, <A HREF="#cmd_bookmark">Bookmarks</A>, <A HREF="#cmd_trans">Character Translation</A>, <A HREF="#cmd_file">File Commands</A>, <A HREF="#cmd_directory">Directory Commands</A>, <A HREF="#cmd_search">Search and Replace</A>, <A HREF="#cmd_window">Window Commands</A>, <A HREF="#cmd_compile">Compiler Support</A>, <A HREF="#cmd_cvs">CVS Support</A>, <A HREF="#cmd_tags">TAGS Commands</A>, <A HREF="#cmd_option">Option commands</A>, <A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.Compile">Compile</A></H2>
+Ask for compile command and run compiler
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_compile">Compiler Support</A>.<HR><H2><A NAME="ec.RunCompiler">RunCompiler</A></H2>
+Run configured compile command
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_compile">Compiler Support</A>.<HR><H2><A NAME="ec.ViewMessages">ViewMessages</A></H2>
+View compiler output
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_compile">Compiler Support</A>.<HR><H2><A NAME="ec.CompileNextError">CompileNextError</A></H2>
+Switch to next compiler error
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_compile">Compiler Support</A>.<HR><H2><A NAME="ec.CompilePrevError">CompilePrevError</A></H2>
+Switch to previous compiler error
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_compile">Compiler Support</A>.<HR><H2><A NAME="ec.RunProgram">RunProgram</A></H2>
+Run external program
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_compile">Compiler Support</A>.<HR><H1><A NAME="cmd_cvs">CVS Support</A></H1>
+<UL>
+<LI><A HREF="#ec.Cvs">Cvs</A>
+<LI><A HREF="#ec.RunCvs">RunCvs</A>
+<LI><A HREF="#ec.ViewCvs">ViewCvs</A>
+<LI><A HREF="#ec.ClearCvsMessages">ClearCvsMessages</A>
+<LI><A HREF="#ec.CvsDiff">CvsDiff</A>
+<LI><A HREF="#ec.RunCvsDiff">RunCvsDiff</A>
+<LI><A HREF="#ec.ViewCvsDiff">ViewCvsDiff</A>
+<LI><A HREF="#ec.CvsCommit">CvsCommit</A>
+<LI><A HREF="#ec.RunCvsCommit">RunCvsCommit</A>
+<LI><A HREF="#ec.ViewCvsLog">ViewCvsLog</A>
+</UL>
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>, <A HREF="#cmd_delete">Deleting Text</A>, <A HREF="#cmd_line">Line Commands</A>, <A HREF="#cmd_block">Block Commands</A>, <A HREF="#cmd_edit">Text Editing and Insertion</A>, <A HREF="#cmd_fold">Folding Text</A>, <A HREF="#cmd_bookmark">Bookmarks</A>, <A HREF="#cmd_trans">Character Translation</A>, <A HREF="#cmd_file">File Commands</A>, <A HREF="#cmd_directory">Directory Commands</A>, <A HREF="#cmd_search">Search and Replace</A>, <A HREF="#cmd_window">Window Commands</A>, <A HREF="#cmd_compile">Compiler Support</A>, <A HREF="#cmd_cvs">CVS Support</A>, <A HREF="#cmd_tags">TAGS Commands</A>, <A HREF="#cmd_option">Option commands</A>, <A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.Cvs">Cvs</A></H2>
+Ask for CVS options and run CVS
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cvs">CVS Support</A>.<HR><H2><A NAME="ec.RunCvs">RunCvs</A></H2>
+Run configured CVS command
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cvs">CVS Support</A>.<HR><H2><A NAME="ec.ViewCvs">ViewCvs</A></H2>
+View CVS output
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cvs">CVS Support</A>.<HR><H2><A NAME="ec.ClearCvsMessages">ClearCvsMessages</A></H2>
+Clear CVS messages
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cvs">CVS Support</A>.<HR><H2><A NAME="ec.CvsDiff">CvsDiff</A></H2>
+Ask for CVS diff options and run CVS
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cvs">CVS Support</A>.<HR><H2><A NAME="ec.RunCvsDiff">RunCvsDiff</A></H2>
+Run configured CVS diff command
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cvs">CVS Support</A>.<HR><H2><A NAME="ec.ViewCvsDiff">ViewCvsDiff</A></H2>
+View CVS diff output
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cvs">CVS Support</A>.<HR><H2><A NAME="ec.CvsCommit">CvsCommit</A></H2>
+Ask for CVS commit options and run CVS
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cvs">CVS Support</A>.<HR><H2><A NAME="ec.RunCvsCommit">RunCvsCommit</A></H2>
+Run configured CVS commit command
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cvs">CVS Support</A>.<HR><H2><A NAME="ec.ViewCvsLog">ViewCvsLog</A></H2>
+View CVS log
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cvs">CVS Support</A>.<HR><H1><A NAME="cmd_tags">TAGS Commands</A></H1>
+<UL>
+<LI><A HREF="#ec.TagFind">TagFind</A>
+<LI><A HREF="#ec.TagFindWord">TagFindWord</A>
+<LI><A HREF="#ec.TagNext">TagNext</A>
+<LI><A HREF="#ec.TagPrev">TagPrev</A>
+<LI><A HREF="#ec.TagPop">TagPop</A>
+<LI><A HREF="#ec.TagLoad">TagLoad</A>
+<LI><A HREF="#ec.TagClear">TagClear</A>
+<LI><A HREF="#ec.TagGoto">TagGoto</A>
+</UL>
+fte supports TAGS files generated by programs like ctags.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>, <A HREF="#cmd_delete">Deleting Text</A>, <A HREF="#cmd_line">Line Commands</A>, <A HREF="#cmd_block">Block Commands</A>, <A HREF="#cmd_edit">Text Editing and Insertion</A>, <A HREF="#cmd_fold">Folding Text</A>, <A HREF="#cmd_bookmark">Bookmarks</A>, <A HREF="#cmd_trans">Character Translation</A>, <A HREF="#cmd_file">File Commands</A>, <A HREF="#cmd_directory">Directory Commands</A>, <A HREF="#cmd_search">Search and Replace</A>, <A HREF="#cmd_window">Window Commands</A>, <A HREF="#cmd_compile">Compiler Support</A>, <A HREF="#cmd_cvs">CVS Support</A>, <A HREF="#cmd_tags">TAGS Commands</A>, <A HREF="#cmd_option">Option commands</A>, <A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.TagFind">TagFind</A></H2>
+Find word argumen in tag files.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_tags">TAGS Commands</A>.<HR><H2><A NAME="ec.TagFindWord">TagFindWord</A></H2>
+Find word under cursor in tag files.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_tags">TAGS Commands</A>.<HR><H2><A NAME="ec.TagNext">TagNext</A></H2>
+Switch to next occurance of tag
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_tags">TAGS Commands</A>.<HR><H2><A NAME="ec.TagPrev">TagPrev</A></H2>
+Switch to previous occurance of tag
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_tags">TAGS Commands</A>.<HR><H2><A NAME="ec.TagPop">TagPop</A></H2>
+Pop saved position from tag stack
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_tags">TAGS Commands</A>.<HR><H2><A NAME="ec.TagLoad">TagLoad</A></H2>
+Load tag file and merge with current tags
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_tags">TAGS Commands</A>.<HR><H2><A NAME="ec.TagClear">TagClear</A></H2>
+Clear loaded tags
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_tags">TAGS Commands</A>.<HR><H2><A NAME="ec.TagGoto">TagGoto</A></H2>
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_tags">TAGS Commands</A>.<HR><H1><A NAME="cmd_option">Option commands</A></H1>
+<UL>
+<LI><A HREF="#ec.ToggleAutoIndent">ToggleAutoIndent</A>
+<LI><A HREF="#ec.ToggleInsert">ToggleInsert</A>
+<LI><A HREF="#ec.ToggleExpandTabs">ToggleExpandTabs</A>
+<LI><A HREF="#ec.ToggleShowTabs">ToggleShowTabs</A>
+<LI><A HREF="#ec.ToggleUndo">ToggleUndo</A>
+<LI><A HREF="#ec.ToggleReadOnly">ToggleReadOnly</A>
+<LI><A HREF="#ec.ToggleKeepBackups">ToggleKeepBackups</A>
+<LI><A HREF="#ec.ToggleMatchCase">ToggleMatchCase</A>
+<LI><A HREF="#ec.ToggleBackSpKillTab">ToggleBackSpKillTab</A>
+<LI><A HREF="#ec.ToggleDeleteKillTab">ToggleDeleteKillTab</A>
+<LI><A HREF="#ec.ToggleSpaceTabs">ToggleSpaceTabs</A>
+<LI><A HREF="#ec.ToggleIndentWithTabs">ToggleIndentWithTabs</A>
+<LI><A HREF="#ec.ToggleBackSpUnindents">ToggleBackSpUnindents</A>
+<LI><A HREF="#ec.ToggleWordWrap">ToggleWordWrap</A>
+<LI><A HREF="#ec.ToggleTrim">ToggleTrim</A>
+<LI><A HREF="#ec.ToggleShowMarkers">ToggleShowMarkers</A>
+<LI><A HREF="#ec.ToggleHilitTags">ToggleHilitTags</A>
+<LI><A HREF="#ec.ToggleShowBookmarks">ToggleShowBookmarks</A>
+<LI><A HREF="#ec.SetLeftMargin">SetLeftMargin</A>
+<LI><A HREF="#ec.SetRightMargin">SetRightMargin</A>
+<LI><A HREF="#ec.ToggleSysClipboard">ToggleSysClipboard</A>
+<LI><A HREF="#ec.SetPrintDevice">SetPrintDevice</A>
+<LI><A HREF="#ec.ChangeTabSize">ChangeTabSize</A>
+<LI><A HREF="#ec.ChangeLeftMargin">ChangeLeftMargin</A>
+<LI><A HREF="#ec.ChangeRightMargin">ChangeRightMargin</A>
+</UL>
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>, <A HREF="#cmd_delete">Deleting Text</A>, <A HREF="#cmd_line">Line Commands</A>, <A HREF="#cmd_block">Block Commands</A>, <A HREF="#cmd_edit">Text Editing and Insertion</A>, <A HREF="#cmd_fold">Folding Text</A>, <A HREF="#cmd_bookmark">Bookmarks</A>, <A HREF="#cmd_trans">Character Translation</A>, <A HREF="#cmd_file">File Commands</A>, <A HREF="#cmd_directory">Directory Commands</A>, <A HREF="#cmd_search">Search and Replace</A>, <A HREF="#cmd_window">Window Commands</A>, <A HREF="#cmd_compile">Compiler Support</A>, <A HREF="#cmd_cvs">CVS Support</A>, <A HREF="#cmd_tags">TAGS Commands</A>, <A HREF="#cmd_option">Option commands</A>, <A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.ToggleAutoIndent">ToggleAutoIndent</A></H2>
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_option">Option commands</A>.<HR><H2><A NAME="ec.ToggleInsert">ToggleInsert</A></H2>
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_option">Option commands</A>.<HR><H2><A NAME="ec.ToggleExpandTabs">ToggleExpandTabs</A></H2>
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_option">Option commands</A>.<HR><H2><A NAME="ec.ToggleShowTabs">ToggleShowTabs</A></H2>
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_option">Option commands</A>.<HR><H2><A NAME="ec.ToggleUndo">ToggleUndo</A></H2>
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_option">Option commands</A>.<HR><H2><A NAME="ec.ToggleReadOnly">ToggleReadOnly</A></H2>
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_option">Option commands</A>.<HR><H2><A NAME="ec.ToggleKeepBackups">ToggleKeepBackups</A></H2>
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_option">Option commands</A>.<HR><H2><A NAME="ec.ToggleMatchCase">ToggleMatchCase</A></H2>
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_option">Option commands</A>.<HR><H2><A NAME="ec.ToggleBackSpKillTab">ToggleBackSpKillTab</A></H2>
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_option">Option commands</A>.<HR><H2><A NAME="ec.ToggleDeleteKillTab">ToggleDeleteKillTab</A></H2>
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_option">Option commands</A>.<HR><H2><A NAME="ec.ToggleSpaceTabs">ToggleSpaceTabs</A></H2>
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_option">Option commands</A>.<HR><H2><A NAME="ec.ToggleIndentWithTabs">ToggleIndentWithTabs</A></H2>
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_option">Option commands</A>.<HR><H2><A NAME="ec.ToggleBackSpUnindents">ToggleBackSpUnindents</A></H2>
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_option">Option commands</A>.<HR><H2><A NAME="ec.ToggleWordWrap">ToggleWordWrap</A></H2>
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_option">Option commands</A>.<HR><H2><A NAME="ec.ToggleTrim">ToggleTrim</A></H2>
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_option">Option commands</A>.<HR><H2><A NAME="ec.ToggleShowMarkers">ToggleShowMarkers</A></H2>
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_option">Option commands</A>.<HR><H2><A NAME="ec.ToggleHilitTags">ToggleHilitTags</A></H2>
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_option">Option commands</A>.<HR><H2><A NAME="ec.ToggleShowBookmarks">ToggleShowBookmarks</A></H2>
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_option">Option commands</A>.<HR><H2><A NAME="ec.SetLeftMargin">SetLeftMargin</A></H2>
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_option">Option commands</A>.<HR><H2><A NAME="ec.SetRightMargin">SetRightMargin</A></H2>
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_option">Option commands</A>.<HR><H2><A NAME="ec.ToggleSysClipboard">ToggleSysClipboard</A></H2>
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_option">Option commands</A>.<HR><H2><A NAME="ec.SetPrintDevice">SetPrintDevice</A></H2>
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_option">Option commands</A>.<HR><H2><A NAME="ec.ChangeTabSize">ChangeTabSize</A></H2>
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_option">Option commands</A>.<HR><H2><A NAME="ec.ChangeLeftMargin">ChangeLeftMargin</A></H2>
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_option">Option commands</A>.<HR><H2><A NAME="ec.ChangeRightMargin">ChangeRightMargin</A></H2>
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_option">Option commands</A>.<HR><H1><A NAME="cmd_other">Other commands</A></H1>
+<UL>
+<LI><A HREF="#ec.ShowPosition">ShowPosition</A>
+<LI><A HREF="#ec.ShowVersion">ShowVersion</A>
+<LI><A HREF="#ec.ShowKey">ShowKey</A>
+<LI><A HREF="#ec.WinRefresh">WinRefresh</A>
+<LI><A HREF="#ec.MainMenu">MainMenu</A>
+<LI><A HREF="#ec.ShowMenu">ShowMenu</A>
+<LI><A HREF="#ec.LocalMenu">LocalMenu</A>
+<LI><A HREF="#ec.ChangeMode">ChangeMode</A>
+<LI><A HREF="#ec.ChangeKeys">ChangeKeys</A>
+<LI><A HREF="#ec.ChangeFlags">ChangeFlags</A>
+<LI><A HREF="#ec.Cancel">Cancel</A>
+<LI><A HREF="#ec.Activate">Activate</A>
+<LI><A HREF="#ec.Rescan">Rescan</A>
+<LI><A HREF="#ec.CloseActivate">CloseActivate</A>
+<LI><A HREF="#ec.ActivateInOtherWindow">ActivateInOtherWindow</A>
+<LI><A HREF="#ec.DeleteFile">DeleteFile</A>
+<LI><A HREF="#ec.ASCIITable">ASCIITable</A>
+<LI><A HREF="#ec.DesktopSave">DesktopSave</A>
+<LI><A HREF="#ec.ClipClear">ClipClear</A>
+<LI><A HREF="#ec.DesktopSaveAs">DesktopSaveAs</A>
+<LI><A HREF="#ec.ChildClose">ChildClose</A>
+<LI><A HREF="#ec.BufListFileSave">BufListFileSave</A>
+<LI><A HREF="#ec.BufListFileClose">BufListFileClose</A>
+<LI><A HREF="#ec.BufListSearchCancel">BufListSearchCancel</A>
+<LI><A HREF="#ec.BufListSearchNext">BufListSearchNext</A>
+<LI><A HREF="#ec.BufListSearchPrev">BufListSearchPrev</A>
+<LI><A HREF="#ec.ViewModeMap">ViewModeMap</A>
+<LI><A HREF="#ec.ClearMessages">ClearMessages</A>
+<LI><A HREF="#ec.IndentFunction">IndentFunction</A>
+<LI><A HREF="#ec.MoveFunctionPrev">MoveFunctionPrev</A>
+<LI><A HREF="#ec.MoveFunctionNext">MoveFunctionNext</A>
+<LI><A HREF="#ec.InsertDate">InsertDate</A>
+<LI><A HREF="#ec.InsertUid">InsertUid</A>
+<LI><A HREF="#ec.FrameNew">FrameNew</A>
+<LI><A HREF="#ec.FrameClose">FrameClose</A>
+<LI><A HREF="#ec.FrameNext">FrameNext</A>
+<LI><A HREF="#ec.FramePrev">FramePrev</A>
+<LI><A HREF="#ec.BufferViewNext">BufferViewNext</A>
+<LI><A HREF="#ec.BufferViewPrev">BufferViewPrev</A>
+<LI><A HREF="#ec.ShowHelpWord">ShowHelpWord</A>
+<LI><A HREF="#ec.ShowHelp">ShowHelp</A>
+<LI><A HREF="#ec.ConfigRecompile">ConfigRecompile</A>
+<LI><A HREF="#ec.SetCIndentStyle">SetCIndentStyle</A>
+<LI><A HREF="#ec.SetIndentWithTabs">SetIndentWithTabs</A>
+<LI><A HREF="#ec.ListMark">ListMark</A>
+<LI><A HREF="#ec.ListUnmark">ListUnmark</A>
+<LI><A HREF="#ec.ListToggleMark">ListToggleMark</A>
+<LI><A HREF="#ec.ListMarkAll">ListMarkAll</A>
+<LI><A HREF="#ec.ListUnmarkAll">ListUnmarkAll</A>
+</UL>
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_cursor">Cursor Movement</A>, <A HREF="#cmd_delete">Deleting Text</A>, <A HREF="#cmd_line">Line Commands</A>, <A HREF="#cmd_block">Block Commands</A>, <A HREF="#cmd_edit">Text Editing and Insertion</A>, <A HREF="#cmd_fold">Folding Text</A>, <A HREF="#cmd_bookmark">Bookmarks</A>, <A HREF="#cmd_trans">Character Translation</A>, <A HREF="#cmd_file">File Commands</A>, <A HREF="#cmd_directory">Directory Commands</A>, <A HREF="#cmd_search">Search and Replace</A>, <A HREF="#cmd_window">Window Commands</A>, <A HREF="#cmd_compile">Compiler Support</A>, <A HREF="#cmd_cvs">CVS Support</A>, <A HREF="#cmd_tags">TAGS Commands</A>, <A HREF="#cmd_option">Option commands</A>, <A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.ShowPosition">ShowPosition</A></H2>
+Show internal position information on status line
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.ShowVersion">ShowVersion</A></H2>
+Show editor version information
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.ShowKey">ShowKey</A></H2>
+Wait for keypress and display modifiers+key pressed
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.WinRefresh">WinRefresh</A></H2>
+Refresh display
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.MainMenu">MainMenu</A></H2>
+Activate main menu
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.ShowMenu">ShowMenu</A></H2>
+Popup menu specified as argument
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.LocalMenu">LocalMenu</A></H2>
+Popup context menu
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.ChangeMode">ChangeMode</A></H2>
+Change active mode for current buffer
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.ChangeKeys">ChangeKeys</A></H2>
+Change keybindings for current buffer
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.ChangeFlags">ChangeFlags</A></H2>
+Change option flags for current buffer
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.Cancel">Cancel</A></H2>
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.Activate">Activate</A></H2>
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.Rescan">Rescan</A></H2>
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.CloseActivate">CloseActivate</A></H2>
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.ActivateInOtherWindow">ActivateInOtherWindow</A></H2>
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.DeleteFile">DeleteFile</A></H2>
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.ASCIITable">ASCIITable</A></H2>
+Display ASCII selector in status line.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.DesktopSave">DesktopSave</A></H2>
+Save desktop
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.ClipClear">ClipClear</A></H2>
+Clear clipboard
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.DesktopSaveAs">DesktopSaveAs</A></H2>
+Save desktop under a new name
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.ChildClose">ChildClose</A></H2>
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.BufListFileSave">BufListFileSave</A></H2>
+Save currently selected file in buffer list
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.BufListFileClose">BufListFileClose</A></H2>
+Close currently selected file in buffer list
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.BufListSearchCancel">BufListSearchCancel</A></H2>
+Cancel search
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.BufListSearchNext">BufListSearchNext</A></H2>
+Next match in search
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.BufListSearchPrev">BufListSearchPrev</A></H2>
+Previous match in search
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.ViewModeMap">ViewModeMap</A></H2>
+View current mode keybindings
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.ClearMessages">ClearMessages</A></H2>
+Clear compiler messages
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.IndentFunction">IndentFunction</A></H2>
+Indent current function
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.MoveFunctionPrev">MoveFunctionPrev</A></H2>
+Move cursor to previous function
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.MoveFunctionNext">MoveFunctionNext</A></H2>
+Move cursor to next function
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.InsertDate">InsertDate</A></H2>
+Insert date at cursor
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.InsertUid">InsertUid</A></H2>
+Insert user name at cursor
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.FrameNew">FrameNew</A></H2>
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.FrameClose">FrameClose</A></H2>
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.FrameNext">FrameNext</A></H2>
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.FramePrev">FramePrev</A></H2>
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.BufferViewNext">BufferViewNext</A></H2>
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.BufferViewPrev">BufferViewPrev</A></H2>
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.ShowHelpWord">ShowHelpWord</A></H2>
+Show context help on keyword.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.ShowHelp">ShowHelp</A></H2>
+Show help for FTE.
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.ConfigRecompile">ConfigRecompile</A></H2>
+Recompile editor configuration
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.SetCIndentStyle">SetCIndentStyle</A></H2>
+Set C indentation style parameters
+Has the following parameters:
+C_Indent = 4;
+C_BraceOfs = 0;
+C_ParenDelta = -1;
+C_CaseOfs = 0;
+C_CaseDelta = 4;
+C_ClassOfs = 0;
+C_ClassDelta = 4;
+C_ColonOfs = -4;
+C_CommentOfs = 0;
+C_CommentDelta = 1;
+C_FirstLevelWidth = -1;
+C_FirstLevelIndent = 4;
+C_Continuation = 4;
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.SetIndentWithTabs">SetIndentWithTabs</A></H2>
+Set value of indent-with-tabs to argument
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.ListMark">ListMark</A></H2>
+Mark single line in list
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.ListUnmark">ListUnmark</A></H2>
+Unmark single line in list
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.ListToggleMark">ListToggleMark</A></H2>
+Toggle marking of single line in list
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.ListMarkAll">ListMarkAll</A></H2>
+Mark all lines in list
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_other">Other commands</A>.<HR><H2><A NAME="ec.ListUnmarkAll">ListUnmarkAll</A></H2>
+Unmark all lines in list
+Toggle marking of all lines in list
+<P><B>SEE ALSO:</B>
+<A HREF="#cmd_other">Other commands</A>.</BODY>
+</HTML>

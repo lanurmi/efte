@@ -1,0 +1,310 @@
+<HTML>
+<HEAD><TITLE>Mode Configuration</TITLE></HEAD>
+<BODY>
+fte allows each file extension to have a different editing mode. Mode
+is a collection of editor settings such as keybindings, tab settings,
+autoindent settings, syntax highlighting,...
+<P>
+Syntax of <B>mode</B> command is
+<P>
+<PRE>
+mode NAME { mode settings }
+mode NAME: PARENT { mode settings }
+</PRE>
+
+<P> Mode with name <I>NAME</I>inherits settings from mode <I>PARENT</I>
+if parent mode is specified at mode declaration.
+
+<P> When editor is searching for a mode to use for a file it will
+first check if the mode has been overriden by a <A
+HREF="command.html#ec.FileOpenInMode">FileOpenInMode</A> command or a command line
+option (<B>-m</B>).
+
+<P> Then it will check if the file name matches <A
+HREF="#ms.FileNameRx">FileNameRx</A> defined in mode declarations. 
+
+<P> If the mode has still not been found, it will read the first line
+(max 80 chars) of the file, and attempt to match the <A
+HREF="#ms.FirstLineRx">FirstLineRx</A> with the first line. 
+
+<P> If this fails, the editor will use mode specified by
+<B><A HREF="global.html#gs.DefaultModeName">DefaultModeName</A></B> global
+setting to load a file. If that mode does not exist, first mode defined
+in the configuration file will be used.
+
+<HR>
+<H2><A NAME="modesetup">Mode Settings</A></H2>
+<P>
+The following settings can be specified for each mode:
+<H3><A NAME="ms.ExpandTabs">ExpandTabs</A></H3>
+{0,1}
+<P>
+Should be set to 1 if tabs are to be expanded when displayed. Use
+<A HREF="command.html#ec.ToggleExpandTabs">ToggleExpandTabs</A> command to toggle
+during editing.
+
+<H3><A NAME="ms.TabSize">TabSize</A></H3>
+{1-32}
+<P>Tab size when tabs are shown expanded on display.
+
+<H3><A NAME="ms.AutoIndent">AutoIndent</A></H3>
+{0,1}
+<P>Should be set to 1 if autoindent is to be used. Use
+<A HREF="command.html#ec.ToggleAutoIndent">ToggleAutoIndent</A> command
+to toggle it on/off during editing.
+
+<H3><A NAME="ms.Insert">Insert</A></H3>
+
+{0,1}
+<P>
+If set to <B>1</B>, Insert mode is active by default.
+If set to <B>0</B>, Overwrite mode is active by default.
+<P> Use <A HREF="command.html#ec.ToggleInsert">ToggleInsert</A> command
+to toggle it on/off during editing.
+
+<H3><A NAME="ms.StripChar">StripChar</A></H3>
+{ASCII code/-1}
+
+<P>This characted will be stripped if it is found the end of any line
+when the file is being loaded. If it is set to <B>-1</B>, no characted
+will be stripped.
+<P>Usually used to strip 13 (CR) characters from DOS text files.
+
+<H3><A NAME="ms.LineChar">LineChar</A></H3>
+{ASCII code/-1}
+
+<P>This character is used as a line separator when loading a file.
+If set to <B>-1</B>, there is no line separator. (<B>WARNING: File will
+be loaded as one line if LineChar is set to -1</B>).
+<P>Usually set to 10 (LF) as standard text file line separator.
+
+<H3><A NAME="ms.AddCR">AddCR</A></H3>
+{0,1}
+
+<P>If set to <B>1</B>, CR (13, \r) character will be added to end of
+line when saving.
+
+<H3><A NAME="ms.AddLF">AddLF</A></H3>
+
+{0,1}
+<P>If set to <B>1</B>, LF (10, \n) characted will be added to end if line when saving.
+
+<H3><A NAME="ms.ForceNewLine">ForceNewLine</A></H3>
+{0,1}
+<P>Normally, when saving, the last line is saved without any CR/LF
+characters. This setting will override that behaviour.
+
+<H3><A NAME="ms.Hilit">Hilit</A></H3>
+{0,1}
+<P>If set to <B>1</B>, syntax highliting will be active.
+
+<H3><A NAME="ms.ShowTabs">ShowTabs</A></H3>
+{0,1}
+<P>If set to <B>1</B>, tabs will be visible as circles (EPM-like).
+
+<H3><A NAME="ms.IndentMode">IndentMode</A></H3>
+{PLAIN,C,REXX}
+<P>Activates the specified smart indent mode. (PLAIN mode specifies
+no smart audoindenting, just normal autoindent).
+
+<H3><A NAME="colorizer">Colorizer</A></H3>
+Specifies a previously declared <A HREF="#colorizer">colorize</A> mode to use for syntax
+highlighting in this editing mode.
+
+<H3><A NAME="eventmap">EventMap</A></H3>
+Specify the name of existing eventmap to use for current mode.
+
+<H3><A NAME="ms.UndoLimit">UndoLimit</A></H3>
+{Number}
+<P>Limit undo to this many recent commands (-1 = unlimited)
+
+<H3><A NAME="ms.UndoMoves">UndoMoves</A></H3>
+{0,1}
+<P>If set to 1, all cursor movements will be recorded on undo stack.
+
+<H3><A NAME="ms.KeepBackups">KeepBackups</A></H3>
+{0,1}
+<P>If set to <B>0</B>, backup files will be deleted after a successful
+save operation.
+
+<H3><A NAME="ms.MatchCase">MatchCase</A></H3>
+{0,1}
+<P>If set to <B>0</B>, searches will be case insensitive. This can be
+toggled via <A HREF="command.html#ec.ToggleMatchCase">ToggleMatchCase</A> command when editor
+is running.
+
+<H3><A NAME="ms.BackSpKillTab">BackSpKillTab</A></H3>
+{0,1}
+<P>If set to 1, <A HREF="command.html#ec.BackSpace">BackSpace</A> will kill entire tabs instead of converting them to spaces.
+
+<H3><A NAME="ms.DeleteKillTab">DeleteKillTab</A></H3>
+{0,1}
+<P>If set to 1, <A HREF="command.html#ec.Delete">Delete</A> will kill entire tabs instead of converting them to spaces.
+
+<H3><A NAME="ms.BackSpUnindents">BackSpUnindents</A></H3>
+{0,1}
+<P>If set to 1, <A HREF="command.html#ec.BackSpace">BackSpace</A> will unindent to previous indentation level if issued on beginning of line.
+
+<H3><A NAME="ms.SpaceTabs">SpaceTabs</A></H3>
+{0,1}
+<P>If set to 1, <A HREF="command.html#ec.InsertTab">InsertTab</A> command will insert spaces instead of tabs.
+
+<H3><A NAME="ms.IndentWithTabs">IndentWithTabs</A></H3>
+{0,1}
+<P>If set to 1, indentation will be done using tabs instead of spaces.
+
+<H3><A NAME="ms.WordWrap">WordWrap</A></H3>
+{0,1,2}
+<P>If set to 1, editor wrap current line when right margin is reached.
+If set to 2, editor will wrap current paragraph continously. Paragraphs
+as recognised by <A HREF="command.html#ec.WrapPara">WrapPara</A> command must be
+separated by blank lines.
+
+<H3><A NAME="ms.LeftMargin">LeftMargin</A></H3>
+{1-xx}
+<P>Left margin for word wrap (<A HREF="command.html#ec.WrapPara">WrapPara</A> command).
+
+<H3><A NAME="ms.RightMargin">RightMargin</A></H3>
+{1-xx}
+<P>Right margin for word wrap (<A HREF="command.html#ec.WrapPara">WrapPara</A> command).
+
+<H3><A NAME="ms.Trim">Trim</A></H3>
+{0,1}
+<P>If set to 1, spaces on the end of line will be trimmed when editing.
+
+<H3><A NAME="ms.ShowMarkers">ShowMarkers</A></H3>
+{0,1}
+<P>If set to 1, end of line and end of file markers will be shown.
+
+<H3><A NAME="ms.CursorTroughTabs">CursorTroughTabs</A></H3>
+{0,1}
+<P>If set to 1, editor will allow cursor to be positioned inside tabs.
+
+<H3><A NAME="ms.DefFindOpt">DefFindOpt</A></H3>
+'options'
+<P>Default <A HREF="#search.options">search options</A> for <A HREF="command.html#ec.Find">Find</A> command.
+
+<H3><A NAME="ms.DefFindReplaceOpt">DefFindReplaceOpt</A></H3>
+'options'
+<P>Default <A HREF="#search.options">search/replace</A> options for <A HREF="command.html#ec.FindReplace">FindReplace</A> command.
+
+<H3><A NAME="ms.SaveFolds">SaveFolds</A></H3>
+{0,1,2}
+<P>If 0, folds are not saved. If 1, folds are saved at beginning of
+line, if 2 folds are saved at end of line.
+<P>Folds are saved as comments in source files, depending on active
+editing mode.
+<P> See mode settings <A HREF="#ms.CommentStart">CommentStart</A> and
+<A HREF="#ms.CommentEnd">CommentEnd</A> for configuration of fold
+comments.
+
+<H3><A NAME="ms.CommentStart">CommentStart</A></H3>
+"comment-start-string"
+<P>String that starts comments (for saving folds)
+
+<H3><A NAME="ms.CommentEnd">CommentEnd</A></H3>
+"comment-end-string"
+<P>String that ends comments
+
+<H3><A NAME="ms.AutoHilitParen">AutoHilitParen</A></H3>
+{0,1}
+<P>If set to <B>1</B>, editor will automatically highlight the
+matching bracket if it is visible on screen. This is equivalent
+to executing <A HREF="command.html#ec.HilitMatchBracket">HilitMatchBracket</A> command.
+
+<H3><A NAME="ms.Abbreviations">Abbreviations</A></H3>
+{0,1}
+<P>If set to 1, <A HREF="#abbrevs">abbreviation</A> expansion will be
+active in this mode.
+
+<H3><A NAME="ms.BackSpKillBlock">BackSpKillBlock</A></H3>
+{0,1}
+<P>If set to 1, <A HREF="command.html#ec.BackSpace">BackSpace</A> command will
+delete block if it is marked, otherwise it will delete the previous
+character.
+
+<H3><A NAME="ms.DeleteKillBlock">DeleteKillBlock</A></H3>
+{0,1}
+<P>If set to 1, <A HREF="command.html#ec.Delete">Delete</A> command will delete
+block if marked, instead of deleting the character below cursor.
+
+<H3><A NAME="ms.PersistentBlocks">PersistentBlocks</A></H3>
+{0,1}
+<P>If set to 1, blocks will stay marked even if cursor
+is moved in the file, if set to 0, block is unmarked as soon
+as the cursor is moved.
+
+<H3><A NAME="ms.InsertKillBlock">InsertKillBlock</A></H3>
+{0,1}
+<P>If set to 1, the marked block is deleted when a new character
+is typed.
+
+<H3><A NAME="ms.FileNameRx">FileNameRx</A></H3>
+"regexp"
+<P>Must be set to regexp that matches names of files that should
+be edited in this mode. Has priority over <A HREF="#ms.FirstLineRx">FirstLineRx</A>
+
+<H3><A NAME="ms.FirstLineRx">FirstLineRx</A></H3>
+"regexp"
+<P>Must be set to regex that matches the first line of files that
+should be edited in this mode. This is checked only if no
+<A HREF="#ms.FileNameRx">FileNameRx</A> matches the filename.
+
+<H3><A NAME="ms.RoutineRegexp">RoutineRegexp</A></H3>
+"regexp"
+<P> Regular expression that matches function header.
+<P> Used by editor commands:
+<A HREF="command.html#ec.ListRoutines">ListRoutines</A>,
+<A HREF="command.html#ec.MoveFunctionPrev">MoveFunctionPrev</A>,
+<A HREF="command.html#ec.MoveFunctionNext">MoveFunctionNext</A>,
+<A HREF="command.html#ec.BlockMarkFunction">BlockMarkFunction</A>,
+<A HREF="command.html#ec.IndentFunction">IndentFunction</A>.
+
+<HR>
+<H2><A NAME="loading">Loading files in various formats</A></H2>
+<P>
+Here are settings for loading files in various formats:
+<P>
+<DL>
+<DT>DOS/Win/OS2/NT text files (CR/LF delimited):
+<DD>
+<PRE>
+          StripChar      13
+          LineChar       10
+          AddCR          1
+          AddLF          1
+</PRE>
+<BR>
+<DT>Unix text files (LF delimited):
+<DD>
+<PRE>
+          StripChar      -1
+          LineChar       10
+          AddCR          0
+          AddLF          1
+</PRE>
+<DT>MAC text files (CR delimited):
+<DD>
+<PRE>
+          StripChar      -1
+          LineChar       13
+          AddCR          1
+          AddLF          0
+</PRE>
+<DT>Binary files (fixed record length):
+<DD>
+<PRE>
+          StripChar      -1
+          LineChar       -1
+          AddCR          0
+          AddLF          0
+          LoadMargin     64
+          ForceNewLine   0
+</PRE>          
+</DL>
+
+<HR>
+<H2><A NAME="modes-tabopts">Configuration of Tab options</A></H2>
+
+</BODY>
+</HTML>

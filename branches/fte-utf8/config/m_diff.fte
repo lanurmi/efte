@@ -1,0 +1,32 @@
+colorize DIFF {
+    SyntaxParser = 'SIMPLE';
+
+    color {
+        { 'Normal',     'Editor_Default' },
+        { 'Old',        'DIFF_Old' },
+        { 'New',        'DIFF_New' },
+        { 'Changed',    'DIFF_Changed' },
+    };
+
+    h_state 0 { 'Normal' }
+    h_trans { 1, '^<s', '+>', 'New' }
+    h_trans { 2, '^<s', '-<', 'Old' }
+    h_trans { 3, '^<', '!', 'Changed' }
+
+    h_state 1 { 'New' }
+    h_trans { 0, '$', '', 'Normal' }
+
+    h_state 2 { 'Old' }
+    h_trans { 0, '$', '', 'Normal' }
+
+    h_state 3 { 'Changed' }
+    h_trans { 0, '$', '', 'Normal' }
+}
+
+mode DIFF: PLAIN {        # unix/gnu diff
+    FileNameRx          = /\c{DIFF?}$/;
+    FirstLineRx         = /^diff /;
+    HilitOn             = 1;
+    Colorizer           = 'DIFF';
+    MultiLineHilit      = 0;
+}

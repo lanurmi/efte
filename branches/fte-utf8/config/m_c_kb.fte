@@ -1,0 +1,79 @@
+# C mode
+
+colorize C {
+    SyntaxParser = 'C';
+
+    color {
+	{ 'Normal',	   'Editor_Default' },
+	{ 'Number',	   'Lang_DecimalNumber' },
+	{ 'HexNumber',	   'Lang_HexNumber' },
+	{ 'Punctuation',   'Lang_Punctuation' },
+	{ 'String',	   'Lang_String' },
+	{ 'Comment',	   'Lang_Comment' },
+	{ 'CPreprocessor', 'Lang_Preprocessor' },
+	{ 'Function',	   'Lang_Function' },
+	{ 'Label',	   'Lang_Label' },
+    };
+
+    keyword 'Editor_Keywords' { # any missing ?
+	'do', 'if',
+	'asm', 'int','for', 'new', 'try',
+	'auto', 'case', 'char', 'else', 'enum', 'goto',
+	'long', 'this', 'void',
+	'break', 'catch', 'cdecl', 'class', 'const', 'float',
+	'short', 'union', 'while',
+	'delete',  'double', 'except',	'extern',  'friend',  'inline',
+	'pascal', 'public',  'return', 'signed',  'sizeof',  'static',
+	'struct',  'switch',
+	'default', 'private', 'typedef', 'virtual',
+	'continue', 'operator',  'register',  'volatile',  'template',
+	'unsigned', 'protected',
+	'throw', 'namespace', 'using', 'explicit', 'mutable',
+	'_asm', '__asm', '_far16', '__far16', '_pascal', '_cdecl',
+	'__cdecl', '_export', '__pascal', '_stdcall', '_syscall',
+	'__stdcall', '__syscall', '_fastcall', '__fastcall', '__export',
+	'bool', 
+    };
+    
+    keyword 'Lang_DecimalNumber' {
+        'true', 'True', 'TRUE', 'false', 'False', 'FALSE', 'NULL',              
+    };                                                                          
+                                                                                
+    keyword 'Lang_Preprocessor' {                                               
+        'Boolean', 'Widget'                                                     
+    };                                                                          
+}
+
+mode C: PLAIN {      # C/C++ Mode
+    FileNameRx		= /\.\c{C|H|{CPP}|{CXX}|{HPP}|{CC}|{XS}}$/;
+    HilitOn		= 1;
+    Colorizer		= 'C';
+    AutoIndent		= 1;
+    IndentMode		= 'C';
+    TabSize		= 8; # think twice before changing this, historically
+			     # it's been known to cause a mess in sources ;-)
+    SpaceTabs		= 0;
+    MatchCase		= 1;
+    Trim		= 1;
+    MultiLineHilit	= 1;
+    AutoHilitParen	= 1;
+    
+#	RoutineRegexp	= /^\w[\w_:*&~]+[\w\\s_:*&~]@\(.*\){\s*\{}?\s*$/;
+    RoutineRegexp	= /^\w[\w_:*&~]+[\w\s_:*&~]@\([^;]*$/;
+#	RoutineRx	= ^\w[\w_:*&]+[\w\s_:*&]@\(
+#	RoutineRx	= ^{[a-zA-Z0-9_:*&]#\s*}+\(
+    
+    SaveFolds		= 2;	  # save fold info at end of line
+    CommentStart	= ' /*';
+    CommentEnd		= '*/';
+
+    # kabi prefered settings
+    IndentWithTabs = 1;
+    CursorThroughTabs = 1;
+    DeleteKillTab = 0;
+    DeleteKillBlock = 0;
+    BackSpKillTab = 0;
+    BackSpUnindents = 0;
+    Abbreviations = 1;
+    UndoMoves = 0;
+}

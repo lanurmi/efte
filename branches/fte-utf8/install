@@ -1,0 +1,102 @@
+#!/bin/sh
+
+# Installing FTE has gotten too complicated for a makefile.  Thus, a shell
+# script.
+
+# SETTINGS:
+
+# Everything goes into this directory.  If it's not set, we'll use a default.
+PREFIX=${PREFIX:-/usr/local}
+
+
+# INSTALLATION CODE (do not touch):
+
+BINDIR=$PREFIX/bin
+LIBDIR=$PREFIX/lib/fte
+CONFIGDIR=$LIBDIR/config
+
+LOCALCONFIGDIR=$LIBDIR/localconfig
+
+# To do some of this stuff, you should be root...
+if [ -z "$INSTALL_NONROOT" ]
+then
+    id | grep "^uid=0(" > /dev/null
+    if [ $? -ne 0 ]
+    then
+        echo "We don't recommend installing as non-root.  To try anyway,"
+        echo "export INSTALL_NONROOT=1 before running the install."
+        echo "NOTE: You should also export PREFIX=/your/home/dir/fte to"
+        echo "give this a chance of working."
+        exit 1
+    fi
+else
+	echo "Root-check bypassed - installing at your own risk"
+fi
+
+# Ensure everything is made.
+make -e all
+if [ $? -ne 0 ]
+then
+	echo "Not everything could be made - not going to install it."
+    exit 1
+fi
+
+# If there is a config directory, remove it.
+rm -rf $CONFIGDIR
+
+# Make the directories we'll need.
+mkdir -p $BINDIR
+mkdir -p $LIBDIR
+mkdir -p $LOCALCONFIGDIR
+
+# Set up our binaries.
+for file in fte xfte cfte sfte vfte nfte
+do
+    # each binary is either in . or in src (if it exists at all on this platform)
+    for dir in . src
+    do
+        # if this is the right directory for this file, use it.
+        if [ -f $dir/$file ]
+        then
+            # try to copy it.
+            cp $dir/$file $BINDIR 2> /dev/null
+            # if that doesn't work, force it.
+            # NOTE: This may crash any running copy of FTE on some platforms
+            #       AIX, Linux: confirmed okay
+            #       Sun: confirmed crash
+            if [ $? -ne 0 ]
+            then
+                # Unix has the nice capability of being able to unlink
+                # in-use files.
+                echo "Forcing $file"
+                rm -f $BINDIR/$file
+                cp $dir/$file $BINDIR
+            fi
+        fi
+    done
+done
+
+# Copy our configuration.
+cp -r config $LIBDIR
+# Somehow things may not all be properly readable by everyone.
+chmod a+r $CONFIGDIR/*
+chmod a+r $CONFIGDIR/*/*
+
+# Any CVS directory that is copied over should be uncopied over.
+rm -rf `find $CONFIGDIR -type d -name CVS`
+
+# Set the directories to be world-executable.
+chmod a+x `find $CONFIGDIR -type d`
+
+# If the sysadmin does not have a system-wide config, set it up.
+# If it already exists DO NOT OVERWRITE IT.
+if [ ! -f $LOCALCONFIGDIR/systemmain.fte ]
+then
+    mv $CONFIGDIR/systemmain.fte $LOCALCONFIGDIR
+fi
+
+# Set up the system default rc file.
+(cd $CONFIGDIR; $BINDIR/cfte main.fte $LIBDIR/system.fterc)
+
+# Done.
+exit 0
