@@ -1013,10 +1013,10 @@ int GUI::RunProgram(int /*mode */ , char *Command)
 
 TChar ConGetDrawChar(int idx)
 {
-    static const char * use_tab = NULL;
+    static const TChar * use_tab = NULL;
     static int use_tab_size = 0;
 
-    static const char tab[] =
+    static const TChar tab[] =
     {
 	DCH_SLANG_C1,
 	DCH_SLANG_C2,
@@ -1038,10 +1038,11 @@ TChar ConGetDrawChar(int idx)
 	DCH_SLANG_HFORE,
 	DCH_SLANG_HBACK,
 	DCH_SLANG_ALEFT,
-	DCH_SLANG_ARIGHT
+        DCH_SLANG_ARIGHT,
+        0
     };
 
-    static const char tab_linux[] =
+    static const TChar tab_linux[] =
     {
 	DCH_SLANG_C1,
 	DCH_SLANG_C2,
@@ -1063,7 +1064,8 @@ TChar ConGetDrawChar(int idx)
 	DCH_SLANG_HFORE,
 	DCH_SLANG_HBACK,
 	DCH_SLANG_ALEFT,
-	DCH_SLANG_ARIGHT
+        DCH_SLANG_ARIGHT,
+        0
     };
     //static const char tab_linux1[] =
     //{
@@ -1076,7 +1078,7 @@ TChar ConGetDrawChar(int idx)
 	char *c = getenv("TERM");
         use_tab = ((c == NULL) || strcmp(c, "linux") != 0) ? tab : tab_linux;
         use_tab=GetGUICharacters ("Slang",use_tab);
-	use_tab_size = strlen(use_tab);
+	use_tab_size = tstrlen(use_tab);
     }
 
     assert(idx >= 0 && idx < use_tab_size);

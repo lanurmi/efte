@@ -14,7 +14,7 @@
 typedef struct _GUICharactersEntry {
     struct _GUICharactersEntry *next;
     char *name;
-    char *chars;
+    TChar *chars;
 } GUICharactersEntry;
 
 typedef struct _CurPos {
@@ -94,19 +94,19 @@ char XShellCommand[256] = "xterm";
 // Which characters to get. defaultCharacters if not set, rest filled
 // with defaultCharacters if too short
 // List of GUICharacters is freed, only one item remains
-const char *GetGUICharacters(const char *which, const char *defChars) {
+const TChar *GetGUICharacters(const char *which, const TChar *defChars) {
     GUICharactersEntry *g, *gg, *found = NULL;
-    char *s;
+    TChar *s;
     unsigned int i;
 
     for (g = GUICharacters; g; g=gg) {
         gg = g->next;
         if (strcmp(g->name, which) == 0) {
-            if ((i = strlen(g->chars)) < strlen(defChars)) {
-                s = new char [strlen(defChars) + 1];
+            if ((i = tstrlen(g->chars)) < tstrlen(defChars)) {
+                s = new TChar [tstrlen(defChars) + 1];
                 assert(s != NULL);
-                strcpy(s, g->chars);
-                strcpy(s + i, defChars + i);
+                tstrlcpy(s, g->chars, tstrlen(defChars) + 1);
+                tstrlcpy(s + i, defChars + i, tstrlen(defChars) + 1);
                 delete g->chars;
                 g->chars = s;
             }
@@ -142,7 +142,7 @@ static void AppendGUICharacters(const char *string) {
         strncat(g->name, string, (s-string));
 
         // copy text after ':' to chars...
-        g->chars = strdup(s+1);
+        g->chars = tstrdup(s+1);
         assert(g->chars != NULL);
 
         g->next = GUICharacters;

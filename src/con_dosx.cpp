@@ -1135,13 +1135,13 @@ int ConPutEvent(TEvent Event)
 }
 
 TChar ConGetDrawChar(int index) {
-    static const char *tab = NULL;
+    static const TChar *tab = NULL;
+    static const TChar *defChars = _T("Ú¿ÀÙÄ³ÂÃ´ÁÅ\x1Aú\x04Ä\x18\x19±°\x1B\x1A");
 
     if (!tab) {
-        //tab = GetGUICharacters ("DOS","Ú¿ÀÙÄ³ÂÃ´ÁÅ\x1AúÄ±°");
-        tab = GetGUICharacters ("DOS","Ú¿ÀÙÄ³ÂÃ´ÁÅ\x1Aú\x04Ä\x18\x19±°\x1B\x1A");
+        tab = GetGUICharacters ("DOS", defChars);
     }
-    assert(index >= 0 && index < (int)strlen(tab) && strlen(tab) > 20);
+    assert(index >= 0 && index < (int)tstrlen(tab) && tstrlen(tab) > 20);
 
     return tab[index];
 }

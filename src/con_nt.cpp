@@ -899,12 +899,14 @@ int GUI::ShowEntryScreen() { /*FOLD00*/
 }
 
 TChar ConGetDrawChar(int index) { /*FOLD00*/
-    static const char *tab=NULL;
+    static const TChar *tab = NULL;
+    static const TChar *defChars = _T("Ú¿ÀÙÄ³ÂÃ´ÁÅ\x1AúÄ±°\x1B\x1A");
 
     if (!tab) {
-        tab=GetGUICharacters ("WindowsNT","Ú¿ÀÙÄ³ÂÃ´ÁÅ\x1AúÄ±°\x1B\x1A");
+        tab=GetGUICharacters ("WindowsNT", defChars);
     }
-    assert(index >= 0 && index < (int)strlen(tab));
+
+    assert(index >= 0 && index < (int)tstrlen(tab));
 
     return tab[index];
 }

@@ -1222,20 +1222,21 @@ int GUI::RunProgram(int /*mode*/, char *Command) {
 }
 
 TChar ConGetDrawChar(int idx) {
-    static const char *tab=NULL;
+    static const TChar *tab=NULL;
+    static const TChar *defCharsISO = _T("++++-|+++++>.*-^v :[>");
+    static const TChar *defChars = _T("Ú¿ÀÙÄ³ÂÃ´ÁÅ\x1AúÄ±°\x1B\x1A");
 
     if (!tab) {
         if (getenv("ISOCONSOLE")) {
-            tab=GetGUICharacters ("Linux","++++-|+++++>.*-^v :[>");
+            tab = GetGUICharacters("Linux", defCharsISO);
         } else {
-            tab=GetGUICharacters ("Linux","Ú¿ÀÙÄ³ÂÃ´ÁÅ\x1AúÄ±°\x1B\x1A");
-//            tab=GetGUICharacters ("Linux","\x0D\x0C\x0E\x0B\x12\x19____+>\x1F\x01\x12 ");
+            tab = GetGUICharacters("Linux", defChars);
         }
     }
-    assert(idx >= 0 && idx < int(strlen(tab)));
+    assert(idx >= 0 && idx < int(tstrlen(tab)));
 
 #ifdef USE_SCRNMAP
-    return fromScreen[tab[idx]];
+    return fromScreen[tab[idx] & 0xFF];
 #else
     return tab[idx];
 #endif
