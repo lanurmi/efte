@@ -13,6 +13,10 @@
 #%define(UI_BRIEF)
 # experimental
 
+%if(!BSD_BRACE)
+%define(1TBS_BRACE)
+%endif
+
 #%define(COLORS_GRAY_BG)
 #%define(COLORS_WHITE_BG)
 %define(COLORS_BLACK_BG)
@@ -233,6 +237,7 @@ include 'ab_c_os2.fte';
 include 'ab_rexx.fte';
 include 'ab_sh.fte';
 include 'ab_java.fte';
+include 'ab_perl.fte';
 
 # some customizations
 

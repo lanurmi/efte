@@ -9,22 +9,40 @@ eventmap JAVA {
     # a new line after the current one, and indents it properly.
     # in cmode defined as LineAdd; LineIndent;
     abbrev 'ifx' {
-        KillWordPrev; InsertString 'if () {'; LineIndent; LineNew; 
+        KillWordPrev;
+%if(BSD_BRACE)
+        InsertString 'if ()'; MoveLeft; SavePos; MoveRight; LineIndent; LineNew;
+        InsertString '{'; LineIndent; LineNew;
+%endif
+%if(1TBS_BRACE)
+        InsertString 'if () {'; 3:MoveLeft; SavePos; 3:MoveRight; LineIndent; LineNew; 
+%endif
         InsertString '}'; LineIndent; 
-        MoveUp; MoveLineEnd; 3:MoveLeft; 
-        Fail; # do not insert typed character
+        MoveSavedPos; Fail; # do not insert typed character
     }
     abbrev 'whx' { 
-        KillWordPrev; InsertString 'while () {'; LineIndent; LineNew;
+        KillWordPrev;
+%if(BSD_BRACE)
+        InsertString 'while ()'; MoveLeft; SavePos; MoveRight; LineIndent; LineNew;
+        InsertString '{'; LineIndent; LineNew;
+%endif
+%if(1TBS_BRACE)
+        InsertString 'while () {'; 3:MoveLeft; SavePos; 3:MoveRight; LineIndent; LineNew; 
+%endif
         InsertString '}'; LineIndent; 
-        MoveUp; MoveLineEnd; 3:MoveLeft;
-        Fail;
+        MoveSavedPos; Fail;
     }
     abbrev 'swx' { 
-        KillWordPrev; InsertString 'switch () {'; LineIndent; LineNew;
+        KillWordPrev;
+%if(BSD_BRACE)
+        InsertString 'switch ()'; MoveLeft; SavePos; MoveRight; LineIndent; LineNew;
+        InsertString '{'; LineIndent; LineNew;
+%endif
+%if(1TBS_BRACE)
+        InsertString 'switch () {'; 3:MoveLeft; SavePos; 3:MoveRight; LineIndent; LineNew; 
+%endif
         InsertString '}'; LineIndent; 
-        MoveUp; MoveLineEnd; 3:MoveLeft; 
-        Fail;
+        MoveSavedPos; Fail;
     }
     abbrev 'cax' {
         KillWordPrev; InsertString 'case :'; LineIndent; LineNew;
