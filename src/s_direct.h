@@ -36,6 +36,7 @@ public:
 #define ffFULLPATH   2  // return full path to files
 #define ffDIRECTORY  4  // return directories beside files (see ffFAST)
 #define ffHIDDEN     8  // return hidden files (dot-files for UNIX)
+#define ffLINK      16  // diagnose location of symbolic link, not link itself
 
 class FileFind {
     char *Directory;

@@ -105,7 +105,8 @@ void EDirectory::RescanList() {
     if (JustDirectory(Path, Dir) != 0) return;
     JustFileName(Path, Name);
 
-    ff = new FileFind(Dir, "*", ffDIRECTORY | ffHIDDEN);
+    // we don't want any special information about symbolic links, just to browse files
+    ff = new FileFind(Dir, "*", ffDIRECTORY | ffHIDDEN | ffLINK);
     if (ff == 0)
         return ;
 

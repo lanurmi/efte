@@ -303,16 +303,31 @@ again:
         if (!(Flags & ffFULLPATH)) // need it now
             JoinDirFile(fullpath, Directory, dent->d_name);
 
-        if (
+        if (Flags && ffLINK)
+        {
+            // if we are handling location of symbolic links, lstat cannot be used
+            // instead use normal stat
+            if (
 #if defined(DJGPP)
-            my_stat
-#elif defined(UNIX) // must use lstat if available
-            lstat
+                my_stat
 #else
-            stat
+                stat
 #endif
-            (fullpath, &st) != 0 && 0)
-            goto again;
+                (fullpath, &st) != 0 && 0)
+                goto again;
+        } else
+        {
+            if (
+#if defined(DJGPP)
+                my_stat
+#elif defined(UNIX) // must use lstat if available
+                lstat
+#else
+                stat
+#endif
+                (fullpath, &st) != 0 && 0)
+                goto again;
+        }
 
         if (!(Flags & ffDIRECTORY) && S_ISDIR(st.st_mode))
             goto again;
