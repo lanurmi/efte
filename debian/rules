@@ -41,7 +41,7 @@ allpackages=\
 
 build:
 	$(checkdir)
-	$(MAKE) -C -j 4 src/ -f fte-unix.mak
+	$(MAKE) -C src/ -j 4 -f fte-unix.mak
 	touch build
 
 cleanB:
@@ -51,7 +51,6 @@ cleanB:
 	@rm -f debian/*.debhelper
 	@rm -f debian/*.substvars
 	@rm -rf $(allpackages) debian/files* core
-
 
 clean: cleanB
 	$(checkdir)
@@ -75,7 +74,7 @@ binary-arch: cleanB checkroot checkscripts build
 	@echo "/etc/fte/system.fterc" >debian/conffiles
 ##	find config -type f | sed -e 's/^/\/etc\/fte\//g' >>debian/conffiles
 	@$(INST) -s src/cfte debian/tmp/usr/bin/
-	@src/cfte config/main.fte debian/tmp/etc/fte/system.fterc
+	@cd config; ../src/cfte main.fte ../debian/tmp/etc/fte/system.fterc
 
 	@tar cf debian/$(docs)/usr/share/doc/fte/config-example.tar config
 	@$(INST) -s -m 4755 src/vfte debian/$(console)/usr/bin/
@@ -118,7 +117,7 @@ binary-arch: cleanB checkroot checkscripts build
 	dh_strip
 	dh_compress
 	dh_fixperms -Xvfte
-	dh_suidregister
+#obsoleted	dh_suidregister
 	dh_shlibdeps
 	dh_gencontrol
 	dh_makeshlibs
