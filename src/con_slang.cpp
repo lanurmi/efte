@@ -590,6 +590,11 @@ static const TKeyCode keys_ctrlhack[] =
     kfCtrl | 'Y',
 
     kbDel,
+    kbEsc,
+    kbCtrl | '\\',
+    kbCtrl | ']',
+    kbCtrl | '^',
+    kbCtrl | '_'
 };
 
 static TKeyCode ftesl_getftekey(unsigned char key)
@@ -610,7 +615,8 @@ static TKeyCode ftesl_process_key(int key, int ctrlhack = 0)
     //fprintf(stderr, "KEY  %03d \n", key);
     if (key < 256 && key >= 32) {
 	return (TKeyCode) key;
-    } else if (key >= 1 && key <= 26 && key != 13 && key != 9 && key != 8) {
+    } else if (key >= 1 && key <= 31 && key != 13 && key != 9 && key != 8
+	       && key != 27) {
 	if (!ctrlhack)
 	    return ((key + 'A' - 1) & 0xff) | kfCtrl;
 	else
