@@ -137,7 +137,7 @@ void EDirectory::RescanList() {
     {
         char CTitle[256];
 
-        sprintf(CTitle, "%d files%c%d dirs%c%ul bytes%c%-200.200s",
+        sprintf(CTitle, "%d files%c%d dirs%c%lu bytes%c%-200.200s",
                 FCount, ConGetDrawChar(DCH_V),
                 DirCount, ConGetDrawChar(DCH_V),
                 SizeCount, ConGetDrawChar(DCH_V),
