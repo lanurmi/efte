@@ -88,20 +88,46 @@ int Hilit_C(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, h
                     State = hsC_CommentL;
                     Color = Colors[CLR_Comment];
                     goto hilit2;
-                } else if ((len >= 2) && (*p == '0') && (toupper(*(p+1)) == 'X')) {
-                    Color = Colors[CLR_HexNumber];
-                    ColorNext();
-                    ColorNext();
-                    while (len && isxdigit(*p)) ColorNext();
-                    if (len && (toupper(*p) == 'U')) ColorNext();
-                    if (len && (toupper(*p) == 'L')) ColorNext();
-                    continue;
                 } else if (isdigit(*p)) {
-                    Color = Colors[CLR_Number];
-                    ColorNext();
-                    while (len && (isdigit(*p) || *p == 'e' || *p == 'E' || *p == '.')) ColorNext();
-                    if (len && (toupper(*p) == 'U')) ColorNext();
-                    if (len && (toupper(*p) == 'L')) ColorNext();
+                    if ((len >= 2) && (*p == '0')) {
+                        if (toupper(*(p+1)) == 'X') {
+                            Color = Colors[CLR_HexNumber];
+                            ColorNext();
+                            ColorNext();
+                            while (len && isxdigit(*p)) ColorNext();
+                        } else /* assume it's octal */ {
+                            Color = Colors[CLR_Number];
+                            ColorNext();
+                            while (len && ('0' <= *p && *p <= '7')) ColorNext();
+                            // if we hit a non-octal, stop hilighting it.
+                            if (len && ('8' <= *p && *p <= '9'))
+                            {
+                                Color = Colors[CLR_Normal];
+                                while (len && !isspace(*p)) ColorNext();
+                                continue;
+                            }
+                        }
+                    } else /* assume it's decimal/floating */ {
+                        Color = Colors[CLR_Number];
+                        ColorNext();
+                        while (len && (isdigit(*p) || *p == 'e' || *p == 'E' || *p == '.')) ColorNext();
+                        // if it ends with 'f', the number can't have more extras.
+                        if (len && (toupper(*p) == 'F')) {
+                            ColorNext();
+                            continue;
+                        }
+                    }
+                    // allowed extras: u, l, ll, ul, ull, lu, llu
+                    int colored_u = 0;
+                    if (len && (toupper(*p) == 'U')) {
+                        ColorNext();
+                        colored_u = 1;
+                    }
+                    if (len && (toupper(*p) == 'L')) {
+                        ColorNext();
+                        if (len && (toupper(*p) == 'L')) ColorNext();
+                        if (! colored_u && len && (toupper(*p) == 'U')) ColorNext();
+                    }
                     continue;
                 } else if (*p == '\'') {
                     State = hsC_String1;
@@ -220,20 +246,46 @@ int Hilit_C(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, h
                 hilit:
                     ColorNext();
                     continue;
-                } else if ((len >= 2) && (*p == '0') && (*(p+1) == 'x')) {
-                    Color = Colors[CLR_HexNumber];
-                    ColorNext();
-                    ColorNext();
-                    while (len && isxdigit(*p)) ColorNext();
-                    if (len && (toupper(*p) == 'U')) ColorNext();
-                    if (len && (toupper(*p) == 'L')) ColorNext();
-                    continue;
                 } else if (isdigit(*p)) {
-                    Color = Colors[CLR_Number];
-                    ColorNext();
-                    while (len && isdigit(*p)) ColorNext();
-                    if (len && (toupper(*p) == 'U')) ColorNext();
-                    if (len && (toupper(*p) == 'L')) ColorNext();
+                    if ((len >= 2) && (*p == '0')) {
+                        if (toupper(*(p+1)) == 'X') {
+                            Color = Colors[CLR_HexNumber];
+                            ColorNext();
+                            ColorNext();
+                            while (len && isxdigit(*p)) ColorNext();
+                        } else /* assume it's octal */ {
+                            Color = Colors[CLR_Number];
+                            ColorNext();
+                            while (len && ('0' <= *p && *p <= '7')) ColorNext();
+                            // if we hit a non-octal, stop hilighting it.
+                            if (len && ('8' <= *p && *p <= '9'))
+                            {
+                                Color = Colors[CLR_Normal];
+                                while (len && !isspace(*p)) ColorNext();
+                                continue;
+                            }
+                        }
+                    } else /* assume it's decimal/floating */ {
+                        Color = Colors[CLR_Number];
+                        ColorNext();
+                        while (len && (isdigit(*p) || *p == 'e' || *p == 'E' || *p == '.')) ColorNext();
+                        // if it ends with 'f', the number can't have more extras.
+                        if (len && (toupper(*p) == 'F')) {
+                            ColorNext();
+                            continue;
+                        }
+                    }
+                    // allowed extras: u, l, ll, ul, ull, lu, llu
+                    int colored_u = 0;
+                    if (len && (toupper(*p) == 'U')) {
+                        ColorNext();
+                        colored_u = 1;
+                    }
+                    if (len && (toupper(*p) == 'L')) {
+                        ColorNext();
+                        if (len && (toupper(*p) == 'L')) ColorNext();
+                        if (! colored_u && len && (toupper(*p) == 'U')) ColorNext();
+                    }
                     continue;
                 } else if (*p == '\'') {
                     State = hsC_CPP_String1;
