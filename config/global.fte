@@ -77,29 +77,29 @@ object GLOBAL {
 #    REXX_Do_Offset      = 0;
 
 # grep -n
-    CompileRx = { 1, 2, 3, /^([\w:._\-\/\\]#):(\d+):/ };
+    CompileRx = { 1, 2, 3, /^([\w:._\-\+\/\\]#):(\d+):/ };
 # GCC
-    CompileRx = { 1, 2, 3, /^([\w:._\-\/\\]+):(\d+):\s(.*)$/ };
+    CompileRx = { 1, 2, 3, /^([\w:._\-\+\/\\]+):(\d+):\s(.*)$/ };
 # Borland C++              
     CompileRx = { 1, 2, 3, /^{Error}|{Warning}\s(\S+)\s(\d+):\s(.*)$/ };
 # CSet++
-    CompileRx = { 1, 2, 3, /^([\w:._\-\/\\]+)\((\d+):\d+\)(.*)$/ };
+    CompileRx = { 1, 2, 3, /^([\w:._\-\+\/\\]+)\((\d+):\d+\)(.*)$/ };
 # Watcom C++
-    CompileRx = { 1, 2, 3, /^([\w:._\-\/\\]+)\((\d+)\):\x20{Error!}|{Warning!}(.*)$/ };
-# TI CC ?
-    CompileRx = { 1, 2, 3, /^"([\w:._\-\/\\]+)", line (\d+): (.*)$/ };
+    CompileRx = { 1, 2, 3, /^([\w:._\-\+\/\\]+)\((\d+)\):\x20{Error!}|{Warning!}(.*)$/ };
+# xlC (AIX)
+    CompileRx = { 1, 2, 3, /^"([\w:._\-\+\/\\]+)", line (\d+){.\d+}?: (.*)$/ };
 # IPF compiler
     CompileRx = { 1, 2, 3, /^\<([^:]+):(\d+)\> (.*)$/ };
 
-    CompileRx = { 1, 2, 3, /^([\w:._\-\/\\]+)\((\d+)\)\s*:\s*(.*)$/ };
+    CompileRx = { 1, 2, 3, /^([\w:._\-\+\/\\]+)\((\d+)\)\s*:\s*(.*)$/ };
     CompileRx = { 2, 3, 1, /^([^\t]+)\t([^\t]+)\t(\d+)$/ };
     CompileRx = { 2, 3, 1, /^\s*at\s*([^\(]+)\(([^\:]+)\:(\d+)\)$/ };  # PAF@design.ru
 
 # Ant (javac)
-    CompileRx = { 1, 2, 3, /^.*\s([\w:._\-\/\\]+):(\d+):\s(.*)$/ };
+    CompileRx = { 1, 2, 3, /^.*\s([\w:._\-\+\/\\]+):(\d+):\s(.*)$/ };
 
 # Python interpreter tracebacks
-    CompileRx = { 1, 2, 3, /^\s*File\s+"([\w:._\-\/\\]+)",\s+line\s+(\d+)(.*)$/ };
+    CompileRx = { 1, 2, 3, /^\s*File\s+"([\w:._\-\+\/\\]+)",\s+line\s+(\d+)(.*)$/ };
 
     CvsIgnoreRx = /^cvs update: Updating /;
     CvsIgnoreRx = /^cvs server: Updating /;
