@@ -1,3 +1,14 @@
+NOTE: This file possibly cointains incorrect information and
+      probably will be removed from future release.
+
+To report bugs, please use our issue tracker at:
+
+http://sourceforge.net/tracker/?group_id=943
+
+Thank you.
+
+---------------------------------------------------------------------
+
 OS/2 notes and limitations:
 - pm controls are not disabled while a modal entryfield is active.
 - pm subwindows can not be resized.
