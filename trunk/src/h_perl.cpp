@@ -265,6 +265,7 @@ int Hilit_PERL(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
                     State = hsPerl_Normal | X_BIT;
                     continue;
                 } else if (*p == '$' || *p == '@' || *p == '\\' || (len > 2 && (*p == '%' || *p == '*') && X_NOT(State))) {
+                    char var_type = *p;
                     State = hsPerl_Variable;
                     Color = Colors[CLR_Variable];
                     ColorNext();
@@ -272,18 +273,37 @@ int Hilit_PERL(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
                         IF_TAB() else
                             ColorNext();
                     }
-                    while ((len > 0) && (*p == '$' ||
+                    /*while ((len > 0) && (*p == '$' ||
                                          *p == '@' ||
                                          *p == '*' ||
                                          *p == '%' ||
                                          *p == '\\'))
+                        ColorNext();*/
+                    char first = *p;
+                    if (len > 0 && *p != ' ' && *p != '\t' && *p != '"' && *p != '\'')
                         ColorNext();
-                    if (len > 0 && *p != '{' && *p != ' ' && *p != '\t' && *p != '"' && *p != '\'')
-                        ColorNext();
-                    while ((len > 0) && (isalnum(*p) || 
-                                         *p == '_' || 
-                                         *p == '\''))
-                        ColorNext();
+                    // the following are one-character-ONLY
+                    if (
+                        (var_type == '$' && strchr("_&`'+*.!/|,\\\";#%=-~:?$<>()[]", first) != NULL) ||
+                        (var_type == '@' && strchr("-", first) != NULL)
+                       )
+                    {
+                        // nothing.
+                    }
+                    // the following are one-or-two-characters-ONLY
+                    else if (first == '^')
+                    {
+                        if (len > 0 && isalpha(*p))
+                            ColorNext();
+                    }
+                    else
+                    {
+                        while ((len > 0) && (isalnum(*p) ||
+                                             (first == '{' && *p == '^' || *p == '}') ||
+                                             *p == '_' ||
+                                             *p == '\''))
+                            ColorNext();
+                    }
                     State = hsPerl_Normal | X_BIT;
                     continue;
                 } else if ((len >= 2) && (*p == '0') && (*(p+1) == 'x')) {
