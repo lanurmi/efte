@@ -119,7 +119,7 @@ int main(int argc, char **argv) {
     char *p = argv[1];
     int n = 1;
 
-    fprintf(stderr, PROG_CFTE " " VERSION " " COPYRIGHT "\n");
+    fprintf(stderr, PROG_CFTE " " VERSION "\n" COPYRIGHT "\n");
     if (argc < 2 || argc > 4) {
         fprintf(stderr, "Usage: " PROG_CFTE " [-o<offset>] "
 #ifndef UNIX
