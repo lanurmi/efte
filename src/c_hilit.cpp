@@ -32,10 +32,10 @@ static const struct {
 { "MAKE", HILIT_MAKE, Hilit_MAKE },
 #endif
 #ifdef CONFIG_HILIT_DIFF
-{ "DIFF", HILIT_DIFF, Hilit_DIFF },
+//{ "DIFF", HILIT_DIFF, Hilit_DIFF },
 #endif
 #ifdef CONFIG_HILIT_MERGE
-{ "MERGE", HILIT_MERGE, Hilit_MERGE },
+//{ "MERGE", HILIT_MERGE, Hilit_MERGE },
 #endif
 #ifdef CONFIG_HILIT_IPF
 { "IPF", HILIT_IPF, Hilit_IPF },
@@ -202,19 +202,14 @@ EColorize *FindColorizer(const char *AName) {
 }
 
 int EColorize::SetColor(int idx, const char *Value) {
-    unsigned int Col;
     unsigned int ColBg, ColFg;
-    ChColor C;
 
     if (sscanf(Value, "%1X %1X", &ColFg, &ColBg) != 2)
         return 0;
 
-    Col = ColFg | (ColBg << 4);
-    C = ChColor(Col);
-
     if (idx < 0 || idx >= COUNT_CLR)
         return 0;
-    Colors[idx] = C;
+    Colors[idx] = ColFg | (ColBg << 4);
     return 1;
 }
 
