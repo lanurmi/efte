@@ -1,19 +1,18 @@
+fte (0.49.13-15) unstable; urgency=low
+
+  * fixed bug in o_message.cpp causing unexpected crash
+  * some gcc-3.0 compilation fixes (Closes: #104809)
+  * added lintian override file for fte-console
+
+ -- Zdenek Kabelac <kabi@debian.org>  Thu,  17 Jul 2001 14:04:21 +0200
+
 fte (0.49.13-14) unstable; urgency=high
 
   * CVS 2001/06/21
-  * fixed some serious text corrupting bug - introduced into
+  * fixed some serious text corruption bug - introduced into
     CVS by some "unexperienced" programmer
 
- -- Zdenek Kabelac <kabi@debian.org>  Thu,  21 Jun 2001 14:04:21 +0000
-
-fte (0.49.13-13) unstable; urgency=low
-
-  * CVS 2001/06/14
-  * fixed building dependency bug (Closes: #100052)
-  * fixed X Window System description bug (Closes: #76078)
-  * (Closes: #96444) - it was not the fault of fte
-
- -- Zdenek Kabelac <kabi@debian.org>  Thu,  14 Jun 2001 14:04:21 +0000
+ -- Zdenek Kabelac <kabi@debian.org>  Thu,  21 Jun 2001 14:04:21 +0200
   
 fte (0.49.13-13) unstable; urgency=low
 
@@ -22,14 +21,14 @@ fte (0.49.13-13) unstable; urgency=low
   * fixed X Window System description bug (Closes: #76078)
   * (Closes: #96444) - it was not the fault of fte
   
- -- Zdenek Kabelac <kabi@debian.org>  Thu,  7 Jun 2001 14:04:21 +0000
+ -- Zdenek Kabelac <kabi@debian.org>  Thu,  7 Jun 2001 14:04:21 +0200
 
 fte (0.49.13-12) unstable; urgency=low
 
   * CVS 2001/06/07
   * fixed bug in colorizing of floating point numbers
   
- -- Zdenek Kabelac <kabi@debian.org>  Thu,  7 Jun 2001 14:04:21 +0000
+ -- Zdenek Kabelac <kabi@debian.org>  Thu,  7 Jun 2001 14:04:21 +0200
 
 fte (0.49.13-11) unstable; urgency=low
 
@@ -40,7 +39,7 @@ fte (0.49.13-11) unstable; urgency=low
   * fixed control file for fte-xwindow added Replaces:  (Closes: #71574)
   * fixed bug in fte init wrapper script (Closes: #72908)
 
- -- Zdenek Kabelac <kabi@debian.org>  Sun,  3 Jun 2001 16:04:21 +0000
+ -- Zdenek Kabelac <kabi@debian.org>  Sun,  3 Jun 2001 16:04:21 +0200
 
 fte (0.49.13-10) frozen unstable; urgency=low
 
