@@ -185,8 +185,8 @@ int Hilit_SH(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, 
                     while (b && len > 0 &&
                            (isalnum(*p) ||
                             (strchr("{}[]_", *p) != NULL) ||
-                            (b == 2 && (strchr("#%:-=?+/", *p) != NULL)) ||
-                            (b == 1 && (strchr("*@#?-$!", *p) != NULL) /*&& (b = 0, 1) ????? */)
+                            (b == 2 && (strchr("#%:-=?+/_", *p) != NULL)) ||
+                            (b == 1 && (strchr("*@#?-$!_", *p) != NULL) /*&& (b = 0, 1) ????? */)
                            )
                           )
                     { // !!!!! ?????
