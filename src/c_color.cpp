@@ -125,20 +125,15 @@ static const struct {
     { "Choice.NormalItem", &hcChoice_NormalItem },
     { "Choice.NormalChar", &hcChoice_NormalChar },
 };
-#define NCOLORS (sizeof(Colors)/sizeof(Colors[0]))
 
 int SetColor(const char *ColorV, const char *Value) {
-    unsigned int Col;
     unsigned int ColBg, ColFg;
-    ChColor C;
 
     if (sscanf(Value, "%1X %1X", &ColFg, &ColBg) != 2)
         return 0;
 
-    Col = ColFg | (ColBg << 4);
-    
-    C = ChColor(Col);
-    for (unsigned int i = 0; i < NCOLORS; i++) {
+    ChColor C = ChColor(ColFg | (ColBg << 4));
+    for (unsigned i = 0; i < sizeof(Colors)/sizeof(Colors[0]); i++) {
         if (strcmp(ColorV, Colors[i].Name) == 0) {
             *Colors[i].C = C;
             return 1;
