@@ -20,6 +20,7 @@
 #%define(COLORS_GRAY_BG)
 #%define(COLORS_WHITE_BG)
 %define(COLORS_BLACK_BG)
+#%define(COLORS_BLUE_BG)
 
 %if(OS_OS2)
 %define(GUI_PM)
@@ -76,6 +77,10 @@ include 'pal_wht.fte';
 
 %if(COLORS_GRAY_BG)
 include 'pal_gray.fte';
+%endif
+    
+%if(COLORS_BLUE_BG)
+include 'pal_blue.fte';
 %endif
 
 object GLOBAL {
