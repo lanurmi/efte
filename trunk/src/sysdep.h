@@ -111,6 +111,9 @@
 #    if defined(BCPP)
 #        include <dir.h>
 #    endif
+#    if defined(MINGW)
+#        include <dir.h>
+#    endif
 #    define filecmp stricmp
 #    define popen _popen
 #    define pclose _pclose
