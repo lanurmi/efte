@@ -172,17 +172,22 @@ EColorize::EColorize(const char *AName, const char *AParent) {
     Colorizers = this;
     Parent = FindColorizer(AParent);
     memset((void *)&Keywords, 0, sizeof(Keywords));
-    memset((void *)&Colors, 0, sizeof(Colors));
+    memset((void *)Colors, 0, sizeof(Colors));
     if (Parent) {
         SyntaxParser = Parent->SyntaxParser;
-        memcpy((void *)&Colors, (void *)&Parent->Colors, sizeof(Colors));
+        memcpy((void *)Colors, (void *)Parent->Colors, sizeof(Colors));
     } else {
         SyntaxParser = HILIT_PLAIN;
     }
 }
 
 EColorize::~EColorize() {
-    delete Name;
+    free(Name);
+
+    for (int i=0; i<CK_MAXLEN; i++)
+        free(Keywords.key[i]);
+
+    delete hm;
 }
 
 EColorize *FindColorizer(const char *AName) {
@@ -274,8 +279,34 @@ HMachine::HMachine() {
 }
 
 HMachine::~HMachine() {
-    free(state);
-    free(trans);
+
+    // free states
+    if (state)
+    {
+        int i;
+
+        while(stateCount--)
+        {
+            for (i=0; i<CK_MAXLEN; i++)
+                free(state[stateCount].keywords.key[i]);
+
+            free(state[stateCount].wordChars);
+        }
+
+        free(state);
+    }
+
+    // free transes
+    if (trans)
+    {
+        while(transCount--)
+        {
+            free(trans[transCount].match);
+        }
+
+        free(trans);
+    }
+
 }
 
 void HMachine::AddState(HState &aState) {
