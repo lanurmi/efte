@@ -156,15 +156,6 @@ eventmap TEX: PLAIN {
     }
 }
 
-include 'm_text.fte';
-include 'm_msg.fte';
-
-%if(UI_KB)
-include 'm_c_kb.fte';
-%endif
-%if(!UI_KB)
-include 'm_c.fte';
-%endif
 
 include 'm_4gl.fte';
 include 'm_a51.fte';
@@ -172,6 +163,7 @@ include 'm_ada.fte';
 include 'm_asm.fte';
 include 'm_asm370.fte';
 include 'm_bin.fte';
+include 'm_c.fte';
 include 'm_catbs.fte';
 include 'm_clario.fte';
 include 'm_diff.fte';
@@ -187,6 +179,7 @@ include 'm_ldsgml.fte';
 include 'm_make.fte';
 include 'm_merge.fte';
 include 'm_mod3.fte';
+include 'm_msg.fte';
 include 'm_pascal.fte';
 include 'm_perl.fte';
 include 'm_php.fte';
@@ -203,6 +196,7 @@ include 'm_sql.fte';
 include 'm_tcl.fte';
 include 'm_tex.fte';
 include 'm_texi.fte';
+include 'm_text.fte';
 include 'm_unrealscript.fte';
 include 'm_xml.fte';
 include 'm_xslt.fte';
