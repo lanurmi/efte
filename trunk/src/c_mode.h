@@ -119,6 +119,7 @@ typedef unsigned char ChColor;
 #define BFS_CapitalChars        (101 | 256)
 
 #define BFI(y,x) ((y)->Flags.num[(x) & 0xFF])
+#define BFI_SET(y,x,v) ((y)->Flags.num[(x) & 0xFF]=(v))
 #define BFS(y,x) ((y)->Flags.str[(x) & 0xFF])
 
 #define WSETBIT(x,y,z) \
