@@ -233,6 +233,7 @@ int UnTabStr(char *dest, int maxlen, const char *source, int slen) {
             break;
     }
 
-    dest[pos] = 0;
+    //dest[pos] = 0;
+    *p = '\0';
     return pos;
 }
