@@ -453,11 +453,16 @@ int EBuffer::SaveTo(char *AFileName) {
     }
 
     if (RCount <= 0) return 0;
-    Msg(S_INFO, "Backing up %s...", AFileName);
-    if (MakeBackup(AFileName, (char *)ABackupName) == 0) {
-        View->MView->Win->Choice(GPC_ERROR, "Error", 1, "O&K", "Could not create backup file.");
-        return 0;
+
+    // make only backups when user have requested a one
+    if (BFI(this, BFI_MakeBackups) != 0) {
+        Msg(S_INFO, "Backing up %s...", AFileName);
+        if (MakeBackup(AFileName, (char *)ABackupName) == 0) {
+            View->MView->Win->Choice(GPC_ERROR, "Error", 1, "O&K", "Could not create backup file.");
+            return 0;
+        }
     }
+
     Msg(S_INFO, "Writing %s...", AFileName);
 
     fp = 0;
@@ -565,13 +570,17 @@ int EBuffer::SaveTo(char *AFileName) {
         goto fail;
     }
     Msg(S_INFO, "Wrote %s.", AFileName);
-    if (BFI(this, BFI_KeepBackups) == 0
+
+    // make only backups when user have requested a one
+    if (BFI(this, BFI_MakeBackups) != 0) {
+        if (BFI(this, BFI_KeepBackups) == 0
 #ifdef CONFIG_OBJ_CVS
-        // No backups for CVS logs
-        || this == CvsLogView
+            // No backups for CVS logs
+            || this == CvsLogView
 #endif
-       ) {
-        unlink(ABackupName);
+           ) {
+            unlink(ABackupName);
+        }
     }
     return 1;
 fail:

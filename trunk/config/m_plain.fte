@@ -41,6 +41,7 @@ mode PLAIN {
     PersistentBlocks    = 1;         # 1 = persistent blocks, 0 = transient
     RightMargin         = 72;        # wrap right margin
     SaveBookmarks       = 0;         # save bookmarks (off = 0, start line = 1, end line = 2, history = 3)
+    MakeBackups         = 1;         # save backups of files.
     SeeThruSel          = 0;         # transparent selections
     ShowMarkers         = 1;         # visible eol/eof markers
     ShowTabs            = 0;         # show tabs as small circle on display

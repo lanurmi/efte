@@ -342,6 +342,7 @@ menu Toggle {
     item "&Undo/Redo\tC+O C+U"		{ ToggleUndo }
     item "&Read only\tC+O C+R"		{ ToggleReadOnly }
     item "&Keep backups"		{ ToggleKeepBackups }
+    item "&Make backups"		{ ToggleMakeBackups }
     item "&Backspace Unindents"		{ ToggleBackSpUnindents }
     item;
     item "I&ndent with tabs"		{ ToggleIndentWithTabs }

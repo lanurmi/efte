@@ -598,6 +598,8 @@ typedef enum {
     ///
     ExToggleShowBookmarks,
     ///
+    ExToggleMakeBackups,
+    ///
     ExSetLeftMargin,
     ///
     ExSetRightMargin,

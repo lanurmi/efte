@@ -108,8 +108,9 @@ typedef int ChColor;
 #define BFI_SaveBookmarks      46
 #define BFI_HilitTags          47
 #define BFI_ShowBookmarks      48
+#define BFI_MakeBackups        49
 
-#define BFI_COUNT              49
+#define BFI_COUNT              50
 
 #define BFS_RoutineRegexp       (0 | 256)
 #define BFS_DefFindOpt          (1 | 256)
