@@ -145,6 +145,16 @@ int Indent_SIMPLE(EBuffer *B, int Line, int PosCursor);
 
 #define CK_MAXLEN 32
 
+inline bool isZeroArray(int* Count, size_t len)
+{
+    for (size_t i = 0; i < len; ++i)
+        if (Count[i] != 0)
+            return 0;
+    return 1;
+}
+
+#define TEST_ZERO isZeroArray(Count, sizeof(Count)/sizeof(Count[0]))
+
 typedef struct {
     int TotalCount;
     int count[CK_MAXLEN];
