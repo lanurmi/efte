@@ -116,6 +116,12 @@ int Hilit_SH(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, 
                 } else if (*p == '"') {
                     State = hsSH_DQuote;
                     Color = Colors[CLR_String];
+                } else if ( len >= 2 && *p == '\\' && p[1] == '\'' ) {
+                    Color = Colors[CLR_String];
+                    ColorNext();
+                } else if ( len >= 2 && *p == '\\' && p[1] == '"' ) {
+                    Color = Colors[CLR_String];
+                    ColorNext();
                 } else if (*p == '`') {
                     State = hsSH_BQuote;
                     Color = Colors[CLR_Command];
@@ -138,10 +144,11 @@ int Hilit_SH(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, 
 
                     char *s = seof;
 
-                    j += 2;
+                    j++;
                     Color = Colors[CLR_Control];
                     while (len > j && isspace(p[j]))
                         j++;
+                    if( p[j] == '\\' ) j++;
                     while (len > j && !isspace(p[j]))
                         *s++ = p[j++];
                     *s = 0;
