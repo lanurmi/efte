@@ -699,12 +699,19 @@ int Parse(CurPos &cp) {
                                 if (--nest == 0)
                                     break;
                             }
-                            if (cp.c + 4 < cp.z &&
-                                strncmp(cp.c, "%if", 4) == 0)
+                            if (cp.c + 3 < cp.z &&
+                                strncmp(cp.c, "%if", 3) == 0)
                             {
-                                cp.c += 4;
+                                cp.c += 3;
                                 ++nest;
                             }
+                        } else if (*cp.c == '#') {
+                            // we really shouldn't process hashed % directives
+                            while( cp.c < cp.z && *cp.c != '\n' ) cp.c++;
+
+                            // workaround to make line numbering correct
+                            cp.line++;
+                            lntotal++;
                         }
                         cp.c++;
                     }
