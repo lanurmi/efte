@@ -1180,6 +1180,14 @@ int LoadConfig(int /*argc*/, char ** /*argv*/, char *CfgFileName) {
         close(fd);
         ENDFUNCRC(-1);
     }
+
+    // check that we have enough room for signature (CONFIG_ID + VERNUM)
+    if (statbuf.st_size < (4+4)) {
+        close(fd);
+        DieError(0, "Bad .CNF signature");
+        ENDFUNCRC(-1);
+    }
+
     buffer = (char *) malloc(statbuf.st_size);
     if (buffer == 0) {
         close(fd);
