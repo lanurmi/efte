@@ -39,6 +39,7 @@ static long offset = -1;
 static long pos = 0;
 static char XTarget[MAXPATH] = "";
 static char StartDir[MAXPATH] = "";
+static bool preprocess_only = false;
 
 #include "c_commands.h"
 #include "c_cmdtab.h"
@@ -80,14 +81,18 @@ static void PutObject(CurPos &cp, int xtag, int xlen, void *obj) {
     unsigned short len = (unsigned short)xlen;
     unsigned char l[2];
 
-    l[0] = len & 0xFF;
-    l[1] = (len >> 8) & 0xFF;
-
-    if (fwrite(&tag, 1, 1, output) != 1 ||
-        fwrite(l, 2, 1, output) != 1 ||
-        fwrite(obj, 1, len, output) != len)
+    if (preprocess_only == false)
     {
-        Fail(cp, "Disk full!");
+
+	l[0] = len & 0xFF;
+	l[1] = (len >> 8) & 0xFF;
+
+	if (fwrite(&tag, 1, 1, output) != 1 ||
+	    fwrite(l, 2, 1, output) != 1 ||
+	    fwrite(obj, 1, len, output) != len)
+	{
+	    Fail(cp, "Disk full!");
+	}
     }
     pos += 1 + 2 + len;
     if (offset != -1 && pos >= offset) {
@@ -117,12 +122,13 @@ static void PutNumber(CurPos &cp, int xtag, long num) {
 int main(int argc, char **argv) {
     char Source[MAXPATH];
     char Target[MAXPATH];
-    char *p = argv[1];
-    int n = 1;
+    unsigned char b[4];
+    unsigned long l;
+    int n = 0;
 
     fprintf(stderr, PROG_CFTE " " VERSION "\n" COPYRIGHT "\n");
-    if (argc < 2 || argc > 4) {
-        fprintf(stderr, "Usage: " PROG_CFTE " [-o<offset>] "
+    if (argc < 2 || argc > 5) {
+        fprintf(stderr, "Usage: " PROG_CFTE " [-o<offset>] [-p[reprocess]] "
 #ifndef UNIX
                 "config/"
 #endif
@@ -142,7 +148,59 @@ int main(int argc, char **argv) {
 #endif
               );
 
-    if (strncmp(p, "-o", 2) == 0) {
+    // setup defaults
+    strcpy(Source, "");
+    strcpy(Target, "fte-new.cnf");
+    preprocess_only = false;
+    offset = -1;
+
+    // parse arguments
+    for (int i = 1; i < argc; i++)
+    {
+	if (argv[i][0] == '-')
+	{
+	    if ((strcmp(argv[i], "-p") == 0) || (strcmp(argv[i], "-preprocess") == 0))
+	    {
+		preprocess_only = true;
+	    } else
+	    if (strncmp(argv[i], "-o", 2) == 0)
+	    {
+		char *p;
+
+		p = argv[i];
+		p += 2;
+		offset = atol(p);
+	    } else
+	    {
+		fprintf(stderr, "Invalid option '%s'\n", argv[i]);
+		exit(1);
+	    }
+	} else
+	{
+	    switch(n)
+	    {
+	    case 0:
+		strcpy(Source, argv[i]);
+		break;
+
+	    case 1:
+                strcpy(Target, argv[i]);
+		break;
+
+	    default:
+		fprintf(stderr, "Invalid option '%s'\n", argv[i]);
+		exit(1);
+	    }
+            n++;
+	}
+    }
+
+    if (n == 0)
+    {
+	fprintf(stderr, "No configuration file specified\n");
+	exit(1);
+    }
+/*    if (strncmp(p, "-o", 2) == 0) {
         p += 2;
         offset = atol(p);
         n++;
@@ -155,39 +213,45 @@ int main(int argc, char **argv) {
     strcpy(Target, "fte-new.cnf");
     if (n < argc)
         strcpy(Target, argv[n++]);
+	*/
 
     JustDirectory(Target, XTarget);
     Slash(XTarget, 1);
-    sprintf(XTarget + strlen(XTarget), "cfte%ld.tmp", (long)getpid());
-    output = fopen(XTarget, "wb");
-    if (output == 0) {
-        fprintf(stderr, "Cannot create '%s', errno=%d!\n", XTarget, errno);
-        cleanup(1);
+
+    if (preprocess_only == false)
+    {
+	sprintf(XTarget + strlen(XTarget), "cfte%ld.tmp", (long)getpid());
+	output = fopen(XTarget, "wb");
+	if (output == 0) {
+	    fprintf(stderr, "Cannot create '%s', errno=%d!\n", XTarget, errno);
+	    cleanup(1);
+	}
+
+	b[0] = b[1] = b[2] = b[3] = 0;
+
+	if (fwrite(b, sizeof(b), 1, output) != 1) {
+	    fprintf(stderr, "Disk full!");
+	    cleanup(1);
+	}
+
+	l = VERNUM;
+
+	b[0] = (unsigned char)(l & 0xFF);
+	b[1] = (unsigned char)((l >> 8) & 0xFF);
+	b[2] = (unsigned char)((l >> 16) & 0xFF);
+	b[3] = (unsigned char)((l >> 24) & 0xFF);
+
+	if (fwrite(b, 4, 1, output) != 1) {
+	    fprintf(stderr, "Disk full!");
+	    cleanup(1);
+	}
+	pos = 2 * 4;
+
+	fprintf(stderr, "Compiling to '%s'\n", Target);
+    } else
+    {
+        pos = 2 * 4;
     }
-
-    unsigned char b[4];
-
-    b[0] = b[1] = b[2] = b[3] = 0;
-
-    if (fwrite(b, sizeof(b), 1, output) != 1) {
-        fprintf(stderr, "Disk full!");
-        cleanup(1);
-    }
-
-    unsigned long l = VERNUM;
-
-    b[0] = (unsigned char)(l & 0xFF);
-    b[1] = (unsigned char)((l >> 8) & 0xFF);
-    b[2] = (unsigned char)((l >> 16) & 0xFF);
-    b[3] = (unsigned char)((l >> 24) & 0xFF);
-
-    if (fwrite(b, 4, 1, output) != 1) {
-        fprintf(stderr, "Disk full!");
-        cleanup(1);
-    }
-    pos = 2 * 4;
-
-    fprintf(stderr, "Compiling to '%s'\n", Target);
     /*{
         char PrevDir[MAXPATH];
         sprintf(PrevDir, "%s/..", Target);
@@ -202,6 +266,7 @@ int main(int argc, char **argv) {
                , StartDir);
     Slash(StartDir, 1);
 
+    if (preprocess_only == false)
     {
         CurPos cp;
         char FSource[MAXPATH];
@@ -224,6 +289,11 @@ int main(int argc, char **argv) {
     if (LoadFile(StartDir, Source, 0) != 0) {
         fprintf(stderr, "\nCompile failed\n");
         cleanup(1);
+    }
+
+    if (preprocess_only == true)
+    {
+        return 0;
     }
 
     l = CONFIG_ID;
@@ -646,97 +716,9 @@ static int Parse(CurPos &cp) {
         case '#':
             while (cp.c < cp.z && *cp.c != '\n') cp.c++;
             break;
-        case '%':
-            cp.c++;
-            if (cp.c + 7 < cp.z && strncmp(cp.c, "define(", 7) == 0) {
-                Word w;
-                cp.c += 7;
-
-                while (cp.c < cp.z && *cp.c != ')') {
-                    GetWord(cp, w);
-                    //printf("define '%s'\n", w);
-                    DefineWord(w);
-                    if (cp.c < cp.z && *cp.c != ',' && *cp.c != ')' )
-                        Fail(cp, "unexpected: %c", cp.c[0]);
-                    if (cp.c < cp.z && *cp.c == ',')
-                        cp.c++;
-                }
-                cp.c++;
-/*            } else if (cp.c + 6 && strcmp(cp.c, "undef(", 6) == 0) {
-                Word w;
-                cp.c += 6;
-
-                while (cp.c < cp.z && *cp.c != ')') {
-                    GetWord(cp, w);
-                    UndefWord(w);
-                }*/
-            } else if (cp.c + 3 < cp.z && strncmp(cp.c, "if(", 3) == 0) {
-                Word w;
-                int wasWord = 0;
-                cp.c += 3;
-
-                while (cp.c < cp.z && *cp.c != ')') {
-                    int neg = 0;
-                    if (*cp.c == '!') {
-                        cp.c++;
-                        neg = 1;
-                    }
-                    GetWord(cp, w);
-                    if (DefinedWord(w))
-                        wasWord = 1;
-                    if (neg)
-                        wasWord = wasWord ? 0 : 1;
-                    /*if (wasWord)
-                        printf("yes '%s'\n", w);
-                    else
-                        printf("not '%s'\n", w);*/
-
-                    if (cp.c < cp.z && *cp.c != ',' && *cp.c != ')' )
-                        Fail(cp, "unexpected: %c", cp.c[0]);
-                    if (cp.c < cp.z && *cp.c == ',')
-                        cp.c++;
-                }
-                cp.c++;
-                if (!wasWord) {
-                    int nest = 1;
-                    while (cp.c < cp.z) {
-                        if (*cp.c == '\n') {
-                            cp.line++;
-                            lntotal++;
-                        } else if (*cp.c == '%') {
-                            if (cp.c + 6 < cp.z &&
-                                strncmp(cp.c, "%endif", 6) == 0)
-                            {
-                                cp.c += 6;
-                                if (--nest == 0)
-                                    break;
-                            }
-                            if (cp.c + 3 < cp.z &&
-                                strncmp(cp.c, "%if", 3) == 0)
-                            {
-                                cp.c += 3;
-                                ++nest;
-                            }
-                        } else if (*cp.c == '#') {
-                            // we really shouldn't process hashed % directives
-                            while( cp.c < cp.z && *cp.c != '\n' ) cp.c++;
-
-                            // workaround to make line numbering correct
-                            cp.line++;
-                            lntotal++;
-                        }
-                        cp.c++;
-                    }
-                }
-            } else if (cp.c + 5 < cp.z && strncmp(cp.c, "endif", 5) == 0) {
-                cp.c += 5;
-            }
-            if (cp.c < cp.z && *cp.c != '\n' && *cp.c != '\r')
-                Fail(cp, "syntax error %30.30s", cp.c);
-            break;
         case '\n':
             cp.line++;
-            lntotal++;
+	    lntotal++;
         case ' ':
         case '\t':
         case '\r':
@@ -1725,6 +1707,151 @@ static int ParseConfigFile(CurPos &cp) {
     }
 }
 
+static int PreprocessConfigFile(CurPos &cp) {
+    char *wipe = NULL;
+    char *wipe_end = NULL;
+    bool rem_active = false;
+    bool string_open = false;
+
+    while (cp.c < cp.z) {
+	switch(*cp.c)
+	{
+	case '#':
+	    if (string_open == true) break;
+
+	    rem_active = true;
+	    break;
+
+	case '\\':
+            cp.c++;
+            break;
+
+	case '"':
+	case '\'':
+	    if (rem_active == true) break;
+
+	    string_open = !string_open;
+	    break;
+
+	case '%':
+	    if (string_open == true) break;
+	    if (rem_active == true) break;
+
+	    wipe = cp.c;
+            wipe_end = NULL;
+
+            if (cp.c + 8 < cp.z && strncmp(cp.c, "%define(", 8) == 0) {
+                Word w;
+                cp.c += 8;
+
+                while (cp.c < cp.z && *cp.c != ')') {
+                    GetWord(cp, w);
+                    //printf("define '%s'\n", w);
+                    DefineWord(w);
+                    if (cp.c < cp.z && *cp.c != ',' && *cp.c != ')' )
+                        Fail(cp, "unexpected: %c", cp.c[0]);
+                    if (cp.c < cp.z && *cp.c == ',')
+                        cp.c++;
+                }
+		cp.c++;
+/*            } else if (cp.c + 6 && strcmp(cp.c, "undef(", 6) == 0) {
+                Word w;
+                cp.c += 6;
+
+                while (cp.c < cp.z && *cp.c != ')') {
+                    GetWord(cp, w);
+                    UndefWord(w);
+                }*/
+            } else if (cp.c + 4 < cp.z && strncmp(cp.c, "%if(", 4) == 0) {
+                Word w;
+                int wasWord = 0;
+                cp.c += 4;
+
+                while (cp.c < cp.z && *cp.c != ')') {
+                    int neg = 0;
+                    if (*cp.c == '!') {
+                        cp.c++;
+                        neg = 1;
+                    }
+                    GetWord(cp, w);
+                    if (DefinedWord(w))
+                        wasWord = 1;
+                    if (neg)
+                        wasWord = wasWord ? 0 : 1;
+                    /*if (wasWord)
+                        printf("yes '%s'\n", w);
+                    else
+                        printf("not '%s'\n", w);*/
+
+                    if (cp.c < cp.z && *cp.c != ',' && *cp.c != ')' )
+                        Fail(cp, "unexpected: %c", cp.c[0]);
+                    if (cp.c < cp.z && *cp.c == ',')
+                        cp.c++;
+                }
+                cp.c++;
+                if (!wasWord) {
+                    int nest = 1;
+                    while (cp.c < cp.z) {
+                        if (*cp.c == '\n') {
+                            cp.line++;
+                            lntotal++;
+                        } else if (*cp.c == '%') {
+                            if (cp.c + 6 < cp.z &&
+                                strncmp(cp.c, "%endif", 6) == 0)
+                            {
+                                cp.c += 6;
+                                if (--nest == 0)
+                                    break;
+                            }
+                            if (cp.c + 3 < cp.z &&
+                                strncmp(cp.c, "%if", 3) == 0)
+                            {
+                                cp.c += 3;
+                                ++nest;
+                            }
+                        } else if (*cp.c == '#') {
+                            // we really shouldn't process hashed % directives
+                            while( cp.c < cp.z && *cp.c != '\n' ) cp.c++;
+
+                            // workaround to make line numbering correct
+                            cp.line++;
+                            lntotal++;
+                        }
+                        cp.c++;
+                    }
+                }
+            } else if (cp.c + 6 < cp.z && strncmp(cp.c, "%endif", 6) == 0) {
+                cp.c += 6;
+            }
+            if (cp.c < cp.z && *cp.c != '\n' && *cp.c != '\r')
+                Fail(cp, "syntax error %30.30s", cp.c);
+
+	    wipe_end = cp.c;
+
+            // wipe preprocessor macros with space
+	    while (wipe < wipe_end)
+	    {
+                *wipe++ = ' ';
+	    }
+
+	    break;
+
+        case '\n':
+	    cp.line++;
+	    rem_active = false;
+            string_open = false;
+	    break;
+
+	default:
+            break;
+	}
+
+        cp.c++;
+    }
+
+    return 0;
+}
+
 static int LoadFile(const char *WhereName, const char *CfgName, int Level) {
     int fd, rc;
     char *buffer = 0;
@@ -1801,11 +1928,14 @@ static int LoadFile(const char *WhereName, const char *CfgName, int Level) {
         fprintf(stderr, "Cannot stat '%s', errno=%d\n", Cfg, errno);
         return -1;
     }
-    buffer = (char *) malloc(statbuf.st_size);
-    if (buffer == 0) {
+    buffer = (char *) malloc(statbuf.st_size+1);
+    if (buffer == NULL) {
         close(fd);
         return -1;
     }
+
+    buffer[statbuf.st_size] = 0; // add null to end of buffer, NOTE: allocated statbuf.st_size + 1
+
     if (read(fd, buffer, statbuf.st_size) != statbuf.st_size) {
         close(fd);
         free(buffer);
@@ -1818,6 +1948,21 @@ static int LoadFile(const char *WhereName, const char *CfgName, int Level) {
     cp.z = cp.a + cp.sz;
     cp.line = 1;
     cp.name = Cfg;
+
+    // preprocess configuration file
+    rc = PreprocessConfigFile(cp);
+    if (rc == -1) {
+        Fail(cp, "Preprocess failed");
+    }
+
+    if (preprocess_only == true) {
+	printf("%s", cp.a);
+    }
+
+    // reset pointers
+    cp.a = cp.c = buffer;
+    cp.z = cp.a + cp.sz;
+    cp.line = 1;
 
     rc = ParseConfigFile(cp);
     // puts("End Loading file");
