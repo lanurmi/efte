@@ -6,8 +6,9 @@
  *    License or the Artistic License, as specified in the README file.
  *
  */
-#define NEED_LOG_H
 #include "fte.h"
+#include "log.h"
+#include "c_history.h"
 #ifdef USE_LOCALE
 #include <locale.h>
 #endif
