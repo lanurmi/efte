@@ -654,7 +654,12 @@ int EView::TagLoad(ExState &State) {
     char Tag[MAXPATH];
     char FullTag[MAXPATH];
 
-    if (ExpandPath("tags", Tag) == -1)
+    char const* pTagFile = getenv("TAGFILE");
+    if (pTagFile == NULL)
+    {
+        pTagFile = "tags";
+    }
+    if (ExpandPath(pTagFile, Tag) == -1)
         return 0;
     if (State.GetStrParam(this, Tag, sizeof(Tag)) == 0)
         if (MView->Win->GetFile("Load tags", sizeof(Tag), Tag, HIST_TAGFILES, GF_OPEN) == 0) return 0;
