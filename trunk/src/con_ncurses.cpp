@@ -91,7 +91,23 @@ static void SaveScreen() {
 	}
 }
 
-int fte_curses_attr[256];
+static void free_savedscreen()
+{
+	if (! SavedScreen)
+		return;
+	for (int i = 0; i < MaxSavedH; i++)
+	{
+		if (SavedScreen[i])
+		{
+			free(SavedScreen[i]);
+			SavedScreen[i] = NULL;
+		}
+	}
+	free(SavedScreen);
+	SavedScreen = NULL;
+}
+
+static int fte_curses_attr[256];
 
 static int ConInitColors()
 {
@@ -149,7 +165,9 @@ int ConInit(int /*XSize */ , int /*YSize */ )
 
 int ConDone(void)
 {
+	keypad(stdscr,0);
 	endwin();
+	free_savedscreen();
 	return 0;
 }
 
@@ -191,14 +209,14 @@ static unsigned int  GetDch(int idx)
 		case DCH_H: return ACS_HLINE;
 		case DCH_V: return ACS_VLINE;
 		case DCH_M1: return ACS_HLINE;
-		case DCH_M2: return 'w';
-		case DCH_M3: return 'e'; break;
-		case DCH_M4 : return 'r'; break;
+		case DCH_M2: return ACS_LTEE;
+		case DCH_M3: return ACS_RTEE;
+		case DCH_M4 : return 'o'; break;
 		case DCH_X: return  'X'; break;
-		case DCH_RPTR: return '.'; break;
+		case DCH_RPTR: return ACS_RARROW; break;
 		case DCH_EOL: return ACS_BULLET; break;
 		case DCH_EOF: return ACS_DIAMOND; break;
-		case DCH_END: return '"'; break;
+		case DCH_END: return ACS_HLINE; break;
 		case DCH_AUP: return ACS_UARROW; break;
 		case DCH_ADOWN: return ACS_DARROW; break;
 		case DCH_HFORE: return ACS_BLOCK; break;
@@ -216,6 +234,9 @@ int ConPutBox(int X, int Y, int W, int H, PCell Cell)
 	int CurX, CurY;
 	getyx(stdscr, CurY, CurX);
 	int yy = Y;
+
+	if (Y + H > LINES)
+		H = LINES - Y;
 
 	for(int j =0 ; j < H; j++)
 	{
@@ -318,7 +339,7 @@ int ConScroll(int Way, int X, int Y, int W, int H, TAttr Fill, int Count)
 		ConSetBox(X, Y, W, Count, fill);
 	}
 
-	delete(box);
+	delete [] (box);
 
 	return 0;
 }
@@ -617,6 +638,7 @@ int ConGetEvent(TEventMask /*EventMask */ ,
 	Event->What = evKeyDown;
 	KEvent->Code = 0;
 
+#if 0
 	if(ch > 127 && ch < 256)
 	{
 		KEvent->Code |= kfAlt;
@@ -626,6 +648,7 @@ int ConGetEvent(TEventMask /*EventMask */ ,
 			ch-=0x20;
 		}
 	}
+#endif
 
 	if(ch < 0)
 	{
@@ -647,7 +670,7 @@ int ConGetEvent(TEventMask /*EventMask */ ,
 	{
 		KEvent->Code |=  (kfCtrl | (ch+ 0100));
 	}
-	else if(ch < 128)
+	else if(ch < 256)
 	{
        		KEvent->Code |= ch;
 	}
@@ -694,6 +717,7 @@ int ConGetEvent(TEventMask /*EventMask */ ,
 				KEvent->Code = kbHome;
 				break;
 			case KEY_END:
+			case KEY_LL: // used in old termcap/infos
 				KEvent->Code = kbEnd;
 				break;
 			case KEY_NPAGE:
@@ -737,6 +761,9 @@ int ConGetEvent(TEventMask /*EventMask */ ,
 				break;
 			case KEY_F(12):
 				KEvent->Code = kbF12;
+				break;
+			case KEY_B2:
+				KEvent->Code = kbCenter;
 				break;
 			case KEY_ENTER: /* shift enter */
 				KEvent->Code |= kbEnter;
