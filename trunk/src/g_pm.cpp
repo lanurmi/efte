@@ -373,7 +373,7 @@ HWND CreatePMMenu(HWND parent, HWND owner, int menu, int id, int style) {
     char *p;
     
     hmenu = WinCreateWindow(parent, 
-                            WC_MENU, (PUCHAR)"menu", style & ~MS_CONDITIONALCASCADE,
+                            WC_MENU, "menu", style & ~MS_CONDITIONALCASCADE,
                             0, 0, 0, 0, 
                             owner, HWND_TOP, id, 0, 0);
     
@@ -466,31 +466,31 @@ MRESULT EXPENTRY FileDlgProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
         
         InsertHistory(WinWindowFromID(hwnd, DID_FILENAME_ED), HIST_PATH, MAXPATH);
         WinInvalidateRect(hwnd, 0, TRUE);
-        WinRestoreWindowPos((PUCHAR)"FTEPM",
-                            (PUCHAR)((dlg->fl & FDS_SAVEAS_DIALOG) ? "FileSaveDlg" : "FileOpenDlg"),
+        WinRestoreWindowPos("FTEPM",
+                            ((dlg->fl & FDS_SAVEAS_DIALOG) ? "FileSaveDlg" : "FileOpenDlg"),
                             hwnd);
         break;
     case WM_COMMAND:
         switch (SHORT1FROMMP(mp1)) {
         case DID_OK:
             WinShowWindow(hwnd, FALSE);
-            WinStoreWindowPos((PUCHAR)"FTEPM",
-                              (PUCHAR)((dlg->fl & FDS_SAVEAS_DIALOG) ? "FileSaveDlg" : "FileOpenDlg"),
+            WinStoreWindowPos("FTEPM",
+                              ((dlg->fl & FDS_SAVEAS_DIALOG) ? "FileSaveDlg" : "FileOpenDlg"),
                               hwnd);
             break;
             
         case DID_CANCEL:
             WinShowWindow(hwnd, FALSE);
-            WinStoreWindowPos((PUCHAR)"FTEPM",
-                              (PUCHAR)((dlg->fl & FDS_SAVEAS_DIALOG) ? "FileSaveDlg" : "FileOpenDlg"),
+            WinStoreWindowPos("FTEPM",
+                              ((dlg->fl & FDS_SAVEAS_DIALOG) ? "FileSaveDlg" : "FileOpenDlg"),
                               hwnd);
             break;
         }
         break;
     case WM_CLOSE:
         WinShowWindow(hwnd, FALSE);
-        WinStoreWindowPos((PUCHAR)"FTEPM",
-                          (PUCHAR)((dlg->fl & FDS_SAVEAS_DIALOG) ? "FileSaveDlg" : "FileOpenDlg"),
+        WinStoreWindowPos("FTEPM",
+                          ((dlg->fl & FDS_SAVEAS_DIALOG) ? "FileSaveDlg" : "FileOpenDlg"),
                           hwnd);
         break;
     }
@@ -534,7 +534,7 @@ typedef struct {
 
 static int DoChoice(HWND hwndFrame, ChoiceInfo *choice) {
     char msg[1024];
-    unsigned char Prompt[1024];
+    char Prompt[1024];
     char *fmt;
     char *p;
     int rc;
@@ -561,7 +561,7 @@ static int DoChoice(HWND hwndFrame, ChoiceInfo *choice) {
                                  WS_VISIBLE,
                                  &flFrame,
                                  0,
-                                 (PUCHAR)choice->Title,
+                                 choice->Title,
                                  0,
                                  0,
                                  0, 0);
@@ -582,7 +582,7 @@ static int DoChoice(HWND hwndFrame, ChoiceInfo *choice) {
         hwndButton[i] =
             WinCreateWindow(hwndDlg,
                             WC_BUTTON,
-                            (PUCHAR)button,
+                            button,
                             WS_VISIBLE | BS_PUSHBUTTON | BS_AUTOSIZE | ((i == 0) ? BS_DEFAULT | WS_TABSTOP | WS_GROUP: 0),
                             cxBorder + x, SPC + cyBorder, 0, 0,
                             hwndDlg, ((i == 0) ? HWND_TOP: hwndButton[i - 1]),
@@ -607,7 +607,7 @@ static int DoChoice(HWND hwndFrame, ChoiceInfo *choice) {
                                  100,
                                  NULL, NULL);
     
-    WinRestoreWindowPos((PUCHAR)"FTEPM", (PUCHAR)msgbox, hwndDlg);
+    WinRestoreWindowPos("FTEPM", msgbox, hwndDlg);
     
     xw = cxScreen / 2;
     if (x - SPC > xw)
@@ -623,7 +623,7 @@ static int DoChoice(HWND hwndFrame, ChoiceInfo *choice) {
         tr.yTop = cyScreen / 2;
         tr.yBottom = 0;
         
-        cd = WinDrawText(ps, -1, (PUCHAR)(Prompt + cp),
+        cd = WinDrawText(ps, -1, (Prompt + cp),
                          &tr,
                          0, 0,
                          DT_LEFT | DT_TOP | DT_WORDBREAK | DT_TEXTATTRS |
@@ -690,7 +690,7 @@ static int DoChoice(HWND hwndFrame, ChoiceInfo *choice) {
 int DLGPickChoice(GView *View, const char *ATitle, int NSel, va_list ap, int Flags) {
     ChoiceInfo choice;
 
-    choice.Title = ATitle;
+    choice.Title = (char *)ATitle;
     choice.NSel = NSel;
     choice.ap = ap;
     choice.Flags = Flags;
@@ -751,7 +751,7 @@ MRESULT EXPENTRY PromptDlgProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
 int DLGGetStr(GView *View, const char *Prompt, unsigned int BufLen, char *Str, int HistId, int Flags) {
     assert(BufLen > 0);
     PromptInfo.MaxLen = BufLen - 1;
-    PromptInfo.Title = Prompt;
+    PromptInfo.Title = (char *)Prompt;
     PromptInfo.Entry = Str;
     PromptInfo.HistId = HistId;
 
@@ -983,7 +983,13 @@ char *ConvertKey(int ch, int virt, int flags, int scan, TEvent &Event) {
     }
     if (keyCode == 0) {
         char c[2];
-        
+
+        if( ch == 0 && scan == 86 ){
+            // Fix for OS/2 bug with UK keyboard layout
+            // This is shift-'\' (to the left of Z), which returns 0
+            ch = '|';
+        }
+
         c[0] = char(ch);
         c[1] = 0;
         
@@ -2290,7 +2296,7 @@ int ConGetEvent(TEventMask EventMask, TEvent *Event, int WaitTime, int Delete, G
     return 0;
 }
 
-static void WorkThread(void *) {
+static void _LNK_CONV WorkThread(void *) {
     habW = WinInitialize(0);
     hmqW = WinCreateMsgQueue(hab, 0);
     
@@ -3861,16 +3867,16 @@ int GUI::multiFrame() {
 
 void DieError(int rc, const char *msg, ...) {
     va_list ap;
-    unsigned char str[1024];
+    char str[1024];
     
     va_start(ap, msg);
-    vsprintf((PCHAR)str, msg, ap);
+    vsprintf(str, msg, ap);
     va_end(ap);
     if (hab == 0)
         hab = WinInitialize(0);
     if (hmq == 0)
         hmq = WinCreateMsgQueue(hab, 0);
-    WinMessageBox(HWND_DESKTOP, HWND_DESKTOP, str, (PUCHAR)"FTE", 0, MB_OK | MB_ERROR);
+    WinMessageBox(HWND_DESKTOP, HWND_DESKTOP, str, "FTE", 0, MB_OK | MB_ERROR);
     WinDestroyMsgQueue(hmq);
     WinTerminate(hab);
     exit(rc);

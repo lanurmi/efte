@@ -17,7 +17,12 @@
 #define LOCALE_SORT
 
 #ifdef LOCALE_SORT
+
+#if defined(__IBMCPP__)
+static int _LNK_CONV CmpStr(const void *p1, const void *p2) {
+#else
 static int CmpStr(const void *p1, const void *p2) {
+#endif
     //printf("%s  %s  %d\n", *(char **)p1, *(char **)p2,
     //	   strcoll(*(char **)p1, *(char **)p2));
     return strcoll(*(char **)p1, *(char **)p2);

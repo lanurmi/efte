@@ -347,9 +347,13 @@ int EBuffer::SaveTo(char *AFileName) {
 #ifdef OS2 // to preserve EA's ?
     fp = fopen(AFileName, "r+b");
     if (fp != 0)
+#if defined(__IBMCPP__) || defined(__WATCOMC__)
+        if ( chsize  (fileno(fp), 0) != 0)
+#else
         if (ftruncate(fileno(fp), 0) != 0)
+#endif // __IBMCPP__ || __WATCOMC__
             goto erroropen;
-#endif
+#endif // OS2
     if (fp == 0)
         fp = fopen(AFileName, "wb");
     if (fp == 0) goto erroropen;
