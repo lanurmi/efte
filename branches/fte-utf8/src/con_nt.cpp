@@ -38,7 +38,6 @@
 #include <signal.h>
 
 #include <wincon.h>
-
 #include <stdio.h>
 #include "sysdep.h"
 #include "console.h"
@@ -693,12 +692,10 @@ int ConSetBox(const int X, const int Y, const int W, const int H, TCell Cell) /*
 
 int ConScroll(int Way, int X, int Y, int W, int H, TAttr Fill, int Count) /*FOLD00*/
 {
-    TCell           FillCell;
+    TCell           FillCell = {' ', Fill};
     SMALL_RECT      rect, clip;
     COORD           dest;
     CHAR_INFO       fillCharInfo;
-
-    MoveCh(&FillCell, ' ', Fill, 1);
 
     fillCharInfo.Char.AsciiChar = ' ';
     fillCharInfo.Attributes = FillCell.Attr;
@@ -832,16 +829,16 @@ int ConGrabEvents(TEventMask EventMask) { /*FOLD00*/
 }
 
 
-static PCell SavedScreen = 0;
+static PCell SavedScreen = NULL;
 static int SavedX, SavedY, SaveCursorPosX, SaveCursorPosY;
 
 int SaveScreen() { /*FOLD00*/
     if (SavedScreen)
-        free(SavedScreen);
+        delete [] SavedScreen;
 
     ConQuerySize(&SavedX, &SavedY);
 
-    SavedScreen = (PCell) malloc(SavedX * SavedY * sizeof(TCell));
+    SavedScreen = new TCell[SavedX * SavedY];
 
     if (SavedScreen)
         ConGetBox(0, 0, SavedX, SavedY, SavedScreen);
@@ -871,7 +868,7 @@ GUI::~GUI() { /*FOLD00*/
     RestoreScreen();
 
     if (SavedScreen)
-        free(SavedScreen);
+        delete [] SavedScreen;
 
     ::ConDone();
     gui = 0;
@@ -901,7 +898,7 @@ int GUI::ShowEntryScreen() { /*FOLD00*/
     return 1;
 }
 
-char ConGetDrawChar(int index) { /*FOLD00*/
+TChar ConGetDrawChar(int index) { /*FOLD00*/
     static const char *tab=NULL;
 
     if (!tab) {

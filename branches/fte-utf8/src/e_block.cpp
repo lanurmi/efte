@@ -770,7 +770,7 @@ int EBuffer::BlockReadFrom(const char *AFileName, int blockMode) {
 
 static EBuffer *SortBuffer;
 static int SortReverse;
-static int *SortRows = 0;
+static int *SortRows = NULL;
 static int SortMinRow;
 static int SortMaxRow;
 static int SortMinCol;
@@ -891,6 +891,7 @@ int EBuffer::BlockSort(int Reverse) {
             return 0;
 
     free(SortRows);
+    SortRows = NULL;
     return 1;
 }
 

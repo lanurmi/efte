@@ -178,7 +178,7 @@ void ExChoice::RepaintStatus() {
         }
         if (i == Cur)
             ConSetCursorPos(pos + 1, H - 1);
-        MoveChar(B, pos, W, ConGetDrawChar(DCH_V), hcChoice_Background, 1);
+        MoveTChar(B, pos, W, ConGetDrawChar(DCH_V), hcChoice_Background, 1);
         MoveCStr(B, pos + 1, W, SOpt[i], color1, color2, W);
         pos += CStrLen(SOpt[i]) + 1;
     }

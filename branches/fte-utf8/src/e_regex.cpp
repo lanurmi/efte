@@ -158,7 +158,7 @@ static RxNode *NewSet(const char ** const Regexp) {
                 RxNode *N = NewNode(s?RE_INSET:RE_NOTINSET);
                 N->fChar = (char *) malloc(sizeof(set));
                 N->fLen = sizeof(set);
-                if (N->fChar == 0) return 0;
+                if (N->fChar == 0) return 0; // TODO: free N ??
                 memcpy(N->fChar, (char *) set, sizeof(set));
                 return N;
             }
