@@ -39,7 +39,7 @@ void MoveCh(PCell B, char CCh, TAttr Attr, int Count) {
     }
 }
 
-void MoveChar(PCell B, int Pos, int Width, char CCh, TAttr Attr, int Count) {
+void MoveChar(PCell B, int Pos, int Width, char const CCh, TAttr Attr, int Count) {
     unsigned char *p = (unsigned char *) B;
     if (Pos < 0) {
         Count += Pos;
