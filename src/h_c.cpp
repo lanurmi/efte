@@ -88,7 +88,7 @@ int Hilit_C(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, h
                     State = hsC_CommentL;
                     Color = Colors[CLR_Comment];
                     goto hilit2;
-                } else if ((len >= 2) && (*p == '0') && (*(p+1) == 'x')) {
+                } else if ((len >= 2) && (*p == '0') && (toupper(*(p+1)) == 'X')) {
                     Color = Colors[CLR_HexNumber];
                     ColorNext();
                     ColorNext();
