@@ -89,7 +89,7 @@ int Indent_SIMPLE(EBuffer *B, int Line, int PosCursor);
       BPos = C - Pos; \
       if (B) \
         if (BPos >= 0 && BPos < Width) { \
-          B[BPos].Ch = *p; \
+          B[BPos].Ch = *((unsigned char*)p); /* TODO: remove cast in future */ \
           B[BPos].Attr = HILIT_CLRD(); \
         } \
       if (StateMap) StateMap[i] = (hsState)(State & 0xFF); \
@@ -145,7 +145,7 @@ int Indent_SIMPLE(EBuffer *B, int Line, int PosCursor);
     ChColor Color = CLR_Normal; \
     int i; \
     int len = Line->Count; \
-    char *p = Line->Chars; \
+    char *p = Line->Chars; /* TODO: change to TChar in future */ \
     int NC = 0, C = 0; \
     int TabSize = BFI(BF, BFI_TabSize); \
     int ExpandTabs = BFI(BF, BFI_ExpandTabs);
