@@ -158,7 +158,7 @@ int EBuffer::HilitWord() {
         return 0;
     s[len] = 0;
 
-    return (HilitFindWord(s)) ? HilitRemoveWord(s) :HilitAddWord(s);
+    return (HilitFindWord(s)) ? HilitRemoveWord(s) : HilitAddWord(s);
 }
 #endif
 
@@ -192,7 +192,7 @@ EColorize::~EColorize() {
 
 EColorize *FindColorizer(const char *AName) {
     EColorize *p = Colorizers;
-    
+
     while (p) {
         if (strcmp(AName, p->Name) == 0)
             return p;
@@ -244,7 +244,7 @@ void HState::InitState() {
 
 int HState::GetHilitWord(int len, char *str, ChColor &clr) {
     char *p;
-    
+
     if (len >= CK_MAXLEN || len < 1)
         return 0;
 

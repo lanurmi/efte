@@ -45,8 +45,8 @@ EBufferFlags DefaultBufferFlags = {
         0,                  // BackKillTab
         0,                  // DelKillTab
         1,                  // BackSpUnindent
-        1,                  // SpaceTabs
-        0,                  // IndentWTabs
+        0,                  // SpaceTabs
+        1,                  // IndentWTabs
         1,                  // Wrap.LeftMargin
         72,                 // Wrap.RightMargin
         1,                  // See Thru Sel
@@ -94,13 +94,13 @@ EMode *GetModeForName(const char *FileName) {
     while (m) {
         if (m->MatchNameRx)
             if (RxExec(m->MatchNameRx,
-                       FileName, strlen(FileName), FileName, 
+                       FileName, strlen(FileName), FileName,
                        &RM) == 1)
                 return m;
         if (m->fNext == 0) break;
         m = m->fNext;
     }
-    
+
     fd = open(FileName, O_RDONLY);
     if (fd != -1) {
         l = read(fd, buf, 80);
@@ -124,9 +124,9 @@ EMode *GetModeForName(const char *FileName) {
             }
         }
     }
-    
+
     if ((m = FindMode(DefaultModeName)) != 0) return m;
-    
+
     m = Modes;
     while (m && m->fNext) m = m->fNext;
     return m;
