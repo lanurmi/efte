@@ -12,25 +12,6 @@
 #   symbolic
 
 color_palette {
-    # map system colors to symbolic
-    
-    { 'black',                        '0 0' },
-    { 'darkBlue',                     '1 1' },
-    { 'darkGreen',                    '2 2' },
-    { 'darkCyan',                     '3 3' },
-    { 'darkRed',                      '4 4' },
-    { 'darkMagenta',                  '5 5' },
-    { 'brown',                        '6 6' },
-    { 'gray',                         '7 7' },
-    { 'darkGray',                     '8 8' },
-    { 'blue',                         '9 9' },
-    { 'green',                        'A A' },
-    { 'cyan',                         'B B' },
-    { 'red',                          'C C' },
-    { 'magenta',                      'D D' },
-    { 'yellow',                       'E E' },
-    { 'white',                        'F F' },
-        
     { 'ScrollBar_Arrows',             'black:gray' },
     { 'ScrollBar_Background',         'gray:black' },
     { 'ScrollBar_Slider',             'gray:black' },
