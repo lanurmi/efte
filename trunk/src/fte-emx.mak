@@ -10,8 +10,8 @@ MT        = -Zmt
 CC        = gcc
 LD        = gcc
 
-XTYPE      = # -Zomf
-XLTYPE     = #-Zsys -Zlinker /map -Zlinker /runfromvdm # -Zomf
+#XTYPE      =  -Zomf
+#XLTYPE     = -Zsys -Zlinker /map -Zlinker /runfromvdm # -Zomf
 #OEXT=obj
 OEXT=o
 
