@@ -45,7 +45,7 @@ mode PLAIN {
     DefFindReplaceOpt   = 'a';       # default find/replace options
     CursorThroughTabs   = 1;
     MultiLineHilit      = 0;
-    WordChars           = 'A-Za-z0-9_';
+    #WordChars           = 'A-Za-z0-9_';
     Abbreviations       = 1;
     PersistentBlocks    = 1;         # 1 = persistent blocks, 0 = transient
     BackSpKillBlock     = 0;         # to delete block if marked

@@ -22,7 +22,10 @@ XMBFLAG = -DUSE_XMB
 # System X11R6 is compiled with X_LOCALE
 #SYSTEM_X_LOCALE = -DX_LOCALE
 
-I18NOPTIONS = $(XMBFLAG) $(REMAPFLAG) $(SYSTEM_X_LOCALE)
+# Enable normal locale support
+USE_LOCALE = -DUSE_LOCALE
+
+I18NOPTIONS = $(XMBFLAG) $(REMAPFLAG) $(SYSTEM_X_LOCALE) $(USE_LOCALE)
 
 # Optionally, you can define:
 # -DDEFAULT_INTERNAL_CONFIG to use internal config by default
