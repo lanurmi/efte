@@ -156,18 +156,15 @@ private:
     ostream& OutputIndent(ostream& os);
 };
 
-template <class T>
-ostream& operator<<(FunctionLog& fl, T const& t)
-{ return fl.OutputLine() << t; }
-
-#define LOG functionLog__obj
+#define LOGOBJNAME functionLog__obj
+#define LOG LOGOBJNAME.OutputLine()
 #define ENDLINE endl
 
-#define STARTFUNC(func) FunctionLog LOG(globalLog, func)
-#define ENDFUNCRC(rc) do { LOG.RC() << (rc) << ENDLINE; return (rc); } while (0)
-#define ENDFUNCRC_SAFE(type,rc) do { type LOG__RC = (rc); LOG.RC() << LOG__RC << ENDLINE; return LOG__RC; } while (0)
-#define ENDFUNCAS(type,rc) do { LOG.RC() << (type)(rc) << ENDLINE; return (rc); } while (0)
-#define ENDFUNCAS_SAFE(logtype,rctype,rc) do { rctype LOG__RC = (rc); LOG.RC() << (logtype)LOG__RC << ENDLINE; return LOG__RC; } while (0)
+#define STARTFUNC(func) FunctionLog LOGOBJNAME(globalLog, func)
+#define ENDFUNCRC(rc) do { LOGOBJNAME.RC() << (rc) << ENDLINE; return (rc); } while (0)
+#define ENDFUNCRC_SAFE(type,rc) do { type LOG__RC = (rc); LOGOBJNAME.RC() << LOG__RC << ENDLINE; return LOG__RC; } while (0)
+#define ENDFUNCAS(type,rc) do { LOGOBJNAME.RC() << (type)(rc) << ENDLINE; return (rc); } while (0)
+#define ENDFUNCAS_SAFE(logtype,rctype,rc) do { rctype LOG__RC = (rc); LOGOBJNAME.RC() << (logtype)LOG__RC << ENDLINE; return LOG__RC; } while (0)
 #define BOOLYESNO(x) ((x) ? "YES" : "NO")
 
 #endif // __LOGGING_HPP

@@ -341,23 +341,33 @@ int IsState(hsState *Buf, hsState State, int Len) {
 
 int LookAt(EBuffer *B, int Row, unsigned int Pos, const char *What, hsState State, int NoWord) {
     STARTFUNC("LookAt{h_c.cpp}");
-    char *P;
-    unsigned int L;
+    char *pLine;
+    unsigned int uLineLength;
     //int StateLen;
     //hsState *StateMap;
     int Len = strlen(What);
 
-    if (Row < 0 || Row >= B->RCount) return 0;
-    P = B->RLine(Row)->Chars;
-    L = B->RLine(Row)->Count;
+    if (Row < 0 || Row >= B->RCount) {
+        LOG << "Row out of range: " << Row << " vs " << B->RCount << ENDLINE;
+        ENDFUNCRC(0);
+    }
+    pLine       = B->RLine(Row)->Chars;
+    uLineLength = B->RLine(Row)->Count;
     Pos = B->CharOffset(B->RLine(Row), Pos);
-    if (Pos + strlen(What) > L) return 0;
-    if (NoWord && L > Pos + Len && isalnum(P[Pos + Len]))
-        return 0;
-    if (memcmp(P + Pos, What, Len) == 0)
-        return 1;
+    if (Pos + strlen(What) > uLineLength) return 0;
+    if (NoWord && uLineLength > Pos + Len && isalnum(pLine[Pos + Len]))
+    {
+        ENDFUNCRC(0);
+    }
+    LOG << "Check against [" << What << ']' << ENDLINE;
+    if (memcmp(pLine + Pos, What, Len) == 0)
+    {
+        ENDFUNCRC(1);
+    }
     else
-        return 0;
+    {
+        ENDFUNCRC(0);
+    }
 }
 
 #ifdef CONFIG_INDENT_C

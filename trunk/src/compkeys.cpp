@@ -327,7 +327,7 @@ int main(int argc, char* argv[])
         int             err = 0;
         unsigned        linecnt = 0;
         unsigned        strcnt = 0;
-        int             opt;
+        //int             opt;
 
         finname[0] = '\0';
         foutname[0] = '\0';
