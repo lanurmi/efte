@@ -105,6 +105,10 @@ void RoutineView::UpdateList() {
     Count = Buffer->rlst.Count;
 }
 
+int RoutineView::GetContext() {
+    return CONTEXT_ROUTINES;
+}
+
 void RoutineView::GetName(char *AName, int MaxLen) {
     strncpy(AName, "Routines", MaxLen);
 }

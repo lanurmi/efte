@@ -513,6 +513,12 @@ int EGUI::ExitEditor(EView *View) {
 #endif
 
     while (ActiveModel) {
+        if (View->Model->GetContext() == CONTEXT_ROUTINES)  // Never delete Routine models directly
+        {
+            ActiveModel = ActiveModel->Next;
+            View->SelectModel(ActiveModel);
+        }
+
         View->Model->DeleteRelated();  // delete related views first
 
         while (View->Model->Next != View->Model &&

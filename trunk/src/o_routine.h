@@ -25,6 +25,7 @@ public:
     virtual int Activate(int No);
     virtual void RescanList();
     void UpdateList();
+    virtual int GetContext();
     virtual void GetName(char *AName, int MaxLen);
     virtual void GetInfo(char *AInfo, int MaxLen);
     virtual void GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen);
