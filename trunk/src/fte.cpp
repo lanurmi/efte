@@ -79,7 +79,7 @@ static char *findPathExt(char *filename) {
 }
 #endif
 
-#if defined(NT) && defined(MSVC)
+#if defined(NT) && defined(MSVC) && !defined(__WATCOMC__)
 char *getProgramName(char *name) {
     return _pgmptr;
 }
@@ -277,7 +277,7 @@ int main(int argc, char **argv) {
    _CrtSetReportFile( _CRT_ASSERT, _CRTDBG_FILE_STDERR );
 #endif //_DEBUG && MSVC && MSVCDEBUG
 
-#if defined(__EMX__) || (defined(NT) && defined(MSVC))
+#if defined(__EMX__) || (defined(NT) && defined(MSVC) && !defined(__WATCOMC__))
     argv[0] = getProgramName(argv[0]);
 #endif
 
