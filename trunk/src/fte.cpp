@@ -6,6 +6,7 @@
  *    License or the Artistic License, as specified in the README file.
  *
  */
+#define NEED_LOG_H
 #include "fte.h"
 
 #if defined(UNIX)

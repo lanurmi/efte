@@ -14,7 +14,9 @@
 #include "feature.h"
 #include "sysdep.h"
 
+#ifdef NEED_LOG_H
 #include "log.h"
+#endif // NEED_LOG_H
 #include "console.h"
 #include "gui.h"
 #include "c_desktop.h"
