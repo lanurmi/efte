@@ -307,7 +307,7 @@ int EView::SwitchTo(ExState &State) {
     if (State.GetIntParam(this, &No) == 0) {
         char str[10] = "";
 
-        if (MView->Win->GetStr("Obj.Number", sizeof(str), (char *)&str, 0) == 0) return 0;
+        if (MView->Win->GetStr("Obj.Number", sizeof(str), str, 0) == 0) return 0;
         No = atoi(str);
     }
     M = Model;
