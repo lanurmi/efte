@@ -89,17 +89,8 @@
 typedef unsigned char TAttr;
 typedef TAttr *PAttr;
 
-#if defined(USE_UNICODE_INTERNALS)
-typedef unsigned long TChar;
-#else
-typedef unsigned char TChar;
-#endif
+// note: TChar definitions moved to sysdep.h
 
-//#ifdef NTCONSOLE
-//typedef unsigned long TCell;
-//#else
-//typedef unsigned short TCell;
-//#endif
 typedef struct {
     TAttr Attr;
     TChar Ch;

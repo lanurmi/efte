@@ -11,4 +11,17 @@ size_t strlcpy(char *dst, const char *src, size_t size);
 size_t strlcat(char *dst, const char *src, size_t size);
 #endif // !HAVE_STRLCAT
 
+// TChar helpers
+size_t tstrlcpy(TChar *dst, const TChar *src, size_t size);
+size_t tstrlcat(TChar *dst, const TChar *src, size_t size);
+size_t tstrlen(const TChar *src);
+TChar *tstrdup(const TChar *src);
+
+#if defined(USE_UNICODE_INTERNALS)
+size_t tstrlcpy(TChar *dst, const char *src, size_t size);
+size_t tstrlcat(TChar *dst, const char *src, size_t size);
+size_t tstrlen(const char *src);
+TChar *tstrdup(const char *src);
+#endif
+
 #endif
