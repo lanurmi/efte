@@ -18,7 +18,7 @@ colorize PYTHON {
         { 'Function',      'Lang_Function' },
         { 'Label',         'Lang_Label' },
         { 'Keyword',       'Editor_Keywords'},
-        { 'Command',       'Lang_Assembler' }, # assembler
+        { 'Command',       'Lang_Command' }, # assembler
     };
 
     keyword "Editor_Keywords" { # reserved words
