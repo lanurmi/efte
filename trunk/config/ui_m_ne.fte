@@ -65,6 +65,8 @@ menu Navigate {
     item "Go to &\\\tCtrl+\\"          { DirGoRoot }
 #    item "&/ Goto Dir\t/"    { DirGoto }
     item "&\\ Goto Dir\t\\"    { DirGoto }
+    item "&Delete File\tCtrl+D"       { DeleteFile }
+    item "&Delete File\tCtrl+D"       { DeleteFile }
     item;
     item '&A:\\' { DirGoto 'A:\\' }
     item '&B:\\' { DirGoto 'B:\\' }
@@ -333,6 +335,7 @@ menu DirectoryLocal {
     item "Go &> level\tCtrl+PgDn"     { DirGoDown }
     item "Go to &\\\tCtrl+\\"         { DirGoRoot }
     item "&/ Goto Dir\t/"             { DirGoto }
+    item "&Delete File\tCtrl+D"       { DeleteFile }
 }
 
 menu BufferListLocal {

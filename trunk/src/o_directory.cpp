@@ -213,6 +213,11 @@ int EDirectory::ExecCommand(int Command, ExState &State) {
         Msg(S_INFO, "");
         FmChDir(SSLASH);
         return ErOK;
+
+    case ExDeleteFile:
+        SearchLen = 0;
+        Msg(S_INFO, "");
+        return FmRmDir(Files[Row]->Name());
     }
     return EList::ExecCommand(Command, State);
 }
@@ -338,6 +343,42 @@ int EDirectory::FmChDir(const char *Name) {
     }
     UpdateTitle();
     return 1;
+}
+
+int EDirectory::FmRmDir(char const* Name)
+{
+    char FilePath[256];
+    strcpy(FilePath, Path);
+    Slash(FilePath, 1);
+    strcat(FilePath, Name);
+
+    int choice =
+        View->MView->Win->Choice(GPC_CONFIRM,
+                                 "Remove File",
+                                 2, "O&K", "&Cancel",
+                                 "Remove %s?", Name);
+
+    if (choice == 0)
+    {
+        if (unlink(FilePath) == 0)
+        {
+            // put the cursor to the previous row
+            --Row;
+
+            // There has to be a more efficient way of doing this ...
+            return RescanDir();
+        }
+        else
+        {
+            Msg(S_INFO, "Failed to remove %s", Name);
+            return 0;
+        }
+    }
+    else
+    {
+        Msg(S_INFO, "Cancelled");
+        return 0;
+    }
 }
 
 int EDirectory::FmLoad(char *Name, EView *XView) {

@@ -486,6 +486,7 @@ eventmap DIRECTORY: MLIST {
     key [C+\\]          { DirGoRoot }
     key [/]             { DirGoto }
     key [\\]            { DirGoto }
+    key [C+D]           { DeleteFile }
     
     key     [A+D]       { MainMenu 'D' }
     key     [A+N]       { MainMenu 'N' }

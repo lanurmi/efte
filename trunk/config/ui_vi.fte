@@ -101,7 +101,7 @@ eventmap MLIST: MODEL {
 
     key     [C+R]       { Rescan }
 }
-# Directory Browser  #fold00
+# Directory Browser  #FOLD00
 menu Directory { #fold01
     item    "&Reloadrl+R"         { Rescan }
     item    "&Close\tCtrl+F10"        { FileClose }
@@ -115,12 +115,13 @@ menu Directory { #fold01
     item    "E&xit\tAlt+X"            { ExitEditor }
 }                              
 
-menu Navigate { #fold01
+menu Navigate { #FOLD01
     item "Go &< level\tCtrl+PgUp"     { DirGoUp }
     item "Go &> level\tCtrl+PgDn"   { DirGoDown }
     item "Go to &\\\tCtrl+\\"          { DirGoRoot }
 #    item "&/ Goto Dir\t/"    { DirGoto }
     item "&\\ Goto Dir\t\\"    { DirGoto }
+    item "&Delete File\tCtrl+D"       { DeleteFile }
     item;
     item '&A:\\' { DirGoto 'A:\\' }
     item '&B:\\' { DirGoto 'B:\\' }
@@ -140,7 +141,7 @@ menu DirMain { #fold01
     submenu "&Window",  Window;
 }
 
-eventmap DIRECTORY: MLIST { #fold01
+eventmap DIRECTORY: MLIST { #FOLD01
     MainMenu = 'DirMain';
     
     key [C+G-PgUp]      { DirGoUp }
@@ -149,6 +150,7 @@ eventmap DIRECTORY: MLIST { #fold01
     key [/]             { DirGoto }
     key [\\]            { DirGoto }
     key [Esc]           { FileClose 0 }
+    key [C+D]           { DeleteFile }
     
     key     [A+D]       { MainMenu 'D' }
     key     [A+N]       { MainMenu 'N' }

@@ -46,6 +46,7 @@ public:
     int isDir(int No);
     int FmChDir(const char *Name);
     int FmLoad(char *Name, EView *View);
+    int FmRmDir(char const* Name);
     int ChangeDir(ExState &State);
     int RescanDir();
 };
