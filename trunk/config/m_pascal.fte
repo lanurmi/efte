@@ -57,6 +57,7 @@ colorize PASCAL {
     h_trans { 3, '<', '"', 'String' }
     h_trans { 4, '<', '\'', 'String' }
     h_trans { 6, '<', '0x', 'HexNumber' }
+    h_trans { 6, '<', '$', 'HexNumber' }
     h_trans { 7, '<s', '0-9', 'Number' }
     h_trans { 0, 'S', '_a-zA-Z0-9', 'Punctuation' }
 
