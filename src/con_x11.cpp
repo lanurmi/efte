@@ -378,9 +378,9 @@ static int SetupXWindow(int argc, char **argv)
     HCLXlibInit(); /* HCL - Initialize the X DLL */
 #endif
 
+#ifdef USE_XTINIT
     XtSetLanguageProc(NULL, NULL, NULL);
 
-#ifdef USE_XTINIT
     XtAppContext  	app_context;
     XtToolkitInitialize();
     app_context = XtCreateApplicationContext();
