@@ -8,6 +8,7 @@ OPTIMIZE  = /O2 /MT
 
 CC        = cl
 LD        = cl
+RC	  = rc
 
 OEXT=obj
 
@@ -17,10 +18,13 @@ CCFLAGS   = $(OPTIMIZE) -DNT -DNTCONSOLE -DMSVC $(INCDIR) /DWIN32 /D_CONSOLE /GX
 	$(APPOPTIONS) $(DEBUG)\
 	/nologo /W3 /J # /YX
 LDFLAGS   = $(OPTIMIZE) $(LIBDIR) /nologo
+RCFLAGS   =
 
 .SUFFIXES: .cpp .$(OEXT)
 
 !include objs.inc
+
+NTRES     = ftewin32.res
 
 .cpp.$(OEXT):
 	$(CC) $(CCFLAGS) -c $<
@@ -44,6 +48,7 @@ clean:
 	-del fte.his
 	-del fte.pdb
 	-del vc60.pdb
+	-del ftewin32.res
 	-del *.obj
 
 cfte.exe: $(CFTE_OBJS) cfte.def
@@ -63,8 +68,11 @@ bin2c.exe: bin2c.cpp
 
 c_config.$(OEXT): defcfg.h
 
-fte.exe: $(OBJS) $(NTOBJS)
-	$(LD) $(LDFLAGS) /Fefte.exe $(OBJS) $(NTOBJS) user32.lib
+ftewin32.res: ftewin32.rc
+	$(RC) $(RCFLAGS) ftewin32.rc
+
+fte.exe: $(OBJS) $(NTOBJS) $(NTRES)
+	$(LD) $(LDFLAGS) /Fefte.exe $(OBJS) $(NTOBJS) user32.lib $(NTRES)
 
 distro: fte.exe fte.cnf cfte.exe
 	zip ../fte-nt.zip fte.exe fte.cnf cfte.exe
