@@ -2041,11 +2041,13 @@ int ConGetEvent(TEventMask EventMask, TEvent *Event, int WaitTime, int Delete, G
                     case SB_LINEUP:
                         Event->What = evCommand;
                         Event->Msg.Command = cmVScrollUp;
+                        Event->Msg.Param1 = 1;
                         break;
                         
                     case SB_LINEDOWN:
                         Event->What = evCommand;
                         Event->Msg.Command = cmVScrollDown;
+                        Event->Msg.Param1 = 1;
                         break;
                         
                     case SB_PAGEUP:
@@ -2091,11 +2093,13 @@ int ConGetEvent(TEventMask EventMask, TEvent *Event, int WaitTime, int Delete, G
                     case SB_LINEUP:
                         Event->What = evCommand;
                         Event->Msg.Command = cmHScrollLeft;
+                        Event->Msg.Param1 = 1;
                         break;
                         
                     case SB_LINEDOWN:
                         Event->What = evCommand;
                         Event->Msg.Command = cmHScrollRight;
+                        Event->Msg.Param1 = 1;
                         break;
                         
                     case SB_PAGEUP:

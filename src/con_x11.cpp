@@ -999,15 +999,20 @@ void ConvertClickToEvent(int type, int xx, int yy, int button, int state, TEvent
             if (type == ButtonPress) {
                 Event->What = evCommand;
                 if (state & ShiftMask) {
+                    Event->Msg.Param1 = 1;
+
                     if (button == Button4)
-                        Event->Msg.Command = cmHScrollPgLt; // fix core to use count
+                        Event->Msg.Command = cmVScrollUp; // fix core to use count
                     else
-                        Event->Msg.Command = cmHScrollPgRt;
-                } else {
+                        Event->Msg.Command = cmVScrollDown;
+                }
+                else
+                {
+                    Event->Msg.Param1 = 3;
                     if (button == Button4)
-                        Event->Msg.Command = cmVScrollPgUp;
+                        Event->Msg.Command = cmVScrollUp;
                     else
-                        Event->Msg.Command = cmVScrollPgDn;
+                        Event->Msg.Command = cmVScrollDown;
                 }
             }
             return ;
