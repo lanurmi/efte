@@ -85,7 +85,7 @@ EMode *GetModeForName(const char *FileName) {
     //    char ext[10];
     //    char *p;
     int l, i;
-    EMode *m = Modes;
+    EMode *m;
     RxMatchRes RM;
     char buf[81];
     int fd;
