@@ -121,10 +121,6 @@ protected:
     bool OpenLogFile(); // actually open it
 };
 
-/*template <class T>
-ostream& operator<<(Log& log, T const& t)
-{ return log() << t; }*/
-
 extern GlobalLog globalLog;
 
 /**
@@ -166,5 +162,66 @@ private:
 #define ENDFUNCAS(type,rc) do { LOGOBJNAME.RC() << (type)(rc) << ENDLINE; return (rc); } while (0)
 #define ENDFUNCAS_SAFE(logtype,rctype,rc) do { rctype LOG__RC = (rc); LOGOBJNAME.RC() << (logtype)LOG__RC << ENDLINE; return LOG__RC; } while (0)
 #define BOOLYESNO(x) ((x) ? "YES" : "NO")
+
+/********************************************************************/
+
+/* Utility ostream functions.
+
+These are functions that only have anything to do with logging because
+logging is the only place we use IO streams.  They're here to make tracing
+easier to capture more information.
+
+**********************************************************************
+FUNCTION
+    BinChar(char)
+
+CLASS
+    IO Manipulator
+
+SAMPLE
+    LOG << "this char is: " << BinChar(CharP) << ENDLINE;
+
+DESCRIPTION
+    BinChar will insert the character followed by the hex value in
+    brackets.  If the character is non-printable, it will display as a
+    dot.
+**********************************************************************
+FUNCTION
+    LOGBINARYDATA(char*, int len)
+
+CLASS
+    Macro
+
+SAMPLE
+    LOG << "The value of some_binary_data is:" << ENDLINE
+    LOGBINARYDATA(some_binary_data, int len);
+
+DESCRIPTION
+    This macro will log some structure or array in basically a
+    memory-dump style: 8 characters, followed by 8 hex values.  If
+    any character is non-printable, it will display as a dot.
+**********************************************************************
+
+*/
+#define DECLARE_OSTREAM_FUNC1(type1) \
+    class ostream_func1_##type1 { \
+    private: \
+        ostream& (*osfunc)(ostream&, type1 const&); \
+        type1 const& o1; \
+    public: \
+        ostream_func1_##type1(ostream& (*osfunc_)(ostream&, type1 const&), type1 const& o1_) : osfunc(osfunc_), o1(o1_) {} \
+        ostream& operator()(ostream& os) const { return osfunc(os, o1); } \
+    }; \
+    inline ostream& operator <<(ostream& os, ostream_func1_##type1 const& ofunc) \
+    { return ofunc(os); }
+
+DECLARE_OSTREAM_FUNC1(char);
+
+ostream& Log__osBinChar(ostream&, char const&);
+inline ostream_func1_char BinChar(char c)
+{ return ostream_func1_char(Log__osBinChar, c); }
+
+void Log__BinaryData(FunctionLog&, void* bin_data, size_t len);
+#define LOGBINARYDATA(bin_data,len) Log__BinaryData(LOGOBJNAME,bin_data,len)
 
 #endif // __LOGGING_HPP
