@@ -315,7 +315,6 @@ int EBuffer::LoadFrom(char *AFileName) {
                         int i, col, startBook;
                         char numbuf[5], buf[256];
 
-                        if (memcmp(LL[l]->Chars + pos, "BOOK", 4) != 0) continue;
                         startBook = pos; pos += 4;
                         while (pos + len_end + 6 + 6 <= LL[l]->Count) {
                             // Read column
