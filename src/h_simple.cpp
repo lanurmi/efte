@@ -11,7 +11,7 @@
 
 #ifdef CONFIG_HILIT_SIMPLE
 
-int Hilit_SIMPLE(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, hlState &State, hsState *StateMap, int *ECol) {
+int Hilit_SIMPLE(EBuffer *BF, int LN, PCell B, int Pos, int Width, ELine *Line, hlState &State, hsState *StateMap, int *ECol) {
     EColorize *col = BF->Mode->fColorize;
     HMachine *hm = col->hm;
     HILIT_VARS(col->Colors, Line);
@@ -23,6 +23,10 @@ int Hilit_SIMPLE(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Li
     int matchLen;
     int nextState;
     char *match;
+    int lastPos = -1;
+    hlState entryState;
+    int iterCount;
+    bool reportError = true;
 
     if (hm == 0 || hm->stateCount == 0)
         return 0;
@@ -58,6 +62,33 @@ int Hilit_SIMPLE(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Li
     }*/
 
     for (i = 0; i < Line->Count; ) {
+        // Check for infinite loops
+        if (i == lastPos) {
+            if (++iterCount > hm->stateCount) {
+                // Passed the same position more times than number of states -> must be looping
+                if (reportError) {
+                    // Report only once per line since other errors may be false alarms caused by hiliter restart
+                    reportError = false;
+                    BF->Msg(S_INFO, "Hiliter looping at line %d, column %d, entry state %d", LN + 1, i + 1, entryState);
+                } else {
+                    // Already reported - advance by one character
+                    Color = hm->state[entryState].color;
+                    IF_TAB()
+                    else
+                        ColorNext();
+                }
+                // Restart with state 0
+                State = 0;
+                st = hm->state;
+                iterCount = 1;
+                goto next_state;
+            }
+        } else {
+            lastPos = i;
+            entryState = State;
+            iterCount = 1;
+        }
+
         if (quotech) {
             quotech = 0;
         } else {
