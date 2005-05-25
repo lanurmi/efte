@@ -61,6 +61,7 @@ EBufferFlags DefaultBufferFlags = {
         0,                  // DeleteKillBlock
         1,                  // PersistentBlocks
         0,                  // InsertKillBlock
+        0,                  // EventMap
         0,                  // UndoMoves
 #ifdef UNIX
         0,                  // DetectLineSep
