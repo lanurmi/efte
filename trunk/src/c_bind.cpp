@@ -304,7 +304,7 @@ void EKeyMap::AddKey(EKey *aKey) {
 }
 
 
-int MatchKey(TKeyCode aKey, KeySel aSel) {
+static int MatchKey(TKeyCode aKey, KeySel aSel) {
     long flags = aKey & ~ 0xFFFF;
     long key = aKey & 0xFFFF;
 

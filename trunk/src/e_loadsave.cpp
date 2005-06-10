@@ -34,7 +34,7 @@ int EBuffer::Save() {
 
 char FileBuffer[RWBUFSIZE];
 
-int EBuffer::LoadFrom(char *AFileName) {
+int EBuffer::LoadFrom(const char *AFileName) {
     int fd;
     int len = 0, partLen;
     unsigned long numChars = 0, Lines = 0;

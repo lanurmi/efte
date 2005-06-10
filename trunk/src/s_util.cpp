@@ -15,7 +15,7 @@
 extern RxNode *CompletionFilter;
 
 // should use DosCopy under OS/2...
-int copyfile(char *f1, char *f2) { // from F1 to F2
+static int copyfile(char *f1, char *f2) { // from F1 to F2
     void *buffer;
     int fd1, fd2;
     int rd;

@@ -19,7 +19,7 @@ int TagsLoad(int id);
 int TagLoad(char *FileName);
 void TagClear();
 int TagGoto(EView *V, char *Tag);
-int TagDefined(char *Tag);
+int TagDefined(const char *Tag);
 int TagFind(EBuffer *B, EView *V, char *Tag);
 int TagComplete(char **Words, int *WordsPos, int WordsMax, char *Tag);
 int TagNext(EView *V);

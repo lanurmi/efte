@@ -454,7 +454,7 @@ int TagFind(EBuffer *B, EView *View, char *Tag) { /*FOLD00*/
     return 0; // tag not found
 }
 
-int TagDefined(char *Tag) {
+int TagDefined(const char *Tag) {
     int L = 0, R = CTags, M, cmp;
 
     if (TagFilesLoaded == 0) // !!! always?
