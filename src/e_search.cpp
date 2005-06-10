@@ -34,7 +34,7 @@ int ParseSearchOption(int replace, char c, unsigned long &opt) {
     return 1;
 }
 
-int UnquoteString(char *str) {
+static int UnquoteString(char *str) {
     char *s, *d;
 
     s = str;

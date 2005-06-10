@@ -9,7 +9,7 @@
 
 #include "fte.h"
 
-ELine::ELine(int ACount, char *AChars) {
+ELine::ELine(int ACount, const char *AChars) {
     Chars = NULL; 
     Count = ACount; 
     Allocate(Count); 

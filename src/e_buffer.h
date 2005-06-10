@@ -81,7 +81,7 @@ public:
     hlState StateE;
 #endif
     
-    ELine(int ACount, char *AChars);
+    ELine(int ACount, const char *AChars);
     ELine(char *AChars, int ACount);
     ~ELine();
     int Allocate(unsigned int Bytes);
@@ -343,7 +343,7 @@ public:
     int UpdateMark(EPoint &M, int Type, int Line, int Col, int Lines, int Cols);
     void UpdateVis(EPoint &M, int Row, int Delta);
     void UpdateVisible(int Row, int Delta);
-    int LoadFrom(char *AFileName);
+    int LoadFrom(const char *AFileName);
     int SaveTo(char *AFileName);
     
     int IsBlockStart();
