@@ -1,8 +1,7 @@
 /* XPM */
-static char * fte64x64_xpm[] = {
-"64 64 10 1",
-"      c None",
-".     c #000000",
+static const char * fte64x64_xpm[] = {
+"64 64 9 1",
+".     c None",
 "+     c #400000",
 "@     c #800000",
 "#     c #FF0000",
