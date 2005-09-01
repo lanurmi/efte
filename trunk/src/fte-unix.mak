@@ -33,6 +33,10 @@ I18NOPTIONS = $(XMBFLAG) $(REMAPFLAG) $(SYSTEM_X_LOCALE) $(USE_LOCALE)
 # -DFTE_NO_LOGGING to completely disable trace logging
 APPOPTIONS = -DDEFAULT_INTERNAL_CONFIG
 
+# Supply icons in X, requires Xpm library
+USE_XICON = -DUSE_XICON
+XPMLIB = -lXpm
+
 #gcc/g++
 COPTIONS = -Wall -Wpointer-arith -Wconversion -Wwrite-strings \
            -Winline
@@ -140,7 +144,7 @@ OPTIMIZE = -g # -O -g
 #OPTIMIZE = -O2
 #OPTIMIZE = -O2 -s
 
-CCFLAGS  = $(OPTIMIZE) $(I18NOPTIONS) $(APPOPTIONS) $(COPTIONS) -DUNIX $(UOS) $(INCDIR) $(XINCDIR) $(QINCDIR) $(MINCDIR) $(SINCDIR)
+CCFLAGS  = $(OPTIMIZE) $(I18NOPTIONS) $(APPOPTIONS) $(USE_XICON) $(COPTIONS) -DUNIX $(UOS) $(INCDIR) $(XINCDIR) $(QINCDIR) $(MINCDIR) $(SINCDIR)
 LDFLAGS  = $(OPTIMIZE) $(LIBDIR) $(XLIBDIR) $(QLIBDIR) $(MLIBDIR)
 
 OEXT     = o
@@ -151,7 +155,7 @@ include objs.inc
 SRCS = $(OBJS:.o=.cpp)
 
 # Need -lXt below if USE_XTINIT is defined
-XLIBS    = -lX11 $(SOCKETLIB)
+XLIBS    = -lX11 $(SOCKETLIB) $(XPMLIB)
 #-lmpatrol -lelf
 VLIBS    = -lgpm -lncurses
 # -ltermcap outdated by ncurses

@@ -31,6 +31,7 @@
 #include <strings.h>
 #include <sys/select.h>
 #endif
+#include <X11/Xproto.h>
 #include <X11/Xatom.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
@@ -56,6 +57,16 @@ i18n_context_t* i18n_ctx = NULL;
 
 #ifdef WINHCLX
 #include <X11/XlibXtra.h>    /* HCL - HCLXlibInit */
+#endif
+
+#ifdef USE_XICON
+#include <X11/xpm.h>
+
+#define ICON_COUNT 4
+#include "icons/fte16x16.xpm"
+#include "icons/fte32x32.xpm"
+#include "icons/fte48x48.xpm"
+#include "icons/fte64x64.xpm"
 #endif
 
 #ifdef CAST_FD_SET_INT
@@ -453,6 +464,89 @@ static int SetupXWindow(int argc, char **argv)
 
     if (InitXColors() != 0) return -1;
     if (InitXGCs() != 0) return -1;
+
+#ifdef USE_XICON
+    // Set icon using WMHints
+    Pixmap icon_pixmap, icon_shape;
+    if (XpmCreatePixmapFromData(display, win, (char **)fte16x16_xpm, &icon_pixmap, &icon_shape, NULL) == XpmSuccess) {
+        XWMHints wm_hints;
+        wm_hints.flags = IconPixmapHint | IconMaskHint;
+        wm_hints.icon_pixmap = icon_pixmap;
+        wm_hints.icon_mask = icon_shape;
+        XSetWMHints(display, win, &wm_hints);
+    }
+
+    // Set icons using _NET_WM_ICON property
+    const char **xpmData[ICON_COUNT] = { fte16x16_xpm, ftepm, fte48x48_xpm, fte64x64_xpm };
+    XpmImage xpmImage[ICON_COUNT];
+    CARD32 *xpmColors[ICON_COUNT] = { NULL, NULL, NULL, NULL };
+    int i, iconBufferSize = 0;
+    unsigned int j;
+
+    // Load icons as XpmImage instances and create their colormaps
+    for (i = 0; i < ICON_COUNT; i++) {
+        XpmImage &xpm = xpmImage[i];
+        CARD32 *&colors = xpmColors[i];
+        if (XpmCreateXpmImageFromData((char **)xpmData[i], &xpm, NULL) != XpmSuccess) break;
+        iconBufferSize += 2 + xpm.width * xpm.height;
+        colors = (CARD32 *)malloc(xpm.ncolors * sizeof(CARD32));
+        if (colors == NULL) {
+            // Need to clear here is cleanup at the end checks for colors[i] to see if XPM was loaded
+            XpmFreeXpmImage(&xpm);
+            break;
+        }
+        // Decode all colors
+        for (j = 0; j < xpm.ncolors; j++) {
+            XColor xc;
+            char *c = xpm.colorTable[j].c_color;
+            if (c == NULL) c = xpm.colorTable[j].g_color;
+            else if (c == NULL) c = xpm.colorTable[j].g4_color;
+            else if (c == NULL) c = xpm.colorTable[j].m_color;
+            else if (c == NULL) c = xpm.colorTable[j].symbolic;
+            if (c == NULL) {
+                // Unknown color
+                colors[j] = 0;
+            } else if (strcmp(c, "None") == 0) {
+                // No color - see thru
+                colors[j] = 0;
+            } else if (XParseColor(display, colormap, c, &xc)) {
+                // Color parsed successfully
+                ((char *)(colors + j))[0] = xc.blue >> 8;
+                ((char *)(colors + j))[1] = xc.green >> 8;
+                ((char *)(colors + j))[2] = xc.red >> 8;
+                ((char *)(colors + j))[3] = 0xff;
+            } else {
+                // Color parsing failed
+                colors[j] = 0;
+            }
+        }
+    }
+    if (i == ICON_COUNT) {
+        // Everything OK, can create property
+        CARD32 *iconBuffer = (CARD32 *)malloc(iconBufferSize * sizeof(CARD32));
+        if (iconBuffer) {
+            CARD32 *b = iconBuffer;
+            for (i = 0; i < ICON_COUNT; i++) {
+                XpmImage &xpm = xpmImage[i];
+                CARD32 *&colors = xpmColors[i];
+                *b++ = xpm.width; *b++ = xpm.height;
+                for (j = 0; j < xpm.width * xpm.height; j++) {
+                    *b++ = colors[xpm.data[j]];
+                }
+            }
+            XChangeProperty(display, win, XInternAtom(display, "_NET_WM_ICON", False),
+                            XA_CARDINAL, 32, PropModeReplace, (unsigned char *)iconBuffer, iconBufferSize);
+            free(iconBuffer);
+        }
+    }
+    // Cleanup
+    for (i = 0; i < ICON_COUNT; i++) {
+        if (xpmColors[i]) {
+            free(xpmColors[i]);
+            XpmFreeXpmImage(xpmImage + i);
+        }
+    }
+#endif
 
     XResizeWindow(display, win, ScreenCols * FontCX, ScreenRows * FontCY);
     XMapRaised(display, win);
