@@ -441,6 +441,7 @@ MODE_FLG(LoadDesktopMode),
 MODE_FLG(IgnoreBufferList),
 MODE_FLG(ReassignModelIds),
 MODE_FLG(RecheckReadOnly),
+MODE_FLG(CursorBlink),
 { 0, 0 },
 };
 

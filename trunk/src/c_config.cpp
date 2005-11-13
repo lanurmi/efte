@@ -57,6 +57,7 @@ int ScreenSizeX = -1, ScreenSizeY = -1;
 int ScrollBarWidth = 1;
 int CursorInsSize[2] = { 90, 100 };
 int CursorOverSize[2] = { 0, 100 };
+bool CursorBlink = 0; // default is "no" (same as before)
 int OpenAfterClose = 1;
 int SelectPathname = 0;
 char DefaultModeName[32] = "";
@@ -263,6 +264,7 @@ static int SetGlobalNumber(int what, int number) {
     case FLAG_CursorInsertEnd:   CursorInsSize[1] = number; break;
     case FLAG_CursorOverStart:   CursorOverSize[0] = number; break;
     case FLAG_CursorOverEnd:     CursorOverSize[1] = number; break;
+    case FLAG_CursorBlink:       CursorBlink = number; break;
     case FLAG_SysClipboard:      SystemClipboard = number; break;
     case FLAG_OpenAfterClose:    OpenAfterClose = number; break;
     case FLAG_ShowVScroll:       ShowVScroll = number; break;

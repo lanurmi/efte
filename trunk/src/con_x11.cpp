@@ -632,7 +632,8 @@ void DrawCursor(int Show) {
         unsigned char *p = CursorXYPos(CursorX, CursorY);
 
         // Check if cursor is on or off due to flashing
-        Show &= (CursorLastTime % (CursorFlashInterval * 2)) > CursorFlashInterval;
+        if (CursorBlink)
+            Show &= (CursorLastTime % (CursorFlashInterval * 2)) > CursorFlashInterval;
 
         if (!useXMB)
             XDrawImageString(display, win, GCs[p[1]],
@@ -1393,6 +1394,9 @@ void ProcessXEvents(TEvent *Event) {
 
 static void FlashCursor ()
 {
+    if (!CursorBlink)
+        return;
+
     struct timeval tv;
     if (gettimeofday (&tv, NULL))
         return;
@@ -1431,7 +1435,12 @@ int ConGetEvent(TEventMask EventMask, TEvent *Event, int WaitTime, int Delete) {
     }
 
     // We can't sleep for too much since we have to flash the cursor
-    if ((WaitTime == -1) || (WaitTime > (int)CursorFlashInterval))
+    if (
+        CursorBlink &&
+        (
+         (WaitTime == -1) || (WaitTime > (int)CursorFlashInterval)
+        )
+       )
         WaitTime = CursorFlashInterval;
 
     Event->What = evNone;
