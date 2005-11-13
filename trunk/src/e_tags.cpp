@@ -580,12 +580,12 @@ int TagPop(EView *View) { /*FOLD00*/
         if (T->CurrentTag)
         {
             CurrentTag = strdup(T->CurrentTag);
-            TagPosition = T->TagPos;
+        }
+        TagPosition = T->TagPos;
 
-            if (GotoFilePos(View, T->FileName, T->Line, T->Col) == 0) {
-                free(T);
-                return 0;
-            }
+        if (GotoFilePos(View, T->FileName, T->Line, T->Col) == 0) {
+            free(T);
+            return 0;
         }
         free(T);
         return 1;
