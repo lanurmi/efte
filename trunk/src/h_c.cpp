@@ -363,12 +363,12 @@ int LookAt(EBuffer *B, int Row, unsigned int Pos, const char *What, hsState Stat
         (!CaseInsensitive && memcmp(pLine + Pos, What, Len) == 0)
        )
     {
-        ENDFUNCRC(1);
+        int StateLen;
+        hsState *StateMap;
+        if (B->GetMap(Row, &StateLen, &StateMap) == 0) ENDFUNCRC(0);
+        if( IsState(StateMap + Pos, State, strlen(What) ) ) ENDFUNCRC(1);
     }
-    else
-    {
         ENDFUNCRC(0);
-    }
 }
 
 #ifdef CONFIG_INDENT_C

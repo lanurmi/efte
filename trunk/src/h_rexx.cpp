@@ -16,6 +16,7 @@
 #define hsREXX_String1   3
 #define hsREXX_String2   4
 #define hsREXX_Keyword   5
+#define hsREXX_CommentL  6
 
 int Hilit_REXX(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, hlState &State, hsState *StateMap, int *ECol) {
     int j = 0;
@@ -91,12 +92,18 @@ int Hilit_REXX(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
                     C += j;
                     State = hsREXX_Normal;
                     continue;
-                } else if ((len >= 2) && (*p == '/') && (*(p+1) == '*')) {
+                } else if ((len >= 2) && ( (*p == '/') && (*(p+1) == '*') )) {
                     State = hsREXX_Comment;
                     Color = CLR_Comment;
                     //hilit2:
                     ColorNext();
                 hilit:
+                    ColorNext();
+                    continue;
+                } else if ((len >= 2) && (*p == '-') && (p[1] == '-')) {
+                    State = hsREXX_CommentL;
+                    Color = CLR_Comment;
+                    ColorNext();
                     ColorNext();
                     continue;
                 } else if (isdigit(*p)) {
@@ -118,12 +125,16 @@ int Hilit_REXX(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
                 }
                 Color = CLR_Normal;
                 goto hilit;
+            case hsREXX_CommentL:
+                Color = CLR_Comment;
+                goto hilit;
             }
         }
     }
     switch (State) {
     case hsREXX_String1:
     case hsREXX_String2:
+    case hsREXX_CommentL:
         State = hsREXX_Normal;
         break;
     }
@@ -133,8 +144,29 @@ int Hilit_REXX(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
 
 #ifdef CONFIG_INDENT_REXX
 
+int REXX_Base_Indent = 4;
+int REXX_Do_Offset = 0;
+
+#define REXX_BASE_INDENT       REXX_Base_Indent
+#define REXX_DO_OFFSET         REXX_Do_Offset
+
+
 static int Match(int Len, int Pos, hsState *StateMap, const char *Text, const char *String, hsState State) {
     int L = strlen(String);
+
+    if (Pos + L <= Len)
+        if (StateMap == NULL || IsState(StateMap + Pos, State, L))
+            if (strnicmp(String, Text + Pos, L) == 0)
+                return 1;
+    return 0;
+}
+
+static int Match2(int Len, int Pos, hsState *StateMap, const char *Text, const char *String, hsState State) {
+    int L = strlen(String);
+
+    int i;
+    for( i = 0; i < Pos; i++ )
+        if( Text[i] != ' ' ) return 0;
 
     if (Pos + L <= Len)
         if (StateMap == NULL || IsState(StateMap + Pos, State, L))
@@ -153,7 +185,11 @@ static int SearchMatch(int Count, EBuffer *B, int Row, int Ctx) {
 
     Count = (Ctx == 2) ? 0 : Count;
 
-
+    // Check all previous rows of the buffer for a matching "starting" keyword.
+    // Count gives the "depth" we are in, must reach 0.
+    // Ctx == 1 means we are looking for a mate for "end"
+    // Ctx == 2 means we are looking for a mate for "else"
+    // We try to find the indent of the line that "started" this "block" and return it.
     while (Row >= 0) {
         P = B->RLine(Row)->Chars;
         L = B->RLine(Row)->Count;
@@ -162,17 +198,30 @@ static int SearchMatch(int Count, EBuffer *B, int Row, int Ctx) {
         Pos = L - 1;
         if (L > 0) while (Pos >= 0) {
             if (isalpha(P[Pos])) {
+                if( Ctx == 1 || Ctx == 3 ) {
                 if (Match(L, Pos, StateMap, P, "do", hsREXX_Keyword) ||
+                        Match(L, Pos, StateMap, P, "loop", hsREXX_Keyword) ||
                     Match(L, Pos, StateMap, P, "select", hsREXX_Keyword ))
                 {
                     Count++;
-                    if (Count == 0 && Ctx != 2) {
+                        if (Count == 0) {
                         if (StateMap)
                             free(StateMap);
+                            if( Ctx == 3 )
                         return B->LineIndented(Row);
+                            else
+                                return B->LineIndented(Row) + REXX_BASE_INDENT;
                     }
                 } else if (Match(L, Pos, StateMap, P, "end", hsREXX_Keyword)) {
                     Count--;
+                }
+                } else if( Ctx == 4 ) {
+                    if (Match2(L, Pos, StateMap, P, "class", hsREXX_Keyword) )
+                    {
+                        if (StateMap)
+                            free(StateMap);
+                        return B->LineIndented(Row) + REXX_BASE_INDENT;
+                    }
                 }
                 if (Ctx == 2 && Count == 0) {
                     if (Match(L, Pos, StateMap, P, "if", hsREXX_Keyword)) {
@@ -242,7 +291,7 @@ static int SearchBackContext(EBuffer *B, int Row, char &ChFind) {
                 }
             }
             if (isalpha(P[Pos]) && (Pos == 0 || !isalpha(P[Pos - 1]))) {
-                if (Match(L, Pos, StateMap, P, "do", hsREXX_Keyword)) {
+                if (Match(L, Pos, StateMap, P, "do", hsREXX_Keyword) || Match(L, Pos, StateMap, P, "loop", hsREXX_Keyword)) {
                     Count++;
                     ChFind = 'd';
                     //} else if (Match(L, Pos, StateMap, P, "procedure", hsREXX_Keyword)) {
@@ -251,6 +300,18 @@ static int SearchBackContext(EBuffer *B, int Row, char &ChFind) {
                 } else if (Match(L, Pos, StateMap, P, "select", hsREXX_Keyword)) {
                     Count++;
                     ChFind = 's';
+                } else if (Match(L, Pos, StateMap, P, "method", hsREXX_Keyword)) {
+                    Count++;
+                    ChFind = 'm';
+                } else if (Match(L, Pos, StateMap, P, "properties", hsREXX_Keyword)) {
+                    Count++;
+                    ChFind = 'r';
+                } else if (Match2(L, Pos, StateMap, P, "class", hsREXX_Keyword)) {
+                    Count++;
+                    ChFind = 'c';
+                    if (StateMap)
+                        free(StateMap);
+                    return B->LineIndented(Row) + REXX_BASE_INDENT;
                 } else if (Match(L, Pos, StateMap, P, "otherwise", hsREXX_Keyword) && Count == 0) {
                     //Count++;
                     ChFind = 'o';
@@ -290,19 +351,29 @@ static int SearchBackContext(EBuffer *B, int Row, char &ChFind) {
     return -1;
 }
 
-int REXX_Base_Indent = 4;
-int REXX_Do_Offset = 0;
-
-#define REXX_BASE_INDENT       REXX_Base_Indent
-#define REXX_DO_OFFSET         REXX_Do_Offset
-
 static int IndentComment(EBuffer *B, int Row, int /*StateLen*/, hsState * /*StateMap*/) {
     int I = 0;
+    char ChFind;
 
     if (Row > 0) {
-        I = B->LineIndented(Row - 1);
+        I = SearchBackContext(B, Row - 1, ChFind);
+        if (I != -1)
+            switch (ChFind) {
+            case 's':
+            case 'd':
+            case 'c':
+            case 't':
+            case 'e':
+            case 'o':
+                //        case 'r':
+                //        case 'm':
+                I += REXX_BASE_INDENT;
+            }
+        else
+            I = 0;
         if (B->RLine(Row - 1)->StateE == hsREXX_Comment)
-            if (LookAt(B, Row - 1, I, "/*", hsREXX_Comment, 0)) I+= 1;
+            //if (LookAt(B, Row - 1, I, "/*", hsREXX_Comment, 0))
+                I += 1;
     }
     return I;
 }
@@ -317,6 +388,10 @@ static int IndentNormal(EBuffer *B, int Line, int /*StateLen*/, hsState * /*Stat
         return SearchMatch(-1, B, Line - 1, 1);
     } else if (LookAtNoCase(B, Line, 0, "else", hsREXX_Keyword)) {
         return SearchMatch(-1, B, Line - 1, 2);
+    } else if (LookAtNoCase(B, Line, 0, "catch", hsREXX_Keyword)) {
+        return SearchMatch(-1, B, Line - 1, 3);
+    } else if (LookAtNoCase(B, Line, 0, "method", hsREXX_Keyword) || LookAtNoCase(B, Line, 0, "properties", hsREXX_Keyword)) {
+        return SearchMatch(-1, B, Line - 1, 4);
     } else {
         char ChFind;
 
@@ -331,6 +406,9 @@ static int IndentNormal(EBuffer *B, int Line, int /*StateLen*/, hsState * /*Stat
                 return I + REXX_BASE_INDENT;
         case 's':
         case 'd':
+        case 'c':
+        case 'r':
+        case 'm':
             return I + REXX_BASE_INDENT;
         case 't':
         case 'e':
