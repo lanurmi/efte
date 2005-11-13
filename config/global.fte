@@ -3,6 +3,7 @@ object GLOBAL {
 
     CursorInsertStart   = 84; CursorInsertEnd = 100;  # % size in ins mode
     CursorOverStart     = 0;  CursorOverEnd   = 100;  # % size in over mode
+    CursorBlink         = 0; # set to 1 to have a blinking cursor.
 
     SysClipboard        = 1;   # use system (PM) clipboard if available
     SelectPathname      = 1;   # select pathname when asking for file

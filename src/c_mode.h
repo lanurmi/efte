@@ -205,6 +205,7 @@ extern EBufferFlags DefaultBufferFlags;
 #define FLAG_RecheckReadOnly    60
 #define FLAG_XShellCommand      61
 #define FLAG_RGBColor		62
+#define FLAG_CursorBlink        63
 
 #define EM_MENUS 2
 #define EM_MainMenu 0
