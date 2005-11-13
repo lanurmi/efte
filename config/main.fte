@@ -83,6 +83,10 @@ include 'pal_gray.fte';
 include 'pal_blue.fte';
 %endif
 
+%if(COLORS_BLUEZ_BG)
+include 'pal_bluez.fte'; # alternate blue from andyz @ sf.net
+%endif
+
 object GLOBAL {
 # fonts for GUI version
 

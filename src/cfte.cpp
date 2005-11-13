@@ -455,6 +455,7 @@ MODE_FLG(GUICharacters),
 MODE_FLG(CvsCommand),
 MODE_FLG(CvsLogMode),
 MODE_FLG(XShellCommand),
+MODE_FLG(RGBColor),
 { 0, 0 },
 };
 

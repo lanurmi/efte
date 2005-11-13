@@ -208,4 +208,10 @@ char ConGetDrawChar(int index);
 
 extern char WindowFont[64];
 
+typedef struct {
+  unsigned char r,g,b;
+} TRGBColor;
+extern TRGBColor RGBColor[16];
+extern bool RGBColorValid[16];
+
 #endif

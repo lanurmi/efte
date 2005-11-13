@@ -71,6 +71,10 @@ int KeepHistory = 0;
 int LoadDesktopOnEntry = 0;
 int SaveDesktopOnExit = 0;
 char WindowFont[64] = "";
+// Custom RGB colors (if console driver supports them)
+TRGBColor RGBColor[16];
+// true if corresponding triplet in RGBColor is valid
+bool RGBColorValid [16];
 int KeepMessages = 0;
 int ScrollBorderX = 0;
 int ScrollBorderY = 0;
@@ -290,6 +294,28 @@ static int SetGlobalNumber(int what, int number) {
     ENDFUNCRC(0);
 }
 
+static void SetRGBColor(const char *string) {
+    int idx,r,g,b;
+    if (sscanf (string, "%x:%x,%x,%x", &idx, &r, &g, &b) != 4) {
+        fprintf(stderr, "Invalid RGB Definition: %s\n", string);
+        return;
+    }
+    if (idx < 0 || idx > 15) {
+        fprintf(stderr, "Invalid RGB index: (0-f only) (%s)\n", string);
+        return;
+    }
+    if (r < 0 || r > 255 ||
+        g < 0 || g > 255 ||
+        b < 0 || b > 255) {
+        fprintf(stderr, "Invalid RGB palette values (00-ff only): %s\n", string);
+        return;
+    }
+    RGBColorValid[idx] = true;
+    RGBColor[idx].r = r;
+    RGBColor[idx].g = g;
+    RGBColor[idx].b = b;
+}
+
 static int SetGlobalString(long what, const char *string) {
     STARTFUNC("SetGlobalString");
     LOG << "What: " << what << " String: " << string << ENDLINE;
@@ -304,6 +330,7 @@ static int SetGlobalString(long what, const char *string) {
     case FLAG_GUICharacters: AppendGUICharacters (string); break;
     case FLAG_CvsCommand: strlcpy(CvsCommand, string, sizeof(CvsCommand)); break;
     case FLAG_CvsLogMode: strlcpy(CvsLogMode, string, sizeof(CvsLogMode)); break;
+    case FLAG_RGBColor: SetRGBColor(string); break;
     case FLAG_XShellCommand: strlcpy(XShellCommand, string, sizeof(XShellCommand)); break;
     default:
         //printf("Unknown global string: %ld\n", what);

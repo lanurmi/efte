@@ -105,6 +105,10 @@ static unsigned int ScreenRows = 40;
 static unsigned int CursorX = 0;
 static unsigned int CursorY = 0;
 static int CursorVisible = 1;
+static int CursorStart, CursorEnd;
+static unsigned long CursorLastTime;
+// Cursor flashing interval, in msecs
+static unsigned CursorFlashInterval = 300;
 static unsigned char *ScreenBuffer = NULL;
 static int Refresh = 0;
 
@@ -205,9 +209,17 @@ static struct {
 
 static void SetColor(int i) {
     assert (0 <= i && i <= 15);
+
+    if (RGBColorValid [i]) {
+        Colors[i].blue  = (RGBColor[i].b << 8) | RGBColor[i].b;
+        Colors[i].green = (RGBColor[i].g << 8) | RGBColor[i].g;
+        Colors[i].red   = (RGBColor[i].r << 8) | RGBColor[i].r;
+    }
+    else {
     Colors[i].blue  = (dcolors[i].b << 8) | dcolors[i].b;
     Colors[i].green = (dcolors[i].g << 8) | dcolors[i].g;
     Colors[i].red   = (dcolors[i].r << 8) | dcolors[i].r;
+    }
     Colors[i].flags = DoRed | DoGreen | DoBlue;
 }
 
@@ -617,24 +629,29 @@ int ConGetTitle(char *Title, int MaxLen, char *STitle, int SMaxLen) {
 
 void DrawCursor(int Show) {
     if (CursorVisible) {
-        unsigned char *p = CursorXYPos(CursorX, CursorY), attr;
-        attr = p[1];
-        /*if (Show) attr = ((((attr << 4) & 0xF0)) | (attr >> 4)) ^ 0x77;*/
-        if (Show)
-            attr = (attr ^ 0x77);
+        unsigned char *p = CursorXYPos(CursorX, CursorY);
+
+        // Check if cursor is on or off due to flashing
+        Show &= (CursorLastTime % (CursorFlashInterval * 2)) > CursorFlashInterval;
 
         if (!useXMB)
-            XDrawImageString(display, win, GCs[((unsigned)attr) & 0xFF],
+            XDrawImageString(display, win, GCs[p[1]],
                              CursorX * FontCX,
                              fontStruct->max_bounds.ascent + CursorY * FontCY,
                              (char *)p, 1);
 #ifdef USE_XMB
         else
-            XmbDrawImageString(display, win, fontSet,
-                               GCs[((unsigned)attr) & 0xFF],
+            XmbDrawImageString(display, win, fontSet, GCs[p[1]],
                                CursorX * FontCX, FontCYD + CursorY * FontCY,
                                (char *)p, 1);
 #endif
+        if (Show) {
+	    int cs = (CursorStart * FontCY + FontCY / 2) / 100;
+	    int ce = (CursorEnd   * FontCY + FontCY / 2) / 100;
+	    XFillRectangle (display, win, GCs[p[1]],
+	                    CursorX * FontCX, CursorY * FontCY + cs,
+			    FontCX, ce - cs);
+	}
     }
 }
 
@@ -851,7 +868,10 @@ int ConHideCursor(void) {
 int ConCursorVisible(void) {
     return 1;
 }
-int ConSetCursorSize(int /*Start*/, int /*End*/) {
+int ConSetCursorSize(int Start, int End) {
+    CursorStart = Start;
+    CursorEnd = End;
+    DrawCursor(CursorVisible);
     return 1;
 }
 
@@ -970,6 +990,8 @@ static struct {
     { XK_KP_Enter,       kbEnter | kfGray },
     { XK_Insert,         kbIns | kfGray },
     { XK_Delete,         kbDel | kfGray },
+    { XK_KP_Insert,      kbIns },
+    { XK_KP_Delete,      kbDel },
     { XK_KP_Add,         '+' | kfGray },
     { XK_KP_Subtract,    '-' | kfGray },
     { XK_KP_Multiply,    '*' | kfGray },
@@ -1369,6 +1391,18 @@ void ProcessXEvents(TEvent *Event) {
     }
 }
 
+static void FlashCursor ()
+{
+    struct timeval tv;
+    if (gettimeofday (&tv, NULL))
+        return;
+
+    unsigned long OldTime = CursorLastTime;
+    CursorLastTime = tv.tv_sec * 1000 + tv.tv_usec / 1000;
+    if (OldTime / CursorFlashInterval != CursorLastTime / CursorFlashInterval)
+	DrawCursor (CursorVisible);
+}
+
 static TEvent Pending = { evNone };
 
 int ConGetEvent(TEventMask EventMask, TEvent *Event, int WaitTime, int Delete) {
@@ -1376,6 +1410,8 @@ int ConGetEvent(TEventMask EventMask, TEvent *Event, int WaitTime, int Delete) {
     struct timeval timeout;
     int rc;
     static TEvent Queued = { evNone };
+
+    FlashCursor ();
 
     Event->What = evNone;
     if (Queued.What != evNone) {
@@ -1394,10 +1430,15 @@ int ConGetEvent(TEventMask EventMask, TEvent *Event, int WaitTime, int Delete) {
             Pending.What = evNone;
     }
 
+    // We can't sleep for too much since we have to flash the cursor
+    if ((WaitTime == -1) || (WaitTime > (int)CursorFlashInterval))
+        WaitTime = CursorFlashInterval;
+
     Event->What = evNone;
     while (Event->What == evNone) {
         Event->What = evNone;
         while (XPending(display) > 0) {
+	    FlashCursor ();
             ProcessXEvents(Event);
             if (Event->What != evNone) {
                 while ((Event->What == evMouseMove) && (Queued.What == evNone)) {
