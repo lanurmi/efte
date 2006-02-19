@@ -56,6 +56,10 @@
 #include "o_cvsbase.h"
 #include "o_cvs.h"
 #include "o_cvsdiff.h"
+#include "e_svnlog.h"
+#include "o_svnbase.h"
+#include "o_svn.h"
+#include "o_svndiff.h"
 #include "c_commands.h"
 #include "c_history.h"
 

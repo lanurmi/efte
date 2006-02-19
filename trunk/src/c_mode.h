@@ -27,6 +27,9 @@
 #define CONTEXT_CVSBASE  12
 #define CONTEXT_CVS      13
 #define CONTEXT_CVSDIFF  14
+#define CONTEXT_SVNBASE  15
+#define CONTEXT_SVN      16
+#define CONTEXT_SVNDIFF  17
 
 //typedef unsigned char ChColor;
 typedef int ChColor;
@@ -206,6 +209,8 @@ extern EBufferFlags DefaultBufferFlags;
 #define FLAG_XShellCommand      61
 #define FLAG_RGBColor		62
 #define FLAG_CursorBlink        63
+#define FLAG_SvnCommand         64
+#define FLAG_SvnLogMode         65
 
 #define EM_MENUS 2
 #define EM_MainMenu 0

@@ -93,6 +93,15 @@ eventmap CVS: MLIST {
     LocalMenu = "MCvs";
 }
 
+eventmap SVNDIFF: MLIST {
+    key     [C+G-Ins]   { BlockCopy }
+    key         [Esc]   { FileClose }
+}
+
+eventmap SVN: MLIST {
+    LocalMenu = "MSvn";
+}
+
 eventmap DIRECTORY: MLIST {
     MainMenu = 'DirectoryMain';
     LocalMenu = 'DirectoryLocal';
@@ -106,6 +115,8 @@ eventmap DIRECTORY: MLIST {
     key [Esc]           { FileClose 0 }
     
     key     [A+N]       { MainMenu 'N' }
+    key     [C+O_C+V]   { ShowMenu 'MCvs' }
+    key     [C+O_C+N]   { ShowMenu 'MSvn' }
 }
 
 # Buffer List
@@ -119,6 +130,8 @@ eventmap BUFFERS: MLIST {
     key  [G-Del] { BufListFileClose }
     key  [C+S]   { BufListFileSave }
     key  [F2]    { BufListFileSave }
+    key     [C+O_C+V]   { ShowMenu 'MCvs' }
+    key     [C+O_C+N]   { ShowMenu 'MSvn' }
 }
 
 # Routine List
@@ -295,6 +308,7 @@ eventmap PLAIN: MODEL {
     key     [C+O_C+U]   { ToggleUndo }
     key     [C+O_C+W]   { ToggleWordWrap }
     key     [C+O_C+V]   { ShowMenu 'MCvs' }
+    key     [C+O_C+N]   { ShowMenu 'MSvn' }
     key     [C+O_.]     { ToggleShowMarkers }
     key     [C+O_[]     { SetLeftMargin }     # set margin to current cursor pos
     key     [C+O_\]]    { SetRightMargin }

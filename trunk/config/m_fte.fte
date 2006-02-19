@@ -18,7 +18,7 @@ colorize FTE {
         'h_state', 'h_trans', 'h_words', 'h_wtype', 'submenucond',
         'color_palette',
     };
-    
+
     keyword 'Editor_Keywords2' { # macro commands
         'Activate', 'ActivateInOtherWindow', 'ASCIITable', 'BackSpace',
         'BlockBegin', 'BlockCaseDown', 'BlockCaseToggle', 'BlockCaseUp',
@@ -38,7 +38,7 @@ colorize FTE {
         'ChildClose', 'ClearMessages', 'ClipClear', 'CloseActivate', 'Compile',
         'CompileNextError', 'CompilePrevError', 'CompleteWord',
         'ConfigRecompile', 'Delete', 'DeleteFile', 'DesktopSave', 'DesktopSaveAs',
-        'DirOpen', 'DirGoUp', 'DirGoDown', 'DirGoRoot', 'DirGoto',        
+        'DirOpen', 'DirGoUp', 'DirGoDown', 'DirGoRoot', 'DirGoto',
         'ExitEditor', 'Fail', 'FileClose', 'FileCloseAll', 'FileLast',
         'FileNext', 'FileOpen', 'FileOpenInMode', 'FilePrev', 'FilePrint',
         'FileReload', 'FileSave', 'FileSaveAll', 'FileSaveAs', 'FileTrim',
@@ -47,8 +47,8 @@ colorize FTE {
         'FoldCreate', 'FoldCreateAtRoutines', 'FoldCreateByRegexp', 'FoldDemote',
         'FoldDestroy', 'FoldDestroyAll', 'FoldOpen', 'FoldOpenAll',
         'FoldOpenNested', 'FoldPromote', 'FoldToggleOpenClose', 'FrameClose',
-        'FrameNew', 'FrameNext', 'FramePrev', 'GotoBookmark', 'GotoGlobalBookmark', 
-        'HilitMatchBracket', 'HilitWord', 'IncrementalSearch', 'IndentFunction', 
+        'FrameNew', 'FrameNext', 'FramePrev', 'GotoBookmark', 'GotoGlobalBookmark',
+        'HilitMatchBracket', 'HilitWord', 'IncrementalSearch', 'IndentFunction',
         'InsertChar', 'InsertDate',
         'InsertSpace', 'InsertSpacesToTab', 'InsertString', 'InsertTab',
         'InsertUid', 'InsPrevLineChar', 'InsPrevLineToEol', 'KillBlock',
@@ -57,7 +57,7 @@ colorize FTE {
         'KillWordPrev', 'LineAdd', 'LineCaseDown', 'LineCaseToggle',
         'LineCaseUp', 'LineCenter', 'LineDuplicate', 'LineIndent',
         'LineInsert', 'LineJoin', 'LineNew', 'LineSplit', 'LineTrans',
-        'LineTrim', 'ListRoutines', 'LocalMenu', 'MainMenu', 'MatchBracket', 
+        'LineTrim', 'ListRoutines', 'LocalMenu', 'MainMenu', 'MatchBracket',
         'MoveBeginLinePageFile', 'MoveBeginOrNonWhite', 'MoveBlockEnd',
         'MoveBlockStart', 'MoveDown', 'MoveEndLinePageFile', 'MoveFileEnd',
         'MoveFileStart', 'MoveFirstNonWhite', 'MoveFoldNext', 'MoveFoldPrev',
@@ -75,7 +75,7 @@ colorize FTE {
         'PopGlobalBookmark', 'PushGlobalBookmark', 'Redo', 'RemoveBookmark',
         'RemoveGlobalBookmark', 'Rescan', 'RunCompiler', 'RunProgram',
         'SavePos', 'ScrollDown', 'ScrollLeft', 'ScrollRight', 'ScrollUp',
-        'SearchWordPrev', 'SearchWordNext', 
+        'SearchWordPrev', 'SearchWordNext',
         'SelfInsert', 'SetCIndentStyle', 'SetLeftMargin', 'SetPrintDevice',
         'SetRightMargin', 'ShowEntryScreen', 'ShowHelp', 'ShowHelpWord',
         'ShowKey', 'ShowMenu', 'ShowPosition', 'ShowVersion', 'SwitchTo',
@@ -86,6 +86,8 @@ colorize FTE {
         'ToggleMatchCase', 'ToggleReadOnly', 'ToggleShowMarkers',
         'ToggleShowTabs', 'ToggleSpaceTabs', 'ToggleSysClipboard', 'ToggleTrim',
         'ToggleUndo', 'ToggleWordWrap', 'TypeChar', 'Undo', 'ViewBuffers',
+        'RunCvs', 'RunCvsCommit', 'Cvs', 'CvsDiff', 'ViewCvs', 'ViewCvsDiff', 'ViewCvsLog', 'ClearCvsMessages',
+        'RunSvn', 'RunSvnCommit', 'Svn', 'SvnDiff', 'ViewSvn', 'ViewSvnDiff', 'ViewSvnLog', 'ClearSvnMessages',
         'ViewMessages', 'ViewModeMap', 'WinClose', 'WinHSplit', 'WinNext',
         'WinPrev', 'WinRefresh', 'WinResize', 'WinZoom', 'WrapPara'
     };
@@ -97,11 +99,13 @@ colorize FTE {
         'C_FirstLevelIndent', 'C_FirstLevelWidth', 'C_Indent', 'C_ParenDelta',
         'Colorizer', 'CommentEnd', 'CommentStart', 'CompileCommand',
         'CompileRx', 'CompletionFilter', 'CursorInsertEnd', 'CursorInsertStart',
-        'CursorOverEnd', 'CursorOverStart', 'CursorThroughTabs', 'CvsCommand', 'CvsIgnoreRx',
+        'CursorOverEnd', 'CursorOverStart', 'CursorThroughTabs',
+        'CvsCommand', 'CvsIgnoreRx',
+        'SvnCommand', 'SvnIgnoreRx',
         'DefaultModeName', 'DefFindOpt', 'DefFindReplaceOpt', 'DeleteKillBlock',
         'DeleteKillTab', 'DetectLineSep', 'ExpandTabs', 'FileNameRx',
         'FirstLineRx', 'ForceNewLine', 'FunctionUsesContinuation', 'HelpCommand', 'HilitOn', 'HilitTags',
-        'IgnoreBufferList', 'IndentMode', 'IndentWithTabs', 'Insert', 'InsertKillBlock', 
+        'IgnoreBufferList', 'IndentMode', 'IndentWithTabs', 'Insert', 'InsertKillBlock',
         'KeepBackups', 'KeepHistory', 'KeepMessages', 'LeftMargin', 'LineChar',
         'LoadDesktopOnEntry', 'LoadMargin', 'MatchCase', 'MultiLineHilit',
         'OpenAfterClose', 'PersistentBlocks', 'PMDisableAccel', 'PrintDevice',
@@ -123,7 +127,7 @@ mode FTE: PLAIN {
     IndentMode          = 'C';
     MultiLineHilit      = 1;
     AutoHilitParen      = 1;
-    
+
     SaveFolds           = 2;      # save fold info at end of line
     CommentStart        = ' #';
     CommentEnd          = '';

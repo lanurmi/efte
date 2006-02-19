@@ -387,6 +387,23 @@ menu MCvs {
     item "Cl&ear CVS messages" { ClearCvsMessages }
 }
 
+menu MSvn {
+    item "SVN C&heck"  { RunSvn "-n update" }
+    item "SVN &Update" { RunSvn "update -d" }
+    item "SVN &Diff"   { SvnDiff "" }
+    item "SVN &Commit" { RunSvnCommit "" }
+    item "SVN &Add"    { RunSvn "add" }
+    item "SVN &Remove" { RunSvn "remove" }
+    item "SVN S&tatus" { RunSvn "status -v" }
+    item "SV&N"        { Svn }
+    item;
+    item "&View SVN"      { ViewSvn }
+    item "View SVN Di&ff" { ViewSvnDiff }
+    item "View SVN &log"  { ViewSvnLog }
+    item;
+    item "Cl&ear SVN messages" { ClearSvnMessages }
+}
+
 menu Tools {
     item "&Compile\tF9" { FileSaveAll; Compile "make" }
     item "&Grep" { Compile "grep -n " }
@@ -401,6 +418,7 @@ menu Tools {
     item "&ASCII Table...\tCtrl+Shift+A" { ASCIITable }
     item;
     submenu "C&VS\tC+O_C+V", MCvs;
+    submenu "SVN\tC+O_C+N", MSvn;
     item;
     submenu "Customi&ze", Options;
 }
@@ -481,6 +499,7 @@ eventmap PLAIN: MODEL { #FOLD02
 #---- The WINDOW menu
 #---- The HELP menu
     key     [C+O_C+V]   { ShowMenu 'MCvs' }
+    key     [C+O_C+N]   { ShowMenu 'MSvn' }
 #-------------------------------------------------------------------
     
     key   [A+S-F2]      { FileSave; FileClose }

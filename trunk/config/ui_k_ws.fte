@@ -90,6 +90,15 @@ eventmap CVS: MLIST {
     LocalMenu = "MCvs";
 }
 
+eventmap SVNDIFF: MLIST {
+    key     [C+G-Ins]   { BlockCopy }
+    key         [Esc]   { FileClose }
+}
+
+eventmap SVN: MLIST {
+    LocalMenu = "MSvn";
+}
+
 eventmap DIRECTORY: MLIST {
     MainMenu = 'DirectoryMain';
     LocalMenu = 'DirectoryLocal';

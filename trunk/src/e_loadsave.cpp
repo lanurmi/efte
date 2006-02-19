@@ -577,6 +577,10 @@ int EBuffer::SaveTo(char *AFileName) {
             // No backups for CVS logs
             || this == CvsLogView
 #endif
+#ifdef CONFIG_OBJ_SVN
+            // No backups for SVN logs
+            || this == SvnLogView
+#endif
            ) {
             unlink(ABackupName);
         }

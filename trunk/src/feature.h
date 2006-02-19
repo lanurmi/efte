@@ -54,6 +54,7 @@
 #define CONFIG_OBJ_BUFFERS
 #define CONFIG_OBJ_MESSAGES
 #define CONFIG_OBJ_CVS
+#define CONFIG_OBJ_SVN
 #endif
 
 #define CONFIG_SYNTAX_HILIT

@@ -353,7 +353,20 @@ TAB(RunCvsDiff),
 TAB(ViewCvsDiff),
 TAB(CvsCommit),
 TAB(RunCvsCommit),
-TAB(ViewCvsLog)
+TAB(ViewCvsLog),
+
+TAB(Svn),
+TAB(RunSvn),
+TAB(ViewSvn),
+TAB(ClearSvnMessages),
+TAB(SvnDiff),
+TAB(RunSvnDiff),
+TAB(ViewSvnDiff),
+TAB(SvnCommit),
+TAB(RunSvnCommit),
+TAB(ViewSvnLog)
+
+
 #if 0
 //TAB(ShowMsg),
 TAB(BlockReadPipe),

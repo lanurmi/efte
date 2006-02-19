@@ -1075,6 +1075,13 @@ void EGUI::Stop() {
     }
 #endif
 
+#ifdef CONFIG_OBJ_SVN
+    // free SvnIgnoreRegexp array from o_messages.cpp
+    {
+        FreeSvnIgnoreRegexp();
+    }
+#endif
+
     // free configuration file path
     {
         free(ConfigSourcePath);

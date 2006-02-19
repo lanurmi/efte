@@ -156,6 +156,21 @@ public:
     int CvsCommit(char *Options);
     int ViewCvsLog(ExState &State);
 #endif
+#ifdef CONFIG_OBJ_SVN
+    int Svn(ExState &State);
+    int RunSvn(ExState &State);
+    int ViewSvn(ExState &State);
+    int Svn(char *Options);
+    int ClearSvnMessages(ExState &State);
+    int SvnDiff(ExState &State);
+    int RunSvnDiff(ExState &State);
+    int ViewSvnDiff(ExState &State);
+    int SvnDiff(char *Options);
+    int SvnCommit(ExState &State);
+    int RunSvnCommit(ExState &State);
+    int SvnCommit(char *Options);
+    int ViewSvnLog(ExState &State);
+#endif
 #ifdef CONFIG_OBJ_DIRECTORY
     int DirOpen(ExState &State);
     int OpenDir(char *Directory);

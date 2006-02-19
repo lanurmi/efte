@@ -27,6 +27,10 @@ EViewPort *EBuffer::CreateViewPort(EView *V) {
         if (CvsDiffView) CvsDiffView->FindFileLines(this);
 #endif
 
+#ifdef CONFIG_OBJ_SVN
+        if (SvnDiffView) SvnDiffView->FindFileLines(this);
+#endif
+
         markIndex.retrieveForBuffer(this);
 
 #ifdef CONFIG_HISTORY
