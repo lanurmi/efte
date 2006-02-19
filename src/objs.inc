@@ -18,6 +18,7 @@ e_block.$(OEXT) \
 e_buffer.$(OEXT) \
 e_cmds.$(OEXT) \
 e_cvslog.$(OEXT) \
+e_svnlog.$(OEXT) \
 e_redraw.$(OEXT) \
 e_file.$(OEXT) \
 e_fold.$(OEXT) \
@@ -64,6 +65,9 @@ o_directory.$(OEXT) \
 o_cvsbase.$(OEXT) \
 o_cvs.$(OEXT) \
 o_cvsdiff.$(OEXT) \
+o_svnbase.$(OEXT) \
+o_svn.$(OEXT) \
+o_svndiff.$(OEXT) \
 s_files.$(OEXT) \
 s_direct.$(OEXT) \
 s_util.$(OEXT) \

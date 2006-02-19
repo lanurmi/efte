@@ -30,7 +30,7 @@ object GLOBAL {
 
     RecheckReadOnly     = 0;   # recheck read only status when trying to modify file (only performed on when read only is set)
 
-    CompletionFilter    = /^{\c.+\.o|a|{bak}|{exe}|{lib}|{class}|{jar}|{zip}|{gz}|{tar.gz}|{tgz}}|{.+~}|{CVS}$/;
+    CompletionFilter    = /^{\c.+\.o|a|{bak}|{exe}|{lib}|{class}|{jar}|{zip}|{gz}|{tar.gz}|{tgz}}|{.+~}|{CVS}|{SVN}$/;
     # {obj} file is also ASCII Object File Format for MAYA graphics editor
     # so it is removed from Completion Filter
     
@@ -45,6 +45,7 @@ object GLOBAL {
     KeepMessages        = 1;
 
     CvsCommand          = 'cvs';
+    SvnCommand          = 'svn';
 %if(OS_UNIX)
     HelpCommand         = "man";
 %endif
@@ -116,4 +117,6 @@ object GLOBAL {
     
     CvsIgnoreRx = /^cvs update: Updating /;
     CvsIgnoreRx = /^cvs server: Updating /;
+    SvnIgnoreRx = /^svn update: Updating /;
+    SvnIgnoreRx = /^svn server: Updating /;
 }

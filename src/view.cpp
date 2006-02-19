@@ -201,6 +201,30 @@ int EView::ExecCommand(int Command, ExState &State) {
     case ExViewCvsLog:          return ErFAIL;
 #endif
 
+#ifdef CONFIG_OBJ_SVN
+    case ExSvn:                 return Svn(State);
+    case ExRunSvn:              return RunSvn(State);
+    case ExViewSvn:             return ViewSvn(State);
+    case ExClearSvnMessages:    return ClearSvnMessages(State);
+    case ExSvnDiff:             return SvnDiff(State);
+    case ExRunSvnDiff:          return RunSvnDiff(State);
+    case ExViewSvnDiff:         return ViewSvnDiff(State);
+    case ExSvnCommit:           return SvnCommit(State);
+    case ExRunSvnCommit:        return RunSvnCommit(State);
+    case ExViewSvnLog:          return ViewSvnLog(State);
+#else
+    case ExSvn:                 return ErFAIL;
+    case ExRunSvn:              return ErFAIL;
+    case ExViewSvn:             return ErFAIL;
+    case ExClearSvnMessages:    return ErFAIL;
+    case ExSvnDiff:             return ErFAIL;
+    case ExRunSvnDiff:          return ErFAIL;
+    case ExViewSvnDiff:         return ErFAIL;
+    case ExSvnCommit:           return ErFAIL;
+    case ExRunSvnCommit:        return ErFAIL;
+    case ExViewSvnLog:          return ErFAIL;
+#endif
+
     case ExViewBuffers:         return ViewBuffers(State);
 
     case ExShowKey:             return ShowKey(State);
@@ -1008,6 +1032,254 @@ int EView::CvsCommit(char *Options) {
 int EView::ViewCvsLog(ExState &/*State*/) {
     if (CvsLogView != 0) {
         SwitchToModel(CvsLogView);
+        return 1;
+    }
+    return 0;
+}
+
+#endif
+
+#ifdef CONFIG_OBJ_SVN
+
+int EView::Svn(ExState &State) {
+    static char Opts[128] = "";
+    char Options[128] = "";
+
+    if (SvnView != 0 && SvnView->Running) {
+        Msg(S_INFO, "Already running...");
+        return 0;
+    }
+
+    if (State.GetStrParam(this, Options, sizeof(Options)) == 0) {
+        if (MView->Win->GetStr("SVN options", sizeof(Opts), Opts, HIST_SVN) == 0) return 0;
+        strcpy(Options, Opts);
+    } else {
+        if (MView->Win->GetStr("SVN options", sizeof(Options), Options, HIST_SVN) == 0) return 0;
+    }
+    return Svn(Options);
+}
+
+int EView::RunSvn(ExState &State) {
+    char Options[128] = "";
+
+    if (SvnView != 0 && SvnView->Running) {
+        Msg(S_INFO, "Already running...");
+        return 0;
+    }
+
+    State.GetStrParam(this, Options, sizeof(Options));
+    return Svn(Options);
+}
+
+int EView::Svn(char *Options) {
+    char Dir[MAXPATH] = "";
+    char Command[256] = "";
+    char buf[1024] = "";
+    char *OnFiles = buf;
+    ESvn *svn;
+
+    if (GetDefaultDirectory(Model, Dir, sizeof(Dir)) == 0) return 0;
+
+    strcpy(Command, SvnCommand);
+    strcat(Command, " ");
+    if (Options[0] != 0) {
+        strcat(Command, Options);
+        strcat(Command, " ");
+    }
+
+    switch (Model->GetContext()) {
+        case CONTEXT_FILE:
+            if (JustFileName(((EBuffer *)Model)->FileName, OnFiles, sizeof(buf)) != 0) return 0; // OnFiles points to buf
+            break;
+        case CONTEXT_SVNDIFF:
+            OnFiles = strdup(SvnDiffView->OnFiles);
+            break;
+        case CONTEXT_SVN:
+            OnFiles = ((ESvn *)Model)->MarkedAsList();
+            if (!OnFiles) OnFiles = strdup(((ESvn *)Model)->OnFiles);
+            break;
+    }
+
+    if (SvnView != 0) {
+        SvnView->RunPipe(Dir, Command, OnFiles);
+        svn = SvnView;
+    } else {
+        svn = new ESvn(0, &ActiveModel, Dir, Command, OnFiles);
+    }
+    if (OnFiles != buf) free(OnFiles);
+    SwitchToModel(svn);
+    return 1;
+}
+
+int EView::ClearSvnMessages(ExState &/*State*/) {
+    if (SvnView != 0) {
+        if (SvnView->Running) {
+            Msg(S_INFO, "Running...");
+            return 0;
+        } else {
+            SvnView->FreeLines();
+            SvnView->UpdateList();
+            return 1;
+        }
+    }
+    return 0;
+}
+
+int EView::ViewSvn(ExState &/*State*/) {
+    if (SvnView != 0) {
+        SwitchToModel(SvnView);
+        return 1;
+    }
+    return 0;
+}
+
+int EView::SvnDiff(ExState &State) {
+    static char Opts[128] = "";
+    char Options[128] = "";
+
+    if (SvnDiffView != 0 && SvnDiffView->Running) {
+        Msg(S_INFO, "Already running...");
+        return 0;
+    }
+
+    if (State.GetStrParam(this, Options, sizeof(Options)) == 0) {
+        if (MView->Win->GetStr("SVN diff options", sizeof(Opts), Opts, HIST_SVNDIFF) == 0) return 0;
+        strcpy(Options, Opts);
+    } else {
+        if (MView->Win->GetStr("SVN diff options", sizeof(Options), Options, HIST_SVNDIFF) == 0) return 0;
+    }
+    return SvnDiff(Options);
+}
+
+int EView::RunSvnDiff(ExState &State) {
+    char Options[128] = "";
+
+    if (SvnDiffView != 0 && SvnDiffView->Running) {
+        Msg(S_INFO, "Already running...");
+        return 0;
+    }
+
+    State.GetStrParam(this, Options, sizeof(Options));
+    return SvnDiff(Options);
+}
+
+int EView::SvnDiff(char *Options) {
+    char Dir[MAXPATH] = "";
+    char Command[256] = "";
+    char buf[1024] = "";
+    char *OnFiles = buf;
+    ESvnDiff *diffs;
+
+    if (GetDefaultDirectory(Model, Dir, sizeof(Dir)) == 0) return 0;
+
+    strcpy(Command, SvnCommand);
+    strcat(Command, " diff ");
+    if (Options[0] != 0) {
+        strcat(Command, Options);
+        strcat(Command, " ");
+    }
+
+    switch (Model->GetContext()) {
+        case CONTEXT_FILE:
+            if (JustFileName(((EBuffer *)Model)->FileName, OnFiles, sizeof(buf)) != 0) return 0; // OnFiles points to buf
+            break;
+        case CONTEXT_SVNDIFF:
+            OnFiles = strdup(SvnDiffView->OnFiles);
+            break;
+        case CONTEXT_SVN:
+            OnFiles = ((ESvn *)Model)->MarkedAsList();
+            if (!OnFiles) OnFiles = strdup(((ESvn *)Model)->OnFiles);
+            break;
+    }
+
+    if (SvnDiffView != 0) {
+        SvnDiffView->RunPipe(Dir, Command, OnFiles);
+        diffs = SvnDiffView;
+    } else {
+        diffs = new ESvnDiff(0, &ActiveModel, Dir, Command, OnFiles);
+    }
+    if (OnFiles != buf) free(OnFiles);
+    SwitchToModel(diffs);
+    return 1;
+}
+
+int EView::ViewSvnDiff(ExState &/*State*/) {
+    if (SvnDiffView != 0) {
+        SwitchToModel(SvnDiffView);
+        return 1;
+    }
+    return 0;
+}
+
+int EView::SvnCommit(ExState &State) {
+    static char Opts[128] = "";
+    char Options[128] = "";
+
+    if (SvnView != 0 && SvnView->Running) {
+        Msg(S_INFO, "Already running...");
+        return 0;
+    }
+
+    if (State.GetStrParam(this, Options, sizeof(Options)) == 0) {
+        if (MView->Win->GetStr("SVN commit options", sizeof(Opts), Opts, HIST_SVNCOMMIT) == 0) return 0;
+        strcpy(Options, Opts);
+    } else {
+        if (MView->Win->GetStr("SVN commit options", sizeof(Options), Options, HIST_SVNCOMMIT) == 0) return 0;
+    }
+    return SvnCommit(Options);
+}
+
+int EView::RunSvnCommit(ExState &State) {
+    char Options[128] = "";
+
+    if (SvnView != 0 && SvnView->Running) {
+        Msg(S_INFO, "Already running...");
+        return 0;
+    }
+
+    State.GetStrParam(this, Options, sizeof(Options));
+    return SvnCommit(Options);
+}
+
+int EView::SvnCommit(char *Options) {
+    char Dir[MAXPATH] = "";
+    char Command[256] = "";
+    char buf[1024] = "";
+    char *OnFiles = buf;
+    ESvn *svn;
+
+    if (GetDefaultDirectory(Model, Dir, sizeof(Dir)) == 0) return 0;
+
+    strcpy(Command, SvnCommand);
+    strcat(Command, " commit ");
+    if (Options[0] != 0) {
+        strcat(Command, Options);
+        strcat(Command, " ");
+    }
+
+    switch (Model->GetContext()) {
+        case CONTEXT_FILE:
+            if (JustFileName(((EBuffer *)Model)->FileName, OnFiles, sizeof(buf)) != 0) return 0; // OnFiles points to buf
+            break;
+        case CONTEXT_SVNDIFF:
+            OnFiles = strdup(SvnDiffView->OnFiles);
+            break;
+        case CONTEXT_SVN:
+            OnFiles = ((ESvn *)Model)->MarkedAsList();
+            if (!OnFiles) OnFiles = strdup(((ESvn *)Model)->OnFiles);
+            break;
+    }
+
+    if (SvnView == 0) svn = new ESvn(0, &ActiveModel);else svn = SvnView;
+    SwitchToModel(svn);
+    svn->RunCommit(Dir, Command, OnFiles);
+    if (OnFiles != buf) free(OnFiles);
+    return 1;
+}
+
+int EView::ViewSvnLog(ExState &/*State*/) {
+    if (SvnLogView != 0) {
+        SwitchToModel(SvnLogView);
         return 1;
     }
     return 0;

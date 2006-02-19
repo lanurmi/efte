@@ -9,6 +9,7 @@
 
 #include "fte.h"
 #include "o_cvsbase.h"
+#include "o_svnbase.h"
 #include "log.h"
 
 typedef struct _GUICharactersEntry {
@@ -92,6 +93,8 @@ int IgnoreBufferList = 0;
 static GUICharactersEntry *GUICharacters = NULL;
 char CvsCommand[256] = "cvs";
 char CvsLogMode[32] = "PLAIN";
+char SvnCommand[256] = "svn";
+char SvnLogMode[32] = "PLAIN";
 int ReassignModelIds = 0;
 int RecheckReadOnly = 0;
 char XShellCommand[256] = "xterm";
@@ -332,6 +335,8 @@ static int SetGlobalString(long what, const char *string) {
     case FLAG_GUICharacters: AppendGUICharacters (string); break;
     case FLAG_CvsCommand: strlcpy(CvsCommand, string, sizeof(CvsCommand)); break;
     case FLAG_CvsLogMode: strlcpy(CvsLogMode, string, sizeof(CvsLogMode)); break;
+    case FLAG_SvnCommand: strlcpy(SvnCommand, string, sizeof(SvnCommand)); break;
+    case FLAG_SvnLogMode: strlcpy(SvnLogMode, string, sizeof(SvnLogMode)); break;
     case FLAG_RGBColor: SetRGBColor(string); break;
     case FLAG_XShellCommand: strlcpy(XShellCommand, string, sizeof(XShellCommand)); break;
     default:
@@ -1020,6 +1025,19 @@ static int ReadObject(CurPos &cp, const char *ObjName) {
                 if ((regexp = GetCharStr(cp, len)) == 0) return -1;
 
                 if (AddCvsIgnoreRegexp(regexp) == 0) return -1;
+            }
+            break;
+#endif
+
+#ifdef CONFIG_OBJ_SVN
+        case CF_SVNIGNRX:
+            {
+                const char *regexp;
+
+                if (GetObj(cp, len) != CF_REGEXP) return -1;
+                if ((regexp = GetCharStr(cp, len)) == 0) return -1;
+
+                if (AddSvnIgnoreRegexp(regexp) == 0) return -1;
             }
             break;
 #endif

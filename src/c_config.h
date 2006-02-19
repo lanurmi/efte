@@ -42,6 +42,8 @@ extern char ConfigFileName[MAXPATH];
 extern int IgnoreBufferList;
 extern char CvsCommand[256];
 extern char CvsLogMode[32];
+extern char SvnCommand[256];
+extern char SvnLogMode[32];
 extern int ReassignModelIds;
 extern int RecheckReadOnly;
 extern char XShellCommand[256];

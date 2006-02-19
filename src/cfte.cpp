@@ -455,6 +455,8 @@ MODE_FLG(HelpCommand),
 MODE_FLG(GUICharacters),
 MODE_FLG(CvsCommand),
 MODE_FLG(CvsLogMode),
+MODE_FLG(SvnCommand),
+MODE_FLG(SvnLogMode),
 MODE_FLG(XShellCommand),
 MODE_FLG(RGBColor),
 { 0, 0 },
@@ -553,6 +555,7 @@ static int Lookup(const OrdLookup *where, char *what) {
 #define K_HWTYPE     20
 #define K_COLPALETTE 21
 #define K_CVSIGNRX   22
+#define K_SVNIGNRX   23
 
 typedef char Word[64];
 
@@ -579,6 +582,7 @@ static const OrdLookup CfgKW[] = {
 { "h_wtype", K_HWTYPE },
 { "submenucond", K_SUBMENUCOND },
 { "CvsIgnoreRx", K_CVSIGNRX },
+{ "SvnIgnoreRx", K_SVNIGNRX },
 { 0, 0 },
 };
 
@@ -1606,6 +1610,20 @@ static int ParseConfigFile(CurPos &cp) {
                                 if (Parse(cp) != P_STRING) Fail(cp, "String expected");
                                 regexp = GetString(cp);
                                 PutNull(cp, CF_CVSIGNRX);
+                                PutString(cp, CF_REGEXP, regexp);
+                                if (Parse(cp) != P_EOS) Fail(cp, "';' expected");
+                                GetOp(cp, P_EOS);
+                            }
+                            break;
+                        case K_SVNIGNRX:
+                            {
+                                char *regexp;
+
+                                if (Parse(cp) != P_ASSIGN) Fail(cp, "'=' expected");
+                                GetOp(cp, P_ASSIGN);
+                                if (Parse(cp) != P_STRING) Fail(cp, "String expected");
+                                regexp = GetString(cp);
+                                PutNull(cp, CF_SVNIGNRX);
                                 PutString(cp, CF_REGEXP, regexp);
                                 if (Parse(cp) != P_EOS) Fail(cp, "';' expected");
                                 GetOp(cp, P_EOS);
