@@ -213,11 +213,11 @@ int Hilit_SH(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, 
                            )
                           )
                     { // !!!!! ?????
-                        // in ${...}, once we hit a :, anything goes.
+                        // in ${...}, once we hit a :, %, or #, anything goes.
                         // Ideally, we'd do normal processing inside as well,
                         // but that'll take much, much longer to figure out
                         // how to do.
-                        if (b == 2 && *p == ':')
+                        if (b == 2 && strchr("#%:", *p) != NULL)
                         {
                             UntilMatchBrace('{',ColorNext());
                             break;
