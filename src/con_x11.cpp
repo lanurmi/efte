@@ -1290,10 +1290,10 @@ void ProcessXEvents(TEvent *Event) {
         ConvertClickToEvent(event.type, buttonEvent->x, buttonEvent->y, buttonEvent->button, buttonEvent->state, Event, motionEvent->time);
         break;
     case FocusIn:
-        i18n_focus_in(i18n_ctx);
+        if (i18n_ctx) i18n_focus_in(i18n_ctx);
         break;
     case FocusOut:
-        i18n_focus_out(i18n_ctx);
+        if (i18n_ctx) i18n_focus_out(i18n_ctx);
         break;
     case KeyPress:
         // case KeyRelease:
@@ -1302,7 +1302,7 @@ void ProcessXEvents(TEvent *Event) {
         keyEvent1 = *keyEvent;
         keyEvent1.state &= ~(ShiftMask | ControlMask | Mod1Mask | Mod2Mask | Mod3Mask | Mod4Mask);
 
-        if (event.type == KeyRelease)
+        if (!i18n_ctx || event.type == KeyRelease)
             XLookupString(keyEvent, keyName, sizeof(keyName), &key, 0);
         else {
 	    i18n_lookup_sym(keyEvent, keyName, sizeof(keyName), &key, i18n_ctx->xic);
