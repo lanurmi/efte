@@ -206,14 +206,13 @@ static int i18n_key_analyze(XKeyEvent * /*keyEvent*/, KeySym * key, /*FOLD00*/
  */
 i18n_context_t* i18n_open(Display * display, Window win, unsigned long *mask) /*FOLD00*/
 {
-    i18n_context_t* ctx = (i18n_context_t*) malloc(sizeof(i18n_context_t));
-    memset(ctx, 0, sizeof(i18n_context_t));
-
+    *mask = 0;
 #if XlibSpecificationRelease >= 6
     char *s, tmp[256];
     int found = False;
 
-    *mask = 0;
+    i18n_context_t* ctx = (i18n_context_t*) malloc(sizeof(i18n_context_t));
+    memset(ctx, 0, sizeof(i18n_context_t));
 
     /* Locale setting taken from XtSetLanguageProc */
     if (!(s = setlocale(LC_ALL, "")))
@@ -324,10 +323,10 @@ i18n_context_t* i18n_open(Display * display, Window win, unsigned long *mask) /*
         i18n_destroy(ctx);
     } else if (XGetICValues(ctx->xic, XNFilterEvents, mask, NULL))
 	fprintf(stderr, "I18N error: Can't get Event Mask\n");
-#else
-    *mask = 0;
-#endif
     return ctx;
+#else
+    return NULL;
+#endif
 }
  /*FOLD00*/
 
