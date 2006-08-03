@@ -22,7 +22,7 @@ ECvsLog::ECvsLog (int createFlags,EModel **ARoot,char *Directory,char *OnFiles):
     // Create filename for message
 #ifdef UNIX
     // Use this in Unix - it says more to user
-    sprintf (msgFile,"/tmp/fte%d-cvs-msg",getpid ());
+    sprintf (msgFile,"/tmp/fte%d-cvs-msg", (int)getpid());
 #else
     tmpnam (msgFile);
 #endif
