@@ -81,6 +81,10 @@ i18n_context_t* i18n_ctx = NULL;
 #define MAX_PIPES 40
 //#define PIPE_BUFLEN 4096
 
+#define SELECTION_INCR_LIMIT 0x1000
+#define SELECTION_XFER_LIMIT 0x1000
+#define SELECTION_MAX_AGE 10
+
 typedef struct {
     int used;
     int id;
@@ -120,10 +124,14 @@ static Display *display;
 static Colormap colormap;
 static Atom wm_protocols;
 static Atom wm_delete_window;
-static Atom targets;
 static Atom XA_CLIPBOARD = 0;
+static Atom proptype_targets;
+static Atom proptype_text;
+static Atom proptype_compound_text;
+static Atom proptype_utf8_string;
+static Atom proptype_incr;
 static Window win;
-static Atom selection_buffer;
+static Atom prop_selection;
 static XSizeHints sizeHints;
 // program now contains both modes if available
 // some older Xservers don't like XmbDraw...
@@ -146,6 +154,27 @@ static unsigned char* CurSelectionData[3] = {NULL,NULL,NULL};
 static int CurSelectionLen[3] = {0,0,0};
 static int CurSelectionOwn[3] = {0,0,0};
 static Time now;
+
+typedef struct _IncrementalSelectionInfo {
+    struct _IncrementalSelectionInfo *next;
+    unsigned char *data;
+    int len;
+    int pos;
+    Atom requestor;
+    Atom property;
+    Atom type;
+    time_t lastUse;
+} IncrementalSelectionInfo;
+IncrementalSelectionInfo *incrementalSelections = NULL;
+
+static Bool gotXError;
+
+static void SendSelection(XEvent *notify, Atom property, Atom type, unsigned char *data, int len, Bool privateData);
+
+static int ErrorHandler(Display *, XErrorEvent *ee) {
+    gotXError = True;
+    return 1;
+}
 
 static Atom GetXClip (int clipboard) {
     if (clipboard==1) {
@@ -441,19 +470,27 @@ static int SetupXWindow(int argc, char **argv)
     /* we set it anyway, but not pass to XmbLookupString -- mark */
     mask |= ExposureMask | StructureNotifyMask | VisibilityChangeMask |
         FocusChangeMask | KeyPressMask | KeyReleaseMask |
-        ButtonPressMask | ButtonReleaseMask | ButtonMotionMask;
+        ButtonPressMask | ButtonReleaseMask | ButtonMotionMask | PropertyChangeMask;
     XSelectInput(display, win, mask);
 
     wm_protocols = XInternAtom(display, "WM_PROTOCOLS", False);
     assert(wm_protocols != None);
     wm_delete_window = XInternAtom(display, "WM_DELETE_WINDOW", False);
     assert(wm_delete_window != None);
-    selection_buffer = XInternAtom(display, "fte_clip", False);//??? needed
-    assert(selection_buffer != None);
-    targets = XInternAtom(display, "TARGETS", False);
-    assert(targets != None);
+    prop_selection = XInternAtom(display, "fte_clip", False);
+    assert(prop_selection != None);
     XA_CLIPBOARD = XInternAtom(display, "CLIPBOARD", False);
     assert(XA_CLIPBOARD != None);
+    proptype_targets = XInternAtom(display, "TARGETS", False);
+    assert(proptype_targets != None);
+    proptype_text = XInternAtom(display, "TEXT", False);
+    assert(proptype_text != None);
+    proptype_compound_text = XInternAtom(display, "COMPOUND_TEXT", False);
+    assert(proptype_compound_text != None);
+    proptype_utf8_string = XInternAtom(display, "UTF8_STRING", False);
+    assert(proptype_utf8_string != None);
+    proptype_incr = XInternAtom(display, "INCR", False);
+    assert(proptype_incr != None);
 
     sizeHints.flags = PResizeInc | PMinSize | PBaseSize | PWinGravity;
     sizeHints.width_inc = FontCX;
@@ -1232,8 +1269,33 @@ void ProcessXEvents(TEvent *Event) {
         return;
     }
 
-    if (anyEvent->window != win)
+    if (anyEvent->window != win) {
+        if (event.type == PropertyNotify && event.xproperty.state == PropertyDelete) {
+            // Property change on different window - try to find matching incremental selection request
+            IncrementalSelectionInfo *isi, *prev_isi = NULL;
+
+            for (isi = incrementalSelections; isi; prev_isi = isi, isi = isi->next) {
+                if (isi->requestor == event.xproperty.window && isi->property == event.xproperty.atom) {
+                    // Found selection request - send more data
+                    int send = isi->len - isi->pos;
+
+                    send = send < SELECTION_XFER_LIMIT ? send : SELECTION_XFER_LIMIT;
+                    XChangeProperty(display, isi->requestor, isi->property, isi->type, 8, PropModeAppend, isi->data + isi->pos, send);
+                    isi->pos += send;
+                    isi->lastUse = time(NULL);
+
+                    if (send == 0) {
+                        // Was sent - remove from memory
+                        if (prev_isi) prev_isi->next = isi->next; else incrementalSelections = isi->next;
+                        XFree(isi->data);
+                        delete isi;
+                    }
+                    break;
+                }
+            }
+        }
         return;
+    }
 
     switch (event.type) {
     case Expose:
@@ -1330,63 +1392,132 @@ void ProcessXEvents(TEvent *Event) {
         break;
     case SelectionClear:
         {
-            for (int i=0; i<3; i++) {
-                Window owner = XGetSelectionOwner(display, GetXClip(i));
+            int clip = GetFTEClip(event.xselectionclear.selection);
+            if (clip >= 0) {
+                Window owner = XGetSelectionOwner(display, GetXClip(clip));
                 if (owner != win) {
-                    if (CurSelectionData[i] != NULL)
-                        free(CurSelectionData[i]);
-                    CurSelectionData[i] = NULL;
-                    CurSelectionLen[i] = 0;
-                    CurSelectionOwn[i] = 0;
+                    if (CurSelectionData[clip] != NULL)
+                        free(CurSelectionData[clip]);
+                    CurSelectionData[clip] = NULL;
+                    CurSelectionLen[clip] = 0;
+                    CurSelectionOwn[clip] = 0;
                 }
             }
         }
         break;
     case SelectionRequest:
         {
+            // SelectionRequest:
+            //   owner     - selection owner (should be fte window)
+            //   selection - selection (clipboard)
+            //   target    - target type to which the selection should be converted
+            //   property  - target property - place data to this property of requestor's window, set correct type
+            //   requestor - selection requestor
+            //   time      - request time - owner should provide selection if it owned it at this time
+            //  Note: Old clients use None property - in this case the right property is stored in target field.
+            //  On error refuse request by sending notification with None property.
+            //
+            // SelectionNotify:
+            //   requestor -
+            //   selection - should be copied from request
+            //   target    - -- copy --
+            //   property  - -- copy -- or None if on error - request could not be fulfilled
+            //   time      - -- copy --
+
+            static unsigned char empty[] = "";
             XEvent notify;
-            unsigned int clip = GetFTEClip(event.xselectionrequest.selection);
+            Bool notifySent = False;
+            int clip = GetFTEClip(event.xselectionrequest.selection);
 
             notify.type = SelectionNotify;
             notify.xselection.requestor = event.xselectionrequest.requestor;
             notify.xselection.selection = event.xselectionrequest.selection;
             notify.xselection.target = event.xselectionrequest.target;
             notify.xselection.time = event.xselectionrequest.time;
+            // Prefill for "unknown/bad request" case
+            notify.xselection.property = None;
 
-            if (clip<=2 && event.xselectionrequest.target == XA_STRING)
-	    {
-                static unsigned char empty[] = "";
-                XChangeProperty(display,
-                                event.xselectionrequest.requestor,
-                                event.xselectionrequest.property,
-                                event.xselectionrequest.target,
-                                8, PropModeReplace,
-                                (CurSelectionData[clip] ? CurSelectionData[clip] : empty),
-                                CurSelectionLen[clip]);
-                notify.xselection.property = event.xselectionrequest.property;
-            } else if (clip<=2 && event.xselectionrequest.target == targets)
-            {
-                Atom type = XA_STRING;
+            if (clip >= 0) {
+                if (event.xselectionrequest.target == proptype_targets) {
+                    // Return targets - to what types data can be rendered
+                    Atom type_list[] = {
+                        XA_STRING,
+                        proptype_text
+#ifdef USE_XMB
+                        , proptype_compound_text
+#ifdef X_HAVE_UTF8_STRING
+                        , proptype_utf8_string
+#endif
+#endif
+                    };
 
-                XChangeProperty(display,
-                                event.xselectionrequest.requestor,
-                                event.xselectionrequest.property,
-                                event.xselectionrequest.target,
-                                32, PropModeReplace,
-                                (unsigned char *)&type, 1);
-                notify.xselection.property = event.xselectionrequest.property;
-            } else {
-                /*fprintf(stderr,
-                 "selection request %ld prop: %ld target: %ld requestor=%lX\n",
-                 event.xselectionrequest.selection,
-                 event.xselectionrequest.property,
-                 event.xselectionrequest.target,
-                 event.xselectionrequest.requestor);*/
+                    XChangeProperty(display,
+                                    event.xselectionrequest.requestor,
+                                    event.xselectionrequest.property,
+                                    XA_ATOM,
+                                    32, PropModeReplace,
+                                    (unsigned char *)&type_list, sizeof(type_list) / sizeof(*type_list));
+                    notify.xselection.property = event.xselectionrequest.property;
+#ifdef USE_XMB
+                } else if (event.xselectionrequest.target == XA_STRING) {
+#else
+                } else if (event.xselectionrequest.target == XA_STRING || event.xselectionrequest.target == proptype_text) {
+#endif
+                    // No conversion, just the string we have (in fact we should convert to ISO Latin-1)
+                    SendSelection(&notify, event.xselectionrequest.property, XA_STRING,
+                                  (CurSelectionData[clip] ? CurSelectionData[clip] : empty), CurSelectionLen[clip], False);
+                    notifySent = True;
+#ifdef USE_XMB
+                } else {
+                    // Convert to requested type
+                    XTextProperty text_property;
+                    char *text_list[1] = {(char *)(CurSelectionData[clip] ? CurSelectionData[clip] : empty)};
 
-                notify.xselection.property = None;
+                    XICCEncodingStyle style =
+                        event.xselectionrequest.target == XA_STRING ? XStringStyle :
+                        event.xselectionrequest.target == proptype_text ? XStdICCTextStyle :
+                        event.xselectionrequest.target == proptype_compound_text ? XCompoundTextStyle :
+#ifdef X_HAVE_UTF8_STRING
+                        event.xselectionrequest.target == proptype_utf8_string ? XUTF8StringStyle :
+#endif
+                        (XICCEncodingStyle)-1;
+
+                    if (style != -1) {
+                        // Can convert
+                        if (XmbTextListToTextProperty(display, text_list, 1, style, &text_property) == Success) {
+                            if (text_property.format == 8) {
+                                // SendSelection supports only 8-bit data (should be always, just safety check)
+                                SendSelection(&notify, event.xselectionrequest.property, text_property.encoding,
+                                              text_property.value, text_property.nitems, True);
+                                notifySent = True;
+                            } else {
+                                // Bad format - just cleanup
+                                XFree(text_property.value);
+                            }
+                        }
+                    }
+#endif
+                }
             }
 
-            XSendEvent(display, notify.xselection.requestor, False, 0L, &notify);
+            if (!notifySent) XSendEvent(display, notify.xselection.requestor, False, 0L, &notify);
+
+            // Now clean too old incremental selections
+            IncrementalSelectionInfo *isi = incrementalSelections, *prev_isi = NULL;
+            time_t tnow = time(NULL);
+
+            while (isi) {
+                if (isi->lastUse + SELECTION_MAX_AGE < tnow) {
+                    IncrementalSelectionInfo *next_isi = isi->next;
+                    if (prev_isi) prev_isi->next = isi->next; else incrementalSelections = isi->next;
+                    XFree(isi->data);
+                    delete isi;
+                    isi = next_isi;
+                } else {
+                    prev_isi = isi;
+                    isi = isi->next;
+                }
+            }
         }
         break;
     }
@@ -1553,6 +1684,228 @@ int ConGrabEvents(TEventMask /*EventMask*/) {
     return 0;
 }
 
+static int WaitForXEvent(int eventType, XEvent *event) {
+    time_t time_started = time(NULL);
+    for (;;) {
+        if (XCheckTypedWindowEvent(display, win, eventType, event)) return 1;
+        time_t tnow = time(NULL);
+        if (time_started > tnow) time_started = tnow;
+        if (tnow - time_started > 5) return 0;
+    }
+}
+
+static void SendSelection(XEvent *notify, Atom property, Atom type, unsigned char *data, int len, Bool privateData) {
+    int (*oldHandler)(Display *, XErrorEvent *);
+    int i, send;
+
+    // Install error handler
+    oldHandler = XSetErrorHandler(ErrorHandler);
+    gotXError = False;
+
+    if (len < SELECTION_INCR_LIMIT) {
+        // Send fully - set property by appending smaller chunks
+        for (i = 0; !gotXError && i < len; i += SELECTION_XFER_LIMIT) {
+            send = len - i;
+            send = send < SELECTION_XFER_LIMIT ? send : SELECTION_XFER_LIMIT;
+            XChangeProperty(display, notify->xselection.requestor, property,
+                            type, 8, PropModeReplace, data + i, send);
+        }
+        if (!gotXError) notify->xselection.property = property;
+        XSendEvent(display, notify->xselection.requestor, False, 0L, notify);
+    } else {
+        // Send incrementally
+        IncrementalSelectionInfo *isi = new IncrementalSelectionInfo;
+
+        isi->next = incrementalSelections;
+        isi->len = len;
+        isi->pos = 0;
+        isi->requestor = notify->xselection.requestor;
+        isi->property = property;
+        isi->type = type;
+        isi->lastUse = time(NULL);
+        if (privateData) {
+            // Private data - use directly
+            isi->data = data;
+            // Mark data non-private so XFree() at the end won't remove it
+            privateData = False;
+        } else {
+            // Non-private data - need to make copy
+            isi->data = (unsigned char *)malloc(len);
+            if (isi->data != NULL) memcpy(isi->data, data, len);
+        }
+        if (isi->data != NULL) {
+            // Data ready - put to list and send response
+            incrementalSelections = isi;
+
+            // Request receiving requestor's property changes
+            XSelectInput(display, notify->xselection.requestor, PropertyChangeMask);
+
+            // Send total size
+            XChangeProperty(display, notify->xselection.requestor, property,
+                            proptype_incr, 32, PropModeReplace, (unsigned char *)&len, 1);
+
+            notify->xselection.property = property;
+        }
+        // Send also in case of error - with None property
+        XSendEvent(display, notify->xselection.requestor, False, 0L, notify);
+    }
+
+    // Restore error handler
+    XSetErrorHandler(oldHandler);
+
+    // Cleanup
+    if (privateData) XFree(data);
+}
+
+static int ConvertSelection(Atom selection, Atom type, int *len, char **data) {
+    XEvent event;
+    Atom actual_type;
+    int actual_format, retval;
+    unsigned long nitems, bytes_after;
+    unsigned char *d;
+
+    // Make sure property does not exist
+    XDeleteProperty(display, win, prop_selection);
+
+    // Request clipboard data
+    XConvertSelection(display, selection, type, prop_selection, win, now);
+
+    // Wait for SelectionNotify
+    if (!WaitForXEvent(SelectionNotify, &event) || event.xselection.property != prop_selection) return -1;
+
+    // Consume event sent when property was set by selection owner
+    WaitForXEvent(PropertyNotify, &event);
+
+    // Check the value - size, type etc.
+    retval = XGetWindowProperty(display, win, prop_selection, 0, 0, False, AnyPropertyType,
+                                &actual_type, &actual_format, &nitems, &bytes_after, &d);
+    XFree(d);
+    if (retval != Success) return -1;
+
+    if (actual_type == proptype_incr) {
+        // Incremental data
+        int pos, buffer_len;
+        unsigned char *buffer;
+
+        // Get selection length and allocate buffer
+        XGetWindowProperty(display, win, prop_selection, 0, 8, True, proptype_incr,
+                           &actual_type, &actual_format, &nitems, &bytes_after, &d);
+        buffer_len = *(int *)d;
+        buffer = (unsigned char *)malloc(buffer_len);
+        XFree(d);
+        // Cannot exit right now if data == NULL since we need to complete the handshake
+
+        // Now read data
+        pos = 0;
+        while(1) {
+            // Wait for new value notification
+            do {
+                if (!WaitForXEvent(PropertyNotify, &event)) {
+                    if (buffer) free(buffer);
+                    return -1;
+                }
+            } while (event.xproperty.state != PropertyNewValue);
+
+            // Get value size
+            XGetWindowProperty(display, win, prop_selection, 0, 0, False, type,
+                               &actual_type, &actual_format, &nitems, &bytes_after, &d);
+            XFree(d);
+            // Get value and delete property
+            XGetWindowProperty(display, win, prop_selection, 0, nitems + bytes_after, True, type,
+                               &actual_type, &actual_format, &nitems, &bytes_after, &d);
+
+            if (nitems && buffer) {
+                // Data received and have buffer
+                if (nitems > (unsigned int)(buffer_len - pos)) {
+                    // More data than expected - realloc buffer
+                    int new_len = pos + nitems;
+                    unsigned char *new_buffer = (unsigned char *)malloc(new_len);
+                    if (new_buffer) memcpy(new_buffer, buffer, buffer_len);
+                    free(buffer);
+                    buffer = new_buffer;
+                    buffer_len = new_len;
+                }
+                if (buffer) memcpy(buffer + pos, d, nitems);
+                pos += nitems;
+            }
+            XFree(d);
+            if (nitems == 0) {
+                // No more data - done
+                if (!buffer) {
+                    // No buffer - failed
+                    return -1;
+                } else {
+                    // Buffer OK - exit loop and continue to data conversion
+                    nitems = pos;
+                    d = buffer;
+                    break;
+                }
+            }
+        }
+    } else {
+        // Obtain the data from property
+        retval = XGetWindowProperty(display, win, prop_selection, 0, nitems + bytes_after, True, type,
+                                    &actual_type, &actual_format, &nitems, &bytes_after, &d);
+        if (retval != Success) {
+            return -1;
+        }
+    }
+
+    // Now convert data to char string (uses nitems and d)
+    if (actual_type == XA_STRING) {
+        // String - propagate directly out of this function
+        // This propagation is not safe since it expects XFree() to be the same as free().
+        // Rather we should make a copy of the received data. The similar applies to data
+        // propagated from INCR branch above - they are allocated by malloc() but get freed
+        // by XFree() after Xmb conversion below.
+        *data = (char *)d;
+        *len = nitems;
+    } else {
+#if USE_XMB
+        // Convert data to char * string
+        XTextProperty text;
+        char **list;
+        int list_count;
+
+        text.value = d;
+        text.encoding = actual_type;
+        text.format = actual_format;
+        text.nitems = nitems;
+
+        *data = NULL; // NULL indicates failure
+        retval = XmbTextPropertyToTextList(display, &text, &list, &list_count);
+        XFree(d);
+        if (retval >= 0) {
+            // Conversion OK - now we'll concat all the strings together
+            int i;
+
+            // Get total length first
+            *len = 0;
+            for (i = 0; i < list_count; i++) {
+                *len += strlen(list[i]);
+            }
+            // Allocate
+            *data = (char *)malloc(*len + 1);
+            if (*data != NULL) {
+                // Concat strings
+                char *s = *data;
+                for (i = 0; i < list_count; i++) {
+                    strcpy(s, list[i]);
+                    s += strlen(s);
+                }
+            }
+            // Cleanup
+            XFreeStringList(list);
+        }
+        if (*data == NULL) return -1; // failed
+#else
+        return -1;
+#endif
+    }
+    // OK
+    return 0;
+}
+
 int GetXSelection(int *len, char **data, int clipboard) {
     if (CurSelectionOwn[clipboard]) {
         *data = (char *) malloc(CurSelectionLen[clipboard]);
@@ -1564,58 +1917,14 @@ int GetXSelection(int *len, char **data, int clipboard) {
     } else {
         Atom clip = GetXClip(clipboard);
         if (XGetSelectionOwner(display, clip) != None) {
-            XEvent event;
-            Atom type;
-            long extra;
-            int i;
-            long l;
-            time_t time_started;
-
-            assert(selection_buffer != None);
-
-            XConvertSelection(display, clip, XA_STRING,
-                              selection_buffer, win, now);
-
-            time_started = time(NULL);
-
-            for (;;) {
-                if (XCheckTypedWindowEvent(display,
-                                           win,
-                                           SelectionNotify,
-                                           &event))
-                    break;
-
-                time_t tnow = time(NULL);
-
-                if (time_started > tnow)
-                    time_started = tnow;
-
-                if (tnow - time_started > 5000)
-                    return -1;
-            }
-
-            /*do
-             {
-             XNextEvent(display, &event);
-             } while (event.type != SelectionNotify &&
-             event.xselection.property != None &&
-             event.type != ButtonPress);*/
-
-	    if (event.type == SelectionNotify
-		&& event.xselection.property != None) {
-                XGetWindowProperty(display,
-                                   event.xselection.requestor,
-                                   event.xselection.property,
-                                   0L, 0x10000, True,
-                                   event.xselection.target, &type, &i,
-                                   (unsigned long *)&l,
-                                   (unsigned long *)&extra,
-                                   (unsigned char **)data);
-
-                *len = l;
-                return 0;
-            }
-            return -1;
+            // Get data - try various formats
+#ifdef USE_XMB
+#ifdef X_HAVE_UTF8_STRING
+            if (ConvertSelection(clip, proptype_utf8_string, len, data) == 0) return 0;
+#endif
+            if (ConvertSelection(clip, proptype_compound_text, len, data) == 0) return 0;
+#endif
+            return ConvertSelection(clip, XA_STRING, len, data);
         }
     }
     *data = XFetchBytes(display, len);
@@ -1630,21 +1939,21 @@ int SetXSelection(int len, char *data, int clipboard) {
     if (CurSelectionData[clipboard] != NULL)
         free(CurSelectionData[clipboard]);
 
-    CurSelectionData[clipboard] = (unsigned char *)malloc(len);
+    // We need CurSelectionData zero-terminated so XmbTextListToTextProperty can work
+    CurSelectionData[clipboard] = (unsigned char *)malloc(len + 1);
     if (CurSelectionData[clipboard] == NULL) {
         CurSelectionLen[clipboard] = 0;
         return -1;
     }
     CurSelectionLen[clipboard] = len;
     memcpy(CurSelectionData[clipboard], data, CurSelectionLen[clipboard]);
+    CurSelectionData[clipboard][len] = 0;
     if (CurSelectionLen[clipboard] < 64 * 1024) {
         XStoreBytes(display, data, len);
-        XSetSelectionOwner(display, clip, win, CurrentTime);
-        if (XGetSelectionOwner(display, clip) == win)
-            CurSelectionOwn[clipboard] = 1;
-    } else {
-        XSetSelectionOwner(display, clip, None, CurrentTime);
     }
+    XSetSelectionOwner(display, clip, win, CurrentTime);
+    if (XGetSelectionOwner(display, clip) == win)
+        CurSelectionOwn[clipboard] = 1;
     return 0;
 }
 
