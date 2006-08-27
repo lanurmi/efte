@@ -91,10 +91,14 @@ char HelpCommand[128] = "man -a";
 char *ConfigSourcePath = 0;
 int IgnoreBufferList = 0;
 static GUICharactersEntry *GUICharacters = NULL;
+#ifdef CONFIG_OBJ_CVS
 char CvsCommand[256] = "cvs";
 char CvsLogMode[32] = "PLAIN";
+#endif
+#ifdef CONFIG_OBJ_SVN
 char SvnCommand[256] = "svn";
 char SvnLogMode[32] = "PLAIN";
+#endif
 int ReassignModelIds = 0;
 int RecheckReadOnly = 0;
 char XShellCommand[256] = "xterm";
@@ -333,10 +337,14 @@ static int SetGlobalString(long what, const char *string) {
     case FLAG_WindowFont: strlcpy(WindowFont, string, sizeof(WindowFont)); break;
     case FLAG_HelpCommand: strlcpy(HelpCommand, string, sizeof(HelpCommand)); break;
     case FLAG_GUICharacters: AppendGUICharacters (string); break;
+#ifdef CONFIG_OBJ_CVS
     case FLAG_CvsCommand: strlcpy(CvsCommand, string, sizeof(CvsCommand)); break;
     case FLAG_CvsLogMode: strlcpy(CvsLogMode, string, sizeof(CvsLogMode)); break;
+#endif
+#ifdef CONFIG_OBJ_SVN
     case FLAG_SvnCommand: strlcpy(SvnCommand, string, sizeof(SvnCommand)); break;
     case FLAG_SvnLogMode: strlcpy(SvnLogMode, string, sizeof(SvnLogMode)); break;
+#endif
     case FLAG_RGBColor: SetRGBColor(string); break;
     case FLAG_XShellCommand: strlcpy(XShellCommand, string, sizeof(XShellCommand)); break;
     default:
