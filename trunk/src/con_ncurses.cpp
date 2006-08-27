@@ -109,6 +109,9 @@ static void free_savedscreen()
 
 static int fte_curses_attr[256];
 
+static int key_sup = 0;
+static int key_sdown = 0;
+
 static int ConInitColors()
 {
 	int c = 0;
@@ -148,6 +151,9 @@ static int ConInitColors()
 
 int ConInit(int /*XSize */ , int /*YSize */ )
 {
+	int ch;
+	char *s;
+
 	ESCDELAY = escDelay;
 	initscr();
 	ConInitColors();
@@ -161,6 +167,19 @@ int ConInit(int /*XSize */ , int /*YSize */ )
 	keypad(stdscr,1);
 	meta(stdscr,1);
 	SaveScreen();
+
+	/* find shift up/down */
+	for(ch = KEY_MAX +1;;ch++)
+	{
+		s = keyname(ch);
+		if(s == NULL) break;
+
+		if(!strcmp(s, "kUP"))
+			key_sup = ch;
+		else if(!strcmp(s, "kDN"))
+			key_sdown = ch;
+		if(key_sup > 0 && key_sdown > 0) break;
+	}
 	return 0;
 }
 
@@ -699,6 +718,21 @@ int ConGetEvent(TEventMask /*EventMask */ ,
 			case KEY_SDC:
 				KEvent->Code = kfShift | kbDel;
 				break;
+			case KEY_SIC:
+				KEvent->Code = kfShift | kbIns;
+				break;
+			case KEY_SHOME:
+				KEvent->Code = kfShift | kbHome;
+				break;
+			case KEY_SEND:
+				KEvent->Code = kfShift | kbEnd;
+				break;
+			case KEY_SNEXT:
+				KEvent->Code = kfShift | kbPgDn;
+				break;
+			case KEY_SPREVIOUS:
+				KEvent->Code = kfShift | kbPgUp;
+				break;
 			case KEY_UP:
 				KEvent->Code = kbUp;
 				break;
@@ -713,6 +747,9 @@ int ConGetEvent(TEventMask /*EventMask */ ,
 				break;
 			case KEY_DC:
 				KEvent->Code = kbDel;
+				break;
+			case KEY_IC:
+				KEvent->Code = kbIns;
 				break;
 			case KEY_BACKSPACE:
 				KEvent->Code = kbBackSp;
@@ -773,8 +810,15 @@ int ConGetEvent(TEventMask /*EventMask */ ,
 				KEvent->Code |= kbEnter;
 				break;
 			default:
-				Event->What = evNone;
+				if(key_sdown != 0 && ch == key_sdown)
+					KEvent->Code = kfShift | kbDown;
+				else if(key_sup != 0 && ch == key_sup)
+					KEvent->Code = kfShift | kbUp;
+				else
+				{
+					Event->What = evNone;
 	//	fprintf(stderr, "Unknown 0x%x %d\n", ch, ch);
+				}
 				break;
 		}
 	}
