@@ -34,10 +34,17 @@ ESvnDiff::~ESvnDiff()
 void
 ESvnDiff::ParseFromTo(char *line, int /*len */ )
 {
+    char           *start;
     char           *end;
-    CurrLine = strtol(line + 4, &end, 10) - 1;
+
+    // "@@ -1,20 +1,20 @@"
+    //            ^ ^^
+
+    start = strchr(line, '+');
+
+    CurrLine = strtol(start, &end, 10) - 1;
     if(*end == ',')
-        ToLine = atoi(end + 1);
+        ToLine = CurrLine + atoi(end + 1);
     else
         ToLine = CurrLine + 1;
     if(!(CurrLine < ToLine && ToLine > 0))
@@ -45,66 +52,78 @@ ESvnDiff::ParseFromTo(char *line, int /*len */ )
 }
 
 
+//AddLine(0, -1, line);                 - output only, default color
+//AddLine(CurrFile, -1, line);          - output and tofile, default color
+//AddLine(CurrFile, CurrLine, line);    - output and tofile in line, default color
+//AddLine(CurrFile, CurrLine, line, 1); - output and tofile in line, color 1
 void
 ESvnDiff::ParseLine(char *line, int len)
 {
-    if(len > 7 && strncmp(line, "Index: ", 7) == 0)
+    if(len > 8 && strncmp(line, "+++ ", 4) == 0)
     {
-        // Filename
+        //"+++ test.txt\t...."
         free(CurrFile);
-        CurrFile = strdup(line + 7);
+        CurrFile = strdup(line + 4);
+        strtok(CurrFile, " \t");
         CurrLine = ToLine = InToFile = 0;
         AddLine(CurrFile, -1, line);
     }
-    else if(len > 8 && strncmp(line, "*** ", 4) == 0)
+    else
     {
-        // From file or from hunk
-        if(strcmp(line + len - 5, " ****") == 0)
+        if(len > 8 && strncmp(line, "@@ ", 3) == 0)
         {
-            // From hunk
-            ParseFromTo(line, len);
-        }
-        InToFile = 0;
-        AddLine(0, -1, line);
-    }
-    else if(len > 8 && strncmp(line, "--- ", 4) == 0)
-    {
-        // To file or to hunk
-        if(strcmp(line + len - 5, " ----") == 0)
-        {
-            // To hunk
-            if(CurrFile)
+            // To file or to hunk
+            if(strcmp(line + len - 3, " @@") == 0)
             {
-                ParseFromTo(line, len);
-                AddLine(CurrFile, CurrLine, line, 1);
+                // "@@ -1,20 +1,20 @@"
+                // To hunk
+                if(CurrFile)
+                {
+                    ParseFromTo(line, len);
+                    AddLine(CurrFile, CurrLine, line, 2);
+                }
+                else
+                {
+                    AddLine(0, -1, line);
+                }
             }
             else
+            {
                 AddLine(0, -1, line);
+            }
         }
         else
         {
-            // To-file
-            AddLine(CurrFile, -1, line);
+            if(CurrLine < ToLine)
+            {
+                // Diff line (markable, if CurrFile is set, also hilited)
+                if(*line == '+')
+                {
+                    //"+(new line from file)"
+                    AddLine(CurrFile, CurrLine, line, 1);
+                    CurrLine++;
+                }
+                else
+                {
+                    if(*line == '-')
+                    {
+                        //"-(deleted line from file)"
+                        AddLine(0, -1, line);
+                    }
+                    else
+                    {
+                        //" (line without change)"
+                        AddLine(CurrFile, CurrLine, line);
+                        CurrLine++;
+                    }
+                }
+            }
+            else
+            {
+                AddLine(0, -1, line);
+            }
         }
-        InToFile = 1;
     }
-    else if(strcmp(line, "***************") == 0)
-    {
-        // Hunk start
-        CurrLine = ToLine = 0;
-        AddLine(0, -1, line);
-    }
-    else if(CurrLine < ToLine)
-    {
-        // Diff line (markable, if CurrFile is set, also hilited)
-        if(InToFile)
-            AddLine(CurrFile, CurrLine, line, 5);
-        else
-            AddLine(0, CurrLine, line, 4);
-        CurrLine++;
-    }
-    else
-        AddLine(0, -1, line);
 }
 
 int
