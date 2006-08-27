@@ -179,12 +179,14 @@ int ConHideCursor();
 int ConCursorVisible();
 int ConSetCursorSize(int Start, int End);
 
+#ifdef CONFIG_MOUSE
 int ConSetMousePos(int X, int Y);
 int ConQueryMousePos(int *X, int *Y);
 int ConShowMouse();
 int ConHideMouse();
 int ConMouseVisible();
 int ConQueryMouseButtons(int *ButtonCount);
+#endif
 
 int ConGetEvent(TEventMask EventMask, TEvent *Event, int WaitTime, int Delete);
 int ConPutEvent(TEvent Event);

@@ -210,14 +210,17 @@ void EEditPort::HandleEvent(TEvent &Event) {
             break;
         }
         break;
+#ifdef CONFIG_MOUSE
     case evMouseDown:
     case evMouseMove:
     case evMouseAuto:
     case evMouseUp:
         HandleMouse(Event);
         break;
+#endif
     }
 }
+#ifdef CONFIG_MOUSE
 void EEditPort::HandleMouse(TEvent &Event) {
     int x, y, xx, yy, W, H;
 
@@ -350,6 +353,7 @@ void EEditPort::HandleMouse(TEvent &Event) {
         }
     }
 }
+#endif
 
 void EEditPort::UpdateView() {
     Buffer->Redraw();
