@@ -212,8 +212,10 @@ static int SetModeString(EMode *mode, int what, const char *string) {
 #endif
         if (j == BFI_EventMap) {
             mode->fEventMap = FindEventMap(string);
+#ifdef CONFIG_INDENT
         } else if (j == BFI_IndentMode) {
             mode->Flags.num[j] = GetIndentMode(string);
+#endif
         } else if (j == BFS_WordChars) {
             SetWordChars(mode->Flags.WordChars, string);
         } else if (j == BFS_CapitalChars) {
