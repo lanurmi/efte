@@ -141,7 +141,9 @@ public:
     virtual ~EEditPort();
     
     virtual void HandleEvent(TEvent &Event);
+#ifdef CONFIG_MOUSE
     virtual void HandleMouse(TEvent &Event);
+#endif
     virtual void UpdateView();
     virtual void RepaintView();
     virtual void UpdateStatus();
