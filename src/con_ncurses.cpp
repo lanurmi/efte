@@ -250,6 +250,14 @@ static unsigned int  GetDch(int idx)
 
 static int last_attr = A_NORMAL;
 
+// "Cell" is currently an integer type, but its contents is treated as
+// a char data struct. So, create a struct to cast it that way.
+typedef struct CellData
+{
+	unsigned char ch;
+	unsigned char attr;
+} CellData;
+
 int ConPutBox(int X, int Y, int W, int H, PCell Cell)
 {
 	int CurX, CurY;
@@ -265,8 +273,9 @@ int ConPutBox(int X, int Y, int W, int H, PCell Cell)
 		move(yy++,X);
 		for ( int i=0; i < W; i++)
 		{
-			unsigned char ch = Cell[0] & 0xff;
-			int attr = fte_curses_attr[Cell[0] >> 8 & 0xff];
+			CellData *celldata = (CellData *)Cell;
+			unsigned char ch = celldata->ch;
+			int attr = fte_curses_attr[celldata->attr];
 			if(attr != last_attr)
 			{
 				wattrset(stdscr,attr);
