@@ -453,6 +453,7 @@ int EBuffer::SaveTo(char *AFileName) {
 
     if (RCount <= 0) return 0;
 
+#ifdef CONFIG_BACKUP
     // make only backups when user have requested a one
     if (BFI(this, BFI_MakeBackups) != 0) {
         Msg(S_INFO, "Backing up %s...", AFileName);
@@ -461,6 +462,7 @@ int EBuffer::SaveTo(char *AFileName) {
             return 0;
         }
     }
+#endif
 
     Msg(S_INFO, "Writing %s...", AFileName);
 
