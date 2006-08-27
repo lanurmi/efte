@@ -32,13 +32,22 @@ colorize C {
         '_asm', '__asm', '_far16', '__far16', '_pascal', '_cdecl',
         '__cdecl', '_export', '__pascal', '_stdcall', '_syscall',
         '__stdcall', '__syscall', '_fastcall', '__fastcall', '__export',
-        'bool', 'true', 'false',
+        'bool', # 'true', 'false',
+        # some gcc extensions
+        '__asm__', '__attribute__', '__format__', '__printf__',
         # more C++ keywords
         'reinterpret_cast', 'static_cast', 'dynamic_cast',
         'const_cast', 'typeid',
         # wide char (from new C/C++ 1998/1999 standards):
         'wchar_t',
     };
+    # show these as numbers
+    # True, TRUE, False, FALSE, NULL are commonly defined values
+    # but they are not part of C lang
+    keyword 'Lang_DecimalNumber' {
+        'true', 'True', 'TRUE', 'false', 'False', 'FALSE', 'NULL',
+    };
+
 }
 
 mode C: PLAIN {      # C/C++ Mode
