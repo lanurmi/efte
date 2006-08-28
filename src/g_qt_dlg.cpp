@@ -29,7 +29,7 @@ int DLGGetFile(GView *v, const char *Prompt, unsigned int BufLen, char *FileName
 
     assert(BufLen > 0);
 
-    JustDirectory(FileName, directory);
+    JustDirectory(FileName, directory, sizeof(directory));
 
     DEBUGX(("Doing file dialog\n"));
     if (Flags & GF_SAVEAS) {
@@ -44,6 +44,17 @@ int DLGGetFile(GView *v, const char *Prompt, unsigned int BufLen, char *FileName
     FileName[BufLen - 1] = 0;
     DEBUGX(("selected %s\n", FileName));
     return FileName[0] ? 1 : 0;
+}
+
+int DLGPickChoice(GView * /*v*/, const char * /*ATitle*/, int /*NSel*/, va_list /*ap*/, int /*Flags*/) {
+    assert(1==0);
+    return 0;
+}
+
+
+int DLGGetStr(GView * /*View*/, const char * /*Prompt*/, unsigned int /*BufLen*/, char * /*Str*/, int /*HistId*/, int /*Flags*/) {
+    assert(1 == 0);
+    return 0;
 }
 
 const int kMaxButton = 16;
@@ -83,7 +94,7 @@ private:
 QChoiceBox::QChoiceBox(QWidget *parent, const char *name)
     : QDialog(parent, name, TRUE)
 {
-    initMetaObject();
+    //initMetaObject();
 
     buttonSelected = -1;
     buttonCount = 0;
