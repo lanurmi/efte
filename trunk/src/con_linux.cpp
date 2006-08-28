@@ -1197,7 +1197,7 @@ char ConGetDrawChar(int idx) {
     assert(idx >= 0 && idx < int(strlen(tab)));
 
 #ifdef USE_SCRNMAP
-    return fromScreen[tab[idx]];
+    return fromScreen[(int)tab[idx]];
 #else
     return tab[idx];
 #endif
