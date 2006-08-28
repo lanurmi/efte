@@ -152,7 +152,7 @@ static int ConInitColors()
 int ConInit(int /*XSize */ , int /*YSize */ )
 {
 	int ch;
-	char *s;
+	const char *s;
 
 	ESCDELAY = escDelay;
 	initscr();
