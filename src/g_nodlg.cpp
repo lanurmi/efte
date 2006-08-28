@@ -1,5 +1,6 @@
 // used in text mode versions, should never be called (just for linking)
 
+#include "feature.h"
 #include <stdarg.h>
 #include <assert.h>
 #include "console.h"
@@ -30,3 +31,8 @@ int DLGGetStr(GView * /*View*/, const char * /*Prompt*/, unsigned int /*BufLen*/
     return 0;
 }
 
+#ifdef CONFIG_MOUSE
+int GView::CaptureMouse(int grab) {
+    return 0;
+}
+#endif
