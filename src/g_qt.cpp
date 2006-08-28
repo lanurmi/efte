@@ -224,23 +224,23 @@ typedef struct _qEvent {
 
 TEvent NextEvent = { evNone };
 static QColor colors[16] = {
-    black,
-    darkBlue,
-    darkGreen,
-    darkCyan,
-    darkRed,
-    darkMagenta,
-    darkYellow,
-    gray,
+    Qt::black,
+    Qt::darkBlue,
+    Qt::darkGreen,
+    Qt::darkCyan,
+    Qt::darkRed,
+    Qt::darkMagenta,
+    Qt::darkYellow,
+    Qt::gray,
     
-    darkGray,
-    blue,
-    green,
-    cyan,
-    red,
-    magenta,
-    yellow,
-    white,
+    Qt::darkGray,
+    Qt::blue,
+    Qt::green,
+    Qt::cyan,
+    Qt::red,
+    Qt::magenta,
+    Qt::yellow,
+    Qt::white
 };
 
 static XFontStruct *fontStruct;
@@ -413,7 +413,7 @@ void QEView::sbVmoveTo(int pos) {
 QEText::QEText(GViewPeer *peer, QWidget *parent, const char *name): QWidget(parent, name) {
     view = peer;
 
-    setAcceptFocus(TRUE);
+//    setAcceptFocus(TRUE);
     setMinimumSize(100, 80);
 }
 
@@ -460,16 +460,16 @@ void QEText::handleMouse(QMouseEvent *qe) {
     LastMousePos = mapToGlobal(qe->pos());
 
     switch (qe->type()) {
-    case Event_MouseButtonPress:
-    case Event_MouseButtonDblClick:
+    case QEvent::MouseButtonPress:
+    case QEvent::MouseButtonDblClick:
         if (!view->View->IsActive())
             view->View->Parent->SelectView(view->View);
         NextEvent.What = evMouseDown;
         break;
-    case Event_MouseButtonRelease:
+    case QEvent::MouseButtonRelease:
         NextEvent.What = evMouseUp;
         break;
-    case Event_MouseMove:
+    case QEvent::MouseMove:
         NextEvent.What = evMouseMove;
         break;
     default:
@@ -501,7 +501,7 @@ void QEText::handleMouse(QMouseEvent *qe) {
         NextEvent.Mouse.KeyMask |= kfAlt;
     
     NextEvent.Mouse.Count = 1;
-    if (qe->type() == Event_MouseButtonDblClick)
+    if (qe->type() == QEvent::MouseButtonDblClick)
         NextEvent.Mouse.Count = 2;
     NextEvent.Mouse.X = X;
     NextEvent.Mouse.Y = Y;
@@ -525,44 +525,44 @@ static struct {
     unsigned int q_code;
     TKeyCode keyCode;
 } key_table[] = {
-{ Key_Escape,     kbEsc },
-{ Key_Tab,        kbTab },
-{ Key_Backtab,    kbTab | kfShift },
-{ Key_Backspace,  kbBackSp },
-{ Key_Return,     kbEnter },
-{ Key_Enter,      kbEnter },
-{ Key_Insert,     kbIns },
-{ Key_Delete,     kbDel },
-{ Key_Pause,      kbPause },
-{ Key_Print,      kbPrtScr },
-{ Key_SysReq,     kbSysReq },
-{ Key_Home,       kbHome },
-{ Key_End,        kbEnd },
-{ Key_Left,       kbLeft },
-{ Key_Up,         kbUp },
-{ Key_Right,      kbRight },
-{ Key_Down,       kbDown },
-{ Key_Prior,      kbPgUp },
-{ Key_Next,       kbPgDn },
-{ Key_Shift,      kbShift | kfModifier },
-{ Key_Control,    kbCtrl | kfModifier },
-{ Key_Meta,       kbAlt | kfModifier },
-{ Key_Alt,        kbAlt | kfModifier },
-{ Key_CapsLock,   kbCapsLock | kfModifier },
-{ Key_NumLock,    kbNumLock | kfModifier },
-{ Key_ScrollLock, kbScrollLock | kfModifier },
-{ Key_F1,         kbF1 },
-{ Key_F2,         kbF2 },
-{ Key_F3,         kbF3 },
-{ Key_F4,         kbF4 },
-{ Key_F5,         kbF5 },
-{ Key_F6,         kbF6 },
-{ Key_F7,         kbF7 },
-{ Key_F8,         kbF8 },
-{ Key_F9,         kbF9 },
-{ Key_F10,        kbF10 },
-{ Key_F11,        kbF11 },
-{ Key_F12,        kbF12 },
+{ Qt::Key_Escape,     kbEsc },
+{ Qt::Key_Tab,        kbTab },
+{ Qt::Key_Backtab,    kbTab | kfShift },
+{ Qt::Key_Backspace,  kbBackSp },
+{ Qt::Key_Return,     kbEnter },
+{ Qt::Key_Enter,      kbEnter },
+{ Qt::Key_Insert,     kbIns },
+{ Qt::Key_Delete,     kbDel },
+{ Qt::Key_Pause,      kbPause },
+{ Qt::Key_Print,      kbPrtScr },
+{ Qt::Key_SysReq,     kbSysReq },
+{ Qt::Key_Home,       kbHome },
+{ Qt::Key_End,        kbEnd },
+{ Qt::Key_Left,       kbLeft },
+{ Qt::Key_Up,         kbUp },
+{ Qt::Key_Right,      kbRight },
+{ Qt::Key_Down,       kbDown },
+{ Qt::Key_Prior,      kbPgUp },
+{ Qt::Key_Next,       kbPgDn },
+{ Qt::Key_Shift,      kbShift | kfModifier },
+{ Qt::Key_Control,    kbCtrl | kfModifier },
+{ Qt::Key_Meta,       kbAlt | kfModifier },
+{ Qt::Key_Alt,        kbAlt | kfModifier },
+{ Qt::Key_CapsLock,   kbCapsLock | kfModifier },
+{ Qt::Key_NumLock,    kbNumLock | kfModifier },
+{ Qt::Key_ScrollLock, kbScrollLock | kfModifier },
+{ Qt::Key_F1,         kbF1 },
+{ Qt::Key_F2,         kbF2 },
+{ Qt::Key_F3,         kbF3 },
+{ Qt::Key_F4,         kbF4 },
+{ Qt::Key_F5,         kbF5 },
+{ Qt::Key_F6,         kbF6 },
+{ Qt::Key_F7,         kbF7 },
+{ Qt::Key_F8,         kbF8 },
+{ Qt::Key_F9,         kbF9 },
+{ Qt::Key_F10,        kbF10 },
+{ Qt::Key_F11,        kbF11 },
+{ Qt::Key_F12,        kbF12 },
 };
 
 void QEText::ActiveEvent(TEvent &Event) {
@@ -832,7 +832,7 @@ void GViewPeer::DrawCursor(/*QPainter *painter, */int Show) {
     //    if (!XtIsManaged(TextWin)) return ;
 
     if (cVisible && cX >= 0 && cY >= 0) {
-        char *p = CursorXYPos(cX, cY);
+        unsigned char* p = CursorXYPos(cX, cY);
         unsigned char attr;
 
         attr = p[1];
@@ -1478,8 +1478,8 @@ int GFramePeer::ConSetTitle(char *Title, char *STitle) {
 }
 
 int GFramePeer::ConGetTitle(char *Title, int MaxLen, char *STitle, int SMaxLen) {
-    strlcpy(Title, qFrame->caption(), MaxLen);
-    strlcpy(STitle, qFrame->iconText(), SMaxLen);
+    strncpy(Title, qFrame->caption(), MaxLen);
+    strncpy(STitle, qFrame->iconText(), SMaxLen);
     return 1;
 }
 
@@ -1961,18 +1961,18 @@ int GUI::ShowEntryScreen() {
     return 1;
 }
 
-int GUI::RunProgram(char *Command) {
+int GUI::RunProgram(int mode, char *Command) {
     char Cmd[1024];
 
-    strlcpy(Cmd, XShellCommand, sizeof(Cmd));
+    //strncpy(Cmd, XShellCommand, sizeof(Cmd));
 
     if (*Command == 0)  // empty string = shell
-        strlcat(Cmd, " -ls &", sizeof(Cmd));
+        strncat(Cmd, " -ls &", sizeof(Cmd));
     else {
-        strlcat(Cmd, " -e ", sizeof(Cmd));
-	strlcat(Cmd, Command, sizeof(Cmd));
-        if (mode == RUN_ASYNC)
-            strlcat(Cmd, " &", sizeof(Cmd));
+        strncat(Cmd, " -e ", sizeof(Cmd));
+	strncat(Cmd, Command, sizeof(Cmd));
+	if (mode == RUN_ASYNC)
+            strncat(Cmd, " &", sizeof(Cmd));
     }
 
     return system(Cmd);
@@ -2092,7 +2092,7 @@ int GUI::multiFrame() { return 1; }
 int GetXSelection(int *len, char **data, int clipboard) {
     QClipboard *cb = QApplication::clipboard();
     const char *text;
-    Mode mode;
+    QClipboard::Mode mode;
     switch (clipboard) {
     case 0:
         mode = QClipboard::Clipboard;
@@ -2118,9 +2118,9 @@ int GetXSelection(int *len, char **data, int clipboard) {
 }
 
 int SetXSelection(int len, char *data, int clipboard) {
-    QClipboard *cb = QApplication::clipboard();
+    QClipboard* cb = QApplication::clipboard();
     char *text = (char *)malloc(len + 1);
-    Mode mode;
+    QClipboard::Mode mode;
     if (text == 0)
         return -1;
     switch (clipboard) {
@@ -2136,7 +2136,7 @@ int SetXSelection(int len, char *data, int clipboard) {
     }
     memcpy(text, data, len);
     text[len] = 0;
-    cb.setText(text, mode);
+    cb->setText(text, mode);
     free(text);
     return 0;
 }
