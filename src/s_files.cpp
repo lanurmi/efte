@@ -445,7 +445,7 @@ const char *ShortFName(const char *Path, int len) {
     int l1;
 
     if (len < 10) len = 10;
-    if (len > (sizeof(P) - 1)) len = sizeof(P) - 1;
+    if (len > (int)(sizeof(P) - 1)) len = sizeof(P) - 1;
 
     if (ExpandPath(Path, p1, sizeof(p1)) == -1) return Path;
     l1 = strlen(p1);
