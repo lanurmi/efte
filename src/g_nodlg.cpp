@@ -30,9 +30,3 @@ int DLGGetStr(GView * /*View*/, const char * /*Prompt*/, unsigned int /*BufLen*/
     assert(1 == 0);
     return 0;
 }
-
-#ifdef CONFIG_MOUSE
-int GView::CaptureMouse(int grab) {
-    return 0;
-}
-#endif
