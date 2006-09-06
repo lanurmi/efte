@@ -7,6 +7,7 @@
  *
  */
 
+#include "feature.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -130,7 +131,7 @@ static int DrawVMenu(int x, int y, int id, int active) {
     GetVSize(id, w, h);
     w += 4;
     h += 2;
-    
+
     MoveChar(B, 0, w, ConGetDrawChar(DCH_H), hcMenu_Background, w);
     MoveCh(B, ConGetDrawChar(DCH_C1), hcMenu_Background, 1);
     MoveCh(B + w - 1, ConGetDrawChar(DCH_C2), hcMenu_Background, 1);

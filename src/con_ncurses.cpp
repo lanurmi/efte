@@ -6,6 +6,7 @@
  *    License or the Artistic License, as specified in the README file.
  *
  */
+#include "feature.h"
 
 #include <ncurses.h>
 #include <unistd.h>

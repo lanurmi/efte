@@ -27,6 +27,7 @@
 
 // ... some more comments below
 
+#include "feature.h"
 
 #include <signal.h>
 #include <assert.h>
