@@ -1102,6 +1102,9 @@ void ConvertKeyToEvent(KeySym key, KeySym key1, char */*keyname*/, char */*keyna
     if (state & ShiftMask) myState |= kfShift;
     if (state & ControlMask) myState |= kfCtrl;
     if (state & Mod1Mask) myState |= kfAlt;
+    if (state & Mod2Mask) myState |= kfAlt;
+    if (state & Mod3Mask) myState |= kfAlt;
+    if (state & Mod4Mask) myState |= kfAlt;
 
     /* modified kabi@fi.muni.cz
      * for old method
@@ -1109,7 +1112,7 @@ void ConvertKeyToEvent(KeySym key, KeySym key1, char */*keyname*/, char */*keyna
      *     return;
      */
 
-    //printf("key: %d ; %d ; %d\n", key, key1, state);
+    //printf("key: %d ; %d ; %d\n", (int)key, (int)key1, state);
     if (key < 256 || (key1 < 256 && (myState == kfAlt || myState == (kfAlt | kfShift)))) {
         if (myState & kfAlt)
             key = key1;
@@ -1152,6 +1155,7 @@ void ConvertClickToEvent(int type, int xx, int yy, int button, int state, TEvent
     static unsigned long LastClick = 0;
     unsigned long CurTime = mtime;
 
+    //printf("Mouse x:%d y:%d  %d\n", xx, yy, type);
     if (type == MotionNotify) Event->What = evMouseMove;
     else if (type == ButtonPress) Event->What = evMouseDown;
     else Event->What = evMouseUp;
@@ -1196,16 +1200,16 @@ void ConvertClickToEvent(int type, int xx, int yy, int button, int state, TEvent
                         Event->Msg.Command = cmVScrollDown;
                 }
             }
-            return ;
+            return;
         }
     }
     Event->Mouse.Count = 1;
     if (state & ShiftMask) myState |= kfShift;
     if (state & ControlMask) myState |= kfCtrl;
     if (state & Mod1Mask) myState |= kfAlt;
-//    if (state & Mod2Mask) myState |= kfAlt;
-//    if (state & Mod3Mask) myState |= kfAlt;
-//    if (state & Mod4Mask) myState |= kfAlt;
+    if (state & Mod2Mask) myState |= kfAlt;
+    if (state & Mod3Mask) myState |= kfAlt;
+    if (state & Mod4Mask) myState |= kfAlt;
     Event->Mouse.KeyMask = myState;
 
     if (Event->What == evMouseDown) {
@@ -1286,7 +1290,10 @@ void ProcessXEvents(TEvent *Event) {
 
                     if (send == 0) {
                         // Was sent - remove from memory
-                        if (prev_isi) prev_isi->next = isi->next; else incrementalSelections = isi->next;
+			if (prev_isi)
+			    prev_isi->next = isi->next;
+			else
+			    incrementalSelections = isi->next;
                         XFree(isi->data);
                         delete isi;
                     }
