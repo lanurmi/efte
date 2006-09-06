@@ -7,6 +7,7 @@
  *
  */
 
+#include "feature.h"
 #include "console.h"
 
 #ifdef  NTCONSOLE
