@@ -7,6 +7,8 @@
  *
  */
 
+#include "feature.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -1201,7 +1203,7 @@ void GUI::ProcessEvent() {
                     frames->ConQuerySize(&Cols, &Rows);
                     int x = Cols / 2, y = Rows / 2;
 #ifdef CONFIG_MOUSE
-                    ::ConQueryMousePos(&x, &y);
+                    ConQueryMousePos(&x, &y);
 #endif
                     
                     frames->Update(); // sync before menu
