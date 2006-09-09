@@ -69,10 +69,11 @@ void EFrame::UpdateMenu() {
     GFrame::UpdateMenu();
 }
 
-EGUI::EGUI(int &argc, char **argv, int XSize, int YSize): GUI(argc, argv, XSize, YSize) {
+EGUI::EGUI(int &argc, char **argv, int XSize, int YSize)
+: GUI(argc, argv, XSize, YSize) {
     ActiveMap = 0;
     OverrideMap = 0;
-    strcpy(CharMap, "");
+    CharMap[0] = 0;
 }
 
 EGUI::~EGUI() {
