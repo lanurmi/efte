@@ -143,6 +143,7 @@ static int FontCYD;
 #else
 static int useXMB = 0;
 #endif
+static int useI18n = 1;
 static int FontCX, FontCY;
 static XColor Colors[16];
 static GC GCs[256];
@@ -352,8 +353,7 @@ static void try_fontset_load(const char *fs)
     if (!fs || !*fs)
 	return;
 
-    fontSet = XCreateFontSet(display, fs, &miss, &nMiss,
-			     &def);
+    fontSet = XCreateFontSet(display, fs, &miss, &nMiss, &def);
 
     if (fontSet == NULL) {
 	fprintf(stderr, "XFTE Warning: unable to open font \"%s\":\n"
@@ -461,7 +461,7 @@ static int SetupXWindow(int argc, char **argv)
                         CopyFromParent, InputOutput, CopyFromParent,
                         CWBitGravity, &setWindowAttributes);
 
-    i18n_ctx = i18n_open(display, win, &mask);
+    i18n_ctx = useI18n ? i18n_open(display, win, &mask) : 0;
 
     if (InitXFonts() != 0)
 	DieError(1, "XFTE Fatal: could not open any font!");
@@ -526,7 +526,7 @@ static int SetupXWindow(int argc, char **argv)
     }
 
     // Set icons using _NET_WM_ICON property
-    const char **xpmData[ICON_COUNT] = { fte16x16_xpm, ftepm, fte48x48_xpm, fte64x64_xpm };
+    static const char **xpmData[ICON_COUNT] = { fte16x16_xpm, ftepm, fte48x48_xpm, fte64x64_xpm };
     XpmImage xpmImage[ICON_COUNT];
     CARD32 *xpmColors[ICON_COUNT] = { NULL, NULL, NULL, NULL };
     int i, iconBufferSize = 0;
@@ -582,9 +582,12 @@ static int SetupXWindow(int argc, char **argv)
                 for (j = 0; j < xpm.width * xpm.height; j++) {
                     *b++ = colors[xpm.data[j]];
                 }
-            }
-            XChangeProperty(display, win, XInternAtom(display, "_NET_WM_ICON", False),
-                            XA_CARDINAL, 32, PropModeReplace, (unsigned char *)iconBuffer, iconBufferSize);
+	    }
+	    Atom at = XInternAtom(display, "_NET_WM_ICON", False);
+	    if (at != None)
+		XChangeProperty(display, win, at,
+				XA_CARDINAL, 32, PropModeReplace,
+				(unsigned char *)iconBuffer, iconBufferSize);
             free(iconBuffer);
         }
     }
@@ -671,25 +674,27 @@ void DrawCursor(int Show) {
         // Check if cursor is on or off due to flashing
         if (CursorBlink)
             Show &= (CursorLastTime % (CursorFlashInterval * 2)) > CursorFlashInterval;
-
+        int attr = p[1] ^ (Show ? 0xff : 0);
         if (!useXMB)
-            XDrawImageString(display, win, GCs[p[1]],
+        XDrawImageString(display, win, GCs[attr],
                              CursorX * FontCX,
                              fontStruct->max_bounds.ascent + CursorY * FontCY,
                              (char *)p, 1);
 #ifdef USE_XMB
         else
-            XmbDrawImageString(display, win, fontSet, GCs[p[1]],
+        XmbDrawImageString(display, win, fontSet, GCs[attr],
                                CursorX * FontCX, FontCYD + CursorY * FontCY,
                                (char *)p, 1);
 #endif
+#if 0
         if (Show) {
 	    int cs = (CursorStart * FontCY + FontCY / 2) / 100;
 	    int ce = (CursorEnd   * FontCY + FontCY / 2) / 100;
 	    XFillRectangle (display, win, GCs[p[1]],
 	                    CursorX * FontCX, CursorY * FontCY + cs,
 			    FontCX, ce - cs);
-	}
+        }
+#endif
     }
 }
 
@@ -1990,6 +1995,9 @@ GUI::GUI(int &argc, char **argv, int XSize, int YSize) {
         } else if ((strcmp(argv[c], "-noxmb") == 0)
                    || (strcmp(argv[c], "--noxmb") == 0))
             useXMB = 0;
+        else if ((strcmp(argv[c], "-no18n") == 0)
+                   || (strcmp(argv[c], "--noi18n") == 0))
+            useI18n = 0;
         else if (strcmp(argv[c], "-name") == 0) {
             if (c + 1 < argc) {
                 strncpy (res_name, argv [++c], sizeof (res_name));
@@ -2014,7 +2022,12 @@ GUI::~GUI() {
 
     for (int i = 0; i < 256; i++)
 	XFreeGC(display, GCs[i]);
-
+#ifdef USE_XMB
+    if (fontSet)
+	XFreeFontSet(display, fontSet);
+#endif
+    if (fontStruct)
+        XFreeFont(display, fontStruct);
     XDestroyWindow(display, win);
     XCloseDisplay(display);
 
