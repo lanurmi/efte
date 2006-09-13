@@ -5,11 +5,13 @@
 
 #  vfte - for Linux console directly (with limitations, see con_linux.cpp)
 
-TARGETS = xfte vfte nfte
-#TARGETS = xfte vfte sfte nfte
-#TARGETS = xfte
+TGT_NFTE = nfte
+#TGT_QFTE = qfte
+#TGT_SFTE = sfte
+TGT_VFTE = vfte
+TGT_XFTE = xfte
 
-PRIMARY = xfte
+TARGETS = $(TGT_XFTE) $(TGT_NFTE) $(TGT_QFTE) $(TGT_SFTE) $(TGT_VFTE)
 
 # Comment or uncoment this two flags below if
 # you want to use:
@@ -18,7 +20,7 @@ PRIMARY = xfte
 #REMAPFLAG = -DUSE_HARD_REMAP
 
 # Drawing fonts with locale support
-XMBFLAG = #-DUSE_XMB
+XMBFLAG = -DUSE_XMB
 
 # System X11R6 is compiled with X_LOCALE
 #SYSTEM_X_LOCALE = -DX_LOCALE
@@ -39,14 +41,14 @@ USE_XICON = -DUSE_XICON
 XPMLIB = -lXpm
 
 #gcc/g++
-COPTIONS = -Wall -Wpointer-arith -Wconversion -Wwrite-strings \
-           -Winline
+#CC = g++
+#LD = g++
+CC = $(CXX)
+LD = $(CXX)
+CPPOPTIONS = -Wall -Wpointer-arith -Wconversion -Wwrite-strings -Winline
 
-#CC       = g++
-#LD       = g++
 # try this for smaller/faster code and less dependencies
-CC       = g++ -fno-rtti -fno-exceptions
-LD       = g++ -fno-rtti -fno-exceptions
+NOEXCEPTION = -fno-rtti -fno-exceptions
 
 
 # choose your os here
@@ -55,15 +57,15 @@ LD       = g++ -fno-rtti -fno-exceptions
 # Linux
 UOS      = -DLINUX
 XINCDIR  = -I/usr/X11R6/include
-XLIBDIR  = -L/usr/X11R6/lib -lstdc++
+XLIBDIR  = -L/usr/X11R6/lib
 
 #######################################################################
 # HP/UX
 #UOS      = -DHPUX -D_HPUX_SOURCE -DCAST_FD_SET_INT
 #UOS      = -DHPUX -D_HPUX_SOURCE
 
-#CC   = CC +a1
-#LD   = CC
+#CC  = CC +a1
+#LD  = CC
 #CC = aCC
 #LD = aCC
 
@@ -83,7 +85,7 @@ SINCDIR   = -I/usr/include/slang
 
 #CC   = xlC
 #LD   = xlC
-#COPTIONS = -DNO_NEW_CPP_FEATURES
+#CPPOPTIONS = -DNO_NEW_CPP_FEATURES
 #TARGETS = xfte
 
 #######################################################################
@@ -94,14 +96,14 @@ SINCDIR   = -I/usr/include/slang
 #UOS  = -DIRIX
 #CC   = CC
 #LD   = CC
-#COPTIONS = -DNO_NEW_CPP_FEATURES -OPT:Olimit=3000 # -xc++
+#CPPOPTIONS = -DNO_NEW_CPP_FEATURES -OPT:Olimit=3000 # -xc++
 
 #######################################################################
 # SunOS (Solaris)
 #UOS      = -DSUNOS
 #CC = CC -noex
 #LD = CC -noex
-#COPTIONS = -DNO_NEW_CPP_FEATURES
+#CPPOPTIONS = -DNO_NEW_CPP_FEATURES
 #XINCDIR  = -I/usr/openwin/include
 #XLIBDIR  = -L/usr/openwin/lib
 
@@ -118,13 +120,13 @@ SINCDIR   = -I/usr/include/slang
 #LD  = $(CC)
 #XLIBDIR  = -L/usr/X11R6/lib
 #SOCKETLIB = -lsocket
-#COPTIONS = +.cpp
+#CPPOPTIONS = +.cpp
 
 #######################################################################
 # NCR
 #CC = cc -Hnocopyr
 #LD = cc -Hnocopyr
-#COPTIONS = -w3
+#CPPOPTIONS = -w3
 #UOS = -DNCR
 #XINCDIR  = -I../../include
 #SOCKETLIB = -lsocket -lnsl -lc -lucb
@@ -135,50 +137,50 @@ SINCDIR   = -I/usr/include/slang
 #QLIBDIR  = -L$(QTDIR)/lib
 #QINCDIR  = -I$(QTDIR)/include
 #QINCDIR  = -I/usr/include/qt
-
+QINCDIR =  -I/usr/include/qt3
 MOC      = moc
 
-LIBDIR   =
-INCDIR   =
+LIBDIRS   =
+INCDIRS   = $(XINCDIR) $(QINCDIR) $(MINCDIR) $(SINCDIR)
 
 OPTIMIZE = -g # -O -g
 #OPTIMIZE = -O2
 #OPTIMIZE = -O2 -s
 
-CCFLAGS  = $(OPTIMIZE) $(I18NOPTIONS) $(APPOPTIONS) $(USE_XICON) $(COPTIONS) -DUNIX $(UOS) $(INCDIR) $(XINCDIR) $(QINCDIR) $(MINCDIR) $(SINCDIR)
-LDFLAGS  = $(OPTIMIZE) $(LIBDIR) $(XLIBDIR) $(QLIBDIR) $(MLIBDIR)
+CCFLAGS  = $(CPPOPTIONS) $(OPTIMIZE) $(NOEXCEPTION) $(INCDIRS) -DUNIX $(UOS) \
+	$(I18NOPTIONS) $(APPOPTIONS) $(USE_XICON)
+LDFLAGS  = $(OPTIMIZE) $(LIBDIRS)
 
-OEXT     = o
 
 .SUFFIXES: .cpp .o .moc
 
+OEXT     = o
 include objs.inc
+
 SRCS = $(OBJS:.o=.cpp)
 
 # Need -lXt below if USE_XTINIT is defined
-XLIBS    = -lX11 $(SOCKETLIB) $(XPMLIB)
-#-lmpatrol -lelf
+XLIBS    = $(XLIBDIR) -lX11 $(SOCKETLIB) $(XPMLIB)
 VLIBS    = -lgpm -lncurses
-# -ltermcap outdated by ncurses
 NLIBS    = -lncurses
 SLIBS    = -lslang
-QLIBS    = -lqt
-#MLIBS    = -lXm -lXp -lXt -lXpm -lXext
+#QLIBS    = $(QLIBDIR) -lqt
+QLIBS    = $(QLIBDIR) -lqt-mt
+#MLIBS    = $(MLIBDIR) -lXm -lXp -lXt -lXpm -lXext
 
 .cpp.o:
-	$(CC) $(CCFLAGS) -c $<
+	$(CC) -c $< $(CXXFLAGS) $(CPPFLAGS) $(CCFLAGS)
 
 .c.o:
-	$(CC) $(CCFLAGS) -c $<
+	$(CC) -c $< $(CFLAGS) $(CPPFLAGS) $(CCFLAGS)
 
 .cpp.moc:
-	$(MOC) $< -o $@
+	$(MOC) -o $@ $<
 
 all:    cfte $(TARGETS)
-#rm -f fte ; ln -s $(PRIMARY) fte
 
 cfte: cfte.o s_files.o s_string.o
-	$(LD) $(LDFLAGS) cfte.o s_files.o s_string.o -o cfte
+	$(LD) -o $@ $(LDFLAGS) cfte.o s_files.o s_string.o
 
 c_config.o: defcfg.h
 
@@ -196,8 +198,8 @@ defcfg.cnf: $(DEFAULT_FTE_CONFIG) cfte
 xfte: .depend $(OBJS) $(XOBJS)
 	$(LD) -o $@ $(LDFLAGS) $(OBJS) $(XOBJS) $(XLIBS)
 
-#qfte: g_qt.moc g_qt_dlg.moc $(OBJS) $(QOBJS)
-#	$(LD) -o $@ $(LDFLAGS) $(OBJS) $(QOBJS) $(QLIBS) $(XLIBS)
+qfte: g_qt.moc g_qt_dlg.moc $(OBJS) $(QOBJS)
+	$(LD) -o $@ $(LDFLAGS) $(OBJS) $(QOBJS) $(QLIBS) $(XLIBS)
 
 vfte: $(OBJS) $(VOBJS)
 	$(LD) -o $@ $(LDFLAGS) $(OBJS) $(VOBJS) $(VLIBS)
@@ -209,10 +211,10 @@ nfte: $(OBJS) $(NOBJS) compkeys
 	$(LD) -o $@ $(LDFLAGS) $(OBJS) $(NOBJS) $(NLIBS)
 
 compkeys: compkeys.o
-	$(LD) $(LDFLAGS) compkeys.o -o compkeys
+	$(LD) -o $@ $(LDFLAGS) compkeys.o
 
-#mfte: $(OBJS) $(MOBJS)
-#	$(LD) $(LDFLAGS) $(OBJS) $(MOBJS) $(MLIBS) $(XLIBS) -o mfte
+mfte: $(OBJS) $(MOBJS)
+	$(LD) -o $@ $(LDFLAGS) $(OBJS) $(MOBJS) $(MLIBS) $(XLIBS)
 
 g_qt.obj: g_qt.moc
 
@@ -225,8 +227,11 @@ g_qt_dlg.obj: g_qt_dlg.moc
 tags: $(SRCS) $(wildcard *.h)
 	ctags *.h $(SRCS)
 
+.PHONY: clean
+
 clean:
-	rm -f core *.o .depend $(TARGETS) defcfg.h defcfg.cnf cfte fte vfte compkeys tags
+	rm -f core *.o *.moc .depend $(TARGETS) defcfg.h defcfg.cnf \
+	cfte fte sfte vfte nfte qfte xfte compkeys tags
 
 #
 # include dependency files if they exist
