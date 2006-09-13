@@ -5,7 +5,7 @@
  *    You may distribute under the terms of either the GNU General Public
  *    License or the Artistic License, as specified in the README file.
  *
- *    I18N & XMB support added by kabi@fi.muni.cz
+ *    I18N & XMB support added by zdenek.kabelac@gmail.com
  */
 
 #include <string.h>
@@ -368,14 +368,11 @@ static void try_fontset_load(const char *fs)
 
 static int InitXFonts(void)
 {
-    char *fs;
-
-    fs = getenv("VIOFONT");
+    char *fs = getenv("VIOFONT");
     if (fs == NULL && WindowFont[0] != 0)
         fs = WindowFont;
 
     if (!useXMB) {
-
         fontStruct = NULL;
 
 	if (fs != NULL) {
@@ -434,8 +431,8 @@ static int SetupXWindow(int argc, char **argv)
                             NULL, 0, &argc, argv)) == NULL)
        DieError(1, "%s:  Can't open display\n", argv[0]);
 #else
-    char *ds;
-    if ((ds = getenv("DISPLAY")) == NULL)
+    char *ds = getenv("DISPLAY");
+    if (!ds)
 	DieError(1, "$DISPLAY not set? This version of fte must be run under X11.");
     if ((display = XOpenDisplay(ds)) == NULL)
 	DieError(1, "XFTE Fatal: could not open display: %s!", ds);
@@ -676,15 +673,15 @@ void DrawCursor(int Show) {
             Show &= (CursorLastTime % (CursorFlashInterval * 2)) > CursorFlashInterval;
         int attr = p[1] ^ (Show ? 0xff : 0);
         if (!useXMB)
-        XDrawImageString(display, win, GCs[attr],
-                             CursorX * FontCX,
-                             fontStruct->max_bounds.ascent + CursorY * FontCY,
+	    XDrawImageString(display, win, GCs[attr],
+			     CursorX * FontCX,
+			     fontStruct->max_bounds.ascent + CursorY * FontCY,
                              (char *)p, 1);
 #ifdef USE_XMB
         else
-        XmbDrawImageString(display, win, fontSet, GCs[attr],
-                               CursorX * FontCX, FontCYD + CursorY * FontCY,
-                               (char *)p, 1);
+	    XmbDrawImageString(display, win, fontSet, GCs[attr],
+			       CursorX * FontCX, FontCYD + CursorY * FontCY,
+			       (char *)p, 1);
 #endif
 #if 0
         if (Show) {
@@ -1461,7 +1458,7 @@ void ProcessXEvents(TEvent *Event) {
                         , proptype_utf8_string
 #endif
 #endif
-                    };
+		    };
 
                     XChangeProperty(display,
                                     event.xselectionrequest.requestor,
@@ -1537,17 +1534,14 @@ void ProcessXEvents(TEvent *Event) {
 
 static void FlashCursor ()
 {
-    if (!CursorBlink)
-        return;
-
     struct timeval tv;
-    if (gettimeofday (&tv, NULL))
+    if (!CursorBlink || gettimeofday (&tv, NULL) != 0)
         return;
 
     unsigned long OldTime = CursorLastTime;
     CursorLastTime = tv.tv_sec * 1000 + tv.tv_usec / 1000;
     if (OldTime / CursorFlashInterval != CursorLastTime / CursorFlashInterval)
-	DrawCursor (CursorVisible);
+	DrawCursor(CursorVisible);
 }
 
 static TEvent Pending = { evNone };
@@ -1558,7 +1552,7 @@ int ConGetEvent(TEventMask EventMask, TEvent *Event, int WaitTime, int Delete) {
     int rc;
     static TEvent Queued = { evNone };
 
-    FlashCursor ();
+    FlashCursor();
 
     Event->What = evNone;
     if (Queued.What != evNone) {
@@ -1578,11 +1572,8 @@ int ConGetEvent(TEventMask EventMask, TEvent *Event, int WaitTime, int Delete) {
     }
 
     // We can't sleep for too much since we have to flash the cursor
-    if (
-        CursorBlink &&
-        (
-         (WaitTime == -1) || (WaitTime > (int)CursorFlashInterval)
-        )
+    if (CursorBlink && ((WaitTime == -1)
+			|| (WaitTime > (int)CursorFlashInterval))
        )
         WaitTime = CursorFlashInterval;
 
@@ -1590,7 +1581,7 @@ int ConGetEvent(TEventMask EventMask, TEvent *Event, int WaitTime, int Delete) {
     while (Event->What == evNone) {
         Event->What = evNone;
         while (XPending(display) > 0) {
-	    FlashCursor ();
+	    FlashCursor();
             ProcessXEvents(Event);
             if (Event->What != evNone) {
                 while ((Event->What == evMouseMove) && (Queued.What == evNone)) {
@@ -1623,9 +1614,7 @@ int ConGetEvent(TEventMask EventMask, TEvent *Event, int WaitTime, int Delete) {
         if ((WaitTime == -1 || WaitTime > MouseAutoDelay) && (LastMouseEvent.What == evMouseAuto) && (EventMask & evMouse)) {
             timeout.tv_sec = 0;
             timeout.tv_usec = MouseAutoDelay * 1000;
-            rc = select(sizeof(fd_set) * 8,
-                        FD_SET_CAST() &read_fds, NULL, NULL,
-                        &timeout);
+            rc = select(sizeof(fd_set) * 8, &read_fds, NULL, NULL, &timeout);
             if (rc == 0) {
                 *Event = LastMouseEvent;
                 return 0;
