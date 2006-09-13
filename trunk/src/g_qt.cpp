@@ -212,7 +212,7 @@ static GView *FocusCapture = 0;
 
 static int cxChar = 1;
 static int cyChar = 1;
-static int fmAscent;
+//static int fmAscent;
 static int FinalExit = 0;
 
 TEvent EventBuf = { evNone };
@@ -248,7 +248,7 @@ static Display *display;
 
 static QPoint LastMousePos;
 
-static int LastMouseX = -1, LastMouseY = -1;
+//static int LastMouseX = -1, LastMouseY = -1;
 
 static qEvent *event_head = 0;
 static qEvent *event_tail = 0;
@@ -576,7 +576,7 @@ void QEText::handleKeyPressEvent(QKeyEvent *qe) {
     TKeyCode keyFlags;
     int state = qe->state();
     int ascii = qe->ascii();
-    int key = qe->key();
+    unsigned int key = qe->key();
     
     DEBUGX(("key: %d, ascii: %d(%c) state:%X\n",
            qe->key(),
@@ -593,7 +593,7 @@ void QEText::handleKeyPressEvent(QKeyEvent *qe) {
         keyFlags |= kfAlt;
 
     keyCode = 0;
-    for (int i = 0; i < (sizeof(key_table)/sizeof(key_table[0])); i++) {
+    for (unsigned i = 0; i < (sizeof(key_table)/sizeof(key_table[0])); i++) {
         if (key == key_table[i].q_code) {
             keyCode = key_table[i].keyCode;
             break;
@@ -1114,7 +1114,7 @@ int GViewPeer::ConSetSize(int X, int Y) {
     unsigned char *NewBuffer;
     unsigned char *p;
     int i;
-    unsigned int MX, MY;
+    int MX, MY;
     
     p = NewBuffer = (unsigned char *) malloc(X * Y * 2);
     if (NewBuffer == NULL) return -1;
@@ -1123,7 +1123,7 @@ int GViewPeer::ConSetSize(int X, int Y) {
         *p++ = 0x07;
     }
     if (ScreenBuffer) {
-        MX = wW; if (X < MX) MX = X;
+	MX = wW; if (X < MX) MX = X;
         MY = wH; if (Y < MY) MY = Y;
         if (X < MX) MX = X;
         p = NewBuffer;
@@ -2153,7 +2153,7 @@ void DieError(int rc, const char *msg, ...) {
 char ConGetDrawChar(int index) {
     static char tab[] = "\x0D\x0C\x0E\x0B\x12\x19____+>\x1F\x01\x12 ";
     
-    assert(index >= 0 && index < strlen(tab));
+    assert(index >= 0 && index < (int)strlen(tab));
     
     return tab[index];
 }
