@@ -1,5 +1,10 @@
 Revision history
 -----------------------------------------------------------------------
+0.50.X -- <fill month here> 2006
+
+0.50.1 -- September 2006
+  - Cleanup and Debian package update
+
 0.50.0 -- <fill month here> 2003
   - Many internal and some external changes
   - Some bugs fixed in this release
