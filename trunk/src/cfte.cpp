@@ -1888,6 +1888,7 @@ static int LoadFile(const char *WhereName, const char *CfgName, int Level) {
         // here we will try relative to a number of places.
         // 1. User's .fte directory.
         // 2. System's "local config" directory.
+        // 3. /usr/share/fte (FHS compliant - from Gentoo)
         // 3. Initial file's directory.
         // 4. Current directory.
         // This means that a user's directory will always win out,
@@ -1903,27 +1904,33 @@ static int LoadFile(const char *WhereName, const char *CfgName, int Level) {
         //fprintf(stderr, "Looking for %s\n", Cfg);
         if (!FileExists(Cfg))
         {
-            // Okay, now try "local config".
+            // 2. try "local config".
             sprintf(tmp, "%slocalconfig/%s", StartDir, CfgName);
             ExpandPath(tmp, Cfg, sizeof(Cfg));
             //fprintf(stderr, "Looking for %s\n", Cfg);
             if (!FileExists(Cfg))
             {
-                sprintf(tmp, "%sconfig/%s", StartDir, CfgName);
+                // 3. /usr/share/fte
+                sprintf(tmp, "/usr/share/fte/%s", CfgName);
                 ExpandPath(tmp, Cfg, sizeof(Cfg));
-                //fprintf(stderr, "Looking for %s\n", Cfg);
                 if (!FileExists(Cfg))
                 {
-                    sprintf(tmp, "./%s", CfgName);
+                    sprintf(tmp, "%sconfig/%s", StartDir, CfgName);
                     ExpandPath(tmp, Cfg, sizeof(Cfg));
                     //fprintf(stderr, "Looking for %s\n", Cfg);
                     if (!FileExists(Cfg))
                     {
-                        fprintf(stderr, "Cannot find '%s' in:\n"
-                                "\t~/.fte,\n""\t%slocalconfig,\n"
-                                "\t%sconfig, or\n"
-                                "\t.",
-                                CfgName, StartDir, StartDir);
+                        sprintf(tmp, "./%s", CfgName);
+                        ExpandPath(tmp, Cfg, sizeof(Cfg));
+                        //fprintf(stderr, "Looking for %s\n", Cfg);
+                        if (!FileExists(Cfg))
+                        {
+                            fprintf(stderr, "Cannot find '%s' in:\n"
+                                    "\t~/.fte,\n""\t%slocalconfig,\n\t/usr/share/fte,\n"
+                                    "\t%sconfig, or\n"
+                                    "\t.",
+                                    CfgName, StartDir, StartDir);
+                        }
                     }
                 }
             }
