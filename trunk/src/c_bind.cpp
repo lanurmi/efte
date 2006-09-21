@@ -287,14 +287,12 @@ EKeyMap::EKeyMap() {
 
 EKeyMap::~EKeyMap() {
     // free keys
-    {
-        EKey *e;
+    EKey *e;
 
-        while((e = fKeys) != NULL)
-        {
-            fKeys = fKeys->fNext;
-            delete e;
-        }
+    while((e = fKeys) != NULL)
+    {
+	fKeys = fKeys->fNext;
+	delete e;
     }
 }
 
