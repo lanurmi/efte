@@ -48,12 +48,12 @@ ExComplete::~ExComplete()
 //    fprintf(stderr, "W %p %p %p %d\n", Words, WordContinue, WordBegin, WordsLast);
 
     if (WordBegin != NULL)
-	delete WordBegin;
+	delete[] WordBegin;
 
     if (Words != NULL) {
 	for(int i = 0; i < WordsLast; i++)
-            delete Words[i];
-	delete Words;
+            delete[] Words[i];
+	delete[] Words;
     }
 }
 
@@ -194,7 +194,7 @@ void ExComplete::HandleEvent(TEvent &Event)
 				FixedUpdate(1);
 			    break;
 			}
-		    delete s;
+		    delete[] s;
 		}
 		Event.What = evNone;
 	    }
@@ -385,7 +385,7 @@ int ExComplete::RefreshComplete()
             } else
             {
                 // word was already listed, free duplicate.
-                delete s;
+                delete[] s;
             }
 	}
     }
