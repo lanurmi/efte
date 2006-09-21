@@ -31,4 +31,4 @@ vag:
 	nmake /f fte-vag.mak
 
 clean:
-	rm -f core *.o *~ .depend
+	rm -f core *.o *~ .depend defcfg.h defcfg.cnf
