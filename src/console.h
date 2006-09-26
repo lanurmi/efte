@@ -10,6 +10,8 @@
 #ifndef __CONSOLE_H__
 #define __CONSOLE_H__
 
+#include "feature.h"
+
 /* don't change these, used as index */
 #define DCH_C1 0
 #define DCH_C2 1
@@ -105,13 +107,13 @@ class GView;
 
 typedef struct {
     TEventMask What;
-    GView *View;
+    GView* View;
     TKeyCode Code;
 } TKeyEvent;
 
 typedef struct {
     TEventMask What;
-    GView *View;
+    GView* View;
     long X;
     long Y;
     unsigned short Buttons;

@@ -10,13 +10,17 @@
 #ifndef __HILIT_H__
 #define __HILIT_H__
 
+#include "console.h"
+#include "c_mode.h"
 #include "e_regex.h"
 
-typedef unsigned short hlState;
-typedef unsigned char hsState;
+#include <sys/types.h>
 
 class EBuffer;
 class ELine;
+
+typedef unsigned short hlState;
+typedef unsigned char hsState;
 
 #define HILIT_P(proc) \
     int proc(EBuffer *BF, int LN, PCell B, int Pos, int Width, ELine *Line, hlState &State, hsState *StateMap, int *ECol)

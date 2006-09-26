@@ -10,6 +10,8 @@
 #ifndef __COLOR_H
 #define __COLOR_H
 
+#include "c_mode.h"
+
 extern ChColor hcStatus_Normal;
 extern ChColor hcStatus_Active;
 

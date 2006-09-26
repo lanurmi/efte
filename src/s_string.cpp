@@ -1,4 +1,5 @@
 #include "fte.h"
+#include <string.h>
 
 int UnTabStr(char *dest, int maxlen, const char *source, int slen) {
     char *p = dest;

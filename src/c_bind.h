@@ -10,6 +10,12 @@
 #ifndef __BIND_H
 #define __BIND_H
 
+
+#include "console.h"
+#include "o_model.h"
+#include "c_mode.h" // EM_MENUS
+#include "e_regex.h"
+
 #define ABBREV_HASH      16
 
 class EMode;
@@ -18,6 +24,7 @@ class EKeyMap;
 class EKey;
 class EAbbrev;
 class EView;
+class EColorize;
 
 typedef struct {
     TKeyCode Mask;

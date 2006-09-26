@@ -10,6 +10,8 @@
 #ifndef __EXCOMPLETE_H
 #define __EXCOMPLETE_H
 
+#include <ctype.h>
+
 // maximum words which will be presented to the user
 #define MAXCOMPLETEWORDS 300
 

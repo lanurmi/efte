@@ -11,10 +11,10 @@
 #define __SYSDEP_H
 
 #include <assert.h>
+#include <string.h>
 #include <errno.h>
 #include <stdlib.h>
 #include <stdarg.h>
-#include <string.h>
 #if defined(AIX) || defined(SCO) || defined(NCR)
 #include <strings.h>
 #endif
@@ -201,5 +201,4 @@
 #define false 0
 #endif
 
-
-#endif
+#endif // __SYSDEP_H

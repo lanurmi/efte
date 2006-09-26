@@ -10,6 +10,9 @@
 #ifndef __GUI_H
 #define __GUI_H
 
+#include "console.h"
+#include <stdarg.h>
+
 #define RUN_WAIT 0
 #define RUN_ASYNC 1
 

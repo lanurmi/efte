@@ -10,6 +10,15 @@
 #ifndef __EGUI_H__
 #define __EGUI_H__
 
+#include "gui.h"
+#include "c_bind.h"  // KeySel
+
+class EEventMap;
+class EKeyMap;
+class GxView;
+class ExState;
+class EView;
+
 class EFrame: public GFrame {
 public:
     EEventMap *CMap;
