@@ -1,6 +1,9 @@
 #ifndef  __CON_IKCS_H
 #define  __CON_IKCS_H
 
+#include "con_i18n.h"
+#include <X11/keysym.h>
+
 static struct remapKey keyboardStd[] =
 {
     {0,}

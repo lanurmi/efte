@@ -10,6 +10,8 @@
 #ifndef __CONFIG_H
 #define __CONFIG_H
 
+#include "sysdep.h"
+
 extern int ScreenSizeX;
 extern int ScreenSizeY;
 extern int CursorInsSize[2];

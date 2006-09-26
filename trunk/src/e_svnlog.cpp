@@ -9,6 +9,7 @@
  */
 
 #include "fte.h"
+//#include "features.h"
 
 #ifdef CONFIG_OBJ_SVN
 

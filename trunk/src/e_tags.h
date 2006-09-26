@@ -10,6 +10,12 @@
 #ifndef __TAGS_H
 #define __TAGS_H
 
+#include "feature.h"
+#include <stdio.h> // FILE
+
+class EView;
+class EBuffer;
+
 #ifdef CONFIG_TAGS
 
 int TagsAdd(char *FileName);
@@ -28,4 +34,4 @@ int TagPop(EView *V);
 
 #endif
 
-#endif
+#endif // __TAGS_H

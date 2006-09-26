@@ -12,6 +12,11 @@
 #include "s_util.h"
 #include "s_string.h"
 
+#include <stdlib.h> // getenv
+#include <string.h>
+#include <sys/stat.h>
+#include <unistd.h> // stat
+
 #if defined(OS2)
 #define INCL_DOS
 #include <os2.h>

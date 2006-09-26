@@ -1,6 +1,10 @@
 #ifndef __EMARK_H
 #define __EMARK_H
 
+#include "e_buffer.h"
+
+#include <stdio.h> // FILE
+
 class EMark {
 public:
     EMark(char *aName, char *aFileName, EPoint aPoint, EBuffer *aBuffer = 0);

@@ -7,6 +7,11 @@
  *
  */
 
+#ifndef CMDTAB_H
+#define CMDTAB_H
+
+#include "c_commands.h"
+
 #define TAB(x) \
     { Ex##x, #x }
 
@@ -374,3 +379,5 @@ TAB(BlockWritePipe),
 TAB(BlockPipe),
 #endif
 };
+
+#endif // CMDTAB_H

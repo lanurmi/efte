@@ -10,6 +10,18 @@
 #ifndef _BUFFER_H_
 #define _BUFFER_H_
 
+#include "gui.h"
+#include "o_model.h"
+#include "c_mode.h"
+#include "e_regex.h"
+
+#include "c_hilit.h" // hlState
+
+#include <sys/stat.h>
+
+class EBuffer;
+class EMode;
+
 #define bmLine    0
 #define bmStream  1
 #define bmColumn  2
@@ -53,7 +65,7 @@ extern char FileBuffer[RWBUFSIZE];
 // after gap -> allocated - 1
 //#define GapLine(x,g,c,a) (((x) < (g)) ? (x) : (x) < (c) ? ((x) + (a) - (c)) : (c) - 1 < (g) ? (c) - 1 : (a) - 1 )
 // Use inline to make it easier to read/debug
-int inline GapLine(int No, int Gap, int Count, int Allocated)
+static inline int GapLine(int No, int Gap, int Count, int Allocated)
 {
     int rc = -1;
     if (No < Gap)
@@ -435,7 +447,7 @@ public:
 // Utility Routines
 /////////////////////////////////////////////////////////////////////////////
     
-    int LineIndented(int Row, const char *indentchars = NULL);
+    int LineIndented(int Row, const char *indentchars = 0);
     int LineIndentedCharCount(ELine *l, const char *indentchars);
     int IndentLine(int Row, int Indent);
 #ifdef CONFIG_SYNTAX_HILIT
