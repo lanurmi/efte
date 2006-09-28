@@ -7,6 +7,7 @@ include 'menu/m_c.fte';
 include 'menu/m_html.fte';
 include 'menu/m_rexx.fte';
 include 'menu/m_sgml.fte';
+include 'menu/m_rst.fte';
 
 include 'kbd/k_c.fte';
 include 'kbd/k_java.fte';
@@ -15,3 +16,4 @@ include 'kbd/k_rexx.fte';
 include 'kbd/k_fte.fte';
 include 'kbd/k_html.fte';
 include 'kbd/k_sgml.fte';
+include 'kbd/k_rst.fte';
