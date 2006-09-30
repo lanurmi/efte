@@ -61,8 +61,7 @@ int Hilit_C(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, h
 			//Color = hcC_Keyword;
 			State = hsC_Keyword;
                     } else {
-                        int x;
-                        x = i + j;
+                        int x = i + j;
 			while (x < Line->Count && isspace(Line->Chars[x]))
 			    x++;
 			if (x < Line->Count && Line->Chars[x] == '(') {
@@ -1199,7 +1198,7 @@ static int IndentNormal(EBuffer *B, int Line, int /*StateLen*/, hsState * /*Stat
             case 'f': ColP += 3; break; // for
             case 'e': ColP += 4; break; // else
             case 'w': ColP += 5; break; // while
-            case 's': ColP += 6; break;
+            case 's': ColP += 6; break; // switch
             }
             PRINTF(("'ifews' -- indent 1: Line=%d, RowP=%d, ColP=%d, CharP=%c\n", Line, RowP, ColP, CharP));
             if (SkipWhite(B, Line, RowP, ColP,
@@ -1347,5 +1346,5 @@ int Indent_C(EBuffer *B, int Line, int PosCursor) {
     }
     return 1;
 }
-#endif
-#endif
+#endif // CONFIG_INDENT_C
+#endif // CONFIG_HILIT_C
