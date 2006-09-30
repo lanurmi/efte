@@ -9,8 +9,7 @@
 
 #include "fte.h"
 
-EModel *ActiveModel = 0;
-char msgbuftmp[MSGBUFTMP_SIZE] = "";
+EModel* ActiveModel = 0;
 
 EModel *FindModelID(EModel *Model, int ID) {
     EModel *M = Model;
@@ -63,14 +62,14 @@ EModel::EModel(int createFlags, EModel **ARoot) {
 
 EModel::~EModel() {
     EModel *D = this;
-    
+
     while (D) {
         D->NotifyDelete(this);
         D = D->Next;
         if (D == this)
             break;
     }
-    
+
     if (Next != this) {
         Prev->Next = Next;
         Next->Prev = Prev;
@@ -82,14 +81,14 @@ EModel::~EModel() {
 
 void EModel::AddView(EView *V) {
     RemoveView(V);
-    if (V) 
+    if (V)
         V->NextView = View;
     View = V;
 }
 
 void EModel::RemoveView(EView *V) {
     EView **X = &View;
-    
+
     if (!V) return;
     while (*X) {
         if ((*X) == V) {
@@ -117,15 +116,16 @@ void EModel::HandleEvent(TEvent &/*Event*/) {
 }
 
 void EModel::Msg(int level, const char *s, ...) {
+    char msgbuftmp[MSGBUFTMP_SIZE];
     va_list ap;
-    
+
     if (View == 0)
         return;
-    
+
     va_start(ap, s);
     vsprintf(msgbuftmp, s, ap);
     va_end(ap);
-    
+
     if (level != S_BUSY)
         View->SetMsg(msgbuftmp);
 }
@@ -167,9 +167,9 @@ void EModel::UpdateTitle() {
     char Title[256] = ""; //fte: ";
     char STitle[256] = ""; //"fte: ";
     EView *V;
-    
-    GetTitle((char *)(Title + 0), sizeof(Title) - 0,
-             (char *)(STitle + 0), sizeof(STitle) - 0);
+
+    GetTitle(Title, sizeof(Title) - 1,
+             STitle, sizeof(STitle) - 1);
 
     V = View;
     while (V) {
