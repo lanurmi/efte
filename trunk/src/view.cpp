@@ -468,6 +468,7 @@ int EView::ShowKey(ExState &/*State*/) {
 }
 
 void EView::Msg(int level, const char *s, ...) {
+    char msgbuftmp[MSGBUFTMP_SIZE];
     va_list ap;
 
     va_start(ap, s);
