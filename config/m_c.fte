@@ -38,8 +38,8 @@ colorize C {
 	'typedef',
 	'union',
         'while',
-        # C++ keywords
 
+	# C++ keywords
 	'catch',
 	'class',
 	'const_cast',
@@ -108,6 +108,7 @@ colorize C {
 	# types C++
 	'mutable',
 	'bool',
+
 	# wide char (from new C/C++ 1998/1999 standards):
 	'wchar_t',
 
