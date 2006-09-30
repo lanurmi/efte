@@ -22,8 +22,8 @@ EMark::EMark(char *aName, char *aFileName, EPoint aPoint, EBuffer *aBuffer) {
 EMark::~EMark() {
     if (Buffer)
         removeBuffer(Buffer);
-    delete Name;
-    delete FileName;
+    delete[] Name;
+    delete[] FileName;
 }
 
 int EMark::setBuffer(EBuffer *aBuffer) {
@@ -73,7 +73,7 @@ EMarkIndex::~EMarkIndex() {
     if (markCount > 0 && marks) {
         for (int n = 0; n < markCount; n++)
             delete marks[n];
-        delete marks;
+        free(marks);
         marks = 0;
     }
 }
