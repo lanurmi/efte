@@ -241,7 +241,7 @@ public:
     
     // constructors
     EBuffer(int createFlags, EModel **ARoot, const char *AName);
-    ~EBuffer();
+    virtual ~EBuffer();
     virtual void DeleteRelated();
     
     virtual EViewPort *CreateViewPort(EView *V);
