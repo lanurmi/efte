@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __MODEL_H__
-#define __MODEL_H__
+#ifndef O_MODEL_H
+#define O_MODEL_H
 
 #include "console.h" // TEvent
 
@@ -207,6 +207,5 @@ int GetNewModelID(EModel *B);
 EModel *FindModelID(EModel *B, int ID);
 
 #define MSGBUFTMP_SIZE 1024
-extern char msgbuftmp[MSGBUFTMP_SIZE];
 
-#endif
+#endif // O_MODEL_H
