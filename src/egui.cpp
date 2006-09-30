@@ -14,7 +14,6 @@ int LastEventChar = -1;
 EFrame::EFrame(int XSize, int YSize): GFrame(XSize, YSize) {
     CMap = 0;
     CModel = 0;
-    frames = this;
 }
 
 EFrame::~EFrame() {
@@ -28,8 +27,8 @@ void EFrame::Update() {
             char Title[256] = ""; //fte: ";
             char STitle[256] = ""; //"fte: ";
 
-            ActiveModel->GetTitle((char *)(Title + 0), sizeof(Title) - 0,
-                                  (char *)(STitle + 0), sizeof(STitle) - 0);
+            ActiveModel->GetTitle(Title, sizeof(Title) - 1,
+                                  STitle, sizeof(STitle) - 1);
             ConSetTitle(Title, STitle);
             CModel = ActiveModel;
         }
@@ -182,7 +181,7 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
 }
 
 void EGUI::SetMsg(char *Msg) {
-    static char CharMap[128] = "";
+    char CharMap[128] = "";
 
     if (Msg == 0) {
         strcpy(CharMap, "");
@@ -192,7 +191,7 @@ void EGUI::SetMsg(char *Msg) {
         strcat(CharMap, "]");
     }
     if (ActiveModel)
-        ActiveModel->Msg(S_INFO, CharMap);
+	ActiveModel->Msg(S_INFO, CharMap);
 }
 
 void EGUI::SetOverrideMap(EKeyMap *aMap, char *ModeName) {
@@ -610,7 +609,7 @@ int EGUI::FrameNew() {
     if (!multiFrame() && frames)
         return 0;
 
-    (void)new EFrame(ScreenSizeX, ScreenSizeY);
+    (void) new EFrame(ScreenSizeX, ScreenSizeY);
     assert(frames != 0);
 
     //frames->SetMenu("Main"); //??
@@ -683,7 +682,7 @@ int EGUI::findDesktop(char *argv[]) {
 #else
             JustDirectory(argv[0], DesktopFileName, sizeof(DesktopFileName));
             strlcat(DesktopFileName, DESKTOP_NAME, sizeof(DesktopFileName));
-#endif
+#endif // UNIX
         }
         return FileExists(DesktopFileName);
 
@@ -739,7 +738,7 @@ void EGUI::DoLoadDesktopOnEntry(int &/*argc*/, char **argv) {
             LoadDesktop(DesktopFileName);
     }
 }
-#endif
+#endif // CONFIG_DESKTOP
 
 void EGUI::EditorInit() {
     SSBuffer = new EBuffer(0, (EModel **)&SSBuffer, "Scrap");
@@ -762,7 +761,7 @@ void EGUI::DoLoadHistoryOnEntry(int &/*argc*/, char **argv) {
 #else
         JustDirectory(argv[0], HistoryFileName, sizeof(HistoryFileName));
         strlcat(HistoryFileName, "fte.his", sizeof(HistoryFileName));
-#endif
+#endif // UNIX
     } else {
         char p[256];
 
@@ -785,7 +784,7 @@ void EGUI::DoSaveHistoryOnExit() {
     // since we are exiting, free history
     ClearHistory();
 }
-#endif
+#endif // CONFIG_HISTORY
 
 int EGUI::CmdLoadFiles(int &argc, char **argv) {
     int QuoteNext = 0;
@@ -799,21 +798,24 @@ int EGUI::CmdLoadFiles(int &argc, char **argv) {
     int ReadOnly = 0;
 
     for (int Arg = 1; Arg < argc; Arg++) {
-        if (!QuoteAll && !QuoteNext && (argv[Arg][0] == '-')) {
-            if (argv[Arg][1] == '-') {
+	if (!QuoteAll && !QuoteNext && (argv[Arg][0] == '-')) {
+	    switch (argv[Arg][1]) {
+	    case '-':
                 if (strncmp(argv[Arg], "--debug", 7) != 0)
-                    QuoteAll = 1;
-            } else if (argv[Arg][1] == '!') {
+		    QuoteAll = 1;
+                Arg = argc;
+                break;
+	    case '!':
+	    case 'C':
+	    case 'c':
+	    case 'D':
+	    case 'd':
+	    case 'H':
                 // handled before
-            } else if (argv[Arg][1] == 'c' || argv[Arg][1] == 'C') {
-                // ^
-            } else if (argv[Arg][1] == 'D' || argv[Arg][1] == 'd') {
-                // ^
-            } else if (argv[Arg][1] == 'H') {
-                // ^
-            } else if (argv[Arg][1] == '+') {
-                QuoteNext = 1;
-            } else if (argv[Arg][1] == '#' || argv[Arg][1] == 'l') {
+                break;
+	    case '+': QuoteNext = 1; break;
+	    case '#':
+	    case 'l':
                 LineNum = 1;
                 ColNum = 1;
                 if (strchr(argv[Arg], ',')) {
@@ -821,24 +823,23 @@ int EGUI::CmdLoadFiles(int &argc, char **argv) {
                 } else {
                     GotoLine = (1 == sscanf(argv[Arg] + 2, "%d", &LineNum));
                 }
-                //                printf("Gotoline = %d, line = %d, col = %d\n", GotoLine, LineNum, ColNum);
-            } else if (argv[Arg][1] == 'r') {
-                ReadOnly = 1;
-            } else if (argv[Arg][1] == 'm') {
+		// printf("Gotoline = %d, line = %d, col = %d\n", GotoLine, LineNum, ColNum);
+                break;
+	    case 'r': ReadOnly = 1; break;
+	    case 'm':
                 if (argv[Arg][2] == 0) {
                     ModeOverride = 0;
                 } else {
                     ModeOverride = 1;
                     strcpy(Mode, argv[Arg] + 2);
-                }
-            } else if (argv[Arg][1] == 'T') {
-                TagsAdd(argv[Arg] + 2);
-            } else if (argv[Arg][1] == 't') {
-                TagGoto(ActiveView, argv[Arg] + 2);
-            } else {
-                DieError(2, "Invalid command line option %s", argv[Arg]);
+		}
+                break;
+	    case 'T': TagsAdd(argv[Arg] + 2); break;
+	    case 't': TagGoto(ActiveView, argv[Arg] + 2); break;
+	    default:
+		DieError(2, "Invalid command line option %s", argv[Arg]);
                 return 0;
-            }
+	    }
         } else {
             char Path[MAXPATH];
 
@@ -934,7 +935,7 @@ int EGUI::Start(int &argc, char **argv) {
 void EGUI::EditorCleanup() {
     if (ActiveModel != NULL) {
         EModel *B, *N, *A;
-        
+
        	B = A = ActiveModel;
         do {
             N = B->Next;
@@ -978,58 +979,40 @@ void EGUI::Stop() {
 #endif
 
     // free macros
-    if (Macros!=NULL)
+    if (Macros != 0)
     {
-        int i;
-
         while (CMacros--)
         {
             free(Macros[CMacros].Name);
 
-            for (i=0; i<Macros[CMacros].Count; i++)
-            {
+            for (unsigned i=0; i<Macros[CMacros].Count; i++)
                 if (Macros[CMacros].cmds[i].type == CT_STRING)
-                {
                     free(Macros[CMacros].cmds[i].u.string);
-                }
-            }
 
             free(Macros[CMacros].cmds);
         }
 
         free(Macros);
 
-        Macros = NULL;
+        Macros = 0;
     }
 
     // free colorizers
-    {
-        EColorize *p;
-
-        while ((p = Colorizers) != NULL) {
-            Colorizers = Colorizers->Next;
-            delete p;
-        }
+    while (EColorize *p = Colorizers) {
+	Colorizers = Colorizers->Next;
+	delete p;
     }
 
     // free event maps
-    {
-        EEventMap *em;
-                  
-        while ((em = EventMaps) != NULL) {
-            EventMaps = EventMaps->Next;
-            delete em;
-        }
+    while (EEventMap *em = EventMaps) {
+	EventMaps = EventMaps->Next;
+	delete em;
     }
 
     // free modes
-    {
-        EMode *m;
-                  
-        while ((m = Modes) != NULL) {
-            Modes = Modes->fNext;
-            delete m;
-        }
+    while (EMode *m = Modes) {
+	Modes = Modes->fNext;
+	delete m;
     }
 
     // free menus
@@ -1058,36 +1041,24 @@ void EGUI::Stop() {
     }
 
     // free completion rexexp filter
-    {
-        extern RxNode *CompletionFilter;
-
-        RxFree(CompletionFilter);
-    }
+    extern RxNode *CompletionFilter;
+    RxFree(CompletionFilter);
 
     // free CRegexp array from o_messages.cpp
-    {
-        FreeCRegexp();
-    }
-
+    FreeCRegexp();
 #ifdef CONFIG_OBJ_CVS
     // free CvsIgnoreRegexp array from o_messages.cpp
-    {
-        FreeCvsIgnoreRegexp();
-    }
+    FreeCvsIgnoreRegexp();
 #endif
 
 #ifdef CONFIG_OBJ_SVN
     // free SvnIgnoreRegexp array from o_messages.cpp
-    {
-        FreeSvnIgnoreRegexp();
-    }
+    FreeSvnIgnoreRegexp();
 #endif
 
     // free configuration file path
-    {
-        free(ConfigSourcePath);
-        ConfigSourcePath = NULL;
-    }
+    free(ConfigSourcePath);
+    ConfigSourcePath = NULL;
 
     EditorCleanup();
 
