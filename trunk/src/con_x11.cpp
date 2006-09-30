@@ -2010,7 +2010,7 @@ GUI::GUI(int &argc, char **argv, int XSize, int YSize) {
 }
 
 GUI::~GUI() {
-    i18n_destroy(i18n_ctx);
+    i18n_destroy(&i18n_ctx);
     for (int i = 0; i < 256; i++)
 	XFreeGC(display, GCs[i]);
 #ifdef USE_XMB

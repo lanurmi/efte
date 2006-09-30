@@ -234,14 +234,14 @@ i18n_context_t* i18n_open(Display * display, Window win, unsigned long *mask) /*
     if (ctx->xim == NULL) {
         // there are languages without Input Methods ????
 	fprintf(stderr, "I18N warning: Input method not specified\n");
-	i18n_destroy(ctx);
+	i18n_destroy(&ctx);
 	return NULL;
     }
 
     if (XGetIMValues(ctx->xim, XNQueryInputStyle, &ctx->xim_styles, NULL)
 	|| ctx->xim_styles == NULL) {
 	fprintf(stderr, "I18N error: Input method doesn't support any style\n");
-        i18n_destroy(ctx);
+        i18n_destroy(&ctx);
 	return NULL;
     }
 
@@ -306,14 +306,14 @@ i18n_context_t* i18n_open(Display * display, Window win, unsigned long *mask) /*
     if (!found) {
 	fprintf(stderr, "I18N error: Input method doesn't support my "
 		"preedit type\n");
-        i18n_destroy(ctx);
+        i18n_destroy(&ctx);
 	return NULL;
     }
     /* This program only understand the Root preedit_style yet */
     if (ctx->input_style != (XIMPreeditNothing | XIMStatusNothing)) {
 	fprintf(stderr, "I18N error: This program only supports the "
 		"'Root' preedit type\n");
-        i18n_destroy(ctx);
+        i18n_destroy(&ctx);
 	return NULL;
     }
     ctx->xic = XCreateIC(ctx->xim, XNInputStyle, ctx->input_style,
@@ -322,7 +322,7 @@ i18n_context_t* i18n_open(Display * display, Window win, unsigned long *mask) /*
 			 NULL);
     if (ctx->xic == NULL) {
 	fprintf(stderr, "I18N error: Failed to create input context\n");
-        i18n_destroy(ctx);
+        i18n_destroy(&ctx);
     } else if (XGetICValues(ctx->xic, XNFilterEvents, mask, NULL))
 	fprintf(stderr, "I18N error: Can't get Event Mask\n");
     return ctx;
@@ -332,15 +332,16 @@ i18n_context_t* i18n_open(Display * display, Window win, unsigned long *mask) /*
 }
  /*FOLD00*/
 
-void i18n_destroy(i18n_context_t* ctx)
+void i18n_destroy(i18n_context_t** ctx)
 {
-    if (ctx)
+    if (ctx && *ctx)
     {
-        if (ctx->xic)
-	    XDestroyIC(ctx->xic);
-	if (ctx->xim)
-	    XCloseIM(ctx->xim);
-        free(ctx);
+        if ((*ctx)->xic)
+	    XDestroyIC((*ctx)->xic);
+	if ((*ctx)->xim)
+	    XCloseIM((*ctx)->xim);
+	free(*ctx);
+        *ctx = NULL;
     }
 }
 
