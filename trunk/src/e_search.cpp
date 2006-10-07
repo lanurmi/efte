@@ -170,7 +170,8 @@ int EBuffer::FindStr(char *Data, int Len, SearchReplaceOptions &opt) {
                 C = X->Count;
             }
         } else {
-            if (Options & SEARCH_REPLACE)
+            if (Options & SEARCH_REPLACE &&
+                opt.lastInsertLen > 0)
             {
                 C += CC * opt.lastInsertLen; // 0 or opt.lastInsertLen
             } else
