@@ -15,15 +15,11 @@ GxView::GxView(GFrame *Parent): GView(Parent, -1, -1) {
 }
 
 GxView::~GxView() {
-    if (Top) {
-        ExView *V;
-
-        while (Top) {
-            V = Top;
-            Top = Top->Next;
-            V->Win = 0;
-            delete V;
-        }
+    while (Top) {
+	ExView *V = Top;
+	Top = Top->Next;
+	V->Win = 0;
+	delete V;
     }
 }
 
@@ -70,28 +66,19 @@ void GxView::NewView(ExView * /*view*/) {
 }
 
 EEventMap *GxView::GetEventMap() {
-    if (Top)
-        return Top->GetEventMap();
-    return 0;
+    return (Top) ? Top->GetEventMap() : 0;
 }
 
 int GxView::ExecCommand(int Command, ExState &State) {
-    if (Top)
-        return Top->ExecCommand(Command, State);
-    return 0;
+    return (Top) ? Top->ExecCommand(Command, State) : 0;
 }
 
 int GxView::BeginMacro() {
-    if (Top)
-        return Top->BeginMacro();
-    return 1;
+    return (Top) ?  Top->BeginMacro() : 1;
 }
 
 int GxView::GetContext() {
-    if (Top)
-        return Top->GetContext();
-    else
-        return CONTEXT_NONE;
+    return (Top) ? Top->GetContext() : CONTEXT_NONE;
 }
 
 void GxView::HandleEvent(TEvent &Event) {
