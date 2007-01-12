@@ -10,7 +10,8 @@
 
 #ifdef CONFIG_OBJ_CVS
 
-static int SameDir (char *D1,char *D2) {
+static int SameDir(char* D1, char* D2)
+{
     if (!D1||!D2) return 0;
     int l1=strlen (D1);
     int l2=strlen (D2);
@@ -22,14 +23,19 @@ static int SameDir (char *D1,char *D2) {
 const char *CvsStatusChars="?UPMCAR";
 ECvs *CvsView=0;
 
-ECvs::ECvs (int createFlags,EModel **ARoot,char *ADir,char *ACommand,char *AOnFiles):ECvsBase (createFlags,ARoot,"CVS") {
+ECvs::ECvs(int createFlags, EModel **ARoot, char* ADir, char* ACommand,
+	   char* AOnFiles)
+    : ECvsBase(createFlags, ARoot, "CVS")
+{
     CvsView=this;
     LogFile=0;
     Commiting=0;
-    RunPipe (ADir,ACommand,AOnFiles);
+    RunPipe (ADir, ACommand, AOnFiles);
 }
 
-ECvs::ECvs (int createFlags,EModel **ARoot):ECvsBase (createFlags,ARoot,"CVS") {
+ECvs::ECvs (int createFlags,EModel **ARoot)
+:ECvsBase (createFlags,ARoot,"CVS")
+{
     CvsView=this;
     LogFile=0;
 }
@@ -39,7 +45,8 @@ ECvs::~ECvs () {
     RemoveLogFile ();
 }
 
-void ECvs::RemoveLogFile () {
+void ECvs::RemoveLogFile()
+{
     if (LogFile) {
         unlink (LogFile);
         free (LogFile);
@@ -47,7 +54,8 @@ void ECvs::RemoveLogFile () {
     }
 }
 
-char *ECvs::MarkedAsList () {
+char* ECvs::MarkedAsList()
+{
     int i;
     int len=0;
     // First pass - calculate size
@@ -64,26 +72,30 @@ char *ECvs::MarkedAsList () {
     return s;
 }
 
-char ECvs::GetFileStatus (char *file) {
+char ECvs::GetFileStatus(char* file)
+{
     // Search backward, file can be present several times (old messages)
     for (int i=LineCount-1;i>=0;i--)
         if (Lines[i]->File&&filecmp (Lines[i]->File,file)==0) return Lines[i]->Msg[0];
     return 0;
 }
 
-void ECvs::ParseLine (char *line,int len) {
+void ECvs::ParseLine(char* line, int len)
+{
     if (len>2&&line[1]==' '&&strchr (CvsStatusChars,line[0])) {
         AddLine (line+2,-1,line,5);
     } else AddLine (0,-1,line);
 }
 
-int ECvs::RunPipe (char *ADir,char *ACommand,char *AOnFiles) {
+int ECvs::RunPipe(char* ADir, char* ACommand, char* AOnFiles)
+{
     Commiting=0;
     if (!SameDir (Directory,ADir)) FreeLines ();
     return ECvsBase::RunPipe (ADir,ACommand,AOnFiles);
 }
 
-void ECvs::ClosePipe () {
+void ECvs::ClosePipe()
+{
     ECvsBase::ClosePipe ();
     if (Commiting&&!ReturnCode) {
         // Successful commit - reload files
@@ -92,7 +104,8 @@ void ECvs::ClosePipe () {
     Commiting=0;
 }
 
-int ECvs::RunCommit (char *ADir,char *ACommand,char *AOnFiles) {
+int ECvs::RunCommit(char* ADir, char* ACommand, char* AOnFiles)
+{
     if (!SameDir (Directory,ADir)) FreeLines ();
 
     free (Command);
@@ -119,7 +132,8 @@ int ECvs::RunCommit (char *ADir,char *ACommand,char *AOnFiles) {
 
 extern BufferView *BufferList;//!!!
 
-int ECvs::DoneCommit (int commit) {
+int ECvs::DoneCommit(int commit)
+{
     Running=0;
     // Remove line with link to log
     free (Lines[LineCount-1]->File);
@@ -159,29 +173,31 @@ int ECvs::DoneCommit (int commit) {
 
         return ret;
     } else {
-        RemoveLogFile ();
-        UpdateList ();
+        RemoveLogFile();
+        UpdateList();
         return 0;
     }
 }
 
 // If running, can't be closed without asking
-int ECvs::CanQuit () {
+int ECvs::CanQuit()
+{
     if (Running) return 0;else return 1;
 }
 
 // Ask user if we can close this model
-int ECvs::ConfQuit (GxView *V,int multiFile) {
+int ECvs::ConfQuit(GxView* V, int multiFile)
+{
     if (CvsLogView) {
         // Log is open
-        if (CvsLogView->ConfQuit (V,multiFile)) {
+        if (CvsLogView->ConfQuit(V,multiFile)) {
             // Commit confirmed or discarded - depends on Running
-            ActiveView->DeleteModel (CvsLogView);
+            ActiveView->DeleteModel(CvsLogView);
         } else return 0;
     }
     if (Running) {
         // CVS command in progress
-        switch (V->Choice (GPC_ERROR,"CVS command is running",2,"&Kill","&Cancel","")) {
+        switch (V->Choice(GPC_ERROR,"CVS command is running",2,"&Kill","&Cancel","")) {
             case 0: // Kill
                 return 1;
             case 1: // Cancel
@@ -192,8 +208,9 @@ int ECvs::ConfQuit (GxView *V,int multiFile) {
 }
 
 // Event map - this name is used in config files when defining eventmap
-EEventMap *ECvs::GetEventMap () {
-    return FindEventMap ("CVS");
+EEventMap *ECvs::GetEventMap()
+{
+    return FindEventMap("CVS");
 }
 
 #endif
