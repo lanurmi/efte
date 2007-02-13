@@ -514,7 +514,7 @@ static int SetupXWindow(int argc, char **argv)
 #ifdef USE_XICON
     // Set icon using WMHints
     Pixmap icon_pixmap, icon_shape;
-    if (XpmCreatePixmapFromData(display, win, (char **)fte16x16_xpm, &icon_pixmap, &icon_shape, NULL) == XpmSuccess) {
+    if (XpmCreatePixmapFromData(display, win, const_cast<char**>(fte16x16_xpm), &icon_pixmap, &icon_shape, NULL) == XpmSuccess) {
         XWMHints wm_hints;
         wm_hints.flags = IconPixmapHint | IconMaskHint;
         wm_hints.icon_pixmap = icon_pixmap;
@@ -533,7 +533,7 @@ static int SetupXWindow(int argc, char **argv)
     for (i = 0; i < ICON_COUNT; i++) {
         XpmImage &xpm = xpmImage[i];
         CARD32 *&colors = xpmColors[i];
-        if (XpmCreateXpmImageFromData((char **)xpmData[i], &xpm, NULL) != XpmSuccess) break;
+        if (XpmCreateXpmImageFromData(const_cast<char**>(xpmData[i]), &xpm, NULL) != XpmSuccess) break;
         iconBufferSize += 2 + xpm.width * xpm.height;
         colors = (CARD32 *)malloc(xpm.ncolors * sizeof(CARD32));
         if (colors == NULL) {
