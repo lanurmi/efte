@@ -125,7 +125,7 @@ int ECvs::RunCommit(char* ADir, char* ACommand, char* AOnFiles)
     LogFile=strdup (cvslog->FileName);
     View->SwitchToModel (cvslog);
 
-    AddLine (LogFile,-1,(char *)"CVS commit start - enter message text",1);
+    AddLine (LogFile,-1,"CVS commit start - enter message text",1);
 
     return 0;
 }

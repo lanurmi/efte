@@ -72,7 +72,7 @@ void ESvnBase::FreeLines () {
     BufLen=BufPos=0;
 }
 
-void ESvnBase::AddLine (char *file,int line,char *msg,int status) {
+void ESvnBase::AddLine (char *file,int line, const char* msg,int status) {
     SvnLine *l;
 
     l=(SvnLine *)malloc (sizeof (SvnLine));

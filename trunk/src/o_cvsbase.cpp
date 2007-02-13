@@ -72,7 +72,7 @@ void ECvsBase::FreeLines () {
     BufLen=BufPos=0;
 }
 
-void ECvsBase::AddLine (char *file,int line,char *msg,int status) {
+void ECvsBase::AddLine (char *file,int line,const char* msg,int status) {
     CvsLine *l;
 
     l=(CvsLine *)malloc (sizeof (CvsLine));

@@ -116,7 +116,7 @@ int ESvn::RunCommit (char *ADir,char *ACommand,char *AOnFiles) {
     LogFile=strdup (svnlog->FileName);
     View->SwitchToModel (svnlog);
 
-    AddLine (LogFile,-1,(char *)"SVN commit start - enter message text",1);
+    AddLine (LogFile, -1, "SVN commit start - enter message text", 1);
 
     return 0;
 }

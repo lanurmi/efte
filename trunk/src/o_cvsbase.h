@@ -44,7 +44,7 @@ class ECvsBase:public EList {
         ~ECvsBase ();
 
         void FreeLines ();
-        void AddLine (char *file,int line,char *msg,int hilit=0);
+        void AddLine (char *file,int line,const char *msg,int hilit=0);
         void FindBuffer (int line);
         void AssignBuffer (EBuffer *B,int line);
         void FindFileLines (EBuffer *B);
