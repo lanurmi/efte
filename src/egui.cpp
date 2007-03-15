@@ -985,7 +985,7 @@ void EGUI::Stop() {
         {
             free(Macros[CMacros].Name);
 
-            for (unsigned i=0; i<Macros[CMacros].Count; i++)
+            for (int i=0; i<Macros[CMacros].Count; ++i)
                 if (Macros[CMacros].cmds[i].type == CT_STRING)
                     free(Macros[CMacros].cmds[i].u.string);
 
