@@ -1505,7 +1505,7 @@ int EBuffer::InsertDate(ExState &State) {
 
 
 int EBuffer::InsertUid() {
-    char *p = getenv("USER");
+    const char *p = getenv("USER");
     if (p == 0) p = getenv("NAME");
     if (p == 0) p = getenv("ID");
     // mostly for Windows.  Why they can't just be standard, I don't know...
@@ -1513,7 +1513,7 @@ int EBuffer::InsertUid() {
     if (p == 0) {
         Msg(S_INFO, "User ID not set ($USER).");
         //return 0;
-        p = (char *)"UNKNOWN USER";
+	p = "UNKNOWN USER";
     }
     return InsertString(p, strlen(p));
 }
