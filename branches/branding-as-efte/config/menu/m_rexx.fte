@@ -1,0 +1,403 @@
+# FTE pull-down menu for REXX mode
+# by Michael DeBusk
+# debu4335@eclipsetel.com
+# Revision March 19, 2001
+
+# Decide if you want menus for libraries
+# Uncomment to include
+%define(REXXUtil)
+#%define(RxFTP)
+#%define(RxSock)
+
+menu REXX_Comments {
+    item    "&Header\theadx" { REXX_Heading }
+    item    "&Comment\tC+E c" { REXX_Comment }
+}
+
+menu REXX_Constructs {
+    item    "&Do\tdox" { REXX_Do }
+    item    "Do &While\tdwx" { REXX_DoWhile }
+    item    "Do &Until\tdux" { REXX_DoUntil }
+    item    "Do &Forever\tdfx" { REXX_DoForever }
+    item    "&If-Then-Else\tifx" { REXX_If }
+    item    "&Select\tselx" { REXX_Select }
+}
+
+# Keywords
+menu REXX_Call {
+    item    "&Call" { InsertString "CALL name [expression]"; }
+    item    "Call &On" { InsertString "CALL ON condition [NAME trapname]"; }
+    item    "Call O&ff" { InsertString "CALL OFF condition"; }
+}
+
+menu REXX_Numeric {
+    item    "&Digits" { InsertString "NUMERIC DIGITS [expression]"; }
+    item    "&Form" { InsertString "NUMERIC FORM [SCIENTIFIC | ENGINEERING | [VALUE] exp]"; }
+    item    "Fu&zz" { InsertString "NUMERIC FUZZ [exp]"; }
+}
+
+menu REXX_Parse {
+    item    "&Arg" { InsertString "PARSE [UPPER] ARG [template]"; }
+    item    "&LineIn" { InsertString "PARSE [UPPER] LINEIN [template]"; }
+    item    "&Pull" { InsertString "PARSE [UPPER] PULL [template]"; }
+    item    "&Source" { InsertString "PARSE [UPPER] SOURCE [template]"; }
+    item    "&Value" { InsertString "PARSE [UPPER] VALUE [expression] WITH [template]"; }
+    item    "Va&r" { InsertString "PARSE [UPPER] VAR [template]"; }
+    item    "Ver&sion" { InsertString "PARSE [UPPER] VERSION [template]"; }
+}
+menu REXX_Signal {
+    item    "&Signal" { InsertString "SIGNAL labelname"; }
+    item    "&Value" { InsertString "SIGNAL [VALUE] expression"; }
+    item    "&On" { InsertString "SIGNAL ON condition [NAME trapname]"; }
+    item    "O&ff" { InsertString "SIGNAL OFF condition"; }
+}
+
+menu REXX_Trace {
+    item    "&All" { InsertString "TRACE 'A'"; }
+    item    "&Commands" { InsertString "TRACE 'C'"; }
+    item    "&Error" { InsertString "TRACE 'E'"; }
+    item    "&Failure" { InsertString "TRACE 'F'"; }
+    item    "&Intermediates" { InsertString "TRACE 'I'"; }
+    item    "&Labels" { InsertString "TRACE 'L'"; }
+    item    "&Normal" { InsertString "TRACE 'N'"; }
+    item    "&Off" { InsertString "TRACE 'O'"; }
+    item    "&Results" { InsertString "TRACE 'R'"; }
+}
+
+menu REXX_Keywords {
+    item    "Address" { InsertString "ADDRESS [environment/value] [expression]"; }
+    item    "Ar&g" { InsertString "ARG [template]"; }
+    submenu "&Call", REXX_Call;
+    item    "&Drop" { InsertString "DROP variable-list"; }
+    item    "E&xit" { InsertString "EXIT expression"; }
+    item    "Interpret" { InsertString "INTERPRET expression"; }
+    item    "Iterate" { InsertString "ITERATE name"; }
+    item    "Le&ave" { InsertString "LEAVE name"; }
+    item    "&NOP" { InsertString "NOP"; }
+    submenu "Numer&ic", REXX_Numeric;
+    item    "&Options" { InsertString "OPTIONS expression"; }
+    submenu "&Parse", REXX_Parse;
+    item    "Proc&edure" { InsertString ": PROCEDURE [EXPOSE variable-list]"; }
+    item    "Pu&ll" { InsertString "PULL [TEMPLATE]"; }
+    item    "P&ush" { InsertString "PUSH [expression]"; }
+    item    "&Queue" { InsertString "QUEUE [expression]"; }
+    item    "&Return" { InsertString "RETURN [expression]"; }
+    item    "Sa&y" { InsertString "SAY [expression]"; }
+    submenu "&Signal", REXX_Signal;
+    submenu "&Trace", REXX_Trace;
+}
+
+
+# Built-in Functions
+
+menu REXX_API {
+    item    "&Create Queue" { InsertString "RxQueue( Create [, queuename] )"; }
+    item    "&Delete Queue" { InsertString "RxQueue( Delete, queuename )"; }
+    item    "&Get Queue" { InsertString "RxQueue( Get )"; }
+    item    "&Set Queue" { InsertString "RxQueue( Set, newqueuename )"; }
+    item    "&Queued" { InsertString "Queued()"; }
+    item    "RxFunc&Add" { InsertString "RxFuncAdd( name, module, procedure )"; }
+    item    "RxFuncD&rop" { InsertString "RxFuncDrop( name )"; }
+    item    "RxFuncQuer&y" { InsertString "RxFuncQuery( name )"; }
+}
+
+menu REXX_Comp {
+    item    "Bit&And" { InsertString "BitAnd(string1 [, string2 ] [, pad ] )"; }
+    item    "Bit&Or" { InsertString "BitOr( string1 [, string2 ] [, pad ] )"; }
+    item    "Bit&Xor" { InsertString "BitXor( string1 [, string2 ] [, pad ] )"; }
+    item    "&Compare" { InsertString "Compare( string1, string2 [,pad] )"; }
+    item    "&Datatype" { InsertString "Datatype( string [, type ] )"; }
+    item    "&Translate" { InsertString "Translate(string, [[,tableo [,tablei [, pad]]]])"; }
+    item    "&Value" { InsertString "Value(name, [, [newvalue] [,selector]])"; }
+    item    "Veri&fy" { InsertString "Verify(string, reference [, [option] [,start]])"; }
+    item    "X&Range" { InsertString "XRange([start] [, end])"; }
+}
+
+menu REXX_Conv {
+    item    "B2X\t&1" { InsertString "B2X( binary_string )"; }
+    item    "C2D\t&2" { InsertString "C2D( string [, n] )"; }
+    item    "C2X\t&3" { InsertString "C2X( string )"; }
+    item    "D2C\t&4" { InsertString "D2C(number)[,n]"; }
+    item    "D2X\t&5" { InsertString "D2X(number[, n])"; }
+    item    "X2B\t&6" { InsertString "X2B(hexstring)"; }
+    item    "X2C\t&7" { InsertString "X2C(hexstring)"; }
+    item    "X2D\t&8" { InsertString "X2D(hextring [,n])"; }
+}
+
+menu REXX_Date {
+    item    "&Basedate" { InsertString "DATE('B')"; }
+    item    "&Days" { InsertString "DATE('D')"; }
+    item    "&European" { InsertString "DATE('E')"; }
+    item    "&Language" { InsertString "DATE('L')"; }
+    item    "&Month" { InsertString "DATE('M')"; }
+    item    "&Normal" { InsertString "DATE('N')"; }
+    item    "&Ordered" { InsertString "DATE('O')"; }
+    item    "&Sorted" { InsertString "DATE('S')"; }
+    item    "&USA" { InsertString "DATE('U')"; }
+    item    "&Weekday" { InsertString "DATE('W')"; }
+}
+
+menu REXX_Num {
+    item    "&Abs" { InsertString "Abs(number)"; }
+    item    "&Digits" { InsertString "Digits()"; }
+    item    "&Form" { InsertString "Form()"; }
+    item    "Fo&rmat" { InsertString "Format( number, [before [, after [, expp] [,expt] ]])"; }
+    item    "Fu&zz" { InsertString "Fuzz()"; }
+    item    "Ma&x" { InsertString "Max( number [, number ...] )"; }
+    item    "Mi&n" { InsertString "Min( number [, number ...] )"; }
+    item    "Rando&m" { InsertString "Random([min], [max] [, seed])"; }
+    item    "&Sign" { InsertString "Sign(number)"; }
+    item    "&Trunc" { InsertString "Trunc(number [,n])"; }
+}
+
+menu REXX_Stream {
+    item    "&Command" { InsertString "Stream(name, 'C]', streamcommand)"; }
+    item    "&Description" { InsertString "Stream(name, 'D')"; }
+    item    "&State" { InsertString "Stream(name, 'S')"; }
+}
+
+menu REXX_Strings {
+    item    "&Abbrev" { InsertString "Abbrev(information, info [,length])"; }
+    item    "Arg" { InsertString "Arg([n [, option]])"; }
+    item    "&Center" { InsertString "Center( string, length [, pad ] )"; }
+    item    "Char&In" { InsertString "CharIn( [name] [, start, length ] )"; }
+    item    "Char&Out" { InsertString "CharOut( [name] [, string, start ] )"; }
+    item    "Chars" { InsertString "Chars( [name] )"; }
+    item    "Copies" { InsertString "Copies( string, n )"; }
+    item    "&DelStr" { InsertString "DelStr( string, n, [, length] )"; }
+    item    "I&nsert" { InsertString "Insert( new, target [, [n] [, [length] [,pad]]])"; }
+    item    "&LastPos" { InsertString "LastPos( needle, haystack [,start])"; }
+    item    "Le&ft" { InsertString "Left( string, length [,pad] )"; }
+    item    "Lengt&h" { InsertString "Length( string )"; }
+    item    "Lin&eIn" { InsertString "LineIn( [name] [, [line] [,count] ] )"; }
+    item    "LineOu&t" { InsertString "LineOut( [name] [, [string] [,line]] )"; }
+    item    "Line&s" { InsertString "Lines( [name] )"; }
+    item    "O&verlay" { InsertString "Overlay(new, target [, [n] [, [length] [,pad]]])"; }
+    item    "Pos" { InsertString "Pos( needle, haystack [, start] )"; }
+    item    "&Reverse" { InsertString "Reverse( string )"; }
+    item    "Ri&ght" { InsertString "Right( string, length, [,pad] )"; }
+    item    "S&pace" { InsertString "Space( string [, [n] [,pad]] )"; }
+    item    "Strip" { InsertString "Strip(string [, [option] [, char]])"; }
+    item    "Su&bstr" { InsertString "Substr(string, n [, [length] [, pad]])"; }
+    item    "S&ymbol" { InsertString "Symbol(name)"; }
+}
+
+menu REXX_Sys {
+    item    "&Address" { InsertString "Address()"; }
+    item    "&Beep" { InsertString "Beep(frequency, duration)"; }
+    item    "&Condition" { InsertString "Condition( option )"; }
+    item    "&Directory" { InsertString "Directory([newdirectory])"; }
+    item    "Error&Text" { InsertString "ErrorText(n)"; }
+    item    "&EndLocal" { InsertString "EndLocal()"; }
+    item    "&FileSpec" { InsertString "FileSpec(element, filespec)"; }
+    item    "Set&Local" { InsertString "SetLocal()"; }
+    item    "&SourceLine" { InsertString "SourceLine([n])"; }
+    item    "T&race" { InsertString "Trace([option])"; }
+}
+
+menu REXX_Time {
+    item    "&24-Hour" { InsertString "TIME()"; }
+    item    "&Civil" { InsertString "TIME('C')"; }
+    item    "&Elapsed" { InsertString "TIME('E')"; }
+    item    "&Hours" { InsertString "TIME('H')"; }
+    item    "&Long" { InsertString "TIME('L')"; }
+    item    "&Minutes" { InsertString "TIME('M')"; }
+    item    "&Normal" { InsertString "TIME('N')"; }
+    item    "&Reset" { InsertString "TIME('R')"; }
+    item    "&Seconds" { InsertString "TIME('S')"; }
+}
+
+menu REXX_Word {
+    item    "&DelWord" { InsertString "DelWord( string, n [, length] )"; }
+    item    "&SubWord" { InsertString "SubWord(string, n [,length])"; }
+    item    "&Word" { InsertString "Word(string, n)"; }
+    item    "Word&Index" { InsertString "WordIndex(string, n)"; }
+    item    "Word&Length" { InsertString "WordLength(string, n)"; }
+    item    "Word&Pos" { InsertString "WordPos(phrase, string [,start])"; }
+    item    "Wor&ds" { InsertString "Words(string)"; }
+}
+
+menu REXX_BuiltIn {
+    submenu "&API", REXX_API;
+    submenu "Com&parison", REXX_Comp;
+    submenu "&Conversion", REXX_Conv;
+    submenu "&Date", REXX_Date;
+    submenu "&Numbers", REXX_Num;
+    submenu "&Stream", REXX_Stream;
+    submenu "Strin&gs", REXX_Strings;
+    submenu "S&ystem", REXX_Sys;
+    submenu "&Time", REXX_Time;
+    submenu "&Word", REXX_Word;
+}
+
+#REXXUtil Functions
+%if(REXXUtil)
+menu REXX_Disk {
+    item    "SysDrive&Info" { InsertString "info = SysDriveInfo(drive)"; }
+    item    "SysDrive&Map" { InsertString "map = SysDriveMap([drive], [opt])"; }
+    item    "SysFile&Delete" { InsertString "rc = SysFileDelete(file)"; }
+    item    "SysFile&Tree" { InsertString "rc = SysFileTree(filespec, stem, [options], [tattrib], [nattrib])"; }
+    item    "SysFile&Search" { InsertString "CALL SysFileSearch target, file, stem, [options]"; }
+    item    "Sys&GetEA" { InsertString "result = SysGetEA(file, name, variable)"; }
+    item    "SysM&kDir" { InsertString "rc = SysMkDir(dirspec)"; }
+    item    "Sys&PutEA" { InsertString "result = SysPutEA(file, name, value)"; }
+    item    "Sys&RmDir" { InsertString "rc = SysRmDir(dirspec)"; }
+    item    "SysSear&chPath" { InsertString "filespec = SysSearchPath(path, filename)"; }
+    item    "SysTemp&FileName" { InsertString "file = SysTempFileName(template, [filter])"; }
+}
+
+menu REXX_INI {
+    item    "&Set key value" { InsertString "result = SysIni([inifile], app, key, val)"; }
+    item    "&Query key value" { InsertString "result = SysIni([inifile], app, key)"; }
+    item    "&Delete key" { InsertString "result = SysIni([inifile], app, key, 'DELETE:')"; }
+    item    "Delete &application" { InsertString "result = SysIni([inifile], app, ['DELETE:'])"; }
+    item    "Query application &keys" { InsertString "result = SysIni([inifile], app, 'ALL:', 'stem')"; }
+    item    "Query a&ll apps" { InsertString "result = SysIni([inifile], 'ALL:', 'stem')"; }
+}
+
+menu REXX_Misc {
+    item    "Rx&MessageBox" { InsertString "action = RxMessageBox(text, [title], [button], [icon])"; }
+    item    "Sys&DropFuncs" { InsertString "CALL SysDropFuncs"; }
+    item    "Sys&GetMessage" { InsertString "msg = SysGetMessage(num, [file] [str1],...[str9])"; }
+    item    "Sys&OS2Ver" { InsertString "ver = SysOS2Ver()"; }
+    item    "Sys&Sleep" { InsertString "CALL SysSleep secs"; }
+    item    "Sys&WaitNamedPipe" { InsertString "result = SysWaitNamedPipe(name, [timeout])"; }
+}
+
+menu REXX_TxtScr { 
+    item    "Sys&Cls" { InsertString "CALL SysCls"; }
+    item    "SysC&urPos" { InsertString "pos = SysCurPos([row, col])"; }
+    item    "SysCu&rState" { InsertString "CALL SysCurState ON/OFF"; }
+    item    "Sys&GetKey" { InsertString "key = SysGetKey([ECHO/NOECHO])"; }
+    item    "Sys&TextScreenRead" { InsertString "string = SysTextScreenRead(row, col, [len])"; }
+    item    "SysTe&xtScreenSize" { InsertString "result = SysTextScreenSize()"; }
+}
+
+menu REXX_WPS {
+    item    "Sys&CreateObject" { InsertString "rc = SysCreateObject(classname, title, location [,setup] [,option])"; }
+    item    "Sys&DeregisterObjectClass" { InsertString "rc = SysDeregisterObjectClass(class)"; }
+    item    "SysDe&stroyObject" { InsertString "result = SysDestroyObject(name)"; }
+    item    "Sys&QueryClassList" { InsertString "CALL SysQueryClassList stem"; }
+    item    "Sys&RegisterObjectClass" { InsertString "rc = SysRegisterObjectClass(class, module)"; }
+    item    "SysSet&Icon" { InsertString "rc = SysSetIcon(filename, iconfilename)"; }
+    item    "SysSet&ObjectData" { InsertString "rc = SysSetObjectData(name, setup)"; }
+    item    "SysCo&pyObject" {InsertString "rc = SysCopyObject(objectName, objectDest)"; }
+    item    "SysCr&eateShadow" {InsertString "rc = SysCreateShadow(objectName, objectDest)"; }
+    item    "SysMo&veObject" {InsertString "rc = SysMoveObject(objectName, objectDest)"; }
+    item    "SysS&aveObject" {InsertString "rc = SysSaveObject(name, fAsync)"; }
+    item    "SysOpe&nObject" {InsertString "rc = SysOpenObject(name, View, Flag)"; }
+}
+
+menu REXX_RU {
+    item "&Load REXXUtil\tutilx" { REXX_RexxUtil }
+    submenu "&Disk Services", REXX_Disk;
+    submenu "&Miscellaneous", REXX_Misc;
+    submenu "&SysIni", REXX_INI;
+    submenu "&Text Screen Svc", REXX_TxtScr;
+    submenu "&WPS Services", REXX_WPS;
+}
+%endif
+
+# REXXSock
+%if(OS_OS2)
+%if(RxSock)
+menu REXX_RS {
+    item    "&Load REXXSock\tsockx" { REXX_RxSock }
+    item    "Sock&Accept" { InsertString "socket = SockAccept(socket[,address])"; }
+    item    "Sock&Bind" { InsertString "rc = SockBind(socket,address)"; }
+    item    "Sock&Close" { InsertString "rc = SockClose(socket)"; }
+    item    "SockConnec&t" { InsertString "rc = SockConnect(socket,address)"; }
+    item    "Sock&DropFuncs" { InsertString "rc = SockDropFuncs()"; }
+    item    "Sock&GetHostByAddr" { InsertString "rc = SockGetHostByAddr(dotAddress,host[,domain])"; }
+    item    "SockGetHostBy&Name" { InsertString "rc = SockGetHostByName(nameAddress,host])"; }
+    item    "SockGetHost&Id" { InsertString "dotAddress = SockGetHostId()"; }
+    item    "SockGetP&eerName" { InsertString "rc = SockGetPeerName(socket,address)"; }
+    item    "SockGetSockNa&me" { InsertString "rc = SockGetSockName(socket,address)"; }
+    item    "SockGetSockO&pt" { InsertString "rc = SockGetSockOpt(socket,level,optVar,optVal"; }
+    item    "&SockInit" { InsertString "rc = SockInit()"; }
+    item    "SockI&octl" { InsertString "rc = SockIoctl(socket,ioctlCmd,ioctlData)"; }
+    item    "Soc&kListen" { InsertString "rc = SockListen(socket,backlog)"; }
+    item    "SockPSock_Errno" { InsertString "SockPSock_Errno([error_string])"; }
+    item    "SockRec&v" { InsertString "rc = SockRecv(socket,var,len[,flags])"; }
+    item    "SockRecv&From" { InsertString "rc = SockRecvFrom(socket,var,len[,flags],address)"; }
+    item    "SockSelect" { InsertString "rc = SockSelect(reads,writes,excepts[,timeout])"; }
+    item    "SockSend" { InsertString "rc = SockSend(socket,data[,flags])"; }
+    item    "SockSendTo" { InsertString "rc = SockSendTo(socket,data[,flags],address)"; }
+    item    "SockSetSockOpt" { InsertString "rc = SockSetSockOpt(socket,level,optVar,optVal)"; }
+    item    "SockShutDo&wn" { InsertString "rc = SockShutDown(socket,how)"; }
+    item    "SockSock_E&rrno" { InsertString "errno = SockSock_Errno()"; }
+    item    "SockSocket" { InsertString "socket = SockSocket(domain,type,protocol)"; }
+    item    "SockSoClose" { InsertString "rc = SockSoClose(socket)"; }
+    item    "SockVersion" { InsertString "vers = SockVersion()"; }
+}
+%endif
+
+# RxFTP
+%if(RxFTP)
+menu REXX_F {
+    item    "&Load REXXFTP\tftpx" { REXX_RxFTP }
+    item    "&Append to Remote File" { InsertString "rc = FtpAppend(localFile,remoteFile[,'Binary'|'Ascii'])"; }
+    item    "&ChDir Remote" { InsertString "rc = FtpChDir(directory)"; }
+    item    "&Delete Remote File" { InsertString "FtpDelete(remoteFile)"; }
+    item    "&Remote Dir Listing" { InsertString "FtpDir(pattern,stem)"; }
+    item    "Dr&op RxFTP Functions" { InsertString "FtpDropFuncs()"; }
+    item    "Do&wnload File" { InsertString "FtpGet(localFile,remoteFile[,'Binary'|'Ascii'])"; }
+    item    "Lo&goff" { InsertString "FtpLogoff()"; }
+    item    "Remote L&s Listing" { InsertString "FtpLs(pattern,stem)"; }
+    item    "M&kDir Remote" { InsertString "FtpMkDir(directory)"; }
+    item    "&Ping Host" { InsertString "FtpPing(host,length)"; }
+    item    "Copy by Pro&xy" { InsertString "FtpProxy(rc = FtpProxy(host1,userid1,password1,account1,host2,userid2,password2,account2,file1,file2[,'Binary'|'Ascii']))"; }
+    item    "Upload &File" { InsertString "FtpPut(localFile,remoteFile[,'Binary'|'Ascii'])"; }
+    item    "Upload File, Uni&que" { InsertString "FtpPutUnique(localFile,remoteFile[,'Binary'|'Ascii'])"; }
+    item    "G&et Current Remote Dir" { InsertString "FtpPwd(dirName)"; }
+    item    "Se&nd a String" { InsertString "FtpQuote(quote)"; }
+    item    "Rena&me Remote File" { InsertString "FtpRename(oldFile,newFile)"; }
+    item    "RmD&ir Remote" { InsertString "FtpRmDir(directory)"; }
+    item    "&Binary or ASCII" { InsertString "FtpSetBinary('Binary'|'Ascii')"; }
+    item    "Set &User Information" { InsertString "FtpSetUser(host,userid,password[,account])"; }
+    item    "Sen&d Site Information" { InsertString "FtpSite(site)"; }
+    item    "Get Remo&te Operating System" { InsertString "FtpSys(operSys)"; }
+    item    "&Version of RxFTP API" { InsertString "FtpVersion(variable)"; }
+}
+%endif
+%endif
+
+menu REXX_Libraries {
+    %if(REXXUtil)
+    submenu "REXX&Util", REXX_RU;
+    %endif
+%if(OS_OS2)
+    %if(RxSock)
+    submenu "REXX&Sock", REXX_RS;
+    %endif
+    %if(RxFTP)
+    submenu "REXX&FTP", REXX_F;
+    %endif
+%endif
+}
+
+menu REXXTags {
+    submenu "&Comments", REXX_Comments;
+    submenu "Co&nstructs", REXX_Constructs;
+    submenu "&Keywords", REXX_Keywords;
+    submenu "&Libraries", REXX_Libraries;
+    submenu "&Functions", REXX_BuiltIn;
+}
+
+menu Main_REXX {
+    submenu "&File",    File;
+    submenu "&Edit",    Edit;
+    submenu "&Block",   Block;
+    submenu "&Search",  Search;
+    submenu "Fol&d",    Fold;
+    submenu "&Tools",   Tools;
+    submenu "&REXX",    REXXTags;
+    submenu "&Window",  Window;
+    submenu "&Options", Options;
+    submenu "&Help",    Help;
+}
+
+eventmap REXX {
+    MainMenu            = "Main_REXX";   # menu for menubar
+    key [A+R] { MainMenu 'R' }
+}

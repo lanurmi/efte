@@ -1,0 +1,81 @@
+colorize IPF { 
+    SyntaxParser = 'SIMPLE';
+    
+    color {
+        { 'Normal',     'Editor_Default' },
+        { 'String',     'Lang_String' },
+        { 'Symbol',     'Markup_Symbol' },
+        { 'Tag',        'Markup_Tag' },
+        { 'Control',    'Markup_Control' },
+    };
+
+    keyword 'Editor_Keywords' {
+        'acviewport', 'artlink', 'eartlink', 'artwork',
+        'caution', 'ecaution', 'cgraphic', 'ecgraphic',
+        'color', 'ctrl', 'ctrldef', 'ectrldef', 'ddf', 'docprof',
+        'fig', 'efig', 'figcap', 'font', 'fn', 'efn',
+        'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+        'hp1', 'ehp1', 'hp2', 'ehp2', 'hp3', 'ehp3', 'hp4', 'ehp4',
+        'hp5', 'ehp5', 'hp6', 'ehp6', 'hp7', 'ehp7', 'hp8', 'ehp8',
+        'hp9', 'ehp9',
+        'i1', 'i2',
+        'hide', 'ehide', 'icmd', 'isyn', 'lines', 'elines',
+        'link', 'elink', 'lm', 'note', 'nt', 'ent', 'p', 'pbutton',
+        'rm', 'title', 'userdoc', 'euserdoc', 'warning', 'ewarning',
+        'xmp', 'exmp',
+        'dl', 'edl', 'dthd', 'ddhd', 'dt', 'dd', 'li', 'lp', 'ol',
+        'eol', 'parml', 'eparlm', 'pt', 'pd', 'sl', 'esl', 'table',
+        'etable', 'row', 'c', 'ul', 'eul',
+    };
+    keyword 'Editor_Keywords2' {
+        'dll', 'objectname', 'objectinfo', 'objectid',
+        'vpx', 'vpy', 'vpcx', 'vpcy',
+        'name', 'align', 'linkfile', 'runin', 'fit',
+        'text', 'fc', 'bc', 'ctrlid', 'controls', 'page',
+        'coverpage', 'res', 'compact', 'tsize', 'break',
+        'toc', 'ctrlarea', 'facename', 'size', 'codepage',
+        'id', 'global', 'tutorial', 'x', 'y', 'width', 'height',
+        'group', 'viewport', 'clear', 'titlebar', 'scroll',
+        'rules', 'nosearch', 'noprint', 'hide', 'ctrlrefid',
+        'key', 'roots', 'sortkey', 'refid', 'root', 'reftype',
+        'database', 'object', 'data', 'auto', 'dependent',
+        'split', 'margin', 'break', 'cols', 'rules', 'frame',
+        'face', 'left', 'right', 'center', 'index',
+    };
+
+    h_state 0 { 'Normal' }
+    h_trans { 1, '^<', '.', 'Control' }
+    h_trans { 2, '<', ':', 'Tag' }
+    h_trans { 3, '<', '&', 'Symbol' }
+
+    h_state 1 { 'Control' }
+    h_trans { 0, '$', '', 'Normal' }
+
+    h_state 2 { 'Tag' }
+    h_trans { 5, '-s', 'a-zA-Z_', 'Tag' }
+    h_trans { 0, '>', '.', 'Tag' }
+    h_trans { 4, '<', '\'', 'String' }
+
+    h_state 3 { 'Symbol' }
+    h_trans { 0, '>', '.', 'Symbol' }
+
+    h_state 4 { 'String' }
+    h_trans { 2, '>', '\'', 'String' }
+
+    h_state 5 { 'Tag' }
+    h_trans { 2, '$', '', 'Tag' }
+    h_wtype { 2, 2, 2, '', 'a-zA-Z0-9_' }
+}
+
+mode IPF: PLAIN {                       # .IPF files
+    FileNameRx          = /\.\cIPF$/;
+    HilitOn             = 1;
+    Colorizer           = 'IPF';
+    MultiLineHilit      = 1;
+
+    RoutineRegexp       = ':[Hh]\\d\\.';
+    
+    SaveFolds           = 1;      # save fold info at beginning of line
+    CommentStart        = '.*';
+    CommentEnd          = '';
+}

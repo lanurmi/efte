@@ -1,0 +1,17 @@
+#!/bin/sh
+
+if [ ! -f $HOME/.fterc ]
+then
+    # Is there a .fte/mymain.fte ?  If not, create it.
+    if [ ! -f $HOME/.fte/mymain.fte ]
+    then
+        if [ ! -d $HOME/.fte ]
+        then
+            mkdir $HOME/.fte
+        fi
+    	cp @@CONFIGDIR@@/mymain.fte $HOME/.fte/mymain.fte
+    fi
+    (cd @@CONFIGDIR@@; @@BINDIR@@/cfte mymain.fte $HOME/.fterc) || exit 1
+fi
+
+exec @@BINDIR@@/xfte "$@"

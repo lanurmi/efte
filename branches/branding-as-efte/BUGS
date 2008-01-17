@@ -1,0 +1,30 @@
+NOTE: This file possibly cointains incorrect information and
+      probably will be removed from future release.
+
+To report bugs, please use our issue tracker at:
+
+http://sourceforge.net/tracker/?group_id=943
+
+Thank you.
+
+---------------------------------------------------------------------
+
+OS/2 notes and limitations:
+- pm controls are not disabled while a modal entryfield is active.
+- pm subwindows can not be resized.
+- does not handle multiple frames well (dialogs are modal for all).
+
+Linux notes and limitations:
+
+- Console version:
+  Runs only on linux console. Requires rw access to /dev/vcsa?? devices.
+  Runs in raw mode, so switch consoles using Ctrl+Alt+Fn. Currently
+  operates in no-translation screen mode. Console cut/paste does not currently
+  work.
+
+- X11 version:
+  If your backspace key does not work, make sure it is defined as
+  BackSpace (using loadkeys/xmodmap).
+
+- Some stuff may still be OS/2 centric. This will be fixed
+  in the future.
