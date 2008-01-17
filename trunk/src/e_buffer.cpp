@@ -788,6 +788,32 @@ int EBuffer::InsChars(int Row, int Ofs, int ACount, const char *Buffer) {
     return 1;
 }
 
+int EBuffer::InsertIndent(int Row, int Ofs, int ACount) {
+    if (Ofs == 0 && RLine(Row)->Count == 0 && BFI(this, BFI_IndentWithTabs)) {
+        /* We're writing the initial indentation to the line.
+           Insert as many tabs as we can and fill the rest with spaces. */
+        int tabCount, tabSize = BFI(this, BFI_TabSize);
+        char *tabs;
+
+        tabCount = ACount / tabSize;
+        tabs = (char *)malloc(tabCount);
+        if (tabs == NULL)
+            return 0;
+
+        memset(tabs, '\t', tabCount);
+        if (InsChars(Row, Ofs, tabCount, tabs) == 0) {
+            free(tabs);
+            return 0;
+        }
+        free(tabs);
+
+        ACount %= tabSize;
+        Ofs += tabCount;
+    }
+
+    return InsChars(Row, Ofs, ACount, 0);
+}
+
 int EBuffer::UnTabPoint(int Row, int Col) {
     ELine *L;
     int Ofs, Pos, TPos;
@@ -879,7 +905,7 @@ int EBuffer::InsText(int Row, int Col, int ACount, const char *ABuffer, int DoMa
     if (DoMark) UpdateMarker(umInsert, Row, Col, 0, ACount);
     L = LineLen(Row);
     if (L < Col) {
-        if (InsChars(Row, RLine(Row)->Count, Col - L, 0) == 0)
+        if (InsertIndent(Row, RLine(Row)->Count, Col - L) == 0)
             return 0;
     } else
         if (UnTabPoint(Row, Col) == 0) return 0;

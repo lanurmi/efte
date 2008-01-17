@@ -418,6 +418,7 @@ public:
     int InsLine(int Row, int DoAppend, int DoMark = 1);
     int DelChars(int Row, int Ofs, int ACount);
     int InsChars(int Row, int Ofs, int ACount, const char *Buffer);
+    int InsertIndent(int Row, int Ofs, int ACount);
     int ChgChars(int Row, int Ofs, int ACount, const char *Buffer);
     int DelText(int Row, int Col, int ACount, int DoMark = 1);
     int InsText(int Row, int Col, int ACount, const char *Buffer, int DoMark = 1);
