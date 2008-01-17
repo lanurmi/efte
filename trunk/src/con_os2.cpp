@@ -514,6 +514,9 @@ int ConSetSize(int X, int Y) {
     VIOMODEINFO vmi;
     int rc;
 
+    assert(X <= ConMaxCols);
+    assert(Y <= ConMaxRows);
+
     vmi.cb = sizeof(VIOMODEINFO);
     VioGetMode(&vmi, 0);
     vmi.col = (USHORT)X;
