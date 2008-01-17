@@ -644,7 +644,7 @@ int EBuffer::BackSpace() {
         if (MoveLineEnd() == 0) return 0;
         if (LineJoin() == 0) return 0;
     } else {
-        if (BFI(this, BFI_BackSpUnindents) && (LineIndented(Y) >= CP.Col)) {
+        if (BFI(this, BFI_BackSpUnindents) && (LineIndented(Y) == CP.Col)) {
             int C = CP.Col, C1 = 0;
             int L = VToR(CP.Row);
             
