@@ -1,0 +1,106 @@
+#
+# TCL keyword highlighting (initial version)
+#
+# Contributor: Wirawan Purwanto <wirawan0@softhome.net> [2003-01-22]
+# Submitted to FTE community: 2003-05-20
+#
+# NOTE:
+# All the keywords originally listed in this file were deleted: they
+# were 100% WRONG! They were SH keywords!
+#
+
+colorize TCL {
+    SyntaxParser = 'SIMPLE';
+    
+    color {
+        { 'Normal',      'Editor_Default' },
+        { 'Comment',     'Lang_Comment' },
+        { 'String',      'Lang_String' },
+        { 'Punctuation', 'Lang_Punctuation' },
+        { 'Variable',    'Lang_Variable' },
+        { 'Directive',   'Lang_Preprocessor' },
+        { 'Special',     'Lang_Control' },
+    };
+
+    keyword 'Editor_Keywords' {
+        # These keywords were taken from Tcl/Tk 8.03 electronic reference
+        # (as compiled by Charles Todd, October 1998): only TCL keywords
+        # are included here
+
+        'after', 'append', 'array', 'binary', 'break', 'catch', 'cd',
+        'clock', 'close', 'concat', 'continue', 'eof', 'error', 'eval',
+        'exec', 'exit', 'expr', 'fblocked', 'fconfigure', 'fcopy', 'file',
+        'fileevent', 'filename', 'flush', 'for', 'foreach', 'format',
+        'gets', 'glob', 'global', 'history', 'if', 'incr', 'info',
+        'interp', 'join', 'lappend', 'lindex', 'linsert', 'list',
+        'llength', 'load', 'lrange', 'lreplace', 'lsearch', 'lsort',
+        'namespace', 'open', 'package', 'pid', 'pkg_mkIndex', 'proc',
+        'puts', 'pwd', 'read', 'regexp', 'regsub', 'rename', 'resource',
+        'return', 'scan', 'seek', 'set', 'socket', 'source', 'split',
+        'string', 'subst', 'switch', 'tell', 'time', 'trace', 'unset',
+        'update', 'uplevel', 'upvar', 'variable', 'vwait', 'while',
+
+#       Built-ins that require package:
+	#'registry',  # on Windows only
+
+#       Special commands that must be provided (or can be overridden) by
+#       the user:
+	'bgerror', 'unknown',
+
+#       Obsoleted commands
+        'case',
+
+#       Not a command: don't highlight them!
+	#'Http', 'Safe Base', 'Tcl', 'library',
+    };
+
+    h_state 0 { 'Normal' }
+    h_trans { 1, '-s', 'a-zA-Z0-9_', 'Normal' }
+    h_trans { 5, '<', '$', 'Variable' }
+    h_trans { 6, '<', '-', 'Directive' }
+    h_trans { 7, '<', '.', 'Special' }
+    h_trans { 2, '<', '#', 'Comment' }
+    h_trans { 3, '<', '"', 'String' }
+    h_trans { 4, '<', '`', 'String' }
+    h_trans { 0, 'S', 'a-zA-Z0-9_', 'Punctuation' }
+
+    h_state 1 { 'Normal' }
+    h_trans { 0, '$', '', 'Normal' }
+    h_wtype { 0, 0, 0, '', 'a-zA-Z0-9_' }
+
+    h_state 2 { 'Comment' }
+    h_trans { 0, '$', '', 'Normal' }
+
+    h_state 3 { 'String' }
+    h_trans { 0, '>', '"', 'String' }
+    h_trans { 3, 'qQ', '\\', 'String' }
+
+    h_state 4 { 'String' }
+    h_trans { 0, '>', '`', 'String' }
+    h_trans { 4, 'qQ', '\\', 'String' }
+
+    h_state 5 { 'Variable' }
+    h_trans { 0, '$', '', 'Normal' }
+    h_trans { 0, '-S',  'a-zA-Z0-9_', 'Normal' }
+
+    h_state 6 { 'Directive' }
+    h_trans { 0, '$', '', 'Normal' }
+    h_trans { 0, '-S',  'a-zA-Z0-9_', 'Normal' }
+
+    h_state 7 { 'Special' }
+    h_trans { 0, '$', '', 'Normal' }
+    h_trans { 0, '-S',  'a-zA-Z0-9_', 'Normal' }
+}
+
+mode TCL: PLAIN { # *sh
+    FileNameRx          = /\.\ctcl$/;
+    FirstLineRx         = /^\#\![^ ]*{{wish>}|{tclsh>}}/;
+    HilitOn             = 1;
+    Colorizer           = 'TCL';
+    MultiLineHilit      = 1;
+    AutoHilitParen      = 1;
+    
+    SaveFolds           = 2;      # save fold info at end of line
+    CommentStart        = ' #';
+    CommentEnd          = '';
+}

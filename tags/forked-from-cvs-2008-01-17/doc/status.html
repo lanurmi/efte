@@ -1,0 +1,19 @@
+<HTML>
+<HEAD><TITLE>Status Line</TITLE></HEAD>
+<BODY>
+<P>Status line displays the following status information:
+<P><B>position|flags|mode|curchar|mod? filename|winno</B>
+<P><B>position</B> = line:column
+<P><B>flags</B>
+<DL>
+<DT>I<DD>Insert
+<DT>A<DD>Autoindent
+<DT>C<DD>Matches are case sensitive
+<DT>SLC<DD>Stream, Line, Column block-mode
+<DT>wW<DD>Automatic word wrap active (w = line, W = paragraph).
+</DL>
+<P><B>mode</B>      = Mode name as specified in configuration file
+<P><B>curchar</B>   = Decimal ASCII code of character under cursor, or EOL/EOF
+<P><B>mod?</B>      = <B>*</B> if file was modified, <B>%</B> if file is read-only
+</BODY>
+</HTML>

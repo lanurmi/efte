@@ -1,0 +1,28 @@
+Todo list (needs to be updated)
+-----------------------------------------------------------------------
+ - improve documentation
+ - configurable smart indentation like in C/JAVA/PERL/REXX modes for any mode
+ - fully support clipboard in every prompt
+ - draw mode
+ - piping block to program, redirection of program output to buffer
+ - hex mode editing
+ - shell window support
+ - Menus should determine keybindings automatically.
+ - Regexp optimizer and improved regexps.
+ - multiple frame support for gui version.
+ - Win32 gui version.
+
+Here are some more:
+ - command to center the lines in block (BlockCenter) 
+ - command to wrap entire paragraph
+ - commands to load/close desktop
+ - remove all modal states (when getting input) (needed for kbd macros and multiframe).
+ - fix win95 compiler execution
+ - OS2: see if we can avoid clipserv under OS/2 using Ilya's fake-PM trick.
+ - make configuration editor in Java (support only subset of config files?)
+ - see if we could use java as the macro language
+ - X11: set WM_COMMAND
+ - Linux: make it run on tty.
+ - Linux: fix the console version (capslock, numlock, ...)
+
+Comments and suggestions are appreciated!

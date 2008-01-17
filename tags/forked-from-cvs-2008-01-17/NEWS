@@ -1,0 +1,6 @@
+NEWS - list of user-visible changes between releases of FTE
+
+New in 0.50.0 - <add release date here>:
+* Initial version of NEWS file
+* Added -p[reprocess] to cfte. It can be used to debug configuration files.
+* Added XShellCommand variable. It defines default terminal application that should be used under X11.
