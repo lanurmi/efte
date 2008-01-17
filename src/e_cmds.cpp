@@ -891,7 +891,7 @@ int EBuffer::InsertString(const char *aStr, int aCount) {
     C = ScreenPos(RLine(L), P);
     if (SetPos(C, CP.Row) == 0)
         return 0;
-    if (BFI(this, BFI_Trim))
+    if (BFI(this, BFI_Trim) && *aStr != '\t')
         if (TrimLine(L) == 0)
             return 0;
 #ifdef CONFIG_WORDWRAP
