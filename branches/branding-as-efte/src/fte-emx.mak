@@ -36,7 +36,7 @@ include objs.inc
 .c.$(OEXT):
 	$(CC) $(CCFLAGS) -c $<
 
-all: cfte.exe fte.exe ftepm.exe clipserv.exe cliputil.exe
+all: cefte.exe efte.exe eftepm.exe clipserv.exe cliputil.exe
 
 clipserv.exe: clipserv.$(OEXT) clipserv.def
 	$(LD) $(LDFLAGS) clipserv.$(OEXT) clipserv.def -o clipserv.exe $(LIBS)
@@ -44,11 +44,11 @@ clipserv.exe: clipserv.$(OEXT) clipserv.def
 cliputil.exe: cliputil.$(OEXT) clip_vio.$(OEXT) cliputil.def
 	$(LD) $(LDFLAGS) cliputil.$(OEXT) clip_vio.$(OEXT) cliputil.def -o cliputil.exe $(LIBS)
 
-cfte.exe: $(CFTE_OBJS) cfte.def
-	$(LD) $(LDFLAGS) $(CFTE_OBJS) cfte.def -o cfte.exe $(LIBS)
+cefte.exe: $(CFTE_OBJS) cfte.def
+	$(LD) $(LDFLAGS) $(CFTE_OBJS) cfte.def -o cefte.exe $(LIBS)
 
-defcfg.cnf: defcfg.fte cfte.exe
-	cfte defcfg.fte defcfg.cnf
+defcfg.cnf: defcfg.fte cefte.exe
+	cefte defcfg.fte defcfg.cnf
 
 defcfg.h: defcfg.cnf bin2c.exe
 	bin2c defcfg.cnf >defcfg.h
@@ -58,23 +58,23 @@ bin2c.exe: bin2c.cpp
 
 c_config.$(OEXT): defcfg.h
 
-fte.exe: $(OBJS) $(VIOOBJS) fte.def
-	$(LD) $(LDFLAGS) $(OBJS) $(VIOOBJS) fte.def -o fte.exe $(LIBS)
+efte.exe: $(OBJS) $(VIOOBJS) fte.def
+	$(LD) $(LDFLAGS) $(OBJS) $(VIOOBJS) fte.def -o efte.exe $(LIBS)
 
 ftepm.res: ftepm.rc pmdlg.rc bmps/*.bmp
 	rc -r -i \emx\include ftepm.rc ftepm.res
 
-ftepm.exe: $(OBJS) $(PMOBJS) ftepm.def ftepm.res
-	$(LD) $(LDFLAGS) $(OBJS) $(PMOBJS) ftepm.def ftepm.res -o ftepm.exe $(LIBS)
+eftepm.exe: $(OBJS) $(PMOBJS) ftepm.def ftepm.res
+	$(LD) $(LDFLAGS) $(OBJS) $(PMOBJS) ftepm.def ftepm.res -o eftepm.exe $(LIBS)
 
-fte.cnf: cfte.exe
-	cfte ..\config\main.fte fte.cnf
+efte.cnf: cefte.exe
+	cefte ..\config\main.fte efte.cnf
 
 #rc -i \emx\include ftepm.rc ftepm.exe
 
 #ftepm.exe:: ftepm.res
 #	rc ftepm.res ftepm.exe
 
-distro: ftepm.exe fte.exe fte.cnf cfte.exe clipserv.exe cliputil.exe
-	zip ../fte-os2.zip ftepm.exe fte.exe fte.cnf cfte.exe clipserv.exe cliputil.exe
-	(cd .. && zip -r fte-config.zip Artistic doc config)
+distro: eftepm.exe efte.exe efte.cnf cefte.exe clipserv.exe cliputil.exe
+	zip ../efte-os2.zip eftepm.exe efte.exe efte.cnf cefte.exe clipserv.exe cliputil.exe
+	(cd .. && zip -r efte-config.zip Artistic doc config)

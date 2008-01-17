@@ -26,9 +26,9 @@ OEXT=obj
 .c.$(OEXT):
 	$(CC) $(CCFLAGS) -c {$< }
 
-all: cfte.exe fte.exe ftepm.exe clipserv.exe cliputil.exe
+all: cefte.exe efte.exe eftepm.exe clipserv.exe cliputil.exe
 
-defcfg.cnf: defcfg.fte cfte.exe
+defcfg.cnf: defcfg.fte cefte.exe
 	cfte defcfg.fte defcfg.cnf
 
 defcfg.h: defcfg.cnf bin2c.exe
@@ -39,21 +39,21 @@ c_config.obj: defcfg.h
 bin2c.exe: bin2c.cpp
 	$(CC) $(CCFLAGS) bin2c.cpp
 
-cfte.exe: $(CFTE_OBJS)
+cefte.exe: $(CFTE_OBJS)
 	$(LD) @&&|
-        $(LDFLAGS) $(INIT) $**,cfte.exe,cfte.map,os2 c2mt,cfte.def
+        $(LDFLAGS) $(INIT) $**,cefte.exe,cfte.map,os2 c2mt,cfte.def
 |
 
-fte.exe: $(OBJS) $(VIOOBJS)
+efte.exe: $(OBJS) $(VIOOBJS)
 	$(LD) @&&|
-        $(LDFLAGS) $(INIT) $**,fte.exe,fte.map,os2 c2mt,fte.def
+        $(LDFLAGS) $(INIT) $**,efte.exe,fte.map,os2 c2mt,fte.def
 |
 
-ftepm.exe:: $(OBJS) $(PMOBJS)
+eftepm.exe:: $(OBJS) $(PMOBJS)
 	$(LD) @&&|
-        $(LDFLAGS) $(INIT) $**,ftepm.exe,ftepm.map,c2mt os2,ftepm.def
+        $(LDFLAGS) $(INIT) $**,eftepm.exe,ftepm.map,c2mt os2,ftepm.def
 |
-        rc -i $(INCDIR) ftepm.rc ftepm.exe
+        rc -i $(INCDIR) ftepm.rc eftepm.exe
 
 clipserv.exe: clipserv.obj
 	$(LD) @&&|
@@ -65,8 +65,8 @@ cliputil.exe: cliputil.obj clip_vio.obj
         $(LDFLAGS) $(INIT) $**,cliputil.exe,cliputil.map,c2mt os2,cliputil.def
 |
 
-ftepm.exe:: ftepm.res
-        rc ftepm.res ftepm.exe
+eftepm.exe:: ftepm.res
+        rc ftepm.res eftepm.exe
 
 ftepm.res: ftepm.rc pmdlg.rc
         rc -i $(INCDIR) -r ftepm.rc
