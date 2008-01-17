@@ -1,7 +1,7 @@
 MAKE=make
 
 all:
-	@echo 'What (emx, unix, cygwin, bcc2, win32ms, win32bcc5, win32mingw, djgpp2, vag)?'
+	@echo 'What (emx, unix, cygwin, bcc2, win32ms, win32bcc5, win32mingw, vag)?'
 
 emx:
 	$(MAKE) -f fte-emx.mak
@@ -23,9 +23,6 @@ win32mingw:
 
 win32bcc5:
 	$(MAKE) -f fte-bcc5.mak
-
-djgpp2:
-	$(MAKE) -f fte-dj2.mak
 
 vag:
 	nmake /f fte-vag.mak
