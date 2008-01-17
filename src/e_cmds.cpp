@@ -667,7 +667,18 @@ int EBuffer::BackSpace() {
             if (DelText(Y, C1, C - C1) == 0) return 0;
         } else {
             if (MovePrev() == 0) return 0;
-            if (DelText(Y, CP.Col, 1) == 0) return 0;
+
+	    ELine *L = RLine(Y);
+            int C = CharOffset(L, CP.Col);
+
+            if (L->Count > 0 && L->Chars[C] == 9) {
+                /* We're on top of tab character. Skip over all spaces and
+                   tabs so that only the last space/tab gets deleted. */
+                while (C < L->Count &&
+                       (L->Chars[C+1] == 9 || L->Chars[C+1] == ' ')) C++;
+            }
+
+            if (DelText(Y, ScreenPos(L, C), 1) == 0) return 0;
         } 
     }
 #ifdef CONFIG_WORDWRAP
@@ -695,8 +706,19 @@ int EBuffer::Delete() {
             P = CharOffset(RLine(Y), C);
             C1 = ScreenPos(RLine(Y), P + 1);
             if (DelText(Y, C, C1 - C) == 0) return 0;
-        } else 
-            if (DelText(Y, CP.Col, 1) == 0) return 0;
+        } else {
+            ELine *L = RLine(Y);
+            int C = CharOffset(L, CP.Col);
+
+            if (L->Count > 0 && L->Chars[C] == '\t') {
+                /* We're on top of tab character. Skip over all spaces and
+                   tabs so that only the last space/tab gets deleted. */
+                while (C < L->Count &&
+                       (L->Chars[C+1] == '\t' || L->Chars[C+1] == ' ')) C++;
+            }
+
+            if (DelText(Y, ScreenPos(L, C), 1) == 0) return 0;
+        }
     } else 
         if (LineJoin() == 0) return 0;
 #ifdef CONFIG_WORDWRAP
