@@ -489,11 +489,13 @@ static int SetupXWindow(int argc, char **argv)
     proptype_incr = XInternAtom(display, "INCR", False);
     assert(proptype_incr != None);
 
-    sizeHints.flags = PResizeInc | PMinSize | PBaseSize | PWinGravity;
+    sizeHints.flags = PResizeInc | PMinSize | PMaxSize | PBaseSize | PWinGravity;
     sizeHints.width_inc = FontCX;
     sizeHints.height_inc = FontCY;
     sizeHints.min_width = MIN_SCRWIDTH * FontCX;
+    sizeHints.max_width = ConMaxCols * FontCX;
     sizeHints.min_height = MIN_SCRHEIGHT * FontCY;
+    sizeHints.max_height = ConMaxRows * FontCY;
     sizeHints.base_width = 0;
     sizeHints.base_height = 0;
     if (setUserPosition)
@@ -845,6 +847,9 @@ int ConSetSize(int X, int Y) {
     unsigned char *p;
     int i;
     int MX, MY;
+
+    assert(X <= ConMaxCols);
+    assert(Y <= ConMaxRows);
 
     p = NewBuffer = (unsigned char *) malloc(X * Y * 2);
     if (NewBuffer == NULL) return -1;
@@ -1973,12 +1978,12 @@ GUI::GUI(int &argc, char **argv, int XSize, int YSize) {
 
                 XParseGeometry(argv[++c], &initX, &initY,
                                &ScreenCols, &ScreenRows);
-                if (ScreenCols > 255)
-                    ScreenCols = 255;
+                if (ScreenCols > ConMaxCols)
+                    ScreenCols = ConMaxCols;
                 else if (ScreenCols < MIN_SCRWIDTH)
                     ScreenCols = MIN_SCRWIDTH;
-                if (ScreenRows > 255)
-                    ScreenRows = 255;
+                if (ScreenRows > ConMaxRows)
+                    ScreenRows = ConMaxRows;
                 else if (ScreenRows < MIN_SCRHEIGHT)
                     ScreenRows = MIN_SCRHEIGHT;
                 setUserPosition = 1;
