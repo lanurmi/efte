@@ -117,8 +117,8 @@ static unsigned char *ScreenBuffer = NULL;
 static int Refresh = 0;
 
 // res_name can be set with -name switch
-static char res_name[20] = "fte";
-static char res_class[] = "Fte";
+static char res_name[20] = "efte";
+static char res_class[] = "Efte";
 
 static Display *display;
 static Colormap colormap;
@@ -427,15 +427,15 @@ static int SetupXWindow(int argc, char **argv)
     XtAppContext  	app_context;
     XtToolkitInitialize();
     app_context = XtCreateApplicationContext();
-    if (( display = XtOpenDisplay(app_context, NULL, argv[0], "xfte",
+    if (( display = XtOpenDisplay(app_context, NULL, argv[0], "xefte",
                             NULL, 0, &argc, argv)) == NULL)
        DieError(1, "%s:  Can't open display\n", argv[0]);
 #else
     char *ds = getenv("DISPLAY");
     if (!ds)
-	DieError(1, "$DISPLAY not set? This version of fte must be run under X11.");
+	DieError(1, "$DISPLAY not set? This version of efte must be run under X11.");
     if ((display = XOpenDisplay(ds)) == NULL)
-	DieError(1, "XFTE Fatal: could not open display: %s!", ds);
+	DieError(1, "XeFTE Fatal: could not open display: %s!", ds);
 #endif
 
     colormap = DefaultColormap(display, DefaultScreen(display));
@@ -461,7 +461,7 @@ static int SetupXWindow(int argc, char **argv)
     i18n_ctx = useI18n ? i18n_open(display, win, &mask) : 0;
 
     if (InitXFonts() != 0)
-	DieError(1, "XFTE Fatal: could not open any font!");
+	DieError(1, "XeFTE Fatal: could not open any font!");
 
     /* >KeyReleaseMask shouldn't be set for correct key mapping */
     /* we set it anyway, but not pass to XmbLookupString -- mark */

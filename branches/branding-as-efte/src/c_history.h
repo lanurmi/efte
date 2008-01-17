@@ -13,9 +13,9 @@
 #ifdef CONFIG_HISTORY
 
 #ifdef UNIX
-#define HISTORY_NAME ".fte-history"
+#define HISTORY_NAME ".efte-history"
 #else
-#define HISTORY_NAME "fte.his"
+#define HISTORY_NAME "efte.his"
 #endif
 
 typedef struct {

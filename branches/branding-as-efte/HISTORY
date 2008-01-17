@@ -1,6 +1,11 @@
 Revision history
 -----------------------------------------------------------------------
-0.50.X -- <fill month here> 2006
+
+1.0 -- January 2008
+  - First release of eFTE
+
+0.50.1 -- January 17, 2008
+  - Forked from FTE (http://fte.sourceforge.net)
 
 0.50.1 -- September 2006
   - Cleanup and Debian package update

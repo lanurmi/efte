@@ -16,9 +16,9 @@
 #if defined(UNIX)
 /* default locations for the configuration files */
 const char *Unix_RCPaths[] = {
-    "/usr/local/etc/fte/system.fterc",
-    "/etc/fte/system.fterc",
-    "/usr/X11R6/lib/X11/fte/system.fterc",
+    "/usr/local/etc/efte/system.fterc",
+    "/etc/efte/system.fterc",
+    "/usr/X11R6/lib/X11/efte/system.fterc",
 };
 
 // variables used by vfte
@@ -53,7 +53,7 @@ static void Usage() {
            "  -T[<tagfile>]     Load tags file at startup.\n"
            "  -t<tag>           Locate specified tag.\n"
 #endif
-//           "       -p        Load files into already running FTE.\n"
+//           "       -p        Load files into already running eFTE.\n"
         );
 }
 
@@ -113,8 +113,8 @@ static int GetConfigFileName(int /*argc*/, char **argv, char *ConfigFileName) {
 
     if (ConfigFileName[0] == 0) {
 #if defined(UNIX)
-        // ? use ./.fterc if by current user ?
-        ExpandPath("~/.fterc", CfgName, sizeof(CfgName));
+        // ? use ./.efterc if by current user ?
+        ExpandPath("~/.efterc", CfgName, sizeof(CfgName));
 #elif defined(DOS) || defined(DOSP32)
         strlcpy(CfgName, argv[0], sizeof(CfgName));
 
@@ -141,7 +141,7 @@ static int GetConfigFileName(int /*argc*/, char **argv, char *ConfigFileName) {
         if (home[0]) {
             strlcpy(CfgName, home, sizeof(CfgName));
             Slash(CfgName, 1);
-            strlcat(CfgName, "fte.cnf", sizeof(CfgName));
+            strlcat(CfgName, "efte.cnf", sizeof(CfgName));
         }
 
         if (!home[0] || access(CfgName, 0) != 0) {
@@ -191,12 +191,12 @@ static int CmdLoadConfiguration(int &argc, char **argv) {
 #ifndef FTE_NO_LOGGING
                     char path[MAXPATH];
 #ifdef UNIX
-                    ExpandPath("~/.fte", path, sizeof(path));
+                    ExpandPath("~/.efte", path, sizeof(path));
 #else
                     JustDirectory(argv[0], path, sizeof(path));
 #endif
                     Slash(path,1);
-                    strlcat(path, "fte.log", sizeof(path));
+                    strlcat(path, "efte.log", sizeof(path));
                     if (debug_clean) unlink(path);
 
                     globalLog.SetLogFile(path);

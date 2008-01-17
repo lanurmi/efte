@@ -135,7 +135,7 @@ int main(int argc, char **argv) {
 #ifndef UNIX
                 "config/"
 #endif
-                "main.fte [fte-new.cnf]\n");
+                "main.fte [efte-new.cnf]\n");
         exit(1);
     }
 
@@ -153,7 +153,7 @@ int main(int argc, char **argv) {
 
     // setup defaults
     strcpy(Source, "");
-    strcpy(Target, "fte-new.cnf");
+    strcpy(Target, "efte-new.cnf");
     preprocess_only = false;
     offset = -1;
 
@@ -209,7 +209,7 @@ int main(int argc, char **argv) {
 
     if (preprocess_only == false)
     {
-	sprintf(XTarget + strlen(XTarget), "cfte%ld.tmp", (long)getpid());
+	sprintf(XTarget + strlen(XTarget), "cefte%ld.tmp", (long)getpid());
 	output = fopen(XTarget, "wb");
 	if (output == 0) {
 	    fprintf(stderr, "Cannot create '%s', errno=%d!\n", XTarget, errno);
@@ -1899,7 +1899,7 @@ static int LoadFile(const char *WhereName, const char *CfgName, int Level) {
 #ifdef UNIX
         // 1. User's .fte directory.
         char tmp[MAXPATH];
-        sprintf(tmp, "~/.fte/%s", CfgName);
+        sprintf(tmp, "~/.efte/%s", CfgName);
         ExpandPath(tmp, Cfg, sizeof(Cfg));
         //fprintf(stderr, "Looking for %s\n", Cfg);
         if (!FileExists(Cfg))
@@ -1910,8 +1910,8 @@ static int LoadFile(const char *WhereName, const char *CfgName, int Level) {
             //fprintf(stderr, "Looking for %s\n", Cfg);
             if (!FileExists(Cfg))
             {
-                // 3. /usr/share/fte
-                sprintf(tmp, "/usr/share/fte/%s", CfgName);
+                // 3. /usr/share/efte
+                sprintf(tmp, "/usr/share/efte/%s", CfgName);
                 ExpandPath(tmp, Cfg, sizeof(Cfg));
                 if (!FileExists(Cfg))
                 {
@@ -1926,7 +1926,7 @@ static int LoadFile(const char *WhereName, const char *CfgName, int Level) {
                         if (!FileExists(Cfg))
                         {
                             fprintf(stderr, "Cannot find '%s' in:\n"
-                                    "\t~/.fte,\n""\t%slocalconfig,\n\t/usr/share/fte,\n"
+                                    "\t~/.efte,\n""\t%slocalconfig,\n\t/usr/share/efte,\n"
                                     "\t%sconfig, or\n"
                                     "\t.",
                                     CfgName, StartDir, StartDir);

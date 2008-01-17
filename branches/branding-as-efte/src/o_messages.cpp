@@ -460,7 +460,7 @@ void EMessages::GetErrors() {
                     } else {
                         //** Mismatch filenames -> error, and revoke stack.
                         //dbg("mismatch on %s", fn);
-                        AddError(0, -1, 0, "fte: mismatch in directory stack!?");
+                        AddError(0, -1, 0, "efte: mismatch in directory stack!?");
                         
                         //** In this case we totally die the stack..
                         while(a != 0)
