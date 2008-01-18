@@ -38,7 +38,8 @@
     !defined(IRIX) && \
     !defined(SCO) && \
     !defined(SUNOS) && \
-    !defined(NCR)
+    !defined(NCR) && \
+    !defined(MACOSX)
 #    error Target not supported.
 #endif
 
