@@ -13,9 +13,9 @@
 #ifdef CONFIG_DESKTOP
 
 #ifdef UNIX
-#    define        DESKTOP_NAME       ".fte-desktop"
+#    define        DESKTOP_NAME       ".efte-desktop"
 #else
-#    define        DESKTOP_NAME       "fte.dsk"
+#    define        DESKTOP_NAME       "efte.dsk"
 #endif
 
 extern char DesktopFileName[256];

@@ -15,7 +15,6 @@
 #include <stdlib.h> // getenv
 #include <string.h>
 #include <sys/stat.h>
-#include <unistd.h> // stat
 
 #if defined(OS2)
 #define INCL_DOS
@@ -25,6 +24,8 @@
 #if defined(NT)
 #   define  WIN32_LEAN_AND_MEAN 1
 #   include <windows.h>
+#else
+#    include <unistd.h>
 #endif
 
 #if defined(DOSP32)

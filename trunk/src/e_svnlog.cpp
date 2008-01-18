@@ -23,7 +23,7 @@ ESvnLog::ESvnLog (int createFlags,EModel **ARoot,char *Directory,char *OnFiles):
     // Create filename for message
 #ifdef UNIX
     // Use this in Unix - it says more to user
-    sprintf (msgFile,"/tmp/fte%d-svn-msg",getpid ());
+    sprintf (msgFile,"/tmp/efte%d-svn-msg",getpid ());
 #else
     tmpnam (msgFile);
 #endif

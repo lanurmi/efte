@@ -3,13 +3,14 @@
 
 #define MAKE_VERSION(major,minor,release) ((major<<24L) | (minor << 16L) | release)
 
-#define PROG_FTE      "fte"
-#define PROG_CFTE     "cfte"
+#define PROG_FTE      "efte"
+#define PROG_CFTE     "cefte"
 #define PROGRAM       PROG_FTE
-#define EXTRA_VERSION "-cvs"
-#define VERSION       "0.50.01" EXTRA_VERSION
-#define VERNUM        MAKE_VERSION(0x00, 0x49, 0x0402)
-#define COPYRIGHT     "Copyright (c) 1994-1998 Marko Macek\n" \
-                      "Copyright (c) 2000-2006 Others"
+#define EXTRA_VERSION ""
+#define VERSION       "1.0" EXTRA_VERSION
+#define VERNUM        MAKE_VERSION(0x01, 0x00, 0x00)
+#define COPYRIGHT     "Copyright (c) 2008 eFTE Group" \
+   "Copyright (c) 2000-2006 Others" \
+   "Copyright (c) 1994-1998 Marko Macek"
 
 #endif // __FTEVER_H

@@ -5,13 +5,14 @@
 
 #  vfte - for Linux console directly (with limitations, see con_linux.cpp)
 
-TGT_NFTE = nfte
-#TGT_QFTE = qfte
-#TGT_SFTE = sfte
-TGT_VFTE = vfte
-TGT_XFTE = xfte
+TGT_CFTE = cefte
+TGT_NFTE = nefte
+#TGT_QFTE = qefte
+#TGT_SFTE = sefte
+TGT_VFTE = vefte
+TGT_XFTE = xefte
 
-TARGETS = $(TGT_XFTE) $(TGT_NFTE) $(TGT_QFTE) $(TGT_SFTE) $(TGT_VFTE)
+TARGETS = $(TGT_CFTE) $(TGT_XFTE) $(TGT_NFTE) $(TGT_QFTE) $(TGT_SFTE) $(TGT_VFTE)
 
 # Comment or uncoment this two flags below if
 # you want to use:
@@ -86,7 +87,7 @@ SINCDIR   = -I/usr/include/slang
 #CC   = xlC
 #LD   = xlC
 #CPPOPTIONS = -DNO_NEW_CPP_FEATURES
-#TARGETS = xfte
+#TARGETS = $(TGT_XFTE)
 
 #######################################################################
 # Irix
@@ -177,10 +178,10 @@ QLIBS    = $(QLIBDIR) -lqt-mt
 .cpp.moc:
 	$(MOC) -o $@ $<
 
-all:    cfte $(TARGETS)
+all: $(TARGETS)
 
-cfte: cfte.o s_files.o s_string.o
-	$(LD) -o $@ $(LDFLAGS) cfte.o s_files.o s_string.o
+$(TGT_CFTE): $(CFTE_OBJS)
+	$(LD) -o $@ $(LDFLAGS) $(CFTE_OBJS)
 
 c_config.o: defcfg.h
 
@@ -192,28 +193,28 @@ DEFAULT_FTE_CONFIG = defcfg.fte
 #DEFAULT_FTE_CONFIG = defcfg2.fte
 #DEFAULT_FTE_CONFIG = ../config/main.fte
 
-defcfg.cnf: $(DEFAULT_FTE_CONFIG) cfte
-	./cfte $(DEFAULT_FTE_CONFIG) defcfg.cnf
+defcfg.cnf: $(DEFAULT_FTE_CONFIG) $(TGT_CFTE)
+	./$(TGT_CFTE) $(DEFAULT_FTE_CONFIG) defcfg.cnf
 
-xfte: .depend $(OBJS) $(XOBJS)
+$(TGT_XFTE): .depend $(OBJS) $(XOBJS)
 	$(LD) -o $@ $(LDFLAGS) $(OBJS) $(XOBJS) $(XLIBS)
 
-qfte: g_qt.moc g_qt_dlg.moc $(OBJS) $(QOBJS)
+$(TGT_QFTE): g_qt.moc g_qt_dlg.moc $(OBJS) $(QOBJS)
 	$(LD) -o $@ $(LDFLAGS) $(OBJS) $(QOBJS) $(QLIBS) $(XLIBS)
 
-vfte: $(OBJS) $(VOBJS)
+$(TGT_VFTE): $(OBJS) $(VOBJS)
 	$(LD) -o $@ $(LDFLAGS) $(OBJS) $(VOBJS) $(VLIBS)
 
-sfte: $(OBJS) $(SOBJS) compkeys
+$(TGT_SFTE): $(OBJS) $(SOBJS) compkeys
 	$(LD) -o $@ $(LDFLAGS) $(OBJS) $(SOBJS) $(SLIBS)
 
-nfte: $(OBJS) $(NOBJS) compkeys
+$(TGT_NFTE): $(OBJS) $(NOBJS) compkeys
 	$(LD) -o $@ $(LDFLAGS) $(OBJS) $(NOBJS) $(NLIBS)
 
 compkeys: compkeys.o
 	$(LD) -o $@ $(LDFLAGS) compkeys.o
 
-mfte: $(OBJS) $(MOBJS)
+$(TGT_MFTE): $(OBJS) $(MOBJS)
 	$(LD) -o $@ $(LDFLAGS) $(OBJS) $(MOBJS) $(MLIBS) $(XLIBS)
 
 g_qt.obj: g_qt.moc
@@ -230,8 +231,7 @@ tags: $(SRCS) $(wildcard *.h)
 .PHONY: clean
 
 clean:
-	rm -f core *.o *.moc .depend $(TARGETS) defcfg.h defcfg.cnf \
-	cfte fte sfte vfte nfte qfte xfte compkeys tags
+	rm -f core *.o *.moc .depend $(TARGETS) defcfg.h defcfg.cnf compkeys tags
 
 #
 # include dependency files if they exist
@@ -239,3 +239,4 @@ clean:
 ifneq ($(wildcard .depend),)
 include .depend
 endif
+
