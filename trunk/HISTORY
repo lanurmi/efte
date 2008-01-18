@@ -6,6 +6,7 @@ Revision history
   - Branded FTE to be eFTE
   - Removed DJGPP support
   + Added CursorWrap and CursorWithinEOL
+  + Added searching in the Routine List
 
 0.50.1 -- January 17, 2008
   - Forked from FTE (http://fte.sourceforge.net)
