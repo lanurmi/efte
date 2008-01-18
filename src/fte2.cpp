@@ -16,9 +16,9 @@
 
 /* Actual locations */
 char *Unix_RCPaths[UNIX_RCPATHS]={
-    "/usr/local/etc/fte/system.fterc",
-    "/etc/fte/system.fterc",
-    "/usr/X11R6/lib/X11/xfte/system.fterc",
+    "/usr/local/etc/efte/system.fterc",
+    "/etc/efte/system.fterc",
+    "/usr/X11R6/lib/X11/xefte/system.fterc",
 };
 
 #endif /* UNIX */
@@ -103,8 +103,8 @@ static int GetConfigFileName(int argc, char **argv, char *ConfigFileName) {
     
     if (ConfigFileName[0] == 0) {
 #if defined(UNIX)
-        // ? use ./.fterc if by current user ?
-        ExpandPath("~/.fterc", CfgName);
+        // ? use ./.efterc if by current user ?
+        ExpandPath("~/.efterc", CfgName);
 #elif defined(DOS) || defined(DOSP32)
         strcpy(CfgName, argv[0]);
         strcpy(findPathExt(CfgName), ".cnf");
@@ -124,7 +124,7 @@ static int GetConfigFileName(int argc, char **argv, char *ConfigFileName) {
         if (home[0]) {
             strcpy(CfgName, home);
             Slash(CfgName, 1);
-            strcat(CfgName, "fte.cnf");
+            strcat(CfgName, "efte.cnf");
         }
 
         if (!home[0] || access(CfgName, 0) != 0) {
@@ -335,10 +335,10 @@ static int CmdLoadFiles(int &argc, char **argv) {
 static void DoLoadHistoryOnEntry(int &argc, char **argv) {
     if (HistoryFileName[0] == 0) {
 #ifdef UNIX
-        ExpandPath("~/.fte-history", HistoryFileName);
+        ExpandPath("~/.efte-history", HistoryFileName);
 #else
         JustDirectory(argv[0], HistoryFileName);
-        strcat(HistoryFileName, "fte.his");
+        strcat(HistoryFileName, "efte.his");
 #endif
     } else {
         char p[256];
@@ -347,9 +347,9 @@ static void DoLoadHistoryOnEntry(int &argc, char **argv) {
         if (IsDirectory(p)) {
             Slash(p, 1);
 #ifdef UNIX
-            strcat(p, ".fte-history");
+            strcat(p, ".efte-history");
 #else
-            strcat(p, "fte.his");
+            strcat(p, "efte.his");
 #endif
         }
         strcpy(HistoryFileName, p);
@@ -369,17 +369,17 @@ static void DoSaveHistoryOnExit() {
 void DoLoadDesktopOnEntry(int &argc, char **argv) {
     if (DesktopFileName[0] == 0) {
 #ifdef UNIX
-        if (FileExists(".fte-desktop")) {
-            ExpandPath(".fte-desktop", DesktopFileName);
+        if (FileExists(".efte-desktop")) {
+            ExpandPath(".efte-desktop", DesktopFileName);
         } else {
-            ExpandPath("~/.fte-desktop", DesktopFileName);
+            ExpandPath("~/.efte-desktop", DesktopFileName);
         }
 #else
-        if (FileExists("fte.dsk")) {
-            ExpandPath("fte.dsk", DesktopFileName);
+        if (FileExists("efte.dsk")) {
+            ExpandPath("efte.dsk", DesktopFileName);
         } else {
             JustDirectory(argv[0], DesktopFileName);
-            strcat(DesktopFileName, "fte.dsk");
+            strcat(DesktopFileName, "efte.dsk");
         }
 #endif
     } else {
@@ -389,9 +389,9 @@ void DoLoadDesktopOnEntry(int &argc, char **argv) {
         if (IsDirectory(p)) {
             Slash(p, 1);
 #ifdef UNIX
-            strcat(p, ".fte-desktop");
+            strcat(p, ".efte-desktop");
 #else
-            strcat(p, "fte.dsk");
+            strcat(p, "efte.dsk");
 #endif
         }
         strcpy(DesktopFileName, p);

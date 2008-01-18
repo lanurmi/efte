@@ -35,7 +35,7 @@ int EView::SysShowHelp(ExState &State, const char *word) {
         word = wordAsk;
     }
 
-    snprintf(file, sizeof(file)-1, "/tmp/fte%d-man-%s", getpid(), word);
+    snprintf(file, sizeof(file)-1, "/tmp/efte%d-man-%s", getpid(), word);
     snprintf(command, sizeof(command)-1, "%s %s %s >'%s' 2>&1", HelpCommand, options, word, file);
 
     /// !!! why is this needed ???

@@ -1,11 +1,11 @@
 # versions of FTE to build
 
 # Versions:
-#  xfte - using XLib (the most stable)
+#  xefte - using XLib (the most stable)
 
-TARGETS = xfte
+TARGETS = xefte
 
-PRIMARY = xfte
+PRIMARY = xefte
 
 # Comment or uncoment this two flags below if
 # you want to use:
@@ -74,11 +74,11 @@ XLIBS    = -lX11 $(SOCKETLIB)
 	$(CC) $(CCFLAGS) -c $<
 
 
-all:    cfte $(TARGETS)
+all:    cefte $(TARGETS)
 #rm -f fte ; ln -s $(PRIMARY) fte
 
-cfte: cfte.o s_files.o
-	$(LD) $(LDFLAGS) cfte.o s_files.o -o cfte 
+cefte: cfte.o s_files.o
+	$(LD) $(LDFLAGS) cfte.o s_files.o -o cefte 
 
 c_config.o: defcfg.h
 
@@ -90,14 +90,15 @@ DEFAULT_FTE_CONFIG = defcfg.fte
 #DEFAULT_FTE_CONFIG = defcfg2.fte
 #DEFAULT_FTE_CONFIG = ../config/main.fte
 
-defcfg.cnf: $(DEFAULT_FTE_CONFIG) cfte
-	./cfte $(DEFAULT_FTE_CONFIG) defcfg.cnf
+defcfg.cnf: $(DEFAULT_FTE_CONFIG) cefte
+	./cefte $(DEFAULT_FTE_CONFIG) defcfg.cnf
 
-xfte: $(OBJS) $(XOBJS)
-	$(LD) $(LDFLAGS) $(OBJS) $(XOBJS) $(XLIBS) -o xfte
+xefte: $(OBJS) $(XOBJS)
+	$(LD) $(LDFLAGS) $(OBJS) $(XOBJS) $(XLIBS) -o xefte
 
 compkeys: compkeys.o 
 	$(LD) $(LDFLAGS) compkeys.o -o compkeys
 
 clean:
-	rm -f core *.o $(TARGETS) defcfg.h defcfg.cnf cfte fte vfte compkeys
+	rm -f core *.o $(TARGETS) defcfg.h defcfg.cnf cefte efte vefte compkeys
+

@@ -757,10 +757,10 @@ int EGUI::InterfaceInit(int &/*argc*/, char ** /*argv*/) {
 void EGUI::DoLoadHistoryOnEntry(int &/*argc*/, char **argv) {
     if (HistoryFileName[0] == 0) {
 #ifdef UNIX
-        ExpandPath("~/.fte-history", HistoryFileName, sizeof(HistoryFileName));
+        ExpandPath("~/.efte-history", HistoryFileName, sizeof(HistoryFileName));
 #else
         JustDirectory(argv[0], HistoryFileName, sizeof(HistoryFileName));
-        strlcat(HistoryFileName, "fte.his", sizeof(HistoryFileName));
+        strlcat(HistoryFileName, "efte.his", sizeof(HistoryFileName));
 #endif // UNIX
     } else {
         char p[256];

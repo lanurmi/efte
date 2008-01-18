@@ -21,9 +21,15 @@ OEXT=obj
 #	/nologo /W3 /J # /YX
 
 # Use these settings for MSVC 2003
-CCFLAGS   = $(OPTIMIZE) -DNT -DNTCONSOLE -DMSVC -DWIN32 -D_CONSOLE $(INCDIR) /GX \
+#CCFLAGS   = $(OPTIMIZE) -DNT -DNTCONSOLE -DMSVC -DWIN32 -D_CONSOLE $(INCDIR) /GX \
+#	$(APPOPTIONS) $(DEBUG) \
+#	/nologo /W3 /J # /YX
+
+# Use these settings for MSVC Express 2008
+CCFLAGS   = $(OPTIMIZE) -DNT -D_CRT_NONSTDC_NO_WARNINGS -D_CRT_SECURE_NO_WARNINGS \
+	-DNTCONSOLE -DMSVC -DWIN32 -D_CONSOLE $(INCDIR) /EHsc \
 	$(APPOPTIONS) $(DEBUG) \
-	/nologo /W3 /J # /YX
+	/nologo /W3 /J
 
 LDFLAGS   = $(OPTIMIZE) $(LIBDIR) /nologo
 RCFLAGS   =
@@ -40,36 +46,36 @@ NTRES     = ftewin32.res
 .c.$(OEXT):
 	$(CC) $(CCFLAGS) -c $<
 
-all: cfte.exe fte.cnf fte.exe
+all: cefte.exe efte.cnf efte.exe
 
 clean:
 	-del bin2c.exe
 	-del bin2c.pdb
-	-del cfte.exe
-	-del cfte.pdb
-	-del cfte.exp
-	-del cfte.lib
+	-del cefte.exe
+	-del cefte.pdb
+	-del cefte.exp
+	-del cefte.lib
 	-del defcfg.cnf
 	-del defcfg.h
-	-del fte.cnf
-	-del fte.exe
-	-del fte.his
-	-del fte.pdb
+	-del efte.cnf
+	-del efte.exe
+	-del efte.his
+	-del efte.pdb
 	-del vc60.pdb
-	-del ftewin32.res
+	-del eftewin32.res
 	-del *.obj
 
-cfte.exe: $(CFTE_OBJS) cfte.def
-	$(LD) $(LDFLAGS) /Fecfte.exe $(CFTE_OBJS) cfte.def
+cefte.exe: $(CFTE_OBJS) cfte.def
+	$(LD) $(LDFLAGS) /Fecefte.exe $(CFTE_OBJS) cfte.def
 
-defcfg.cnf: defcfg.fte cfte.exe
-	cfte defcfg.fte defcfg.cnf
+defcfg.cnf: defcfg.fte cefte.exe
+	cefte defcfg.fte defcfg.cnf
 
 defcfg.h: defcfg.cnf bin2c.exe
 	bin2c defcfg.cnf >defcfg.h
 
-fte.cnf: ..\config\* cfte.exe
-	cfte ..\config\main.fte fte.cnf
+efte.cnf: ..\config\* cefte.exe
+	cefte ..\config\main.fte efte.cnf
 
 bin2c.exe: bin2c.cpp
 	$(CC) $(CCFLAGS) $(LDFLAGS) /Febin2c.exe bin2c.cpp
@@ -79,9 +85,9 @@ c_config.$(OEXT): defcfg.h
 ftewin32.res: ftewin32.rc
 	$(RC) $(RCFLAGS) ftewin32.rc
 
-fte.exe: $(OBJS) $(NTOBJS) $(NTRES)
-	$(LD) $(LDFLAGS) /Fefte.exe $(OBJS) $(NTOBJS) user32.lib $(NTRES)
+efte.exe: $(OBJS) $(NTOBJS) $(NTRES)
+	$(LD) $(LDFLAGS) /Feefte.exe $(OBJS) $(NTOBJS) user32.lib $(NTRES)
 
-distro: fte.exe fte.cnf cfte.exe
-	zip ../fte-nt.zip fte.exe fte.cnf cfte.exe
+distro: efte.exe efte.cnf cefte.exe
+	zip ../efte-nt.zip efte.exe efte.cnf cefte.exe
 

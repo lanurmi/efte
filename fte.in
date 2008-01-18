@@ -1,17 +1,17 @@
 #!/bin/sh
 
-if [ ! -f $HOME/.fterc ]
+if [ ! -f $HOME/.efterc ]
 then
-    # Is there a .fte/mymain.fte ?  If not, create it.
-    if [ ! -f $HOME/.fte/mymain.fte ]
+    # Is there a .efte/mymain.fte ?  If not, create it.
+    if [ ! -f $HOME/.efte/mymain.fte ]
     then
-        if [ ! -d $HOME/.fte ]
+        if [ ! -d $HOME/.efte ]
         then
-            mkdir $HOME/.fte
+            mkdir $HOME/.efte
         fi
-    	cp @@CONFIGDIR@@/mymain.fte $HOME/.fte/mymain.fte
+    	cp @@CONFIGDIR@@/mymain.fte $HOME/.efte/mymain.fte
     fi
-    (cd @@CONFIGDIR@@; @@BINDIR@@/cfte mymain.fte $HOME/.fterc) || exit 1
+    (cd @@CONFIGDIR@@; @@BINDIR@@/cefte mymain.fte $HOME/.efterc) || exit 1
 fi
 
-exec @@BINDIR@@/xfte "$@"
+exec @@BINDIR@@/xefte "$@"
