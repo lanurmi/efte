@@ -442,6 +442,8 @@ MODE_FLG(IgnoreBufferList),
 MODE_FLG(ReassignModelIds),
 MODE_FLG(RecheckReadOnly),
 MODE_FLG(CursorBlink),
+MODE_FLG(CursorWrap),
+MODE_FLG(CursorWithinEOL),
 { 0, 0 },
 };
 
