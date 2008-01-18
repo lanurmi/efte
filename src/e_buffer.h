@@ -238,7 +238,9 @@ public:
     SyntaxProc HilitProc;
     int StartHilit, EndHilit;
 #endif
-    
+
+    int LastUpDownColumn; // For CursorWithinEOL movement
+
     // constructors
     EBuffer(int createFlags, EModel **ARoot, const char *AName);
     virtual ~EBuffer();

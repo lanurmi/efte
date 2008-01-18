@@ -55,6 +55,7 @@ EEditPort::EEditPort(EBuffer *B, EView *V): EViewPort(V) {
     Rows = Cols = 0;
     OldTP.Row = -1;
     OldTP.Col = -1;
+
     GetPos();
     TP = B->TP;
     CP = B->CP;
@@ -379,6 +380,10 @@ int EBuffer::BeginMacro() {
 }
 
 int EBuffer::ExecCommand(int Command, ExState &State) {
+    if ( CursorWithinEOL == 1 && (Command != ExMoveUp && Command != ExMoveDown) ) {
+        LastUpDownColumn = -1; // Reset when not moving up or down
+    }
+
     switch (Command) {
     case ExMoveUp:                return MoveUp();
     case ExMoveDown:              return MoveDown();

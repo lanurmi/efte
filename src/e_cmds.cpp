@@ -10,26 +10,59 @@
 #include "fte.h"
 
 int EBuffer::MoveLeft() {
-    if (CP.Col == 0) return 0;
-    SetPos(CP.Col - 1, CP.Row, tmLeft);
-    return 1;
+   if (CP.Col == 0) {
+      if ( CursorWrap == 1 && MoveUp() )
+         return MoveLineEnd();
+      else
+         return 0;
+   }
+   SetPos(CP.Col - 1, CP.Row, tmLeft);
+   return 1;
 }
 
 int EBuffer::MoveRight() {
-    SetPos(CP.Col + 1, CP.Row, tmRight);
-    return 1;
+   if ( CursorWrap == 1 && CP.Col == LineLen() ) {
+      if ( MoveDown() )
+         return MoveLineStart();
+      else
+         return 0;
+   }
+   SetPos(CP.Col + 1, CP.Row, tmRight);
+   return 1;
 }
 
 int EBuffer::MoveUp() {
-    if (CP.Row == 0) return 0;
-    SetPos(CP.Col, CP.Row - 1, tmLeft);
-    return 1;
+   if ( LastUpDownColumn == -1 )
+      LastUpDownColumn = CP.Col;
+
+   if (CP.Row == 0) return 0;
+
+   SetPos(CP.Col, CP.Row - 1, tmLeft);
+
+   if ( CursorWithinEOL == 1 ) {
+      MoveLineEnd();
+      if ( CP.Col > LastUpDownColumn )
+         SetPos( LastUpDownColumn, CP.Row );
+   }
+
+   return 1;
 }
 
 int EBuffer::MoveDown() {
-    if (CP.Row == VCount - 1) return 0;
-    SetPos(CP.Col, CP.Row + 1, tmLeft);
-    return 1;
+   if ( LastUpDownColumn == -1 )
+      LastUpDownColumn = CP.Col;
+
+   if (CP.Row == VCount - 1) return 0;
+
+   SetPos(CP.Col, CP.Row + 1, tmLeft);
+
+   if ( CursorWithinEOL == 1 ) {
+      MoveLineEnd();
+      if ( CP.Col > LastUpDownColumn )
+         SetPos( LastUpDownColumn, CP.Row );
+   }
+
+   return 1;
 }
 
 int EBuffer::MovePrev() {
