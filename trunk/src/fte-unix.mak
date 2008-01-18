@@ -10,7 +10,7 @@ TGT_NFTE = nefte
 #TGT_QFTE = qefte
 #TGT_SFTE = sefte
 TGT_VFTE = vefte
-TGT_XFTE = xefte
+TGT_XFTE = efte
 
 TARGETS = $(TGT_CFTE) $(TGT_XFTE) $(TGT_NFTE) $(TGT_QFTE) $(TGT_SFTE) $(TGT_VFTE)
 
