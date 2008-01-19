@@ -206,6 +206,10 @@ include 'm_xml.fte';
 include 'm_xslt.fte';
 include 'm_rst.fte';
 
+# Must be included AFTER m_text.fte in order for the filename regexp to
+# match correctly (i.e. CMakeLists.txt should match CMAKE mode, not TEXT mode)
+include 'm_cmake.fte';
+
 # C indentation style menu
 include 'uicstyle.fte';
 
