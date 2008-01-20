@@ -98,10 +98,8 @@ colorize FTE {
         'C_CommentDelta', 'C_CommentOfs', 'C_Continuation',
         'C_FirstLevelIndent', 'C_FirstLevelWidth', 'C_Indent', 'C_ParenDelta',
         'Colorizer', 'CommentEnd', 'CommentStart', 'CompileCommand',
-        'CompileRx', 'CompletionFilter', 'CursorBlink'
-        'CursorThroughTabs', 'CursorWithinEOL', 'CursorWrap',
-        'CvsCommand', 'CvsIgnoreRx',
-        'SvnCommand', 'SvnIgnoreRx',
+        'CompileRx', 'CompletionFilter', 'CursorBlink', 'CursorThroughTabs', 'CursorWithinEOL', 
+        'CursorWrap','CvsCommand', 'CvsIgnoreRx',
         'DefaultModeName', 'DefFindOpt', 'DefFindReplaceOpt', 'DeleteKillBlock',
         'DeleteKillTab', 'DetectLineSep', 'ExpandTabs', 'FileNameRx',
         'FirstLineRx', 'ForceNewLine', 'FunctionUsesContinuation', 'HelpCommand', 'HilitOn', 'HilitTags',
@@ -114,7 +112,8 @@ colorize FTE {
         'ScrollBorderY', 'ScrollJumpX', 'ScrollJumpY', 'SeeThruSel',
         'SelectPathname', 'ShowHScroll', 'ShowMarkers', 'ShowMenuBar',
         'ShowTabs', 'ShowToolBar', 'ShowVScroll', 'SpaceTabs', 'StripChar',
-        'SyntaxParser', 'SysClipboard', 'TabSize', 'Trim', 'TrimOnSave',
+        'SvnCommand', 'SvnIgnoreRx','SyntaxParser', 'SysClipboard', 
+        'TabSize', 'Trim', 'TrimOnSave',
         'UndoLimit', 'UndoMoves', 'WeirdScroll', 'WordChars', 'WordWrap',
         'XShellCommand'
     };
