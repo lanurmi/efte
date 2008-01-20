@@ -190,7 +190,7 @@ int CompletePath(const char *Base, char *Match, int Count) {
 #ifdef UNIX
                         while (cname[o] && dname[o] && (cname[o] == dname[o])) o++;
 #endif
-#if defined(OS2) || defined(NT) || defined(DOS) || defined(DOSP32)
+#if defined(OS2) || defined(NT)
                         while (cname[o] && dname[o] && (toupper(cname[o]) == toupper(dname[o]))) o++;
 #endif
                         cname[o] = 0;

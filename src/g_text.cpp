@@ -902,12 +902,7 @@ int GUI::ConFlush(void) {
 
 static inline int scrollBreak(TEvent &E)
 {
-#if defined(DOS) || defined(DOSP32)
-    // workaround until mouse code in con_dosx.cpp is finished
-    return (E.What != evMouseDown);
-#else
     return (E.What == evMouseUp);
-#endif
 }
 
 static void HandleVScroll(GView *view, TEvent &E) {

@@ -18,16 +18,11 @@
 
 #define ISSLASH(c) ((c) == SLASH)
 #define ISSEP(c) ((c) == SLASH)
-#endif
+#endif // UNIX
 
-#if defined(OS2) || defined(NT) || defined(DOS) || defined(DOSP32)
-#if defined(DJGPP)
-#define SLASH '/'
-#define SSLASH "/"
-#else
+#if defined(OS2) || defined(NT)
 #define SLASH '\\'
 #define SSLASH "\\"
-#endif
 
 #define ISSLASH(c) (((c) == '/') || ((c) == '\\'))
 #define ISSEP(c) (((c) == ':') || ISSLASH(c))
@@ -51,4 +46,4 @@ int JoinDirFile(char *Dest, const char *Dir, const char *Name);
 char *SepRChr(char *Dir);
 int RelativePathName(const char *Dir, const char *Path, char *RelPath);
 
-#endif
+#endif // OS2 || NT

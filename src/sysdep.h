@@ -31,7 +31,6 @@
 
 #if !defined(OS2) && \
     !defined(NT) && \
-    !defined(DOSP32) && \
     !defined(LINUX) && \
     !defined(HPUX) && \
     !defined(AIX) && \
@@ -43,7 +42,7 @@
 #    error Target not supported.
 #endif
 
-#if defined(UNIX) || defined(DJGPP)
+#if defined(UNIX)
 #    define USE_DIRENT
 #endif
 
@@ -83,27 +82,6 @@
 #    if !defined(__EMX__)
 #        define NO_NEW_CPP_FEATURES
 #    endif
-#endif
-
-#if defined(DOS) || defined(DOSP32)
-#    include <malloc.h>
-#    include <dos.h>
-#    include <io.h>
-#    include <process.h>
-#    define NO_NEW_CPP_FEATURES
-#    if defined(BCPP)
-#        include <dir.h>
-#    endif
-#    if defined(WATCOM)
-#        include <direct.h>
-#    endif
-#    if defined(DJGPP)
-#        include <dir.h>
-#        include <unistd.h>
-#        undef MAXPATH
-         extern "C" int memicmp(const void *s1, const void *s2, size_t n);
-#    endif
-#    define filecmp stricmp
 #endif
 
 #if defined(NT)
@@ -165,7 +143,7 @@
 #define S_IWOTH 0
 #endif
 
-#if defined(OS2) || defined(NT) || defined(DOSP32) || defined(DOS)
+#if defined(OS2) || defined(NT)
 #define PATHTYPE   PT_DOSISH
 #else
 #define PATHTYPE   PT_UNIXISH

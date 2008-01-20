@@ -430,11 +430,7 @@ void EBuffer::Redraw() {
                     else strcpy(CCharStr, "   EOF");
                 }
 
-                sprintf(s, "%04d:%02d %c%c%c%c%c %.6s %c"
-#ifdef DOS
-                        " %lu "
-#endif
-                        ,
+                sprintf(s, "%04d:%02d %c%c%c%c%c %.6s %c",
                         //                    CurLine + 1,
                         ActLine + 1,
                         CurColumn + 1,
@@ -462,9 +458,6 @@ void EBuffer::Redraw() {
                         //                    (Flags.KeepBackups)?'B':' ',
                         Mode->fName,
                         (Modified != 0)?'*':(BFI(this, BFI_ReadOnly))?'%':' '
-#ifdef DOS
-                        ,coreleft()
-#endif
                        );
 
                 int l = strlen(s);

@@ -42,11 +42,7 @@ class EMode;
 
 typedef unsigned char TransTable[256];
 
-#ifdef DOS /* 16 bit, sometime ;-) */
-#define RWBUFSIZE     8192
-#else
 #define RWBUFSIZE     32768
-#endif
 
 extern char FileBuffer[RWBUFSIZE];
 
