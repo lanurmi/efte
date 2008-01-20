@@ -81,6 +81,7 @@ public:
     int LocalMenu(GxView *View);
     
     int DesktopSaveAs(ExState &State, GxView *View);
+    int DesktopLoad(ExState &State, GxView *View);
 
     int findDesktop(char *argv[]);
     void DoLoadDesktopOnEntry(int &argc, char **argv);

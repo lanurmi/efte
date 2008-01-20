@@ -37,7 +37,7 @@ colorize FTE {
         'CharCaseDown', 'CharCaseToggle', 'CharCaseUp', 'CharTrans',
         'ChildClose', 'ClearMessages', 'ClipClear', 'CloseActivate', 'Compile',
         'CompileNextError', 'CompilePrevError', 'CompleteWord',
-        'ConfigRecompile', 'Delete', 'DeleteFile', 'DesktopSave', 'DesktopSaveAs',
+        'ConfigRecompile', 'Delete', 'DeleteFile', 'DesktopLoad', 'DesktopSave', 'DesktopSaveAs',
         'DirOpen', 'DirGoUp', 'DirGoDown', 'DirGoRoot', 'DirGoto',
         'ExitEditor', 'Fail', 'FileClose', 'FileCloseAll', 'FileLast',
         'FileNext', 'FileOpen', 'FileOpenInMode', 'FilePrev', 'FilePrint',

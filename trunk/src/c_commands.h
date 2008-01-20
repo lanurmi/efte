@@ -683,6 +683,8 @@ typedef enum {
     /// Clear clipboard
     ExDesktopSaveAs,
     /// Save desktop under a new name
+    ExDesktopLoad,
+    /// Load desktop from a file
     ExChildClose,
     ///
 

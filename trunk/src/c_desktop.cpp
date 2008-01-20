@@ -71,7 +71,7 @@ int LoadDesktop(char *FileName) {
 #ifdef CONFIG_TAGS
     TagClear();
 #endif
-    
+
     fp = fopen(FileName, "r");
     if (fp == 0)
         return 0;
