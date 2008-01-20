@@ -65,11 +65,7 @@ int OpenAfterClose = 1;
 int SelectPathname = 0;
 char DefaultModeName[32] = "";
 RxNode *CompletionFilter = NULL;
-#if defined(DOS) || defined(DOSP32)
-char PrintDevice[MAXPATH] = "PRN";
-#else
 char PrintDevice[MAXPATH] = "\\DEV\\PRN";
-#endif
 char CompileCommand[256] = "make";
 int KeepHistory = 0;
 int LoadDesktopOnEntry = 0;

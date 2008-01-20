@@ -3,7 +3,7 @@
 #include <stddef.h>
 #include <ctype.h>
 
-#if defined(__DJGPP__) || defined(UNIX)
+#if defined(UNIX)
 
 #ifdef __cplusplus
 extern "C"

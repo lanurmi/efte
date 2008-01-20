@@ -21,31 +21,6 @@
 #include <windows.h>
 #endif
 
-#if defined(DOSP32) || (defined(NT) && defined(USE_DIRENT)) // NT ?
-#   include "port.h"
-#endif
-
-
-#ifdef DJGPP
-#include <sys/stat.h>
-static int my_stat(const char *name, struct stat *s)
-{
-    unsigned short f = _djstat_flags;
-    // speed up directory access by turning off unused stat functionality
-    _djstat_flags |= _STAT_INODE;
-    _djstat_flags |= _STAT_EXEC_EXT;
-    _djstat_flags |= _STAT_EXEC_MAGIC;
-    _djstat_flags |= _STAT_DIRSIZE;
-    //_djstat_flags |= _STAT_ROOT_TIME;
-    _djstat_flags &= ~_STAT_ROOT_TIME;
-    _djstat_flags |= _STAT_WRITEBIT;
-    int r = stat(name,s);
-    _djstat_flags = f;
-    return r;
-}
-#endif
-
-
 FileInfo::FileInfo(char *Name, int Type, off_t Size, time_t MTime) {
     name = new char[strlen (Name) + 1];
     if (name)
@@ -74,7 +49,6 @@ FileFind::FileFind(const char *aDirectory, const char *aPattern, int aFlags) {
     }
     Flags = aFlags;
 #if defined(USE_DIRENT)
-    //#if defined(UNIX) || defined(DOSP32) || defined(NT)
     dir = 0;
 #elif defined(OS2) && !defined(USE_DIRENT)
     dir = 0;
@@ -87,7 +61,6 @@ FileFind::~FileFind() {
     delete [] Directory;
     if (Pattern)
         delete [] Pattern;
-    //#if defined(UNIX) || defined(DOSP32) || defined(NT)
 #if defined(USE_DIRENT)
     if (dir)
         closedir(dir);
@@ -101,7 +74,6 @@ FileFind::~FileFind() {
 }
 
 int FileFind::FindFirst(FileInfo **fi) {
-    //#if defined(UNIX) || defined(NT) || defined(DOSP32)
 #if defined(USE_DIRENT)
     if (dir)
         closedir(dir);
@@ -271,7 +243,6 @@ int FileFind::FindFirst(FileInfo **fi) {
 }
 
 int FileFind::FindNext(FileInfo **fi) {
-    //#if defined(UNIX) || defined(NT) || defined(DOSP32)
 #if defined(USE_DIRENT)
     struct dirent *dent;
     char fullpath[MAXPATH];
@@ -307,20 +278,12 @@ again:
         {
             // if we are handling location of symbolic links, lstat cannot be used
             // instead use normal stat
-            if (
-#if defined(DJGPP)
-                my_stat
-#else
-                stat
-#endif
-                (fullpath, &st) != 0 && 0)
+            if (stat(fullpath, &st) != 0 && 0)
                 goto again;
         } else
         {
             if (
-#if defined(DJGPP)
-                my_stat
-#elif defined(UNIX) // must use lstat if available
+#if defined(UNIX) // must use lstat if available
                 lstat
 #else
                 stat

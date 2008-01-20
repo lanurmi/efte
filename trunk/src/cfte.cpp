@@ -146,8 +146,6 @@ int main(int argc, char **argv) {
                "UNIX"
 #elif defined(NT)
                "NT"
-#elif defined(DOSP32)
-               "DOS32"
 #endif
               );
 

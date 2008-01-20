@@ -115,16 +115,6 @@ static int GetConfigFileName(int /*argc*/, char **argv, char *ConfigFileName) {
 #if defined(UNIX)
         // ? use ./.efterc if by current user ?
         ExpandPath("~/.efterc", CfgName, sizeof(CfgName));
-#elif defined(DOS) || defined(DOSP32)
-        strlcpy(CfgName, argv[0], sizeof(CfgName));
-
-        char *extPtr;
-
-        if ((extPtr = findPathExt(CfgName)) != NULL)
-        {
-            *extPtr = 0;
-            strlcat(CfgName, ".cnf", sizeof(CfgName));
-        }
 #elif defined(OS2) || defined(NT)
         char home[MAXPATH] = "";
         char *ph;

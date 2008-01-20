@@ -28,70 +28,6 @@
 #    include <unistd.h>
 #endif
 
-#if defined(DOSP32)
-#   include "port.h"
-#endif
-
-
-#if defined(DJGPP)
-static inline int is_end(int c)
-{
-    return c == 0 || c == '.' || c == '/';
-}
-
-static inline int is_filename_char(int c)
-{
-    return (strchr("+<>",c) == NULL);
-}
-
-
-static void my_fixpath(const char *in, char *out) {
-    // this does most of the cleanup
-    _fixpath(in,out);
-    if (_USE_LFN)
-        return;
-
-    // handle 8+3 restrictions
-    char tmp[MAXPATH];
-    char *t = tmp;
-    char *o = out;
-    if (o[0] && o[1] == ':') {
-        *t++ = *o++;
-        *t++ = *o++;
-    }
-    while (*o) {
-        int i;
-        // copy over slash
-        if (*o == '/')
-            *t++ = *o++;
-        // copy over filename (up to 8 chars)
-        for (i = 0; i < 8 && !is_end(*o); o++)
-            if (is_filename_char(*o))
-                *t++ = *o, i++;
-                // copy over extension (up to 3 chars)
-                if (*o == '.') {
-                    // don't copy a trailing '.' unless following a ':'
-                    if (o[1] == 0 && o > out && o[-1] != ':')
-                        break;
-                    *t++ = (i > 0 ? '.' : '_');
-                    o++;
-                    for (i = 0; i < 3 && !is_end(*o); o++)
-                        if (is_filename_char(*o))
-                            *t++ = *o, i++;
-                }
-                // find next slash
-                while (*o && *o != '/')
-                    o++;
-    }
-    *t++ = 0;
-#if 0
-    if (strcmp(out,tmp) != 0)
-        fprintf(stderr,"fix: '%s'->'%s'\n",out,tmp);
-#endif
-    strcpy(out,tmp);
-}
-#endif
-
 
 char *Slash(char *Path, int Add) {
     int len = strlen(Path);
@@ -120,15 +56,8 @@ char *SlashDir(char *Path) {
     if (len > 1) {
 #if PATHTYPE == PT_DOSISH
         if ((len == 2) && Path[1] == ':') {
-#ifdef DJGPP
-            char tmp[MAXPATH];
-            strcpy(tmp,Path);
-            my_fixpath(tmp,Path);
-            strcat(Path,SSLASH);
-#else
             Path[2] = SLASH;
             Path[3] = 0;
-#endif
         }
         else
 #endif
@@ -208,8 +137,6 @@ static int GetDiskCurDir(int drive, char *dir) {
         SetCurrentDirectory(orig); // ? check
         return 0;
     }
-#elif defined(DOS) || defined(DOSP32)
-    return (plGetcurdir(drive, dir) != 0);
 #endif
 }
 
@@ -232,11 +159,6 @@ static int SetDrive(int drive) { // 1 = A, 2 = B, 3 = C, ...
     buf[1] = ':';
     buf[2] = '\0';
     return SetCurrentDirectory(buf) ? 0 : -1;
-#elif defined(DOS) || defined(DOSP32)
-    unsigned int ndr;
-
-    _dos_setdrive(drive, &ndr);
-    return 0; //(ndr == drive) ? 0 : -1; // ?
 #endif
 }
 #endif
@@ -326,9 +248,6 @@ int ExpandPath(const char *Path, char *Expand, int ExpandSize) {
     }
     if (Path[0] != SLASH)
        Slash(Name, 0);
-#if defined(DJGPP)
-    my_fixpath(Name, Expand);
-#else
     if (Name[0] && Name[1] == ':' && Name[2] == 0) { // '?:'
         int drive = Name[0];
 
@@ -347,7 +266,6 @@ int ExpandPath(const char *Path, char *Expand, int ExpandSize) {
         if (_fullpath(Expand, Name, MAXPATH) == NULL) return -1;
 #endif
     }
-#endif
 #if defined(__EMX__)
     {
         char *p = Expand;
