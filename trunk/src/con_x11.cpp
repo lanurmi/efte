@@ -109,6 +109,7 @@ static unsigned int ScreenRows = 40;
 static unsigned int CursorX = 0;
 static unsigned int CursorY = 0;
 static int CursorVisible = 1;
+static bool insertState = 1;
 static unsigned long CursorLastTime;
 // Cursor flashing interval, in msecs
 static unsigned CursorFlashInterval = 300;
@@ -673,7 +674,9 @@ void DrawCursor(int Show) {
         // Check if cursor is on or off due to flashing
         if (CursorBlink)
             Show &= (CursorLastTime % (CursorFlashInterval * 2)) > CursorFlashInterval;
-        int attr = p[1] ^ (Show ? 0xff : 0);
+        int attr = p[1];
+        if (Show)
+            attr ^= insertState ? CursorInsertMask : CursorOverMask;
         if (!useXMB)
 	    XDrawImageString(display, win, GCs[attr],
 			     CursorX * FontCX,
@@ -912,6 +915,10 @@ int ConHideCursor(void) {
 
 int ConCursorVisible(void) {
     return 1;
+}
+
+void ConSetInsertState(bool insert) {
+    insertState = insert;
 }
 
 int ConSetMousePos(int /*X*/, int /*Y*/) {

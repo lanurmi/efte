@@ -47,6 +47,7 @@ public:
     int ConShowCursor();
     int ConHideCursor();
     int ConCursorVisible();
+    void ConSetInsertState(bool insert);
     
     int CaptureMouse(int grab);
     int CaptureFocus(int grab);

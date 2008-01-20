@@ -59,6 +59,8 @@ int ScrollBarWidth = 1;
 bool CursorBlink = 0; // default is "no" (same as before)
 bool CursorWrap = 0; // default is "no" (same as before)
 bool CursorWithinEOL = 0; // default is "no" (same as before)
+int CursorInsertMask = 0x77;
+int CursorOverMask = 0x44;
 int OpenAfterClose = 1;
 int SelectPathname = 0;
 char DefaultModeName[32] = "";
@@ -296,6 +298,8 @@ static int SetGlobalNumber(int what, int number) {
     case FLAG_RecheckReadOnly:   RecheckReadOnly = number; break;
     case FLAG_CursorWrap:        CursorWrap = number; break;
     case FLAG_CursorWithinEOL:   CursorWithinEOL = number; break;
+    case FLAG_CursorInsertMask:  CursorInsertMask = number; break;
+    case FLAG_CursorOverMask:    CursorOverMask = number; break;
     default:
         //printf("Unknown global number: %d\n", what);
         ENDFUNCRC(-1);

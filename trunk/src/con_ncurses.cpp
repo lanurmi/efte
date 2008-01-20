@@ -429,6 +429,9 @@ int ConCursorVisible()
 	return CurVis;
 }
 
+void ConSetInsertState(bool insert) {
+}
+
 #ifdef CONFIG_MOUSE
 int ConSetMousePos(int /*X */ , int /*Y */ )
 {

@@ -98,3 +98,8 @@ int ExView::ConHideCursor() {
         return Win->ConHideCursor();
     return -1;
 }
+
+void ExView::ConSetInsertState(bool insert) {
+    if (Win)
+        Win->ConSetInsertState(insert);
+}

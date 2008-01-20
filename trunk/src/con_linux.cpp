@@ -519,6 +519,9 @@ int ConSetMousePos(int /*X*/, int /*Y*/) {
     return -1;
 }
 
+void ConSetInsertState(bool insert) {
+}
+
 int ConQueryMousePos(int *X, int *Y) {
     if (X) *X = LastMouseX;
     if (Y) *Y = LastMouseY;

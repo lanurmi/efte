@@ -767,6 +767,9 @@ int ConHideCursor() {
 	return 0;
 }
 
+void ConSetInsertState(bool insert) {
+}
+
 //int ConSetMousePos(int X, int Y) {
 //	return 0;
 //}

@@ -179,6 +179,7 @@ int ConQueryCursorPos(int *X, int *Y);
 int ConShowCursor();
 int ConHideCursor();
 int ConCursorVisible();
+void ConSetInsertState(bool insert);
 
 #ifdef CONFIG_MOUSE
 int ConSetMousePos(int X, int Y);

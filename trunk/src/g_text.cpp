@@ -61,6 +61,7 @@ public:
     int sbVstart, sbVamount, sbVtotal, sbVupdate;
     int sbHstart, sbHamount, sbHtotal, sbHupdate;
     int SbVBegin, SbVEnd, SbHBegin, SbHEnd;
+    bool insertState;
     
     GViewPeer(GView *view, int XSize, int YSize);
     ~GViewPeer();
@@ -79,7 +80,8 @@ public:
     int ConShowCursor();
     int ConHideCursor();
     int ConCursorVisible();
-    
+    void ConSetInsertState(bool insert);
+
 #ifdef CONFIG_MOUSE
     int CaptureMouse(int grab);
 #endif
@@ -211,6 +213,11 @@ int GViewPeer::ConCursorVisible() {
     return cVisible;
 }
 
+void GViewPeer::ConSetInsertState(bool insert) {
+    insertState = insert;
+    ::ConSetInsertState(insert);
+}
+
 #ifdef CONFIG_MOUSE
 int GViewPeer::CaptureMouse(int grab) {
     if (MouseCapture == 0) {
@@ -292,6 +299,7 @@ int GViewPeer::SetSbHPos(int Start, int Amount, int Total) {
 
 int GViewPeer::UpdateCursor() {
     ConSetCursorPos(cX, cY);
+    ConSetInsertState(insertState);
     if (cVisible)
         ConShowCursor();
     else
@@ -442,6 +450,10 @@ int GView::ConHideCursor() {
 
 int GView::ConCursorVisible() {
     return Peer->ConCursorVisible(); 
+}
+
+void GView::ConSetInsertState(bool insert) {
+    Peer->ConSetInsertState(insert);
 }
 
 #ifdef CONFIG_MOUSE

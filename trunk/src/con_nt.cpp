@@ -732,6 +732,9 @@ int ConCursorVisible() { /*FOLD00*/
     return (CursorVisible == 1);
 }
 
+void ConSetInsertState(bool insert) { /*FOLD00*/
+}
+
 int ConSetMousePos(int X, int Y) { /*FOLD00*/
     return -1;
 }

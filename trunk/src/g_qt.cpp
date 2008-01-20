@@ -146,6 +146,7 @@ public:
     int sbVstart, sbVamount, sbVtotal;
     int sbHstart, sbHamount, sbHtotal;
     int VertPos, HorzPos;
+    bool insertState;
     unsigned char *ScreenBuffer;
     
     GViewPeer(GView *view, int XSize, int YSize);
@@ -169,7 +170,8 @@ public:
     int ConShowCursor();
     int ConHideCursor();
     int ConCursorVisible();
-    
+    void ConSetInsertState(bool insert);
+
     int QuerySbVPos();
     int SetSbVPos(int Start, int Amount, int Total);
     int SetSbHPos(int Start, int Amount, int Total);
@@ -1190,6 +1192,11 @@ int GViewPeer::ConCursorVisible() {
     return cVisible;
 }
 
+void GViewPeer::ConSetInsertState(bool insert) {
+    insertState = insert;
+    ::ConSetInsertState(insert);
+}
+
 int GViewPeer::ExpandHeight(int DeltaY) {
     return 0;
 }
@@ -1249,6 +1256,7 @@ int GViewPeer::SetSbHPos(int Start, int Amount, int Total) {
 
 int GViewPeer::UpdateCursor() {
     ConSetCursorPos(cX, cY);
+    ConSetInsertState(insertState);
     if (cVisible)
         ConShowCursor();
     else
@@ -1345,6 +1353,10 @@ int GView::ConHideCursor() {
 
 int GView::ConCursorVisible() {
     return Peer->ConCursorVisible(); 
+}
+
+void GView::ConSetInsertState(bool insert) {
+    Peer->ConSetInsertState(insert);
 }
 
 int GView::QuerySbVPos() {
