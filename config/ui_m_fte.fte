@@ -165,6 +165,7 @@ menu Window {
     item "&Close view\tCtrl+Alt+F4" { WinClose }
     item "Close &other views\tF5" { WinZoom }
     item;
+    item "&Load Desktop" { DesktopLoad }
     item "Sa&ve Desktop" { DesktopSave }
     item "Save Desktop &As" { DesktopSaveAs }
     item;

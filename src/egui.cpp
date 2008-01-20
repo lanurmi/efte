@@ -124,6 +124,7 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
         if (DesktopFileName[0] != 0)
             return SaveDesktop(DesktopFileName);
         return 0;
+    case ExDesktopLoad:             return DesktopLoad(State, view);
     case ExChangeKeys:
         {
             char kmaps[64] = "";
@@ -600,6 +601,16 @@ int EGUI::DesktopSaveAs(ExState &State, GxView *view) {
     if (DesktopFileName[0] != 0)
         return SaveDesktop(DesktopFileName);
     return 0;
+}
+
+int EGUI::DesktopLoad(ExState &State, GxView *view) {
+   if (State.GetStrParam(0, DesktopFileName, sizeof(DesktopFileName)) == 0)
+      if (view->GetFile("Load Desktop", sizeof(DesktopFileName), DesktopFileName, HIST_PATH, GF_OPEN) == 0)
+         return 0;
+
+   if (DesktopFileName[0] != 0)
+      return LoadDesktop(DesktopFileName);
+   return 0;
 }
 
 int EGUI::FrameNew() {

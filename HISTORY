@@ -19,6 +19,8 @@ Revision history
   + Windows now normalizes path separators, / becomes \\
   ! BlockRead command was not expanding any file
   ! WM_COMMAND now set in X11 binary
+  - Removed partially implemented block cursor sizing
+  + Added DesktopLoad command
 
 0.50.1 -- January 17, 2008
   - Forked from FTE (http://fte.sourceforge.net)
