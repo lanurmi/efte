@@ -179,7 +179,6 @@ int ConQueryCursorPos(int *X, int *Y);
 int ConShowCursor();
 int ConHideCursor();
 int ConCursorVisible();
-int ConSetCursorSize(int Start, int End);
 
 #ifdef CONFIG_MOUSE
 int ConSetMousePos(int X, int Y);
