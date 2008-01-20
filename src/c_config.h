@@ -17,6 +17,8 @@ extern int ScreenSizeY;
 extern bool CursorBlink;
 extern bool CursorWrap;
 extern bool CursorWithinEOL;
+extern int CursorInsertMask;
+extern int CursorOverMask;
 extern int SystemClipboard;
 extern int OpenAfterClose;
 extern int ShowMenuBar;

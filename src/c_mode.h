@@ -209,6 +209,8 @@ extern EBufferFlags DefaultBufferFlags;
 #define FLAG_SvnLogMode         65
 #define FLAG_CursorWrap         66
 #define FLAG_CursorWithinEOL    67
+#define FLAG_CursorInsertMask   68
+#define FLAG_CursorOverMask     69
 
 #define EM_MENUS 2
 #define EM_MainMenu 0

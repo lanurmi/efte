@@ -2,6 +2,8 @@ object GLOBAL {
 #    ScreenSizeX = 80; ScreenSizeY = 25;
 
     CursorBlink         = 0; # set to 1 to have a blinking cursor.
+    CursorInsertMask    = 127;
+    CursorOverMask      = 68;
 
     SysClipboard        = 1;   # use system (PM) clipboard if available
     SelectPathname      = 1;   # select pathname when asking for file

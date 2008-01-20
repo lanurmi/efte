@@ -48,7 +48,8 @@ public:
     int ConSetCursorPos(int X, int Y);
     int ConShowCursor();
     int ConHideCursor();
-    
+    void ConSetInsertState(bool insert);
+
     virtual int IsModelView() { return 0; }
     virtual void WnSwitchBuffer(EModel *M) { Next->WnSwitchBuffer(M); }
 };

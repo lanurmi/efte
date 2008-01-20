@@ -490,8 +490,9 @@ void EBuffer::Redraw() {
         if (V->MView->Win->GetStatusContext() == V->MView) {
             V->MView->ConPutBox(0, W->Rows, W->Cols, 1, B);
             if (V->MView->IsActive()) {
-                V->MView->ConShowCursor();
                 V->MView->ConSetCursorPos(W->CP.Col - W->TP.Col, W->CP.Row - W->TP.Row);
+                V->MView->ConSetInsertState(BFI(this, BFI_Insert));
+                V->MView->ConShowCursor();
             }
         }
     }

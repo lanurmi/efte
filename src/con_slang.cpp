@@ -517,6 +517,9 @@ int ConCursorVisible()
     return CurVis;
 }
 
+void ConSetInsertState(bool insert) {
+}
+
 int ConSetMousePos(int /*X */ , int /*Y */ )
 {
     return -1;

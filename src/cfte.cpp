@@ -440,6 +440,8 @@ MODE_FLG(RecheckReadOnly),
 MODE_FLG(CursorBlink),
 MODE_FLG(CursorWrap),
 MODE_FLG(CursorWithinEOL),
+MODE_FLG(CursorInsertMask),
+MODE_FLG(CursorOverMask),
 { 0, 0 },
 };
 
