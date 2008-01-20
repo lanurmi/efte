@@ -109,8 +109,6 @@ LDFLAGS   = $(LDOPTIMIZE) $(LIBDIR) -nologo Advapi32.lib User32.lib Wsock32.lib 
 #MINCDIR  = -I/usr/include/Motif1.2
 #MLIBDIR  = -L/usr/lib/Motif1.2
 
-SINCDIR   = -I/usr/include/slang
-
 #######################################################################
 # AIX
 #UOS      = -DAIX -D_BSD_INCLUDES # not recently tested (it did work)
@@ -187,7 +185,6 @@ include objs.inc
 #XLIBS    = -lX11 -Xt $(SOCKETLIB)
 #VLIBS    = -lgpm -lncurses
 # -ltermcap outdated by ncurses
-#SLIBS    = -lslang
 #QLIBS    = -lqt
 #MLIBS    = -lXm -lXp -lXt -lXpm -lXext
 

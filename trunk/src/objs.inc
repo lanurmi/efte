@@ -111,13 +111,6 @@ g_qt.$(OEXT) \
 g_qt_dlg.$(OEXT) \
 clip_x11.$(OEXT)
 
-SOBJS = $(UNIXOBJS) \
-g_text.$(OEXT) \
-menu_text.$(OEXT) \
-con_slang.$(OEXT) \
-clip_no.$(OEXT) \
-g_nodlg.$(OEXT)
-
 NOBJS = $(UNIXOBJS) \
 g_text.$(OEXT) \
 menu_text.$(OEXT) \
@@ -146,13 +139,3 @@ clip_os2.$(OEXT) \
 g_nodlg.$(OEXT) \
 e_win32.$(OEXT)
 
-DOSP32OBJS = \
-memicmp.$(OEXT) \
-port.$(OEXT) \
-portdos.$(OEXT) \
-g_text.$(OEXT) \
-menu_text.$(OEXT) \
-con_dosx.$(OEXT) \
-clip_no.$(OEXT) \
-g_nodlg.$(OEXT) \
-e_djgpp2.$(OEXT)
