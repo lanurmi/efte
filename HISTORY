@@ -1,3 +1,10 @@
+Revision legend
+-----------------------------------------------------------------------
+
+  - = general alteration/note
+  + = added new feature
+  ! = fixed a bug
+
 Revision history
 -----------------------------------------------------------------------
 
@@ -8,6 +15,9 @@ Revision history
   + Added CursorWrap and CursorWithinEOL
   + Added searching in the Routine List
   + Added new mode for CMake files
+  + Windows XP and Vista now expand ~ to be the users home directory
+  + Windows now normalizes path separators, / becomes \\
+  ! BlockRead command was not expanding any file
 
 0.50.1 -- January 17, 2008
   - Forked from FTE (http://fte.sourceforge.net)
