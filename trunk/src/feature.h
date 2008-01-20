@@ -63,6 +63,7 @@
 #ifdef CONFIG_SYNTAX_HILIT
 #define CONFIG_INDENT
 #define CONFIG_HILIT_C
+#define CONFIG_HILIT_FALCON
 #define CONFIG_HILIT_REXX
 #define CONFIG_HILIT_PERL
 #define CONFIG_HILIT_ADA
@@ -87,6 +88,10 @@
 
 #if defined(CONFIG_HILIT_REXX)
 #define CONFIG_INDENT_REXX
+#endif
+
+#if defined(CONFIG_HILIT_FALCON)
+#define CONFIG_INDENT_FALCON
 #endif
 
 #define CONFIG_I_COMPLETE

@@ -409,6 +409,11 @@ MODE_FLG(FunctionUsesContinuation),
 MODE_FLG(REXX_Indent),
 MODE_FLG(REXX_Do_Offset),
 #endif
+#ifdef CONFIG_INDENT_FALCON
+MODE_FLG(Falcon_Indent),
+MODE_FLG(Falcon_Paren_Delta),
+MODE_FLG(Falcon_Max_Paren),
+#endif
 MODE_FLG(ScreenSizeX),
 MODE_FLG(ScreenSizeY),
 MODE_FLG(SysClipboard),

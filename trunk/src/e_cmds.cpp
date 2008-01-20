@@ -832,6 +832,9 @@ int EBuffer::LineIndent() {
 #ifdef CONFIG_INDENT_REXX
         case INDENT_REXX: rc = Indent_REXX(this, L, 1); break;
 #endif
+#ifdef CONFIG_INDENT_FALCON
+        case INDENT_FALCON: rc = Indent_FALCON(this, L, 1); break;
+#endif
 #ifdef CONFIG_INDENT_SIMPLE
         case INDENT_SIMPLE: rc = Indent_SIMPLE(this, L, 1); break;
 #endif
