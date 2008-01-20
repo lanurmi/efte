@@ -732,10 +732,6 @@ int ConCursorVisible() { /*FOLD00*/
     return (CursorVisible == 1);
 }
 
-int ConSetCursorSize(int Start, int End) { /*FOLD00*/
-    return -1;
-}
-
 int ConSetMousePos(int X, int Y) { /*FOLD00*/
     return -1;
 }

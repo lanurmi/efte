@@ -429,11 +429,6 @@ int ConCursorVisible()
 	return CurVis;
 }
 
-int ConSetCursorSize(int /*Start */ , int /*End */ )
-{
-	return 0;
-}
-
 #ifdef CONFIG_MOUSE
 int ConSetMousePos(int /*X */ , int /*Y */ )
 {

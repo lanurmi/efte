@@ -120,7 +120,7 @@ public:
     GView *View;
 //    int wX, wY;
     int wW, wH, wState;
-    int cX, cY, cVisible, cStart, cEnd;
+    int cX, cY, cVisible;
     int sbVstart, sbVamount, sbVtotal;
     int sbHstart, sbHamount, sbHtotal;
     
@@ -147,7 +147,6 @@ public:
     int ConShowCursor();
     int ConHideCursor();
     int ConCursorVisible();
-    int ConSetCursorSize(int Start, int End);
     
     int QuerySbVPos();
     int SetSbVPos(int Start, int Amount, int Total);
@@ -1651,7 +1650,7 @@ MRESULT EXPENTRY AVIOWndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
                                 pmData->cxChar * Peer->cX,
                                 pmData->cyChar * (Peer->wH - Peer->cY - 1) +
                                 pmData->cyChar * (100 - Peer->cEnd) / 100,
-                                pmData->cxChar, pmData->cyChar * (Peer->cEnd - Peer->cStart) / 100,
+                                pmData->cxChar, pmData->cyChar,
                                 CURSOR_TYPE,
                                 NULL);
                 WinShowCursor(hwnd, TRUE);
@@ -1685,7 +1684,7 @@ MRESULT EXPENTRY AVIOWndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
                                 pmData->cxChar * Peer->cX,
                                 pmData->cyChar * (Peer->wH - Peer->cY - 1) +
                                 pmData->cyChar * (100 - Peer->cEnd) / 100,
-                                pmData->cxChar, pmData->cyChar * (Peer->cEnd - Peer->cStart) / 100,
+                                pmData->cxChar, pmData->cyChar,
                                 CURSOR_TYPE,
                                 NULL);
                 WinShowCursor(hwnd, TRUE);
@@ -2357,8 +2356,6 @@ GViewPeer::GViewPeer(GView *view, int XSize, int YSize) {
     sbHamount = 0;
     wState = 0;
     cVisible = 1;
-    cStart = 0; // %
-    cEnd = 100;
     OldMouseX = OldMouseY = 0xFFFF;
     
     pmData = (PMData *)malloc(sizeof(PMData));
@@ -2570,15 +2567,6 @@ int GViewPeer::ConCursorVisible() {
     return cVisible;
 }
 
-int GViewPeer::ConSetCursorSize(int Start, int End) {
-    cStart = Start;
-    cEnd = End;
-    if (wState & sfFocus)
-        return PMSetCursorPos();
-    else
-        return 1;
-}
-
 int GViewPeer::ExpandHeight(int DeltaY) {
     if (View->Parent->Top == View->Next)
         return -1;
@@ -2685,7 +2673,6 @@ int GViewPeer::SetSbHPos(int Start, int Amount, int Total) {
 
 int GViewPeer::UpdateCursor() {
     ConSetCursorPos(cX, cY);
-    ConSetCursorSize(cStart, cEnd);
     if (cVisible)
         ConShowCursor();
     else
@@ -2712,7 +2699,7 @@ int GViewPeer::PMSetCursorPos() {
                         pmData->cxChar * cX,
                         pmData->cyChar * (wH - cY - 1) +
                         pmData->cyChar * (100 - cEnd) / 100,
-                        pmData->cxChar, pmData->cyChar * (cEnd - cStart) / 100,
+                        pmData->cxChar, pmData->cyChar,
                         CURSOR_TYPE,
                         NULL);
         WinShowCursor(hwndView, TRUE);
@@ -2804,10 +2791,6 @@ int GView::ConHideCursor() {
 
 int GView::ConCursorVisible() {
     return Peer->ConCursorVisible(); 
-}
-
-int GView::ConSetCursorSize(int Start, int End) {
-    return Peer->ConSetCursorSize(Start, End);
 }
 
 int GView::QuerySbVPos() {

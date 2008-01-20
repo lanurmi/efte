@@ -14,8 +14,6 @@
 
 extern int ScreenSizeX;
 extern int ScreenSizeY;
-extern int CursorInsSize[2];
-extern int CursorOverSize[2];
 extern bool CursorBlink;
 extern bool CursorWrap;
 extern bool CursorWithinEOL;

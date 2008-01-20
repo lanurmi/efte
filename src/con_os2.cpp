@@ -563,17 +563,6 @@ int ConHideCursor() {
     return 0;
 }
 
-int ConSetCursorSize(int Start, int End) {
-    VIOCURSORINFO ci;
-
-    VioGetCurType(&ci, 0);
-    ci.yStart = -Start;
-    ci.cEnd = -End;
-    ci.cx = 0;
-    VioSetCurType(&ci, 0);
-    return 0;
-}
-
 int ConSetMousePos(int X, int Y) {
     PTRLOC mp;
 

@@ -98,9 +98,3 @@ int ExView::ConHideCursor() {
         return Win->ConHideCursor();
     return -1;
 }
-
-int ExView::ConSetCursorSize(int Start, int End) {
-    if (Win)
-        return Win->ConSetCursorSize(Start, End);
-    return -1;
-}
