@@ -767,10 +767,6 @@ int ConHideCursor() {
 	return 0;
 }
 
-int ConSetCursorSize(int Start, int End) {
-	return 0;
-}
-
 //int ConSetMousePos(int X, int Y) {
 //	return 0;
 //}

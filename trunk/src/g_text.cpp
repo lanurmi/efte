@@ -57,7 +57,7 @@ class GViewPeer {
 public:
     GView *View;
     int wX, wY, wW, wH, wState;
-    int cX, cY, cVisible, cStart, cEnd;
+    int cX, cY, cVisible;
     int sbVstart, sbVamount, sbVtotal, sbVupdate;
     int sbHstart, sbHamount, sbHtotal, sbHupdate;
     int SbVBegin, SbVEnd, SbHBegin, SbHEnd;
@@ -79,7 +79,6 @@ public:
     int ConShowCursor();
     int ConHideCursor();
     int ConCursorVisible();
-    int ConSetCursorSize(int Start, int End);
     
 #ifdef CONFIG_MOUSE
     int CaptureMouse(int grab);
@@ -129,8 +128,6 @@ GViewPeer::GViewPeer(GView *view, int XSize, int YSize) {
     sbHupdate = 1;
     wState = 0;
     cVisible = 1;
-    cStart = 0; // %
-    cEnd = 100;
     cX = cY = 0;
 }
 
@@ -214,15 +211,6 @@ int GViewPeer::ConCursorVisible() {
     return cVisible;
 }
 
-int GViewPeer::ConSetCursorSize(int Start, int End) {
-    cStart = Start;
-    cEnd = End;
-    if (wState & sfFocus)
-        return ::ConSetCursorSize(Start, End);
-    else
-        return 1;
-}
-
 #ifdef CONFIG_MOUSE
 int GViewPeer::CaptureMouse(int grab) {
     if (MouseCapture == 0) {
@@ -304,7 +292,6 @@ int GViewPeer::SetSbHPos(int Start, int Amount, int Total) {
 
 int GViewPeer::UpdateCursor() {
     ConSetCursorPos(cX, cY);
-    ConSetCursorSize(cStart, cEnd);
     if (cVisible)
         ConShowCursor();
     else
@@ -455,10 +442,6 @@ int GView::ConHideCursor() {
 
 int GView::ConCursorVisible() {
     return Peer->ConCursorVisible(); 
-}
-
-int GView::ConSetCursorSize(int Start, int End) {
-    return Peer->ConSetCursorSize(Start, End);
 }
 
 #ifdef CONFIG_MOUSE

@@ -492,11 +492,6 @@ void EBuffer::Redraw() {
             if (V->MView->IsActive()) {
                 V->MView->ConShowCursor();
                 V->MView->ConSetCursorPos(W->CP.Col - W->TP.Col, W->CP.Row - W->TP.Row);
-                if (BFI(this, BFI_Insert)) {
-                    V->MView->ConSetCursorSize(CursorInsSize[0], CursorInsSize[1]);
-                } else {
-                    V->MView->ConSetCursorSize(CursorOverSize[0], CursorOverSize[1]);
-                }
             }
         }
     }

@@ -56,8 +56,6 @@ extern int ShowMenuBar;
 int SystemClipboard = 0;
 int ScreenSizeX = -1, ScreenSizeY = -1;
 int ScrollBarWidth = 1;
-int CursorInsSize[2] = { 90, 100 };
-int CursorOverSize[2] = { 0, 100 };
 bool CursorBlink = 0; // default is "no" (same as before)
 bool CursorWrap = 0; // default is "no" (same as before)
 bool CursorWithinEOL = 0; // default is "no" (same as before)
@@ -271,10 +269,6 @@ static int SetGlobalNumber(int what, int number) {
 #endif
     case FLAG_ScreenSizeX:       ScreenSizeX = number; break;
     case FLAG_ScreenSizeY:       ScreenSizeY = number; break;
-    case FLAG_CursorInsertStart: CursorInsSize[0] = number; break;
-    case FLAG_CursorInsertEnd:   CursorInsSize[1] = number; break;
-    case FLAG_CursorOverStart:   CursorOverSize[0] = number; break;
-    case FLAG_CursorOverEnd:     CursorOverSize[1] = number; break;
     case FLAG_CursorBlink:       CursorBlink = number; break;
     case FLAG_SysClipboard:      SystemClipboard = number; break;
     case FLAG_OpenAfterClose:    OpenAfterClose = number; break;

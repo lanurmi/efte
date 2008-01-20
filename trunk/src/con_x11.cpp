@@ -109,7 +109,6 @@ static unsigned int ScreenRows = 40;
 static unsigned int CursorX = 0;
 static unsigned int CursorY = 0;
 static int CursorVisible = 1;
-static int CursorStart, CursorEnd;
 static unsigned long CursorLastTime;
 // Cursor flashing interval, in msecs
 static unsigned CursorFlashInterval = 300;
@@ -912,12 +911,6 @@ int ConHideCursor(void) {
 }
 
 int ConCursorVisible(void) {
-    return 1;
-}
-int ConSetCursorSize(int Start, int End) {
-    CursorStart = Start;
-    CursorEnd = End;
-    DrawCursor(CursorVisible);
     return 1;
 }
 

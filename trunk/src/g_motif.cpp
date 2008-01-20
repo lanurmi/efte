@@ -82,7 +82,7 @@ public:
     GView *View;
 //    int wX, wY;
     int wW, wH, wState, wRefresh;
-    int cX, cY, cVisible, cStart, cEnd;
+    int cX, cY, cVisible;
     int sbVstart, sbVamount, sbVtotal;
     int sbHstart, sbHamount, sbHtotal;
     int VertPos, HorzPos;
@@ -109,7 +109,6 @@ public:
     int ConShowCursor();
     int ConHideCursor();
     int ConCursorVisible();
-    int ConSetCursorSize(int Start, int End);
 
     int QuerySbVPos();
     int SetSbVPos(int Start, int Amount, int Total);
@@ -619,8 +618,6 @@ GViewPeer::GViewPeer(GView *view, int XSize, int YSize) {
     sbHamount = 0;
     wState = 0;
     cVisible = 1;
-    cStart = 0; // %
-    cEnd = 100;
     wRefresh = 0;
     ScreenBuffer = 0;
     cX = -1;
@@ -1013,15 +1010,6 @@ int GViewPeer::ConCursorVisible() {
     return cVisible;
 }
 
-int GViewPeer::ConSetCursorSize(int Start, int End) {
-    cStart = Start;
-    cEnd = End;
-    if (wState & sfFocus)
-        return 1; //PMSetCursorSize(Start, End);
-    else
-        return 1;
-}
-
 int GViewPeer::ExpandHeight(int DeltaY) {
     return 0;
 }
@@ -1097,7 +1085,6 @@ int GViewPeer::SetSbHPos(int Start, int Amount, int Total) {
 
 int GViewPeer::UpdateCursor() {
     ConSetCursorPos(cX, cY);
-    ConSetCursorSize(cStart, cEnd);
     if (cVisible)
         ConShowCursor();
     else
@@ -1206,10 +1193,6 @@ int GView::ConHideCursor() {
 
 int GView::ConCursorVisible() {
     return Peer->ConCursorVisible();
-}
-
-int GView::ConSetCursorSize(int Start, int End) {
-    return Peer->ConSetCursorSize(Start, End);
 }
 
 int GView::QuerySbVPos() {

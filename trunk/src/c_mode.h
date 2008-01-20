@@ -156,10 +156,6 @@ extern EBufferFlags DefaultBufferFlags;
 #define FLAG_REXX_Indent         3
 #define FLAG_ScreenSizeX         6
 #define FLAG_ScreenSizeY         7
-#define FLAG_CursorInsertStart   8
-#define FLAG_CursorInsertEnd     9
-#define FLAG_CursorOverStart    10
-#define FLAG_CursorOverEnd      11
 #define FLAG_SysClipboard       12
 #define FLAG_ShowHScroll        13
 #define FLAG_ShowVScroll        14

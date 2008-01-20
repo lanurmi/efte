@@ -997,10 +997,6 @@ int GetMouseEvent(TEvent *Event) {
     return 0;
 }
 
-int ConSetCursorSize(int /*Start*/, int /*End*/) {
-    return 0;
-}
-
 static PCell SavedScreen = 0;
 static int SavedX, SavedY, SaveCursorPosX, SaveCursorPosY;
 
