@@ -148,8 +148,8 @@ static int FontCX, FontCY;
 static XColor Colors[16];
 static GC GCs[256];
 //static int rc;
-static char winTitle[256] = "FTE";
-static char winSTitle[256] = "FTE";
+static char winTitle[256] = "eFTE";
+static char winSTitle[256] = "eFTE";
 
 static unsigned char* CurSelectionData[3] = {NULL,NULL,NULL};
 static int CurSelectionLen[3] = {0,0,0};
@@ -427,7 +427,7 @@ static int SetupXWindow(int argc, char **argv)
     XtAppContext  	app_context;
     XtToolkitInitialize();
     app_context = XtCreateApplicationContext();
-    if (( display = XtOpenDisplay(app_context, NULL, argv[0], "xefte",
+    if (( display = XtOpenDisplay(app_context, NULL, argv[0], "efte",
                             NULL, 0, &argc, argv)) == NULL)
        DieError(1, "%s:  Can't open display\n", argv[0]);
 #else
@@ -509,6 +509,7 @@ static int SetupXWindow(int argc, char **argv)
     XSetStandardProperties(display, win, winTitle, winTitle, 0, NULL, 0, 0);
     XSetWMNormalHints(display, win, &sizeHints);
     XSetWMProtocols(display, win, &wm_delete_window, 1);
+    XSetCommand(display, win, argv, argc);
 
     if (InitXColors() != 0) return -1;
     if (InitXGCs() != 0) return -1;
@@ -643,7 +644,7 @@ int ConSetTitle(char *Title, char *STitle) {
     if (buf[0] == '\0') // if there is no filename, try the directory name.
         JustLastDirectory(Title, buf, sizeof(buf));
 
-    strncpy(winTitle, "FTE - ", sizeof(winTitle) - 1);
+    strncpy(winTitle, "eFTE - ", sizeof(winTitle) - 1);
     if (buf[0] != 0) // if there is a file/dir name, stick it in here.
     {
         strncat(winTitle, buf, sizeof(winTitle) - 1 - strlen(winTitle));

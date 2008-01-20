@@ -11,7 +11,7 @@
 
 #ifdef CONFIG_HISTORY
 
-#define HISTORY_VER "FTE History 1\n"
+#define HISTORY_VER "eFTE History 1\n"
 
 char HistoryFileName[256] = "";
 

@@ -18,6 +18,7 @@ Revision history
   + Windows XP and Vista now expand ~ to be the users home directory
   + Windows now normalizes path separators, / becomes \\
   ! BlockRead command was not expanding any file
+  ! WM_COMMAND now set in X11 binary
 
 0.50.1 -- January 17, 2008
   - Forked from FTE (http://fte.sourceforge.net)

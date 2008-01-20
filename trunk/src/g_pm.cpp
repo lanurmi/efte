@@ -11,7 +11,7 @@
  * here's how it works:
  * there's one visible and one object window per view
  * events are forwarded from the visible on to object window and pulled
- * into the editor from the worker thread (there's only one, FTE
+ * into the editor from the worker thread (there's only one, eFTE
  * editor core is single-threaded).
  * SIQ is never blocked.
  * the only problem is that window doesn't repaint correctly after resize,
@@ -467,7 +467,7 @@ MRESULT EXPENTRY FileDlgProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
         
         InsertHistory(WinWindowFromID(hwnd, DID_FILENAME_ED), HIST_PATH, MAXPATH);
         WinInvalidateRect(hwnd, 0, TRUE);
-        WinRestoreWindowPos("FTEPM",
+        WinRestoreWindowPos("eFTEPM",
                             ((dlg->fl & FDS_SAVEAS_DIALOG) ? "FileSaveDlg" : "FileOpenDlg"),
                             hwnd);
         break;
@@ -475,14 +475,14 @@ MRESULT EXPENTRY FileDlgProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
         switch (SHORT1FROMMP(mp1)) {
         case DID_OK:
             WinShowWindow(hwnd, FALSE);
-            WinStoreWindowPos("FTEPM",
+            WinStoreWindowPos("eFTEPM",
                               ((dlg->fl & FDS_SAVEAS_DIALOG) ? "FileSaveDlg" : "FileOpenDlg"),
                               hwnd);
             break;
             
         case DID_CANCEL:
             WinShowWindow(hwnd, FALSE);
-            WinStoreWindowPos("FTEPM",
+            WinStoreWindowPos("eFTEPM",
                               ((dlg->fl & FDS_SAVEAS_DIALOG) ? "FileSaveDlg" : "FileOpenDlg"),
                               hwnd);
             break;
@@ -490,7 +490,7 @@ MRESULT EXPENTRY FileDlgProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
         break;
     case WM_CLOSE:
         WinShowWindow(hwnd, FALSE);
-        WinStoreWindowPos("FTEPM",
+        WinStoreWindowPos("eFTEPM",
                           ((dlg->fl & FDS_SAVEAS_DIALOG) ? "FileSaveDlg" : "FileOpenDlg"),
                           hwnd);
         break;
@@ -608,7 +608,7 @@ static int DoChoice(HWND hwndFrame, ChoiceInfo *choice) {
                                  100,
                                  NULL, NULL);
     
-    WinRestoreWindowPos("FTEPM", msgbox, hwndDlg);
+    WinRestoreWindowPos("eFTEPM", msgbox, hwndDlg);
     
     xw = cxScreen / 2;
     if (x - SPC > xw)
@@ -675,7 +675,7 @@ static int DoChoice(HWND hwndFrame, ChoiceInfo *choice) {
     rc = LONGFROMMR(WinSendMsg(hwndFrame, UWM_PROCESSDLG,
                                MPFROMLONG(hwndDlg), 0));
     
-    WinStoreWindowPos("FTEPM", msgbox, hwndDlg);
+    WinStoreWindowPos("eFTEPM", msgbox, hwndDlg);
     
     WinSendMsg(hwndFrame, UWM_DESTROYHWND, MPFROMLONG(hwndDlg), 0);
     if (rc == DID_CANCEL || rc == DID_ERROR)
@@ -717,7 +717,7 @@ MRESULT EXPENTRY PromptDlgProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
         WinSetDlgItemText(hwnd, IDS_PROMPT, PromptInfo.Title);
         WinSetWindowText(hwnd, PromptInfo.Title);
         WinInvalidateRect(hwnd, 0, TRUE);
-        WinRestoreWindowPos("FTEPM", "PromptDlg", hwnd);
+        WinRestoreWindowPos("eFTEPM", "PromptDlg", hwnd);
         return WinDefDlgProc(hwnd, msg, mp1, mp2);
         
     case WM_COMMAND:
@@ -728,20 +728,20 @@ MRESULT EXPENTRY PromptDlgProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
             AddInputHistory(PromptInfo.HistId, PromptInfo.Entry);
             
             WinShowWindow(hwnd, FALSE);
-            WinStoreWindowPos("FTEPM", "PromptDlg", hwnd);
+            WinStoreWindowPos("eFTEPM", "PromptDlg", hwnd);
             WinDismissDlg(hwnd, TRUE);
             return (MRESULT)FALSE;
             
         case DID_CANCEL:
             WinShowWindow(hwnd, FALSE);
-            WinStoreWindowPos("FTEPM", "PromptDlg", hwnd);
+            WinStoreWindowPos("eFTEPM", "PromptDlg", hwnd);
             WinDismissDlg(hwnd, FALSE);
             return (MRESULT)FALSE;
         }
         break;
     case WM_CLOSE:
         WinShowWindow(hwnd, FALSE);
-        WinStoreWindowPos("FTEPM", "PromptDlg", hwnd);
+        WinStoreWindowPos("eFTEPM", "PromptDlg", hwnd);
         /* passthru */
     default:
         return WinDefDlgProc(hwnd, msg, mp1, mp2);
@@ -792,7 +792,7 @@ MRESULT EXPENTRY FindDlgProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
             WinCheckButton(hwnd, IDC_DELETELINE, (SearchOpt.Options & SEARCH_DELETE) ? 1 : 0);
         }
         WinInvalidateRect(hwnd, 0, TRUE);
-        WinRestoreWindowPos("FTEPM", ReplaceDlg ? "ReplaceDlg" : "FindDlg", hwnd);
+        WinRestoreWindowPos("eFTEPM", ReplaceDlg ? "ReplaceDlg" : "FindDlg", hwnd);
         return WinDefDlgProc(hwnd, msg, mp1, mp2);
         
     case WM_COMMAND:
@@ -836,20 +836,20 @@ MRESULT EXPENTRY FindDlgProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
             }
             
             WinShowWindow(hwnd, FALSE);
-            WinStoreWindowPos("FTEPM", ReplaceDlg ? "ReplaceDlg" : "FindDlg", hwnd);
+            WinStoreWindowPos("eFTEPM", ReplaceDlg ? "ReplaceDlg" : "FindDlg", hwnd);
             WinDismissDlg(hwnd, TRUE);
             return (MRESULT)FALSE;
             
         case DID_CANCEL:
             WinShowWindow(hwnd, FALSE);
-            WinStoreWindowPos("FTEPM", ReplaceDlg ? "ReplaceDlg" : "FindDlg", hwnd);
+            WinStoreWindowPos("eFTEPM", ReplaceDlg ? "ReplaceDlg" : "FindDlg", hwnd);
             WinDismissDlg(hwnd, FALSE);
             return (MRESULT)FALSE;
         }
         break;
     case WM_CLOSE:
         WinShowWindow(hwnd, FALSE);
-        WinStoreWindowPos("FTEPM", ReplaceDlg ? "ReplaceDlg" : "FindDlg", hwnd);
+        WinStoreWindowPos("eFTEPM", ReplaceDlg ? "ReplaceDlg" : "FindDlg", hwnd);
         /* passthru */
     default:
         return WinDefDlgProc(hwnd, msg, mp1, mp2);
@@ -1064,7 +1064,7 @@ MRESULT CreateChild(HWND parent, GViewPeer *peer, PMData *pmData) {
     ptr.p = pmData;
 
     peer->hwndView = WinCreateWindow(parent,
-                                     szClient, "FTE",
+                                     szClient, "eFTE",
                                      WS_VISIBLE, 0, 0, 0, 0,
                                      NULLHANDLE, HWND_TOP, FID_CLIENT,
                                      (void *)&ptr, NULL);
@@ -1624,7 +1624,7 @@ MRESULT EXPENTRY AVIOWndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
     case WM_CLOSE:
         if (WinPostMsg(pmData->hwndWorker, msg, mp1, mp2) == FALSE) {
             WinMessageBox(HWND_DESKTOP, HWND_DESKTOP,
-                          "WinPostMsg failed, WM_CLOSE", "FTE/PM",
+                          "WinPostMsg failed, WM_CLOSE", "eFTE/PM",
                           0, MB_OK | MB_ERROR | MB_APPLMODAL | MB_MOVEABLE);
         }
         return (MRESULT) FALSE;
@@ -1659,7 +1659,7 @@ MRESULT EXPENTRY AVIOWndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
             //DosBeep(500, 100);
             if (WinPostMsg(pmData->hwndWorker, msg, mp1, mp2) == FALSE) {
                 WinMessageBox(HWND_DESKTOP, HWND_DESKTOP,
-                              "WinPostMsg failed, WM_SIZE", "FTE/PM",
+                              "WinPostMsg failed, WM_SIZE", "eFTE/PM",
                               0, MB_OK | MB_ERROR | MB_APPLMODAL | MB_MOVEABLE);
             }
         }
@@ -1670,7 +1670,7 @@ MRESULT EXPENTRY AVIOWndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
     case WM_SETSELECTION:
         if (WinPostMsg(pmData->hwndWorker, msg, mp1, mp2) == FALSE) {
             WinMessageBox(HWND_DESKTOP, HWND_DESKTOP,
-                          "WinPostMsg failed, WM_SETFOCUS", "FTE/PM",
+                          "WinPostMsg failed, WM_SETFOCUS", "eFTE/PM",
                           0, MB_OK | MB_ERROR | MB_APPLMODAL | MB_MOVEABLE);
         }
         break;
@@ -1698,7 +1698,7 @@ MRESULT EXPENTRY AVIOWndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
         DosReleaseMutexSem(hmtxPMData);
         if (WinPostMsg(pmData->hwndWorker, msg, mp1, mp2) == FALSE) {
             WinMessageBox(HWND_DESKTOP, HWND_DESKTOP,
-                          "WinPostMsg failed, WM_SETFOCUS", "FTE/PM",
+                          "WinPostMsg failed, WM_SETFOCUS", "eFTE/PM",
                           0, MB_OK | MB_ERROR | MB_APPLMODAL | MB_MOVEABLE);
         }
         break;
@@ -2924,7 +2924,7 @@ GFramePeer::GFramePeer(GFrame *aFrame, int Width, int Height) {
 }
 
 GFramePeer::~GFramePeer() {
-    WinStoreWindowPos("FTEPM", "Frame1", hwndFrame);
+    WinStoreWindowPos("eFTEPM", "Frame1", hwndFrame);
     WinSendMsg(hwndFrame, UWM_DESTROY, 0, 0);
 }
 
@@ -2962,7 +2962,7 @@ int GFramePeer::ConGetTitle(char *Title, int MaxLen, char *STitle, int SMaxLen) 
 }
 
 void GFramePeer::MapFrame() {
-    if (frames != frames->Next || WinRestoreWindowPos("FTEPM", "Frame1", hwndFrame) == FALSE) {
+    if (frames != frames->Next || WinRestoreWindowPos("eFTEPM", "Frame1", hwndFrame) == FALSE) {
         WinQueryTaskSizePos(hab, 0, &swp);
         
         WinSetWindowPos(hwndFrame, HWND_TOP,
@@ -3398,7 +3398,7 @@ GUI::GUI(int &argc, char **argv, int XSize, int YSize) {
 
     hwndCreatorUser = WinCreateWindow(HWND_DESKTOP,
                                       szCreator,
-                                      "FTEPM",
+                                      "eFTEPM",
                                       0,
                                       0, 0, 0, 0,
                                       HWND_DESKTOP, HWND_TOP,
@@ -3558,7 +3558,7 @@ static int CreatePipeChild(ULONG *sid, PID *pid, HPIPE &hfPipe, char *Command) {
     HFILE hfStdOut = (HFILE)1, hfStdErr = (HFILE)2;
     int rc;
     
-    sprintf(szPipe, "\\PIPE\\FTE%d\\CHILD%d", getpid(), PCount);
+    sprintf(szPipe, "\\PIPE\\eFTE%d\\CHILD%d", getpid(), PCount);
     PCount++;
     
     rc = DosCreateNPipe(szPipe, &hfPipe,
@@ -3885,7 +3885,7 @@ void DieError(int rc, const char *msg, ...) {
         hab = WinInitialize(0);
     if (hmq == 0)
         hmq = WinCreateMsgQueue(hab, 0);
-    WinMessageBox(HWND_DESKTOP, HWND_DESKTOP, str, "FTE", 0, MB_OK | MB_ERROR);
+    WinMessageBox(HWND_DESKTOP, HWND_DESKTOP, str, "eFTE", 0, MB_OK | MB_ERROR);
     WinDestroyMsgQueue(hmq);
     WinTerminate(hab);
     exit(rc);
