@@ -38,6 +38,9 @@ HILIT_P(Hilit_Plain);
 #ifdef CONFIG_HILIT_C
 HILIT_P(Hilit_C);
 #endif
+#ifdef CONFIG_HILIT_FALCON
+HILIT_P(Hilit_FALCON);
+#endif
 #ifdef CONFIG_HILIT_PERL
 HILIT_P(Hilit_PERL);
 #endif
@@ -83,6 +86,9 @@ int Indent_REXX(EBuffer *B, int Line, int PosCursor);
 #endif
 #ifdef CONFIG_INDENT_SIMPLE
 int Indent_SIMPLE(EBuffer *B, int Line, int PosCursor);
+#endif
+#ifdef CONFIG_INDENT_FALCON
+int Indent_FALCON(EBuffer *B, int Line, int PosCursor);
 #endif
 
  /*

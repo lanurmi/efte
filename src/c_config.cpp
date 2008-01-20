@@ -49,6 +49,12 @@ extern int REXX_Base_Indent;
 extern int REXX_Do_Offset;
 #endif
 
+#ifdef CONFIG_INDENT_FALCON
+extern int Falcon_Base_Indent;
+extern int Falcon_Paren_Delta;
+extern int Falcon_Max_Paren;
+#endif
+
 extern int ShowVScroll;
 extern int ShowHScroll;
 extern int ShowMenuBar;
@@ -264,6 +270,11 @@ static int SetGlobalNumber(int what, int number) {
 #ifdef CONFIG_INDENT_REXX
     case FLAG_REXX_Indent:       REXX_Base_Indent = number; break;
     case FLAG_REXX_Do_Offset:    REXX_Do_Offset = number; break;
+#endif
+#ifdef CONFIG_INDENT_FALCON
+    case FLAG_Falcon_Indent:      Falcon_Base_Indent = number; break;
+    case FLAG_Falcon_Paren_Delta: Falcon_Paren_Delta = number; break;
+    case FLAG_Falcon_Max_Paren:   Falcon_Max_Paren = number; break;
 #endif
     case FLAG_ScreenSizeX:       ScreenSizeX = number; break;
     case FLAG_ScreenSizeY:       ScreenSizeY = number; break;

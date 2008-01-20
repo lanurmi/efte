@@ -22,6 +22,9 @@ static const struct {
 #ifdef CONFIG_HILIT_REXX
 { "REXX", HILIT_REXX, Hilit_REXX },
 #endif
+#ifdef CONFIG_HILIT_FALCON
+{ "FALCON", HILIT_FALCON, Hilit_FALCON },
+#endif
 #ifdef CONFIG_HILIT_PERL
 { "PERL", HILIT_PERL, Hilit_PERL },
 #endif
@@ -66,6 +69,9 @@ static const struct {
 #endif
 #ifdef CONFIG_INDENT_REXX
 { "REXX", INDENT_REXX },
+#endif
+#ifdef CONFIG_INDENT_FALCON
+{ "FALCON", INDENT_FALCON },
 #endif
 #ifdef CONFIG_INDENT_SIMPLE
 { "SIMPLE", INDENT_REXX },

@@ -51,11 +51,13 @@ typedef int ChColor;
 #define HILIT_FTE    14
 #define HILIT_CATBS  15
 #define HILIT_SIMPLE 16
+#define HILIT_FALCON 17
 
 #define INDENT_PLAIN  0
 #define INDENT_C      1
 #define INDENT_REXX   2
 #define INDENT_SIMPLE 3
+#define INDENT_FALCON 4
 
 #define BFI_AutoIndent          0
 #define BFI_Insert              1
@@ -211,6 +213,10 @@ extern EBufferFlags DefaultBufferFlags;
 #define FLAG_CursorWithinEOL    67
 #define FLAG_CursorInsertMask   68
 #define FLAG_CursorOverMask     69
+#define FLAG_Falcon_Indent      70
+#define FLAG_Falcon_Paren_Delta 71
+#define FLAG_Falcon_Max_Paren   72
+
 
 #define EM_MENUS 2
 #define EM_MainMenu 0
