@@ -1010,7 +1010,7 @@ int EBuffer::BlockReadX(ExState &State, int blockMode) {
         View->MView->Win->Choice(GPC_ERROR, "Error", 1, "O&K", "Invalid path: %s.", FName);
         return 0;
     }
-    return BlockReadFrom(FName, blockMode);
+    return BlockReadFrom(Name, blockMode);
 }
 
 int EBuffer::BlockRead(ExState &State) {

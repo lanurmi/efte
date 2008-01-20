@@ -11,8 +11,8 @@
 
 #ifdef CONFIG_DESKTOP
 
-#define DESKTOP_VER "FTE Desktop 2\n"
-#define DESKTOP_VER1 "FTE Desktop 1\n"
+#define DESKTOP_VER "eFTE Desktop 2\n"
+#define DESKTOP_VER1 "eFTE Desktop 1\n"
 
 char DesktopFileName[256] = "";
 
