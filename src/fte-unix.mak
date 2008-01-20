@@ -8,7 +8,6 @@
 TGT_CFTE = cefte
 TGT_NFTE = nefte
 #TGT_QFTE = qefte
-#TGT_SFTE = sefte
 TGT_VFTE = vefte
 TGT_XFTE = efte
 
@@ -77,8 +76,6 @@ XLIBDIR  = -L/usr/X11R6/lib
 
 #MINCDIR  = -I/usr/include/Motif1.2
 #MLIBDIR  = -L/usr/lib/Motif1.2
-
-SINCDIR   = -I/usr/include/slang
 
 #######################################################################
 # AIX
@@ -164,7 +161,6 @@ SRCS = $(OBJS:.o=.cpp)
 XLIBS    = $(XLIBDIR) -lX11 $(SOCKETLIB) $(XPMLIB)
 VLIBS    = -lgpm -lncurses
 NLIBS    = -lncurses
-SLIBS    = -lslang
 #QLIBS    = $(QLIBDIR) -lqt
 QLIBS    = $(QLIBDIR) -lqt-mt
 #MLIBS    = $(MLIBDIR) -lXm -lXp -lXt -lXpm -lXext
@@ -204,9 +200,6 @@ $(TGT_QFTE): g_qt.moc g_qt_dlg.moc $(OBJS) $(QOBJS)
 
 $(TGT_VFTE): $(OBJS) $(VOBJS)
 	$(LD) -o $@ $(LDFLAGS) $(OBJS) $(VOBJS) $(VLIBS)
-
-$(TGT_SFTE): $(OBJS) $(SOBJS) compkeys
-	$(LD) -o $@ $(LDFLAGS) $(OBJS) $(SOBJS) $(SLIBS)
 
 $(TGT_NFTE): $(OBJS) $(NOBJS) compkeys
 	$(LD) -o $@ $(LDFLAGS) $(OBJS) $(NOBJS) $(NLIBS)
