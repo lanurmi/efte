@@ -282,15 +282,53 @@ int ExpandPath(const char *Path, char *Expand, int ExpandSize) {
     }
 #if PATHTYPE == PT_DOSISH
     int slashed = 0;
+    char *path;
 
     strlcpy(Name, Path, sizeof(Name));
+
+    // Normalize slashes
+    for (size_t idx=0; idx < strlen(Name); idx++)
+       if (Name[idx] == '/')
+          Name[idx] = '\\';
+
     if (Name[0] != 0)
-        slashed = ISSLASH(Name[strlen(Name)-1]);
+       slashed = ISSLASH(Name[strlen(Name)-1]);
     Slash(Name, 0);
+
+    path = Name;
+    switch (Name[0]) {
+    case SLASH:
+       break;
+
+    case 0:
+       slashed = ISSLASH(Name[strlen(Name)-1]);
+       break;
+
+    case '~':
+       {
+          char Name2[MAXPATH];
+          if (Name[1] == SLASH || Name[1] == 0) {
+             path = Name + 1;
+             char *homePath = getenv("HOMEPATH"); // Windows Vista
+             if (homePath == NULL)
+                homePath = getenv("USERPROFILE"); // Windows XP
+             if (homePath == NULL)
+                strlcpy(Name2, "C:\\", sizeof(Name2)); // Windows 95/98 do not have home path
+             else
+                strlcpy(Name2, homePath, sizeof(Name2));
+          }
+          if (path[0] != SLASH)
+             Slash(Name2, 1);
+          strlcat(Name2, path, sizeof(Name2));
+          strlcpy(Name, Name2, sizeof(Name));
+       }
+       break;
+    }
+    if (Path[0] != SLASH)
+       Slash(Name, 0);
 #if defined(DJGPP)
     my_fixpath(Name, Expand);
 #else
-    //puts(Name);
     if (Name[0] && Name[1] == ':' && Name[2] == 0) { // '?:'
         int drive = Name[0];
 
@@ -301,7 +339,7 @@ int ExpandPath(const char *Path, char *Expand, int ExpandSize) {
         drive = (int)(toupper(Name[0]) - 'A' + 1);
 
         if (GetDiskCurDir(drive, Expand + 3) == -1)
-            return -1;
+           return -1;
     } else {
 #if defined(__EMX__)
         if (_fullpath(Expand, Name, MAXPATH) == -1) return -1;
@@ -321,8 +359,7 @@ int ExpandPath(const char *Path, char *Expand, int ExpandSize) {
     }
 #endif
     if (slashed)
-        SlashDir(Expand);
-    //puts(Expand);
+       SlashDir(Expand);
     return 0;
 #endif
 #if PATHTYPE == PT_UNIXISH
