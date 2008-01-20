@@ -266,8 +266,8 @@ DESCRIPTION
     inline ostream& operator <<(ostream& os, ostream_func2_##type1##_##type2 const& ofunc) \
     { return ofunc(os); }
 
-DECLARE_OSTREAM_FUNC1(char);
-DECLARE_OSTREAM_FUNC2(char, size_t);
+DECLARE_OSTREAM_FUNC1(char)
+DECLARE_OSTREAM_FUNC2(char, size_t)
 
 ostream& Log__osBinChar(ostream&, char const&);
 inline ostream_func1_char BinChar(char c)

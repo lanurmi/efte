@@ -518,6 +518,6 @@ int EDirectory::ChangeDir(ExState &State) {
 }
 
 int EDirectory::GetContext() { return CONTEXT_DIRECTORY; }
-char *EDirectory::FormatLine(int /*Line*/) { return 0; };
+char *EDirectory::FormatLine(int /*Line*/) { return 0; }
 int EDirectory::CanActivate(int /*Line*/) { return 1; }
 #endif

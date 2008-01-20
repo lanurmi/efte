@@ -31,7 +31,7 @@ RoutineView::RoutineView(int createFlags, EModel **ARoot, EBuffer *AB): EList(cr
                 Buffer->rlst.Count);
         SetTitle(CTitle);
     }
-};
+}
 
 RoutineView::~RoutineView() {
     Buffer->Routines = 0;
