@@ -1113,7 +1113,6 @@ void ConvertKeyToEvent(KeySym key, KeySym key1, char */*keyname*/, char */*keyna
     //if (state & Mod2Mask) myState |= kfAlt; // NumLock
     if (state & Mod3Mask) myState |= kfAlt;
     if (state & Mod4Mask) myState |= kfAlt;
-    if (state & Mod5Mask) myState |= kfAlt;
 
     /* modified kabi@fi.muni.cz
      * for old method
@@ -1219,7 +1218,6 @@ void ConvertClickToEvent(int type, int xx, int yy, int button, int state, TEvent
     //if (state & Mod2Mask) myState |= kfAlt;
     if (state & Mod3Mask) myState |= kfAlt;
     if (state & Mod4Mask) myState |= kfAlt;
-    if (state & Mod5Mask) myState |= kfAlt;
     Event->Mouse.KeyMask = myState;
 
     if (Event->What == evMouseDown) {
@@ -1379,7 +1377,7 @@ void ProcessXEvents(TEvent *Event) {
         now = event.xkey.time;
         state = keyEvent->state;
         keyEvent1 = *keyEvent;
-        keyEvent1.state &= ~(ShiftMask | ControlMask | Mod1Mask /* | Mod2Mask*/ | Mod3Mask | Mod4Mask | Mod5Mask);
+        keyEvent1.state &= ~(ShiftMask | ControlMask | Mod1Mask /* | Mod2Mask*/ | Mod3Mask | Mod4Mask);
 
         if (!i18n_ctx || event.type == KeyRelease)
             XLookupString(keyEvent, keyName, sizeof(keyName), &key, 0);
