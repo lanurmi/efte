@@ -47,7 +47,6 @@ public:
     int ConShowCursor();
     int ConHideCursor();
     int ConCursorVisible();
-    int ConSetCursorSize(int Start, int End);
     
     int CaptureMouse(int grab);
     int CaptureFocus(int grab);
