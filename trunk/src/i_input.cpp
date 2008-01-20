@@ -301,5 +301,6 @@ void ExInput::RepaintStatus() {
     MoveAttr(B, FPos + SelStart - LPos, W, hcEntry_Selection, SelEnd - SelStart);
     ConSetCursorPos(FPos + Pos - LPos, H - 1);
     ConPutBox(0, H - 1, W, 1, B);
+    ConSetInsertState(true);
     ConShowCursor();
 }
