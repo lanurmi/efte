@@ -427,7 +427,7 @@ void EList::FixPos() {
     }
 }
 
-int EList::GetContext() { return CONTEXT_LIST; };
+int EList::GetContext() { return CONTEXT_LIST; }
 int EList::BeginMacro() { return 1; }
 int EList::CanActivate(int /*Line*/) { return 1; }
 int EList::Activate(int /*No*/) { return 0; }
