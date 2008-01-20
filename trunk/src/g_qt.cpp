@@ -285,6 +285,10 @@ static void qGetEvent(TEvent &Event) {
     delete q;
 }
 
+void ConSetInsertState(bool insert) {
+    //insertState = insert;
+}
+
 QEView::QEView(GViewPeer *peer, QWidget *parent, const char *name): QFrame(parent, name)
 {
     view = peer;
