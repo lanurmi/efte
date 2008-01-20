@@ -12,7 +12,7 @@ PREFIX=${PREFIX:-/usr/local}
 # INSTALLATION CODE (do not touch):
 
 BINDIR=$PREFIX/bin
-LIBDIR=$PREFIX/lib/fte
+LIBDIR=$PREFIX/share/efte
 CONFIGDIR=$LIBDIR/config
 
 LOCALCONFIGDIR=$LIBDIR/localconfig
@@ -50,7 +50,7 @@ mkdir -p $LIBDIR
 mkdir -p $LOCALCONFIGDIR
 
 # Set up our binaries.
-for file in fte xfte cfte sfte vfte nfte
+for file in efte cefte sefte vefte nefte
 do
     # each binary is either in . or in src (if it exists at all on this platform)
     for dir in . src
@@ -96,7 +96,7 @@ then
 fi
 
 # Set up the system default rc file.
-(cd $CONFIGDIR; $BINDIR/cfte main.fte $LIBDIR/system.fterc)
+(cd $CONFIGDIR; $BINDIR/cefte main.fte $LIBDIR/system.fterc)
 
 # Done.
 exit 0

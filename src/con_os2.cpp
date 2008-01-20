@@ -842,7 +842,7 @@ static int CreatePipeChild(PID &pid, HPIPE &hfPipe, char *Command) {
     HFILE hfStdOut = 1, hfStdErr = 2;
     int rc;
 
-    sprintf(szPipe, "\\PIPE\\FTE%d\\CHILD%d", getpid(), PCount);
+    sprintf(szPipe, "\\PIPE\\eFTE%d\\CHILD%d", getpid(), PCount);
     PCount++;
 
     rc = DosCreateNPipe(szPipe, &hfPipe,
@@ -1200,8 +1200,8 @@ int ConSetTitle(char *Title, char *STitle) {
 }
 
 int ConGetTitle(char *Title, int MaxLen, char *STitle, int SMaxLen) {
-    strcpy(Title, "FTE");
-    strcpy(STitle, "FTE");
+    strcpy(Title, "eFTE");
+    strcpy(STitle, "eFTE");
     return 0;
 }
 

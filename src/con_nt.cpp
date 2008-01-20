@@ -68,8 +68,8 @@ static int LastMouseX = 0;
 static int      LastMouseY = 0;
 //static int      isWin95 = 0;
 
-static char winTitle[256] = "FTE";
-static char winSTitle[256] = "FTE";
+static char winTitle[256] = "eFTE";
+static char winSTitle[256] = "eFTE";
 
 int codepage;
 
@@ -902,7 +902,7 @@ int ConSetTitle(char *Title, char *STitle) { /*FOLD00*/
     if (buf[0] == '\0') // if there is no filename, try the directory name.
         JustLastDirectory(Title, buf, sizeof(buf));
 
-    strncpy(winTitle, "FTE - ", sizeof(winTitle) - 1);
+    strncpy(winTitle, "eFTE - ", sizeof(winTitle) - 1);
     if (buf[0] != 0) // if there is a file/dir name, stick it in here.
     {
         strncat(winTitle, buf, sizeof(winTitle) - 1 - strlen(winTitle));
