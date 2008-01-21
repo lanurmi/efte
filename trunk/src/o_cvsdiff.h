@@ -10,8 +10,6 @@
 #ifndef __CVSDIFF_H__
 #define __CVSDIFF_H__
 
-#ifdef CONFIG_OBJ_CVS
-
 class ECvsDiff:public ECvsBase {
     public:
         int CurrLine,ToLine,InToFile;
@@ -33,7 +31,5 @@ class ECvsDiff:public ECvsBase {
 };
 
 extern ECvsDiff *CvsDiffView;
-
-#endif
 
 #endif

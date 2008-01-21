@@ -19,21 +19,15 @@ EViewPort *EBuffer::CreateViewPort(EView *V) {
     if (Loaded == 0 && !suspendLoads) {
         Load();
 
-#ifdef CONFIG_OBJ_MESSAGES
         if (CompilerMsgs)
             CompilerMsgs->FindFileErrors(this);
-#endif
-#ifdef CONFIG_OBJ_CVS
-        if (CvsDiffView) CvsDiffView->FindFileLines(this);
-#endif
-
-#ifdef CONFIG_OBJ_SVN
-        if (SvnDiffView) SvnDiffView->FindFileLines(this);
-#endif
+        if (CvsDiffView)
+            CvsDiffView->FindFileLines(this);
+        if (SvnDiffView)
+            SvnDiffView->FindFileLines(this);
 
         markIndex.retrieveForBuffer(this);
 
-#ifdef CONFIG_HISTORY
         int r, c;
 
         if (RetrieveFPos(FileName, r, c) == 1)
@@ -42,10 +36,8 @@ EViewPort *EBuffer::CreateViewPort(EView *V) {
         V->Port->GetPos();
         V->Port->ReCenter = 1;
 
-#ifdef CONFIG_BOOKMARKS
-        if (BFI (this,BFI_SaveBookmarks)==3) RetrieveBookmarks(this);
-#endif
-#endif
+        if (BFI (this,BFI_SaveBookmarks)==3)
+            RetrieveBookmarks(this);
     }
     return V->Port;
 }
@@ -211,17 +203,15 @@ void EEditPort::HandleEvent(TEvent &Event) {
             break;
         }
         break;
-#ifdef CONFIG_MOUSE
     case evMouseDown:
     case evMouseMove:
     case evMouseAuto:
     case evMouseUp:
         HandleMouse(Event);
         break;
-#endif
     }
 }
-#ifdef CONFIG_MOUSE
+
 void EEditPort::HandleMouse(TEvent &Event) {
     int x, y, xx, yy, W, H;
 
@@ -354,7 +344,6 @@ void EEditPort::HandleMouse(TEvent &Event) {
         }
     }
 }
-#endif
 
 void EEditPort::UpdateView() {
     Buffer->Redraw();
@@ -474,11 +463,7 @@ int EBuffer::ExecCommand(int Command, ExState &State) {
     case ExInsertTab:             return InsertTab();
     case ExInsertSpace:           return InsertSpace();
     case ExWrapPara:
-#ifdef CONFIG_WORDWRAP
         return WrapPara();
-#else
-        return ErFAIL;
-#endif
     case ExInsPrevLineChar:       return InsPrevLineChar();
     case ExInsPrevLineToEol:      return InsPrevLineToEol();
     case ExLineDuplicate:         return LineDuplicate();
@@ -527,13 +512,8 @@ int EBuffer::ExecCommand(int Command, ExState &State) {
     case ExBlockSelectPara:       return BlockSelectPara();
     case ExBlockUnTab:            return BlockUnTab();
     case ExBlockEnTab:            return BlockEnTab();
-#ifdef CONFIG_UNDOREDO
     case ExUndo:                  return Undo();
     case ExRedo:                  return Redo();
-#else
-    case ExUndo:                  return ErFAIL;
-    case ExRedo:                  return ErFAIL;
-#endif
     case ExMatchBracket:          return MatchBracket();
     case ExMovePrevPos:           return MovePrevPos();
     case ExMoveSavedPosCol:       return MoveSavedPosCol();
@@ -566,12 +546,7 @@ int EBuffer::ExecCommand(int Command, ExState &State) {
     case ExBlockPrint:            return BlockPrint();
     case ExBlockTrim:             return BlockTrim();
     case ExFileTrim:              return FileTrim();
-    case ExHilitWord:
-#ifdef CONFIG_WORD_HILIT
-        return HilitWord();
-#else
-        return ErFAIL;
-#endif
+    case ExHilitWord:             return HilitWord();
     case ExSearchWordPrev:        return SearchWord(SEARCH_BACK | SEARCH_NEXT);
     case ExSearchWordNext:        return SearchWord(SEARCH_NEXT);
     case ExHilitMatchBracket:     return HilitMatchBracket();
@@ -602,15 +577,9 @@ int EBuffer::ExecCommand(int Command, ExState &State) {
     case ExMoveToLine:          return MoveToLine(State);
     case ExMoveToColumn:        return MoveToColumn(State);
     case ExFoldCreateByRegexp:  return FoldCreateByRegexp(State);
-#ifdef CONFIG_BOOKMARKS
     case ExPlaceBookmark:       return PlaceBookmark(State);
     case ExRemoveBookmark:      return RemoveBookmark(State);
     case ExGotoBookmark:        return GotoBookmark(State);
-#else
-    case ExPlaceBookmark:       return ErFAIL;
-    case ExRemoveBookmark:      return ErFAIL;
-    case ExGotoBookmark:        return ErFAIL;
-#endif
     case ExPlaceGlobalBookmark: return PlaceGlobalBookmark(State);
     case ExPushGlobalBookmark:  return PushGlobalBookmark();
     case ExInsertString:        return InsertString(State);
@@ -646,23 +615,13 @@ int EBuffer::ExecCommand(int Command, ExState &State) {
     case ExChangeTabSize:       return ChangeTabSize(State);
     case ExChangeLeftMargin:    return ChangeLeftMargin(State);
     case ExChangeRightMargin:   return ChangeRightMargin(State);
-    case ExASCIITable:
-#ifdef CONFIG_I_ASCII
-        return ASCIITable(State);
-#else
-        return ErFAIL;
-#endif
+    case ExASCIITable:          return ASCIITable(State);
     case ExCharTrans:           return CharTrans(State);
     case ExLineTrans:           return LineTrans(State);
     case ExBlockTrans:          return BlockTrans(State);
-
-#ifdef CONFIG_TAGS
     case ExTagFind:             return FindTag(State);
     case ExTagFindWord:         return FindTagWord(State);
-#endif
-
     case ExSetCIndentStyle:     return SetCIndentStyle(State);
-
     case ExBlockMarkFunction:   return BlockMarkFunction();
     case ExIndentFunction:      return IndentFunction();
     case ExMoveFunctionPrev:    return MoveFunctionPrev();
@@ -714,7 +673,6 @@ int EBuffer::FoldCreateByRegexp(ExState &State) {
     return FoldCreateByRegexp(strbuf);
 }
 
-#ifdef CONFIG_BOOKMARKS
 int EBuffer::PlaceUserBookmark(const char *n,EPoint P) {
     char name[256+4] = "_BMK";
     int result;
@@ -731,7 +689,6 @@ int EBuffer::PlaceUserBookmark(const char *n,EPoint P) {
         }
         if (BFI (this,BFI_SaveBookmarks)==1||BFI (this,BFI_SaveBookmarks)==2) {
             if (!Modify ()) return result;   // Never try to save to read-only
-#ifdef CONFIG_UNDOREDO
             if (BFI(this, BFI_Undo)) {
                 if (PushULong(prev.Row) == 0) return 0;
                 if (PushULong(prev.Col) == 0) return 0;
@@ -739,7 +696,6 @@ int EBuffer::PlaceUserBookmark(const char *n,EPoint P) {
                 if (PushULong(strlen (n)+1) == 0) return 0;
                 if (PushUChar(ucPlaceUserBookmark) == 0) return 0;
             }
-#endif
         }
     }
     return result;
@@ -759,13 +715,11 @@ int EBuffer::RemoveUserBookmark(const char *n) {
         }
         if (BFI (this,BFI_SaveBookmarks)==1||BFI (this,BFI_SaveBookmarks)==2) {
             if (!Modify ()) return result;   // Never try to save to read-only
-#ifdef CONFIG_UNDOREDO
             if (PushULong(p.Row) == 0) return 0;
             if (PushULong(p.Col) == 0) return 0;
             if (PushUData((void *)n,strlen (n)+1) == 0) return 0;
             if (PushULong(strlen (n)+1) == 0) return 0;
             if (PushUChar(ucRemoveUserBookmark) == 0) return 0;
-#endif
         }
     }
     return result;
@@ -818,7 +772,6 @@ int EBuffer::GotoBookmark(ExState &State) {
         if (View->MView->Win->GetStr("Goto Bookmark", sizeof(name), name, HIST_BOOKMARK) == 0) return 0;
     return GotoUserBookmark(name);
 }
-#endif
 
 int EBuffer::PlaceGlobalBookmark(ExState &State) {
     char name[256] = "";
@@ -1412,7 +1365,6 @@ void EBuffer::GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen) {
     }
 }
 
-#ifdef CONFIG_I_ASCII
 int EBuffer::ASCIITable(ExState &/*State*/) {
     int rc;
 
@@ -1422,7 +1374,6 @@ int EBuffer::ASCIITable(ExState &/*State*/) {
 
     return 0;
 }
-#endif
 
 int EBuffer::ScrollLeft(ExState &State) {
     int Cols;
@@ -1456,7 +1407,6 @@ int EBuffer::ScrollUp(ExState &State) {
     return ScrollUp(Rows);
 }
 
-#ifdef CONFIG_TAGS
 int EBuffer::FindTag(ExState &State) {
     char Tag[MAXSEARCH] = "";
 
@@ -1482,7 +1432,6 @@ int EBuffer::FindTag(ExState &State) {
     return 0;
 
 }
-#endif
 
 // these two will probably be replaced in the future
 int EBuffer::InsertDate(ExState &State) {

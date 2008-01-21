@@ -9,8 +9,6 @@
 
 #include "fte.h"
 
-#ifdef CONFIG_HILIT_PASCAL
-
 #define hsPas_Normal       0
 #define hsPas_Comment1     1
 #define hsPas_Comment2     2
@@ -135,4 +133,3 @@ int Hilit_PASCAL(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Li
     *ECol = C;
     return 0;
 }
-#endif

@@ -103,7 +103,6 @@ void ExChoice::HandleEvent(TEvent &Event) {
             break;
         }
         break;
-#ifdef CONFIG_MOUSE
     case evMouseDown:
         if (Win->CaptureMouse(1))
             MouseCaptured = 1;
@@ -130,7 +129,6 @@ void ExChoice::HandleEvent(TEvent &Event) {
         else
             Cur = 0;
         break;
-#endif
     }
 }
 

@@ -718,68 +718,7 @@ error:
 
 
 int EBuffer::CompleteWord() {
-#ifdef CONFIG_I_COMPLETE
     return View->MView->Win->ICompleteWord(View);
-#else
-    PELine L = VLine(CP.Row), M;
-    int C, P, X, P1, N, xlen, XL;
-    EPoint O = CP;
-
-    if (CP.Col == 0) return 0;
-
-    if (SetPos(CP.Col, CP.Row) == 0) return 0;
-
-    C = CP.Col;
-    P = CharOffset(L, C);
-    P1 = P;
-    N = VToR(CP.Row);
-
-    if (P > L->Count) return 0;
-
-    if (P > 0) {
-        while ((P > 0) && ((ChClass(L->Chars[P - 1]) == 1) || (L->Chars[P - 1] == '_'))) P--;
-        if (P == P1) return 0;
-        xlen = P1 - P;
-        C = ScreenPos(L, P);
-        Match.Row = N;
-        Match.Col = C;
-        //if (SetPos(C, CP.Row) == 0) return 0;
-        //again:
-        if (FindStr(L->Chars + P, xlen, SEARCH_BACK | SEARCH_NEXT | SEARCH_NOPOS | SEARCH_WORDBEG) == 1) {
-            M = RLine(Match.Row);
-            X = CharOffset(M, Match.Col);
-            XL = X;
-            //if ((XL > 0) && ((ChClass(M->Chars[XL - 1]) == 1) || (M->Chars[XL - 1] == '_'))) goto again;
-            while ((XL < M->Count) && ((ChClass(M->Chars[XL]) == 1) || (M->Chars[XL] == '_'))) XL++;
-            {
-                char *pp = (char *)malloc(XL - X - xlen);
-
-                if (pp) {
-                    memcpy(pp, M->Chars + X + xlen, XL - X - xlen);
-
-                    if (InsText(N, O.Col,
-                                XL - X - xlen,
-                                pp,
-                                1) == 0) return 0;
-                    free(pp);
-                }
-            }
-            if (SetPos(O.Col + XL - X - xlen, O.Row) == 0) return 0;
-            Draw(Match.Row, Match.Row);
-            Match.Row = -1;
-            Match.Col = -1;
-            MatchLen = 0;
-            MatchCount = 0;
-            return 1;
-        }
-    }
-    if (Match.Row != -1)
-        Draw(Match.Row, Match.Row);
-    Match.Col = Match.Row = -1;
-    MatchLen = 0;
-    MatchCount = 0;
-    return 0;
-#endif
 }
 
 int EBuffer::Search(ExState &State, char *aString, int Options, int /*CanResume*/) {
@@ -854,7 +793,6 @@ int EBuffer::SearchReplace(ExState &State)   { return SearchReplace(State, 0, 0,
 int EBuffer::SearchReplaceB(ExState &State)  { return SearchReplace(State, 0, 0, SEARCH_BACK); }
 int EBuffer::SearchReplaceRx(ExState &State) { return SearchReplace(State, 0, 0, SEARCH_RE); }
 
-#ifdef CONFIG_OBJ_ROUTINE
 int EBuffer::ScanForRoutines() {
     RxNode *regx;
     int line;
@@ -891,7 +829,6 @@ int EBuffer::ScanForRoutines() {
     RxFree(regx);
     return 1;
 }
-#endif
 
 int EBuffer::ShowPosition() {
     int CLine, NLines;
@@ -939,19 +876,15 @@ int EBuffer::ShowPosition() {
     }
 #endif
 
-#ifdef CONFIG_UNDOREDO
     int NN = -1;
     if (US.UndoPtr > 0)
         NN = US.Top[US.UndoPtr - 1];
-#endif
     Msg(S_INFO,
 #ifdef HEAPWALK
         "M%ld,%ld B%ld,%ld S%ld,%ld"
 #endif
         "L%d/%d G%d/%d/%d A%d/%d C%d/%d P%d/%d "
-#ifdef CONFIG_UNDOREDO
         "U%d/%d/%d "
-#endif
         "H%d/%d/%d",
 #ifdef HEAPWALK
         MemUsed, MemFree, BlkUsed, BlkFree, BigUsed, BigFree,
@@ -961,14 +894,11 @@ int EBuffer::ShowPosition() {
         CAct, NAct,
         CColumn, NColumns,
         CCharPos, NChars,
-#ifdef CONFIG_UNDOREDO
         US.UndoPtr, US.Num, NN,
-#endif
         StartHilit, MinRedraw, MaxRedraw);
     return 1;
 }
 
-#ifdef CONFIG_BOOKMARKS
 int EBuffer::PlaceBookmark(char *Name, EPoint P) {
     int i;
     EBookmark *p;
@@ -1041,7 +971,6 @@ int EBuffer::GotoBookmark(char *Name) {
     View->MView->Win->Choice(GPC_ERROR, "GotoBookmark", 1, "O&K", "Bookmark %s not found.", Name);
     return 0;
 }
-#endif
 
 int EBuffer::GetMatchBrace(EPoint &M, int MinLine, int MaxLine, int show) {
     int StateLen;

@@ -10,8 +10,6 @@
 #ifndef __ROUTINE_H__
 #define __ROUTINE_H__
 
-#ifdef CONFIG_OBJ_ROUTINE
-
 class RoutineView: public EList {
 public:
     EBuffer *Buffer;
@@ -38,6 +36,5 @@ public:
     virtual void GetInfo(char *AInfo, int MaxLen);
     virtual void GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen);
 };
-#endif
 
 #endif

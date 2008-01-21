@@ -9,8 +9,6 @@
 
 #include "fte.h"
 
-#ifdef CONFIG_HILIT_SIMPLE
-
 int Hilit_SIMPLE(EBuffer *BF, int LN, PCell B, int Pos, int Width, ELine *Line, hlState &State, hsState *StateMap, int *ECol) {
     EColorize *col = BF->Mode->fColorize;
     HMachine *hm = col->hm;
@@ -270,5 +268,3 @@ end_parse: ;
     *ECol = C;
     return 0;
 }
-
-#endif

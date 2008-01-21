@@ -9,8 +9,6 @@
 
 #include "fte.h"
 
-#ifdef CONFIG_HILIT_FALCON
-
 enum { hsFalcon_Normal, hsFalcon_Comment, hsFalcon_CommentL, hsFalcon_Keyword,
 hsFalcon_String1, hsFalcon_String2 };
 
@@ -157,8 +155,6 @@ int Hilit_FALCON(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Li
    *ECol = C;
    return 0;
 }
-
-#ifdef CONFIG_INDENT_FALCON
 
 int Falcon_Base_Indent = 4;
 int Falcon_Paren_Delta = 2;
@@ -507,6 +503,3 @@ int Indent_FALCON(EBuffer *B, int Line, int PosCursor) {
    }
    return 1;
 }
-          
-#endif /* CONFIG_INDENT_FALCON */
-#endif /* CONFIG_HILIT_FALCON */

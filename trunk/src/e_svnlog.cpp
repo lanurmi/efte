@@ -11,8 +11,6 @@
 #include "fte.h"
 //#include "features.h"
 
-#ifdef CONFIG_OBJ_SVN
-
 ESvnLog *SvnLogView;
 
 ESvnLog::ESvnLog (int createFlags,EModel **ARoot,char *Directory,char *OnFiles):EBuffer (createFlags,ARoot,NULL) {
@@ -168,5 +166,3 @@ void ESvnLog::GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen) {
     strncpy (ATitle,"SVN log",MaxLen);
     strncpy (ASTitle,"SVN log",SMaxLen);
 }
-
-#endif

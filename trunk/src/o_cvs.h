@@ -9,8 +9,6 @@
 #ifndef __CVS_H__
 #define __CVS_H__
 
-#ifdef CONFIG_OBJ_CVS
-
 class ECvs:public ECvsBase {
     public:
         char *LogFile;
@@ -44,7 +42,5 @@ class ECvs:public ECvsBase {
 };
 
 extern ECvs *CvsView;
-
-#endif
 
 #endif

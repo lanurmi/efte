@@ -15,7 +15,6 @@
 #include "c_commands.h"
 #include "c_history.h"
 
-#ifdef CONFIG_OBJ_DIRECTORY
 EDirectory::EDirectory(int createFlags, EModel **ARoot, char *aPath): EList(createFlags, ARoot, aPath) {
     char XPath[MAXPATH];
 
@@ -520,4 +519,3 @@ int EDirectory::ChangeDir(ExState &State) {
 int EDirectory::GetContext() { return CONTEXT_DIRECTORY; }
 char *EDirectory::FormatLine(int /*Line*/) { return 0; }
 int EDirectory::CanActivate(int /*Line*/) { return 1; }
-#endif

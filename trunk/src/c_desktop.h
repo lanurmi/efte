@@ -10,8 +10,6 @@
 #ifndef __DESKTOP_H__
 #define __DESKTOP_H__
 
-#ifdef CONFIG_DESKTOP
-
 #ifdef UNIX
 #    define        DESKTOP_NAME       ".efte-desktop"
 #else
@@ -22,7 +20,5 @@ extern char DesktopFileName[256];
 
 int SaveDesktop(char *FileName);
 int LoadDesktop(char *FileName);
-
-#endif
 
 #endif

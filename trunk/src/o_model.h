@@ -135,10 +135,7 @@ public:
     int ToggleSysClipboard(ExState &State);
     int ShowKey(ExState &State);
     int ViewBuffers(ExState &State);
-#ifdef CONFIG_OBJ_ROUTINE
     int ViewRoutines(ExState &State);
-#endif
-#ifdef CONFIG_OBJ_MESSAGES
     int Compile(ExState &State);
     int RunCompiler(ExState &State);
     int Compile(char *Command);
@@ -146,8 +143,6 @@ public:
     int CompilePrevError(ExState &State);
     int CompileNextError(ExState &State);
     int ConfigRecompile(ExState &State);
-#endif
-#ifdef CONFIG_OBJ_CVS
     int Cvs(ExState &State);
     int RunCvs(ExState &State);
     int ViewCvs(ExState &State);
@@ -161,8 +156,6 @@ public:
     int RunCvsCommit(ExState &State);
     int CvsCommit(char *Options);
     int ViewCvsLog(ExState &State);
-#endif
-#ifdef CONFIG_OBJ_SVN
     int Svn(ExState &State);
     int RunSvn(ExState &State);
     int ViewSvn(ExState &State);
@@ -176,17 +169,12 @@ public:
     int RunSvnCommit(ExState &State);
     int SvnCommit(char *Options);
     int ViewSvnLog(ExState &State);
-#endif
-#ifdef CONFIG_OBJ_DIRECTORY
     int DirOpen(ExState &State);
     int OpenDir(char *Directory);
-#endif
     int ShowVersion();
     int ViewModeMap(ExState &State);
     int ClearMessages();
-#ifdef CONFIG_TAGS
     int TagLoad(ExState &State);
-#endif
     int SysShowHelp(ExState &State, const char *word);
 
     int RemoveGlobalBookmark(ExState &State);

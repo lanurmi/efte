@@ -7,7 +7,6 @@
  *
  */
 
-#include "feature.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -190,9 +189,7 @@ int ExecVertMenu(int x, int y, int id, TEvent &E, UpMenu *up) {
     PCell c;
     PCell SaveC = 0;
     int SaveX, SaveY, SaveW, SaveH;
-#ifdef CONFIG_MOUSE
     int wasmouse = 0;
-#endif
     UpMenu here;
     int dovert = 0;
     int rx;
@@ -247,7 +244,6 @@ int ExecVertMenu(int x, int y, int id, TEvent &E, UpMenu *up) {
     SaveW = w;
     SaveH = h;
     
-#ifdef CONFIG_MOUSE
     if (E.What == evMouseMove || E.What == evMouseDown) {
     }
     if (E.What & evMouse) {
@@ -256,7 +252,6 @@ int ExecVertMenu(int x, int y, int id, TEvent &E, UpMenu *up) {
         wasmouse = 1;
         E.What = evNone;
     }
-#endif
     abort = -2;
     while (abort == -2) {
         DrawVMenu(x, y, id, cur);
@@ -364,7 +359,6 @@ int ExecVertMenu(int x, int y, int id, TEvent &E, UpMenu *up) {
                 }
             }
             break;
-#ifdef CONFIG_MOUSE
         case evMouseDown:
             if (E.Mouse.X >= x && E.Mouse.Y >= y &&
                 E.Mouse.X < x + w && E.Mouse.Y < y + h) 
@@ -463,7 +457,6 @@ int ExecVertMenu(int x, int y, int id, TEvent &E, UpMenu *up) {
                 }
             }
             break;
-#endif
         }
     }
     if (SaveC) {
@@ -512,12 +505,11 @@ int ExecMainMenu(TEvent &E, char sub) {
         }
     }
 
-#ifdef CONFIG_MOUSE
     if (E.What == evMouseDown) {
         cur = GetHPosItem(id, E.Mouse.X);
         dovert = 1;
     }
-#endif
+
     abort = -2;
     while (abort == -2) {
         DrawHMenu(0, 0, id, cur);
@@ -616,7 +608,6 @@ int ExecMainMenu(TEvent &E, char sub) {
                 break;
             }
             break;
-#ifdef CONFIG_MOUSE
         case evMouseDown:
             if (E.Mouse.Y == 0) {
                 int oldcur = cur;
@@ -655,7 +646,6 @@ int ExecMainMenu(TEvent &E, char sub) {
                 }
             }
             break;
-#endif
         }
     }
     DrawHMenu(0, 0, id, -1);

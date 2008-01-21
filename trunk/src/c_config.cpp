@@ -27,7 +27,7 @@ typedef struct _CurPos {
     const char *name; // filename
 } CurPos;
 
-#ifdef CONFIG_INDENT_C
+// C Indent
 extern int C_Indent;
 extern int C_BraceOfs;
 extern int C_CaseOfs;
@@ -42,18 +42,15 @@ extern int C_FirstLevelIndent;
 extern int C_Continuation;
 extern int C_ParenDelta;
 extern int FunctionUsesContinuation;
-#endif
 
-#ifdef CONFIG_INDENT_REXX
+// REXX Indent
 extern int REXX_Base_Indent;
 extern int REXX_Do_Offset;
-#endif
 
-#ifdef CONFIG_INDENT_FALCON
+// Falcon Indent
 extern int Falcon_Base_Indent;
 extern int Falcon_Paren_Delta;
 extern int Falcon_Max_Paren;
-#endif
 
 extern int ShowVScroll;
 extern int ShowHScroll;
@@ -95,14 +92,10 @@ char HelpCommand[128] = "man -a";
 char *ConfigSourcePath = 0;
 int IgnoreBufferList = 0;
 static GUICharactersEntry *GUICharacters = NULL;
-#ifdef CONFIG_OBJ_CVS
 char CvsCommand[256] = "cvs";
 char CvsLogMode[32] = "PLAIN";
-#endif
-#ifdef CONFIG_OBJ_SVN
 char SvnCommand[256] = "svn";
 char SvnLogMode[32] = "PLAIN";
-#endif
 int ReassignModelIds = 0;
 int RecheckReadOnly = 0;
 char XShellCommand[256] = "xterm";
@@ -166,7 +159,6 @@ static void AppendGUICharacters(const char *string) {
     }
 }
 
-#ifdef CONFIG_SYNTAX_HILIT
 static int AddKeyword(ColorKeywords *tab, char color, const char *keyword) {
     int len;
 
@@ -196,7 +188,6 @@ static int AddKeyword(ColorKeywords *tab, char color, const char *keyword) {
     tab->TotalCount++;
     return 1;
 }
-#endif
 
 static int SetModeNumber(EMode *mode, int what, int number) {
     int j = what;
@@ -209,17 +200,13 @@ static int SetModeNumber(EMode *mode, int what, int number) {
 static int SetModeString(EMode *mode, int what, const char *string) {
     int j = what;
 
-#ifdef CONFIG_SYNTAX_HILIT
     if (j == BFI_Colorizer) {
         mode->fColorize = FindColorizer(string);
     } else
-#endif
         if (j == BFI_EventMap) {
             mode->fEventMap = FindEventMap(string);
-#ifdef CONFIG_INDENT
         } else if (j == BFI_IndentMode) {
             mode->Flags.num[j] = GetIndentMode(string);
-#endif
         } else if (j == BFS_WordChars) {
             SetWordChars(mode->Flags.WordChars, string);
         } else if (j == BFS_CapitalChars) {
@@ -251,7 +238,6 @@ static int SetGlobalNumber(int what, int number) {
     LOG << "What: " << what << " Number: " << number << ENDLINE;
 
     switch (what) {
-#ifdef CONFIG_INDENT_C
     case FLAG_C_Indent:          C_Indent = number; break;
     case FLAG_C_BraceOfs:        C_BraceOfs = number; break;
     case FLAG_C_CaseOfs:         C_CaseOfs = number; break;
@@ -266,16 +252,11 @@ static int SetGlobalNumber(int what, int number) {
     case FLAG_C_Continuation:    C_Continuation = number; break;
     case FLAG_C_ParenDelta:      C_ParenDelta = number; break;
     case FLAG_FunctionUsesContinuation: FunctionUsesContinuation = number; break;
-#endif
-#ifdef CONFIG_INDENT_REXX
     case FLAG_REXX_Indent:       REXX_Base_Indent = number; break;
     case FLAG_REXX_Do_Offset:    REXX_Do_Offset = number; break;
-#endif
-#ifdef CONFIG_INDENT_FALCON
     case FLAG_Falcon_Indent:      Falcon_Base_Indent = number; break;
     case FLAG_Falcon_Paren_Delta: Falcon_Paren_Delta = number; break;
     case FLAG_Falcon_Max_Paren:   Falcon_Max_Paren = number; break;
-#endif
     case FLAG_ScreenSizeX:       ScreenSizeX = number; break;
     case FLAG_ScreenSizeY:       ScreenSizeY = number; break;
     case FLAG_CursorBlink:       CursorBlink = number; break;
@@ -348,14 +329,10 @@ static int SetGlobalString(long what, const char *string) {
     case FLAG_WindowFont: strlcpy(WindowFont, string, sizeof(WindowFont)); break;
     case FLAG_HelpCommand: strlcpy(HelpCommand, string, sizeof(HelpCommand)); break;
     case FLAG_GUICharacters: AppendGUICharacters (string); break;
-#ifdef CONFIG_OBJ_CVS
     case FLAG_CvsCommand: strlcpy(CvsCommand, string, sizeof(CvsCommand)); break;
     case FLAG_CvsLogMode: strlcpy(CvsLogMode, string, sizeof(CvsLogMode)); break;
-#endif
-#ifdef CONFIG_OBJ_SVN
     case FLAG_SvnCommand: strlcpy(SvnCommand, string, sizeof(SvnCommand)); break;
     case FLAG_SvnLogMode: strlcpy(SvnLogMode, string, sizeof(SvnLogMode)); break;
-#endif
     case FLAG_RGBColor: SetRGBColor(string); break;
     case FLAG_XShellCommand: strlcpy(XShellCommand, string, sizeof(XShellCommand)); break;
     default:
@@ -379,7 +356,6 @@ static int SetEventString(EEventMap *Map, long what, const char *string) {
     ENDFUNCRC(0);
 }
 
-#ifdef CONFIG_SYNTAX_HILIT
 static int SetColorizeString(EColorize *Colorize, long what, const char *string) {
     STARTFUNC("SetColorizeString");
     LOG << "What: " << what << " String: " << string << ENDLINE;
@@ -392,7 +368,6 @@ static int SetColorizeString(EColorize *Colorize, long what, const char *string)
     }
     ENDFUNCRC(0);
 }
-#endif
 
 static unsigned char GetObj(CurPos &cp, unsigned short &len) {
     len = 0;
@@ -604,7 +579,6 @@ static int ReadColors(CurPos &cp, const char *ObjName) {
     return -1;
 }
 
-#ifdef CONFIG_SYNTAX_HILIT
 static int ReadHilitColors(CurPos &cp, EColorize *Colorize, const char * /*ObjName*/) {
     unsigned char obj;
     unsigned short len;
@@ -655,7 +629,6 @@ static int ReadKeywords(CurPos &cp, ColorKeywords *keywords, int color) {
     }
     return -1;
 }
-#endif
 
 static int ReadEventMap(CurPos &cp, EEventMap *Map, const char * /*MapName*/) {
     unsigned char obj;
@@ -677,7 +650,6 @@ static int ReadEventMap(CurPos &cp, EEventMap *Map, const char * /*MapName*/) {
             }
             break;
 
-#ifdef CONFIG_ABBREV
         case CF_ABBREV:
             {
                 EAbbrev *Ab;
@@ -700,7 +672,6 @@ static int ReadEventMap(CurPos &cp, EEventMap *Map, const char * /*MapName*/) {
                 }
             }
             break;
-#endif
 
         case CF_SETVAR:
             {
@@ -737,7 +708,6 @@ static int ReadEventMap(CurPos &cp, EEventMap *Map, const char * /*MapName*/) {
     return -1;
 }
 
-#ifdef CONFIG_SYNTAX_HILIT
 static int ReadColorize(CurPos &cp, EColorize *Colorize, const char *ModeName) {
     unsigned char obj;
     unsigned short len;
@@ -964,7 +934,6 @@ static int ReadColorize(CurPos &cp, EColorize *Colorize, const char *ModeName) {
     }
     return -1;
 }
-#endif
 
 static int ReadMode(CurPos &cp, EMode *Mode, const char * /*ModeName*/) {
     unsigned char obj;
@@ -1016,7 +985,6 @@ static int ReadObject(CurPos &cp, const char *ObjName) {
         case CF_COLOR:
             if (ReadColors(cp, ObjName) == -1) return -1;
             break;
-#ifdef CONFIG_OBJ_MESSAGES
         case CF_COMPRX:
             {
                 long file, line, msg;
@@ -1034,8 +1002,7 @@ static int ReadObject(CurPos &cp, const char *ObjName) {
                 if (AddCRegexp(file, line, msg, regexp) == 0) return -1;
             }
             break;
-#endif
-#ifdef CONFIG_OBJ_CVS
+
         case CF_CVSIGNRX:
             {
                 const char *regexp;
@@ -1046,9 +1013,7 @@ static int ReadObject(CurPos &cp, const char *ObjName) {
                 if (AddCvsIgnoreRegexp(regexp) == 0) return -1;
             }
             break;
-#endif
 
-#ifdef CONFIG_OBJ_SVN
         case CF_SVNIGNRX:
             {
                 const char *regexp;
@@ -1059,7 +1024,7 @@ static int ReadObject(CurPos &cp, const char *ObjName) {
                 if (AddSvnIgnoreRegexp(regexp) == 0) return -1;
             }
             break;
-#endif
+
         case CF_SETVAR:
             {
                 long what;

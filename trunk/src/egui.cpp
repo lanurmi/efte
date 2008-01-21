@@ -94,11 +94,7 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
         case ExFileCloseAll:            return FileCloseAll(View, State);
         case ExExitEditor:              return ExitEditor(View);
         case ExIncrementalSearch:
-#ifdef CONFIG_I_SEARCH
             return View->MView->Win->IncrementalSearch(View);
-#else
-            return ErFAIL;
-#endif
         }
     }
     switch (Command) {
@@ -371,7 +367,6 @@ int EGUI::FileCloseX(EView *View, int CreateNew, int XClose) {
 
         View->DeleteModel(View->Model);
 
-#ifdef CONFIG_OBJ_DIRECTORY
         if (ActiveModel == 0 && CreateNew) {
             EView *V = ActiveView;
             EModel *m = new EDirectory(0, &ActiveModel, Path);
@@ -383,7 +378,6 @@ int EGUI::FileCloseX(EView *View, int CreateNew, int XClose) {
             } while (V != ActiveView);
             return 0;
         }
-#endif
 
         if (ActiveModel == 0) {
             StopLoop();
@@ -498,7 +492,6 @@ int EGUI::ExitEditor(EView *View) {
             break;
     }
 
-#ifdef CONFIG_DESKTOP
     if (SaveDesktopOnExit && DesktopFileName[0] != 0)
         SaveDesktop(DesktopFileName);
     else if (LoadDesktopMode == 2) {       // Ask about saving?
@@ -511,7 +504,6 @@ int EGUI::ExitEditor(EView *View) {
             SaveDesktop(DesktopFileName);
         }
     }
-#endif
 
     while (ActiveModel) {
         if (View->Model->GetContext() == CONTEXT_ROUTINES)  // Never delete Routine models directly
@@ -668,7 +660,6 @@ int EGUI::FramePrev(GxView * /*View*/) {
     return 0;
 }
 
-#ifdef CONFIG_DESKTOP
 int EGUI::findDesktop(char *argv[]) {
     /*
      *  Locates the desktop file depending on the load desktop mode flag:
@@ -749,7 +740,6 @@ void EGUI::DoLoadDesktopOnEntry(int &/*argc*/, char **argv) {
             LoadDesktop(DesktopFileName);
     }
 }
-#endif // CONFIG_DESKTOP
 
 void EGUI::EditorInit() {
     SSBuffer = new EBuffer(0, (EModel **)&SSBuffer, "Scrap");
@@ -764,7 +754,6 @@ int EGUI::InterfaceInit(int &/*argc*/, char ** /*argv*/) {
     return 0;
 }
 
-#ifdef CONFIG_HISTORY
 void EGUI::DoLoadHistoryOnEntry(int &/*argc*/, char **argv) {
     if (HistoryFileName[0] == 0) {
 #ifdef UNIX
@@ -795,7 +784,6 @@ void EGUI::DoSaveHistoryOnExit() {
     // since we are exiting, free history
     ClearHistory();
 }
-#endif // CONFIG_HISTORY
 
 int EGUI::CmdLoadFiles(int &argc, char **argv) {
     int QuoteNext = 0;
@@ -916,29 +904,19 @@ int EGUI::Start(int &argc, char **argv) {
 
     EditorInit();
 
-#ifdef CONFIG_HISTORY
     DoLoadHistoryOnEntry(argc, argv);
-#endif
-
-#ifdef CONFIG_DESKTOP
     DoLoadDesktopOnEntry(argc, argv);
-#endif
 
     if (CmdLoadFiles(argc, argv) == 0)
         return 3;
 
     if (ActiveModel == 0) {
-#ifdef CONFIG_OBJ_DIRECTORY
         char Path[MAXPATH];
 
         GetDefaultDirectory(0, Path, sizeof(Path));
         EModel *m = new EDirectory(0, &ActiveModel, Path);
         assert(ActiveModel != 0 && m != 0);
         ActiveView->SwitchToModel(ActiveModel);
-#else
-        Usage();
-        return 1;
-#endif
     }
     return 0;
 }
@@ -985,9 +963,7 @@ void EGUI::InterfaceCleanup() {
 }
 
 void EGUI::Stop() {
-#ifdef CONFIG_HISTORY
     DoSaveHistoryOnExit();
-#endif
 
     // free macros
     if (Macros != 0)
@@ -1057,15 +1033,10 @@ void EGUI::Stop() {
 
     // free CRegexp array from o_messages.cpp
     FreeCRegexp();
-#ifdef CONFIG_OBJ_CVS
     // free CvsIgnoreRegexp array from o_messages.cpp
     FreeCvsIgnoreRegexp();
-#endif
-
-#ifdef CONFIG_OBJ_SVN
     // free SvnIgnoreRegexp array from o_messages.cpp
     FreeSvnIgnoreRegexp();
-#endif
 
     // free configuration file path
     free(ConfigSourcePath);

@@ -40,19 +40,13 @@ static void Usage() {
            "  -? -h --help      Display usage.\n"
            "  -!                Ignore config file, use builtin defaults (also -c).\n"
            "  -C[<.cnf>]        Use specified configuration file (no arg=builtin).\n"
-#ifdef CONFIG_DESKTOP
            "  -D[<.dsk>]        Load/Save desktop from <.dsk> file (no arg=disable desktop).\n"
-#endif
-#ifdef CONFIG_HISTORY
            "  -H[<.his>]        Load/Save history from <.his> file (no arg=disable history).\n"
-#endif
            "  -m[<mode>]        Override mode for remaining files (no arg=no override).\n"
            "  -l<line>[,<col>]  Go to line (and column) in next file.\n"
            "  -r                Open next file as read-only.\n"
-#ifdef CONFIG_TAGS
            "  -T[<tagfile>]     Load tags file at startup.\n"
            "  -t<tag>           Locate specified tag.\n"
-#endif
 //           "       -p        Load files into already running eFTE.\n"
         );
 }
@@ -237,7 +231,6 @@ static int CmdLoadConfiguration(int &argc, char **argv) {
                 QuoteAll = 1;
             } else if (argv[Arg][1] == '+') {
                 QuoteNext = 1;
-#ifdef CONFIG_DESKTOP
             } else if (argv[Arg][1] == 'D') {
                 ExpandPath(argv[Arg] + 2, DesktopFileName, sizeof(DesktopFileName));
                 if (IsDirectory(DesktopFileName)) {
@@ -250,8 +243,6 @@ static int CmdLoadConfiguration(int &argc, char **argv) {
                 } else {
                     LoadDesktopOnEntry = 1;
                 }
-#endif
-#ifdef CONFIG_HISTORY
             } else if (argv[Arg][1] == 'H') {
                 strlcpy(HistoryFileName, argv[Arg] + 2, sizeof(HistoryFileName));
                 if (HistoryFileName[0] == 0) {
@@ -259,7 +250,6 @@ static int CmdLoadConfiguration(int &argc, char **argv) {
                 } else {
                     KeepHistory = 1;
                 }
-#endif
             }
         } else {
             if (LoadDesktopOnEntry == 2) {

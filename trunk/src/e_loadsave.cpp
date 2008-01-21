@@ -453,7 +453,6 @@ int EBuffer::SaveTo(char *AFileName) {
 
     if (RCount <= 0) return 0;
 
-#ifdef CONFIG_BACKUP
     // make only backups when user have requested a one
     if (BFI(this, BFI_MakeBackups) != 0) {
         Msg(S_INFO, "Backing up %s...", AFileName);
@@ -462,7 +461,6 @@ int EBuffer::SaveTo(char *AFileName) {
             return 0;
         }
     }
-#endif
 
     Msg(S_INFO, "Writing %s...", AFileName);
 
@@ -500,7 +498,6 @@ int EBuffer::SaveTo(char *AFileName) {
         }
 
         bindex = 0; blen = 0;
-#ifdef CONFIG_BOOKMARKS
         if (BFI(this, BFI_SaveBookmarks) == 1 || BFI(this, BFI_SaveBookmarks) == 2) {
             blen = 4;     // Just after "BOOK"
             while ((bindex = GetUserBookmarkForLine(bindex, l, bname, bpos)) != -1) {
@@ -512,7 +509,6 @@ int EBuffer::SaveTo(char *AFileName) {
                 blen += sprintf(book + blen, "x%04xb", blen);
             } else blen = 0;      // Signal, that no bookmarks were saved
         }
-#endif
 
         // what - write at 1 = beginning / 2 = end of line
         for (int what = 1; what < 3; what++) {
@@ -528,12 +524,10 @@ int EBuffer::SaveTo(char *AFileName) {
                     if (fwrite(fold, 1, foldlen, fp) != foldlen) goto fail;
                     ByteCount += foldlen;
                 }
-#ifdef CONFIG_BOOKMARKS
                 if (BFI(this, BFI_SaveBookmarks) == what && blen) {
                     if (fwrite(book, 1, blen, fp) != blen) goto fail;
                     ByteCount += blen;
                 }
-#endif
                 if (len_end) {
                     if (fwrite(BFS(this, BFS_CommentEnd), 1, len_end, fp) != len_end) goto fail;
                     ByteCount += len_end;
@@ -575,14 +569,10 @@ int EBuffer::SaveTo(char *AFileName) {
     // make only backups when user have requested a one
     if (BFI(this, BFI_MakeBackups) != 0) {
         if (BFI(this, BFI_KeepBackups) == 0
-#ifdef CONFIG_OBJ_CVS
             // No backups for CVS logs
             || this == CvsLogView
-#endif
-#ifdef CONFIG_OBJ_SVN
             // No backups for SVN logs
             || this == SvnLogView
-#endif
            ) {
             unlink(ABackupName);
         }

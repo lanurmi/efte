@@ -32,64 +32,27 @@ typedef HILIT_P((*SyntaxProc));
 int Indent_Plain(EBuffer *B, int Line, int PosCursor);
 HILIT_P(Hilit_Plain);
 
-#ifdef CONFIG_SYNTAX_HILIT
 /* highlighting state */
 
-#ifdef CONFIG_HILIT_C
 HILIT_P(Hilit_C);
-#endif
-#ifdef CONFIG_HILIT_FALCON
 HILIT_P(Hilit_FALCON);
-#endif
-#ifdef CONFIG_HILIT_PERL
 HILIT_P(Hilit_PERL);
-#endif
-#ifdef CONFIG_HILIT_MAKE
 HILIT_P(Hilit_MAKE);
-#endif
-#ifdef CONFIG_HILIT_REXX
 HILIT_P(Hilit_REXX);
-#endif
-#ifdef CONFIG_HILIT_IPF
 HILIT_P(Hilit_IPF);
-#endif
-#ifdef CONFIG_HILIT_ADA
 HILIT_P(Hilit_ADA);
-#endif
-#ifdef CONFIG_HILIT_MSG
 HILIT_P(Hilit_MSG);
-#endif
-#ifdef CONFIG_HILIT_SH
 HILIT_P(Hilit_SH);
-#endif
-#ifdef CONFIG_HILIT_PASCAL
 HILIT_P(Hilit_PASCAL);
-#endif
-#ifdef CONFIG_HILIT_TEX
 HILIT_P(Hilit_TEX);
-#endif
-#ifdef CONFIG_HILIT_FTE
 HILIT_P(Hilit_FTE);
-#endif
-#ifdef CONFIG_HILIT_CATBS
 HILIT_P(Hilit_CATBS);
-#endif
-#ifdef CONFIG_HILIT_SIMPLE
 HILIT_P(Hilit_SIMPLE);
-#endif
 
-#ifdef CONFIG_INDENT_C
 int Indent_C(EBuffer *B, int Line, int PosCursor);
-#endif
-#ifdef CONFIG_INDENT_REXX
 int Indent_REXX(EBuffer *B, int Line, int PosCursor);
-#endif
-#ifdef CONFIG_INDENT_SIMPLE
 int Indent_SIMPLE(EBuffer *B, int Line, int PosCursor);
-#endif
-#ifdef CONFIG_INDENT_FALCON
 int Indent_FALCON(EBuffer *B, int Line, int PosCursor);
-#endif
 
  /*
   * NT has 2-byte charcode and attribute... Following is not portable to non-
@@ -274,6 +237,4 @@ int LookAt(EBuffer *B, int Row, unsigned int Pos, const char *What, hsState Stat
 inline int LookAtNoCase(EBuffer *B, int Row, unsigned int Pos, const char *What, hsState State, int NoWord = 1)
 { return LookAt(B, Row, Pos, What, State, NoWord, 1); }
 
-#endif
-
-#endif
+#endif /* __HILIT_H__ */

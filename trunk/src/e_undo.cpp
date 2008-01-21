@@ -16,14 +16,8 @@ int EBuffer::NextCommand() {
     }
     if (View)
         View->SetMsg(0);
-#ifdef CONFIG_UNDOREDO
     return BeginUndo();
-#else
-    return 1;
-#endif
 }
-
-#ifdef CONFIG_UNDOREDO
 
 int EBuffer::PushBlockData() {
     if (BFI(this, BFI_Undo) == 0) return 1;
@@ -391,4 +385,3 @@ int EBuffer::Undo() {
     US.Undo = 0;
     return rc;
 }
-#endif

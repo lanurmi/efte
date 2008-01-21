@@ -224,9 +224,7 @@ EMode::EMode(EMode *aMode, EEventMap *Map, const char *aName) {
     fParent = aMode;
     InitWordChars();
     if (aMode) {
-#ifdef CONFIG_SYNTAX_HILIT
         fColorize = aMode->fColorize;
-#endif
         Flags = aMode->Flags;
 
         // duplicate strings in flags to allow them be freed
@@ -253,9 +251,7 @@ EMode::EMode(EMode *aMode, EEventMap *Map, const char *aName) {
         MatchLine = 0;
         MatchNameRx = 0;
         MatchLineRx = 0;
-#ifdef CONFIG_SYNTAX_HILIT
         fColorize = 0;
-#endif
         Flags = DefaultBufferFlags;
 
         // there is no strings in default settings...
@@ -401,7 +397,6 @@ char *EEventMap::GetMenu(int which) {
         return Parent->GetMenu(which);
 }
 
-#ifdef CONFIG_ABBREV
 int EEventMap::AddAbbrev(EAbbrev *ab) {
     int i = HashStr(ab->Match, ABBREV_HASH);
     ab->next = abbrev[i];
@@ -428,7 +423,6 @@ EAbbrev *EMode::FindAbbrev(const char *string) {
     }
     return 0;
 }
-#endif
 
 static const struct {
     const char *Name;
@@ -569,7 +563,6 @@ EKey::~EKey()
     delete fKeyMap;
 }
 
-#ifdef CONFIG_ABBREV
 EAbbrev::EAbbrev(const char *aMatch, const char *aReplace) {
     next = 0;
     Match = strdup(aMatch);
@@ -590,7 +583,6 @@ EAbbrev::~EAbbrev() {
     if (Replace)
         free(Replace);
 }
-#endif
 
 int AddCommand(int no, int Command, int count, int ign) {
     if (count == 0) return 0;

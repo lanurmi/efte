@@ -36,7 +36,6 @@
 #include <ctype.h>
 #include "ftever.h"
 #include "sysdep.h"
-#include "feature.h"
 #include "console.h"
 #include "gui.h"
 #include "c_history.h"

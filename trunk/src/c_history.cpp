@@ -9,8 +9,6 @@
 
 #include "fte.h"
 
-#ifdef CONFIG_HISTORY
-
 #define HISTORY_VER "eFTE History 1\n"
 
 char HistoryFileName[256] = "";
@@ -188,7 +186,7 @@ int LoadHistory(char *FileName) { /*FOLD00*/
     return 1;
 }
 
-int UpdateFPos(char *FileName, int Row, int Col) { /*fold00*/
+int UpdateFPos(char *FileName, int Row, int Col) { /*FOLD00*/
     int L = 0, R = FPHistoryCount, M, N;
     FPosHistory *fp, **NH;
     int cmp;
@@ -310,7 +308,7 @@ int CountInputHistory(int Id) { /*FOLD00*/
     return c;
 }
 
-int GetInputHistory(int Id, char *String, int len, int Nth) { /*fold00*/
+int GetInputHistory(int Id, char *String, int len, int Nth) { /*FOLD00*/
     int i = 0;
 
     assert(len > 0);
@@ -332,8 +330,7 @@ int GetInputHistory(int Id, char *String, int len, int Nth) { /*fold00*/
 /*
  * Get bookmarks for given Buffer (file) from history.
  */
-int RetrieveBookmarks(EBuffer *buffer) { /*fold00*/
-#ifdef CONFIG_BOOKMARKS
+int RetrieveBookmarks(EBuffer *buffer) { /*FOLD00*/
     int L = 0, R = FPHistoryCount, M,i;
     int cmp;
     HBookmark *bmk;
@@ -364,16 +361,12 @@ int RetrieveBookmarks(EBuffer *buffer) { /*fold00*/
         }
     }
     return 1;
-#else
-    return 1;
-#endif
 }
 
 /*
  * Store given Buffer's bookmarks to history.
  */
-int StoreBookmarks(EBuffer *buffer) { /*fold00*/
-#ifdef CONFIG_BOOKMARKS
+int StoreBookmarks(EBuffer *buffer) { /*FOLD00*/
     int L = 0, R = FPHistoryCount, M,i,j;
     int cmp;
     char *name;
@@ -432,9 +425,4 @@ int StoreBookmarks(EBuffer *buffer) { /*fold00*/
     }
     // Should not get here
     return 0;
-#else
-    return 0
-#endif
 }
-
-#endif

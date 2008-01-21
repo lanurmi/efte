@@ -11,10 +11,7 @@
 #ifndef _SVNLOG_H_
 #define _SVNLOG_H_
 
-#include "feature.h"
 #include "e_buffer.h"
-
-#ifdef CONFIG_OBJ_SVN
 
 class ESvnLog:public EBuffer {
     public:
@@ -44,7 +41,5 @@ class ESvnLog:public EBuffer {
 };
 
 extern ESvnLog *SvnLogView;
-
-#endif
 
 #endif

@@ -10,13 +10,10 @@
 #ifndef __TAGS_H
 #define __TAGS_H
 
-#include "feature.h"
 #include <stdio.h> // FILE
 
 class EView;
 class EBuffer;
-
-#ifdef CONFIG_TAGS
 
 int TagsAdd(char *FileName);
 int TagsSave(FILE *fp);
@@ -31,7 +28,5 @@ int TagComplete(char **Words, int *WordsPos, int WordsMax, char *Tag);
 int TagNext(EView *V);
 int TagPrev(EView *V);
 int TagPop(EView *V);
-
-#endif
 
 #endif // __TAGS_H

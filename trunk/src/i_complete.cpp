@@ -9,25 +9,16 @@
 
 #include "fte.h"
 
-#ifdef CONFIG_I_COMPLETE
-
 #define STRCOMPLETE "Complete Word: ["
 #define STRNOCOMPLETE "No word for completition..."
-
-#define LOCALE_SORT
-
-#ifdef LOCALE_SORT
 
 #if defined(__IBMCPP__)
 static int _LNK_CONV CmpStr(const void *p1, const void *p2) {
 #else
 static int CmpStr(const void *p1, const void *p2) {
-#endif
-    //printf("%s  %s  %d\n", *(char **)p1, *(char **)p2,
-    //	   strcoll(*(char **)p1, *(char **)p2));
+#endif // defined(__IBMCPP__)
     return strcoll(*(const char **)p1, *(const char **)p2);
 }
-#endif
 
 /**
  * Create Sorted list of possible word extensions
@@ -392,10 +383,8 @@ int ExComplete::RefreshComplete()
     Buffer->Match.Row = Buffer->Match.Col = -1;
     Buffer->MatchLen = Buffer->MatchCount = 0;
 
-#ifdef LOCALE_SORT
     // sort by current locales
     qsort(Words, WordsLast, sizeof(Words[0]), CmpStr);
-#endif
 
     FixedUpdate(0);
 
@@ -426,16 +415,3 @@ void ExComplete::FixedUpdate(int add)
 	WordFixedCount = WordsLast;
 
 }
-/*
-    // Well this was my first idea - but these menus are unusable
-    int menu = NewMenu("CW");
-    int n;
-    n = NewItem(menu, "Word1");
-    Menus[menu].Items[n].Cmd = ExFind;
-    n = NewItem(menu, "Word2");
-    Menus[menu].Items[n].Cmd = ExMoveLineStart;
-    n = NewItem(menu, "Word3");
-    Menus[menu].Items[n].Cmd = ExMovePageEnd;
-    printf(">%d ****\n", View->MView->Win->Parent->PopupMenu("CW"));
- */
-#endif

@@ -14,7 +14,6 @@
 
 extern RxNode *CompletionFilter;
 
-#ifdef CONFIG_BACKUP
 // should use DosCopy under OS/2...
 static int copyfile(char *f1, char *f2) { // from F1 to F2
     void *buffer;
@@ -82,7 +81,6 @@ char *MakeBackup(char *FileName, char *NewName) {
 
     return NULL;
 }
-#endif
 
 int GetCharFromEvent(TEvent &E, char *Ch) {
     *Ch = 0;

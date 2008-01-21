@@ -43,15 +43,9 @@ public:
     int ReadStr(const char *Prompt, unsigned int BufLen, char *Str, Completer Comp, int Select, int HistId);
     int Choice(unsigned long Flags, const char *Title, int NSel, ... /* choices, format, args */);
     TKeyCode GetChar(const char *Prompt);
-#ifdef CONFIG_I_SEARCH
     int IncrementalSearch(EView *V);
-#endif
-#ifdef CONFIG_I_ASCII
     int PickASCII();
-#endif
-#ifdef CONFIG_I_COMPLETE
     int ICompleteWord(EView *View);
-#endif
 
     int GetStr(const char *Prompt, unsigned int BufLen, char *Str, int HistId);
     int GetFile(const char *Prompt, unsigned int BufLen, char *Str, int HistId, int Flags);

@@ -9,8 +9,6 @@
 
 #include "fte.h"
 
-#ifdef CONFIG_HILIT_FTE
-
 // These states should match those in h_c.cpp to let autoindentation work
 #define hsFTE_Normal       0
 #define hsFTE_Comment      1
@@ -167,4 +165,3 @@ int Hilit_FTE(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line,
     *ECol = C;
     return 0;
 }
-#endif

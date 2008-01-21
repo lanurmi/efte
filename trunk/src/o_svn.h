@@ -9,8 +9,6 @@
 #ifndef __SVN_H__
 #define __SVN_H__
 
-#ifdef CONFIG_OBJ_SVN
-
 class ESvn:public ESvnBase {
     public:
         char *LogFile;
@@ -44,7 +42,5 @@ class ESvn:public ESvnBase {
 };
 
 extern ESvn *SvnView;
-
-#endif
 
 #endif

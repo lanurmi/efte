@@ -42,9 +42,7 @@ public:
     EBufferFlags Flags;
     EEventMap *fEventMap;
     EMode *fParent;
-#ifdef CONFIG_SYNTAX_HILIT
     EColorize *fColorize;
-#endif
     char filename[256];
     
     EMode(EMode *aMode, EEventMap *Map, const char *aName);
@@ -79,9 +77,7 @@ public:
     ~EEventMap();
     void SetMenu(int which, const char *What);
     char *GetMenu(int which);
-#ifdef CONFIG_ABBREV
     int AddAbbrev(EAbbrev *ab);
-#endif
 };
 
 #define CT_COMMAND  0
@@ -118,7 +114,6 @@ public:
     ~EKey();
 };
 
-#ifdef CONFIG_ABBREV
 class EAbbrev {
 public:
     EAbbrev *next;
@@ -130,7 +125,6 @@ public:
     EAbbrev(const char *aMatch, int aCmd);
     ~EAbbrev();
 };
-#endif
 
 class ExState { // state of macro execution
 public:

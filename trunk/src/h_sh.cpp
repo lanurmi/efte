@@ -9,8 +9,6 @@
 
 #include "fte.h"
 
-#ifdef CONFIG_HILIT_SH
-
 enum { hsSH_Normal, hsSH_SQuote, hsSH_DQuote, hsSH_BQuote,
 hsSH_DBQuote, hsSH_Control, hsSH_Keyword, hsSH_Comment,
 hsSH_Variable, hsSH_EOF, hsSH_InOpt };
@@ -264,4 +262,3 @@ int Hilit_SH(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, 
     *ECol = C;
     return 0;
 }
-#endif

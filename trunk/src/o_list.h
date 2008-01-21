@@ -24,9 +24,7 @@ public:
     void GetPos();
     
     virtual void HandleEvent(TEvent &Event);
-#ifdef CONFIG_MOUSE
     virtual void HandleMouse(TEvent &Event);
-#endif
 
     void PaintView(int PaintAll);
     

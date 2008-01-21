@@ -714,11 +714,9 @@ int EBuffer::BackSpace() {
             if (DelText(Y, ScreenPos(L, C), 1) == 0) return 0;
         } 
     }
-#ifdef CONFIG_WORDWRAP
     if (BFI(this, BFI_WordWrap) == 2) {
         if (DoWrap(0) == 0) return 0;
     }
-#endif
     if (BFI(this, BFI_Trim)) {
         Y = VToR(CP.Row);
         if (TrimLine(Y) == 0) return 0;
@@ -754,7 +752,6 @@ int EBuffer::Delete() {
         }
     } else 
         if (LineJoin() == 0) return 0;
-#ifdef CONFIG_WORDWRAP
     if (BFI(this, BFI_WordWrap) == 2) {
         if (DoWrap(0) == 0) return 0;
         if (CP.Col >= LineLen(Y))
@@ -762,7 +759,6 @@ int EBuffer::Delete() {
                 if (SetPos(BFI(this, BFI_LeftMargin), CP.Row + 1) == 0) return 0;
             }
     }
-#endif
     if (BFI(this, BFI_Trim))
         if (TrimLine(VToR(CP.Row)) == 0)
             return 0;
@@ -826,18 +822,10 @@ int EBuffer::LineIndent() {
         int L = VToR(CP.Row);
         
         switch (BFI(this, BFI_IndentMode)) {
-#ifdef CONFIG_INDENT_C
         case INDENT_C: rc = Indent_C(this, L, 1); break;
-#endif
-#ifdef CONFIG_INDENT_REXX
         case INDENT_REXX: rc = Indent_REXX(this, L, 1); break;
-#endif
-#ifdef CONFIG_INDENT_FALCON
         case INDENT_FALCON: rc = Indent_FALCON(this, L, 1); break;
-#endif
-#ifdef CONFIG_INDENT_SIMPLE
         case INDENT_SIMPLE: rc = Indent_SIMPLE(this, L, 1); break;
-#endif
         default: rc = Indent_Plain(this, L, 1); break;
         }
     }
@@ -874,7 +862,6 @@ int EBuffer::TypeChar(char aCh) { // does abbrev expansion if appropriate
         if (CheckBlock() == 1)
             if (BlockKill() == 0)
                 return 0;
-#ifdef CONFIG_ABBREV    //fprintf(stderr, "TypeChar\n");
     if (ChClass(aCh) == 0 && BFI(this, BFI_Abbreviations) == 1) {
         PELine L = VLine(CP.Row);
         int C, P, P1, C1, Len, R;
@@ -922,7 +909,6 @@ int EBuffer::TypeChar(char aCh) { // does abbrev expansion if appropriate
             }
         }
     }
-#endif
     return InsertString(&aCh, 1);
 }
 
@@ -952,7 +938,6 @@ int EBuffer::InsertString(const char *aStr, int aCount) {
     if (BFI(this, BFI_Trim) && *aStr != '\t')
         if (TrimLine(L) == 0)
             return 0;
-#ifdef CONFIG_WORDWRAP
     if (BFI(this, BFI_WordWrap) == 2) {
         if (DoWrap(0) == 0) return 0;
     } else if (BFI(this, BFI_WordWrap) == 1) {
@@ -979,7 +964,6 @@ int EBuffer::InsertString(const char *aStr, int aCount) {
             if (SetPos(CP.Col - C - 1 + BFI(this, BFI_LeftMargin), CP.Row + 1) == 0) return 0;
         }
     }
-#endif
     return 1;
 }
 
@@ -1068,7 +1052,6 @@ int EBuffer::IndentLine(int Row, int Indent) {
     return Ind - I;
 }
 
-#ifdef CONFIG_UNDOREDO
 int EBuffer::CanUndo() {
     if (BFI(this, BFI_Undo) == 0) return 0;
     if (US.Num == 0 || US.UndoPtr == 0) return 0;
@@ -1080,7 +1063,6 @@ int EBuffer::CanRedo() {
     if (US.Num == 0 || US.UndoPtr == US.Num) return 0;
     return 1;
 }
-#endif
 
 int EBuffer::IsLineBlank(int Row) {
     PELine X = RLine(Row);
@@ -1092,7 +1074,6 @@ int EBuffer::IsLineBlank(int Row) {
     return 1;
 }
 
-#ifdef CONFIG_WORDWRAP
 #define WFAIL(x) return 0	/*do { puts(#x "\x7"); return -1; } while (0) */
 
 int EBuffer::DoWrap(int WrapAll) {
@@ -1211,7 +1192,6 @@ int EBuffer::WrapPara() {
         if (SetPos(CP.Col, CP.Row + 1) == 0) return 0;
     return DoWrap(1);
 }
-#endif
 
 int EBuffer::LineCenter() {
     if (LineTrim() == 0)

@@ -6,7 +6,6 @@
  *    License or the Artistic License, as specified in the README file.
  *
  */
-#include "feature.h"
 
 #include <ncurses.h>
 #include <unistd.h>
@@ -158,9 +157,7 @@ int ConInit(int /*XSize */ , int /*YSize */ )
 	ESCDELAY = escDelay;
 	initscr();
 	ConInitColors();
-#ifdef CONFIG_MOUSE
 	mousemask(ALL_MOUSE_EVENTS|REPORT_MOUSE_POSITION, NULL);
-#endif
 	/*    cbreak (); */
 	raw();
 	noecho();
@@ -432,7 +429,6 @@ int ConCursorVisible()
 void ConSetInsertState(bool insert) {
 }
 
-#ifdef CONFIG_MOUSE
 int ConSetMousePos(int /*X */ , int /*Y */ )
 {
 	return -1;
@@ -515,7 +511,6 @@ static int ConGetMouseEvent(
 	}
 	return 0;
 }
-#endif
 
 static TEvent Prev =
 {evNone};
@@ -711,12 +706,10 @@ int ConGetEvent(TEventMask /*EventMask */ ,
 				ResizeWindow(COLS,LINES);
 				Event->What = evNone;
 				break;
-#ifdef CONFIG_MOUSE
 			case KEY_MOUSE:
 				Event->What = evNone;
 				ConGetMouseEvent(Event);
 				break;
-#endif
 			case KEY_SRIGHT:
 				KEvent->Code = kfShift | kbRight;
 				break;
@@ -884,9 +877,7 @@ int GUI::RunProgram(int /*mode */ , char *Command)
 	int rc, W, H, W1, H1;
 
 	ConQuerySize(&W, &H);
-#ifdef CONFIG_MOUSE
 	ConHideMouse();
-#endif
 	ConSuspend();
 
 	if (*Command == 0)		// empty string = shell
@@ -895,9 +886,7 @@ int GUI::RunProgram(int /*mode */ , char *Command)
 	rc = system(Command);
 
 	ConContinue();
-#ifdef CONFIG_MOUSE
 	ConShowMouse();
-#endif
 	ConQuerySize(&W1, &H1);
 
 	if (W != W1 || H != H1) {

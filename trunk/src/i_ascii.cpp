@@ -9,8 +9,6 @@
 
 #include "fte.h"
 
-#ifdef CONFIG_I_ASCII
-
 static int SPos = 0;
 static int SLPos = 0;
 
@@ -126,4 +124,3 @@ void ExASCII::RepaintStatus() {
     ConShowCursor();
     ConPutBox(0, H - 1, W, 1, B);
 }
-#endif

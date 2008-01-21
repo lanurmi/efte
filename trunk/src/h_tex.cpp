@@ -9,8 +9,6 @@
 
 #include "fte.h"
 
-#ifdef CONFIG_HILIT_TEX
-
 #define hsTEX_Normal  0
 #define hsTEX_Tag     1
 #define hsTEX_Comment 2
@@ -85,4 +83,3 @@ int Hilit_TEX(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line,
     *ECol = C;
     return 0;
 }
-#endif

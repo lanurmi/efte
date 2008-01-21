@@ -9,8 +9,6 @@
 
 #include "fte.h"
 
-#ifdef CONFIG_HILIT_IPF
-
 #define hsIPF_Normal  0
 #define hsIPF_Symbol  1
 #define hsIPF_Tag     2
@@ -103,4 +101,3 @@ int Hilit_IPF(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line,
     *ECol = C;
     return 0;
 }
-#endif
