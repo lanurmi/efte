@@ -506,7 +506,7 @@ int EBuffer::SaveTo(char *AFileName) {
             while ((bindex = GetUserBookmarkForLine(bindex, l, bname, bpos)) != -1) {
                 // Skip too long bookmarks
                 if (strlen(bname) > 256 || blen + strlen(bname) + 6 + 6 > sizeof(book)) continue;
-                blen += sprintf(book + blen, "%04x%02x%s", bpos.Col, strlen(bname), bname);
+                blen += sprintf(book + blen, "%04x%02x%s", bpos.Col, (unsigned int)strlen(bname), bname);
             }
             if (blen != 4) {
                 blen += sprintf(book + blen, "x%04xb", blen);
