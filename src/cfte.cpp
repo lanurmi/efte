@@ -954,7 +954,7 @@ static int ParseConfigFile(CurPos &cp) {
                     PutString(cp, CF_SUB, Name);
                     if (Parse(cp) != P_OPENBRACE) Fail(cp, "'{' expected");
                     GetOp(cp, P_OPENBRACE);
-                    if (ParseCommands(cp, strdup(Name ? Name : "")) == -1)
+                    if (ParseCommands(cp, strdup(Name)) == -1)
                         Fail(cp, "Parse failed");
                     PutNull(cp, CF_END);
                 }
