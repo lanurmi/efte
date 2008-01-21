@@ -14,7 +14,6 @@
 int Hilit_Plain(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine* Line, hlState& State, hsState *StateMap, int *ECol) {
     HILIT_VARS(BF->Mode->fColorize->Colors, Line);
 
-#ifdef CONFIG_WORD_HILIT
     int j = 0;
     
     if (BF->Mode->fColorize->Keywords.TotalCount > 0 ||
@@ -49,29 +48,29 @@ int Hilit_Plain(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine* Lin
                 continue;
             }
         }
-    } else
-#endif
-    if (ExpandTabs) { /* use slow mode */
-        for (i = 0; i < Line->Count;) {
-            IF_TAB() else {
-                ColorNext();
+    } else {
+        if (ExpandTabs) { /* use slow mode */
+            for (i = 0; i < Line->Count;) {
+                IF_TAB() else {
+                    ColorNext();
+                }
             }
-        }
-    } else { /* fast mode */
-        if (Pos < Line->Count) {
-            if (Pos + Width < Line->Count) {
-                if (B) 
-                    MoveMem(B, 0, Width, Line->Chars + Pos, HILIT_CLRD(), Width);
-                if (StateMap)
-                    memset(StateMap, State, Line->Count);
-            } else {
-                if (B) 
-                    MoveMem(B, 0, Width, Line->Chars + Pos, HILIT_CLRD(), Line->Count - Pos);
-                if (StateMap)
-                    memset(StateMap, State, Line->Count);
+        } else { /* fast mode */
+            if (Pos < Line->Count) {
+                if (Pos + Width < Line->Count) {
+                    if (B)
+                        MoveMem(B, 0, Width, Line->Chars + Pos, HILIT_CLRD(), Width);
+                    if (StateMap)
+                        memset(StateMap, State, Line->Count);
+                } else {
+                    if (B)
+                        MoveMem(B, 0, Width, Line->Chars + Pos, HILIT_CLRD(), Line->Count - Pos);
+                    if (StateMap)
+                        memset(StateMap, State, Line->Count);
+                }
             }
+            C = Line->Count;
         }
-        C = Line->Count;
     }
     *ECol = C;
     State = 0;

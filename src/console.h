@@ -10,8 +10,6 @@
 #ifndef __CONSOLE_H__
 #define __CONSOLE_H__
 
-#include "feature.h"
-
 /* don't change these, used as index */
 #define DCH_C1 0
 #define DCH_C2 1
@@ -181,14 +179,12 @@ int ConHideCursor();
 int ConCursorVisible();
 void ConSetInsertState(bool insert);
 
-#ifdef CONFIG_MOUSE
 int ConSetMousePos(int X, int Y);
 int ConQueryMousePos(int *X, int *Y);
 int ConShowMouse();
 int ConHideMouse();
 int ConMouseVisible();
 int ConQueryMouseButtons(int *ButtonCount);
-#endif
 
 int ConGetEvent(TEventMask EventMask, TEvent *Event, int WaitTime, int Delete);
 int ConPutEvent(TEvent Event);

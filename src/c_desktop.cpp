@@ -9,8 +9,6 @@
 
 #include "fte.h"
 
-#ifdef CONFIG_DESKTOP
-
 #define DESKTOP_VER "eFTE Desktop 2\n"
 #define DESKTOP_VER1 "eFTE Desktop 1\n"
 
@@ -32,31 +30,24 @@ int SaveDesktop(char *FileName) {
     while (M) {
         switch(M->GetContext()) {
         case CONTEXT_FILE:
-#ifdef CONFIG_OBJ_CVS
             if (M != CvsLogView) {
-#else
-            {
-#endif
                 EBuffer *B = (EBuffer *)M;
                 fprintf(fp, "F|%d|%s\n", B->ModelNo, B->FileName);
             }
             break;
-#ifdef CONFIG_OBJ_DIRECTORY
+
         case CONTEXT_DIRECTORY:
             {
                 EDirectory *D = (EDirectory *)M;
                 fprintf(fp, "D|%d|%s\n", D->ModelNo, D->Path);
             }
             break;
-#endif
         }
         M = M->Next;
         if (M == ActiveModel)
             break;
     }
-#ifdef CONFIG_TAGS
     TagsSave(fp);
-#endif
     markIndex.saveToDesktop(fp);
     fclose(fp);
     return 1;
@@ -68,9 +59,7 @@ int LoadDesktop(char *FileName) {
     char *p, *e;
     int FLCount = 0;
 
-#ifdef CONFIG_TAGS
     TagClear();
-#endif
 
     fp = fopen(FileName, "r");
     if (fp == 0)
@@ -106,11 +95,9 @@ int LoadDesktop(char *FileName) {
                 if (FileLoad(0, p, 0, ActiveView))
                     FLCount++;
                 suspendLoads  = 0;
-#ifdef CONFIG_OBJ_DIRECTORY
             } else if (line[0] == 'D') { // directory
                 EModel *m = new EDirectory(0, &ActiveModel, p);
                 assert(ActiveModel != 0 && m != 0);
-#endif
             }
 
             if (ActiveModel) {
@@ -126,10 +113,8 @@ int LoadDesktop(char *FileName) {
                 }
             }
         } else {
-#ifdef CONFIG_TAGS
             if (line[0] == 'T' && line[1] == '|') { // tag file
                 TagsAdd(line + 2);
-#endif
             } else if (line[0] == 'M' && line[1] == '|') { // mark
                 char *name;
                 char *file;
@@ -162,5 +147,3 @@ int LoadDesktop(char *FileName) {
     fclose(fp);
     return 1;
 }
-
-#endif

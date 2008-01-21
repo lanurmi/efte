@@ -9,8 +9,6 @@
 
 #include "fte.h"
 
-#ifdef CONFIG_HILIT_ADA
-
 #define hsAda_Normal       0
 #define hsAda_Comment      1
 #define hsAda_CommentL     2
@@ -126,4 +124,3 @@ int Hilit_ADA(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line,
     *ECol = C;
     return 0;
 }
-#endif

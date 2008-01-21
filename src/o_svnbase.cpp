@@ -11,8 +11,6 @@
 #include "c_commands.h"
 #include "o_svnbase.h"
 
-#ifdef CONFIG_OBJ_SVN
-
 #define MAXREGEXP 32
 
 static int SvnIgnoreRegexpCount=0;
@@ -429,5 +427,3 @@ void ESvnBase::GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen) {
     strncpy (ASTitle,Title,SMaxLen);
     ASTitle[SMaxLen-1]=0;
 }
-
-#endif

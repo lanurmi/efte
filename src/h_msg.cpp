@@ -9,8 +9,6 @@
 
 #include "fte.h"
 
-#ifdef CONFIG_HILIT_MSG
-
 #define hsMSG_Normal  0
 #define hsMSG_Header  1
 #define hsMSG_Quote   2
@@ -83,7 +81,6 @@ int Hilit_MSG(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine* Line,
     }
 
     ChColor DefColor = Color;
-#ifdef CONFIG_WORD_HILIT
     int j = 0;
     
     if (BF->Mode->fColorize->Keywords.TotalCount > 0 ||
@@ -117,33 +114,31 @@ int Hilit_MSG(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine* Line,
             }
         }
     } else
-#endif
-    if (ExpandTabs) { /* use slow mode */
-        for (i = 0; i < Line->Count;) {
-            IF_TAB() else {
-                ColorNext();
+
+        if (ExpandTabs) { /* use slow mode */
+            for (i = 0; i < Line->Count;) {
+                IF_TAB() else {
+                    ColorNext();
+                }
             }
-        }
-    } else { /* fast mode */
-        if (Pos < Line->Count) {
-            if (Pos + Width < Line->Count) {
-                if (B) 
-                    MoveMem(B, 0, Width, Line->Chars + Pos, Color, Width);
-                if (StateMap)
-                    memset(StateMap, State, Line->Count);
-            } else {
-                if (B)
-                    MoveMem(B, 0, Width, Line->Chars + Pos, Color, Line->Count - Pos);
-                if (StateMap)
-                    memset(StateMap, State, Line->Count);
+        } else { /* fast mode */
+            if (Pos < Line->Count) {
+                if (Pos + Width < Line->Count) {
+                    if (B)
+                        MoveMem(B, 0, Width, Line->Chars + Pos, Color, Width);
+                    if (StateMap)
+                        memset(StateMap, State, Line->Count);
+                } else {
+                    if (B)
+                        MoveMem(B, 0, Width, Line->Chars + Pos, Color, Line->Count - Pos);
+                    if (StateMap)
+                        memset(StateMap, State, Line->Count);
+                }
             }
+            C = Line->Count;
         }
-        C = Line->Count;
-    }
-    if (State != hsMSG_Header) 
+    if (State != hsMSG_Header)
         State = hsMSG_Normal;
     *ECol = C;
     return 0;
 }
-
-#endif

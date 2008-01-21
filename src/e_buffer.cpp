@@ -35,7 +35,6 @@ EBuffer::EBuffer(int createFlags, EModel **ARoot, const char * /*AName*/)
     ExtendGrab = 0;
     AutoExtend = 0;
     MatchLen = MatchCount = 0;
-#ifdef CONFIG_UNDOREDO
     US.Num = 0;
     US.Data = 0;
     US.Top = 0;
@@ -43,20 +42,13 @@ EBuffer::EBuffer(int createFlags, EModel **ARoot, const char * /*AName*/)
     US.NextCmd = 1;
     US.Record = 1;
     US.Undo = 0;
-#endif
-#ifdef CONFIG_BOOKMARKS
     BMCount = 0;
     BMarks = 0;
-#endif
-#ifdef CONFIG_OBJ_ROUTINE
     rlst.Count = 0;
     rlst.Lines = 0;
     Routines = 0;
-#endif
-#ifdef CONFIG_WORD_HILIT
     WordList = 0;
     WordCount = 0;
-#endif
     //Name = strdup(AName);
     Allocate(0);
     AllocVis(0);
@@ -68,27 +60,21 @@ EBuffer::EBuffer(int createFlags, EModel **ARoot, const char * /*AName*/)
     MinRedraw = -1;
     MaxRedraw = -1;
     RedrawToEos = 0;
-#ifdef CONFIG_SYNTAX_HILIT
     StartHilit = 0;
     EndHilit = -1;
     HilitProc = 0;
     if (Mode && Mode->fColorize)
         HilitProc = GetHilitProc(Mode->fColorize->SyntaxParser);
-#endif
     InsertLine(CP,0,0); /* there should always be at least one line in the edit buffer */
     Flags = (Mode->Flags);
     Modified = 0;
 }
 
 EBuffer::~EBuffer() {
-#ifdef CONFIG_HISTORY
     if (FileName != 0 && Loaded) {
         UpdateFPos(FileName, VToR(CP.Row), CP.Col);
-#ifdef CONFIG_BOOKMARKS
         if (BFI (this,BFI_SaveBookmarks)==3) StoreBookmarks(this);
-#endif
     }
-#endif
     if (FileName && Loaded)
         markIndex.storeForBuffer(this);
     
@@ -98,7 +84,6 @@ EBuffer::~EBuffer() {
     //free(Name);
     if (FileName)
 	free(FileName);
-#ifdef CONFIG_BOOKMARKS
     if (BMCount != 0) {
         for (int i = 0; i < BMCount; i++)
             free(BMarks[i].Name);
@@ -106,28 +91,22 @@ EBuffer::~EBuffer() {
         BMarks = 0;
         BMCount = 0;
     }
-#endif
-#ifdef CONFIG_OBJ_ROUTINE
     if (rlst.Lines) {
         free(rlst.Lines);
         rlst.Lines = 0;
     }
     DeleteRelated();
-#endif
 }
 
 void EBuffer::DeleteRelated() {
-#ifdef CONFIG_OBJ_ROUTINE
     if (Routines) {
         ::ActiveView->DeleteModel(Routines);
         Routines = 0;
     }
-#endif
 }
 
 int EBuffer::Clear() {
     Modified = 1;
-#ifdef CONFIG_SYNTAX_HILIT
     EndHilit = -1;
     StartHilit = 0;
 
@@ -139,14 +118,12 @@ int EBuffer::Clear() {
 
     WordCount = 0;
     WordList = 0;
-#endif
-#ifdef CONFIG_OBJ_ROUTINE
     rlst.Count = 0;
     if (rlst.Lines) {
         free(rlst.Lines);
         rlst.Lines = 0;
     }
-#endif
+
     if (LL)
     {
 	for (int i = 0; i < RCount; i++)
@@ -161,9 +138,7 @@ int EBuffer::Clear() {
         free(VV);
 	VV = 0;
     }
-#ifdef CONFIG_UNDOREDO
     FreeUndo();
-#endif
     if (FCount != 0) {
         free(FF);
         FCount = 0;
@@ -172,7 +147,6 @@ int EBuffer::Clear() {
     return 0;
 }
 
-#ifdef CONFIG_UNDOREDO
 int EBuffer::FreeUndo() {
     for (int j = 0; j < US.Num; j++)
         free(US.Data[j]);
@@ -186,7 +160,6 @@ int EBuffer::FreeUndo() {
     US.UndoPtr = 0;
     return 1;
 }
-#endif
 
 int EBuffer::Modify() {
     // if RecheckReadOnly is activated do readonly checking when necessary
@@ -239,10 +212,8 @@ int EBuffer::Modify() {
                 }
             }
         }
-#ifdef CONFIG_UNDOREDO
         if (BFI(this, BFI_Undo))
             if (PushUChar(ucModified) == 0) return 0;
-#endif
     }
     Modified++;
     if (Modified == 0) Modified++;
@@ -376,7 +347,6 @@ int EBuffer::UpdateMarker(int Type, int Row, int Col, int Rows, int Cols) {
         V = V->NextView;
     }
     
-#ifdef CONFIG_OBJ_ROUTINE
     for (int i = 0; i < rlst.Count && rlst.Lines; i++) {
         EPoint M;
 
@@ -385,7 +355,6 @@ int EBuffer::UpdateMarker(int Type, int Row, int Col, int Rows, int Cols) {
         UpdateMark(M, Type, Row, Col, Rows, Cols);
         rlst.Lines[i] = M.Row;
     }
-#endif
     
     for (int f = 0; f < FCount; f++) {
         EPoint M;
@@ -396,10 +365,8 @@ int EBuffer::UpdateMarker(int Type, int Row, int Col, int Rows, int Cols) {
         FF[f].line = M.Row;
     }
     
-#ifdef CONFIG_BOOKMARKS
     for (int b = 0; b < BMCount; b++)
         UpdateMark(BMarks[b].BM, Type, Row, Col, Rows, Cols);
-#endif
     
     if (OldBB.Row != BB.Row) {
         int MinL = Min(OldBB.Row, BB.Row);
@@ -450,11 +417,9 @@ int EBuffer::SetFileName(const char *AFileName, const char *AMode) {
         Mode = GetModeForName(AFileName);
     assert(Mode != 0);
     Flags = (Mode->Flags);
-#ifdef CONFIG_SYNTAX_HILIT
     HilitProc = 0;
     if (Mode && Mode->fColorize)
         HilitProc = GetHilitProc(Mode->fColorize->SyntaxParser);
-#endif
     UpdateTitle();
     return FileName?1:0;
 }
@@ -462,13 +427,11 @@ int EBuffer::SetFileName(const char *AFileName, const char *AMode) {
 int EBuffer::SetPos(int Col, int Row, int tabMode) {
     assert (Col >= 0 && Row >= 0 && Row < VCount);
 
-#ifdef CONFIG_UNDOREDO
     if (BFI(this, BFI_Undo) == 1 && BFI(this, BFI_UndoMoves) == 1) {
         if (PushULong(CP.Col) == 0) return 0;
         if (PushULong(CP.Row) == 0) return 0;
         if (PushUChar(ucPosition) == 0) return 0;
     }
-#endif
     if (AutoExtend) {
         BlockExtendBegin();
         AutoExtend = 1;
@@ -599,14 +562,12 @@ int EBuffer::DelLine(int Row, int DoMark) {
     VLine = RToV(Row);
     assert(VLine != -1);
     
-#ifdef CONFIG_UNDOREDO
     if (BFI(this, BFI_Undo) == 1) {
         if (PushUData(RLine(Row)->Chars, RLine(Row)->Count) == 0) return 0;
         if (PushULong(RLine(Row)->Count) == 0) return 0;
         if (PushULong(Row) == 0) return 0;
         if (PushUChar(ucDelLine) == 0) return 0;
     }
-#endif
     if (DoMark)
         UpdateMarker(umDelete, Row, 0, 1, 0);
     //puts("Here");
@@ -671,12 +632,10 @@ int EBuffer::InsLine(int Row, int DoAppend, int DoMark) {
     }
     L = new ELine(0, (char *)0);
     if (L == 0) return 0;
-#ifdef CONFIG_UNDOREDO
     if (BFI(this, BFI_Undo) == 1) {
         if (PushULong(Row) == 0) return 0;
         if (PushUChar(ucInsLine) == 0) return 0;
     }
-#endif
     if (DoMark)
         UpdateMarker(umInsert, Row, 0, 1, 0);
     Draw(Row, -1);
@@ -733,7 +692,6 @@ int EBuffer::DelChars(int Row, int Ofs, int ACount) {
     
     if (Modify() == 0) return 0;
     
-#ifdef CONFIG_UNDOREDO
     if (BFI(this, BFI_Undo) == 1) {
         if (PushUData(L->Chars + Ofs, ACount) == 0) return 0;
         if (PushULong(ACount) == 0) return 0;
@@ -741,7 +699,6 @@ int EBuffer::DelChars(int Row, int Ofs, int ACount) {
         if (PushULong(Row) == 0) return 0;
         if (PushUChar(ucDelChars) == 0) return 0;
     }
-#endif
     
     if (L->Count > Ofs + ACount)
         memmove(L->Chars + Ofs, L->Chars + Ofs + ACount, L->Count - Ofs - ACount);
@@ -767,14 +724,12 @@ int EBuffer::InsChars(int Row, int Ofs, int ACount, const char *Buffer) {
     
     if (Modify() == 0) return 0;
 
-#ifdef CONFIG_UNDOREDO
     if (BFI(this, BFI_Undo) == 1) {
         if (PushULong(Row) == 0) return 0;
         if (PushULong(Ofs) == 0) return 0;
         if (PushULong(ACount) == 0) return 0;
         if (PushUChar(ucInsChars) == 0) return 0;
     }
-#endif
     if (L->Allocate(L->Count + ACount) == 0) return 0;
     if (L->Count > Ofs)
         memmove(L->Chars + Ofs + ACount, L->Chars + Ofs, L->Count - Ofs);
@@ -849,7 +804,6 @@ int EBuffer::ChgChars(int Row, int Ofs, int ACount, const char * /*Buffer*/) {
     
     if (Modify() == 0) return 0;
     
-#ifdef CONFIG_UNDOREDO
     if (BFI(this, BFI_Undo) == 1) {
         if (PushUData(L->Chars + Ofs, ACount) == 0) return 0;
         if (PushULong(ACount) == 0) return 0;
@@ -861,7 +815,6 @@ int EBuffer::ChgChars(int Row, int Ofs, int ACount, const char * /*Buffer*/) {
         if (PushULong(ACount) == 0) return 0;
         if (PushUChar(ucInsChars) == 0) return 0;
     }
-#endif
     Hilit(Row);
     Draw(Row, Row);
     return 1;

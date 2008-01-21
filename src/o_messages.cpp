@@ -11,7 +11,6 @@
 #include "s_files.h"
 #include "c_commands.h"
 
-#ifdef CONFIG_OBJ_MESSAGES
 #define MAXREGEXP  32
 
 EMessages *CompilerMsgs = 0;
@@ -647,5 +646,3 @@ int EMessages::GetRowLength(int ARow)
 
     return 0;
 }
-
-#endif

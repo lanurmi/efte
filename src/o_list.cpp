@@ -94,18 +94,15 @@ void EListPort::HandleEvent(TEvent &Event) {
             break;
         }
         break;
-#ifdef CONFIG_MOUSE
     case evMouseDown:
     case evMouseUp:
     case evMouseMove:
     case evMouseAuto:
         HandleMouse(Event);
-#endif
         break;
     }
 }
  
-#ifdef CONFIG_MOUSE
 void EListPort::HandleMouse(TEvent &Event) {
     int W, H;
     int x, y, xx, yy;
@@ -180,7 +177,6 @@ void EListPort::HandleMouse(TEvent &Event) {
         break;
     }
 }
-#endif
 
 void EListPort::UpdateView() {
     if (OldLeftCol != LeftCol || OldTopRow != TopRow || OldCount != List->Count)

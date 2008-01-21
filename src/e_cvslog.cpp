@@ -10,8 +10,6 @@
 
 #include "fte.h"
 
-#ifdef CONFIG_OBJ_CVS
-
 ECvsLog *CvsLogView;
 
 ECvsLog::ECvsLog (int createFlags,EModel **ARoot,char *Directory,char *OnFiles):EBuffer (createFlags,ARoot,NULL) {
@@ -167,5 +165,3 @@ void ECvsLog::GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen) {
     strncpy (ATitle,"CVS log",MaxLen);
     strncpy (ASTitle,"CVS log",SMaxLen);
 }
-
-#endif

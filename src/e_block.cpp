@@ -18,9 +18,7 @@ int EBuffer::SetBB(EPoint M) {
     int MinL, MaxL;
 
     if (BB.Row == M.Row && BB.Col == M.Col) return 1;
-#ifdef CONFIG_UNDOREDO
     if (PushBlockData() == 0) return 0;
-#endif
     BB = M;
     if (OldBB.Row == -1) OldBB = BE;
     if ((OldBB.Col != BB.Col) && (BlockMode == bmColumn)) BlockRedraw();
@@ -36,9 +34,7 @@ int EBuffer::SetBE(EPoint M) {
     int MinL, MaxL;
 
     if (BE.Row == M.Row && BE.Col == M.Col) return 1;
-#ifdef CONFIG_UNDOREDO
     if (PushBlockData() == 0) return 0;
-#endif
     BE = M;
     if (OldBE.Row == -1) OldBE = BB;
     if ((OldBE.Col != BE.Col) && (BlockMode == bmColumn)) BlockRedraw();
@@ -282,13 +278,11 @@ int EBuffer::BlockKill() {
     Draw(B.Row, -1);
     //    if (MoveToPos(B.Col, B.Row) == 0) return 0;
 
-#ifdef CONFIG_UNDOREDO
     if (BFI(this, BFI_Undo) == 1) {
         if (PushULong(CP.Col) == 0) return 0;
         if (PushULong(CP.Row) == 0) return 0;
         if (PushUChar(ucPosition) == 0) return 0;
     }
-#endif
 
     switch (BlockMode) {
     case bmLine:

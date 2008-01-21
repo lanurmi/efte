@@ -8,8 +8,6 @@
 
 #include "fte.h"
 
-#ifdef CONFIG_OBJ_CVS
-
 static int SameDir(char* D1, char* D2)
 {
     if (!D1||!D2) return 0;
@@ -212,5 +210,3 @@ EEventMap *ECvs::GetEventMap()
 {
     return FindEventMap("CVS");
 }
-
-#endif

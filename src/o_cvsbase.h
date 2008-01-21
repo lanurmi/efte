@@ -10,8 +10,6 @@
 #ifndef __CVSBASE_H__
 #define __CVSBASE_H__
 
-#ifdef CONFIG_OBJ_CVS
-
 typedef struct {
     char *File; // Relative to view's directory
     int Line;
@@ -83,7 +81,5 @@ class ECvsBase:public EList {
 
 int AddCvsIgnoreRegexp (const char *);
 void FreeCvsIgnoreRegexp ();
-
-#endif
 
 #endif

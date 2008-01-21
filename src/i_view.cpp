@@ -85,7 +85,6 @@ void GxView::HandleEvent(TEvent &Event) {
     GView::HandleEvent(Event);
     Top->HandleEvent(Event);
 
-#ifdef CONFIG_MOUSE
     if (Event.What & evMouse) {
         int W, H;
 
@@ -123,7 +122,6 @@ void GxView::HandleEvent(TEvent &Event) {
             return ;
         }
     }
-#endif
 }
 
 void GxView::Update() {
@@ -262,7 +260,6 @@ TKeyCode GxView::GetChar(const char *Prompt) {
     return K;
 }
 
-#ifdef CONFIG_I_SEARCH
 int GxView::IncrementalSearch(EView *View) {
     int rc;
     ExISearch *search;
@@ -287,9 +284,7 @@ int GxView::IncrementalSearch(EView *View) {
 
     return rc;
 }
-#endif
 
-#ifdef CONFIG_I_ASCII
 int GxView::PickASCII() {
     int rc;
     ExASCII *ascii;
@@ -306,9 +301,7 @@ int GxView::PickASCII() {
     delete ascii;
     return rc;
 }
-#endif
 
-#ifdef CONFIG_I_COMPLETE
 int GxView::ICompleteWord(EView *View) {
     int rc = 0;
 
@@ -333,4 +326,3 @@ int GxView::ICompleteWord(EView *View) {
     }
     return rc;
 }
-#endif

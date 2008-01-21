@@ -9,8 +9,6 @@
 
 #include "fte.h"
 
-#ifdef CONFIG_I_SEARCH
-
 static char PrevISearch[MAXISEARCH] = "";
 
 ExISearch::ExISearch(EBuffer *B) {
@@ -185,4 +183,3 @@ void ExISearch::SetState(IState s) {
     state = s;
     RepaintView();
 }
-#endif

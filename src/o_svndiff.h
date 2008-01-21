@@ -10,8 +10,6 @@
 #ifndef __SVNDIFF_H__
 #define __SVNDIFF_H__
 
-#ifdef CONFIG_OBJ_SVN
-
 class ESvnDiff:public ESvnBase {
     public:
         int CurrLine,ToLine,InToFile;
@@ -33,7 +31,5 @@ class ESvnDiff:public ESvnBase {
 };
 
 extern ESvnDiff *SvnDiffView;
-
-#endif
 
 #endif

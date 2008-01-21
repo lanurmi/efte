@@ -11,8 +11,6 @@
 #include "c_commands.h"
 #include "o_cvsbase.h"
 
-#ifdef CONFIG_OBJ_CVS
-
 #define MAXREGEXP 32
 
 static int CvsIgnoreRegexpCount=0;
@@ -429,5 +427,3 @@ void ECvsBase::GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen) {
     strncpy (ASTitle,Title,SMaxLen);
     ASTitle[SMaxLen-1]=0;
 }
-
-#endif

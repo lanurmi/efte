@@ -13,9 +13,7 @@ ELine::ELine(int ACount, const char *AChars) {
     Chars = NULL; 
     Count = ACount; 
     Allocate(Count); 
-#ifdef CONFIG_SYNTAX_HILIT
     StateE = 0;
-#endif
     if (AChars)
         memcpy(Chars, AChars, Count);
     else
@@ -25,9 +23,7 @@ ELine::ELine(int ACount, const char *AChars) {
 ELine::ELine(char *AChars, int ACount) {
     Chars = AChars;
     Count = ACount; 
-#ifdef CONFIG_SYNTAX_HILIT
     StateE = 0;
-#endif
 }
 
 ELine::~ELine() {

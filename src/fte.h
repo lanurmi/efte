@@ -11,7 +11,6 @@
 #define __FTE_H
 
 #include "ftever.h"
-#include "feature.h"
 #include "sysdep.h"
 
 #ifdef NEED_LOG_H

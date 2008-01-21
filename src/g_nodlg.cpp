@@ -1,6 +1,5 @@
 // used in text mode versions, should never be called (just for linking)
 
-#include "feature.h"
 #include <stdarg.h>
 #include <assert.h>
 #include "console.h"

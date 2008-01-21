@@ -10,7 +10,6 @@
 #ifndef __MESSAGES_H__
 #define __MESSAGES_H__
 
-#ifdef CONFIG_OBJ_MESSAGES
 typedef struct {
     char *file;
     int line;
@@ -88,7 +87,5 @@ public:
 extern EMessages *CompilerMsgs;
 
 void FreeCRegexp();
-
-#endif
 
 #endif

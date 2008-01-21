@@ -37,21 +37,15 @@ static void Usage() {
            "   --help            Display usage.\n"
            "   -!                Ignore config file, use builtin defaults (also -c).\n"
            "   -c[<.cnf>]        Use specified configuration file (no arg=builtin).\n"
-#ifdef CONFIG_DESKTOP
            "   -d[<.dsk>]        Load/Save desktop from <.dsk> (no arg=disable desktop).\n"
-#endif
 /*
-#ifdef CONFIG_HISTORY
            "   -h[<.his>]        Load/Save history from <.his> (no arg=disable history).\n"
-#endif
 */
            "   -m[<mode>]        Override mode for remaining files (no arg=no override).\n"
            "   -l<line>[,<col>]  Go to line (and column) in next file.\n"
            "   -r                Open next file as read-only.\n"
-#ifdef CONFIG_TAGS
            "   -T[<tagfile>]     Load tags file at startup.\n"
            "   -t<tag>           Locate specified tag.\n"
-#endif
 //           "       -p        Load files into already running FTE.\n"
         );
 }
@@ -209,7 +203,6 @@ static int CmdLoadConfiguration(int &argc, char **argv) {
                 QuoteAll = 1;
             } else if (argv[Arg][1] == '+') {
                 QuoteNext = 1;
-#ifdef CONFIG_DESKTOP
             } else if (argv[Arg][1] == 'd') {
                 strcpy(DesktopFileName, argv[Arg] + 2);
                 if (DesktopFileName[0] == 0) {
@@ -218,8 +211,6 @@ static int CmdLoadConfiguration(int &argc, char **argv) {
                 } else {
                     LoadDesktopOnEntry = 1;
                 }
-#endif
-#ifdef CONFIG_HISTORY
             } else if (argv[Arg][1] == 'h') {
                 strcpy(HistoryFileName, argv[Arg] + 2);
                 if (HistoryFileName[0] == 0) {
@@ -227,7 +218,6 @@ static int CmdLoadConfiguration(int &argc, char **argv) {
                 } else {
                     KeepHistory = 1;
                 }
-#endif
             }
         } 
     }
@@ -328,7 +318,6 @@ static int CmdLoadFiles(int &argc, char **argv) {
     return 1;
 }
 
-#ifdef CONFIG_HISTORY
 static void DoLoadHistoryOnEntry(int &argc, char **argv) {
     if (HistoryFileName[0] == 0) {
 #ifdef UNIX
@@ -360,9 +349,7 @@ static void DoSaveHistoryOnExit() {
     if (KeepHistory && HistoryFileName[0] != 0)
         SaveHistory(HistoryFileName);
 }
-#endif
 
-#ifdef CONFIG_DESKTOP
 void DoLoadDesktopOnEntry(int &argc, char **argv) {
     if (DesktopFileName[0] == 0) {
 #ifdef UNIX
@@ -397,7 +384,6 @@ void DoLoadDesktopOnEntry(int &argc, char **argv) {
     if (LoadDesktopOnEntry && FileExists(DesktopFileName))
         LoadDesktop(DesktopFileName);
 }
-#endif
 
 static void EditorInit() {
     SS = new EBuffer((EModel **)&SS, "Scrap");
@@ -475,43 +461,28 @@ int main(int argc, char **argv) {
     if (CmdLoadConfiguration(argc, argv) == 0)
         return 1;
 
-#ifdef CONFIG_HISTORY
     DoLoadHistoryOnEntry(argc, argv);
-#endif
-
     EditorInit();
-
-#ifdef CONFIG_DESKTOP
     DoLoadDesktopOnEntry(argc, argv);
-#endif
 
     if (CmdLoadFiles(argc, argv) == 0)
         return 3;
 
     if (MM == 0) {
-#ifdef CONFIG_OBJ_DIRECTORY
         char Path[MAXPATH];
         
         GetDefaultDirectory(0, Path, sizeof(Path));
         MM = new EDirectory(&MM, Path);
         assert(MM != 0);
         //VV->SwitchToModel(MM);
-#else
-        Usage();
-        return 1;
-#endif
     }
     if (InterfaceInit(argc, argv) != 0)
         return 2;
 
     gui->Run(); // here starts the PM second thread, so the above blocks the SIQ ;-(
 
-#ifdef CONFIG_HISTORY
     DoSaveHistoryOnExit();
-#endif
-    
     EditorCleanup();
-
     InterfaceCleanup();
     
 #if defined(OS2)

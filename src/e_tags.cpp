@@ -8,7 +8,6 @@
 
 #include "fte.h"
 
-#ifdef CONFIG_TAGS
 struct TagData {
     int Tag;        // tag name pos
     int FileName;
@@ -593,5 +592,3 @@ int TagPop(EView *View) { /*FOLD00*/
     View->Msg(S_INFO, "Tag stack empty.");
     return 0;
 }
-
-#endif

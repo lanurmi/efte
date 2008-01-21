@@ -23,11 +23,9 @@ int EBuffer::GetMap(int Row, int *StateLen, hsState **StateMap) {
         *StateMap = (hsState *) malloc(*StateLen);
         if (*StateMap == 0) return 0;
 
-#ifdef CONFIG_SYNTAX_HILIT
         if (BFI(this, BFI_HilitOn) == 1 && HilitProc != 0)
             HilitProc(this, Row, 0, 0, *StateLen, L, State, *StateMap, &ECol);
         else
-#endif
             Hilit_Plain(this, Row, 0, 0, *StateLen, L, State, *StateMap, &ECol);
         //        if (L->StateE != State) {
         //            L->StateE = State;
@@ -153,11 +151,9 @@ void EBuffer::DrawLine(TDrawBuffer B, int VRow, int C, int W, int &HilitX) {
 
         if (Row > 0) State = RLine(Row - 1)->StateE;
         else State = 0;
-#ifdef CONFIG_SYNTAX_HILIT
         if (BFI(this, BFI_HilitOn) == 1 && HilitProc != 0)
             HilitProc(this, Row, B, C, W, L, State, 0, &ECol);
         else
-#endif
             Hilit_Plain(this, Row, B, C, W, L, State, 0, &ECol);
         if (L->StateE != State) {
             HilitX = 1;
@@ -231,7 +227,6 @@ void EBuffer::DrawLine(TDrawBuffer B, int VRow, int C, int W, int &HilitX) {
             else
                 MoveAttr(B, StartPos, W, hcPlain_Selected, EndPos - StartPos);
         }
-#ifdef CONFIG_BOOKMARKS
         if (BFI(this, BFI_ShowBookmarks)) {
             int i = 0;
             char *Name;
@@ -247,7 +242,6 @@ void EBuffer::DrawLine(TDrawBuffer B, int VRow, int C, int W, int &HilitX) {
                 }
             }
         }
-#endif
         if (Match.Row != -1 && Match.Col != -1) {
             if (Row == Match.Row) {
                 if (BFI(this, BFI_SeeThruSel))
@@ -447,12 +441,10 @@ void EBuffer::Redraw() {
                         ((BlockMode == bmStream) ? 'S' :
                          (BlockMode == bmLine) ? 'L': 'C'
                         ),
-#ifdef CONFIG_WORDWRAP
                         (BFI(this, BFI_WordWrap) == 3) ? 't' :
                         (BFI(this, BFI_WordWrap) == 2) ? 'W' :
                         (BFI(this, BFI_WordWrap) == 1) ? 'w' :
                         ' ',
-#endif
                         //                    (BFI(this, BFI_Undo))?'U':' ',
                         //                    (BFI(this, BFI_Trim))?'E':' ',
                         //                    (Flags.KeepBackups)?'B':' ',
@@ -559,7 +551,6 @@ int EBuffer::GetHilitWord(int len, char *str, ChColor &clr, int IgnCase) {
     if (len >= CK_MAXLEN)
         return 0;
 
-#ifdef CONFIG_WORD_HILIT
     {
         char s[CK_MAXLEN + 1];
         s[CK_MAXLEN] = 0;
@@ -570,7 +561,6 @@ int EBuffer::GetHilitWord(int len, char *str, ChColor &clr, int IgnCase) {
             return 1;
         }
     }
-#endif
     if (len < 1) return 0;
     p = Mode->fColorize->Keywords.key[len];
     if (IgnCase) {

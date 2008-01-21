@@ -9,8 +9,6 @@
 
 #include "fte.h"
 
-#ifdef CONFIG_INDENT_SIMPLE
-
 /* place holder */
 
 int Indent_SIMPLE(EBuffer *B, int Line, int /*PosCursor*/) {
@@ -34,4 +32,3 @@ int Indent_SIMPLE(EBuffer *B, int Line, int /*PosCursor*/) {
             return 0;;
     return 1;
 }
-#endif

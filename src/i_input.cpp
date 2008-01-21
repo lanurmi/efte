@@ -91,9 +91,7 @@ void ExInput::HandleEvent(TEvent &Event) {
         case kbEnd: Pos = strlen(Line); SelStart = SelEnd = 0; TabCount = 0; Event.What = evNone; break;
         case kbEsc: EndExec(0); Event.What = evNone; break;
         case kbEnter: 
-#ifdef CONFIG_HISTORY
             AddInputHistory(HistId, Line);
-#endif
             EndExec(1);
             Event.What = evNone; 
             break;
@@ -188,7 +186,6 @@ void ExInput::HandleEvent(TEvent &Event) {
                 }
             }
             break;
-#ifdef CONFIG_HISTORY
         case kbUp:
             SelStart = SelEnd = 0;
             if (CurItem == 0) 
@@ -213,7 +210,6 @@ void ExInput::HandleEvent(TEvent &Event) {
             }
             Event.What = evNone;
             break;
-#endif
         case kbTab | kfShift:
             TabCount -= 2;
         case kbTab:

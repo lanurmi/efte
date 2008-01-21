@@ -10,8 +10,6 @@
 #ifndef __FPOSHIST_H__
 #define __FPOSHIST_H__
 
-#ifdef CONFIG_HISTORY
-
 #ifdef UNIX
 #define HISTORY_NAME ".efte-history"
 #else
@@ -81,7 +79,5 @@ int StoreBookmarks(EBuffer *buf);
 #define HIST_SVN       15
 #define HIST_SVNDIFF   16
 #define HIST_SVNCOMMIT 17
-
-#endif
 
 #endif

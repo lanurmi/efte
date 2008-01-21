@@ -10,8 +10,6 @@
 #include "fte.h"
 #include "log.h"
 
-#ifdef CONFIG_HILIT_C
-
 
 #define PRINTF(x) //printf x
 
@@ -369,8 +367,6 @@ int LookAt(EBuffer *B, int Row, unsigned int Pos, const char *What, hsState Stat
     }
         ENDFUNCRC(0);
 }
-
-#ifdef CONFIG_INDENT_C
 
 int C_Indent = 4;
 int C_BraceOfs = 0;
@@ -1346,5 +1342,3 @@ int Indent_C(EBuffer *B, int Line, int PosCursor) {
     }
     return 1;
 }
-#endif // CONFIG_INDENT_C
-#endif // CONFIG_HILIT_C

@@ -9,73 +9,36 @@
 
 #include "fte.h"
 
-#ifdef CONFIG_SYNTAX_HILIT
 static const struct {
     const char *Name;
     int Num;
     SyntaxProc Proc;
 } HilitModes[] = {
 { "PLAIN", HILIT_PLAIN, Hilit_Plain },
-#ifdef CONFIG_HILIT_C
 { "C", HILIT_C, Hilit_C },
-#endif
-#ifdef CONFIG_HILIT_REXX
 { "REXX", HILIT_REXX, Hilit_REXX },
-#endif
-#ifdef CONFIG_HILIT_FALCON
 { "FALCON", HILIT_FALCON, Hilit_FALCON },
-#endif
-#ifdef CONFIG_HILIT_PERL
 { "PERL", HILIT_PERL, Hilit_PERL },
-#endif
-#ifdef CONFIG_HILIT_MAKE
 { "MAKE", HILIT_MAKE, Hilit_MAKE },
-#endif
-#ifdef CONFIG_HILIT_IPF
 { "IPF", HILIT_IPF, Hilit_IPF },
-#endif
-#ifdef CONFIG_HILIT_ADA
 { "Ada", HILIT_ADA, Hilit_ADA },
-#endif
-#ifdef CONFIG_HILIT_MSG
 { "MSG", HILIT_MSG, Hilit_MSG },
-#endif
-#ifdef CONFIG_HILIT_SH
 { "SH", HILIT_SH, Hilit_SH },
-#endif
-#ifdef CONFIG_HILIT_PASCAL
 { "PASCAL", HILIT_PASCAL, Hilit_PASCAL },
-#endif
-#ifdef CONFIG_HILIT_TEX
 { "TEX", HILIT_TEX, Hilit_TEX },
-#endif
-#ifdef CONFIG_HILIT_FTE
 { "FTE", HILIT_FTE, Hilit_FTE },
-#endif
-#ifdef CONFIG_HILIT_CATBS
 { "CATBS", HILIT_CATBS, Hilit_CATBS },
-#endif
-#ifdef CONFIG_HILIT_SIMPLE
 { "SIMPLE", HILIT_SIMPLE, Hilit_SIMPLE },
-#endif
 };
 
 static const struct {
     const char *Name;
     int Num;
 } IndentModes[] = {
-#ifdef CONFIG_INDENT_C
 { "C", INDENT_C },
-#endif
-#ifdef CONFIG_INDENT_REXX
 { "REXX", INDENT_REXX },
-#endif
-#ifdef CONFIG_INDENT_FALCON
 { "FALCON", INDENT_FALCON },
-#endif
-#ifdef CONFIG_INDENT_SIMPLE
 { "SIMPLE", INDENT_REXX },
-#endif
 { "PLAIN", INDENT_PLAIN },
 };
 
@@ -102,7 +65,6 @@ SyntaxProc GetHilitProc(int id) {
     return 0;
 }
 
-#ifdef CONFIG_WORD_HILIT
 int EBuffer::HilitAddWord(const char *Word) {
     if (HilitFindWord(Word) == 1)
 	return 1;
@@ -157,7 +119,6 @@ int EBuffer::HilitWord() {
 
     return (HilitFindWord(s)) ? HilitRemoveWord(s) : HilitAddWord(s);
 }
-#endif
 
 /* ======================================================================= */
 
@@ -319,5 +280,3 @@ void HMachine::AddTrans(HTrans &aTrans) {
     trans[transCount] = aTrans;
     transCount++;
 }
-
-#endif

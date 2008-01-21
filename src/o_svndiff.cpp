@@ -9,8 +9,6 @@
 
 #include "fte.h"
 
-#ifdef CONFIG_OBJ_SVN
-
 ESvnDiff       *SvnDiffView = 0;
 
 ESvnDiff::ESvnDiff(int createFlags, EModel ** ARoot, char *ADir, char *ACommand,
@@ -195,5 +193,3 @@ ESvnDiff::GetEventMap()
 {
     return FindEventMap("SVNDIFF");
 }
-
-#endif

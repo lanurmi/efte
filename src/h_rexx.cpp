@@ -9,8 +9,6 @@
 
 #include "fte.h"
 
-#ifdef CONFIG_HILIT_REXX
-
 #define hsREXX_Normal    0
 #define hsREXX_Comment   1
 #define hsREXX_String1   3
@@ -141,8 +139,6 @@ int Hilit_REXX(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
     *ECol = C;
     return 0;
 }
-
-#ifdef CONFIG_INDENT_REXX
 
 int REXX_Base_Indent = 4;
 int REXX_Do_Offset = 0;
@@ -464,5 +460,3 @@ int Indent_REXX(EBuffer *B, int Line, int PosCursor) {
     }
     return 1;
 }
-#endif
-#endif

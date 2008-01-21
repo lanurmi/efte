@@ -8,8 +8,6 @@
 
 #include "fte.h"
 
-#ifdef CONFIG_OBJ_SVN
-
 static int SameDir (char *D1,char *D2) {
     if (!D1||!D2) return 0;
     int l1=strlen (D1);
@@ -199,5 +197,3 @@ int ESvn::ConfQuit (GxView *V,int multiFile) {
 EEventMap *ESvn::GetEventMap () {
     return FindEventMap ("SVN");
 }
-
-#endif

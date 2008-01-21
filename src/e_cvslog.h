@@ -13,8 +13,6 @@
 
 #include "e_buffer.h"
 
-#ifdef CONFIG_OBJ_CVS
-
 class ECvsLog:public EBuffer {
     public:
         ECvsLog (int createFlags,EModel **ARoot,char *Directory,char *OnFiles);
@@ -43,7 +41,5 @@ class ECvsLog:public EBuffer {
 };
 
 extern ECvsLog *CvsLogView;
-
-#endif
 
 #endif

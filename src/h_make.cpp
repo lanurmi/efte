@@ -9,8 +9,6 @@
 
 #include "fte.h"
 
-#ifdef CONFIG_HILIT_MAKE
-
 #define hsMAKE_Normal  0
 #define hsMAKE_Comment 1
 #define hsMAKE_DotCmd  2
@@ -67,5 +65,3 @@ int Hilit_MAKE(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
     *ECol = C;
     return 0;
 }
-
-#endif

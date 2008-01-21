@@ -7,8 +7,6 @@
  *
  */
 
-#include "feature.h"
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -82,9 +80,7 @@ public:
     int ConCursorVisible();
     void ConSetInsertState(bool insert);
 
-#ifdef CONFIG_MOUSE
     int CaptureMouse(int grab);
-#endif
     int CaptureFocus(int grab);
     
     int QuerySbVPos();
@@ -134,10 +130,8 @@ GViewPeer::GViewPeer(GView *view, int XSize, int YSize) {
 }
 
 GViewPeer::~GViewPeer() {
-#ifdef CONFIG_MOUSE
     if (MouseCapture == View)
         MouseCapture = 0;
-#endif
     if (FocusCapture == View)
         FocusCapture = 0;
 }
@@ -218,7 +212,6 @@ void GViewPeer::ConSetInsertState(bool insert) {
     ::ConSetInsertState(insert);
 }
 
-#ifdef CONFIG_MOUSE
 int GViewPeer::CaptureMouse(int grab) {
     if (MouseCapture == 0) {
         if (grab)
@@ -233,7 +226,6 @@ int GViewPeer::CaptureMouse(int grab) {
     }
     return 1;
 }
-#endif
 
 int GViewPeer::CaptureFocus(int grab) {
     if (FocusCapture == 0) {
@@ -456,11 +448,9 @@ void GView::ConSetInsertState(bool insert) {
     Peer->ConSetInsertState(insert);
 }
 
-#ifdef CONFIG_MOUSE
 int GView::CaptureMouse(int grab) {
     return Peer->CaptureMouse(grab);
 }
-#endif
 
 int GView::CaptureFocus(int grab) {
     return Peer->CaptureFocus(grab);
@@ -1192,9 +1182,7 @@ void GUI::ProcessEvent() {
                     if (id == -1) return;
                     frames->ConQuerySize(&Cols, &Rows);
                     int x = Cols / 2, y = Rows / 2;
-#ifdef CONFIG_MOUSE
                     ConQueryMousePos(&x, &y);
-#endif
                     
                     frames->Update(); // sync before menu
                     if (::ExecVertMenu(x, y, id, E, 0) != 1) {

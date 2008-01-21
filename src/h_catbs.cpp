@@ -9,8 +9,6 @@
 
 #include "fte.h"
 
-#ifdef CONFIG_HILIT_CATBS
-
 #define hsBS_Normal 1
 
 // this is for viewing only, do not try to edit or anything.
@@ -48,4 +46,3 @@ int Hilit_CATBS(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Lin
     *ECol = C;
     return 0;
 }
-#endif

@@ -178,12 +178,10 @@ int EBuffer::FoldCreate(int Line) { /*FOLD00*/
 
     if (FindFold(Line) != -1) return 1; // already exists
 
-#ifdef CONFIG_UNDOREDO
     if (BFI(this, BFI_Undo)) {
         if (PushULong(Line) == 0) return 0;
         if (PushUChar(ucFoldCreate) == 0) return 0;
     }
-#endif
 
     n = FindNearFold(Line);
     n++;
@@ -262,13 +260,11 @@ int EBuffer::FoldDestroy(int Line) { /*FOLD00*/
     if (FF[f].open == 0)
         if (FoldOpen(Line) == 0) return 0;
 
-#ifdef CONFIG_UNDOREDO
     if (BFI(this, BFI_Undo)) {
         if (PushULong(FF[f].level) == 0) return 0;
         if (PushULong(Line) == 0) return 0;
         if (PushUChar(ucFoldDestroy) == 0) return 0;
     }
-#endif
 
     memmove(FF + f, FF + f + 1, sizeof(EFold) * (FCount - f - 1));
     FCount--;
@@ -297,12 +293,10 @@ int EBuffer::FoldPromote(int Line) { /*FOLD00*/
     if (FF[f].open == 0) return 0;
     if (FF[f].level == 0) return 0;
 
-#ifdef CONFIG_UNDOREDO
     if (BFI(this, BFI_Undo)) {
         if (PushULong(Line) == 0) return 0;
         if (PushUChar(ucFoldPromote) == 0) return 0;
     }
-#endif
 
     if ((FF[f].line > 0) && (ExposeRow(FF[f].line - 1) == 0))
         return 0;
@@ -321,12 +315,11 @@ int EBuffer::FoldDemote(int Line) { /*FOLD00*/
     if (FF[f].open == 0) return 0;
     if (FF[f].level == 99) return 0;
 
-#ifdef CONFIG_UNDOREDO
     if (BFI(this, BFI_Undo)) {
         if (PushULong(Line) == 0) return 0;
         if (PushUChar(ucFoldDemote) == 0) return 0;
     }
-#endif
+
     if ((FF[f].line > 0) && (ExposeRow(FF[f].line - 1) == 0))
         return 0;
 
@@ -346,12 +339,10 @@ int EBuffer::FoldOpen(int Line) { /*FOLD00*/
 
     if (Modify() == 0) return 0;
 
-#ifdef CONFIG_UNDOREDO
     if (BFI(this, BFI_Undo)) {
         if (PushULong(Line) == 0) return 0;
         if (PushUChar(ucFoldOpen) == 0) return 0;
     }
-#endif
 
     FF[f].open = 1;
     top = FF[f].line;
@@ -429,12 +420,10 @@ int EBuffer::FoldClose(int Line) { /*FOLD00*/
 
     if (SetPosR(CP.Col, FF[f].line, tmLeft) == 0) return 0;
 
-#ifdef CONFIG_UNDOREDO
     if (BFI(this, BFI_Undo)) {
         if (PushULong(Line) == 0) return 0;
         if (PushUChar(ucFoldClose) == 0) return 0;
     }
-#endif
 
     FF[f].open = 0;
     top = FF[f].line;

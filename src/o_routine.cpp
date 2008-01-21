@@ -9,7 +9,6 @@
 
 #include "fte.h"
 
-#ifdef CONFIG_OBJ_ROUTINE
 RoutineView::RoutineView(int createFlags, EModel **ARoot, EBuffer *AB): EList(createFlags, ARoot, "Routines") {
     SearchLen = 0;
 
@@ -199,4 +198,3 @@ void RoutineView::GetTitle(char *ATitle, int /*MaxLen*/, char *ASTitle, int SMax
     strncpy(ASTitle, "Routines", SMaxLen);
     ASTitle[SMaxLen - 1] = 0;
 }
-#endif

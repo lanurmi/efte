@@ -85,9 +85,7 @@ class ELine {
 public:
     int Count;
     char *Chars;
-#ifdef CONFIG_SYNTAX_HILIT
     hlState StateE;
-#endif
     
     ELine(int ACount, const char *AChars);
     ELine(char *AChars, int ACount);
@@ -115,21 +113,17 @@ typedef struct _UndoStack {
     int *Top;
 } UndoStack;
 
-#ifdef CONFIG_OBJ_ROUTINE
 class RoutineView;
 
 typedef struct _RoutineList {
     int Count;
     int *Lines;
 } RoutineList;
-#endif
 
-#ifdef CONFIG_BOOKMARKS
 typedef struct _EBookmark {
     char *Name;
     EPoint BM;
 } EBookmark;
-#endif
 
 typedef struct {
     int line;
@@ -149,9 +143,7 @@ public:
     virtual ~EEditPort();
     
     virtual void HandleEvent(TEvent &Event);
-#ifdef CONFIG_MOUSE
     virtual void HandleMouse(TEvent &Event);
-#endif
     virtual void UpdateView();
     virtual void RepaintView();
     virtual void UpdateStatus();
@@ -185,9 +177,7 @@ public:
     int AutoExtend;
     int Loaded;
 
-#ifdef CONFIG_UNDOREDO
     UndoStack US;
-#endif
 
     struct stat FileStatus;
     int FileOk;
@@ -203,37 +193,28 @@ public:
     int VCount;
     int *VV;
 
-#ifdef CONFIG_FOLDS
     int FCount;
     EFold *FF;
-#endif
 
     EPoint Match;
     int MatchLen;
     int MatchCount;
     RxMatchRes MatchRes;
 
-#ifdef CONFIG_BOOKMARKS
     int BMCount;
     EBookmark *BMarks;
-#endif
     
-#ifdef CONFIG_OBJ_ROUTINE
     RoutineList rlst;
     RoutineView *Routines;
-#endif
 
     int MinRedraw, MaxRedraw;
     int RedrawToEos;
     
-#ifdef CONFIG_WORD_HILIT
     char **WordList;
     int WordCount;
-#endif
-#ifdef CONFIG_SYNTAX_HILIT
+
     SyntaxProc HilitProc;
     int StartHilit, EndHilit;
-#endif
 
     int LastUpDownColumn; // For CursorWithinEOL movement
 
@@ -339,9 +320,8 @@ public:
     int Modify();
     int Clear();
 
-#ifdef CONFIG_UNDOREDO
     int FreeUndo();
-#endif
+
     // internal primitives  
     int ValidPos(EPoint W);
     int RValidPos(EPoint W);
@@ -390,7 +370,6 @@ public:
 /////////////////////////////////////////////////////////////////////////////
     
     int NextCommand();
-#ifdef CONFIG_UNDOREDO
     int PushUData(void *data, int len);
     int PushULong(unsigned long l);
     int PushUChar(unsigned char ch);
@@ -402,7 +381,6 @@ public:
     int BeginUndo();
     int EndUndo();
     int PushBlockData();
-#endif
 
 /////////////////////////////////////////////////////////////////////////////
 // Primitive Editing
@@ -449,9 +427,7 @@ public:
     int LineIndented(int Row, const char *indentchars = 0);
     int LineIndentedCharCount(ELine *l, const char *indentchars);
     int IndentLine(int Row, int Indent);
-#ifdef CONFIG_SYNTAX_HILIT
     int GetMap(int Row, int *StateLen, hsState **StateMap);
-#endif
     int FindStr(char *Data, int Len, int Options);
     int FindStr(char *Data, int Len, SearchReplaceOptions &opt);
     int FindRx(RxNode *Rx, SearchReplaceOptions &opt);
@@ -459,21 +435,17 @@ public:
     int IsLineBlank(int Row);
     int TrimLine(int Row);
     
-#ifdef CONFIG_OBJ_ROUTINE
     int ScanForRoutines();
-#endif
 
 /////////////////////////////////////////////////////////////////////////////
 // Bookmark Routines
 /////////////////////////////////////////////////////////////////////////////
     
-#ifdef CONFIG_BOOKMARKS
     int PlaceBookmark(char *Name, EPoint P);
     int RemoveBookmark(char *Name);
     int GetBookmark(char *Name, EPoint &P);
     int GotoBookmark(char *Name);
     int GetBookmarkForLine(int searchFrom, int searchForLine, char *&Name, EPoint &P);
-#endif
     
 /////////////////////////////////////////////////////////////////////////////
 // Editing Routines
@@ -597,10 +569,8 @@ public:
     int     FileTrim();
     int     BlockTrim();
 
-#ifdef CONFIG_UNDOREDO
     int     CanUndo();
     int     CanRedo();
-#endif
     
     int     LineLen();
     int     LineCount();
@@ -614,10 +584,8 @@ public:
     int     InsertTab();
     int     InsertSpace();
     int     SelfInsert();
-#ifdef CONFIG_WORDWRAP
     int     DoWrap(int WrapAll);
     int     WrapPara();
-#endif
     int     InsPrevLineChar();
     int     InsPrevLineToEol();
     int     LineDuplicate();
@@ -694,15 +662,12 @@ public:
     int     SearchReplaceB(ExState &State);
     int     SearchReplaceRx(ExState &State);
     
-#ifdef CONFIG_WORD_HILIT
     int     HilitAddWord(const char *Word);
     int     HilitFindWord(const char *Word);
     int     HilitRemoveWord(const char *Word);
     int     HilitWord();
-#endif
     int     SearchWord(int Flags);
 
-#ifdef CONFIG_FOLDS
     int     FindFold(int Line);
     int     FindNearFold(int Line);
     int     FoldCreate(int Line);
@@ -717,7 +682,6 @@ public:
     int     FoldClose(int Line);
     int     FoldCloseAll();
     int     FoldToggleOpenClose();
-#endif
     
     int     ChangeMode(char *Mode);
     int     ChangeKeys(char *Mode);
@@ -733,7 +697,6 @@ public:
     int MoveToColumn(ExState &State);
     int MoveToLine(ExState &State);
     int FoldCreateByRegexp(ExState &State);
-#ifdef CONFIG_BOOKMARKS
     int PlaceUserBookmark(const char *n,EPoint P);
     int RemoveUserBookmark(const char *n);
     int GotoUserBookmark(const char *n);
@@ -741,7 +704,6 @@ public:
     int PlaceBookmark(ExState &State);
     int RemoveBookmark(ExState &State);
     int GotoBookmark(ExState &State);
-#endif
     int InsertString(ExState &State);
     int SelfInsert(ExState &State);
     int FileReload(ExState &State);
@@ -769,14 +731,10 @@ public:
     int ChangeRightMargin(ExState &State);
     int ChangeLeftMargin(ExState &State);
     
-#ifdef CONFIG_I_ASCII
     int ASCIITable(ExState &State);
-#endif
 
-#ifdef CONFIG_TAGS
     int FindTag(ExState &State);
     int FindTagWord(ExState &State);
-#endif
 
     int SetCIndentStyle(ExState &State);
 

@@ -29,19 +29,6 @@
 #include <malloc.h>
 #endif
 
-#if !defined(OS2) && \
-    !defined(NT) && \
-    !defined(LINUX) && \
-    !defined(HPUX) && \
-    !defined(AIX) && \
-    !defined(IRIX) && \
-    !defined(SCO) && \
-    !defined(SUNOS) && \
-    !defined(NCR) && \
-    !defined(MACOSX)
-#    error Target not supported.
-#endif
-
 #if defined(UNIX)
 #    define USE_DIRENT
 #endif

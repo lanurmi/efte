@@ -10,8 +10,6 @@
 #ifndef __SVNBASE_H__
 #define __SVNBASE_H__
 
-#ifdef CONFIG_OBJ_SVN
-
 typedef struct {
     char *File; // Relative to view's directory
     int Line;
@@ -83,7 +81,5 @@ class ESvnBase:public EList {
 
 int AddSvnIgnoreRegexp (const char *);
 void FreeSvnIgnoreRegexp ();
-
-#endif
 
 #endif

@@ -149,35 +149,13 @@ int EView::ExecCommand(int Command, ExState &State) {
     case ExFileOpen:            return FileOpen(State);
     case ExFileOpenInMode:      return FileOpenInMode(State);
     case ExFileSaveAll:         return FileSaveAll();
-
-    case ExListRoutines:
-#ifdef CONFIG_OBJ_ROUTINE
-        return ViewRoutines(State);
-#else
-        return ErFAIL;
-#endif
-
-    case ExDirOpen:
-#ifdef CONFIG_OBJ_DIRECTORY
-        return DirOpen(State);
-#else
-        return ErFAIL;
-#endif
-
-#ifdef CONFIG_OBJ_MESSAGES
+    case ExListRoutines:        return ViewRoutines(State);
+    case ExDirOpen:             return DirOpen(State);
     case ExViewMessages:        return ViewMessages(State);
     case ExCompile:             return Compile(State);
     case ExRunCompiler:         return RunCompiler(State);
     case ExCompilePrevError:    return CompilePrevError(State);
     case ExCompileNextError:    return CompileNextError(State);
-#else
-    case ExViewMessages:        return ErFAIL;
-    case ExCompile:             return ErFAIL;
-    case ExCompilePrevError:    return ErFAIL;
-    case ExCompileNextError:    return ErFAIL;
-#endif
-
-#ifdef CONFIG_OBJ_CVS
     case ExCvs:                 return Cvs(State);
     case ExRunCvs:              return RunCvs(State);
     case ExViewCvs:             return ViewCvs(State);
@@ -188,20 +166,6 @@ int EView::ExecCommand(int Command, ExState &State) {
     case ExCvsCommit:           return CvsCommit(State);
     case ExRunCvsCommit:        return RunCvsCommit(State);
     case ExViewCvsLog:          return ViewCvsLog(State);
-#else
-    case ExCvs:                 return ErFAIL;
-    case ExRunCvs:              return ErFAIL;
-    case ExViewCvs:             return ErFAIL;
-    case ExClearCvsMessages:    return ErFAIL;
-    case ExCvsDiff:             return ErFAIL;
-    case ExRunCvsDiff:          return ErFAIL;
-    case ExViewCvsDiff:         return ErFAIL;
-    case ExCvsCommit:           return ErFAIL;
-    case ExRunCvsCommit:        return ErFAIL;
-    case ExViewCvsLog:          return ErFAIL;
-#endif
-
-#ifdef CONFIG_OBJ_SVN
     case ExSvn:                 return Svn(State);
     case ExRunSvn:              return RunSvn(State);
     case ExViewSvn:             return ViewSvn(State);
@@ -212,35 +176,18 @@ int EView::ExecCommand(int Command, ExState &State) {
     case ExSvnCommit:           return SvnCommit(State);
     case ExRunSvnCommit:        return RunSvnCommit(State);
     case ExViewSvnLog:          return ViewSvnLog(State);
-#else
-    case ExSvn:                 return ErFAIL;
-    case ExRunSvn:              return ErFAIL;
-    case ExViewSvn:             return ErFAIL;
-    case ExClearSvnMessages:    return ErFAIL;
-    case ExSvnDiff:             return ErFAIL;
-    case ExRunSvnDiff:          return ErFAIL;
-    case ExViewSvnDiff:         return ErFAIL;
-    case ExSvnCommit:           return ErFAIL;
-    case ExRunSvnCommit:        return ErFAIL;
-    case ExViewSvnLog:          return ErFAIL;
-#endif
-
     case ExViewBuffers:         return ViewBuffers(State);
-
     case ExShowKey:             return ShowKey(State);
     case ExToggleSysClipboard:  return ToggleSysClipboard(State);
     case ExSetPrintDevice:      return SetPrintDevice(State);
     case ExShowVersion:         return ShowVersion();
     case ExViewModeMap:         return ViewModeMap(State);
     case ExClearMessages:       return ClearMessages();
-
-#ifdef CONFIG_TAGS
     case ExTagNext:             return TagNext(this);
     case ExTagPrev:             return TagPrev(this);
     case ExTagPop:              return TagPop(this);
     case ExTagClear:            TagClear(); return 1;
     case ExTagLoad:             return TagLoad(State);
-#endif
     case ExShowHelp:            return SysShowHelp(State, 0);
     case ExConfigRecompile:     return ConfigRecompile(State);
     case ExRemoveGlobalBookmark:return RemoveGlobalBookmark(State);
@@ -261,10 +208,8 @@ void EView::HandleEvent(TEvent &Event) {
             {
                 char *file = (char *)Event.Msg.Param2;
 
-#ifdef CONFIG_OBJ_DIRECTORY
                 if (IsDirectory(file))
                     OpenDir(file);
-#endif
                 MultiFileLoad(0, file, NULL, this);
             }
             break;
@@ -405,10 +350,8 @@ int EView::FileOpen(ExState &State) {
 
     if( strlen( FName ) == 0 ) return 0;
 
-#ifdef CONFIG_OBJ_DIRECTORY
     if (IsDirectory(FName))
         return OpenDir(FName);
-#endif
     return MultiFileLoad(0, FName, NULL, this);
 }
 
@@ -428,10 +371,8 @@ int EView::FileOpenInMode(ExState &State) {
         return 0;
     if (State.GetStrParam(this, FName, sizeof(FName)) == 0)
         if (MView->Win->GetFile("Open file", sizeof(FName), FName, HIST_PATH, GF_OPEN) == 0) return 0;
-#ifdef CONFIG_OBJ_DIRECTORY
     if (IsDirectory(FName))
         return OpenDir(FName);
-#endif
 
     if( strlen( FName ) == 0 ) return 0;
 
@@ -518,7 +459,6 @@ int EView::ViewBuffers(ExState &/*State*/) {
     return 0;
 }
 
-#ifdef CONFIG_OBJ_ROUTINE
 int EView::ViewRoutines(ExState &/*State*/) {
     //int rc = 1;
     //RoutineView *routines;
@@ -544,9 +484,7 @@ int EView::ViewRoutines(ExState &/*State*/) {
     SwitchToModel(Buffer->Routines);
     return 1;
 }
-#endif
 
-#ifdef CONFIG_OBJ_DIRECTORY
 int EView::DirOpen(ExState &State) {
     char Path[MAXPATH];
 
@@ -582,9 +520,7 @@ int EView::OpenDir(char *Path) {
     SelectModel(dir);
     return 1;
 }
-#endif
 
-#ifdef CONFIG_OBJ_MESSAGES
 int EView::Compile(ExState &State) {
     static char Cmd[256] = "";
     char Command[256] = "";
@@ -669,7 +605,6 @@ int EView::CompileNextError(ExState &/*State*/) {
         return CompilerMsgs->CompileNextError(this);
     return 0;
 }
-#endif
 
 int EView::ShowVersion() {
     MView->Win->Choice(0, "About", 1, "O&K", PROGRAM " " VERSION " " COPYRIGHT);
@@ -700,7 +635,6 @@ int EView::ClearMessages() {
     return 1;
 }
 
-#ifdef CONFIG_TAGS
 int EView::TagLoad(ExState &State) {
     char Tag[MAXPATH];
     char FullTag[MAXPATH];
@@ -725,7 +659,6 @@ int EView::TagLoad(ExState &State) {
 
     return ::TagLoad(FullTag);
 }
-#endif
 
 int EView::ConfigRecompile(ExState &/*State*/) {
     if (ConfigSourcePath == 0 || ConfigFileName[0] == 0) {
@@ -791,8 +724,6 @@ int EView::GetIntVar(int var, int *value) {
     //}
     return Model->GetIntVar(var, value);
 }
-
-#ifdef CONFIG_OBJ_CVS
 
 int EView::Cvs(ExState &State) {
     static char Opts[128] = "";
@@ -1038,10 +969,6 @@ int EView::ViewCvsLog(ExState &/*State*/) {
     return 0;
 }
 
-#endif
-
-#ifdef CONFIG_OBJ_SVN
-
 int EView::Svn(ExState &State) {
     static char Opts[128] = "";
     char Options[128] = "";
@@ -1285,5 +1212,3 @@ int EView::ViewSvnLog(ExState &/*State*/) {
     }
     return 0;
 }
-
-#endif

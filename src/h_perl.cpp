@@ -20,8 +20,6 @@
 
 #include "fte.h"
 
-#ifdef CONFIG_HILIT_PERL
-
 #define X_BIT     0x80     /* set if last was number, var, */
 #define X_MASK    0x7F
 #define X_NOT(state) (!((state) & X_BIT))
@@ -701,4 +699,3 @@ int Hilit_PERL(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
     *ECol = C;
     return 0;
 }
-#endif

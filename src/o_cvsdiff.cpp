@@ -9,8 +9,6 @@
 
 #include "fte.h"
 
-#ifdef CONFIG_OBJ_CVS
-
 ECvsDiff *CvsDiffView=0;
 
 ECvsDiff::ECvsDiff (int createFlags,EModel **ARoot,char *ADir,char *ACommand,char *AOnFiles):ECvsBase (createFlags,ARoot,"CVS diff") {
@@ -120,5 +118,3 @@ int ECvsDiff::BlockCopy (int Append) {
 EEventMap *ECvsDiff::GetEventMap () {
     return FindEventMap ("CVSDIFF");
 }
-
-#endif

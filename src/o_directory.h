@@ -10,8 +10,6 @@
 #ifndef __ODIRECTORY_H
 #define __ODIRECTORY_H
 
-#ifdef CONFIG_OBJ_DIRECTORY
-
 class EDirectory: public EList {
 public:
     char *Path;
@@ -51,6 +49,4 @@ public:
     int ChangeDir(ExState &State);
     int RescanDir();
 };
-#endif
-
 #endif
