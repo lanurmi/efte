@@ -253,6 +253,8 @@ static int FSearchMatch(int Count, EBuffer *B, int Row, int Ctx) {
                    FMatch(L, Pos, StateMap, P, "loop", hsFalcon_Keyword) ||
                    FMatch(L, Pos, StateMap, P, "init", hsFalcon_Keyword) ||
                    FMatch(L, Pos, StateMap, P, "for", hsFalcon_Keyword) ||
+                   FMatch(L, Pos, StateMap, P, "select", hsFalcon_Keyword) ||
+                   FMatch(L, Pos, StateMap, P, "switch", hsFalcon_Keyword) ||
                    FMatch(L, Pos, StateMap, P, "try", hsFalcon_Keyword))
                {
                   Count++;
@@ -331,6 +333,8 @@ static int FSearchBackContext(EBuffer *B, int Row, char &ChFind, int &paren, int
                 FMatch(L, Pos, StateMap, P, "init", hsFalcon_Keyword) ||
                 FMatch(L, Pos, StateMap, P, "loop", hsFalcon_Keyword) ||
                 FMatch(L, Pos, StateMap, P, "for", hsFalcon_Keyword) ||
+                FMatch(L, Pos, StateMap, P, "select", hsFalcon_Keyword) ||
+                FMatch(L, Pos, StateMap, P, "switch", hsFalcon_Keyword) ||
                 FMatch(L, Pos, StateMap, P, "try", hsFalcon_Keyword) ||
                 FMatch(L, Pos, StateMap, P, "if", hsFalcon_Keyword))
             {
@@ -449,7 +453,7 @@ static int FIndentNormal(EBuffer *B, int Line, int /*StateLen*/, hsState * /*Sta
          return 0;
       switch (ChFind) {
       case 'i':
-         return I + FALCON_BASE_INDENT;
+          return I + FALCON_BASE_INDENT;
       case 'o':
          return I - FALCON_BASE_INDENT;
       default:
@@ -506,4 +510,3 @@ int Indent_FALCON(EBuffer *B, int Line, int PosCursor) {
           
 #endif /* CONFIG_INDENT_FALCON */
 #endif /* CONFIG_HILIT_FALCON */
-
