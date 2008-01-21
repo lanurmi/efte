@@ -1,7 +1,7 @@
 MAKE=make
 
 all:
-	@echo 'What (emx, unix, cygwin, bcc2, win32ms, win32bcc5, win32mingw, vag)?'
+	@echo 'What (emx, unix, cygwin, bcc2, win32ms, win32bcc5, win32mingw, vag, owos2, ownt)?'
 
 emx:
 	$(MAKE) -f fte-emx.mak
@@ -24,8 +24,31 @@ win32mingw:
 win32bcc5:
 	$(MAKE) -f fte-bcc5.mak
 
+djgpp2:
+	$(MAKE) -f fte-dj2.mak
+
 vag:
 	nmake /f fte-vag.mak
 
+owos2: .SYMBOLIC
+	wmake -f owconvert.mak
+	watconvert
+	wmake -f fte-owos2.mak
+
+ownt:   .SYMBOLIC
+	wmake -f owconvert.mak
+	watconvert
+	wmake -f fte-ownt.mak
+
+owclean : .SYMBOLIC
+	@rm *.obj
+	@rm *.exe
+	@rm *.err
+	@rm *.lst
+	@rm *.map
+	@rm def*.h
+	@rm *.cnf
+	@rm *.mif
+
 clean:
-	rm -f core *.o *~ .depend defcfg.h defcfg.cnf
+	rm -f core *.o *~ .depend
