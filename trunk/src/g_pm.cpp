@@ -1649,8 +1649,7 @@ MRESULT EXPENTRY AVIOWndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
                 WinDestroyCursor(hwnd);
                 WinCreateCursor(hwnd, 
                                 pmData->cxChar * Peer->cX,
-                                pmData->cyChar * (Peer->wH - Peer->cY - 1) +
-                                pmData->cyChar * (100 - Peer->cEnd) / 100,
+                                pmData->cyChar * (Peer->wH - Peer->cY - 1),
                                 pmData->cxChar, pmData->cyChar,
                                 CURSOR_TYPE,
                                 NULL);
@@ -1683,8 +1682,7 @@ MRESULT EXPENTRY AVIOWndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
             if (SHORT1FROMMP(mp2)) {
                 WinCreateCursor(hwnd,
                                 pmData->cxChar * Peer->cX,
-                                pmData->cyChar * (Peer->wH - Peer->cY - 1) +
-                                pmData->cyChar * (100 - Peer->cEnd) / 100,
+                                pmData->cyChar * (Peer->wH - Peer->cY - 1),
                                 pmData->cxChar, pmData->cyChar,
                                 CURSOR_TYPE,
                                 NULL);
@@ -2704,8 +2702,7 @@ int GViewPeer::PMSetCursorPos() {
         WinDestroyCursor(hwndView);
         WinCreateCursor(hwndView,
                         pmData->cxChar * cX,
-                        pmData->cyChar * (wH - cY - 1) +
-                        pmData->cyChar * (100 - cEnd) / 100,
+                        pmData->cyChar * (wH - cY - 1),
                         pmData->cxChar, pmData->cyChar,
                         CURSOR_TYPE,
                         NULL);
