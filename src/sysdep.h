@@ -174,10 +174,4 @@
 #undef HAVE_STRLCPY
 #undef HAVE_STRLCAT
 
-#ifndef HAVE_BOOL
-#define bool  int
-#define true  1
-#define false 0
-#endif
-
 #endif // __SYSDEP_H
