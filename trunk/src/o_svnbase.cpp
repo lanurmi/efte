@@ -409,7 +409,7 @@ void ESvnBase::GetName (char *AName,int MaxLen) {
 void ESvnBase::GetInfo (char *AInfo,int MaxLen) {
     char format[128];
 
-    sprintf (format,"%2d %04d/%03d %s (%%.%is) ",ModelNo,Row,Count,Title,MaxLen-24-strlen (Title));
+    sprintf (format,"%2d %04d/%03d %s (%%.%is) ",ModelNo,Row,Count,Title,MaxLen-24-(int)strlen (Title));
     sprintf (AInfo,format,Command);
 }
 
@@ -424,7 +424,7 @@ void ESvnBase::GetPath (char *APath,int MaxLen) {
 void ESvnBase::GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen) {
     char format[128];
 
-    sprintf (format,"%s: %%.%is",Title,MaxLen-4-strlen (Title));
+    sprintf (format,"%s: %%.%is",Title,MaxLen-4-(int)strlen (Title));
     sprintf (ATitle,format,Command);
     strncpy (ASTitle,Title,SMaxLen);
     ASTitle[SMaxLen-1]=0;
