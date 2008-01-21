@@ -104,6 +104,7 @@
 		538B51880D414C740092CDDF /* cfte.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 538B51870D414C740092CDDF /* cfte.cpp */; };
 		538B519C0D414E6E0092CDDF /* s_files.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 532F6A950D30192C00C0ED59 /* s_files.cpp */; };
 		538B51A20D414E860092CDDF /* s_string.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 532F6A980D30192C00C0ED59 /* s_string.cpp */; };
+		53E0CFE60D452D00006F8FBB /* h_falcon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53E0CFE50D452D00006F8FBB /* h_falcon.cpp */; };
 		8D11072A0486CEB800E47090 /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = 29B97318FDCFA39411CA2CEA /* MainMenu.nib */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
@@ -270,6 +271,7 @@
 		532F6AA00D30192C00C0ED59 /* view.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = view.cpp; sourceTree = "<group>"; };
 		538B51760D414BB60092CDDF /* cefte */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = cefte; sourceTree = BUILT_PRODUCTS_DIR; };
 		538B51870D414C740092CDDF /* cfte.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cfte.cpp; sourceTree = "<group>"; };
+		53E0CFE50D452D00006F8FBB /* h_falcon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = h_falcon.cpp; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* eFTE.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = eFTE.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -438,6 +440,7 @@
 				532F6A160D30192C00C0ED59 /* h_ada.cpp */,
 				532F6A180D30192C00C0ED59 /* h_c.cpp */,
 				532F6A1A0D30192C00C0ED59 /* h_catbs.cpp */,
+				53E0CFE50D452D00006F8FBB /* h_falcon.cpp */,
 				532F6A1C0D30192C00C0ED59 /* h_fte.cpp */,
 				532F6A1E0D30192C00C0ED59 /* h_ipf.cpp */,
 				532F6A200D30192C00C0ED59 /* h_make.cpp */,
@@ -716,6 +719,7 @@
 				532F6B950D30192F00C0ED59 /* s_string.cpp in Sources */,
 				532F6B970D30192F00C0ED59 /* s_util.cpp in Sources */,
 				532F6B9A0D30192F00C0ED59 /* view.cpp in Sources */,
+				53E0CFE60D452D00006F8FBB /* h_falcon.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
