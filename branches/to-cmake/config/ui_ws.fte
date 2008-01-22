@@ -1,0 +1,14 @@
+# FTE 
+
+include 'ui_m_ws.fte';
+include 'ui_k_ws.fte';
+
+include 'menu/m_c.fte';
+include 'menu/m_html.fte';
+
+include 'kbd/k_c.fte';
+include 'kbd/k_java.fte';
+include 'kbd/k_perl.fte';
+include 'kbd/k_rexx.fte';
+include 'kbd/k_fte.fte';
+include 'kbd/k_html.fte';

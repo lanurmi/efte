@@ -1,0 +1,117 @@
+<HTML>
+<HEAD><TITLE>Regular Expressions</TITLE></HEAD>
+<BODY>
+Regular expressions are a way to specify text patterns when searching for
+a text in a buffer. Regular expressions consist of normal characters
+and special operator characters with a special meanings. Operators
+allow you to anchor matches, match classes of characters, match given
+pattern several times or match alternate patterns. Operators can be
+also used to group patterns.
+<H1><A NAME="regexp-search">Search/Match Operators</A></H1>
+<DL>
+<DT><B>\</B>
+<DD>Quotes the following character. If the following character is not
+alphanumeric, it will lost it's special meaning, otherwise it will
+gain a special meaning as described below.
+<DT><B>\n</B>
+<DD>Matches a 0x0A (LF) character.
+<DT><B>\r</B>
+<DD>Matches a 0x0D (CR) character.
+<DT><B>\t</B>
+<DD>Matches a 0x09 (TAB) character.
+<DT><B>\e</B>
+<DD>Matches an escape character (0x1B)
+<DT><B>\s</B>
+<DD>Matches whitespace (CR, LF, TAB, SPACE) characters.
+<DT><B>\S</B>
+<DD>Matches non-whitespace (the reverse of \s)
+<DT><B>\w</B>
+<DD>Matches word character [a-zA-Z0-9]
+<DT><B>\W</B>
+<DD>Matches non-word character
+<DT><B>\d</B>
+<DD>Matches a digit [0-9].
+<DT><B>\D</B>
+<DD>Matches a non-digit.
+<DT><B>\U</B>
+<DD>Matches uppercase characters (A-Z)
+<DT><B>\L</B>
+<DD>Matches lowercase characters (a-z)
+<DT><B>\x##</B>
+<DD>Matches specified hex value (\x0A, \x0D, \x09, etc.)
+<DT><B>\o###</B>
+<DD>Matches specified octal value (\o000, \o015, etc.)
+<DT><B>\N###</B>
+<DD>Matches specified decimal value (\N000, \N013, \N009, etc.)
+<DT><B>\C</B>
+<DD>Starts case sensitive matching.
+<DT><B>\c</B>
+<DD>Starts case insensitive matching.
+<DT><B>^</B>
+<DD>Match a beginning of line.
+<DT><B>$</B>
+<DD>Match an end of line.
+<DT><B>.</B>
+<DD>Match any character.
+<DT><B>&lt;</B>
+<DD>Match beginning of word (word consists of [A-Za-z0-9]).
+<DT><B>&gt;</B>
+<DD>Match end of word.
+<DT><B>[ ]</B>
+<DD>Specifies a class of characters ([abc123], [\]\x10], etc).
+<DT><B>[ - ]</B>
+<DD>Specified a range of characters ([0-9a-zA-Z_], [0-9], etc)
+<DT><B>[^ ]</B>
+<DD>Specifies complement class ([^a-z], [^\-], etc)
+<DT><B>?</B>
+<DD>Matches preceeding pattern optionally (a?bc, filename\.?, $?, etc)
+<DT><B>|</B>
+<DD>Matches preceeding or next pattern (a|b, c|d, abc|d). Only one
+character will be used as pattern unless grouped together using {} or
+().
+<DT><B>*</B>
+<DD>Match zero or more occurances of preceeding pattern. Matching is
+greedy and will match as much as possible.
+<DT><B>+</B>
+<DD>Match one or more occurances of preceeding pattern. Match is
+greedy.
+<DT><B>@</B>
+<DD>Match zero or more occurances of preceeding pattern. Matching is
+non-greedy and will match as little as possible without causing the
+rest of the pattern match to fail.
+<DT><B>#</B>
+<DD>Match one or more occurances of preceeding pattern. Matching is
+non-greedy.
+<DT><B>{ }</B>
+<DD>Group patterns together to form complex pattern. ( {abc},
+{abc}|{cde}, {abc}?, {word}?)
+<DT><B>( )</B>
+<DD>Group patterns together to form complex pattern. Also used to save
+the matched substring into the register which can be used for
+substitution operation. Up to 9 registers can be used.
+</DL>
+<H1><A NAME="regexp-replace">Replacement Operators</A></H1>
+<DL>
+<DT><B>\</B>
+<DD>Causes the next character to lose it's special meaning.
+<DT><B>\n</B>
+<DD>Inserts a 0x0A (LF) character.
+<DT><B>\r</B>
+<DD>Inserts a 0x0D (CR) character.
+<DT><B>\t</B>
+<DD>Inserts a 0x09 (TAB) character.
+<DT><B>\1 to \9</B>
+<DD>Recalls stored substrings from registers (\1, \2, \3, to \9).
+<DT><B>\0</B>
+<DD>Recalls entire matched pattern.
+<DT><B>\u</B>
+<DD>Convert next character to uppercase
+<DT><B>\l</B>
+<DD>Convert next character to lowercase
+<DT><B>\U</B>
+<DD>Convert to uppercase till \E or \e
+<DT><B>\L</B>
+<DD>Convert to lowercase till \E or \e
+</DL>
+</BODY>
+</HTML>

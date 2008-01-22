@@ -1,0 +1,186 @@
+<HTML>
+<HEAD><TITLE>Global Configuration</TITLE></HEAD>
+<BODY>
+
+<H1><A NAME="set-global">Global Settings</A></H1>
+The following settings can be used in the <B>GLOBAL</B> section of the
+configuration file. Some of the options are platform specific (to be fixed).
+
+<H2><A NAME="gs.DefaultModeName">DefaultModeName</A></H2>
+Default mode name for loading/editing files. If not set or invalid,
+first mode in the configuration file will be used instead. By default
+set to 'PLAIN'.
+
+<H2><A NAME="gs.CompletionFilter">CompletionFilter</A></H2>
+Files matching this regexp are ignored when doing filename completion.
+
+<H2><A NAME="gs.CompileRx">CompileRx</A></H2>
+Defines <A HREF="regexp.html">regular expressions</A> and thers subpattern
+indices to match when searching for errors and warnings in compilation
+output. First number is an index of the subpattern that matches 
+filename. The second must match the line number, the third parameter is
+the regular expression to match to each line of the compiler output.
+
+<H2><A NAME="gs.OpenAfterClose">OpenAfterClose</A></H2>
+If set to 1, editor will prompt for another file when all files are
+closed.
+
+<H2><A NAME="gs.SysClipboard">SysClipboard</A></H2>
+When set to 1, editor will use external (PM, X11) clipboard instead of
+internal one.
+
+<H2><A NAME="gs.ScreenSizeX">ScreenSizeX</A></H2>
+Number of columns visible on screen or window
+
+<H2><A NAME="gs.ScreenSizeY">ScreenSizeY</A></H2>
+Number of lines visible on screen or window
+
+<H2><A NAME="gs.CursorInsertStart">CursorInsertStart</A></H2>
+Starting percentage of cursor size (from top) when in insert mode.
+
+<H2><A NAME="gs.CursorInsertEnd">CursorInsertEnd</A></H2>
+Ending percentage of cursor size when in insert mode.
+
+<H2><A NAME="gs.CursorOverStart">CursorOverStart</A></H2>
+Starting percentage of cursor size when in overstrike mode
+
+<H2><A NAME="gs.CursorOverEnd">CursorOverEnd</A></H2>
+Ending percentage of cursor size when in overstrike mode.
+
+<H2><A NAME="gs.SelectPathname">SelectPathname</A></H2>
+If set to 1, pathname will be selected by default when prompting for a
+file in <A HREF="command.html#ec.FileOpen">FileOpen</A> function. If set to 0,
+pathname will not be selected, this allows you to quickly type a new
+filename, without erasing an entire entryfield.
+
+<H2><A NAME="gs.ShowMenuBar">ShowMenuBar</A></H2>
+If set to 1, main menu bar will be visible.
+
+<H2><A NAME="gs.ShowVScroll">ShowVScroll</A></H2>
+If set to 1, scroll bar will be visible.
+
+<H2><A NAME="gs.ShowHScroll">ShowHScroll</A></H2>
+If set to 1, scroll bar will be visible.
+
+<H2><A NAME="gs.KeepHistory">KeepHistory</A></H2>
+If set to 1, last file position and imput prompt history will
+be loaded on startup and saved on exit. Can be overriden
+with command line option '-h'.
+
+<H2><A NAME="gs.LoadDesktopOnEntry">LoadDesktopOnEntry</A></H2>
+If set to 1, all files listed in FTE.DSK in current directory or
+FTE.EXE directory will be loaded into FTE. The desktop file can
+be overriden with command line option '-d'.
+<P>
+If set to 2, desktop is only loaded (and saved) if there are no
+files specified on the command line.
+
+<H2><A NAME="gs.SaveDesktopOnExit">SaveDesktopOnExit</A></H2>
+If set to 1, desktop will be automatically saved when <A
+HREF="command.html#ec.ExitEditor">ExitEditor</A> command is issued.
+
+<H2><A NAME="gs.KeepMessages">KeepMessages</A></H2>
+If set to 1, compiler messages will be kept until deleted by user.
+
+<H2><A NAME="gs.ScrollBorderX">ScrollBorderX</A></H2>
+Horizontal offset to the border before window starts scrolling.
+
+<H2><A NAME="gs.ScrollBorderY">ScrollBorderY</A></H2>
+Vertical offset to the border before window starts scrolling.
+
+<H2><A NAME="gs.ScrollJumpX">ScrollJumpX</A></H2>
+Scroll window by this many columns when cursor reaches scrolling border.
+
+<H2><A NAME="gs.ScrollJumpY">ScrollJumpY</A></H2>
+Scroll window by this many lines when cursor reaches scrolling border.
+
+<H2>C_*</H2>
+Define the C mode smart indentation parameters
+
+<P> See section on <A HREF="#global-cmode">configuring C mode indentation</A>.
+
+<H2><A NAME="gs.REXX_Indent">REXX_Indent</A></H2>
+Defines the REXX basic indentation level
+
+<H1><A NAME="global-cmode">CMode Smart Indentation</A></H1>
+
+<B>Settings for CMode smart indentation</B>
+<P>
+<DL>
+<DT><B>C_Indent</B><DD>Basic C indentation level
+<DT><B>C_BraceOfs</B><DD>Brace '{' offset
+<DT><B>C_CaseOfs</B><DD>Offset of case and default statements
+<DT><B>C_CaseDelta</B><DD>Offsets of statements following case/default.
+<DT><B>C_ClassOfs</B><DD>Offset of public, private and protected
+<DT><B>C_ClassDelta</B><DD>Offset of statements following public, private, protected
+<DT><B>C_ColonOfs</B><DD>Offset of labels
+<DT><B>C_CommentOfs</B><DD>Offset of comments
+<DT><B>C_CommentDelta</B><DD>Offset of second line of comments
+<DT><B>C_FirstLevelWidth</B><DD>Width of the first indentation level (indent of '{' in the function start).
+<DT><B>C_FirstLevelIndent</B><DD>Indentation of statements in the first indentation level.
+<DT><B>C_ParenDelta</B><DD>When >= 0, offset of continued text after '('. When set to -1, the offset is equal to position of '(' plus one.
+</DL>
+<P>
+Example 1:
+
+<PRE>
+class line {
+public:                   // C_ClassOfs = 0
+    line();               // C_ClassDelta = 4
+    ~line();
+};
+
+int main() {
+    int x = 1;
+    
+    /*                    // C_CommentOfs = 0
+     * check value        // C_CommentDelta = 1
+     */
+    
+    puts("main");         // C_Indent = 4
+    if (x)
+    {                     // C_BraceOfs = 0
+        switch (x) {
+        case 1:           // C_CaseOfs = 0
+            puts("ok");   // C_CaseDelta = 4
+            break;
+        }
+    }
+end:
+    return 0;
+}
+</PRE>
+
+<P>
+Example 2:
+
+<PRE>
+class line {
+  public:                     // C_ClassOfs = 2
+    line();                   // C_ClassDelta = 2
+    ~line();
+};
+
+int main() {
+    int x = 1;
+    
+      /*                      // C_CommentOfs = 2
+      ** check value          // C_CommentDelta = 0
+      */
+    
+    puts("main");             // C_Indent = 4
+    if (x)
+    {                         // C_BraceOfs = 0
+        switch (x) {
+            case 1:           // C_CaseOfs = 4
+                puts("ok");   // C_CaseDelta = 4
+                break;
+        }
+    }
+end:
+    return 0;
+}
+</PRE>
+
+</BODY>
+</HTML>

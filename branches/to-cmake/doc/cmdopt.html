@@ -1,0 +1,63 @@
+<HTML>
+<HEAD><TITLE>Command Line Options</TITLE></HEAD>
+<BODY>
+The FTE command line syntax is:
+<P>
+<TT>fte [[options] [files] ...]</TT>
+<H1><A NAME="command-line-options">Options</A></H1>
+<DL>
+<DT><TT><B>-l</B>line[,column]</TT>
+<DD>Go to line (and column) in next file specified on command line
+<DT><TT><B>-m</B>[MOD]E</TT>
+<DD>Use mode <TT>MODE</TT> for remaining files. If no argument is
+specified, mode override is cancelled.
+<DT><TT><B>-C</B>[file]</TT>
+<DD>Use specified configuration file (compiled). If no argument is specified,
+the default builtin configuration is used.
+<DT><TT><B>-D</B>[file.dsk]</TT>
+<DD>Load/save desktop from file <TT>file.dsk</TT>. If no argument is specified, desktop loading/saving
+is disabled.
+<DT><TT><B>-H</B>[file.his]</TT>
+<DD>Load/save history from file &lt;.his&gt;. If no argument, disable history load/save.
+<DT><TT><B>-T</B>tags</TT>
+<DD>Load tags file <TT>tags</TT>. The file must be in the format generated
+by the <B>ctags</B> program.
+<DT><TT><B>-t</B>tag</TT>
+<DD>Lookup tag <TT>tag</TT> and display file containing it.
+<DT><TT><B>--</B></TT>
+<DD>The rest of the arguments are not options, but filenames.
+<DT><TT><B>-+</B></TT>
+<DD>The next argument is not an option even if starting with a '-'.
+</DL>
+<P>
+Optional arguments are marked by [ and ] brackets.
+<P>
+There should not be any delimiter between option and it's arguments.
+<P>
+<H1><A NAME="command-line-examples">Examples</A></H1>
+<DL>
+<DT><TT>fte -mBIN fte.exe</TT>
+<DD>load fte.exe in BIN mode
+<DT><TT>fte -l100,30 win.c</TT>
+<DD>go to (100,30) in win.c
+<DT><TT>fte window.cpp</TT>
+<DD>load file window.cpp
+<DT><TT>fte -mBIN fte.exe -m fte.cpp</TT>
+<DD>load fte.exe in binary mode, window.cpp in default mode (C/C++)
+<DT><TT>fte -mBIN -+ -bla-</TT>
+<DD>load file -bla- in BIN mode
+<DT><TT>fte -- -1 -2 -3 -4 -5 -6</TT>
+<DD>load files -1, -2, -3, -4, -5, -6
+<DT><TT>fte -D -H fte.dsk fte.his</TT>
+<DD>Disable desktop and history loading and saving and load files
+<TT>fte.dsk</TT> and <TT>fte.his</TT>.
+</DL>
+
+<P>Under OS/2,NT and DOS default history and desktop files are
+named <TT>FTE.DSK</TT> and <TT>FTE.HIS</TT> respectively. Under Unix they
+are named <TT>.fte-desktop</TT> and <TT>.fte-history</TT>. The global
+desktop and history files will be searched in program directory under
+OS/2 and in user home directory under Unix.
+
+</BODY>
+</HTML>

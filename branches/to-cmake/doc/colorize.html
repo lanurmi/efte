@@ -1,0 +1,219 @@
+<HTML>
+<HEAD><TITLE>Configuration of Syntax Highlighting</TITLE></HEAD>
+<BODY>
+Syntax:
+<PRE>
+    <B>colorize</B> <I>Mode</I>[<B>:</B><I>Parent</I>] <B>{</B> <I><A HREF="#settings">Settings</A></I> <B>}</B>
+</PRE>
+
+<H1><A NAME="settings">Settings</A></H1>
+
+<UL>
+<LI>SyntaxParser
+<P>Syntax:
+<PRE>
+    <B>SyntaxParser = "</B><I>Parser</I><B>";</B>
+</PRE>
+
+<P>Activates the specified syntax parser for highlighting mode.
+Value of <TT><I>Parser</I></TT> can be chosen from:<P>
+<DL>
+<DT>PLAIN<DD>No syntax parser, only <A HREF="#hl_keyword">keyword highlighting</A>
+is available.
+<DT>SIMPLE<DD><A HREF="#hl_simple">User configurable syntax parser</A>
+will be defined.
+<DT>C
+<DT>REXX
+<DT>HTML
+<DT>PERL
+<DT>MAKE
+<DT>DIFF<DD>For viewing output of <B>diff</B>.
+<DT>MERGE<DD>For editing output of <B>rcsmerge</B> (RCS, CVS).
+<DT>IPF
+<DT>Ada
+<DT>MSG<DD>For editing E-Mail,
+<DT>SH
+<DT>PASCAL
+<DT>TEX
+<DT>FTE
+<DT>CATBS<DD>For <B>VIEWING ONLY</B> of <B>nroff</B> formatted
+man-pages (formatted with backspaces).
+</DL>
+<P>
+<LI><A NAME="hl_keyword">Keywords</A>
+<P>Syntax:
+<PRE>
+    <B>keyword "</B><A HREF="colors.html"><I>color_specification</I></A><B>" {
+        "</B><I>keyword</I><B>"</B>, ...
+    <B>};</B>
+</PRE>
+Multiple keyword sets with different colors can be defined.
+<P>
+<LI><A NAME="hl_color">Colors</A>
+<P>Syntax:
+<PRE>
+    <B>color {
+        "</B><I>color_name</I><B>", "</B><A HREF="colors.html"><I>color_specification</I></A><B>"</B>
+        ...
+    <B>};</B>
+</PRE>
+
+<P> The following color-names are available, which ones
+will actually be used depends on the SyntaxParser setting used:<P>
+<UL>
+<LI>TODO: make color names dynamic at least for user defined parsers.
+</UL>
+</UL>
+<H1><A NAME="hl_simple">Configurable Syntax Parser</A></H1>
+
+<B>This is not fully stabilized yet. Might change in the future.</B>
+<P>
+When <B>SyntaxParser</B> is set to "SIMPLE", the following commands
+can be used to configure the state machine used for parsing the
+text.
+
+<DL>
+<DT><B>h_state</B>
+<DD>Defines a new state for the state machine
+<P>
+<PRE>
+<B>h_state</B> <I>state_number</I> <B>{</B>
+    <B>"</B><A HREF="#hl_color"><I>default_color_name</I></A><B>"</B>
+<B>}</B>
+</PRE>
+
+<B>h_state</B> command takes the following parameters:
+<P>
+<DL>
+<DT><TT><I>state_number</I></TT>
+<DD>States must be numbered sequentially from 0 without skipping any
+number.
+
+<DT><TT><I>default_color_name</I></TT>
+<DD>Contains the name of default color used for characters that are not
+matched by any transition string or keyword.
+
+</DL>
+<P>
+<DT><B>h_wtype</B>
+<DD>Specifies the keyword matching parameters for current
+state. There can be only one <B>h_wtype</B> keyword per state.
+
+<PRE>
+<B>h_wtype {</B>
+    <I>next_state_if_matched</I><B>,</B>
+    <I>next_state_if_not_matched</I><B>,</B>
+    <I>next_state_if_no_keyword</I><B>,</B>
+    <B>"</B><I>state_flags</I><B>",</B>
+    <B>"</B><I>keyword_charset</I><B>"</B>
+<B>}</B>
+</PRE>
+
+<B>h_wtype</B> takes the following arguments:
+<P>
+<DL>
+<DT><TT><I>next_state_if_matched</I></TT>
+<DD>The number of the next state if any keyword is matched. Can
+be -1 to keep current state.
+
+<DT><TT><I>next_state_if_not_matched</I></TT>
+<DD>The number of the next state if no keyword is matched. Can
+be -1 to keep current state.
+
+<DT><TT><I>next_state_if_no_keyword</I></TT>
+<DD>The number of next state if no keyword is found at all. Can
+be -1 to keep current state.
+
+<DT><TT><I>state_flags</I></TT>
+<DD>String containing zero or more of the following characters:
+<P>
+<DL>
+<DT><B>i</B>
+<DD>Keyword matching is performed case-insensitively.
+</DL>
+</DL>
+<P>
+<DT><B>h_trans</B>
+<DD>Defines a new state transition for current state.
+
+<PRE>
+<B>h_trans {</B>
+    <I>next_state</I><B>,</B>
+    <I>trans_flags</I><B>,</B>
+    <I>trans_match</I><B>,</B>
+    <I>color_name</I>
+<B>}</B>
+</PRE>
+<P>
+<B>h_trans</B> command takes the following parameters:
+<P>
+<DL>
+<DT><TT><I>next_state</I></TT>
+<DD>The number of next state to go if a match is successful.
+
+<DT><TT><I>trans_flags</I></TT>
+<DD>Determines options for matching. Can contain zero or more of the
+following characters:
+<P>
+<DL>
+<DT><B>^</B>
+<DD>Matches only at the beginning of the line.
+<DT><B>$</B>
+<DD>Matches only at the end of the line.
+<DT><B>i</B>
+<DD>Match is case-insensitive.
+<DT><B>s</B>
+<DD><TT><I>trans_match</I></TT> is a character set. Matches only if the
+next character is part of the set.
+<DT><B>S</B>
+<DD>Same as 's' but next character must not be part of the set.
+<DT><B>x</B>
+<DD><TT><I>trans_match</I></TT> is a regular expression. If some part of expression
+is enclosed in parentheses, pointer is advanced up to the start of parenthesized
+match (WARNING: this can cause infinite loops).
+<DT><B>-</B>
+<DD>After successfull match, the pointer is not advanced, matching
+will resume at the same position in next state. (WARNING: this
+can cause infinite loops).
+<DT><B>&lt;</B>
+<DD>The matched character(s) are tagged with current state number.
+This is important for proper operation of <B><A HREF="command.html#ec.MatchBracket">MatchBracket</A></B> command.
+MatchBracket will only match braces tagged with same state number.
+<DT><B>&gt;</B>
+<DD>The matched character(s) are tagged with next state number.
+<DT><B>q</B>
+<DD>On successful match quote the next character (the next character
+is not used for matching).
+<DT><B>Q</B>
+<DD>On successful match quote the end of line (the end of line
+is not used for matching).
+</DL>
+
+<DT><TT><I>trans_match</I></TT>
+<DD>When <B>S</B> or <B>s</B> option is used, a character set to be matched. When
+<B>S</B> or <B>s</B> options are not used, a string to be matched.
+
+</DL>
+<P>
+<DT><B>h_words</B>
+<DD>Specifies the set of keywords to match in this state. All
+characters in keywords must be part of the <TT><I>keyword_charset</I></TT>
+in <B>h_wtype</B> command for this mode.
+
+<P>
+<PRE>
+    <B>h_words "</B><A HREF="colors.html">color_specification</A><B>" {</B>
+        <B>"</B><I>keyword</I><B>",</B> ...
+    <B>}</B>
+</PRE>
+
+<P> Works the same way as the <B><A HREF="#hl_keyword">keyword</A></B> but keywords
+are for current state only.
+
+<P> Multiple keyword sets with different colors can be defined.
+<P> '-' can be used for color specifier do use the default keyword
+color specified in global settings.
+</DL>
+
+</BODY>
+</HTML>

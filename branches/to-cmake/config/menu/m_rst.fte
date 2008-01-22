@@ -1,0 +1,146 @@
+# FTE menus for editing reStructureedText files
+# maintained by: Sergey Pinigin
+# Revision:      2006-08-29
+#
+# RST_* macros are defined in ../m_rst.fte
+# keybindings are defined in  ../kbd/k_rst.fte
+# this file is included from  ../ui_fte.fte
+
+
+menu RST_Sections {
+    item  "Section  C-E &1" {  RST_H1  }
+    item  "Section  C-E &2" {  RST_H2  }
+    item  "Section  C-E &3" {  RST_H3  }
+    item  "Section  C-E &4" {  RST_H4  }
+    item  "Section  C-E &5" {  RST_H5  }
+}
+
+
+menu RST_Role {
+    item "&Emphasis   C+G+Up"          { RST_ROLE_EMP }
+    item "&Strong     C+G+Down"        { RST_ROLE_STR }
+    item "&Literal    C+E_C+L"         { RST_ROLE_LIT }
+    item "Su&bscript  "                { RST_ROLE_SUB }
+    item "Su&perscript"                { RST_ROLE_SUP }
+    item "&Title"                      { RST_ROLE_TIT }
+    item "P&EP"                        { RST_ROLE_PEP }
+    item "&RFC"                        { RST_ROLE_RFC }
+    item;
+    item "r&aw-X"                      { RST_ROLE_RAW }
+    item "&define raw-X"               { RST_ROLE_DRAW }
+}
+
+
+menu RST_INLINE {
+    item "&Emphasis          A+G+Up"      { RST_INLINE_EMP }
+    item "&Strong            A+G+Down"    { RST_INLINE_STR }
+    item "&Interpreted       C+E_0"       { RST_INLINE_INT }
+    item "&Literals          C+E_9"       { RST_INLINE_LIT }
+    item;
+    item "&Hyperlink    ``_   C+E_C+H"    { RST_INLINE_HLINK }
+    item "Embedded &URIs`<>`_ C+E_C+U"    { RST_INLINE_ELINK }
+    item "Int. &Targets  _``  C+E_C+T"    { RST_INLINE_ITAG }
+    item "Footnote &Ref.[]_   C+E_C+R"    { RST_INLINE_REF }
+    item "&Auto Ref.    [#]_  C+E_C+A"    { RST_INLINE_REFA }
+    item "&Sub. Ref.    ||_   C+E_C+\\"   { RST_INLINE_REFS }
+}
+
+
+menu RST_ADMON {
+    item "&Attention   C+E_A+A"     { RST_ADM_ATTE }
+    item "&Caution     C+E_A+C"     { RST_ADM_CAUT }
+    item "&Danger      C+E_A+D"     { RST_ADM_DANG }
+    item "&Error       C+E_A+E"     { RST_ADM_ERRO }
+    item "&Hint        C+E_A+H"     { RST_ADM_HINT }
+    item "&Important   C+E_A+I"     { RST_ADM_IMPO }
+    item "&Note        C+E_A+N"     { RST_ADM_NOTE }
+    item "&Tip         C+E_A+T"     { RST_ADM_TIP  }
+    item "&Warning     C+E_A+W"     { RST_ADM_WARN }
+    item "Tit&le       C+E_A+L"     { RST_ADM_TITL }
+    item "Adm&onition  C+E_A+O"     { RST_ADM_ADMO }
+}
+
+
+menu RST_IMAG {
+    item "&Image         C+E_C+I"   { RST_IMAGE }
+    item "I&mage, parameters    "   { RST_IMAGE_FULL }
+    item "&Figure        C+E_C+F"   { RST_FIGURE }
+    item "Fi&gure, parameters   "   { RST_FIGURE_FULL }
+}
+
+
+#Body Elements
+menu RST_BODY {
+    item "&Topic"            { RST_BOEL_TOPI }
+    item "&Sidebar"          { RST_BOEL_SIDE }
+    item "&Line Block"       { RST_BOEL_LBLK }
+    item "&Parsed Block"     { RST_BOEL_PLIT }
+    item "&Rubric"           { RST_BOEL_RUBR }
+    item "&Epigraph"         { RST_BOEL_EPIG }
+    item "&Highlights"       { RST_BOEL_HIGH }
+    item "Pull-&Quote"       { RST_BOEL_PQUO }
+    item "&Compound"         { RST_BOEL_COMP }
+    item "C&ontainer"        { RST_BOEL_CONT }
+    item;
+    item "&Include"          { RST_INC }
+}
+
+menu RST_TABLE {
+    item "&Simple  2 column"   { RST_TABS_2C  }
+    item "Simple  2*2,&head"   { RST_TABS_22H }
+    item "Simple  2*2,s&pan"   { RST_TABS_22S }
+    item "&Grid  2*2"          { RST_TABG_22  }
+    item "G&rid  2*2,head"     { RST_TABG_22H }
+    item "&Table title"        { RST_TAB_TIT  }
+    item;
+    item "&CSV-table"          { RST_TABCSV   }
+    item "&List-table"         { RST_TABLIST  }
+}
+
+
+menu RST_PARTS {
+    item "&Contents"           { RST_PART_CON }
+    item "C&ontents, options"  { RST_PART_CON_ }
+    item "&Sectnum"            { RST_PART_SEC }
+    item "S&ectnum, options"   { RST_PART_SEC_ }
+    item "&Header"             { RST_PART_HEAD }
+    item "&Footer"             { RST_PART_FOOT }
+}
+
+#Substitution Definitions
+#menu RST_SDEF {
+#    item "" {  }
+# }
+
+menu RSTTags {
+    submenu "&Roles",               RST_Role;
+    submenu "In&line",              RST_INLINE;
+    submenu "&Admonition",          RST_ADMON;
+    submenu "&Images",              RST_IMAG;
+    submenu "&Body Elements",       RST_BODY;
+    submenu "&Document Parts",      RST_PARTS;
+    submenu "&Sections",            RST_Sections;
+    submenu "&Tables",              RST_TABLE;
+    item    "&List enter C+Enter" { RST_LISTS_1ENT  }
+    item    "Literal Bloc&k "     { RST_CODE }
+}
+
+#====================================================================
+menu Main_RST {
+    submenu "&File",    File;
+    submenu "&Edit",    Edit;
+    submenu "&Block",   Block;
+    submenu "&Search",  Search;
+    submenu "Fol&d",    Fold;
+    submenu "&Tools",   Tools;
+    submenu "&reST",    RSTTags;
+    submenu "&Window",  Window;
+    submenu "&Options", Options;
+    submenu "&Help",    Help;
+}
+
+
+eventmap reST {
+    MainMenu            = "Main_RST";   # menu for menubar
+    key [A+R] { MainMenu 'R' } # reload 'A+R'
+}
