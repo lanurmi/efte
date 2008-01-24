@@ -1,6 +1,6 @@
 #----------------------------------------------------------------------------
 #
-# Makefile for ECS-OS2 version of FTE using OpenWatcom 1.4
+# Makefile for ECS-OS2 version of eFTE using OpenWatcom 1.4
 #
 # Notes:
 #
@@ -38,38 +38,38 @@ OEXT    = obj
 
 !include objs.mif
 
-.cpp.obj:
+.cpp.obj: *.cpp
   $(CC) $(CFLAGS) $<
 
-all: cfte.exe fte.exe ftepm.exe fte.cnf
+all: cefte.exe efte.exe eftepm.exe efte.cnf
 
-cfte.exe: $(CFTE_OBJS) cfte.def
-  $(LD) NAME cfte SYS os2v2 $(LDFLAGS) FILE {$(CFTE_OBJS)}
+cefte.exe: $(CFTE_OBJS) fte.def
+  $(LD) NAME cefte SYS os2v2 $(LDFLAGS) FILE {$(CFTE_OBJS)}
 
-defcfg.cnf: defcfg.fte cfte.exe
-  cfte defcfg.fte defcfg.cnf
+defcfg.cnf: defcfg.fte cefte.exe
+  cefte defcfg.fte defcfg.cnf
 
 defcfg.h: defcfg.cnf bin2c.exe
   bin2c defcfg.cnf >defcfg.h
 
-fte.cnf: cfte.exe
-  cfte ..\config\main.fte fte.cnf
-  copy fte.cnf ftepm.cnf
+efte.cnf: cefte.exe
+  cefte ..\config\main.fte efte.cnf
+  copy efte.cnf ftepm.cnf
 
 bin2c.exe: bin2c.obj
   $(LD) NAME bin2c SYS os2v2 $(LDFLAGS) FILE {bin2c.obj}
 
 c_config.obj: c_config.cpp defcfg.h
 
-fte.exe: $(OBJS) $(VIOOBJS) fte.def
-  $(LD) NAME fte SYS os2v2 $(LDFLAGS) FILE {$(OBJS) $(VIOOBJS)}
+efte.exe: $(OBJS) $(VIOOBJS) fte.def
+  $(LD) NAME efte SYS os2v2 $(LDFLAGS) FILE {$(OBJS) $(VIOOBJS)}
 
-ftepm.res: ftepm.rc pmdlg.rc
-  $(RC) -r ftepm.rc
+eftepm.res: ftepm.rc pmdlg.rc
+  $(RC) -r ftepm.rc eftepm.res
 
-ftepm.exe: $(OBJS) $(PMOBJS) ftepm.res
-  $(LD) NAME ftepm SYS os2v2_pm $(LDFLAGS) FILE {$(OBJS) $(PMOBJS)}
-  $(RC) ftepm.res ftepm.exe
+eftepm.exe: $(OBJS) $(PMOBJS) eftepm.res
+  $(LD) NAME eftepm SYS os2v2_pm $(LDFLAGS) FILE {$(OBJS) $(PMOBJS)}
+  $(RC) eftepm.res eftepm.exe
 
 clean : .SYMBOLIC
   -@rm *.obj
