@@ -1,7 +1,7 @@
 
 #----------------------------------------------------------------------------
 #
-# Makefile for NT version of FTE using OpenWatcom 1.4
+# Makefile for NT version of eFTE using OpenWatcom 1.4
 #
 # Notes:
 #
@@ -40,31 +40,31 @@ OEXT    = obj
 .cpp.obj:
   $(CC) $(CFLAGS) $<
 
-all: cfte.exe fte.exe fte.cnf
+all: cefte.exe efte.exe efte.cnf
 
-cfte.exe: $(CFTE_OBJS) cfte.def
-  $(LD) NAME cfte SYS nt $(LDFLAGS) FILE {$(CFTE_OBJS)}
+cefte.exe: $(CFTE_OBJS) cfte.def
+  $(LD) NAME ecfte SYS nt $(LDFLAGS) FILE {$(CFTE_OBJS)}
 
-defcfg.cnf: defcfg.fte cfte.exe
-  cfte defcfg.fte defcfg.cnf
+defcfg.cnf: defcfg.fte cefte.exe
+  cefte defcfg.fte defcfg.cnf
 
 defcfg.h: defcfg.cnf bin2c.exe
   bin2c defcfg.cnf >defcfg.h
 
-fte.cnf: cfte.exe
-  cfte ..\config\main.fte fte.cnf
+efte.cnf: cefte.exe
+  cefte ..\config\main.fte efte.cnf
 
 bin2c.exe: bin2c.obj
   $(LD) NAME bin2c SYS nt $(LDFLAGS) FILE {bin2c.obj}
 
 c_config.obj: c_config.cpp defcfg.h
 
-ftewin32.res:
-  $(RC) -r ftewin32.rc
+eftewin32.res:
+  $(RC) -r ftewin32.rc eftewin32.res
 
-fte.exe: $(OBJS) $(NTOBJS) ftewin32.res
-  $(LD) NAME fte SYS nt $(LDFLAGS) FILE {$(OBJS) $(NTOBJS)}
-  $(RC) ftewin32.res fte.exe
+efte.exe: $(OBJS) $(NTOBJS) eftewin32.res
+  $(LD) NAME efte SYS nt $(LDFLAGS) FILE {$(OBJS) $(NTOBJS)}
+  $(RC) eftewin32.res efte.exe
 
 clean : .SYMBOLIC
   -@rm *.obj
