@@ -60,7 +60,6 @@ int SystemClipboard = 0;
 int ScreenSizeX = -1, ScreenSizeY = -1;
 int ScrollBarWidth = 1;
 bool CursorBlink = 0; // default is "no" (same as before)
-bool CursorWrap = 0; // default is "no" (same as before)
 bool CursorWithinEOL = 0; // default is "no" (same as before)
 int CursorInsertMask = 0x77;
 int CursorOverMask = 0x44;
@@ -284,7 +283,6 @@ static int SetGlobalNumber(int what, int number) {
     case FLAG_IgnoreBufferList:  IgnoreBufferList = number; break;
     case FLAG_ReassignModelIds:  ReassignModelIds = number; break;
     case FLAG_RecheckReadOnly:   RecheckReadOnly = number; break;
-    case FLAG_CursorWrap:        CursorWrap = number; break;
     case FLAG_CursorWithinEOL:   CursorWithinEOL = number; break;
     case FLAG_CursorInsertMask:  CursorInsertMask = number; break;
     case FLAG_CursorOverMask:    CursorOverMask = number; break;

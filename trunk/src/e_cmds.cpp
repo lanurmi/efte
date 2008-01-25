@@ -11,7 +11,7 @@
 
 int EBuffer::MoveLeft() {
    if (CP.Col == 0) {
-      if ( CursorWrap == 1 && MoveUp() )
+      if ( CursorWithinEOL == 1 && MoveUp() )
          return MoveLineEnd();
       else
          return 0;
@@ -21,7 +21,7 @@ int EBuffer::MoveLeft() {
 }
 
 int EBuffer::MoveRight() {
-   if ( CursorWrap == 1 && CP.Col == LineLen() ) {
+   if ( CursorWithinEOL == 1 && CP.Col == LineLen() ) {
       if ( MoveDown() )
          return MoveLineStart();
       else
