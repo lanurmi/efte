@@ -201,7 +201,7 @@ colorize PYTHON {
 
 }
 
-mode PYTHON: PLAIN {
+mode PYTHON: SOURCE {
     FileNameRx          = /\.\cPY$/;
     HilitOn             = 1;
     Colorizer           = "PYTHON";

@@ -57,7 +57,7 @@ colorize sl {
     };
 }
 
-mode sl: PLAIN {      # SLang Mode
+mode sl: SOURCE {      # SLang Mode
     FileNameRx          = /\.\cSL$/;
     HilitOn             = 1;
     Colorizer           = 'sl';

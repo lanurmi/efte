@@ -92,7 +92,7 @@ colorize TCL {
     h_trans { 0, '-S',  'a-zA-Z0-9_', 'Normal' }
 }
 
-mode TCL: PLAIN { # *sh
+mode TCL: SOURCE { # TCL
     FileNameRx          = /\.\ctcl$/;
     FirstLineRx         = /^\#\![^ ]*{{wish>}|{tclsh>}}/;
     HilitOn             = 1;

@@ -25,6 +25,7 @@ static const char *indentTokens[] = {
    "function",
    "init",
    "loop",
+   "object",
    "select",
    "switch",
    "try",
@@ -244,16 +245,17 @@ static int FSearchMatch(int Count, EBuffer *B, int Row, int Ctx) {
                   }
                }
                else if (FMatch(L, Pos, StateMap, P, "function", hsFalcon_Keyword) ||
-                   FMatch(L, Pos, StateMap, P, "class", hsFalcon_Keyword) ||
-                   FMatch(L, Pos, StateMap, P, "while", hsFalcon_Keyword) ||
-                   FMatch(L, Pos, StateMap, P, "loop", hsFalcon_Keyword) ||
-                   FMatch(L, Pos, StateMap, P, "init", hsFalcon_Keyword) ||
-                   FMatch(L, Pos, StateMap, P, "for", hsFalcon_Keyword) ||
-                   FMatch(L, Pos, StateMap, P, "select", hsFalcon_Keyword) ||
-                   FMatch(L, Pos, StateMap, P, "switch", hsFalcon_Keyword) ||
-                   FMatch(L, Pos, StateMap, P, "try", hsFalcon_Keyword))
+                        FMatch(L, Pos, StateMap, P, "class", hsFalcon_Keyword) ||
+                        FMatch(L, Pos, StateMap, P, "while", hsFalcon_Keyword) ||
+                        FMatch(L, Pos, StateMap, P, "loop", hsFalcon_Keyword) ||
+                        FMatch(L, Pos, StateMap, P, "init", hsFalcon_Keyword) ||
+                        FMatch(L, Pos, StateMap, P, "for", hsFalcon_Keyword) ||
+                        FMatch(L, Pos, StateMap, P, "object", hsFalcon_Keyword) ||
+                        FMatch(L, Pos, StateMap, P, "select", hsFalcon_Keyword) ||
+                        FMatch(L, Pos, StateMap, P, "switch", hsFalcon_Keyword) ||
+                        FMatch(L, Pos, StateMap, P, "try", hsFalcon_Keyword))
                {
-                  Count++;
+                   Count++;
                   if (Count == 0) {
                      if (StateMap)
                         free(StateMap);
@@ -324,27 +326,28 @@ static int FSearchBackContext(EBuffer *B, int Row, char &ChFind, int &paren, int
                }
             }
             else if (FMatch(L, Pos, StateMap, P, "function", hsFalcon_Keyword) ||
-                FMatch(L, Pos, StateMap, P, "class", hsFalcon_Keyword) ||
-                FMatch(L, Pos, StateMap, P, "while", hsFalcon_Keyword) ||
-                FMatch(L, Pos, StateMap, P, "init", hsFalcon_Keyword) ||
-                FMatch(L, Pos, StateMap, P, "loop", hsFalcon_Keyword) ||
-                FMatch(L, Pos, StateMap, P, "for", hsFalcon_Keyword) ||
-                FMatch(L, Pos, StateMap, P, "select", hsFalcon_Keyword) ||
-                FMatch(L, Pos, StateMap, P, "switch", hsFalcon_Keyword) ||
-                FMatch(L, Pos, StateMap, P, "try", hsFalcon_Keyword) ||
-                FMatch(L, Pos, StateMap, P, "if", hsFalcon_Keyword))
+                     FMatch(L, Pos, StateMap, P, "class", hsFalcon_Keyword) ||
+                     FMatch(L, Pos, StateMap, P, "while", hsFalcon_Keyword) ||
+                     FMatch(L, Pos, StateMap, P, "init", hsFalcon_Keyword) ||
+                     FMatch(L, Pos, StateMap, P, "loop", hsFalcon_Keyword) ||
+                     FMatch(L, Pos, StateMap, P, "for", hsFalcon_Keyword) ||
+                     FMatch(L, Pos, StateMap, P, "object", hsFalcon_Keyword) ||
+                     FMatch(L, Pos, StateMap, P, "select", hsFalcon_Keyword) ||
+                     FMatch(L, Pos, StateMap, P, "switch", hsFalcon_Keyword) ||
+                     FMatch(L, Pos, StateMap, P, "try", hsFalcon_Keyword) ||
+                     FMatch(L, Pos, StateMap, P, "if", hsFalcon_Keyword))
             {
-               Count++;
-               ChFind = 'i';
+                Count++;
+                ChFind = 'i';
             } else if (FMatch(L, Pos, StateMap, P, "else", hsFalcon_Keyword) ||
                        FMatch(L, Pos, StateMap, P, "elif", hsFalcon_Keyword) ||
                        FMatch(L, Pos, StateMap, P, "case", hsFalcon_Keyword) ||
                        FMatch(L, Pos, StateMap, P, "default", hsFalcon_Keyword) ||
                        FMatch(L, Pos, StateMap, P, "catch", hsFalcon_Keyword)) {
-               ChFind = 'i';
+                ChFind = 'i';
             } else if (FMatch(L, Pos, StateMap, P, "end", hsFalcon_Keyword)) {
-               Count--;
-               ChFind = 'o';
+                Count--;
+                ChFind = 'o';
             } else {
                is_blank++;
                Pos--;

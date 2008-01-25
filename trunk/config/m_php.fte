@@ -151,7 +151,7 @@ colorize PHP {
 
 }
 
-mode PHP: PLAIN {      # PHP Mode
+mode PHP: SOURCE {      # PHP Mode
     FileNameRx          = /\.\c{PHP3}|{PHP4}|{PHP}|{PHTML}$/;
     HilitOn             = 1;
     Colorizer           = 'PHP';

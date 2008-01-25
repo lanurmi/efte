@@ -54,7 +54,7 @@ colorize XML {
     h_trans { 0, '>', '>', 'Comment' }
 }
 
-mode XML: PLAIN {
+mode XML: MARKUP {
    FileNameRx          = /\.\c{XML}|{XSL}$/;
    FirstLineRx         = /\<\?xml/;
    HilitOn             = 1;

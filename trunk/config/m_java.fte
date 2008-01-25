@@ -49,7 +49,7 @@ colorize JAVA {
     };
 }
 
-mode JAVA: PLAIN {      # JAVA Mode
+mode JAVA: SOURCE {      # JAVA Mode
     FileNameRx          = /\.\c{JAVA}$/;
     HilitOn             = 1;
     Colorizer           = 'JAVA';

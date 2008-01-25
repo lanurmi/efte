@@ -157,7 +157,7 @@ colorize SIOD {
 
 }
 
-mode SIOD: PLAIN {      # siod Mode
+mode SIOD: SOURCE {      # siod Mode
     FileNameRx          = /\.\cscm$/;
     HilitOn             = 1;
     Colorizer           = 'SIOD';

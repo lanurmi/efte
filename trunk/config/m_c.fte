@@ -157,7 +157,7 @@ colorize C {
 
 }
 
-mode C: PLAIN {      # C/C++ Mode
+mode C: SOURCE {      # C/C++ Mode
     FileNameRx		= /\.\c{c|h|{cpp}|{cxx}|{hpp}|{cc}|{xs}}$/;
     HilitOn		= 1;
     Colorizer		= 'C';

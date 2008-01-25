@@ -100,7 +100,7 @@ colorize FORTRAN {
     h_trans { 0, '$', '', 'Normal' }
 }
 
-mode FORTRAN: PLAIN {
+mode FORTRAN: SOURCE {
     FileNameRx          = /\.\c{F||{F90}|{F9P}|{FPP}}$/;
     HilitOn             = 1;
     Colorizer           = 'FORTRAN';
