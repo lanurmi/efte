@@ -209,13 +209,12 @@ extern EBufferFlags DefaultBufferFlags;
 #define FLAG_CursorBlink        63
 #define FLAG_SvnCommand         64
 #define FLAG_SvnLogMode         65
-#define FLAG_CursorWrap         66
-#define FLAG_CursorWithinEOL    67
-#define FLAG_CursorInsertMask   68
-#define FLAG_CursorOverMask     69
-#define FLAG_Falcon_Indent      70
-#define FLAG_Falcon_Paren_Delta 71
-#define FLAG_Falcon_Max_Paren   72
+#define FLAG_CursorWithinEOL    66
+#define FLAG_CursorInsertMask   67
+#define FLAG_CursorOverMask     68
+#define FLAG_Falcon_Indent      69
+#define FLAG_Falcon_Paren_Delta 70
+#define FLAG_Falcon_Max_Paren   71
 
 
 #define EM_MENUS 2

@@ -439,7 +439,11 @@ int EBuffer::SetPos(int Col, int Row, int tabMode) {
     PrevPos = CP;
     PrevPos.Row = (CP.Row < VCount) ? VToR(CP.Row) : (CP.Row - VCount + RCount);
     CP.Row = Row;
-    CP.Col = Col;
+    if (CursorWithinEOL && Col > LineLen())
+        CP.Col = LineLen();
+    else
+        CP.Col = Col;
+
     if (AutoExtend) {
         BlockExtendEnd();
         AutoExtend = 1;

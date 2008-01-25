@@ -265,7 +265,8 @@ object GLOBAL {
     ShowToolBar = 1;     # PM only
     GUIDialogs = 1;      # PM only
     SysClipboard = 1;    # use PM clipboard, or X11 selection for clipboard
-#    PMDisableAccel      = 0;   # disable Alt+Fx PM accelerators
+    #    PMDisableAccel      = 0;   # disable Alt+Fx PM accelerators
+    CursorWithinEOL = 1;
 }
 
 # some editors have a SmartPaste feature.  We can do that too.

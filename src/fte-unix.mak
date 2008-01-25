@@ -7,7 +7,7 @@
 
 TGT_CFTE = cefte
 TGT_NFTE = nefte
-TGT_QFTE = qefte
+#TGT_QFTE = qefte
 TGT_VFTE = vefte
 TGT_XFTE = efte
 
