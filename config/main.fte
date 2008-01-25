@@ -137,9 +137,17 @@ include 'color.fte';
 # in this mode are declared all basic values
 # these are inherited in other modes - so basicaly
 # change only necessary values in submodes 
+# must be here to be inherited by other modes
 include 'm_plain.fte';
 
-# must be here to be inherited by other modes
+
+# In addition to just PLAIN, there are two other special modes
+# SOURCE and MARKUP. All programming language modes inherit from
+# SOURCE and all markup modes, such has HTML, LaTeX, etc, inherit
+# from MARKUP. Both SOURCE and MARKUP inherit from PLAIN.
+
+include 'm_source.fte'
+include 'm_markup.fte'
 
 # UNIX files have no CR at the end of line
 

@@ -322,7 +322,7 @@ colorize REXX {
     };
 }
 
-mode REXX: PLAIN {                    # REXX mode
+mode REXX: SOURCE {                    # REXX mode
     FileNameRx          = /\.\c{CMD}|{REXX?}$/;
     HilitOn             = 1;
     Colorizer           = 'REXX';

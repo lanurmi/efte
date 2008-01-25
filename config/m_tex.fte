@@ -252,7 +252,7 @@ colorize TEX {
     #h_trans { 0, '$', '', 'Normal' }
 }
 
-mode TEX: PLAIN {
+mode TEX: MARKUP {
     FileNameRx          = /\.\c{TEX}|{STY}|{CLS}|{CLO}|{LTX}|{FD}|{DTX}$/;
     HilitOn             = 1;
     Colorizer           = 'TEX';

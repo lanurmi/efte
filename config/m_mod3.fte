@@ -1,11 +1,11 @@
 #From: Richard Glidden <rrglidden@uwaterloo.ca>
 #
-#  I just spent an hour or so configuring FTE to recognize Modula-3. 
-#This file is almost complete (there are two minor bugs - Keywords
-#immediately following punctuation don't highlight correctly, and
-#RoutineRegexp isn't set to recognize Procedures unless they start at
-#column 1), but I thought you'd like a copy of it anyway to include with
-#FTE.
+# I just spent an hour or so configuring FTE to recognize Modula-3.
+# This file is almost complete (there are two minor bugs - Keywords
+# immediately following punctuation don't highlight correctly, and
+# RoutineRegexp isn't set to recognize Procedures unless they start at
+# column 1), but I thought you'd like a copy of it anyway to include with
+# FTE.
 
 colorize MODULA3 {
     SyntaxParser       = 'SIMPLE';
@@ -126,7 +126,7 @@ colorize MODULA3 {
     h_state 8 { 'Command' }
     h_trans { 0, '>', '*>', 'Command' }
 }
-mode MODULA3: PLAIN {      # Modula-3 Mode
+mode MODULA3: SOURCE {      # Modula-3 Mode
     FileNameRx          = /\.\c{m3}|{i3}$/;
     HilitOn             = 1;
     Colorizer           = 'MODULA3';

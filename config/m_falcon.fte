@@ -43,7 +43,7 @@ colorize FALCON {
    };
 }
 
-mode FALCON: PLAIN {      # Falcon Mode
+mode FALCON: SOURCE {      # Falcon Mode
    FileNameRx          = '\\.{fal}|{ftd}$';
    Colorizer           = 'FALCON';
    HilitOn             = 1;

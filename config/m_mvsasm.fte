@@ -46,7 +46,7 @@ colorize MVSASM {
     h_trans { 1, '-s', ' ', 'Comment' }
 }
 
-mode MVSASM: PLAIN {
+mode MVSASM: SOURCE {
     FileNameRx          = /\.\cMVSA$/;
     HilitOn             = 1;
     Colorizer           = 'MVSASM';

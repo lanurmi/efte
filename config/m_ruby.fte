@@ -66,10 +66,7 @@ colorize Ruby {
         h_trans { 0, 's', '/', 'String' }
 }
 
-
-
-
-mode Ruby: PLAIN {               # Ruby mode
+mode Ruby: SOURCE { # Ruby mode
         FileNameRx          = '\\.{rb}|{ruby}$';
         Colorizer           = 'Ruby';
         HilitOn             = 1;

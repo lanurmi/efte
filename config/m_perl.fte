@@ -56,7 +56,7 @@ colorize PERL {
     };
 }
 
-mode PERL: PLAIN { # PERL
+mode PERL: SOURCE { # PERL
     FileNameRx          = /\.\cPL|M$/;
     FirstLineRx         = /^{\#\! *}|{\cEXTPROC[ \t]+}[^ ]*perl/;
     HilitOn             = 1;

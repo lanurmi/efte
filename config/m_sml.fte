@@ -48,7 +48,7 @@ colorize SML
     h_wtype { 0, 0, 0, 'i', 'a-zA-Z0-9_' }
 }
 
-mode SML: PLAIN {
+mode SML: SOURCE {
     FileNameRx     = /\.\c{SML}$/;
     HilitOn        = 1;
     Colorizer      = 'SML';

@@ -1,0 +1,8 @@
+# SOURCE mode
+#
+# All source modes should inherit from this mode which enables the
+# user to easily modify preferences for all source code file types
+#
+
+mode SOURCE: PLAIN {
+}

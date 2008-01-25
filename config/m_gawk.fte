@@ -174,7 +174,7 @@ colorize GAWK {
 
 }
 
-mode GAWK: PLAIN {      # AWK mode with GNU extensions
+mode GAWK: SOURCE {      # AWK mode with GNU extensions
     FirstLineRx         = /^\#\![ ]*[^ ]*awk>/;
     FileNameRx          = /\.\c{{AWK}|{GAWK}}$/;
     HilitOn             = 1;

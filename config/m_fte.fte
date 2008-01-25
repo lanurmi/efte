@@ -119,7 +119,7 @@ colorize FTE {
     };
 }
 
-mode FTE: PLAIN {
+mode FTE: SOURCE {
     FileNameRx          = /\.\cfte$/;
     HilitOn             = 1;
     Colorizer           = 'FTE';
