@@ -12,7 +12,7 @@ Revision history
   - First release of eFTE
   - Branded FTE to be eFTE
   - Removed DJGPP support
-  + Added CursorWrap and CursorWithinEOL
+  + Added CursorWithinEOL
   + Added searching in the Routine List
   + Added new mode for CMake files
   + Windows XP and Vista now expand ~ to be the users home directory

@@ -146,8 +146,8 @@ include 'm_plain.fte';
 # SOURCE and all markup modes, such has HTML, LaTeX, etc, inherit
 # from MARKUP. Both SOURCE and MARKUP inherit from PLAIN.
 
-include 'm_source.fte'
-include 'm_markup.fte'
+include 'm_source.fte';
+include 'm_markup.fte';
 
 # UNIX files have no CR at the end of line
 
