@@ -572,9 +572,9 @@ static int SetupXWindow(int argc, char **argv)
     }
     if (i == ICON_COUNT) {
         // Everything OK, can create property
-        CARD32 *iconBuffer = (CARD32 *)malloc(iconBufferSize * sizeof(CARD32));
+        long *iconBuffer = (long *)malloc(iconBufferSize * sizeof(long));
         if (iconBuffer) {
-            CARD32 *b = iconBuffer;
+            long *b = iconBuffer;
             for (i = 0; i < ICON_COUNT; i++) {
                 XpmImage &xpm = xpmImage[i];
                 CARD32 *&colors = xpmColors[i];
