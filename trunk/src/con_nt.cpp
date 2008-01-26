@@ -386,7 +386,7 @@ int ReadConsoleEvent(TEvent *E) /*FOLD00*/
         if (inp.Event.MouseEvent.dwEventFlags & DOUBLE_CLICK)
             E->Mouse.Count = 2;
 
-        if (inp.Event.MouseEvent.dwEventFlags == MOUSE_WHEELED)
+        if (inp.Event.MouseEvent.dwEventFlags & MOUSE_WHEELED)
         {
             E->What        = evCommand;
             E->Msg.View    = 0;
