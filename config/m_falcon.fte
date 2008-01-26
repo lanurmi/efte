@@ -15,7 +15,7 @@ colorize FALCON {
    keyword 'Editor_Keywords' {
       'case', 'catch', 'class', 
       'default', 
-      'elif', 'else', 'end',
+      'elif', 'else', 'end', 'export',
       'for','function',
       'if', 'init',
       'loop',
