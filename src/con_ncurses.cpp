@@ -517,7 +517,7 @@ static TEvent Prev =
 
 static int ConGetEscEvent(TEvent *Event)
 {
-	char ch;
+	int ch;
 	
 	TKeyEvent *KEvent = &(Event->Key);
 
@@ -539,46 +539,52 @@ static int ConGetEscEvent(TEvent *Event)
 	}
 	else if(ch == '[' || ch == 'O')
 	{
-		char ch1 = getch();
-		char ch2 = '\0';
-		if(ch1 >= '1' &&  ch1 <= '8')
-		{
-			ch2 = getch();
-			if(ch2 == ERR) ch2 = '\0';
-		}
+		int ch1 = getch();
+		int endch = '\0';
+		int modch = '\0';
 
 		if(ch1 == ERR) /* translate to Alt-[ or Alt-O */
 		{
        			KEvent->Code |= (kfAlt| ch);
 		}
-		else if(ch2 == '~' || ch2 == '$')
-		{
-			if(ch2 == '$')
-				 KEvent->Code |= kfShift;
-			switch(ch1 - '0')
-			{
-				case 1: KEvent->Code |= kbHome; break;
-				case 2: KEvent->Code |= kbIns; break;
-				case 3: KEvent->Code |= kbDel; break;
-				case 4: KEvent->Code |= kbEnd; break;
-				case 5: KEvent->Code |= kbPgUp; break;
-				case 6: KEvent->Code |= kbPgDn; break;
-				case 7: KEvent->Code |= kbHome; break;
-				case 8: KEvent->Code |= kbEnd; break;
-				default: Event->What |= evNone; break;
-			}
-		}
 		else
 		{
-			if(ch2)
+			if(ch1 >= '1' && ch1 <= '8') // [n...
 			{
-				int ctAlSh = ch2 - '1';
+				endch = getch(); 
+				if(endch == ERR) // //[n, not valid
+				{
+					// TODO, should this be ALT-7 ?
+					endch = '\0';
+					ch1 = '\0';
+				}
+			}
+			else // [A
+			{
+				endch = ch1;
+				ch1 = '\0';
+			}
+
+			if(endch == ';') // [n;mX
+			{
+				modch = getch();
+				endch = getch();
+			}
+			else if(ch1 != '\0' && endch != '~' && endch != '$') // [mA
+			{
+				modch = ch1;
+				ch1 = '\0';
+			}
+
+			if(modch != '\0')
+			{
+				int ctAlSh = ch1 - '1';
 				if(ctAlSh & 0x4) KEvent->Code |= kfCtrl;
 				if(ctAlSh & 0x2) KEvent->Code |= kfAlt;
 				if(ctAlSh & 0x1) KEvent->Code |= kfShift;
 			}
-				
-			switch(ch1)
+
+			switch(endch)
 			{
 
 			case 'A':
@@ -602,6 +608,22 @@ static int ConGetEscEvent(TEvent *Event)
        				KEvent->Code |= (kfShift | kbRight); break;
 			case 'd':
        				KEvent->Code |= (kfShift | kbLeft); break;
+			case '$':
+				KEvent->Code |= kfShift;
+			case '~':
+				switch(ch1 - '0')
+				{
+					case 1: KEvent->Code |= kbHome; break;
+					case 2: KEvent->Code |= kbIns; break;
+					case 3: KEvent->Code |= kbDel; break;
+					case 4: KEvent->Code |= kbEnd; break;
+					case 5: KEvent->Code |= kbPgUp; break;
+					case 6: KEvent->Code |= kbPgDn; break;
+					case 7: KEvent->Code |= kbHome; break;
+					case 8: KEvent->Code |= kbEnd; break;
+					default: Event->What |= evNone; break;
+				}
+				break;
 			default:
 				Event->What = evNone;
 				break;
