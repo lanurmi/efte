@@ -61,3 +61,5 @@ mode CLARION: SOURCE {       # CLARION mode
 #    CommentStart        = ' --';
 #    CommentEnd          = '';
 }
+
+oinclude 'mym_clario.fte';

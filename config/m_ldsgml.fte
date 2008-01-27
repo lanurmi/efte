@@ -92,3 +92,5 @@ mode LDSGML: MARKUP {
     CommentStart        = " <!--";
     CommentEnd          = "-->";
 }
+
+oinclude 'mym_ldsgml.fte';

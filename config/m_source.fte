@@ -6,3 +6,5 @@
 
 mode SOURCE: PLAIN {
 }
+
+oinclude 'mym_source.fte';

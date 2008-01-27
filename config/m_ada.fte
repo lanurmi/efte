@@ -68,3 +68,5 @@ mode Ada: SOURCE {               # Ada mode
     CommentStart        = ' --';
     CommentEnd          = '';
 }
+
+oinclude 'mym_ada.fte';

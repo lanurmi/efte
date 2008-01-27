@@ -95,3 +95,5 @@ mode MAKE: PLAIN {
     CommentStart        = ' #';
     CommentEnd          = '';
 }
+
+oinclude 'mym_make.fte';

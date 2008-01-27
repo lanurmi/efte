@@ -168,3 +168,5 @@ mode PHP: SOURCE {      # PHP Mode
 
     RoutineRegexp       = '^{class}|{function}';
 }
+
+oinclude 'mym_php.fte';

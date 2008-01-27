@@ -101,3 +101,5 @@ mode VI_YANK: MODEOPTS {
     key [0]   { BlockUnmark; BlockMarkStream; MoveLineStart; BlockMarkStream; BlockCopy; MovePrevPos; ChangeKeys 'VIMODE' }
     key [w]   { KillWord; ChangeKeys 'VIMODE' }
 }
+
+oinclude 'mym_vi.fte';

@@ -56,3 +56,5 @@ mode MVSASM: SOURCE {
     CommentStart        = ' ;';
     CommentEnd          = '';
 }
+
+oinclude 'mym_mvsasm.fte';

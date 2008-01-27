@@ -75,7 +75,7 @@ static void Fail(CurPos &cp, const char *s, ...) {
     cleanup(1);
 }
 
-static int LoadFile(const char *WhereName, const char *CfgName, int Level = 1);
+static int LoadFile(const char *WhereName, const char *CfgName, int Level = 1, int optional = 1);
 static void DefineWord(const char *w);
 
 static void PutObject(CurPos &cp, int xtag, int xlen, void *obj) {
@@ -511,46 +511,47 @@ static int Lookup(const OrdLookup *where, char *what) {
     return -1;
 }
 
-#define P_EOF         0  // end of file
-#define P_SYNTAX      1  // unknown
-#define P_WORD        2  // a-zA-Z_
-#define P_NUMBER      3  // 0-9
-#define P_STRING      4  // "'`
-#define P_ASSIGN      5  // =
-#define P_EOS         6  // ;
-#define P_KEYSPEC     7  // []
-#define P_OPENBRACE   8  // {
-#define P_CLOSEBRACE  9  // }
-#define P_COLON      10  // :
-#define P_COMMA      11  // ,
-#define P_QUEST      12
-#define P_VARIABLE   13  // $
-#define P_DOT        14  // . (concat)
+#define P_EOF           0  // end of file
+#define P_SYNTAX        1  // unknown
+#define P_WORD          2  // a-zA-Z_
+#define P_NUMBER        3  // 0-9
+#define P_STRING        4  // "'`
+#define P_ASSIGN        5  // =
+#define P_EOS           6  // ;
+#define P_KEYSPEC       7  // []
+#define P_OPENBRACE     8  // {
+#define P_CLOSEBRACE    9  // }
+#define P_COLON        10  // :
+#define P_COMMA        11  // ,
+#define P_QUEST        12
+#define P_VARIABLE     13  // $
+#define P_DOT          14  // . (concat)
 
-#define K_UNKNOWN     0
-#define K_MODE        1
-#define K_KEY         2
-#define K_COLOR       3
-#define K_KEYWORD     4
-#define K_OBJECT      5
-#define K_MENU        6
-#define K_ITEM        7
-#define K_SUBMENU     8
-#define K_COMPILERX   9
-#define K_EXTERN     10
-#define K_INCLUDE    11
-#define K_SUB        12
-#define K_EVENTMAP   13
-#define K_COLORIZE   14
-#define K_ABBREV     15
-#define K_HSTATE     16
-#define K_HTRANS     17
-#define K_HWORDS     18
-#define K_SUBMENUCOND 19
-#define K_HWTYPE     20
-#define K_COLPALETTE 21
-#define K_CVSIGNRX   22
-#define K_SVNIGNRX   23
+#define K_UNKNOWN       0
+#define K_MODE          1
+#define K_KEY           2
+#define K_COLOR         3
+#define K_KEYWORD       4
+#define K_OBJECT        5
+#define K_MENU          6
+#define K_ITEM          7
+#define K_SUBMENU       8
+#define K_COMPILERX     9
+#define K_EXTERN       10
+#define K_INCLUDE      11
+#define K_SUB          12
+#define K_EVENTMAP     13
+#define K_COLORIZE     14
+#define K_ABBREV       15
+#define K_HSTATE       16
+#define K_HTRANS       17
+#define K_HWORDS       18
+#define K_SUBMENUCOND  19
+#define K_HWTYPE       20
+#define K_COLPALETTE   21
+#define K_CVSIGNRX     22
+#define K_SVNIGNRX     23
+#define K_OINCLUDE     24   // Optional include, i.e. do not fail if it does not exist.
 
 typedef char Word[64];
 
@@ -567,6 +568,7 @@ static const OrdLookup CfgKW[] = {
 { "submenu", K_SUBMENU },
 { "CompileRx", K_COMPILERX },
 { "extern", K_EXTERN },
+{ "oinclude", K_OINCLUDE },
 { "include", K_INCLUDE },
 { "sub", K_SUB },
 { "colorize", K_COLORIZE },
@@ -952,7 +954,6 @@ static int ParseConfigFile(CurPos &cp) {
                 }
                 break;
             case K_MENU:
-
                 {
                     Word MenuName;
                     //int menu = -1, item = -1;
@@ -1710,6 +1711,22 @@ static int ParseConfigFile(CurPos &cp) {
                     GetOp(cp, P_EOS);
                 }
                 break;
+            case K_OINCLUDE:
+                {
+                    char *fn;
+
+                    if (Parse(cp) != P_STRING) Fail(cp, "String expected");
+                    fn = GetString(cp);
+
+                    if (LoadFile(cp.name, fn) != 0) {
+                        GetOp(cp, P_EOS);
+                        continue; // This is an optional include
+                    }
+                    if (Parse(cp) != P_EOS)
+                        Fail(cp, "';' expected");
+                    GetOp(cp, P_EOS);
+                }
+                break;
             default:
                 Fail(cp, "Syntax error");
             }
@@ -1865,7 +1882,7 @@ static int PreprocessConfigFile(CurPos &cp) {
     return 0;
 }
 
-static int LoadFile(const char *WhereName, const char *CfgName, int Level) {
+static int LoadFile(const char *WhereName, const char *CfgName, int Level, int optional) {
     int fd, rc;
     char *buffer = 0;
     struct stat statbuf;
@@ -1925,11 +1942,14 @@ static int LoadFile(const char *WhereName, const char *CfgName, int Level) {
                             //fprintf(stderr, "Looking for %s\n", Cfg);
                             if (!FileExists(Cfg))
                             {
-                                fprintf(stderr, "Cannot find '%s' in:\n"
-                                        "\t~/.efte,\n""\t%slocalconfig,\n\t/usr/share/efte,\n"
-                                        "\t%sconfig, or\n"
-                                        "\t.",
-                                        CfgName, StartDir, StartDir);
+                                if (optional)
+                                    return -1;
+                                else
+                                    fprintf(stderr, "Cannot find '%s' in:\n"
+                                            "\t~/.efte,\n""\t%slocalconfig,\n\t/usr/share/efte,\n"
+                                            "\t%sconfig, or\n"
+                                            "\t.",
+                                            CfgName, StartDir, StartDir);
                             }
                         }
                     }
@@ -1946,12 +1966,14 @@ static int LoadFile(const char *WhereName, const char *CfgName, int Level) {
 
     //fprintf(stderr, "Loading file %s\n", Cfg);
     if ((fd = open(Cfg, O_RDONLY | O_BINARY)) == -1) {
-        fprintf(stderr, "Cannot open '%s', errno=%d\n", Cfg, errno);
+        if (!optional)
+            fprintf(stderr, "Cannot open '%s', errno=%d\n", Cfg, errno);
         return -1;
     }
     if (fstat(fd, &statbuf) != 0) {
         close(fd);
-        fprintf(stderr, "Cannot stat '%s', errno=%d\n", Cfg, errno);
+        if (!optional)
+            fprintf(stderr, "Cannot stat '%s', errno=%d\n", Cfg, errno);
         return -1;
     }
     buffer = (char *) malloc(statbuf.st_size+1);

@@ -29,3 +29,5 @@ mode RESOURCE: PLAIN {           # Resource file
     CommentStart        = ' /*';
     CommentEnd          = '*/';
 }
+
+oinclude 'mym_resdlg.fte';

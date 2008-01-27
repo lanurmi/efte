@@ -145,3 +145,5 @@ mode MODULA3: SOURCE {      # Modula-3 Mode
     # not just column 1.
     RoutineRegexp       = '^{PROCEDURE}'; 
 }
+
+oinclude 'mym_mod3.fte';

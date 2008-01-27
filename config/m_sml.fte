@@ -63,3 +63,4 @@ mode SML: SOURCE {
     CommentEnd     = '*)';
 }
 
+oinclude 'mym_sml.fte';

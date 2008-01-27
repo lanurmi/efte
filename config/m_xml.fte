@@ -80,3 +80,5 @@ eventmap XML {
       Fail;
    }
 }
+
+oinclude 'mym_xml.fte';

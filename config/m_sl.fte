@@ -80,3 +80,5 @@ mode sl: SOURCE {      # SLang Mode
     CommentStart        = ' %';
     CommentEnd          = '';
 }
+
+oinclude 'mym_sl.fte';

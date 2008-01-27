@@ -65,3 +65,5 @@ mode JAVA: SOURCE {      # JAVA Mode
     CommentStart        = ' /*';
     CommentEnd          = '*/';
 }
+
+oinclude 'mym_java.fte';

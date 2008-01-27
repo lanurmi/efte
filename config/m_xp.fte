@@ -118,3 +118,5 @@ mode XPE: SOURCE {
     CommentStart        = ' /*';
     CommentEnd          = '*/';
 }
+
+oinclude 'mym_xp.fte';

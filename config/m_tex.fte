@@ -265,3 +265,4 @@ mode TEX: MARKUP {
     CommentEnd          = '';
 }
 
+oinclude 'mym_tex.fte';

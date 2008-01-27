@@ -73,3 +73,5 @@ mode PERL: SOURCE { # PERL
     CommentStart        = ' #';
     CommentEnd          = '';
 }
+
+oinclude 'mym_perl.fte';

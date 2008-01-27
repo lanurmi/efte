@@ -224,6 +224,7 @@ mode PYTHON: SOURCE {
     CommentEnd          = "";
 }
 
+oinclude 'mym_py.fte';
 
 # problems...
 #     we have no indent support at all )-:

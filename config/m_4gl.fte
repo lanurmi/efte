@@ -256,3 +256,5 @@ mode GL: SOURCE {      # 4GL Mode
 #    BackSpUnindents = 0;
 #    SpaceTabs = 0;
 }
+
+oinclude 'mym_4gl.fte';

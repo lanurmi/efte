@@ -684,3 +684,5 @@ mode HTML: MARKUP {
     CommentStart        = " <!--";
     CommentEnd          = "-->";
 }
+
+oinclude 'mym_html.fte';

@@ -104,3 +104,5 @@ mode TCL: SOURCE { # TCL
     CommentStart        = ' #';
     CommentEnd          = '';
 }
+
+oinclude 'mym_tcl.fte';

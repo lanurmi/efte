@@ -44,3 +44,5 @@ mode UNREALSCRIPT: C {      # UScript Mode
     CommentStart        = ' /*';
     CommentEnd          = '*/';
 }
+
+oinclude 'mym_unrealscript.fte';

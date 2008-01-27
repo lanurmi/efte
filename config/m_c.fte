@@ -190,3 +190,5 @@ mode C: SOURCE {      # C/C++ Mode
     UndoMoves		= 0;
 %endif
 }
+
+oinclude 'mym_c.fte';

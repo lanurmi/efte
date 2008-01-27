@@ -143,3 +143,5 @@ mode ASM51: SOURCE {      # C/C++ Mode
     CommentStart        = ' ;';
     CommentEnd          = '';
 }
+
+oinclude 'mym_a51.fte';

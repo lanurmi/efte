@@ -79,3 +79,5 @@ mode IPF: SOURCE {                       # .IPF files
     CommentStart        = '.*';
     CommentEnd          = '';
 }
+
+oinclude 'mym_ipf.fte';
