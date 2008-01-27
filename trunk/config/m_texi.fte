@@ -219,3 +219,5 @@ mode TEXINFO: MARKUP {
     CommentStart        = ' %';
     CommentEnd          = '';
 }
+
+oinclude 'mym_texi.fte';

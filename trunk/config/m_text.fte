@@ -4,3 +4,5 @@ mode TEXT: PLAIN {              # Text files (wordwrap)
 # try also 1
     WordWrap            = 2;
 }
+
+oinclude 'mym_text.fte';

@@ -37,3 +37,5 @@ mode DIFF: PLAIN {        # unix/gnu diff
     Colorizer           = 'DIFF';
     MultiLineHilit      = 0;
 }
+
+oinclude 'mym_diff.fte';

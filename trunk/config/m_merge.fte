@@ -28,3 +28,5 @@ mode MERGE: PLAIN {                      # unix/gnu rscmerge
     Colorizer           = 'MERGE';
     MultiLineHilit      = 0;
 }
+
+oinclude 'mym_merge.fte';

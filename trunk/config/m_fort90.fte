@@ -117,3 +117,5 @@ mode FORTRAN: SOURCE {
 
     # ? RoutineRegexp       = /^\w[\w_:*&~]+[\w\s_:*&~]@\([^;]*$/;
 }
+
+oinclude 'mym_fort90.fte';

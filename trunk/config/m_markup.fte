@@ -6,3 +6,5 @@
 
 mode MARKUP: PLAIN {
 }
+
+oinclude 'mym_markup.fte';

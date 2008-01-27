@@ -177,3 +177,4 @@ mode SIOD: SOURCE {      # siod Mode
 #    RoutineRegexp       = '(';
 }
 
+oinclude 'mym_siod.fte';

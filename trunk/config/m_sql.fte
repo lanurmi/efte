@@ -139,3 +139,5 @@ mode SQL: SOURCE {      # SQL Mode
     CommentStart        = ' /*';
     CommentEnd          = '*/';
 }
+
+oinclude 'mym_sql.fte';
