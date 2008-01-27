@@ -83,7 +83,7 @@ colorize FTE {
         'TagPop', 'TagPrev', 'ToggleAutoIndent', 'ToggleBackSpKillTab',
         'ToggleBackSpUnindents', 'ToggleDeleteKillTab', 'ToggleExpandTabs',
         'ToggleIndentWithTabs', 'ToggleInsert', 'ToggleKeepBackups',
-        'ToggleMatchCase', 'ToggleReadOnly', 'ToggleShowMarkers',
+        'ToggleMakeBackups', 'ToggleMatchCase', 'ToggleReadOnly', 'ToggleShowMarkers',
         'ToggleShowTabs', 'ToggleSpaceTabs', 'ToggleSysClipboard', 'ToggleTrim',
         'ToggleUndo', 'ToggleWordWrap', 'TypeChar', 'Undo', 'ViewBuffers',
         'RunCvs', 'RunCvsCommit', 'Cvs', 'CvsDiff', 'ViewCvs', 'ViewCvsDiff', 'ViewCvsLog', 'ClearCvsMessages',
