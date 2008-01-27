@@ -17,10 +17,12 @@
 %define(1TBS_BRACE)
 %endif
 
-#%define(COLORS_GRAY_BG)
+%define(COLORS_GRAY_BG)
 #%define(COLORS_WHITE_BG)
-%define(COLORS_BLACK_BG)
+#%define(COLORS_BLACK_BG)
 #%define(COLORS_BLUE_BG)
+#%define(COLORS_BLUEZ_BG)
+#%define(COLORS_NCE_BG)
 
 %if(OS_OS2)
 %define(GUI_PM)
@@ -85,6 +87,10 @@ include 'pal_blue.fte';
 
 %if(COLORS_BLUEZ_BG)
 include 'pal_bluez.fte'; # alternate blue from andyz @ sf.net
+%endif
+
+%if(COLORS_NCE_BG)
+include 'pal_nce.fte';
 %endif
 
 object GLOBAL {
