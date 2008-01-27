@@ -21,6 +21,8 @@ Revision history
   ! WM_COMMAND now set in X11 binary
   - Removed partially implemented block cursor sizing
   + Added DesktopLoad command
+  + Added oinclude command
+  + Modes are now user configurable w/o need to edit actual mode file
 
 0.50.1 -- January 17, 2008
   - Forked from FTE (http://fte.sourceforge.net)
