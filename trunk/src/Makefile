@@ -31,14 +31,14 @@ vag:
 	nmake /f fte-vag.mak
 
 owos2: .SYMBOLIC
-	wmake -f owconvert.mak
+	wmake -e -f owconvert.mak
 	watconvert
-	wmake -f fte-owos2.mak
+	wmake -e -f fte-owos2.mak
 
 ownt:   .SYMBOLIC
-	wmake -f owconvert.mak
+	wmake -e -f owconvert.mak
 	watconvert
-	wmake -f fte-ownt.mak
+	wmake -e -f fte-ownt.mak
 
 owclean : .SYMBOLIC
 	@rm *.obj
