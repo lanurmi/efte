@@ -45,7 +45,7 @@ XPMLIB = -lXpm
 #LD = g++
 CC = $(CXX)
 LD = $(CXX)
-CPPOPTIONS = -Wall -Wpointer-arith -Wconversion -Wwrite-strings -Winline
+CPPOPTIONS = -pedantic -Wall -Wpointer-arith -Wconversion -Wwrite-strings -Winline
 
 # try this for smaller/faster code and less dependencies
 NOEXCEPTION = -fno-rtti -fno-exceptions
