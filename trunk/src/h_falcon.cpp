@@ -14,6 +14,7 @@ hsFalcon_String1, hsFalcon_String2 };
 
 #define FALCON_COMMENT_DELTA 1
 
+/* FOR FUTURE USE:
 static const char *indentTokens[] = {
    "case",
    "catch",
@@ -43,6 +44,7 @@ static const char *lineUnindentTokens[] = {
    "elif",
    "else"
 };
+*/
 
 int Hilit_FALCON(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, hlState &State, hsState *StateMap, int *ECol) {
    int j = 0;
@@ -186,7 +188,6 @@ static int FSearchMatch(int Count, EBuffer *B, int Row, int Ctx) {
    int Pos;
    int StateLen;
    hsState *StateMap;
-   int ICount = (Ctx == 2) ? Count : 0;
    
    Count = (Ctx == 2) ? 0 : Count;
    
@@ -223,7 +224,6 @@ static int FSearchMatch(int Count, EBuffer *B, int Row, int Ctx) {
                if (FMatch(L, Pos, StateMap, P, "if", hsFalcon_Keyword) &&
                    P[Pos-2] != 'e' && P[Pos-1] != 'l')
                {
-                  int tPos = Pos;
                   int oneLiner = 0;
                   // TODO: this does not take into account strings that
                   //       may contain :
@@ -309,7 +309,6 @@ static int FSearchBackContext(EBuffer *B, int Row, char &ChFind, int &paren, int
          if (isalpha(P[Pos]) && (Pos == 0 || !isalpha(P[Pos-1]))) {
             if (FMatch(L, Pos, StateMap, P, "if", hsFalcon_Keyword))
             {
-               int tPos = Pos;
                int oneLiner = 0;
                // TODO: this does not take into account strings that
                //       may contain :
