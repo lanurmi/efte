@@ -10,8 +10,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void main( )
-{
+void main() {
     int  i;
 
     char buffer[30];
@@ -20,25 +19,22 @@ void main( )
     FILE *output;
 
     input = fopen("objs.inc", "r");
-    if(input == NULL)
-    {
+    if (input == NULL) {
         printf("objs.inc file not found\n");
         exit(1);
     }
 
     output = fopen("objs.mif", "w");
-    if(input == NULL)
-    {
+    if (input == NULL) {
         printf("objs.mif not writable\n");
         exit(1);
     }
 
-    while(fgets(buffer, 30, input) != NULL)
-    {
-        for(i=0; i<30; i++) if(buffer[i] == '\\') buffer[i] = '&';
+    while (fgets(buffer, 30, input) != NULL) {
+        for (i = 0; i < 30; i++) if (buffer[i] == '\\') buffer[i] = '&';
         fputs(buffer, output);
     }
 
     fclose(input);
-    fclose(output);    
+    fclose(output);
 }

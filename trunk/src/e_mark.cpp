@@ -52,7 +52,7 @@ int EMark::removeBuffer(EBuffer *aBuffer) {
         return 0;
     if (Buffer->RemoveBookmark(Name) == 0)
         return 0;
-    
+
     Buffer = 0;
     return 1;
 }
@@ -147,14 +147,14 @@ int EMarkIndex::remove(char *aName) {
         cmp = strcmp(aName, marks[M]->getName());
         if (cmp == 0) {
             EMark *m = marks[M];
-            
+
             memmove(marks + M,
                     marks + M + 1,
                     sizeof(marks[0]) * (markCount - M - 1));
             markCount--;
 
             EMark **newMarks = (EMark **)realloc(marks,
-                                               sizeof(marks[0]) * (markCount));
+                                                 sizeof(marks[0]) * (markCount));
             if (newMarks != 0 || markCount == 0)
                 marks = newMarks;
 
@@ -188,8 +188,7 @@ int EMarkIndex::view(EView *aView, char *aName) {
 int EMarkIndex::retrieveForBuffer(EBuffer *aBuffer) {
     for (int n = 0; n < markCount; n++)
         if (marks[n]->getBuffer() == 0 &&
-            filecmp(aBuffer->FileName, marks[n]->getFileName()) == 0)
-        {
+                filecmp(aBuffer->FileName, marks[n]->getFileName()) == 0) {
             if (marks[n]->setBuffer(aBuffer) == 0)
                 return 0;
         }
@@ -222,7 +221,7 @@ int EMarkIndex::saveToDesktop(FILE *fp) {
 
 EMark *EMarkIndex::pushMark(EBuffer *aBuffer, EPoint P) {
     int stackTop = -1;
-    
+
     for (int n = 0; n < markCount; n++) {
         char *name = marks[n]->getName();
         if (name && name[0] == '#' && isdigit(name[1])) {
@@ -238,7 +237,7 @@ EMark *EMarkIndex::pushMark(EBuffer *aBuffer, EPoint P) {
 
 int EMarkIndex::popMark(EView *aView) {
     int stackTop = -1;
-    
+
     for (int n = 0; n < markCount; n++) {
         char *name = marks[n]->getName();
         if (name && name[0] == '#' && isdigit(name[1])) {

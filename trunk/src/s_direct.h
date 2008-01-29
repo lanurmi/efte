@@ -21,15 +21,23 @@ class FileInfo {
     off_t size;
     time_t mtime;
     int type;
-    
+
 public:
     FileInfo(char *Name, int type, off_t Size, time_t MTime);
     ~FileInfo();
 
-    const char *Name() const { return name; }
-    off_t Size() const { return size; }
-    int Type() const { return type; }
-    time_t MTime() const { return mtime; }
+    const char *Name() const {
+        return name;
+    }
+    off_t Size() const {
+        return size;
+    }
+    int Type() const {
+        return type;
+    }
+    time_t MTime() const {
+        return mtime;
+    }
 };
 
 #define ffFAST       1  // optimization for UNIX (return name only, NO TYPE CHECK), ignored on OS/2 and NT
@@ -50,7 +58,7 @@ class FileFind {
 #elif defined(NT) && !defined(USE_DIRENT)
     unsigned long dir; // should be HANDLE
 #endif
-    
+
 public:
     FileFind(const char *aDirectory, const char *aPattern, int aFlags);
     ~FileFind();

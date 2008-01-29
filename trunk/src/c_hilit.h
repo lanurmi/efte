@@ -24,7 +24,7 @@ typedef unsigned char hsState;
 
 #define HILIT_P(proc) \
     int proc(EBuffer *BF, int LN, PCell B, int Pos, int Width, ELine *Line, hlState &State, hsState *StateMap, int *ECol)
-    
+
 //typedef int (*SyntaxProc)(EBuffer *BF, int LN, PCell B, int Pos, int Width, ELine *Line, hlState &State, hsState *StateMap);
 typedef HILIT_P((*SyntaxProc));
 
@@ -54,12 +54,12 @@ int Indent_REXX(EBuffer *B, int Line, int PosCursor);
 int Indent_SIMPLE(EBuffer *B, int Line, int PosCursor);
 int Indent_FALCON(EBuffer *B, int Line, int PosCursor);
 
- /*
-  * NT has 2-byte charcode and attribute... Following is not portable to non-
-  * intel; should be replaced by formal TCell definition' usage instead of
-  * assumed array.. (Jal)
-  */
-#ifdef NTCONSOLE 
+/*
+ * NT has 2-byte charcode and attribute... Following is not portable to non-
+ * intel; should be replaced by formal TCell definition' usage instead of
+ * assumed array.. (Jal)
+ */
+#ifdef NTCONSOLE
 #    define PCLI unsigned short
 #else
 #    define PCLI unsigned char
@@ -80,7 +80,7 @@ int Indent_FALCON(EBuffer *B, int Line, int PosCursor);
     if (StateMap) StateMap[i] = (hsState)(State & 0xFF); \
     } while (0)
 
-// MoveChar(B, C - Pos, Width, *p, Color, 1); 
+// MoveChar(B, C - Pos, Width, *p, Color, 1);
 // if (StateMap) StateMap[i] = State; }
 
 #define NextChar() do { i++; p++; len--; C++; } while (0)
@@ -153,8 +153,7 @@ int Indent_FALCON(EBuffer *B, int Line, int PosCursor);
 
 #define CK_MAXLEN 64
 
-inline bool isZeroArray(int* Count, size_t len)
-{
+inline bool isZeroArray(int* Count, size_t len) {
     for (size_t i = 0; i < len; ++i)
         if (Count[i] != 0)
             return 0;
@@ -176,7 +175,7 @@ struct HTrans {
     int nextState;
     int color;
     RxNode *regexp;
-    
+
     void InitTrans();
 };
 
@@ -184,14 +183,14 @@ struct HState {
     int transCount;
     int firstTrans;
     int color;
-    
+
     ColorKeywords keywords;
     char *wordChars;
     long options;
     int nextKwdMatchedState;
     int nextKwdNotMatchedState;
     int nextKwdNoCharState;
-    
+
     void InitState();
     int GetHilitWord(int len, char *str, ChColor &clr);
 };
@@ -202,13 +201,15 @@ public:
     int transCount;
     HState *state;
     HTrans *trans;
-    
+
     HMachine();
     ~HMachine();
     void AddState(HState &aState);
     void AddTrans(HTrans &aTrans);
 
-    HState *LastState() { return state + stateCount - 1; }
+    HState *LastState() {
+        return state + stateCount - 1;
+    }
 };
 
 class EColorize {
@@ -220,10 +221,10 @@ public:
     ColorKeywords Keywords; // keywords to highlight
     HMachine *hm;
     ChColor Colors[COUNT_CLR];
-    
+
     EColorize(const char *AName, const char *AParent);
     ~EColorize();
-    
+
     int SetColor(int clr, const char *value);
 };
 
@@ -234,7 +235,8 @@ SyntaxProc GetHilitProc(int id);
 
 int IsState(hsState *Buf, hsState State, int Len);
 int LookAt(EBuffer *B, int Row, unsigned int Pos, const char *What, hsState State, int NoWord = 1, int CaseInsensitive = 0);
-inline int LookAtNoCase(EBuffer *B, int Row, unsigned int Pos, const char *What, hsState State, int NoWord = 1)
-{ return LookAt(B, Row, Pos, What, State, NoWord, 1); }
+inline int LookAtNoCase(EBuffer *B, int Row, unsigned int Pos, const char *What, hsState State, int NoWord = 1) {
+    return LookAt(B, Row, Pos, What, State, NoWord, 1);
+}
 
 #endif /* __HILIT_H__ */

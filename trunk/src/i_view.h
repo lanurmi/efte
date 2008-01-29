@@ -17,20 +17,26 @@ public:
     ExView *Top;
     ExView *Bottom;
     int MouseCaptured;
-    
+
     GxView(GFrame *Parent);
     virtual ~GxView();
-    
+
     void PushView(ExView *view);
     ExView *PopView();
     void NewView(ExView *view);
-    
+
     EEventMap *GetEventMap();
     int ExecCommand(int Command, ExState &State);
-    
+
     virtual int GetContext();
-    virtual ExView* GetStatusContext() { if (Top) return Top->GetStatusContext(); else return 0; }
-    virtual ExView* GetViewContext() { if (Top) return Top->GetViewContext(); else return 0; }
+    virtual ExView* GetStatusContext() {
+        if (Top) return Top->GetStatusContext();
+        else return 0;
+    }
+    virtual ExView* GetViewContext() {
+        if (Top) return Top->GetViewContext();
+        else return 0;
+    }
     virtual int BeginMacro();
     virtual void HandleEvent(TEvent &Event);
     virtual void Update();
@@ -49,8 +55,10 @@ public:
 
     int GetStr(const char *Prompt, unsigned int BufLen, char *Str, int HistId);
     int GetFile(const char *Prompt, unsigned int BufLen, char *Str, int HistId, int Flags);
-    
-    int IsModelView() { return Top ? Top->IsModelView() : 0; }
+
+    int IsModelView() {
+        return Top ? Top->IsModelView() : 0;
+    }
 };
 
 #endif

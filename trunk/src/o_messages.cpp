@@ -35,10 +35,8 @@ int AddCRegexp(int file, int line, int msg, const char *regexp) {
     return 1;
 }
 
-void FreeCRegexp()
-{
-    while(NCRegexp--)
-    {
+void FreeCRegexp() {
+    while (NCRegexp--) {
         RxFree(CRegexp[NCRegexp].rx);
     }
 }
@@ -68,10 +66,8 @@ EMessages::~EMessages() {
     freeDirStack();
 }
 
-void EMessages::freeDirStack()
-{
-    while(curr_dir != 0)
-    {
+void EMessages::freeDirStack() {
+    while (curr_dir != 0) {
         aDir *a = curr_dir;
         curr_dir = curr_dir->next;
         free(a->name);
@@ -102,11 +98,11 @@ void EMessages::FindErrorFile(int err) {
     assert(err >= 0 && err < ErrCount);
     if (ErrList[err]->file == 0)
         return ;
-    
+
     EBuffer *B;
 
     ErrList[err]->Buf = 0;
-    
+
     B = FindFile(ErrList[err]->file);
     if (B == 0)
         return ;
@@ -149,13 +145,13 @@ void EMessages::FindFileErrors(EBuffer *B) {
 int EMessages::RunPipe(char *ADir, char *ACommand) {
     if (!KeepMessages)
         FreeErrors();
-    
+
     free(Command);
     free(Directory);
-        
+
     Command = strdup(ACommand);
     Directory = strdup(ADir);
-    
+
     MatchCount = 0;
     ReturnCode = -1;
     Running = 1;
@@ -174,7 +170,7 @@ int EMessages::RunPipe(char *ADir, char *ACommand) {
         sprintf(s, "Messages [%s]: %s", Directory, Command);
         SetTitle(s);
     }
-    
+
     ChangeDir(Directory);
     PipeId = gui->OpenPipe(Command, this);
     return 0;
@@ -194,12 +190,12 @@ int EMessages::ExecCommand(int Command, ExState &State) {
         Running = 0;
         {
             char s[30];
-            
+
             sprintf(s, "[aborted, status=%d]", ReturnCode);
             AddError(0, -1, 0, s);
         }
         return ErOK;
-        
+
     case ExActivateInOtherWindow:
         ShowError(View->Next, Row);
         return ErOK;
@@ -217,7 +213,7 @@ void EMessages::AddError(Error *p) {
     if (ErrCount > Count)
         if (Row >= Count - 1) {
             //if (ErrCount > 1 && !ErrList[TopRow]->file)
-                Row = ErrCount - 1;
+            Row = ErrCount - 1;
         }
 
     UpdateList();
@@ -263,9 +259,9 @@ int EMessages::GetLine(char *Line, int maxim) {
     int rc;
     char *p;
     int l;
-    
+
     //fprintf(stderr, "GetLine: %d\n", Running);
-    
+
     *Line = 0;
     if (Running && PipeId != -1) {
         rc = gui->ReadPipe(PipeId, MsgBuf + BufLen, sizeof(MsgBuf) - BufLen);
@@ -298,7 +294,7 @@ int EMessages::GetLine(char *Line, int maxim) {
         //fprintf(stderr, "GetLine: Line Incomplete\n");
         return 0;
     } else {
-        if (l == 0) 
+        if (l == 0)
             return 0;
         memcpy(Line, MsgBuf + BufPos, l);
         Line[l] = 0;
@@ -315,11 +311,10 @@ int EMessages::GetLine(char *Line, int maxim) {
 }
 
 
-static void getWord(char* dest, char*& pin)
-{
+static void getWord(char* dest, char*& pin) {
     char *pout, *pend;
     char ch, ec;
-    
+
     while (*pin == ' ' || *pin == '\t')
         pin++;
 
@@ -335,14 +330,14 @@ static void getWord(char* dest, char*& pin)
                 ch = '\'';
             if (ch == ec || ch == 0)
                 break;
-            
+
             if (pout < pend)
                 *pout++ = ch;
         }
         if (ch == 0)
             pin--;
     } else {
-        for(;;) {
+        for (;;) {
             ch  = *pin++;
             if (ch == ' ' || ch == '\t' || ch == 0)
                 break;
@@ -361,7 +356,7 @@ void EMessages::GetErrors() {
     int didmatch = 0;
     int WasRunning = Running;
     char fn[256];
-    
+
     //fprintf(stderr, "Reading pipe\n");
     while (GetLine((char *)line, sizeof(line))) {
         if (strlen(line) > 0 && line[strlen(line)-1] == '\n') line[strlen(line)-1] = 0;
@@ -374,7 +369,7 @@ void EMessages::GetErrors() {
                 char fn2[256] = "";
                 char *file = 0;
                 *fn = 0;
-                
+
                 memset(fn, 0, 256);
                 memset(ln, 0, 256);
                 memset(msg, 0, 256);
@@ -382,7 +377,7 @@ void EMessages::GetErrors() {
                 if (RM.Close[n] - RM.Open[n] < 256)
                     memcpy(fn, line + RM.Open[n], RM.Close[n] - RM.Open[n]);
                 n = CRegexp[i].RefLine;
-                if (RM.Close[n] - RM.Open[n] < 256) 
+                if (RM.Close[n] - RM.Open[n] < 256)
                     memcpy(ln, line + RM.Open[n], RM.Close[n] - RM.Open[n]);
                 n = CRegexp[i].RefMsg;
                 if (RM.Close[n] - RM.Open[n] < 256)
@@ -408,8 +403,7 @@ void EMessages::GetErrors() {
                 break;
             }
         }
-        if (!didmatch)
-        {
+        if (!didmatch) {
             AddError(0, -1, 0, line);
             //** Quicky: check for gnumake 'entering directory'
             //** make[x]: entering directory `xxx'
@@ -417,38 +411,37 @@ void EMessages::GetErrors() {
             static char t1[] = "entering directory";
             static char t2[] = "leaving directory";
             char*   pin;
-            
-            if ( (pin = strstr(line, "]:")) != 0)
-            {
+
+            if ((pin = strstr(line, "]:")) != 0) {
                 //** It *is* some make line.. Check for 'entering'..
                 pin += 2;
-                
+
                 //while(*pin != ':' && *pin != 0) pin++;
                 //pin++;
                 while (*pin == ' ')
                     pin++;
-                if (strnicmp(pin, t1, sizeof(t1)-1) == 0) {  // Entering?
+                if (strnicmp(pin, t1, sizeof(t1) - 1) == 0) {  // Entering?
                     //** Get the directory name from the line,
-                    pin += sizeof(t1)-1;
+                    pin += sizeof(t1) - 1;
                     getWord(fn, pin);
                     //dbg("entering %s", fn);
-                    
+
                     if (*fn) {
                         //** Indeedy entering directory! Link in list,
                         aDir * a = new aDir;
                         assert(a != 0);
-                        a->name= strdup(fn);
+                        a->name = strdup(fn);
                         assert(a->name != 0);
                         a->next = curr_dir;
                         curr_dir = a;
                     }
-                } else if (strnicmp(pin, t2, sizeof(t2)-1) == 0) {  // Leaving?
-                    pin += sizeof(t2)-1;
+                } else if (strnicmp(pin, t2, sizeof(t2) - 1) == 0) {  // Leaving?
+                    pin += sizeof(t2) - 1;
                     getWord(fn, pin);                   // Get dirname,
                     //dbg("leaving %s", fn);
-                    
+
                     aDir *a;
-                    
+
                     a = curr_dir;
                     if (a != 0)
                         curr_dir = curr_dir->next;       // Remove from stack,
@@ -460,15 +453,14 @@ void EMessages::GetErrors() {
                         //** Mismatch filenames -> error, and revoke stack.
                         //dbg("mismatch on %s", fn);
                         AddError(0, -1, 0, "efte: mismatch in directory stack!?");
-                        
+
                         //** In this case we totally die the stack..
-                        while(a != 0)
-                        {
+                        while (a != 0) {
                             free(a->name);
                             delete a;
-			    a = curr_dir;
+                            a = curr_dir;
                             if (a != 0)
-				curr_dir = curr_dir->next;
+                                curr_dir = curr_dir->next;
                         }
                     }
                 }
@@ -478,7 +470,7 @@ void EMessages::GetErrors() {
     //fprintf(stderr, "Reading Stopped\n");
     if (!Running && WasRunning) {
         char s[30];
-        
+
         sprintf(s, "[done, status=%d]", ReturnCode);
         AddError(0, -1, 0, s);
     }
@@ -488,7 +480,7 @@ void EMessages::GetErrors() {
 
 int EMessages::CompilePrevError(EView *V) {
     if (ErrCount > 0) {
-        bad:
+bad:
         if (Row > 0) {
             Row--;
             if (ErrList[Row]->line == -1 || !ErrList[Row]->file) goto bad;
@@ -506,7 +498,7 @@ int EMessages::CompilePrevError(EView *V) {
 
 int EMessages::CompileNextError(EView *V) {
     if (ErrCount > 0) {
-        bad:        
+bad:
         if (Row < ErrCount - 1) {
             Row++;
             if (ErrList[Row]->line == -1 || !ErrList[Row]->file) goto bad;
@@ -518,8 +510,8 @@ int EMessages::CompileNextError(EView *V) {
                 V->Msg(S_INFO, "No more errors.");
             return 0;
         }
-    } else { 
-        if (Running) 
+    } else {
+        if (Running)
             V->Msg(S_INFO, "No errors (yet).");
         else
             V->Msg(S_INFO, "No errors.");
@@ -604,7 +596,7 @@ int EMessages::CanActivate(int Line) {
         if (ErrList[Line]->file || ErrList[Line]->line != -1) ok = 1;
     return ok;
 }
-    
+
 void EMessages::NotifyPipe(int APipeId) {
     //fprintf(stderr, "Got notified");
     if (APipeId == PipeId)
@@ -616,7 +608,7 @@ void EMessages::GetName(char *AName, int MaxLen) {
 }
 
 void EMessages::GetInfo(char *AInfo, int /*MaxLen*/) {
-    sprintf(AInfo, 
+    sprintf(AInfo,
             "%2d %04d/%03d Messages: %d (%s) ",
             ModelNo,
             Row, Count,
@@ -637,11 +629,9 @@ void EMessages::GetTitle(char *ATitle, int /*MaxLen*/, char *ASTitle, int SMaxLe
 }
 
 // get row length for specified row, used in MoveLineEnd to get actual row length
-int EMessages::GetRowLength(int ARow)
-{
-    if ((ARow >= 0) && (ARow < ErrCount))
-    {
-	return strlen(ErrList[ARow]->text);
+int EMessages::GetRowLength(int ARow) {
+    if ((ARow >= 0) && (ARow < ErrCount)) {
+        return strlen(ErrList[ARow]->text);
     }
 
     return 0;

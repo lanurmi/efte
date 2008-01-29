@@ -141,7 +141,7 @@ int EBuffer::ExposeRow(int Row) { /*FOLD00*/
 //        printf("Expose Row = %d\n", Row);
 //        DumpFold();
 //    }
-    assert (V != -1);
+    assert(V != -1);
     return 1;
 }
 
@@ -165,10 +165,10 @@ void EBuffer::UpdateVisible(int Row, int Delta) { /*FOLD00*/
     UpdateVis(CP, Row, Delta);
     w = View;
     if (w) do {
-        UpdateVis(GetViewVPort(w)->TP, Row, Delta);
-        UpdateVis(GetViewVPort(w)->CP, Row, Delta);
-        w = w->Next;
-    } while (w != View);
+            UpdateVis(GetViewVPort(w)->TP, Row, Delta);
+            UpdateVis(GetViewVPort(w)->CP, Row, Delta);
+            w = w->Next;
+        } while (w != View);
 }
 
 int EBuffer::FoldCreate(int Line) { /*FOLD00*/
@@ -217,7 +217,7 @@ int EBuffer::FoldCreateByRegexp(char *Regexp) { /*FOLD00*/
                 if (first >= 0) {
                     int i;
 
-                    for(i = L; i > 0; i--) {
+                    for (i = L; i > 0; i--) {
                         PELine Y;
 
                         Y = RLine(i);
@@ -226,7 +226,7 @@ int EBuffer::FoldCreateByRegexp(char *Regexp) { /*FOLD00*/
                                 while ((i > 0) && (RLine(i - 1)->Count == 0))
                                     i--;
                                 if ((first >= 0) && i
-                                    && (FoldCreate(i) == 0))
+                                        && (FoldCreate(i) == 0))
                                     err = 0;
                             }
                             break;

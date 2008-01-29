@@ -15,9 +15,8 @@ EBuffer *SSBuffer = 0; // scrap buffer (clipboard)
 ///////////////////////////////////////////////////////////////////////////////
 
 EBuffer::EBuffer(int createFlags, EModel **ARoot, const char * /*AName*/)
-    :EModel(createFlags, ARoot), TP(0,0), CP(0,0), BB(-1,-1), BE(-1,-1),
-     PrevPos(-1, -1), SavedPos(-1, -1), Match(-1, -1)
-{
+        : EModel(createFlags, ARoot), TP(0, 0), CP(0, 0), BB(-1, -1), BE(-1, -1),
+        PrevPos(-1, -1), SavedPos(-1, -1), Match(-1, -1) {
     Modified = 0;
     Loaded = 0;
     Loading = 0;
@@ -65,7 +64,7 @@ EBuffer::EBuffer(int createFlags, EModel **ARoot, const char * /*AName*/)
     HilitProc = 0;
     if (Mode && Mode->fColorize)
         HilitProc = GetHilitProc(Mode->fColorize->SyntaxParser);
-    InsertLine(CP,0,0); /* there should always be at least one line in the edit buffer */
+    InsertLine(CP, 0, 0); /* there should always be at least one line in the edit buffer */
     Flags = (Mode->Flags);
     Modified = 0;
 }
@@ -73,17 +72,17 @@ EBuffer::EBuffer(int createFlags, EModel **ARoot, const char * /*AName*/)
 EBuffer::~EBuffer() {
     if (FileName != 0 && Loaded) {
         UpdateFPos(FileName, VToR(CP.Row), CP.Col);
-        if (BFI (this,BFI_SaveBookmarks)==3) StoreBookmarks(this);
+        if (BFI(this, BFI_SaveBookmarks) == 3) StoreBookmarks(this);
     }
     if (FileName && Loaded)
         markIndex.storeForBuffer(this);
-    
+
     Clear();
     if (LL)
-	free(LL);
+        free(LL);
     //free(Name);
     if (FileName)
-	free(FileName);
+        free(FileName);
     if (BMCount != 0) {
         for (int i = 0; i < BMCount; i++)
             free(BMarks[i].Name);
@@ -110,8 +109,7 @@ int EBuffer::Clear() {
     EndHilit = -1;
     StartHilit = 0;
 
-    while (WordCount--)
-    {
+    while (WordCount--) {
         free(WordList[WordCount]);
     }
     free(WordList);
@@ -124,19 +122,17 @@ int EBuffer::Clear() {
         rlst.Lines = 0;
     }
 
-    if (LL)
-    {
-	for (int i = 0; i < RCount; i++)
-	    delete LL[GapLine(i, RGap, RCount, RAllocated)];
-	free(LL);
-	LL = 0;
+    if (LL) {
+        for (int i = 0; i < RCount; i++)
+            delete LL[GapLine(i, RGap, RCount, RAllocated)];
+        free(LL);
+        LL = 0;
     }
     RCount = RAllocated = RGap = 0;
     VCount = VAllocated = VGap = 0;
-    if (VV)
-    {
+    if (VV) {
         free(VV);
-	VV = 0;
+        VV = 0;
     }
     FreeUndo();
     if (FCount != 0) {
@@ -163,8 +159,7 @@ int EBuffer::FreeUndo() {
 
 int EBuffer::Modify() {
     // if RecheckReadOnly is activated do readonly checking when necessary
-    if (RecheckReadOnly != 0)
-    {
+    if (RecheckReadOnly != 0) {
         if (BFI(this, BFI_ReadOnly)) {
             // File might have been toggled writable outside the editor, or
             //  you might do what I do, and do a Tools/Run/"p4 edit Filename.cpp"
@@ -191,22 +186,20 @@ int EBuffer::Modify() {
 
         if ((FileName != 0) && FileOk && (stat(FileName, &StatBuf) == 0)) {
             if (FileStatus.st_size != StatBuf.st_size ||
-                FileStatus.st_mtime != StatBuf.st_mtime)
-            {
+                    FileStatus.st_mtime != StatBuf.st_mtime) {
                 View->MView->Win->Choice(GPC_ERROR, "Warning! Press Esc!",
                                          0,
-                                         "File %-.55s changed on disk!", 
+                                         "File %-.55s changed on disk!",
                                          FileName);
                 switch (View->MView->Win->Choice(0, "File Changed on Disk",
-                               2,
-                               "&Modify",
-                               "&Cancel",
-                               "%s", FileName))
-                {
+                                                 2,
+                                                 "&Modify",
+                                                 "&Cancel",
+                                                 "%s", FileName)) {
                 case 0:
                     break;
                 case 1:
-                case -1:
+                case - 1:
                 default:
                     return 0;
                 }
@@ -269,8 +262,8 @@ int EBuffer::UpdateMark(EPoint &M, int Type, int Row, int Col, int Rows, int Col
                     if (M.Col >= Col)
                         if (M.Col < Col + Cols)
                             M.Col = Col;
-                else
-                    M.Col -= Cols;
+                        else
+                            M.Col -= Cols;
             }
             if (Rows) {
                 if (M.Row >= Row)
@@ -321,24 +314,24 @@ int EBuffer::UpdateMark(EPoint &M, int Type, int Row, int Col, int Rows, int Col
     }
     return 1;
 }
-        
+
 int EBuffer::UpdateMarker(int Type, int Row, int Col, int Rows, int Cols) {
     EPoint OldBB = BB, OldBE = BE;
     EView *V;
-    
+
     UpdateMark(SavedPos, Type, Row, Col, Rows, Cols);
     UpdateMark(PrevPos, Type, Row, Col, Rows, Cols);
 
     UpdateMark(BB, Type, Row, Col, Rows, Cols);
     UpdateMark(BE, Type, Row, Col, Rows, Cols);
-    
+
     V = View;
     while (V) {
         if (V->Model != this)
             assert(1 == 0);
         if (V != View) {
             EPoint M;
-            
+
             M = GetViewVPort(V)->TP;
             UpdateMark(GetViewVPort(V)->TP, Type, Row, Col, Rows, Cols);
             GetViewVPort(V)->TP.Col = M.Col;
@@ -346,7 +339,7 @@ int EBuffer::UpdateMarker(int Type, int Row, int Col, int Rows, int Cols) {
         }
         V = V->NextView;
     }
-    
+
     for (int i = 0; i < rlst.Count && rlst.Lines; i++) {
         EPoint M;
 
@@ -355,29 +348,29 @@ int EBuffer::UpdateMarker(int Type, int Row, int Col, int Rows, int Cols) {
         UpdateMark(M, Type, Row, Col, Rows, Cols);
         rlst.Lines[i] = M.Row;
     }
-    
+
     for (int f = 0; f < FCount; f++) {
         EPoint M;
-        
+
         M.Col = 0;
         M.Row = FF[f].line;
         UpdateMark(M, Type, Row, Col, Rows, Cols);
         FF[f].line = M.Row;
     }
-    
+
     for (int b = 0; b < BMCount; b++)
         UpdateMark(BMarks[b].BM, Type, Row, Col, Rows, Cols);
-    
+
     if (OldBB.Row != BB.Row) {
         int MinL = Min(OldBB.Row, BB.Row);
         int MaxL = Max(OldBB.Row, BB.Row);
-        if (MinL != -1 && MaxL != -1)  
+        if (MinL != -1 && MaxL != -1)
             Draw(MinL, MaxL);
     }
     if (OldBE.Row != BE.Row) {
         int MinL = Min(OldBE.Row, BE.Row);
         int MaxL = Max(OldBE.Row, BE.Row);
-        if (MinL != -1 && MaxL != -1)  
+        if (MinL != -1 && MaxL != -1)
             Draw(MinL, MaxL);
     }
     return 1;
@@ -385,23 +378,23 @@ int EBuffer::UpdateMarker(int Type, int Row, int Col, int Rows, int Cols) {
 
 int EBuffer::ValidPos(EPoint Pos) {
     if ((Pos.Col >= 0) &&
-        (Pos.Row >= 0) &&
-        (Pos.Row < VCount))
+            (Pos.Row >= 0) &&
+            (Pos.Row < VCount))
         return 1;
     return 0;
 }
 
 int EBuffer::RValidPos(EPoint Pos) {
     if ((Pos.Col >= 0) &&
-        (Pos.Row >= 0) &&
-        (Pos.Row < RCount))
+            (Pos.Row >= 0) &&
+            (Pos.Row < RCount))
         return 1;
     return 0;
 }
 
 int EBuffer::AssertLine(int Row) {
     if (Row == RCount)
-       if (InsLine(RCount, 0) == 0) return 0;
+        if (InsLine(RCount, 0) == 0) return 0;
     return 1;
 }
 
@@ -421,11 +414,11 @@ int EBuffer::SetFileName(const char *AFileName, const char *AMode) {
     if (Mode && Mode->fColorize)
         HilitProc = GetHilitProc(Mode->fColorize->SyntaxParser);
     UpdateTitle();
-    return FileName?1:0;
+    return FileName ? 1 : 0;
 }
 
 int EBuffer::SetPos(int Col, int Row, int tabMode) {
-    assert (Col >= 0 && Row >= 0 && Row < VCount);
+    assert(Col >= 0 && Row >= 0 && Row < VCount);
 
     if (BFI(this, BFI_Undo) == 1 && BFI(this, BFI_UndoMoves) == 1) {
         if (PushULong(CP.Col) == 0) return 0;
@@ -467,15 +460,15 @@ int EBuffer::SetPos(int Col, int Row, int tabMode) {
 }
 
 int EBuffer::SetPosR(int Col, int Row, int tabMode) {
-    assert (Row >= 0 && Row < RCount && Col >= 0);
-    
+    assert(Row >= 0 && Row < RCount && Col >= 0);
+
     int L = RToV(Row);
-    
+
     if (L == -1)
         if (ExposeRow(Row) == 0) return 0;
-    
+
     L = RToV(Row);
-    
+
     return SetPos(Col, L, tabMode);
 }
 
@@ -495,7 +488,7 @@ int EBuffer::SetNearPosR(int Col, int Row, int tabMode) {
 
 int EBuffer::CenterPos(int Col, int Row, int tabMode) {
     assert(Row >= 0 && Row < VCount && Col >= 0);
-    
+
     if (SetPos(Col, Row, tabMode) == 0) return 0;
     if (View && View->Model == this) {
         Row -= GetVPort()->Rows / 2;
@@ -510,9 +503,9 @@ int EBuffer::CenterPos(int Col, int Row, int tabMode) {
 
 int EBuffer::CenterPosR(int Col, int Row, int tabMode) {
     int L;
-    
+
     assert(Row >= 0 && Row < RCount && Col >= 0);
-    
+
     L = RToV(Row);
     if (L == -1)
         if (ExposeRow(Row) == 0) return 0;
@@ -552,20 +545,20 @@ int EBuffer::DelLine(int Row, int DoMark) {
     if (Row < 0) return 0;
     if (Row >= RCount) return 0;
     if (Modify() == 0) return 0;
-    
+
     VLine = RToV(Row);
     if (VLine == -1)
         if (ExposeRow(Row) == 0) return 0;
     VLine = RToV(Row);
     assert(VLine != -1);
-    
+
     if (FindFold(Row) != -1) {
         if (FoldDestroy(Row) == 0) return 0;
     }
-    
+
     VLine = RToV(Row);
     assert(VLine != -1);
-    
+
     if (BFI(this, BFI_Undo) == 1) {
         if (PushUData(RLine(Row)->Chars, RLine(Row)->Count) == 0) return 0;
         if (PushULong(RLine(Row)->Count) == 0) return 0;
@@ -579,9 +572,9 @@ int EBuffer::DelLine(int Row, int DoMark) {
     Draw(Row, -1);
     Hilit(Row);
     assert(RAllocated >= RCount);
-    if (RGap != Row) 
+    if (RGap != Row)
         if (MoveRGap(Row) == 0) return 0;
-    
+
     GapSize = RAllocated - RCount;
 
     delete LL[RGap + GapSize];
@@ -594,7 +587,7 @@ int EBuffer::DelLine(int Row, int DoMark) {
                 sizeof(PELine) * (RCount - RGap));
         if (Allocate(RAllocated - RAllocated / 3) == 0) return 0;
     }
-    
+
     assert(VAllocated >= VCount);
     if (VGap != VLine)
         if (MoveVGap(VLine) == 0) return 0;
@@ -614,9 +607,9 @@ int EBuffer::DelLine(int Row, int DoMark) {
 int EBuffer::InsLine(int Row, int DoAppend, int DoMark) {
     PELine L;
     int VLine = -1;
-    
+
     //    printf("InsLine: %d\n", Row);
-    
+
     //if (! LL)
     //   return 0;
     if (Row < 0) return 0;
@@ -659,7 +652,7 @@ int EBuffer::InsLine(int Row, int DoAppend, int DoMark) {
     RGap++;
     RCount++;
     //    printf("-- %d G:C:A :: %d - %d - %d\n", Row, RGap, RCount, RAllocated);
-    
+
     assert(VCount <= VAllocated);
     if (VCount == VAllocated) {
         if (AllocVis(VCount ? (VCount * 2) : 1) == 0) return 0;
@@ -672,30 +665,30 @@ int EBuffer::InsLine(int Row, int DoAppend, int DoMark) {
     VV[VGap] = Row - VGap;
     VGap++;
     VCount++;
-        
-/*    if (AllocVis(VCount + 1) == 0) return 0;
-    memmove(VV + VLine + 1, VV + VLine, sizeof(VV[0]) * (VCount - VLine));
-    VCount++;
-    Vis(VLine, Row - VLine);*/
+
+    /*    if (AllocVis(VCount + 1) == 0) return 0;
+        memmove(VV + VLine + 1, VV + VLine, sizeof(VV[0]) * (VCount - VLine));
+        VCount++;
+        Vis(VLine, Row - VLine);*/
     return 1;
 }
 
 int EBuffer::DelChars(int Row, int Ofs, int ACount) {
     PELine L;
-    
+
 //    printf("DelChars: %d:%d %d\n", Row, Ofs, ACount);
     if (Row < 0) return 0;
     if (Row >= RCount) return 0;
     L = RLine(Row);
-    
+
     if (Ofs < 0) return 0;
     if (Ofs >= L->Count) return 0;
     if (Ofs + ACount >= L->Count)
         ACount = L->Count - Ofs;
     if (ACount == 0) return 1;
-    
+
     if (Modify() == 0) return 0;
-    
+
     if (BFI(this, BFI_Undo) == 1) {
         if (PushUData(L->Chars + Ofs, ACount) == 0) return 0;
         if (PushULong(ACount) == 0) return 0;
@@ -703,7 +696,7 @@ int EBuffer::DelChars(int Row, int Ofs, int ACount) {
         if (PushULong(Row) == 0) return 0;
         if (PushUChar(ucDelChars) == 0) return 0;
     }
-    
+
     if (L->Count > Ofs + ACount)
         memmove(L->Chars + Ofs, L->Chars + Ofs + ACount, L->Count - Ofs - ACount);
     L->Count -= ACount;
@@ -716,16 +709,16 @@ int EBuffer::DelChars(int Row, int Ofs, int ACount) {
 
 int EBuffer::InsChars(int Row, int Ofs, int ACount, const char *Buffer) {
     PELine L;
-    
+
 //    printf("InsChars: %d:%d %d\n", Row, Ofs, ACount);
-    
+
     assert(Row >= 0 && Row < RCount && Ofs >= 0);
     L = RLine(Row);
-    
+
     if (Ofs < 0) return 0;
     if (Ofs > L->Count) return 0;
     if (ACount == 0) return 1;
-    
+
     if (Modify() == 0) return 0;
 
     if (BFI(this, BFI_Undo) == 1) {
@@ -737,7 +730,7 @@ int EBuffer::InsChars(int Row, int Ofs, int ACount, const char *Buffer) {
     if (L->Allocate(L->Count + ACount) == 0) return 0;
     if (L->Count > Ofs)
         memmove(L->Chars + Ofs + ACount, L->Chars + Ofs, L->Count - Ofs);
-    if (Buffer == 0) 
+    if (Buffer == 0)
         memset(L->Chars + Ofs, ' ', ACount);
     else
         memmove(L->Chars + Ofs, Buffer, ACount);
@@ -777,7 +770,7 @@ int EBuffer::InsertIndent(int Row, int Ofs, int ACount) {
 int EBuffer::UnTabPoint(int Row, int Col) {
     ELine *L;
     int Ofs, Pos, TPos;
-    
+
     assert(Row >= 0 && Row < RCount && Col >= 0);
     L = RLine(Row);
     Ofs = CharOffset(L, Col);
@@ -798,16 +791,16 @@ int EBuffer::UnTabPoint(int Row, int Col) {
 
 int EBuffer::ChgChars(int Row, int Ofs, int ACount, const char * /*Buffer*/) {
     PELine L;
-    
+
     assert(Row >= 0 && Row < RCount && Ofs >= 0);
     L = RLine(Row);
-    
+
     if (Ofs < 0) return 0;
     if (Ofs > L->Count) return 0;
     if (ACount == 0) return 1;
-    
+
     if (Modify() == 0) return 0;
-    
+
     if (BFI(this, BFI_Undo) == 1) {
         if (PushUData(L->Chars + Ofs, ACount) == 0) return 0;
         if (PushULong(ACount) == 0) return 0;
@@ -831,7 +824,7 @@ int EBuffer::DelText(int Row, int Col, int ACount, int DoMark) {
 
     assert(Row >= 0 && Row < RCount && Col >= 0);
     if (Modify() == 0) return 0;
-    
+
     if (ACount == 0) return 1;
     L = LineLen(Row);
     if (Col >= L)
@@ -854,12 +847,12 @@ int EBuffer::DelText(int Row, int Col, int ACount, int DoMark) {
 
 int EBuffer::InsText(int Row, int Col, int ACount, const char *ABuffer, int DoMark) {
     int B, L;
-    
+
 //    printf("InsText: %d:%d %d\n", Row, Col, ACount);
     assert(Row >= 0 && Row < RCount && Col >= 0 && ACount >= 0);
     if (ACount == 0) return 1;
     if (Modify() == 0) return 0;
-    
+
     if (DoMark) UpdateMarker(umInsert, Row, Col, 0, ACount);
     L = LineLen(Row);
     if (L < Col) {
@@ -875,22 +868,22 @@ int EBuffer::InsText(int Row, int Col, int ACount, const char *ABuffer, int DoMa
 
 int EBuffer::PadLine(int Row, int Length) {
     int L;
-    
+
     L = LineLen(Row);
     if (L < Length)
         if (InsChars(Row, RLine(Row)->Count, Length - L, 0) == 0)
             return 0;
     return 1;
 }
-  
+
 int EBuffer::InsLineText(int Row, int Col, int ACount, int LCol, PELine Line) {
     int Ofs, Pos, TPos, C, B, L;
-    
+
     //fprintf(stderr, "\n\nInsLineText: %d:%d %d %d", Row, Col, ACount, LCol);
     assert(Row >= 0 && Row < RCount && Col >= 0 && LCol >= 0);
     if (BFI(this, BFI_ReadOnly) == 1)
         return 0;
-    
+
     L = ScreenPos(Line, Line->Count);
     if (LCol >= L) return 1;
     if (ACount == -1) ACount = L - LCol;
@@ -931,11 +924,11 @@ int EBuffer::SplitLine(int Row, int Col) {
     int VL;
 
     assert(Row >= 0 && Row < RCount && Col >= 0);
-    
+
     if (BFI(this, BFI_ReadOnly) == 1) return 0;
-    
+
     VL = RToV(Row);
-    if (VL == -1) 
+    if (VL == -1)
         if (ExposeRow(Row) == 0) return 0;
     if (Row > 0) {
         VL = RToV(Row - 1);

@@ -23,17 +23,17 @@ int Hilit_PASCAL(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Li
 
     C = 0;
     NC = 0;
-    for(i = 0; i < Line->Count;) {
+    for (i = 0; i < Line->Count;) {
         if (*p != ' ' && *p != 9) firstnw++;
         IF_TAB() else {
-            switch(State) {
+            switch (State) {
             default:
             case hsPas_Normal:
                 if (isalpha(*p) || *p == '_') {
                     j = 0;
                     while (((i + j) < Line->Count) &&
-                           (isalnum(Line->Chars[i+j]) ||
-                            (Line->Chars[i + j] == '_'))
+                            (isalnum(Line->Chars[i+j]) ||
+                             (Line->Chars[i + j] == '_'))
                           ) j++;
                     if (BF->GetHilitWord(j, &Line->Chars[i], Color, 1)) {
                         //                        Color = hcC_Keyword;
@@ -52,18 +52,18 @@ int Hilit_PASCAL(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Li
                     C += j;
                     State = hsPas_Normal;
                     continue;
-                } else if ((len >= 2) && (*p == '(') && (*(p+1) == '*')) {
+                } else if ((len >= 2) && (*p == '(') && (*(p + 1) == '*')) {
                     State = hsPas_Comment1;
                     Color = CLR_Comment;
                     ColorNext();
                     goto hilit;
                 } else if (*p == '{') {
                     State = hsPas_Comment2;
-		    Color = CLR_Comment;
-		    goto hilit;
+                    Color = CLR_Comment;
+                    goto hilit;
                 } else if (*p == '$') {
-		    Color = CLR_HexNumber;
-		    ColorNext();
+                    Color = CLR_HexNumber;
+                    ColorNext();
                     ColorNext();
                     while (len && isxdigit(*p)) ColorNext();
                     continue;
@@ -88,7 +88,7 @@ int Hilit_PASCAL(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Li
                 goto hilit;
             case hsPas_Comment1:
                 Color = CLR_Comment;
-                if ((len >= 2) && (*p == '*') && (*(p+1) == ')')) {
+                if ((len >= 2) && (*p == '*') && (*(p + 1) == ')')) {
                     ColorNext();
                     ColorNext();
                     State = hsPas_Normal;
@@ -118,13 +118,13 @@ int Hilit_PASCAL(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Li
                     State = hsPas_Normal;
                     continue;
                 }
-            hilit:
+hilit:
                 ColorNext();
                 continue;
             }
         }
     }
-    switch(State) {
+    switch (State) {
     case hsPas_String1:
     case hsPas_String2:
         State = hsPas_Normal;

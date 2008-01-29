@@ -32,21 +32,16 @@ using namespace std;
 
 GlobalLog globalLog;
 
-bool GlobalLog::OpenLogFile()
-{
-    if (!m_bOpened && m_strLogFile != NULL)
-    {
+bool GlobalLog::OpenLogFile() {
+    if (!m_bOpened && m_strLogFile != NULL) {
         m_ofsLog.open(m_strLogFile, ios::out /*| ios::text*/ | ios::app /*append*/);
-        if (!m_ofsLog)
-        {
+        if (!m_ofsLog) {
             m_strLogFile = NULL;
             m_bOpened = false;
-        }
-        else
-        {
+        } else {
             m_bOpened = true;
-	    //no way with gcc3.0 m_ofsLog.setbuf(NULL, 0);
-	}
+            //no way with gcc3.0 m_ofsLog.setbuf(NULL, 0);
+        }
     }
     return m_bOpened;
 }
@@ -59,8 +54,7 @@ bool GlobalLog::OpenLogFile()
 // output to the logfile with wrong loglevel.
 static ofstream ofsInvalid;
 
-ostream& GlobalLog::operator()()
-{
+ostream& GlobalLog::operator()() {
     // Ensure the current file is open:
     if (!OpenLogFile()) // if it can't be opened, shortcut everything:
         return ofsInvalid;
@@ -70,37 +64,33 @@ ostream& GlobalLog::operator()()
 
     char cOldFill = m_ofsLog.fill('0');
     m_ofsLog << setw(4) << ptm->tm_year + 1900 << '-'
-        << setw(2) << ptm->tm_mon  << '-'
-        << setw(2) << ptm->tm_mday << ' '
-        << setw(2) << ptm->tm_hour << ':'
-        << setw(2) << ptm->tm_min  << ':'
-        << setw(2) << ptm->tm_sec  << ' '
-        << "eFTE" << ' ';
+    << setw(2) << ptm->tm_mon  << '-'
+    << setw(2) << ptm->tm_mday << ' '
+    << setw(2) << ptm->tm_hour << ':'
+    << setw(2) << ptm->tm_min  << ':'
+    << setw(2) << ptm->tm_sec  << ' '
+    << "eFTE" << ' ';
     m_ofsLog.fill(cOldFill);
     return m_ofsLog;
 }
 
 FunctionLog::FunctionLog(GlobalLog& gl, const char* funcName, unsigned long line)
-    : log(gl), func(funcName), myIndentLevel(++log.indent), indentChar('+')
-{
+        : log(gl), func(funcName), myIndentLevel(++log.indent), indentChar('+') {
     OutputLine(line) << "Entered function" << ENDLINE;
 }
 
-FunctionLog::~FunctionLog()
-{
+FunctionLog::~FunctionLog() {
     indentChar = '+';
     OutputLine() << "Exited function" << ENDLINE;
     --log.indent;
 }
 
-ostream& FunctionLog::RC(unsigned long line)
-{
+ostream& FunctionLog::RC(unsigned long line) {
     indentChar = '!';
     return OutputLine() << "{" << line << "} Returning rc = ";
 }
 
-ostream& FunctionLog::OutputIndent(ostream& os)
-{
+ostream& FunctionLog::OutputIndent(ostream& os) {
     os << FillChar('|', myIndentLevel - 1);
     //for (int i = 1; i < myIndentLevel; ++i)
     //    os << '|';
@@ -109,56 +99,44 @@ ostream& FunctionLog::OutputIndent(ostream& os)
     return os;
 }
 
-ostream& Log__osBinChar(ostream& os, char const& c)
-{
+ostream& Log__osBinChar(ostream& os, char const& c) {
     char const cOldFill = os.fill('0');
     os << (isprint(c) ? c : '.') <<
-        " [0x" << hex << (int)c << dec << "]";
+    " [0x" << hex << (int)c << dec << "]";
     os.fill(cOldFill);
     return os;
 }
 
-ostream& Log__osFillChar(ostream& os, char const& c, size_t const& len)
-{
+ostream& Log__osFillChar(ostream& os, char const& c, size_t const& len) {
     for (size_t i = 0; i < len; ++i)
         os << c;
     return os;
 }
 
 #define LINE_LENGTH 8
-void Log__BinaryData(FunctionLog& LOGOBJNAME, void* bin_data, size_t len, unsigned long line)
-{
-    for (size_t i = 0; i < len; i += LINE_LENGTH)
-    {
+void Log__BinaryData(FunctionLog& LOGOBJNAME, void* bin_data, size_t len, unsigned long line) {
+    for (size_t i = 0; i < len; i += LINE_LENGTH) {
         ostream& os = LOGOBJNAME.OutputLine(line);
         size_t j;
 
         // as characters
-        for (j = i; j < i + LINE_LENGTH; ++j)
-        {
-            if (j < len)
-            {
+        for (j = i; j < i + LINE_LENGTH; ++j) {
+            if (j < len) {
                 char const c = ((char*)bin_data)[i+j];
                 os << (isprint(c) ? c : '.');
-            }
-            else
-            {
+            } else {
                 os << ' ';
             }
         }
         os << "  [";
         // as hex values
         char const cOldFill = os.fill('0');
-        for (j = i; j < i + LINE_LENGTH; ++j)
-        {
-            if (j < len)
-            {
+        for (j = i; j < i + LINE_LENGTH; ++j) {
+            if (j < len) {
                 int const c = ((char*)bin_data)[i+j];
                 if (j != i) os << ',';
                 os << hex << setw(2) << c << dec;
-            }
-            else
-            {
+            } else {
                 os << "   ";
             }
         }

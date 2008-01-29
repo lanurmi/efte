@@ -15,7 +15,7 @@ int SetXSelection(int len, char *data, int clipboard);
 int GetPMClip(int clipboard) {
     char *data;
     int len;
-    int i,j, l, dx;
+    int i, j, l, dx;
     EPoint P;
 
     if (GetXSelection(&len, &data, clipboard) == 0) {
@@ -26,7 +26,8 @@ int GetPMClip(int clipboard) {
         for (i = 0; i < len; i++) {
             if (data[i] == '\n') {
                 SSBuffer->AssertLine(l);
-                P.Col = 0; P.Row = l++;
+                P.Col = 0;
+                P.Row = l++;
                 dx = 0;
                 if ((i > 0) && (data[i-1] == '\r')) dx++;
                 SSBuffer->InsertLine(P, i - j - dx, data + j);
@@ -36,7 +37,8 @@ int GetPMClip(int clipboard) {
         if (j < len) { // remainder
             i = len;
             SSBuffer->AssertLine(l);
-            P.Col = 0; P.Row = l++;
+            P.Col = 0;
+            P.Row = l++;
             dx = 0;
             if ((i > 0) && (data[i-1] == '\r')) dx++;
             SSBuffer->InsText(P.Row, P.Col, i - j - dx, data + j);
@@ -58,7 +60,7 @@ int PutPMClip(int clipboard) {
         L = SSBuffer->RLine(i);
         char *n = (char *)realloc(p, l + L->Count + 1);
         if (n != NULL) {
-            for(int j = 0; j < L->Count; j++) {
+            for (int j = 0; j < L->Count; j++) {
                 if ((j < (L->Count - 1)) && (L->Chars[j + 1] == '\b'))
                     j++;
                 else
@@ -79,5 +81,5 @@ int PutPMClip(int clipboard) {
         rc = (SetXSelection(l, p, clipboard) == 0);
         free(p);
     }
-    return (rc)?1:0;
+    return (rc) ? 1 : 0;
 }

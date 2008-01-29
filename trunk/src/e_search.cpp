@@ -11,22 +11,48 @@
 
 int ParseSearchOption(int replace, char c, unsigned long &opt) {
     switch (tolower(c)) {
-    case 'a': opt |= SEARCH_ALL; break;      // search all occurances
-    case 'b': opt |= SEARCH_BLOCK; break;    // search in block only
-    case 'c': opt &= ~SEARCH_NEXT; break;    // search from current position
-    case 'd': opt |= SEARCH_DELETE; break;   // delete found line
-    case 'g': opt |= SEARCH_GLOBAL; break;   // search globally
-    case 'i': opt |= SEARCH_NCASE; break;    // don't match case
-    case 'j': opt |= SEARCH_JOIN; break;     // join found line
-    case 'r': opt |= SEARCH_BACK; break;     // search reverse
-    case 'w': opt |= SEARCH_WORDBEG | SEARCH_WORDEND; break;
-    case '<': opt |= SEARCH_WORDBEG; break;
-    case '>': opt |= SEARCH_WORDEND; break;
-    case 'x': opt |= SEARCH_RE; break;       // search using regexps
+    case 'a':
+        opt |= SEARCH_ALL;
+        break;      // search all occurances
+    case 'b':
+        opt |= SEARCH_BLOCK;
+        break;    // search in block only
+    case 'c':
+        opt &= ~SEARCH_NEXT;
+        break;    // search from current position
+    case 'd':
+        opt |= SEARCH_DELETE;
+        break;   // delete found line
+    case 'g':
+        opt |= SEARCH_GLOBAL;
+        break;   // search globally
+    case 'i':
+        opt |= SEARCH_NCASE;
+        break;    // don't match case
+    case 'j':
+        opt |= SEARCH_JOIN;
+        break;     // join found line
+    case 'r':
+        opt |= SEARCH_BACK;
+        break;     // search reverse
+    case 'w':
+        opt |= SEARCH_WORDBEG | SEARCH_WORDEND;
+        break;
+    case '<':
+        opt |= SEARCH_WORDBEG;
+        break;
+    case '>':
+        opt |= SEARCH_WORDEND;
+        break;
+    case 'x':
+        opt |= SEARCH_RE;
+        break;       // search using regexps
     default:
         if (!replace) return 0;
         switch (c) {
-        case 'n': opt |= SEARCH_NASK; break; // don't ask before replacing
+        case 'n':
+            opt |= SEARCH_NASK;
+            break; // don't ask before replacing
         default:
             return 0;
         }
@@ -171,11 +197,9 @@ int EBuffer::FindStr(char *Data, int Len, SearchReplaceOptions &opt) {
             }
         } else {
             if (Options & SEARCH_REPLACE &&
-                opt.lastInsertLen > 0)
-            {
+                    opt.lastInsertLen > 0) {
                 C += CC * opt.lastInsertLen; // 0 or opt.lastInsertLen
-            } else
-            {
+            } else {
                 C += CC;
             }
 
@@ -253,22 +277,21 @@ int EBuffer::FindStr(char *Data, int Len, SearchReplaceOptions &opt) {
 
         while (((!(Options & SEARCH_BACK)) && (C <= End - Len)) || ((Options & SEARCH_BACK) && (C >= Start))) {
             if ((!(Options & SEARCH_WORDBEG)
-                 || (C == 0)
-                 || (WGETBIT(Flags.WordChars, P[C - 1]) == 0))
-                &&
-                (!(Options & SEARCH_WORDEND)
-                 || (C + Len >= End)
-                 || (WGETBIT(Flags.WordChars, P[C + Len]) == 0))
-                &&
-                ((!(Options & SEARCH_NCASE)
-                  && (P[C] == Data[0])
-                  && (memcmp(P + C, Data, Len) == 0))
-                 ||
-                 ((Options & SEARCH_NCASE)
-                  && (toupper(P[C]) == toupper(Data[0]))
-                  && (strnicmp(P + C, Data, Len) == 0))) /* && BOL | EOL */
-               )
-            {
+                    || (C == 0)
+                    || (WGETBIT(Flags.WordChars, P[C - 1]) == 0))
+                    &&
+                    (!(Options & SEARCH_WORDEND)
+                     || (C + Len >= End)
+                     || (WGETBIT(Flags.WordChars, P[C + Len]) == 0))
+                    &&
+                    ((!(Options & SEARCH_NCASE)
+                      && (P[C] == Data[0])
+                      && (memcmp(P + C, Data, Len) == 0))
+                     ||
+                     ((Options & SEARCH_NCASE)
+                      && (toupper(P[C]) == toupper(Data[0]))
+                      && (strnicmp(P + C, Data, Len) == 0))) /* && BOL | EOL */
+               ) {
                 Match.Col = ScreenPos(X, C);
                 Match.Row = L;
                 MatchCount = Len;
@@ -282,7 +305,8 @@ int EBuffer::FindStr(char *Data, int Len, SearchReplaceOptions &opt) {
                 Draw(L, L);
                 return 1;
             }
-            if (Options & SEARCH_BACK) C--; else C++;
+            if (Options & SEARCH_BACK) C--;
+            else C++;
         }
         if (Options & SEARCH_BACK) {
             L--;
@@ -532,24 +556,47 @@ int EBuffer::Find(SearchReplaceOptions &opt) {
                                                      "&Once",
                                                      "&Skip",
                                                      "&Cancel",
-                                                     "Replace with %s?", opt.strReplace))
-                    {
-                    case 0: ch = 'Y'; break;
-                    case 1: ch = 'A'; break;
-                    case 2: ch = 'O'; break;
-                    case 3: ch = 'N'; break;
+                                                     "Replace with %s?", opt.strReplace)) {
+                    case 0:
+                        ch = 'Y';
+                        break;
+                    case 1:
+                        ch = 'A';
+                        break;
+                    case 2:
+                        ch = 'O';
+                        break;
+                    case 3:
+                        ch = 'N';
+                        break;
                     case 4:
-                    case -1:
+                    case - 1:
                     default:
-                        ch = 'Q'; break;
+                        ch = 'Q';
+                        break;
                     }
-                    if (ch == 'Y') { ask = 'Y'; goto ok_rep; }
-                    if (ch == 'N') { ask = 'N'; goto ok_rep; }
-                    if (ch == 'Q') { ask = 'Q'; goto ok_rep; }
-                    if (ch == 'A') { ask = 'A'; goto ok_rep; }
-                    if (ch == 'O') { ask = 'O'; goto ok_rep; }
+                    if (ch == 'Y') {
+                        ask = 'Y';
+                        goto ok_rep;
+                    }
+                    if (ch == 'N') {
+                        ask = 'N';
+                        goto ok_rep;
+                    }
+                    if (ch == 'Q') {
+                        ask = 'Q';
+                        goto ok_rep;
+                    }
+                    if (ch == 'A') {
+                        ask = 'A';
+                        goto ok_rep;
+                    }
+                    if (ch == 'O') {
+                        ask = 'O';
+                        goto ok_rep;
+                    }
                 }
-            ok_rep:
+ok_rep:
                 if (ask == 'N') goto try_join;
                 if (ask == 'Q') goto end;
                 if (ask == 'A') Options |= SEARCH_NASK;
@@ -589,7 +636,7 @@ int EBuffer::Find(SearchReplaceOptions &opt) {
             if (ask == 'O')
                 goto end;
         }
-    try_join:
+try_join:
         if (Options & SEARCH_JOIN) {
             char ask = 'A';
 
@@ -606,24 +653,47 @@ int EBuffer::Find(SearchReplaceOptions &opt) {
                                                      "&Once",
                                                      "&Skip",
                                                      "&Cancel",
-                                                     "Join lines %d and %d?", 1 + VToR(CP.Row), 1 + VToR(CP.Row) + 1))
-                    {
-                    case 0: ch = 'Y'; break;
-                    case 1: ch = 'A'; break;
-                    case 2: ch = 'O'; break;
-                    case 3: ch = 'N'; break;
+                                                     "Join lines %d and %d?", 1 + VToR(CP.Row), 1 + VToR(CP.Row) + 1)) {
+                    case 0:
+                        ch = 'Y';
+                        break;
+                    case 1:
+                        ch = 'A';
+                        break;
+                    case 2:
+                        ch = 'O';
+                        break;
+                    case 3:
+                        ch = 'N';
+                        break;
                     case 4:
-                    case -1:
+                    case - 1:
                     default:
-                        ch = 'Q'; break;
+                        ch = 'Q';
+                        break;
                     }
-                    if (ch == 'Y') { ask = 'Y'; goto ok_join; }
-                    if (ch == 'N') { ask = 'N'; goto ok_join; }
-                    if (ch == 'Q') { ask = 'Q'; goto ok_join; }
-                    if (ch == 'A') { ask = 'A'; goto ok_join; }
-                    if (ch == 'O') { ask = 'O'; goto ok_join; }
+                    if (ch == 'Y') {
+                        ask = 'Y';
+                        goto ok_join;
+                    }
+                    if (ch == 'N') {
+                        ask = 'N';
+                        goto ok_join;
+                    }
+                    if (ch == 'Q') {
+                        ask = 'Q';
+                        goto ok_join;
+                    }
+                    if (ch == 'A') {
+                        ask = 'A';
+                        goto ok_join;
+                    }
+                    if (ch == 'O') {
+                        ask = 'O';
+                        goto ok_join;
+                    }
                 }
-            ok_join:
+ok_join:
                 if (ask == 'N') goto try_delete;
                 if (ask == 'Q') goto end;
                 if (ask == 'A') Options |= SEARCH_NASK;
@@ -634,7 +704,7 @@ int EBuffer::Find(SearchReplaceOptions &opt) {
             if (ask == 'O')
                 goto end;
         }
-    try_delete:
+try_delete:
         if (Options & SEARCH_DELETE) {
             char ask = 'A';
 
@@ -651,24 +721,47 @@ int EBuffer::Find(SearchReplaceOptions &opt) {
                                                      "&Once",
                                                      "&Skip",
                                                      "&Cancel",
-                                                     "Delete line %d?", VToR(CP.Row)))
-                    {
-                    case 0: ch = 'Y'; break;
-                    case 1: ch = 'A'; break;
-                    case 2: ch = 'O'; break;
-                    case 3: ch = 'N'; break;
+                                                     "Delete line %d?", VToR(CP.Row))) {
+                    case 0:
+                        ch = 'Y';
+                        break;
+                    case 1:
+                        ch = 'A';
+                        break;
+                    case 2:
+                        ch = 'O';
+                        break;
+                    case 3:
+                        ch = 'N';
+                        break;
                     case 4:
-                    case -1:
+                    case - 1:
                     default:
-                        ch = 'Q'; break;
+                        ch = 'Q';
+                        break;
                     }
-                    if (ch == 'Y') { ask = 'Y'; goto ok_delete; }
-                    if (ch == 'N') { ask = 'N'; goto ok_delete; }
-                    if (ch == 'Q') { ask = 'Q'; goto ok_delete; }
-                    if (ch == 'A') { ask = 'A'; goto ok_delete; }
-                    if (ch == 'O') { ask = 'O'; goto ok_delete; }
+                    if (ch == 'Y') {
+                        ask = 'Y';
+                        goto ok_delete;
+                    }
+                    if (ch == 'N') {
+                        ask = 'N';
+                        goto ok_delete;
+                    }
+                    if (ch == 'Q') {
+                        ask = 'Q';
+                        goto ok_delete;
+                    }
+                    if (ch == 'A') {
+                        ask = 'A';
+                        goto ok_delete;
+                    }
+                    if (ch == 'O') {
+                        ask = 'O';
+                        goto ok_delete;
+                    }
                 }
-            ok_delete:
+ok_delete:
                 if (ask == 'N') goto next;
                 if (ask == 'Q') goto end;
                 if (ask == 'A') Options |= SEARCH_NASK;
@@ -685,11 +778,11 @@ int EBuffer::Find(SearchReplaceOptions &opt) {
                 break;
             goto last;
         }
-    next:
+next:
         if (!(Options & SEARCH_ALL))
             break;
         Options |= SEARCH_NEXT;
-    last:
+last:
         ;
     }
 end:
@@ -708,8 +801,7 @@ end:
     return 1;
 error:
 
-    if (R)
-    {
+    if (R) {
         RxFree(R);
     }
     View->MView->Win->Choice(GPC_ERROR, "Find", 1, "O&K", "Error in search/replace.");
@@ -784,14 +876,30 @@ int EBuffer::SearchReplace(ExState &State, char *aString, char *aReplaceString, 
     return 1;
 }
 
-int EBuffer::Search(ExState &State)          { return Search(State, 0, 0, 1); }
-int EBuffer::SearchB(ExState &State)         { return Search(State, 0, SEARCH_BACK, 1); }
-int EBuffer::SearchRx(ExState &State)        { return Search(State, 0, SEARCH_RE, 1); }
-int EBuffer::SearchAgain(ExState &State)     { return SearchAgain(State, 0); }
-int EBuffer::SearchAgainB(ExState &State)    { return SearchAgain(State, SEARCH_BACK); }
-int EBuffer::SearchReplace(ExState &State)   { return SearchReplace(State, 0, 0, 0); }
-int EBuffer::SearchReplaceB(ExState &State)  { return SearchReplace(State, 0, 0, SEARCH_BACK); }
-int EBuffer::SearchReplaceRx(ExState &State) { return SearchReplace(State, 0, 0, SEARCH_RE); }
+int EBuffer::Search(ExState &State)          {
+    return Search(State, 0, 0, 1);
+}
+int EBuffer::SearchB(ExState &State)         {
+    return Search(State, 0, SEARCH_BACK, 1);
+}
+int EBuffer::SearchRx(ExState &State)        {
+    return Search(State, 0, SEARCH_RE, 1);
+}
+int EBuffer::SearchAgain(ExState &State)     {
+    return SearchAgain(State, 0);
+}
+int EBuffer::SearchAgainB(ExState &State)    {
+    return SearchAgain(State, SEARCH_BACK);
+}
+int EBuffer::SearchReplace(ExState &State)   {
+    return SearchReplace(State, 0, 0, 0);
+}
+int EBuffer::SearchReplaceB(ExState &State)  {
+    return SearchReplace(State, 0, 0, SEARCH_BACK);
+}
+int EBuffer::SearchReplaceRx(ExState &State) {
+    return SearchReplace(State, 0, 0, SEARCH_RE);
+}
 
 int EBuffer::ScanForRoutines() {
     RxNode *regx;
@@ -911,7 +1019,7 @@ int EBuffer::PlaceBookmark(char *Name, EPoint P) {
             return 1;
         }
     }
-    p = (EBookmark *) realloc(BMarks, sizeof (EBookmark) * (1 + BMCount));
+    p = (EBookmark *) realloc(BMarks, sizeof(EBookmark) * (1 + BMCount));
     if (p == 0) return 0;
     BMarks = p;
     BMarks[BMCount].Name = strdup(Name);
@@ -928,7 +1036,7 @@ int EBuffer::RemoveBookmark(char *Name) {
             free(BMarks[i].Name);
             memmove(BMarks + i, BMarks + i + 1, sizeof(EBookmark) * (BMCount - i - 1));
             BMCount--;
-            BMarks = (EBookmark *) realloc(BMarks, sizeof (EBookmark) * BMCount);
+            BMarks = (EBookmark *) realloc(BMarks, sizeof(EBookmark) * BMCount);
             return 1;
         }
     }
@@ -955,10 +1063,10 @@ int EBuffer::GetBookmark(char *Name, EPoint &P) {
  */
 int EBuffer::GetBookmarkForLine(int searchFrom, int searchForLine, char *&Name, EPoint &P) {
     for (int i = searchFrom; i < BMCount; i++)
-        if (searchForLine==-1||BMarks[i].BM.Row==searchForLine) {
+        if (searchForLine == -1 || BMarks[i].BM.Row == searchForLine) {
             Name = BMarks[i].Name;
             P = BMarks[i].BM;
-            return i+1;
+            return i + 1;
         }
     return -1;
 }
@@ -987,15 +1095,47 @@ int EBuffer::GetMatchBrace(EPoint &M, int MinLine, int MaxLine, int show) {
 
     Pos = CharOffset(L, M.Col);
     if (Pos >= L->Count) return 0;
-    switch(L->Chars[Pos]) {
-    case '{': dir = +1; Ch1 = '{'; Ch2 = '}'; break;
-    case '[': dir = +1; Ch1 = '['; Ch2 = ']'; break;
-    case '<': dir = +1; Ch1 = '<'; Ch2 = '>'; break;
-    case '(': dir = +1; Ch1 = '('; Ch2 = ')'; break;
-    case '}': dir = -1; Ch1 = '}'; Ch2 = '{'; break;
-    case ']': dir = -1; Ch1 = ']'; Ch2 = '['; break;
-    case '>': dir = -1; Ch1 = '>'; Ch2 = '<'; break;
-    case ')': dir = -1; Ch1 = ')'; Ch2 = '('; break;
+    switch (L->Chars[Pos]) {
+    case '{':
+        dir = + 1;
+        Ch1 = '{';
+        Ch2 = '}';
+        break;
+    case '[':
+        dir = + 1;
+        Ch1 = '[';
+        Ch2 = ']';
+        break;
+    case '<':
+        dir = + 1;
+        Ch1 = '<';
+        Ch2 = '>';
+        break;
+    case '(':
+        dir = + 1;
+        Ch1 = '(';
+        Ch2 = ')';
+        break;
+    case '}':
+        dir = -1;
+        Ch1 = '}';
+        Ch2 = '{';
+        break;
+    case ']':
+        dir = -1;
+        Ch1 = ']';
+        Ch2 = '[';
+        break;
+    case '>':
+        dir = -1;
+        Ch1 = '>';
+        Ch2 = '<';
+        break;
+    case ')':
+        dir = -1;
+        Ch1 = ')';
+        Ch2 = '(';
+        break;
     default:
         return 0;
     }

@@ -66,15 +66,15 @@
 #define cmPopupMenu 6
 
 /* vertical scroll */
-    
+
 #define cmVScrollUp     10
 #define cmVScrollDown   11
 #define cmVScrollPgUp   12
 #define cmVScrollPgDn   13
 #define cmVScrollMove   14
-    
+
 /* horizontal scroll */
-    
+
 #define cmHScrollLeft   15
 #define cmHScrollRight  16
 #define cmHScrollPgLt   17
@@ -83,11 +83,11 @@
 
 #define cmDroppedFile   30
 #define cmRenameFile    31   /* TODO: in-place editing of titlebar */
-    
+
 typedef unsigned char TAttr;
 typedef TAttr *PAttr;
 
-#ifdef NTCONSOLE 
+#ifdef NTCONSOLE
 typedef unsigned long TCell;
 #else
 typedef unsigned short TCell;
@@ -209,7 +209,7 @@ char ConGetDrawChar(int index);
 extern char WindowFont[64];
 
 typedef struct {
-  unsigned char r,g,b;
+    unsigned char r, g, b;
 } TRGBColor;
 extern TRGBColor RGBColor[16];
 extern bool RGBColorValid[16];

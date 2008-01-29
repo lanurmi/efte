@@ -44,7 +44,7 @@ public:
     EMode *fParent;
     EColorize *fColorize;
     char filename[256];
-    
+
     EMode(EMode *aMode, EEventMap *Map, const char *aName);
     ~EMode();
     EAbbrev *FindAbbrev(const char *string);
@@ -54,10 +54,10 @@ class EKeyMap {
 public:
     EKeyMap *fParent;
     EKey *fKeys;
-    
+
     EKeyMap();
     ~EKeyMap();
-    
+
     void AddKey(EKey *aKey);
     EKey *FindKey(TKeyCode aKey);
 };
@@ -67,12 +67,12 @@ public:
     EEventMap *Next;
     EEventMap *Parent;
     char *Name;
-    
+
     EKeyMap *KeyMap;
     char *Menu[EM_MENUS]; // main + local
-    
+
     EAbbrev *abbrev[ABBREV_HASH];
-    
+
     EEventMap(const char *AName, EEventMap *AParent);
     ~EEventMap();
     void SetMenu(int which, const char *What);
@@ -108,7 +108,7 @@ public:
     int Cmd;
     EKeyMap *fKeyMap;
     EKey *fNext;
-    
+
     EKey(char *aKey);
     EKey(char *aKey, EKeyMap *aKeyMap);
     ~EKey();
@@ -120,7 +120,7 @@ public:
     int Cmd;
     char *Match;
     char *Replace;
-    
+
     EAbbrev(const char *aMatch, const char *aReplace);
     EAbbrev(const char *aMatch, int aCmd);
     ~EAbbrev();
@@ -130,7 +130,7 @@ class ExState { // state of macro execution
 public:
     int Macro;
     int Pos;
-    
+
     int GetStrParam(EView *view, char *str, int buflen);
     int GetIntParam(EView *view, int *value);
 };

@@ -58,9 +58,9 @@ void ExKey::UpdateStatus() {
 void ExKey::RepaintStatus() {
     TDrawBuffer B;
     int W, H;
-    
+
     ConQuerySize(&W, &H);
-    
+
     MoveCh(B, ' ', 0x17, W);
     ConPutBox(0, H - 1, W, 1, B);
 }

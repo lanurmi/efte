@@ -60,7 +60,7 @@ static void cleanup(int xerrno) {
         fclose(output);
     if (XTarget[0] != 0)
         unlink(XTarget);
-    exit (xerrno);
+    exit(xerrno);
 }
 
 static void Fail(CurPos &cp, const char *s, ...) {
@@ -83,18 +83,16 @@ static void PutObject(CurPos &cp, int xtag, int xlen, void *obj) {
     unsigned short len = (unsigned short)xlen;
     unsigned char l[2];
 
-    if (preprocess_only == false)
-    {
+    if (preprocess_only == false) {
 
-	l[0] = len & 0xFF;
-	l[1] = (len >> 8) & 0xFF;
+        l[0] = len & 0xFF;
+        l[1] = (len >> 8) & 0xFF;
 
-	if (fwrite(&tag, 1, 1, output) != 1 ||
-	    fwrite(l, 2, 1, output) != 1 ||
-	    fwrite(obj, 1, len, output) != len)
-	{
-	    Fail(cp, "Disk full!");
-	}
+        if (fwrite(&tag, 1, 1, output) != 1 ||
+                fwrite(l, 2, 1, output) != 1 ||
+                fwrite(obj, 1, len, output) != len) {
+            Fail(cp, "Disk full!");
+        }
     }
     pos += 1 + 2 + len;
     if (offset != -1 && pos >= offset) {
@@ -155,87 +153,77 @@ int main(int argc, char **argv) {
     offset = -1;
 
     // parse arguments
-    for (int i = 1; i < argc; i++)
-    {
-	if (argv[i][0] == '-')
-	{
-	    if ((strcmp(argv[i], "-p") == 0) || (strcmp(argv[i], "-preprocess") == 0))
-	    {
-		preprocess_only = true;
-	    } else
-	    if (strncmp(argv[i], "-o", 2) == 0)
-	    {
-		char *p;
+    for (int i = 1; i < argc; i++) {
+        if (argv[i][0] == '-') {
+            if ((strcmp(argv[i], "-p") == 0) || (strcmp(argv[i], "-preprocess") == 0)) {
+                preprocess_only = true;
+            } else
+                if (strncmp(argv[i], "-o", 2) == 0) {
+                    char *p;
 
-		p = argv[i];
-		p += 2;
-		offset = atol(p);
-	    } else
-	    {
-		fprintf(stderr, "Invalid option '%s'\n", argv[i]);
-		exit(1);
-	    }
-	} else
-	{
-	    switch(n)
-	    {
-	    case 0:
-		strlcpy(Source, argv[i], sizeof(Source));
-		break;
+                    p = argv[i];
+                    p += 2;
+                    offset = atol(p);
+                } else {
+                    fprintf(stderr, "Invalid option '%s'\n", argv[i]);
+                    exit(1);
+                }
+        } else {
+            switch (n) {
+            case 0:
+                strlcpy(Source, argv[i], sizeof(Source));
+                break;
 
-	    case 1:
+            case 1:
                 strlcpy(Target, argv[i], sizeof(Target));
-		break;
+                break;
 
-	    default:
-		fprintf(stderr, "Invalid option '%s'\n", argv[i]);
-		exit(1);
-	    }
+            default:
+                fprintf(stderr, "Invalid option '%s'\n", argv[i]);
+                exit(1);
+            }
             n++;
-	}
+        }
     }
 
-    if (n == 0)
-    {
-	fprintf(stderr, "No configuration file specified\n");
-	exit(1);
+    if (n == 0) {
+        fprintf(stderr, "No configuration file specified\n");
+        exit(1);
     }
 
     JustDirectory(Target, XTarget, sizeof(XTarget));
     Slash(XTarget, 1);
 
-    if (preprocess_only == false)
-    {
-	sprintf(XTarget + strlen(XTarget), "cefte%ld.tmp", (long)getpid());
-	output = fopen(XTarget, "wb");
-	if (output == 0) {
-	    fprintf(stderr, "Cannot create '%s', errno=%d!\n", XTarget, errno);
-	    cleanup(1);
-	}
+    if (preprocess_only == false) {
+        sprintf(XTarget + strlen(XTarget), "cefte%ld.tmp", (long)getpid());
+        output = fopen(XTarget, "wb");
+        if (output == 0) {
+            fprintf(stderr, "Cannot create '%s', errno=%d!\n", XTarget, errno);
+            cleanup(1);
+        }
 
-	b[0] = b[1] = b[2] = b[3] = 0;
+        b[0] = b[1] = b[2] = b[3] = 0;
 
-	if (fwrite(b, sizeof(b), 1, output) != 1) {
-	    fprintf(stderr, "Disk full!");
-	    cleanup(1);
-	}
+        if (fwrite(b, sizeof(b), 1, output) != 1) {
+            fprintf(stderr, "Disk full!");
+            cleanup(1);
+        }
 
-	l = VERNUM;
+        l = VERNUM;
 
-	b[0] = (unsigned char)(l & 0xFF);
-	b[1] = (unsigned char)((l >> 8) & 0xFF);
-	b[2] = (unsigned char)((l >> 16) & 0xFF);
-	b[3] = (unsigned char)((l >> 24) & 0xFF);
+        b[0] = (unsigned char)(l & 0xFF);
+        b[1] = (unsigned char)((l >> 8) & 0xFF);
+        b[2] = (unsigned char)((l >> 16) & 0xFF);
+        b[3] = (unsigned char)((l >> 24) & 0xFF);
 
-	if (fwrite(b, 4, 1, output) != 1) {
-	    fprintf(stderr, "Disk full!");
-	    cleanup(1);
-	}
-	pos = 2 * 4;
+        if (fwrite(b, 4, 1, output) != 1) {
+            fprintf(stderr, "Disk full!");
+            cleanup(1);
+        }
+        pos = 2 * 4;
 
-	fprintf(stderr, "Compiling to '%s'\n", Target);
-    } else
-    {
+        fprintf(stderr, "Compiling to '%s'\n", Target);
+    } else {
         pos = 2 * 4;
     }
     /*{
@@ -252,8 +240,7 @@ int main(int argc, char **argv) {
                , StartDir, sizeof(StartDir));
     Slash(StartDir, 1);
 
-    if (preprocess_only == false)
-    {
+    if (preprocess_only == false) {
         CurPos cp;
         char FSource[MAXPATH];
 
@@ -277,8 +264,7 @@ int main(int argc, char **argv) {
         cleanup(1);
     }
 
-    if (preprocess_only == true)
-    {
+    if (preprocess_only == true) {
         return 0;
     }
 
@@ -320,184 +306,184 @@ typedef struct _OrdLookup {
 } OrdLookup;
 
 static const OrdLookup mode_num[] = {
-MODE_BFI(AutoIndent),
-MODE_BFI(Insert),
-MODE_BFI(DrawOn),
-MODE_BFI(HilitOn),
-MODE_BFI(ExpandTabs),
-MODE_BFI(Trim),
-MODE_BFI(TabSize),
-MODE_BFI(ShowTabs),
-MODE_BFI(LineChar),
-MODE_BFI(StripChar),
-MODE_BFI(AddLF),
-MODE_BFI(AddCR),
-MODE_BFI(ForceNewLine),
-MODE_BFI(HardMode),
-MODE_BFI(Undo),
-MODE_BFI(ReadOnly),
-MODE_BFI(AutoSave),
-MODE_BFI(KeepBackups),
-MODE_BFI(LoadMargin),
-MODE_BFI(UndoLimit),
-MODE_BFI(MatchCase),
-MODE_BFI(BackSpKillTab),
-MODE_BFI(DeleteKillTab),
-MODE_BFI(BackSpUnindents),
-MODE_BFI(SpaceTabs),
-MODE_BFI(IndentWithTabs),
-MODE_BFI(LeftMargin),
-MODE_BFI(RightMargin),
-MODE_BFI(SeeThruSel),
-MODE_BFI(WordWrap),
-MODE_BFI(ShowMarkers),
-MODE_BFI(CursorThroughTabs),
-MODE_BFI(SaveFolds),
-MODE_BFI(MultiLineHilit),
-MODE_BFI(AutoHilitParen),
-MODE_BFI(Abbreviations),
-MODE_BFI(BackSpKillBlock),
-MODE_BFI(DeleteKillBlock),
-MODE_BFI(PersistentBlocks),
-MODE_BFI(InsertKillBlock),
-MODE_BFI(UndoMoves),
-MODE_BFI(DetectLineSep),
-MODE_BFI(TrimOnSave),
-MODE_BFI(SaveBookmarks),
-MODE_BFI(HilitTags),
-MODE_BFI(ShowBookmarks),
-MODE_BFI(MakeBackups),
-{ 0, 0 },
+    MODE_BFI(AutoIndent),
+    MODE_BFI(Insert),
+    MODE_BFI(DrawOn),
+    MODE_BFI(HilitOn),
+    MODE_BFI(ExpandTabs),
+    MODE_BFI(Trim),
+    MODE_BFI(TabSize),
+    MODE_BFI(ShowTabs),
+    MODE_BFI(LineChar),
+    MODE_BFI(StripChar),
+    MODE_BFI(AddLF),
+    MODE_BFI(AddCR),
+    MODE_BFI(ForceNewLine),
+    MODE_BFI(HardMode),
+    MODE_BFI(Undo),
+    MODE_BFI(ReadOnly),
+    MODE_BFI(AutoSave),
+    MODE_BFI(KeepBackups),
+    MODE_BFI(LoadMargin),
+    MODE_BFI(UndoLimit),
+    MODE_BFI(MatchCase),
+    MODE_BFI(BackSpKillTab),
+    MODE_BFI(DeleteKillTab),
+    MODE_BFI(BackSpUnindents),
+    MODE_BFI(SpaceTabs),
+    MODE_BFI(IndentWithTabs),
+    MODE_BFI(LeftMargin),
+    MODE_BFI(RightMargin),
+    MODE_BFI(SeeThruSel),
+    MODE_BFI(WordWrap),
+    MODE_BFI(ShowMarkers),
+    MODE_BFI(CursorThroughTabs),
+    MODE_BFI(SaveFolds),
+    MODE_BFI(MultiLineHilit),
+    MODE_BFI(AutoHilitParen),
+    MODE_BFI(Abbreviations),
+    MODE_BFI(BackSpKillBlock),
+    MODE_BFI(DeleteKillBlock),
+    MODE_BFI(PersistentBlocks),
+    MODE_BFI(InsertKillBlock),
+    MODE_BFI(UndoMoves),
+    MODE_BFI(DetectLineSep),
+    MODE_BFI(TrimOnSave),
+    MODE_BFI(SaveBookmarks),
+    MODE_BFI(HilitTags),
+    MODE_BFI(ShowBookmarks),
+    MODE_BFI(MakeBackups),
+    { 0, 0 },
 };
 
 static const OrdLookup mode_string[] = {
-MODE_BFI(Colorizer),
-MODE_BFI(IndentMode),
-MODE_BFS(RoutineRegexp),
-MODE_BFS(DefFindOpt),
-MODE_BFS(DefFindReplaceOpt),
-MODE_BFS(CommentStart),
-MODE_BFS(CommentEnd),
-MODE_BFS(WordChars),
-MODE_BFS(CapitalChars),
-MODE_BFS(FileNameRx),
-MODE_BFS(FirstLineRx),
-MODE_BFS(CompileCommand),
-MODE_BFI(EventMap),
-{ 0, 0 },
+    MODE_BFI(Colorizer),
+    MODE_BFI(IndentMode),
+    MODE_BFS(RoutineRegexp),
+    MODE_BFS(DefFindOpt),
+    MODE_BFS(DefFindReplaceOpt),
+    MODE_BFS(CommentStart),
+    MODE_BFS(CommentEnd),
+    MODE_BFS(WordChars),
+    MODE_BFS(CapitalChars),
+    MODE_BFS(FileNameRx),
+    MODE_BFS(FirstLineRx),
+    MODE_BFS(CompileCommand),
+    MODE_BFI(EventMap),
+    { 0, 0 },
 };
 
 static const OrdLookup global_num[] = {
-MODE_FLG(C_Indent),
-MODE_FLG(C_BraceOfs),
-MODE_FLG(C_CaseOfs),
-MODE_FLG(C_CaseDelta),
-MODE_FLG(C_ClassOfs),
-MODE_FLG(C_ClassDelta),
-MODE_FLG(C_ColonOfs),
-MODE_FLG(C_CommentOfs),
-MODE_FLG(C_CommentDelta),
-MODE_FLG(C_FirstLevelWidth),
-MODE_FLG(C_FirstLevelIndent),
-MODE_FLG(C_Continuation),
-MODE_FLG(C_ParenDelta),
-MODE_FLG(FunctionUsesContinuation),
-MODE_FLG(REXX_Indent),
-MODE_FLG(REXX_Do_Offset),
-MODE_FLG(Falcon_Indent),
-MODE_FLG(Falcon_Paren_Delta),
-MODE_FLG(Falcon_Max_Paren),
-MODE_FLG(ScreenSizeX),
-MODE_FLG(ScreenSizeY),
-MODE_FLG(SysClipboard),
-MODE_FLG(OpenAfterClose),
-MODE_FLG(ShowVScroll),
-MODE_FLG(ShowHScroll),
-MODE_FLG(ScrollBarWidth),
-MODE_FLG(SelectPathname),
-MODE_FLG(ShowToolBar),
-MODE_FLG(ShowMenuBar),
-MODE_FLG(KeepHistory),
-MODE_FLG(LoadDesktopOnEntry),
-MODE_FLG(SaveDesktopOnExit),
-MODE_FLG(KeepMessages),
-MODE_FLG(ScrollBorderX),
-MODE_FLG(ScrollBorderY),
-MODE_FLG(ScrollJumpX),
-MODE_FLG(ScrollJumpY),
-MODE_FLG(GUIDialogs),
-MODE_FLG(PMDisableAccel),
-MODE_FLG(SevenBit),
-MODE_FLG(WeirdScroll),
-MODE_FLG(LoadDesktopMode),
-MODE_FLG(IgnoreBufferList),
-MODE_FLG(ReassignModelIds),
-MODE_FLG(RecheckReadOnly),
-MODE_FLG(CursorBlink),
-MODE_FLG(CursorWithinEOL),
-MODE_FLG(CursorInsertMask),
-MODE_FLG(CursorOverMask),
-{ 0, 0 },
+    MODE_FLG(C_Indent),
+    MODE_FLG(C_BraceOfs),
+    MODE_FLG(C_CaseOfs),
+    MODE_FLG(C_CaseDelta),
+    MODE_FLG(C_ClassOfs),
+    MODE_FLG(C_ClassDelta),
+    MODE_FLG(C_ColonOfs),
+    MODE_FLG(C_CommentOfs),
+    MODE_FLG(C_CommentDelta),
+    MODE_FLG(C_FirstLevelWidth),
+    MODE_FLG(C_FirstLevelIndent),
+    MODE_FLG(C_Continuation),
+    MODE_FLG(C_ParenDelta),
+    MODE_FLG(FunctionUsesContinuation),
+    MODE_FLG(REXX_Indent),
+    MODE_FLG(REXX_Do_Offset),
+    MODE_FLG(Falcon_Indent),
+    MODE_FLG(Falcon_Paren_Delta),
+    MODE_FLG(Falcon_Max_Paren),
+    MODE_FLG(ScreenSizeX),
+    MODE_FLG(ScreenSizeY),
+    MODE_FLG(SysClipboard),
+    MODE_FLG(OpenAfterClose),
+    MODE_FLG(ShowVScroll),
+    MODE_FLG(ShowHScroll),
+    MODE_FLG(ScrollBarWidth),
+    MODE_FLG(SelectPathname),
+    MODE_FLG(ShowToolBar),
+    MODE_FLG(ShowMenuBar),
+    MODE_FLG(KeepHistory),
+    MODE_FLG(LoadDesktopOnEntry),
+    MODE_FLG(SaveDesktopOnExit),
+    MODE_FLG(KeepMessages),
+    MODE_FLG(ScrollBorderX),
+    MODE_FLG(ScrollBorderY),
+    MODE_FLG(ScrollJumpX),
+    MODE_FLG(ScrollJumpY),
+    MODE_FLG(GUIDialogs),
+    MODE_FLG(PMDisableAccel),
+    MODE_FLG(SevenBit),
+    MODE_FLG(WeirdScroll),
+    MODE_FLG(LoadDesktopMode),
+    MODE_FLG(IgnoreBufferList),
+    MODE_FLG(ReassignModelIds),
+    MODE_FLG(RecheckReadOnly),
+    MODE_FLG(CursorBlink),
+    MODE_FLG(CursorWithinEOL),
+    MODE_FLG(CursorInsertMask),
+    MODE_FLG(CursorOverMask),
+    { 0, 0 },
 };
 
 static const OrdLookup global_string[] = {
-MODE_FLG(DefaultModeName),
-MODE_FLG(CompletionFilter),
-MODE_FLG(PrintDevice),
-MODE_FLG(CompileCommand),
-MODE_FLG(WindowFont),
-MODE_FLG(HelpCommand),
-MODE_FLG(GUICharacters),
-MODE_FLG(CvsCommand),
-MODE_FLG(CvsLogMode),
-MODE_FLG(SvnCommand),
-MODE_FLG(SvnLogMode),
-MODE_FLG(XShellCommand),
-MODE_FLG(RGBColor),
-{ 0, 0 },
+    MODE_FLG(DefaultModeName),
+    MODE_FLG(CompletionFilter),
+    MODE_FLG(PrintDevice),
+    MODE_FLG(CompileCommand),
+    MODE_FLG(WindowFont),
+    MODE_FLG(HelpCommand),
+    MODE_FLG(GUICharacters),
+    MODE_FLG(CvsCommand),
+    MODE_FLG(CvsLogMode),
+    MODE_FLG(SvnCommand),
+    MODE_FLG(SvnLogMode),
+    MODE_FLG(XShellCommand),
+    MODE_FLG(RGBColor),
+    { 0, 0 },
 };
 
 static const OrdLookup event_string[] = {
-EVENT_FLG(MainMenu),
-EVENT_FLG(LocalMenu),
-{ 0, 0 },
+    EVENT_FLG(MainMenu),
+    EVENT_FLG(LocalMenu),
+    { 0, 0 },
 };
 
 static const OrdLookup colorize_string[] = {
-COLORIZE_FLG(SyntaxParser),
-{ 0, 0 },
+    COLORIZE_FLG(SyntaxParser),
+    { 0, 0 },
 };
 
 static const OrdLookup hilit_colors[] = {
-HILIT_CLR(Normal),
-HILIT_CLR(Keyword),
-HILIT_CLR(String),
-HILIT_CLR(Comment),
-HILIT_CLR(CPreprocessor),
-HILIT_CLR(Regexp),
-HILIT_CLR(Header),
-HILIT_CLR(Quotes),
-HILIT_CLR(Number),
-HILIT_CLR(HexNumber),
-HILIT_CLR(OctalNumber),
-HILIT_CLR(FloatNumber),
-HILIT_CLR(Function),
-HILIT_CLR(Command),
-HILIT_CLR(Tag),
-HILIT_CLR(Punctuation),
-HILIT_CLR(New),
-HILIT_CLR(Old),
-HILIT_CLR(Changed),
-HILIT_CLR(Control),
-HILIT_CLR(Separator),
-HILIT_CLR(Variable),
-HILIT_CLR(Symbol),
-HILIT_CLR(Directive),
-HILIT_CLR(Label),
-HILIT_CLR(Special),
-HILIT_CLR(QuoteDelim),
-HILIT_CLR(RegexpDelim),
-{ 0, 0 },
+    HILIT_CLR(Normal),
+    HILIT_CLR(Keyword),
+    HILIT_CLR(String),
+    HILIT_CLR(Comment),
+    HILIT_CLR(CPreprocessor),
+    HILIT_CLR(Regexp),
+    HILIT_CLR(Header),
+    HILIT_CLR(Quotes),
+    HILIT_CLR(Number),
+    HILIT_CLR(HexNumber),
+    HILIT_CLR(OctalNumber),
+    HILIT_CLR(FloatNumber),
+    HILIT_CLR(Function),
+    HILIT_CLR(Command),
+    HILIT_CLR(Tag),
+    HILIT_CLR(Punctuation),
+    HILIT_CLR(New),
+    HILIT_CLR(Old),
+    HILIT_CLR(Changed),
+    HILIT_CLR(Control),
+    HILIT_CLR(Separator),
+    HILIT_CLR(Variable),
+    HILIT_CLR(Symbol),
+    HILIT_CLR(Directive),
+    HILIT_CLR(Label),
+    HILIT_CLR(Special),
+    HILIT_CLR(QuoteDelim),
+    HILIT_CLR(RegexpDelim),
+    { 0, 0 },
 };
 
 static int Lookup(const OrdLookup *where, char *what) {
@@ -556,31 +542,31 @@ static int Lookup(const OrdLookup *where, char *what) {
 typedef char Word[64];
 
 static const OrdLookup CfgKW[] = {
-{ "mode", K_MODE },
-{ "eventmap", K_EVENTMAP },
-{ "key", K_KEY },
-{ "color", K_COLOR },
-{ "color_palette", K_COLPALETTE },
-{ "keyword", K_KEYWORD },
-{ "object", K_OBJECT },
-{ "menu", K_MENU },
-{ "item", K_ITEM },
-{ "submenu", K_SUBMENU },
-{ "CompileRx", K_COMPILERX },
-{ "extern", K_EXTERN },
-{ "oinclude", K_OINCLUDE },
-{ "include", K_INCLUDE },
-{ "sub", K_SUB },
-{ "colorize", K_COLORIZE },
-{ "abbrev", K_ABBREV },
-{ "h_state", K_HSTATE },
-{ "h_trans", K_HTRANS },
-{ "h_words", K_HWORDS },
-{ "h_wtype", K_HWTYPE },
-{ "submenucond", K_SUBMENUCOND },
-{ "CvsIgnoreRx", K_CVSIGNRX },
-{ "SvnIgnoreRx", K_SVNIGNRX },
-{ 0, 0 },
+    { "mode", K_MODE },
+    { "eventmap", K_EVENTMAP },
+    { "key", K_KEY },
+    { "color", K_COLOR },
+    { "color_palette", K_COLPALETTE },
+    { "keyword", K_KEYWORD },
+    { "object", K_OBJECT },
+    { "menu", K_MENU },
+    { "item", K_ITEM },
+    { "submenu", K_SUBMENU },
+    { "CompileRx", K_COMPILERX },
+    { "extern", K_EXTERN },
+    { "oinclude", K_OINCLUDE },
+    { "include", K_INCLUDE },
+    { "sub", K_SUB },
+    { "colorize", K_COLORIZE },
+    { "abbrev", K_ABBREV },
+    { "h_state", K_HSTATE },
+    { "h_trans", K_HTRANS },
+    { "h_words", K_HWORDS },
+    { "h_wtype", K_HWTYPE },
+    { "submenucond", K_SUBMENUCOND },
+    { "CvsIgnoreRx", K_CVSIGNRX },
+    { "SvnIgnoreRx", K_SVNIGNRX },
+    { 0, 0 },
 };
 
 static const OrdLookup CfgVar[] = {
@@ -615,7 +601,7 @@ static void DefineWord(const char *w) {
     if (!w || !w[0])
         return ;
     if (!DefinedWord(w)) {
-        words = (char **)realloc(words, sizeof (char *) * (wordCount + 1));
+        words = (char **)realloc(words, sizeof(char *) * (wordCount + 1));
         assert(words != 0);
         words[wordCount] = strdup(w);
         assert(words[wordCount] != 0);
@@ -632,7 +618,7 @@ static struct _color {
 static int DefineColor(char *name, char *value) {
     if (!name || !value)
         return 0;
-    colors = (struct _color *)realloc(colors, sizeof (struct _color) * (colorCount + 1));
+    colors = (struct _color *)realloc(colors, sizeof(struct _color) * (colorCount + 1));
     assert(colors != 0);
     colors[colorCount].colorName = strdup(name);
     colors[colorCount].colorValue = strdup(value);
@@ -675,10 +661,9 @@ static char *GetColor(CurPos &cp, char *name) {
         name = p;
     }
     if (!isxdigit(name[0]) &&
-        name[1] != ' ' &&
-        !isxdigit(name[2]) &&
-        name[3] != 0)
-    {
+            name[1] != ' ' &&
+            !isxdigit(name[2]) &&
+            name[3] != 0) {
         Fail(cp, "malformed color specification: %s", name);
     }
     return name;
@@ -689,11 +674,10 @@ static int GetWord(CurPos &cp, char *w) {
     int len = 0;
 
     while (len < int(sizeof(Word)) && cp.c < cp.z &&
-           ((*cp.c >= 'a' && *cp.c <= 'z') ||
-            (*cp.c >= 'A' && *cp.c <= 'Z') ||
-            (*cp.c >= '0' && *cp.c <= '9') ||
-            (*cp.c == '_')))
-    {
+            ((*cp.c >= 'a' && *cp.c <= 'z') ||
+             (*cp.c >= 'A' && *cp.c <= 'Z') ||
+             (*cp.c >= '0' && *cp.c <= '9') ||
+             (*cp.c == '_'))) {
         *p++ = *cp.c++;
         len++;
     }
@@ -707,40 +691,62 @@ static int Parse(CurPos &cp) {
     while (cp.c < cp.z) {
         switch (*cp.c) {
 #ifndef UNIX
-        case '\x1A': /* ^Z :-* */ return P_EOF;
+        case '\x1A': /* ^Z :-* */
+            return P_EOF;
 #endif
         case '#':
             while (cp.c < cp.z && *cp.c != '\n') cp.c++;
             break;
         case '\n':
             cp.line++;
-	    lntotal++;
+            lntotal++;
         case ' ':
         case '\t':
         case '\r':
             cp.c++;
             break;
-        case '=': return P_ASSIGN;
-        case ';': return P_EOS;
-        case ',': return P_COMMA;
-        case ':': return P_COLON;
-        case '.': return P_DOT;
+        case '=':
+            return P_ASSIGN;
+        case ';':
+            return P_EOS;
+        case ',':
+            return P_COMMA;
+        case ':':
+            return P_COLON;
+        case '.':
+            return P_DOT;
         case '\'':
         case '"':
         case '`':
-        case '/': return P_STRING;
-        case '[': return P_KEYSPEC;
-        case '{': return P_OPENBRACE;
-        case '}': return P_CLOSEBRACE;
-        case '?': return P_QUEST;
-        case '$': return P_VARIABLE;
-        case '-': case '+':
-        case '0': case '1': case '2': case '3': case '4':
-        case '5': case '6': case '7': case '8': case '9': return P_NUMBER;
+        case '/':
+            return P_STRING;
+        case '[':
+            return P_KEYSPEC;
+        case '{':
+            return P_OPENBRACE;
+        case '}':
+            return P_CLOSEBRACE;
+        case '?':
+            return P_QUEST;
+        case '$':
+            return P_VARIABLE;
+        case '-':
+        case '+':
+        case '0':
+        case '1':
+        case '2':
+        case '3':
+        case '4':
+        case '5':
+        case '6':
+        case '7':
+        case '8':
+        case '9':
+            return P_NUMBER;
         default:
             if ((*cp.c >= 'a' && *cp.c <= 'z') ||
-                (*cp.c >= 'A' && *cp.c <= 'Z') ||
-                (*cp.c == '_'))
+                    (*cp.c >= 'A' && *cp.c <= 'Z') ||
+                    (*cp.c == '_'))
                 return P_WORD;
             else
                 return P_SYNTAX;
@@ -782,19 +788,33 @@ static char *GetString(CurPos &cp) {
             if (cp.c == cp.z) return 0;
             if (c == '"') {
                 switch (*cp.c) {
-                case 'e': *cp.c = '\x1B'; break;
-                case 't': *cp.c = '\t'; break;
-                case 'r': *cp.c = '\r'; break;
-                case 'n': *cp.c = '\n'; break;
-                case 'b': *cp.c = '\b'; break;
-                case 'v': *cp.c = '\v'; break;
-                case 'a': *cp.c = '\a'; break;
+                case 'e':
+                    *cp.c = '\x1B';
+                    break;
+                case 't':
+                    *cp.c = '\t';
+                    break;
+                case 'r':
+                    *cp.c = '\r';
+                    break;
+                case 'n':
+                    *cp.c = '\n';
+                    break;
+                case 'b':
+                    *cp.c = '\b';
+                    break;
+                case 'v':
+                    *cp.c = '\v';
+                    break;
+                case 'a':
+                    *cp.c = '\a';
+                    break;
                 case 'x':
                     cp.c++;
                     if (cp.c == cp.z) return 0;
                     if (*cp.c >= '0' && *cp.c <= '9') n = *cp.c - '0';
-                    else if (*cp.c >='a' && *cp.c <= 'f') n = *cp.c - 'a' + 10;
-                    else if (*cp.c >='A' && *cp.c <= 'F') n = *cp.c - 'A' + 10;
+                    else if (*cp.c >= 'a' && *cp.c <= 'f') n = *cp.c - 'a' + 10;
+                    else if (*cp.c >= 'A' && *cp.c <= 'F') n = *cp.c - 'A' + 10;
                     else return 0;
                     cp.c++;
                     if (cp.c == cp.z) cp.c--;
@@ -841,8 +861,8 @@ static int CmdNum(const char *Cmd) {
     unsigned int i;
 
     for (i = 0;
-         i < sizeof(Command_Table) / sizeof(Command_Table[0]);
-         i++)
+            i < sizeof(Command_Table) / sizeof(Command_Table[0]);
+            i++)
         if (strcmp(Cmd, Command_Table[i].Name) == 0)
             return Command_Table[i].CmdId;
     for (i = 0; i < CMacros; i++)
@@ -939,800 +959,780 @@ static int ParseConfigFile(CurPos &cp) {
         case P_WORD:
             if (GetWord(cp, w) != 0) Fail(cp, "Syntax error");
             switch (Lookup(CfgKW, w)) {
-            case K_SUB:
-                {
-                    Word Name;
+            case K_SUB: {
+                Word Name;
 
-                    if (Parse(cp) != P_WORD) Fail(cp, "Syntax error");
-                    if (GetWord(cp, Name) != 0) Fail(cp, "Syntax error");
-                    PutString(cp, CF_SUB, Name);
-                    if (Parse(cp) != P_OPENBRACE) Fail(cp, "'{' expected");
-                    GetOp(cp, P_OPENBRACE);
-                    if (ParseCommands(cp, strdup(Name)) == -1)
-                        Fail(cp, "Parse failed");
-                    PutNull(cp, CF_END);
-                }
-                break;
-            case K_MENU:
-                {
-                    Word MenuName;
-                    //int menu = -1, item = -1;
+                if (Parse(cp) != P_WORD) Fail(cp, "Syntax error");
+                if (GetWord(cp, Name) != 0) Fail(cp, "Syntax error");
+                PutString(cp, CF_SUB, Name);
+                if (Parse(cp) != P_OPENBRACE) Fail(cp, "'{' expected");
+                GetOp(cp, P_OPENBRACE);
+                if (ParseCommands(cp, strdup(Name)) == -1)
+                    Fail(cp, "Parse failed");
+                PutNull(cp, CF_END);
+            }
+            break;
+            case K_MENU: {
+                Word MenuName;
+                //int menu = -1, item = -1;
 
-                    if (Parse(cp) != P_WORD) Fail(cp, "Syntax error");;
-                    if (GetWord(cp, MenuName) != 0) Fail(cp, "Syntax error");;
-                    if (Parse(cp) != P_OPENBRACE) Fail(cp, "'{' expected");
-                    GetOp(cp, P_OPENBRACE);
+                if (Parse(cp) != P_WORD) Fail(cp, "Syntax error");;
+                if (GetWord(cp, MenuName) != 0) Fail(cp, "Syntax error");;
+                if (Parse(cp) != P_OPENBRACE) Fail(cp, "'{' expected");
+                GetOp(cp, P_OPENBRACE);
 
-                    PutString(cp, CF_MENU, MenuName);
+                PutString(cp, CF_MENU, MenuName);
 
-                    while (1) {
-                        p = Parse(cp);
-                        if (p == P_CLOSEBRACE) break;
-                        if (p == P_EOF) Fail(cp, "Unexpected EOF");
-                        if (p != P_WORD) Fail(cp, "Syntax error");
+                while (1) {
+                    p = Parse(cp);
+                    if (p == P_CLOSEBRACE) break;
+                    if (p == P_EOF) Fail(cp, "Unexpected EOF");
+                    if (p != P_WORD) Fail(cp, "Syntax error");
 
-                        if (GetWord(cp, w) != 0) Fail(cp, "Parse failed");
-                        switch (Lookup(CfgKW, w)) {
-                        case K_ITEM: // menu::item
-                            switch (Parse(cp)) {
-                            case P_EOS:
-                                PutNull(cp, CF_ITEM);
-                                break;
-                            case P_STRING:
-                                s = GetString(cp);
-                                PutString(cp, CF_ITEM, s);
-                                break;
-                            default:
-                                Fail(cp, "Syntax error");;
-                            }
-                            if (Parse(cp) == P_EOS) {
-                                GetOp(cp, P_EOS);
-                                break;
-                            }
-                            if (Parse(cp) != P_OPENBRACE)
-                                Fail(cp, "'{' expected");
-
-                            PutNull(cp, CF_MENUSUB);
-                            if (ParseCommands(cp, 0) == -1)
-                                Fail(cp, "Parse failed");
-                            PutNull(cp, CF_END);
+                    if (GetWord(cp, w) != 0) Fail(cp, "Parse failed");
+                    switch (Lookup(CfgKW, w)) {
+                    case K_ITEM: // menu::item
+                        switch (Parse(cp)) {
+                        case P_EOS:
+                            PutNull(cp, CF_ITEM);
                             break;
-                        case K_SUBMENU: // menu::submenu
-                            if (Parse(cp) != P_STRING)
-                                Fail(cp, "String expected");
+                        case P_STRING:
                             s = GetString(cp);
-                            if (Parse(cp) != P_COMMA)
-                                Fail(cp, "',' expected");
-                            GetOp(cp, P_COMMA);
-                            if (Parse(cp) != P_WORD)
-                                Fail(cp, "Syntax error");
-                            if (GetWord(cp, w) == -1)
-                                Fail(cp, "Parse failed");
-
-                            PutString(cp, CF_SUBMENU, s);
-                            PutString(cp, CF_STRING, w);
-                            if (Parse(cp) != P_EOS)
-                                Fail(cp, "';' expected");
-                            GetOp(cp, P_EOS);
+                            PutString(cp, CF_ITEM, s);
                             break;
-
-                        case K_SUBMENUCOND: // menu::submenu
-                            if (Parse(cp) != P_STRING)
-                                Fail(cp, "String expected");
-                            s = GetString(cp);
-                            if (Parse(cp) != P_COMMA)
-                                Fail(cp, "',' expected");
-                            GetOp(cp, P_COMMA);
-                            if (Parse(cp) != P_WORD)
-                                Fail(cp, "Syntax error");
-                            if (GetWord(cp, w) == -1)
-                                Fail(cp, "Parse failed");
-
-                            PutString(cp, CF_SUBMENUCOND, s);
-                            PutString(cp, CF_STRING, w);
-                            if (Parse(cp) != P_EOS)
-                                Fail(cp, "';' expected");
-                            GetOp(cp, P_EOS);
-                            break;
-                        default:  // menu::
-                            Fail(cp, "Syntax error");
+                        default:
+                            Fail(cp, "Syntax error");;
                         }
+                        if (Parse(cp) == P_EOS) {
+                            GetOp(cp, P_EOS);
+                            break;
+                        }
+                        if (Parse(cp) != P_OPENBRACE)
+                            Fail(cp, "'{' expected");
+
+                        PutNull(cp, CF_MENUSUB);
+                        if (ParseCommands(cp, 0) == -1)
+                            Fail(cp, "Parse failed");
+                        PutNull(cp, CF_END);
+                        break;
+                    case K_SUBMENU: // menu::submenu
+                        if (Parse(cp) != P_STRING)
+                            Fail(cp, "String expected");
+                        s = GetString(cp);
+                        if (Parse(cp) != P_COMMA)
+                            Fail(cp, "',' expected");
+                        GetOp(cp, P_COMMA);
+                        if (Parse(cp) != P_WORD)
+                            Fail(cp, "Syntax error");
+                        if (GetWord(cp, w) == -1)
+                            Fail(cp, "Parse failed");
+
+                        PutString(cp, CF_SUBMENU, s);
+                        PutString(cp, CF_STRING, w);
+                        if (Parse(cp) != P_EOS)
+                            Fail(cp, "';' expected");
+                        GetOp(cp, P_EOS);
+                        break;
+
+                    case K_SUBMENUCOND: // menu::submenu
+                        if (Parse(cp) != P_STRING)
+                            Fail(cp, "String expected");
+                        s = GetString(cp);
+                        if (Parse(cp) != P_COMMA)
+                            Fail(cp, "',' expected");
+                        GetOp(cp, P_COMMA);
+                        if (Parse(cp) != P_WORD)
+                            Fail(cp, "Syntax error");
+                        if (GetWord(cp, w) == -1)
+                            Fail(cp, "Parse failed");
+
+                        PutString(cp, CF_SUBMENUCOND, s);
+                        PutString(cp, CF_STRING, w);
+                        if (Parse(cp) != P_EOS)
+                            Fail(cp, "';' expected");
+                        GetOp(cp, P_EOS);
+                        break;
+                    default:  // menu::
+                        Fail(cp, "Syntax error");
                     }
-                    GetOp(cp, P_CLOSEBRACE);
-                    PutNull(cp, CF_END);
                 }
-                break;
-            case K_EVENTMAP:
-                {
+                GetOp(cp, P_CLOSEBRACE);
+                PutNull(cp, CF_END);
+            }
+            break;
+            case K_EVENTMAP: {
+                if (Parse(cp) != P_WORD) Fail(cp, "Syntax error");
+                if (GetWord(cp, ObjName) != 0) Fail(cp, "Parse failed");
+                PutString(cp, CF_EVENTMAP, ObjName);
+
+                UpMode[0] = 0;
+                if (Parse(cp) == P_COLON) {
+                    GetOp(cp, P_COLON);
                     if (Parse(cp) != P_WORD) Fail(cp, "Syntax error");
-                    if (GetWord(cp, ObjName) != 0) Fail(cp, "Parse failed");
-                    PutString(cp, CF_EVENTMAP, ObjName);
+                    if (GetWord(cp, UpMode) != 0) Fail(cp, "Parse failed");
+                }
+                PutString(cp, CF_PARENT, UpMode);
+                if (Parse(cp) != P_OPENBRACE) Fail(cp, "'{' expected");
+                GetOp(cp, P_OPENBRACE);
 
-                    UpMode[0] = 0;
-                    if (Parse(cp) == P_COLON) {
-                        GetOp(cp, P_COLON);
-                        if (Parse(cp) != P_WORD) Fail(cp, "Syntax error");
-                        if (GetWord(cp, UpMode) != 0) Fail(cp, "Parse failed");
-                    }
-                    PutString(cp, CF_PARENT, UpMode);
-                    if (Parse(cp) != P_OPENBRACE) Fail(cp, "'{' expected");
-                    GetOp(cp, P_OPENBRACE);
+                while (1) {
+                    p = Parse(cp);
+                    if (p == P_CLOSEBRACE) break;
+                    if (p == P_EOF) Fail(cp, "Unexpected EOF");
+                    if (p != P_WORD) Fail(cp, "Syntax error");
 
-                    while (1) {
-                        p = Parse(cp);
-                        if (p == P_CLOSEBRACE) break;
-                        if (p == P_EOF) Fail(cp, "Unexpected EOF");
-                        if (p != P_WORD) Fail(cp, "Syntax error");
+                    if (GetWord(cp, w) != 0) Fail(cp, "Parse failed");
+                    switch (Lookup(CfgKW, w)) {
+                    case K_KEY: // mode::key
+                        if (Parse(cp) != P_KEYSPEC) Fail(cp, "'[' expected");
+                        s = GetString(cp);
+                        PutString(cp, CF_KEY, s);
+                        if (Parse(cp) != P_OPENBRACE) Fail(cp, "'{' expected");
+                        PutNull(cp, CF_KEYSUB);
+                        if (ParseCommands(cp, 0) == -1) Fail(cp, "Parse failed");
+                        PutNull(cp, CF_END);
+                        break;
 
-                        if (GetWord(cp, w) != 0) Fail(cp, "Parse failed");
-                        switch (Lookup(CfgKW, w)) {
-                        case K_KEY: // mode::key
-                            if (Parse(cp) != P_KEYSPEC) Fail(cp, "'[' expected");
-                            s = GetString(cp);
-                            PutString(cp, CF_KEY, s);
-                            if (Parse(cp) != P_OPENBRACE) Fail(cp, "'{' expected");
+                    case K_ABBREV:
+                        if (Parse(cp) != P_STRING) Fail(cp, "String expected");
+                        s = GetString(cp);
+                        PutString(cp, CF_ABBREV, s);
+                        switch (Parse(cp)) {
+                        case P_OPENBRACE:
                             PutNull(cp, CF_KEYSUB);
                             if (ParseCommands(cp, 0) == -1) Fail(cp, "Parse failed");
                             PutNull(cp, CF_END);
                             break;
-
-                        case K_ABBREV:
-                            if (Parse(cp) != P_STRING) Fail(cp, "String expected");
+                        case P_STRING:
                             s = GetString(cp);
-                            PutString(cp, CF_ABBREV, s);
-                            switch (Parse(cp)) {
-                            case P_OPENBRACE:
-                                PutNull(cp, CF_KEYSUB);
-                                if (ParseCommands(cp, 0) == -1) Fail(cp, "Parse failed");
-                                PutNull(cp, CF_END);
-                                break;
-                            case P_STRING:
-                                s = GetString(cp);
-                                PutString(cp, CF_STRING, s);
-                                if (Parse(cp) != P_EOS) Fail(cp, "';' expected");
-                                GetOp(cp, P_EOS);
-                                break;
-                            default:
-                                Fail(cp, "Syntax error");
-                            }
-                            break;
-
-                        default:  // mode::
-                            if (Parse(cp) != P_ASSIGN) Fail(cp, "'=' expected");
-                            GetOp(cp, P_ASSIGN);
-
-                            switch (Parse(cp)) {
-                                /*  case P_NUMBER:
-                                 {
-                                 long var;
-                                 long num;
-
-                                 num = GetNumber(cp);
-                                 var = LookupEventNumber(w);
-                                 if (var == -1) return -1;
-                                 PutObj(cp, CF_SETVAR, sizeof(long), &var);
-                                 PutObj(cp, CF_INT, sizeof(long), &num);
-                                 }
-                                 break;*/
-                            case P_STRING:
-                                {
-                                    long var;
-
-                                    s = GetString(cp);
-                                    if (s == 0) Fail(cp, "String expected");
-                                    var = Lookup(event_string, w);
-                                    if (var == -1) Fail(cp, "Lookup of '%s' failed", w);
-                                    PutNumber(cp, CF_SETVAR, var);
-                                    PutString(cp, CF_STRING, s);
-                                }
-                                break;
-                            default:
-                                return -1;
-                            }
-                            if (Parse(cp) != P_EOS) return -1;
-                            GetOp(cp, P_EOS);
-                            break;
-                        }
-                    }
-                    GetOp(cp, P_CLOSEBRACE);
-                    PutNull(cp, CF_END);
-                }
-                break;
-
-            case K_COLORIZE:
-                {
-                    long LastState = -1;
-
-                    if (Parse(cp) != P_WORD) Fail(cp, "Syntax error");
-                    if (GetWord(cp, ObjName) != 0) Fail(cp, "Parse failed");
-                    PutString(cp, CF_COLORIZE, ObjName);
-
-                    UpMode[0] = 0;
-                    if (Parse(cp) == P_COLON) {
-                        GetOp(cp, P_COLON);
-                        if (Parse(cp) != P_WORD) Fail(cp, "Syntax error");
-                        if (GetWord(cp, UpMode) != 0) Fail(cp, "Parse failed");
-                    }
-                    PutString(cp, CF_PARENT, UpMode);
-                    if (Parse(cp) != P_OPENBRACE) Fail(cp, "'{' expected");
-                    GetOp(cp, P_OPENBRACE);
-
-                    while (1) {
-                        p = Parse(cp);
-                        if (p == P_CLOSEBRACE) break;
-                        if (p == P_EOF) Fail(cp, "Unexpected EOF");
-                        if (p != P_WORD) Fail(cp, "Syntax error");
-
-                        if (GetWord(cp, w) != 0) Fail(cp, "Parse failed");
-                        switch (Lookup(CfgKW, w)) {
-                        case K_COLOR: // mode::color
-                            if (Parse(cp) != P_OPENBRACE) Fail(cp, "'{' expected");
-                            GetOp(cp, P_OPENBRACE);
-                            PutNull(cp, CF_COLOR);
-
-                            while (1) {
-                                char *sname, *svalue;
-                                long cidx;
-
-                                if (Parse(cp) == P_CLOSEBRACE) break;
-                                if (Parse(cp) != P_OPENBRACE) Fail(cp, "'{' expected");
-                                GetOp(cp, P_OPENBRACE);
-                                if (Parse(cp) != P_STRING) Fail(cp, "String expected");
-                                sname = GetString(cp);
-                                if ((cidx = Lookup(hilit_colors, sname)) == -1)
-                                    Fail(cp, "Lookup of '%s' failed", sname);
-                                PutNumber(cp, CF_INT, cidx);
-                                if (Parse(cp) != P_COMMA)
-                                    Fail(cp, "',' expected");
-                                GetOp(cp, P_COMMA);
-                                if (Parse(cp) != P_STRING) Fail(cp, "String expected");
-                                svalue = GetString(cp);
-                                svalue = GetColor(cp, svalue);
-                                PutString(cp, CF_STRING, svalue);
-                                if (Parse(cp) != P_CLOSEBRACE) Fail(cp, "'}' expected");
-                                GetOp(cp, P_CLOSEBRACE);
-                                if (Parse(cp) != P_COMMA)
-                                    break;
-                                else
-                                    GetOp(cp, P_COMMA);
-                            }
-                            if (Parse(cp) != P_CLOSEBRACE) Fail(cp, "'}' expected");
-                            GetOp(cp, P_CLOSEBRACE);
+                            PutString(cp, CF_STRING, s);
                             if (Parse(cp) != P_EOS) Fail(cp, "';' expected");
                             GetOp(cp, P_EOS);
-                            PutNull(cp, CF_END);
                             break;
-
-                        case K_KEYWORD: // mode::keyword
-                            {
-                                char *colorstr, *kname;
-                                //int color;
-
-                                if (Parse(cp) != P_STRING) Fail(cp, "String expected");
-                                colorstr = GetString(cp);
-                                colorstr = GetColor(cp, colorstr);
-                                if (Parse(cp) != P_OPENBRACE) Fail(cp, "'{' expected");
-                                GetOp(cp, P_OPENBRACE);
-
-                                PutString(cp, CF_KEYWORD, colorstr);
-
-                                while (1) {
-                                    if (Parse(cp) == P_CLOSEBRACE) break;
-                                    if (Parse(cp) != P_STRING) Fail(cp, "String expected");
-                                    kname = GetString(cp);
-
-                                    if (strlen(kname) >= CK_MAXLEN) Fail(cp, "Keyword name is too long");
-
-                                    PutString(cp, CF_STRING, kname);
-
-                                    if (Parse(cp) != P_COMMA)
-                                        break;
-                                    else
-                                        GetOp(cp, P_COMMA);
-                                }
-                            }
-                            if (Parse(cp) != P_CLOSEBRACE) Fail(cp, "'}' expected");
-                            GetOp(cp, P_CLOSEBRACE);
-                            if (Parse(cp) != P_EOS) Fail(cp, "';' expected");
-                            GetOp(cp, P_EOS);
-                            PutNull(cp, CF_END);
-                            break;
-
-                        case K_HSTATE:
-                            {
-                                long stateno;
-                                char *cname;
-                                long cidx;
-
-                                if (Parse(cp) != P_NUMBER) Fail(cp, "state index expected");
-                                stateno = GetNumber(cp);
-                                if (stateno != LastState + 1) Fail(cp, "invalid state index");
-
-                                if (Parse(cp) != P_OPENBRACE) Fail(cp, "'{' expected");
-                                GetOp(cp, P_OPENBRACE);
-                                PutNumber(cp, CF_HSTATE, stateno);
-
-                                if (Parse(cp) != P_STRING) Fail(cp, "String expected");
-                                cname = GetString(cp);
-                                if ((cidx = Lookup(hilit_colors, cname)) == -1)
-                                    Fail(cp, "Lookup of '%s' failed", cname);
-                                PutNumber(cp, CF_INT, cidx);
-                                if (Parse(cp) != P_CLOSEBRACE) Fail(cp, "'}' expected");
-                                GetOp(cp, P_CLOSEBRACE);
-                                LastState = stateno;
-                            }
-                            break;
-
-                        case K_HTRANS:
-                            {
-                                long next_state;
-                                char *opts, *match;
-                                long match_opts;
-                                char *cname;
-                                long cidx;
-
-                                if (Parse(cp) != P_OPENBRACE) Fail(cp, "'{' expected");
-                                GetOp(cp, P_OPENBRACE);
-
-                                if (Parse(cp) != P_NUMBER) Fail(cp, "next_state index expected");
-                                next_state = GetNumber(cp);
-                                if (Parse(cp) != P_COMMA) Fail(cp, "',' expected");
-                                GetOp(cp, P_COMMA);
-                                if (Parse(cp) != P_STRING) Fail(cp, "match options expected");
-                                opts = GetString(cp);
-                                if (Parse(cp) != P_COMMA) Fail(cp, "',' expected");
-                                GetOp(cp, P_COMMA);
-                                if (Parse(cp) != P_STRING) Fail(cp, "match string expected");
-                                match = GetString(cp);
-                                PutNumber(cp, CF_HTRANS, next_state);
-                                match_opts = 0;
-                                if (strchr(opts, '^')) match_opts |= MATCH_MUST_BOL;
-                                if (strchr(opts, '$')) match_opts |= MATCH_MUST_EOL;
-                                //if (strchr(opts, 'b')) match_opts |= MATCH_MUST_BOLW;
-                                //if (strchr(opts, 'e')) match_opts |= MATCH_MUST_EOLW;
-                                if (strchr(opts, 'i')) match_opts |= MATCH_NO_CASE;
-                                if (strchr(opts, 's')) match_opts |= MATCH_SET;
-                                if (strchr(opts, 'S')) match_opts |= MATCH_NOTSET;
-                                if (strchr(opts, '-')) match_opts |= MATCH_NOGRAB;
-                                if (strchr(opts, '<')) match_opts |= MATCH_TAGASNEXT;
-                                if (strchr(opts, '>')) match_opts &= ~MATCH_TAGASNEXT;
-                                //if (strchr(opts, '!')) match_opts |= MATCH_NEGATE;
-                                if (strchr(opts, 'q')) match_opts |= MATCH_QUOTECH;
-                                if (strchr(opts, 'Q')) match_opts |= MATCH_QUOTEEOL;
-                                if (strchr(opts, 'x')) match_opts |= MATCH_REGEXP;
-
-                                if (Parse(cp) != P_COMMA) Fail(cp, "',' expected");
-                                GetOp(cp, P_COMMA);
-                                if (Parse(cp) != P_STRING) Fail(cp, "String expected");
-                                cname = GetString(cp);
-                                if ((cidx = Lookup(hilit_colors, cname)) == -1)
-                                    Fail(cp, "Lookup of '%s' failed", cname);
-
-                                PutNumber(cp, CF_INT, match_opts);
-                                PutNumber(cp, CF_INT, cidx);
-                                PutString(cp, match_opts & MATCH_REGEXP ? CF_REGEXP : CF_STRING, match);
-
-                                if (Parse(cp) != P_CLOSEBRACE) Fail(cp, "'}' expected");
-                                GetOp(cp, P_CLOSEBRACE);
-                            }
-                            break;
-
-                        case K_HWTYPE:
-                            if (Parse(cp) != P_OPENBRACE) Fail(cp, "'{' expected");
-                            GetOp(cp, P_OPENBRACE);
-
-                            {
-                                long options = 0;
-                                long nextKwdMatchedState;
-                                long nextKwdNotMatchedState;
-                                long nextKwdNoCharState;
-                                char *opts;
-                                char *wordChars;
-
-
-                                if (Parse(cp) != P_NUMBER) Fail(cp, "next_state index expected");
-                                nextKwdMatchedState = GetNumber(cp);
-
-                                if (Parse(cp) != P_COMMA) Fail(cp, "',' expected");
-                                GetOp(cp, P_COMMA);
-
-                                if (Parse(cp) != P_NUMBER) Fail(cp, "next_state index expected");
-                                nextKwdNotMatchedState = GetNumber(cp);
-
-                                if (Parse(cp) != P_COMMA) Fail(cp, "',' expected");
-                                GetOp(cp, P_COMMA);
-
-                                if (Parse(cp) != P_NUMBER) Fail(cp, "next_state index expected");
-                                nextKwdNoCharState = GetNumber(cp);
-
-                                if (Parse(cp) != P_COMMA) Fail(cp, "',' expected");
-                                GetOp(cp, P_COMMA);
-
-                                if (Parse(cp) != P_STRING) Fail(cp, "String expected");
-                                opts = GetString(cp);
-                                if (strchr(opts, 'i')) options |= STATE_NOCASE;
-                                if (strchr(opts, '<')) options |= STATE_TAGASNEXT;
-                                if (strchr(opts, '>')) options &= ~STATE_TAGASNEXT;
-                                if (strchr(opts, '-')) options |= STATE_NOGRAB;
-
-                                if (Parse(cp) != P_COMMA) Fail(cp, "',' expected");
-                                GetOp(cp, P_COMMA);
-
-                                if (Parse(cp) != P_STRING) Fail(cp, "String expected");
-                                wordChars = GetString(cp);
-
-                                PutNull(cp, CF_HWTYPE);
-                                PutNumber(cp, CF_INT, nextKwdMatchedState);
-                                PutNumber(cp, CF_INT, nextKwdNotMatchedState);
-                                PutNumber(cp, CF_INT, nextKwdNoCharState);
-                                PutNumber(cp, CF_INT, options);
-                                PutString(cp, CF_STRING, wordChars);
-                            }
-                            if (Parse(cp) != P_CLOSEBRACE) Fail(cp, "'}' expected");
-                            GetOp(cp, P_CLOSEBRACE);
-                            break;
-
-                        case K_HWORDS:
-                            {
-                                char *colorstr, *kname;
-                                //int color;
-
-                                if (Parse(cp) != P_STRING) Fail(cp, "String expected");
-                                colorstr = GetString(cp);
-                                colorstr = GetColor(cp, colorstr);
-
-                                if (Parse(cp) != P_OPENBRACE) Fail(cp, "'{' expected");
-                                GetOp(cp, P_OPENBRACE);
-
-                                PutString(cp, CF_HWORDS, colorstr);
-
-                                while (1) {
-                                    if (Parse(cp) == P_CLOSEBRACE) break;
-                                    if (Parse(cp) != P_STRING) Fail(cp, "String expected");
-                                    kname = GetString(cp);
-                                    PutString(cp, CF_STRING, kname);
-
-                                    if (Parse(cp) != P_COMMA)
-                                        break;
-                                    else
-                                        GetOp(cp, P_COMMA);
-                                }
-                            }
-                            if (Parse(cp) != P_CLOSEBRACE) Fail(cp, "'}' expected");
-                            GetOp(cp, P_CLOSEBRACE);
-
-                            PutNull(cp, CF_END);
-                            break;
-
                         default:
-                            if (Parse(cp) != P_ASSIGN) Fail(cp, "'=' expected");
-                            GetOp(cp, P_ASSIGN);
-                            switch (Parse(cp)) {
-                                /*case P_NUMBER:
-                                 {
-                                 long var;
-                                 long num;
+                            Fail(cp, "Syntax error");
+                        }
+                        break;
 
-                                 num = GetNumber(cp);
-                                 var = LookupColorizeNumber(w);
-                                 if (var == -1) return -1;
-                                 PutObj(cp, CF_SETVAR, sizeof(long), &var);
-                                 PutObj(cp, CF_INT, sizeof(long), &num);
-                                 }
-                                 break;*/
-                            case P_STRING:
-                                {
-                                    long var;
+                    default:  // mode::
+                        if (Parse(cp) != P_ASSIGN) Fail(cp, "'=' expected");
+                        GetOp(cp, P_ASSIGN);
 
-                                    s = GetString(cp);
-                                    if (s == 0) Fail(cp, "Parse failed");
-                                    var = Lookup(colorize_string, w);
-                                    if (var == -1)
-                                        Fail(cp, "Lookup of '%s' failed", w);
-                                    PutNumber(cp, CF_SETVAR, var);
-                                    PutString(cp, CF_STRING, s);
-                                }
+                        switch (Parse(cp)) {
+                            /*  case P_NUMBER:
+                             {
+                             long var;
+                             long num;
+
+                             num = GetNumber(cp);
+                             var = LookupEventNumber(w);
+                             if (var == -1) return -1;
+                             PutObj(cp, CF_SETVAR, sizeof(long), &var);
+                             PutObj(cp, CF_INT, sizeof(long), &num);
+                             }
+                             break;*/
+                        case P_STRING: {
+                            long var;
+
+                            s = GetString(cp);
+                            if (s == 0) Fail(cp, "String expected");
+                            var = Lookup(event_string, w);
+                            if (var == -1) Fail(cp, "Lookup of '%s' failed", w);
+                            PutNumber(cp, CF_SETVAR, var);
+                            PutString(cp, CF_STRING, s);
+                        }
+                        break;
+                        default:
+                            return -1;
+                        }
+                        if (Parse(cp) != P_EOS) return -1;
+                        GetOp(cp, P_EOS);
+                        break;
+                    }
+                }
+                GetOp(cp, P_CLOSEBRACE);
+                PutNull(cp, CF_END);
+            }
+            break;
+
+            case K_COLORIZE: {
+                long LastState = -1;
+
+                if (Parse(cp) != P_WORD) Fail(cp, "Syntax error");
+                if (GetWord(cp, ObjName) != 0) Fail(cp, "Parse failed");
+                PutString(cp, CF_COLORIZE, ObjName);
+
+                UpMode[0] = 0;
+                if (Parse(cp) == P_COLON) {
+                    GetOp(cp, P_COLON);
+                    if (Parse(cp) != P_WORD) Fail(cp, "Syntax error");
+                    if (GetWord(cp, UpMode) != 0) Fail(cp, "Parse failed");
+                }
+                PutString(cp, CF_PARENT, UpMode);
+                if (Parse(cp) != P_OPENBRACE) Fail(cp, "'{' expected");
+                GetOp(cp, P_OPENBRACE);
+
+                while (1) {
+                    p = Parse(cp);
+                    if (p == P_CLOSEBRACE) break;
+                    if (p == P_EOF) Fail(cp, "Unexpected EOF");
+                    if (p != P_WORD) Fail(cp, "Syntax error");
+
+                    if (GetWord(cp, w) != 0) Fail(cp, "Parse failed");
+                    switch (Lookup(CfgKW, w)) {
+                    case K_COLOR: // mode::color
+                        if (Parse(cp) != P_OPENBRACE) Fail(cp, "'{' expected");
+                        GetOp(cp, P_OPENBRACE);
+                        PutNull(cp, CF_COLOR);
+
+                        while (1) {
+                            char *sname, *svalue;
+                            long cidx;
+
+                            if (Parse(cp) == P_CLOSEBRACE) break;
+                            if (Parse(cp) != P_OPENBRACE) Fail(cp, "'{' expected");
+                            GetOp(cp, P_OPENBRACE);
+                            if (Parse(cp) != P_STRING) Fail(cp, "String expected");
+                            sname = GetString(cp);
+                            if ((cidx = Lookup(hilit_colors, sname)) == -1)
+                                Fail(cp, "Lookup of '%s' failed", sname);
+                            PutNumber(cp, CF_INT, cidx);
+                            if (Parse(cp) != P_COMMA)
+                                Fail(cp, "',' expected");
+                            GetOp(cp, P_COMMA);
+                            if (Parse(cp) != P_STRING) Fail(cp, "String expected");
+                            svalue = GetString(cp);
+                            svalue = GetColor(cp, svalue);
+                            PutString(cp, CF_STRING, svalue);
+                            if (Parse(cp) != P_CLOSEBRACE) Fail(cp, "'}' expected");
+                            GetOp(cp, P_CLOSEBRACE);
+                            if (Parse(cp) != P_COMMA)
                                 break;
-                            default:
-                                return -1;
-                            }
-                            if (Parse(cp) != P_EOS) Fail(cp, "';' expected");
-                            GetOp(cp, P_EOS);
-                            break;
+                            else
+                                GetOp(cp, P_COMMA);
+                        }
+                        if (Parse(cp) != P_CLOSEBRACE) Fail(cp, "'}' expected");
+                        GetOp(cp, P_CLOSEBRACE);
+                        if (Parse(cp) != P_EOS) Fail(cp, "';' expected");
+                        GetOp(cp, P_EOS);
+                        PutNull(cp, CF_END);
+                        break;
+
+                    case K_KEYWORD: { // mode::keyword
+                        char *colorstr, *kname;
+                        //int color;
+
+                        if (Parse(cp) != P_STRING) Fail(cp, "String expected");
+                        colorstr = GetString(cp);
+                        colorstr = GetColor(cp, colorstr);
+                        if (Parse(cp) != P_OPENBRACE) Fail(cp, "'{' expected");
+                        GetOp(cp, P_OPENBRACE);
+
+                        PutString(cp, CF_KEYWORD, colorstr);
+
+                        while (1) {
+                            if (Parse(cp) == P_CLOSEBRACE) break;
+                            if (Parse(cp) != P_STRING) Fail(cp, "String expected");
+                            kname = GetString(cp);
+
+                            if (strlen(kname) >= CK_MAXLEN) Fail(cp, "Keyword name is too long");
+
+                            PutString(cp, CF_STRING, kname);
+
+                            if (Parse(cp) != P_COMMA)
+                                break;
+                            else
+                                GetOp(cp, P_COMMA);
                         }
                     }
+                    if (Parse(cp) != P_CLOSEBRACE) Fail(cp, "'}' expected");
                     GetOp(cp, P_CLOSEBRACE);
+                    if (Parse(cp) != P_EOS) Fail(cp, "';' expected");
+                    GetOp(cp, P_EOS);
                     PutNull(cp, CF_END);
-                }
-                break;
+                    break;
 
-            case K_MODE: // mode::
-                {
-                    if (Parse(cp) != P_WORD) Fail(cp, "Syntax error");
-                    if (GetWord(cp, ObjName) != 0) Fail(cp, "Parse failed");
-                    PutString(cp, CF_MODE, ObjName);
+                    case K_HSTATE: {
+                        long stateno;
+                        char *cname;
+                        long cidx;
 
-                    UpMode[0] = 0;
-                    if (Parse(cp) == P_COLON) {
-                        GetOp(cp, P_COLON);
-                        if (Parse(cp) != P_WORD) Fail(cp, "Syntax error");
-                        if (GetWord(cp, UpMode) != 0) Fail(cp, "Parse failed");
+                        if (Parse(cp) != P_NUMBER) Fail(cp, "state index expected");
+                        stateno = GetNumber(cp);
+                        if (stateno != LastState + 1) Fail(cp, "invalid state index");
+
+                        if (Parse(cp) != P_OPENBRACE) Fail(cp, "'{' expected");
+                        GetOp(cp, P_OPENBRACE);
+                        PutNumber(cp, CF_HSTATE, stateno);
+
+                        if (Parse(cp) != P_STRING) Fail(cp, "String expected");
+                        cname = GetString(cp);
+                        if ((cidx = Lookup(hilit_colors, cname)) == -1)
+                            Fail(cp, "Lookup of '%s' failed", cname);
+                        PutNumber(cp, CF_INT, cidx);
+                        if (Parse(cp) != P_CLOSEBRACE) Fail(cp, "'}' expected");
+                        GetOp(cp, P_CLOSEBRACE);
+                        LastState = stateno;
                     }
-                    PutString(cp, CF_PARENT, UpMode);
-                    if (Parse(cp) != P_OPENBRACE) Fail(cp, "'{' expected");
-                    GetOp(cp, P_OPENBRACE);
+                    break;
 
-                    while (1) {
-                        p = Parse(cp);
-                        if (p == P_CLOSEBRACE) break;
-                        if (p == P_EOF) Fail(cp, "Unexpected EOF");
-                        if (p != P_WORD) Fail(cp, "Syntax error");
+                    case K_HTRANS: {
+                        long next_state;
+                        char *opts, *match;
+                        long match_opts;
+                        char *cname;
+                        long cidx;
 
-                        if (GetWord(cp, w) != 0) Fail(cp, "Parse failed");
-                        //switch (Lookup(CfgKW, w)) {
-                        //default:  // mode::
+                        if (Parse(cp) != P_OPENBRACE) Fail(cp, "'{' expected");
+                        GetOp(cp, P_OPENBRACE);
+
+                        if (Parse(cp) != P_NUMBER) Fail(cp, "next_state index expected");
+                        next_state = GetNumber(cp);
+                        if (Parse(cp) != P_COMMA) Fail(cp, "',' expected");
+                        GetOp(cp, P_COMMA);
+                        if (Parse(cp) != P_STRING) Fail(cp, "match options expected");
+                        opts = GetString(cp);
+                        if (Parse(cp) != P_COMMA) Fail(cp, "',' expected");
+                        GetOp(cp, P_COMMA);
+                        if (Parse(cp) != P_STRING) Fail(cp, "match string expected");
+                        match = GetString(cp);
+                        PutNumber(cp, CF_HTRANS, next_state);
+                        match_opts = 0;
+                        if (strchr(opts, '^')) match_opts |= MATCH_MUST_BOL;
+                        if (strchr(opts, '$')) match_opts |= MATCH_MUST_EOL;
+                        //if (strchr(opts, 'b')) match_opts |= MATCH_MUST_BOLW;
+                        //if (strchr(opts, 'e')) match_opts |= MATCH_MUST_EOLW;
+                        if (strchr(opts, 'i')) match_opts |= MATCH_NO_CASE;
+                        if (strchr(opts, 's')) match_opts |= MATCH_SET;
+                        if (strchr(opts, 'S')) match_opts |= MATCH_NOTSET;
+                        if (strchr(opts, '-')) match_opts |= MATCH_NOGRAB;
+                        if (strchr(opts, '<')) match_opts |= MATCH_TAGASNEXT;
+                        if (strchr(opts, '>')) match_opts &= ~MATCH_TAGASNEXT;
+                        //if (strchr(opts, '!')) match_opts |= MATCH_NEGATE;
+                        if (strchr(opts, 'q')) match_opts |= MATCH_QUOTECH;
+                        if (strchr(opts, 'Q')) match_opts |= MATCH_QUOTEEOL;
+                        if (strchr(opts, 'x')) match_opts |= MATCH_REGEXP;
+
+                        if (Parse(cp) != P_COMMA) Fail(cp, "',' expected");
+                        GetOp(cp, P_COMMA);
+                        if (Parse(cp) != P_STRING) Fail(cp, "String expected");
+                        cname = GetString(cp);
+                        if ((cidx = Lookup(hilit_colors, cname)) == -1)
+                            Fail(cp, "Lookup of '%s' failed", cname);
+
+                        PutNumber(cp, CF_INT, match_opts);
+                        PutNumber(cp, CF_INT, cidx);
+                        PutString(cp, match_opts & MATCH_REGEXP ? CF_REGEXP : CF_STRING, match);
+
+                        if (Parse(cp) != P_CLOSEBRACE) Fail(cp, "'}' expected");
+                        GetOp(cp, P_CLOSEBRACE);
+                    }
+                    break;
+
+                    case K_HWTYPE:
+                        if (Parse(cp) != P_OPENBRACE) Fail(cp, "'{' expected");
+                        GetOp(cp, P_OPENBRACE);
+
+                        {
+                            long options = 0;
+                            long nextKwdMatchedState;
+                            long nextKwdNotMatchedState;
+                            long nextKwdNoCharState;
+                            char *opts;
+                            char *wordChars;
+
+
+                            if (Parse(cp) != P_NUMBER) Fail(cp, "next_state index expected");
+                            nextKwdMatchedState = GetNumber(cp);
+
+                            if (Parse(cp) != P_COMMA) Fail(cp, "',' expected");
+                            GetOp(cp, P_COMMA);
+
+                            if (Parse(cp) != P_NUMBER) Fail(cp, "next_state index expected");
+                            nextKwdNotMatchedState = GetNumber(cp);
+
+                            if (Parse(cp) != P_COMMA) Fail(cp, "',' expected");
+                            GetOp(cp, P_COMMA);
+
+                            if (Parse(cp) != P_NUMBER) Fail(cp, "next_state index expected");
+                            nextKwdNoCharState = GetNumber(cp);
+
+                            if (Parse(cp) != P_COMMA) Fail(cp, "',' expected");
+                            GetOp(cp, P_COMMA);
+
+                            if (Parse(cp) != P_STRING) Fail(cp, "String expected");
+                            opts = GetString(cp);
+                            if (strchr(opts, 'i')) options |= STATE_NOCASE;
+                            if (strchr(opts, '<')) options |= STATE_TAGASNEXT;
+                            if (strchr(opts, '>')) options &= ~STATE_TAGASNEXT;
+                            if (strchr(opts, '-')) options |= STATE_NOGRAB;
+
+                            if (Parse(cp) != P_COMMA) Fail(cp, "',' expected");
+                            GetOp(cp, P_COMMA);
+
+                            if (Parse(cp) != P_STRING) Fail(cp, "String expected");
+                            wordChars = GetString(cp);
+
+                            PutNull(cp, CF_HWTYPE);
+                            PutNumber(cp, CF_INT, nextKwdMatchedState);
+                            PutNumber(cp, CF_INT, nextKwdNotMatchedState);
+                            PutNumber(cp, CF_INT, nextKwdNoCharState);
+                            PutNumber(cp, CF_INT, options);
+                            PutString(cp, CF_STRING, wordChars);
+                        }
+                        if (Parse(cp) != P_CLOSEBRACE) Fail(cp, "'}' expected");
+                        GetOp(cp, P_CLOSEBRACE);
+                        break;
+
+                    case K_HWORDS: {
+                        char *colorstr, *kname;
+                        //int color;
+
+                        if (Parse(cp) != P_STRING) Fail(cp, "String expected");
+                        colorstr = GetString(cp);
+                        colorstr = GetColor(cp, colorstr);
+
+                        if (Parse(cp) != P_OPENBRACE) Fail(cp, "'{' expected");
+                        GetOp(cp, P_OPENBRACE);
+
+                        PutString(cp, CF_HWORDS, colorstr);
+
+                        while (1) {
+                            if (Parse(cp) == P_CLOSEBRACE) break;
+                            if (Parse(cp) != P_STRING) Fail(cp, "String expected");
+                            kname = GetString(cp);
+                            PutString(cp, CF_STRING, kname);
+
+                            if (Parse(cp) != P_COMMA)
+                                break;
+                            else
+                                GetOp(cp, P_COMMA);
+                        }
+                    }
+                    if (Parse(cp) != P_CLOSEBRACE) Fail(cp, "'}' expected");
+                    GetOp(cp, P_CLOSEBRACE);
+
+                    PutNull(cp, CF_END);
+                    break;
+
+                    default:
                         if (Parse(cp) != P_ASSIGN) Fail(cp, "'=' expected");
                         GetOp(cp, P_ASSIGN);
                         switch (Parse(cp)) {
-                        case P_NUMBER:
-                            {
-                                long var;
-                                long num;
+                            /*case P_NUMBER:
+                             {
+                             long var;
+                             long num;
 
-                                num = GetNumber(cp);
-                                var = Lookup(mode_num, w);
-                                if (var == -1)
-                                    Fail(cp, "Lookup of '%s' failed", w);
-                                PutNumber(cp, CF_SETVAR, var);
-                                PutNumber(cp, CF_INT, num);
-                            }
-                            break;
-                        case P_STRING:
-                            {
-                                long var;
+                             num = GetNumber(cp);
+                             var = LookupColorizeNumber(w);
+                             if (var == -1) return -1;
+                             PutObj(cp, CF_SETVAR, sizeof(long), &var);
+                             PutObj(cp, CF_INT, sizeof(long), &num);
+                             }
+                             break;*/
+                        case P_STRING: {
+                            long var;
 
-                                s = GetString(cp);
-                                if (s == 0) Fail(cp, "Parse failed");
-                                var = Lookup(mode_string, w);
-                                if (var == -1)
-                                    Fail(cp, "Lookup of '%s' filed", w);
-                                PutNumber(cp, CF_SETVAR, var);
-                                PutString(cp, CF_STRING, s);
-                            }
-                            break;
+                            s = GetString(cp);
+                            if (s == 0) Fail(cp, "Parse failed");
+                            var = Lookup(colorize_string, w);
+                            if (var == -1)
+                                Fail(cp, "Lookup of '%s' failed", w);
+                            PutNumber(cp, CF_SETVAR, var);
+                            PutString(cp, CF_STRING, s);
+                        }
+                        break;
                         default:
                             return -1;
                         }
                         if (Parse(cp) != P_EOS) Fail(cp, "';' expected");
                         GetOp(cp, P_EOS);
-                        //    break;
-                        //}
+                        break;
                     }
-                    GetOp(cp, P_CLOSEBRACE);
-                    PutNull(cp, CF_END);
                 }
-                break;
-            case K_OBJECT:
-                {
+                GetOp(cp, P_CLOSEBRACE);
+                PutNull(cp, CF_END);
+            }
+            break;
+
+            case K_MODE: { // mode::
+                if (Parse(cp) != P_WORD) Fail(cp, "Syntax error");
+                if (GetWord(cp, ObjName) != 0) Fail(cp, "Parse failed");
+                PutString(cp, CF_MODE, ObjName);
+
+                UpMode[0] = 0;
+                if (Parse(cp) == P_COLON) {
+                    GetOp(cp, P_COLON);
                     if (Parse(cp) != P_WORD) Fail(cp, "Syntax error");
-                    if (GetWord(cp, ObjName) != 0) Fail(cp, "Parse failed");
-                    if (Parse(cp) != P_OPENBRACE) Fail(cp, "'{' expected");
-                    GetOp(cp, P_OPENBRACE);
-
-                    PutString(cp, CF_OBJECT, ObjName);
-
-                    while (1) {
-                        p = Parse(cp);
-                        if (p == P_CLOSEBRACE) break;
-                        if (p == P_EOF) Fail(cp, "Unexpected EOF");
-                        if (p != P_WORD) Fail(cp, "Syntax error");
-
-                        if (GetWord(cp, w) != 0) Fail(cp, "Parse failed");
-                        switch (Lookup(CfgKW, w)) {
-                        case K_COLOR: // mode::color
-                            if (Parse(cp) != P_OPENBRACE) Fail(cp, "'{' expected");
-                            GetOp(cp, P_OPENBRACE);
-                            PutNull(cp, CF_COLOR);
-
-                            while (1) {
-                                char *sname, *svalue;
-
-                                if (Parse(cp) == P_CLOSEBRACE) break;
-                                if (Parse(cp) != P_OPENBRACE) Fail(cp, "'{' expected");
-                                GetOp(cp, P_OPENBRACE);
-                                if (Parse(cp) != P_STRING) Fail(cp, "String expected");
-                                sname = GetString(cp);
-                                PutString(cp, CF_STRING, sname);
-                                if (Parse(cp) != P_COMMA) Fail(cp, "',' expected");
-                                GetOp(cp, P_COMMA);
-                                if (Parse(cp) != P_STRING) Fail(cp, "String expected");
-                                svalue = GetString(cp);
-                                svalue = GetColor(cp, svalue);
-                                PutString(cp, CF_STRING, svalue);
-                                if (Parse(cp) != P_CLOSEBRACE) Fail(cp, "'}' expected");
-                                GetOp(cp, P_CLOSEBRACE);
-                                if (Parse(cp) != P_COMMA)
-                                    break;
-                                else
-                                    GetOp(cp, P_COMMA);
-                            }
-                            if (Parse(cp) != P_CLOSEBRACE) Fail(cp, "'}' expected");
-                            GetOp(cp, P_CLOSEBRACE);
-                            if (Parse(cp) != P_EOS) Fail(cp, "';' expected");
-                            GetOp(cp, P_EOS);
-                            PutNull(cp, CF_END);
-                            break;
-
-                        case K_COMPILERX:
-                            {
-                                long file, line, msg;
-                                char *regexp;
-
-                                if (Parse(cp) != P_ASSIGN) Fail(cp, "'=' expected");
-                                GetOp(cp, P_ASSIGN);
-                                if (Parse(cp) != P_OPENBRACE) Fail(cp, "'{' expected");
-                                GetOp(cp, P_OPENBRACE);
-                                if (Parse(cp) != P_NUMBER) Fail(cp, "Number expected");
-                                file = GetNumber(cp);
-                                if (Parse(cp) != P_COMMA) Fail(cp, "',' expected");
-                                GetOp(cp, P_COMMA);
-                                if (Parse(cp) != P_NUMBER) Fail(cp, "Number expected");
-                                line = GetNumber(cp);
-                                if (Parse(cp) != P_COMMA) Fail(cp, "',' expected");
-                                GetOp(cp, P_COMMA);
-                                if (Parse(cp) != P_NUMBER) Fail(cp, "Number expected");
-                                msg = GetNumber(cp);
-                                if (Parse(cp) != P_COMMA) Fail(cp, "',' expected");
-                                GetOp(cp, P_COMMA);
-                                if (Parse(cp) != P_STRING) Fail(cp, "String expected");
-                                regexp = GetString(cp);
-                                if (Parse(cp) != P_CLOSEBRACE) Fail(cp, "'}' expected");
-                                GetOp(cp, P_CLOSEBRACE);
-                                PutNull(cp, CF_COMPRX);
-                                PutNumber(cp, CF_INT, file);
-                                PutNumber(cp, CF_INT, line);
-                                PutNumber(cp, CF_INT, msg);
-                                PutString(cp, CF_REGEXP, regexp);
-                                if (Parse(cp) != P_EOS) Fail(cp, "';' expected");
-                                GetOp(cp, P_EOS);
-                            }
-                            break;
-                        case K_CVSIGNRX:
-                            {
-                                char *regexp;
-
-                                if (Parse(cp) != P_ASSIGN) Fail(cp, "'=' expected");
-                                GetOp(cp, P_ASSIGN);
-                                if (Parse(cp) != P_STRING) Fail(cp, "String expected");
-                                regexp = GetString(cp);
-                                PutNull(cp, CF_CVSIGNRX);
-                                PutString(cp, CF_REGEXP, regexp);
-                                if (Parse(cp) != P_EOS) Fail(cp, "';' expected");
-                                GetOp(cp, P_EOS);
-                            }
-                            break;
-                        case K_SVNIGNRX:
-                            {
-                                char *regexp;
-
-                                if (Parse(cp) != P_ASSIGN) Fail(cp, "'=' expected");
-                                GetOp(cp, P_ASSIGN);
-                                if (Parse(cp) != P_STRING) Fail(cp, "String expected");
-                                regexp = GetString(cp);
-                                PutNull(cp, CF_SVNIGNRX);
-                                PutString(cp, CF_REGEXP, regexp);
-                                if (Parse(cp) != P_EOS) Fail(cp, "';' expected");
-                                GetOp(cp, P_EOS);
-                            }
-                            break;
-                        default:  // mode::
-                            if (Parse(cp) != P_ASSIGN) Fail(cp, "'=' expected");
-                            GetOp(cp, P_ASSIGN);
-
-                            switch (Parse(cp)) {
-                            case P_NUMBER:
-                                {
-                                    long var;
-                                    long num;
-
-                                    num = GetNumber(cp);
-                                    var = Lookup(global_num, w);
-                                    if (var == -1)
-                                        Fail(cp, "Lookup of '%s' failed", w);
-                                    PutNumber(cp, CF_SETVAR, var);
-                                    PutNumber(cp, CF_INT, num);
-                                }
-                                break;
-                            case P_STRING:
-                                {
-                                    long var;
-
-                                    s = GetString(cp);
-                                    if (s == 0) Fail(cp, "Parse failed");
-                                    var = Lookup(global_string, w);
-                                    if (var == -1) Fail(cp, "Lookup of '%s' failed", w);
-                                    PutNumber(cp, CF_SETVAR, var);
-                                    PutString(cp, CF_STRING, s);
-                                }
-                                break;
-                            default:
-                                Fail(cp, "Syntax error");
-                            }
-                            if (Parse(cp) != P_EOS) Fail(cp, "';' expected");
-                            GetOp(cp, P_EOS);
-                            break;
-                        }
-                    }
-                    GetOp(cp, P_CLOSEBRACE);
-                    PutNull(cp, CF_END);
+                    if (GetWord(cp, UpMode) != 0) Fail(cp, "Parse failed");
                 }
-                break;
+                PutString(cp, CF_PARENT, UpMode);
+                if (Parse(cp) != P_OPENBRACE) Fail(cp, "'{' expected");
+                GetOp(cp, P_OPENBRACE);
 
-            case K_COLPALETTE:
-                {
-                    if (Parse(cp) != P_OPENBRACE) Fail(cp, "'{' expected");
-                    GetOp(cp, P_OPENBRACE);
+                while (1) {
+                    p = Parse(cp);
+                    if (p == P_CLOSEBRACE) break;
+                    if (p == P_EOF) Fail(cp, "Unexpected EOF");
+                    if (p != P_WORD) Fail(cp, "Syntax error");
 
-                    while (1) {
-                        char *sname, *svalue;
+                    if (GetWord(cp, w) != 0) Fail(cp, "Parse failed");
+                    //switch (Lookup(CfgKW, w)) {
+                    //default:  // mode::
+                    if (Parse(cp) != P_ASSIGN) Fail(cp, "'=' expected");
+                    GetOp(cp, P_ASSIGN);
+                    switch (Parse(cp)) {
+                    case P_NUMBER: {
+                        long var;
+                        long num;
 
-                        if (Parse(cp) == P_CLOSEBRACE) break;
+                        num = GetNumber(cp);
+                        var = Lookup(mode_num, w);
+                        if (var == -1)
+                            Fail(cp, "Lookup of '%s' failed", w);
+                        PutNumber(cp, CF_SETVAR, var);
+                        PutNumber(cp, CF_INT, num);
+                    }
+                    break;
+                    case P_STRING: {
+                        long var;
+
+                        s = GetString(cp);
+                        if (s == 0) Fail(cp, "Parse failed");
+                        var = Lookup(mode_string, w);
+                        if (var == -1)
+                            Fail(cp, "Lookup of '%s' filed", w);
+                        PutNumber(cp, CF_SETVAR, var);
+                        PutString(cp, CF_STRING, s);
+                    }
+                    break;
+                    default:
+                        return -1;
+                    }
+                    if (Parse(cp) != P_EOS) Fail(cp, "';' expected");
+                    GetOp(cp, P_EOS);
+                    //    break;
+                    //}
+                }
+                GetOp(cp, P_CLOSEBRACE);
+                PutNull(cp, CF_END);
+            }
+            break;
+            case K_OBJECT: {
+                if (Parse(cp) != P_WORD) Fail(cp, "Syntax error");
+                if (GetWord(cp, ObjName) != 0) Fail(cp, "Parse failed");
+                if (Parse(cp) != P_OPENBRACE) Fail(cp, "'{' expected");
+                GetOp(cp, P_OPENBRACE);
+
+                PutString(cp, CF_OBJECT, ObjName);
+
+                while (1) {
+                    p = Parse(cp);
+                    if (p == P_CLOSEBRACE) break;
+                    if (p == P_EOF) Fail(cp, "Unexpected EOF");
+                    if (p != P_WORD) Fail(cp, "Syntax error");
+
+                    if (GetWord(cp, w) != 0) Fail(cp, "Parse failed");
+                    switch (Lookup(CfgKW, w)) {
+                    case K_COLOR: // mode::color
                         if (Parse(cp) != P_OPENBRACE) Fail(cp, "'{' expected");
                         GetOp(cp, P_OPENBRACE);
-                        if (Parse(cp) != P_STRING) Fail(cp, "String expected");
-                        sname = GetString(cp);
+                        PutNull(cp, CF_COLOR);
+
+                        while (1) {
+                            char *sname, *svalue;
+
+                            if (Parse(cp) == P_CLOSEBRACE) break;
+                            if (Parse(cp) != P_OPENBRACE) Fail(cp, "'{' expected");
+                            GetOp(cp, P_OPENBRACE);
+                            if (Parse(cp) != P_STRING) Fail(cp, "String expected");
+                            sname = GetString(cp);
+                            PutString(cp, CF_STRING, sname);
+                            if (Parse(cp) != P_COMMA) Fail(cp, "',' expected");
+                            GetOp(cp, P_COMMA);
+                            if (Parse(cp) != P_STRING) Fail(cp, "String expected");
+                            svalue = GetString(cp);
+                            svalue = GetColor(cp, svalue);
+                            PutString(cp, CF_STRING, svalue);
+                            if (Parse(cp) != P_CLOSEBRACE) Fail(cp, "'}' expected");
+                            GetOp(cp, P_CLOSEBRACE);
+                            if (Parse(cp) != P_COMMA)
+                                break;
+                            else
+                                GetOp(cp, P_COMMA);
+                        }
+                        if (Parse(cp) != P_CLOSEBRACE) Fail(cp, "'}' expected");
+                        GetOp(cp, P_CLOSEBRACE);
+                        if (Parse(cp) != P_EOS) Fail(cp, "';' expected");
+                        GetOp(cp, P_EOS);
+                        PutNull(cp, CF_END);
+                        break;
+
+                    case K_COMPILERX: {
+                        long file, line, msg;
+                        char *regexp;
+
+                        if (Parse(cp) != P_ASSIGN) Fail(cp, "'=' expected");
+                        GetOp(cp, P_ASSIGN);
+                        if (Parse(cp) != P_OPENBRACE) Fail(cp, "'{' expected");
+                        GetOp(cp, P_OPENBRACE);
+                        if (Parse(cp) != P_NUMBER) Fail(cp, "Number expected");
+                        file = GetNumber(cp);
+                        if (Parse(cp) != P_COMMA) Fail(cp, "',' expected");
+                        GetOp(cp, P_COMMA);
+                        if (Parse(cp) != P_NUMBER) Fail(cp, "Number expected");
+                        line = GetNumber(cp);
+                        if (Parse(cp) != P_COMMA) Fail(cp, "',' expected");
+                        GetOp(cp, P_COMMA);
+                        if (Parse(cp) != P_NUMBER) Fail(cp, "Number expected");
+                        msg = GetNumber(cp);
                         if (Parse(cp) != P_COMMA) Fail(cp, "',' expected");
                         GetOp(cp, P_COMMA);
                         if (Parse(cp) != P_STRING) Fail(cp, "String expected");
-                        svalue = GetString(cp);
-                        svalue = GetColor(cp, svalue);
-                        if (DefineColor(sname, svalue) != 1)
-                            Fail(cp, "DefineColor failed\n");
+                        regexp = GetString(cp);
                         if (Parse(cp) != P_CLOSEBRACE) Fail(cp, "'}' expected");
                         GetOp(cp, P_CLOSEBRACE);
-                        if (Parse(cp) != P_COMMA)
-                            break;
-                        else
-                            GetOp(cp, P_COMMA);
+                        PutNull(cp, CF_COMPRX);
+                        PutNumber(cp, CF_INT, file);
+                        PutNumber(cp, CF_INT, line);
+                        PutNumber(cp, CF_INT, msg);
+                        PutString(cp, CF_REGEXP, regexp);
+                        if (Parse(cp) != P_EOS) Fail(cp, "';' expected");
+                        GetOp(cp, P_EOS);
                     }
+                    break;
+                    case K_CVSIGNRX: {
+                        char *regexp;
+
+                        if (Parse(cp) != P_ASSIGN) Fail(cp, "'=' expected");
+                        GetOp(cp, P_ASSIGN);
+                        if (Parse(cp) != P_STRING) Fail(cp, "String expected");
+                        regexp = GetString(cp);
+                        PutNull(cp, CF_CVSIGNRX);
+                        PutString(cp, CF_REGEXP, regexp);
+                        if (Parse(cp) != P_EOS) Fail(cp, "';' expected");
+                        GetOp(cp, P_EOS);
+                    }
+                    break;
+                    case K_SVNIGNRX: {
+                        char *regexp;
+
+                        if (Parse(cp) != P_ASSIGN) Fail(cp, "'=' expected");
+                        GetOp(cp, P_ASSIGN);
+                        if (Parse(cp) != P_STRING) Fail(cp, "String expected");
+                        regexp = GetString(cp);
+                        PutNull(cp, CF_SVNIGNRX);
+                        PutString(cp, CF_REGEXP, regexp);
+                        if (Parse(cp) != P_EOS) Fail(cp, "';' expected");
+                        GetOp(cp, P_EOS);
+                    }
+                    break;
+                    default:  // mode::
+                        if (Parse(cp) != P_ASSIGN) Fail(cp, "'=' expected");
+                        GetOp(cp, P_ASSIGN);
+
+                        switch (Parse(cp)) {
+                        case P_NUMBER: {
+                            long var;
+                            long num;
+
+                            num = GetNumber(cp);
+                            var = Lookup(global_num, w);
+                            if (var == -1)
+                                Fail(cp, "Lookup of '%s' failed", w);
+                            PutNumber(cp, CF_SETVAR, var);
+                            PutNumber(cp, CF_INT, num);
+                        }
+                        break;
+                        case P_STRING: {
+                            long var;
+
+                            s = GetString(cp);
+                            if (s == 0) Fail(cp, "Parse failed");
+                            var = Lookup(global_string, w);
+                            if (var == -1) Fail(cp, "Lookup of '%s' failed", w);
+                            PutNumber(cp, CF_SETVAR, var);
+                            PutString(cp, CF_STRING, s);
+                        }
+                        break;
+                        default:
+                            Fail(cp, "Syntax error");
+                        }
+                        if (Parse(cp) != P_EOS) Fail(cp, "';' expected");
+                        GetOp(cp, P_EOS);
+                        break;
+                    }
+                }
+                GetOp(cp, P_CLOSEBRACE);
+                PutNull(cp, CF_END);
+            }
+            break;
+
+            case K_COLPALETTE: {
+                if (Parse(cp) != P_OPENBRACE) Fail(cp, "'{' expected");
+                GetOp(cp, P_OPENBRACE);
+
+                while (1) {
+                    char *sname, *svalue;
+
+                    if (Parse(cp) == P_CLOSEBRACE) break;
+                    if (Parse(cp) != P_OPENBRACE) Fail(cp, "'{' expected");
+                    GetOp(cp, P_OPENBRACE);
+                    if (Parse(cp) != P_STRING) Fail(cp, "String expected");
+                    sname = GetString(cp);
+                    if (Parse(cp) != P_COMMA) Fail(cp, "',' expected");
+                    GetOp(cp, P_COMMA);
+                    if (Parse(cp) != P_STRING) Fail(cp, "String expected");
+                    svalue = GetString(cp);
+                    svalue = GetColor(cp, svalue);
+                    if (DefineColor(sname, svalue) != 1)
+                        Fail(cp, "DefineColor failed\n");
                     if (Parse(cp) != P_CLOSEBRACE) Fail(cp, "'}' expected");
                     GetOp(cp, P_CLOSEBRACE);
+                    if (Parse(cp) != P_COMMA)
+                        break;
+                    else
+                        GetOp(cp, P_COMMA);
                 }
-                break;
-            case K_INCLUDE:
-                {
-                    char *fn;
+                if (Parse(cp) != P_CLOSEBRACE) Fail(cp, "'}' expected");
+                GetOp(cp, P_CLOSEBRACE);
+            }
+            break;
+            case K_INCLUDE: {
+                char *fn;
 
-                    if (Parse(cp) != P_STRING) Fail(cp, "String expected");
-                    fn = GetString(cp);
+                if (Parse(cp) != P_STRING) Fail(cp, "String expected");
+                fn = GetString(cp);
 
-                    if (LoadFile(cp.name, fn) != 0) Fail(cp, "Include of file '%s' failed", fn);
-                    if (Parse(cp) != P_EOS) Fail(cp, "';' expected");
+                if (LoadFile(cp.name, fn) != 0) Fail(cp, "Include of file '%s' failed", fn);
+                if (Parse(cp) != P_EOS) Fail(cp, "';' expected");
+                GetOp(cp, P_EOS);
+            }
+            break;
+            case K_OINCLUDE: {
+                char *fn;
+
+                if (Parse(cp) != P_STRING) Fail(cp, "String expected");
+                fn = GetString(cp);
+
+                if (LoadFile(cp.name, fn) != 0) {
                     GetOp(cp, P_EOS);
+                    continue; // This is an optional include
                 }
-                break;
-            case K_OINCLUDE:
-                {
-                    char *fn;
-
-                    if (Parse(cp) != P_STRING) Fail(cp, "String expected");
-                    fn = GetString(cp);
-
-                    if (LoadFile(cp.name, fn) != 0) {
-                        GetOp(cp, P_EOS);
-                        continue; // This is an optional include
-                    }
-                    if (Parse(cp) != P_EOS)
-                        Fail(cp, "';' expected");
-                    GetOp(cp, P_EOS);
-                }
-                break;
+                if (Parse(cp) != P_EOS)
+                    Fail(cp, "';' expected");
+                GetOp(cp, P_EOS);
+            }
+            break;
             default:
                 Fail(cp, "Syntax error");
             }
             break;
-        case P_EOF: return 0;
-        default:    Fail(cp, "Syntax error");
+        case P_EOF:
+            return 0;
+        default:
+            Fail(cp, "Syntax error");
         }
     }
 }
@@ -1744,30 +1744,29 @@ static int PreprocessConfigFile(CurPos &cp) {
     bool string_open = false;
 
     while (cp.c < cp.z) {
-	switch(*cp.c)
-	{
-	case '#':
-	    if (string_open == true) break;
+        switch (*cp.c) {
+        case '#':
+            if (string_open == true) break;
 
-	    rem_active = true;
-	    break;
+            rem_active = true;
+            break;
 
-	case '\\':
+        case '\\':
             cp.c++;
             break;
 
-	case '"':
-	case '\'':
-	    if (rem_active == true) break;
+        case '"':
+        case '\'':
+            if (rem_active == true) break;
 
-	    string_open = !string_open;
-	    break;
+            string_open = !string_open;
+            break;
 
-	case '%':
-	    if (string_open == true) break;
-	    if (rem_active == true) break;
+        case '%':
+            if (string_open == true) break;
+            if (rem_active == true) break;
 
-	    wipe = cp.c;
+            wipe = cp.c;
             wipe_end = NULL;
 
             if (cp.c + 8 < cp.z && strncmp(cp.c, "%define(", 8) == 0) {
@@ -1778,20 +1777,20 @@ static int PreprocessConfigFile(CurPos &cp) {
                     GetWord(cp, w);
                     //printf("define '%s'\n", w);
                     DefineWord(w);
-                    if (cp.c < cp.z && *cp.c != ',' && *cp.c != ')' )
+                    if (cp.c < cp.z && *cp.c != ',' && *cp.c != ')')
                         Fail(cp, "unexpected: %c", cp.c[0]);
                     if (cp.c < cp.z && *cp.c == ',')
                         cp.c++;
                 }
-		cp.c++;
-/*            } else if (cp.c + 6 && strcmp(cp.c, "undef(", 6) == 0) {
-                Word w;
-                cp.c += 6;
+                cp.c++;
+                /*            } else if (cp.c + 6 && strcmp(cp.c, "undef(", 6) == 0) {
+                                Word w;
+                                cp.c += 6;
 
-                while (cp.c < cp.z && *cp.c != ')') {
-                    GetWord(cp, w);
-                    UndefWord(w);
-                }*/
+                                while (cp.c < cp.z && *cp.c != ')') {
+                                    GetWord(cp, w);
+                                    UndefWord(w);
+                                }*/
             } else if (cp.c + 4 < cp.z && strncmp(cp.c, "%if(", 4) == 0) {
                 Word w;
                 int wasWord = 0;
@@ -1813,7 +1812,7 @@ static int PreprocessConfigFile(CurPos &cp) {
                     else
                         printf("not '%s'\n", w);*/
 
-                    if (cp.c < cp.z && *cp.c != ',' && *cp.c != ')' )
+                    if (cp.c < cp.z && *cp.c != ',' && *cp.c != ')')
                         Fail(cp, "unexpected: %c", cp.c[0]);
                     if (cp.c < cp.z && *cp.c == ',')
                         cp.c++;
@@ -1827,21 +1826,19 @@ static int PreprocessConfigFile(CurPos &cp) {
                             lntotal++;
                         } else if (*cp.c == '%') {
                             if (cp.c + 6 < cp.z &&
-                                strncmp(cp.c, "%endif", 6) == 0)
-                            {
+                                    strncmp(cp.c, "%endif", 6) == 0) {
                                 cp.c += 6;
                                 if (--nest == 0)
                                     break;
                             }
                             if (cp.c + 3 < cp.z &&
-                                strncmp(cp.c, "%if", 3) == 0)
-                            {
+                                    strncmp(cp.c, "%if", 3) == 0) {
                                 cp.c += 3;
                                 ++nest;
                             }
                         } else if (*cp.c == '#') {
                             // we really shouldn't process hashed % directives
-                            while( cp.c < cp.z && *cp.c != '\n' ) cp.c++;
+                            while (cp.c < cp.z && *cp.c != '\n') cp.c++;
 
                             // workaround to make line numbering correct
                             cp.line++;
@@ -1856,25 +1853,24 @@ static int PreprocessConfigFile(CurPos &cp) {
             if (cp.c < cp.z && *cp.c != '\n' && *cp.c != '\r')
                 Fail(cp, "syntax error %30.30s", cp.c);
 
-	    wipe_end = cp.c;
+            wipe_end = cp.c;
 
             // wipe preprocessor macros with space
-	    while (wipe < wipe_end)
-	    {
+            while (wipe < wipe_end) {
                 *wipe++ = ' ';
-	    }
+            }
 
-	    break;
+            break;
 
         case '\n':
-	    cp.line++;
-	    rem_active = false;
+            cp.line++;
+            rem_active = false;
             string_open = false;
-	    break;
-
-	default:
             break;
-	}
+
+        default:
+            break;
+        }
 
         cp.c++;
     }
@@ -1914,34 +1910,28 @@ static int LoadFile(const char *WhereName, const char *CfgName, int Level, int o
         sprintf(tmp, "~/.efte/%s", CfgName);
         ExpandPath(tmp, Cfg, sizeof(Cfg));
         //fprintf(stderr, "Looking for %s\n", Cfg);
-        if (!FileExists(Cfg))
-        {
+        if (!FileExists(Cfg)) {
             // 2. try "local config".
             sprintf(tmp, "%slocalconfig/%s", StartDir, CfgName);
             ExpandPath(tmp, Cfg, sizeof(Cfg));
             //fprintf(stderr, "Looking for %s\n", Cfg);
-            if (!FileExists(Cfg))
-            {
+            if (!FileExists(Cfg)) {
                 // 3. /usr/share/efte
                 sprintf(tmp, "/usr/share/efte/%s", CfgName);
                 ExpandPath(tmp, Cfg, sizeof(Cfg));
-                if (!FileExists(Cfg))
-                {
+                if (!FileExists(Cfg)) {
                     sprintf(tmp, "/usr/local/share/efte/%s", CfgName);
                     ExpandPath(tmp, Cfg, sizeof(Cfg));
                     //fprintf(stderr, "Looking for %s\n", Cfg);
-                    if (!FileExists(Cfg))
-                    {
+                    if (!FileExists(Cfg)) {
                         sprintf(tmp, "./%s", CfgName);
                         ExpandPath(tmp, Cfg, sizeof(Cfg));
                         //fprintf(stderr, "Looking for %s\n", Cfg);
-                        if (!FileExists(Cfg))
-                        {
+                        if (!FileExists(Cfg)) {
                             sprintf(tmp, "%sconfig/%s", StartDir, CfgName);
                             ExpandPath(tmp, Cfg, sizeof(Cfg));
                             //fprintf(stderr, "Looking for %s\n", Cfg);
-                            if (!FileExists(Cfg))
-                            {
+                            if (!FileExists(Cfg)) {
                                 if (optional)
                                     return -1;
                                 else
@@ -1976,7 +1966,7 @@ static int LoadFile(const char *WhereName, const char *CfgName, int Level, int o
             fprintf(stderr, "Cannot stat '%s', errno=%d\n", Cfg, errno);
         return -1;
     }
-    buffer = (char *) malloc(statbuf.st_size+1);
+    buffer = (char *) malloc(statbuf.st_size + 1);
     if (buffer == NULL) {
         close(fd);
         return -1;
@@ -2004,7 +1994,7 @@ static int LoadFile(const char *WhereName, const char *CfgName, int Level, int o
     }
 
     if (preprocess_only == true) {
-	printf("%s", cp.a);
+        printf("%s", cp.a);
     }
 
     // reset pointers

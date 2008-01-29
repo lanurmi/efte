@@ -34,7 +34,7 @@ int EBuffer::GetMap(int Row, int *StateLen, hsState **StateMap) {
         *StateLen = 1;
         *StateMap = (hsState *) malloc(1);
         if (*StateMap == 0) return 0;
-        (*StateMap)[0] = (hsState) (State & 0xFF);
+        (*StateMap)[0] = (hsState)(State & 0xFF);
     }
     return 1;
 }
@@ -130,7 +130,7 @@ void EBuffer::Draw(int Row0, int RowE) {
         RedrawToEos = 1;
         MaxRedraw = MinRedraw;
     } else if (((RowE > MaxRedraw) || (MaxRedraw == -1)) && (RowE != -1))
-	MaxRedraw = RowE;
+        MaxRedraw = RowE;
     //    printf("m = %d, max = %d, rts = %d\n", MinRedraw, MaxRedraw, RedrawToEos);
 }
 
@@ -172,8 +172,8 @@ void EBuffer::DrawLine(TDrawBuffer B, int VRow, int C, int W, int &HilitX) {
             f = FindFold(Row);
             if (f != -1) {
                 int foldColor;
-                if (FF[f].level<5) foldColor=hcPlain_Folds[FF[f].level];
-                else foldColor=hcPlain_Folds[4];
+                if (FF[f].level < 5) foldColor = hcPlain_Folds[FF[f].level];
+                else foldColor = hcPlain_Folds[4];
                 if (FF[f].open == 1) {
                     l = sprintf(fold, "[%d]", FF[f].level);
                     MoveStr(B, ECol - C + 1, W, fold, foldColor, 10);
@@ -192,7 +192,7 @@ void EBuffer::DrawLine(TDrawBuffer B, int VRow, int C, int W, int &HilitX) {
             }
         }
         if (BB.Row != -1 && BE.Row != -1 && Row >= BB.Row && Row <= BE.Row) {
-            switch(BlockMode) {
+            switch (BlockMode) {
             case bmLine:
                 StartPos = 0;
                 if (Row == BE.Row) EndPos = 0;
@@ -288,7 +288,7 @@ void EBuffer::Redraw() {
     if (View == 0 || View->MView == 0 || View->MView->Win == 0)
         return ;
 
-    for ( ; V; V = V->NextView) {
+    for (; V; V = V->NextView) {
         //        printf("Checking\x7\n");
         if (V->Model != this)
             assert(1 == 0);
@@ -338,7 +338,7 @@ void EBuffer::Redraw() {
                         if (DeltaY < 0) {
                             W->ScrollY(DeltaY);
                             A = W->TP.Row;
-			    B = W->TP.Row - DeltaY;
+                            B = W->TP.Row - DeltaY;
                         } else {
                             W->ScrollY(DeltaY);
                             A = W->TP.Row + Rows - DeltaY;
@@ -358,7 +358,7 @@ void EBuffer::Redraw() {
                     }
                     if (A < 0) A = 0;
                     if (B < 0) B = 0;
-		    Draw(VToR(A) + Delta1, VToR(B) + Delta2);
+                    Draw(VToR(A) + Delta1, VToR(B) + Delta2);
                 }
             } else {
                 int A = W->TP.Row;
@@ -435,22 +435,22 @@ void EBuffer::Redraw() {
                         (BFI(this, BFI_MatchCase)) ? 'C' : ' ',
                         AutoExtend ?
                         (
-                         (BlockMode == bmStream) ? 's' :
-                         (BlockMode == bmLine) ? 'l' : 'c'
+                            (BlockMode == bmStream) ? 's' :
+                            (BlockMode == bmLine) ? 'l' : 'c'
                         ) :
-                        ((BlockMode == bmStream) ? 'S' :
-                         (BlockMode == bmLine) ? 'L': 'C'
-                        ),
-                        (BFI(this, BFI_WordWrap) == 3) ? 't' :
-                        (BFI(this, BFI_WordWrap) == 2) ? 'W' :
-                        (BFI(this, BFI_WordWrap) == 1) ? 'w' :
-                        ' ',
-                        //                    (BFI(this, BFI_Undo))?'U':' ',
-                        //                    (BFI(this, BFI_Trim))?'E':' ',
-                        //                    (Flags.KeepBackups)?'B':' ',
-                        Mode->fName,
-                        (Modified != 0)?'*':(BFI(this, BFI_ReadOnly))?'%':' '
-                       );
+                                ((BlockMode == bmStream) ? 'S' :
+                                 (BlockMode == bmLine) ? 'L' : 'C'
+                                ),
+                                (BFI(this, BFI_WordWrap) == 3) ? 't' :
+                                (BFI(this, BFI_WordWrap) == 2) ? 'W' :
+                                (BFI(this, BFI_WordWrap) == 1) ? 'w' :
+                                ' ',
+                                //                    (BFI(this, BFI_Undo))?'U':' ',
+                                //                    (BFI(this, BFI_Trim))?'E':' ',
+                                //                    (Flags.KeepBackups)?'B':' ',
+                                Mode->fName,
+                                (Modified != 0) ? '*' : (BFI(this, BFI_ReadOnly)) ? '%' : ' '
+                               );
 
                 int l = strlen(s);
                 int fw = W->Cols - l;
@@ -528,8 +528,7 @@ void EBuffer::Redraw() {
         for (int R = W->TP.Row; R < W->TP.Row + W->Rows; R++) {
             Row = R;
             if ((Row >= RowA) &&
-                (RedrawToEos || Row <= RowZ))
-            {
+                    (RedrawToEos || Row <= RowZ)) {
                 DrawLine(B, Row, W->TP.Col, W->Cols, HilitX);
                 W->DrawLine(Row, B);
                 if (HilitX && Row == RowZ)
@@ -557,7 +556,7 @@ int EBuffer::GetHilitWord(int len, char *str, ChColor &clr, int IgnCase) {
         memcpy(s, str, len);
         s[len] = 0;
         if (HilitFindWord(s)) {
-	    clr = COUNT_CLR + hcPlain_HilitWord;
+            clr = COUNT_CLR + hcPlain_HilitWord;
             return 1;
         }
     }
@@ -566,7 +565,7 @@ int EBuffer::GetHilitWord(int len, char *str, ChColor &clr, int IgnCase) {
     if (IgnCase) {
         while (p && *p) {
             if (strnicmp(p, str, len) == 0) {
-		clr = COUNT_CLR + ((unsigned char*)p)[len];
+                clr = COUNT_CLR + ((unsigned char*)p)[len];
                 return 1;
             }
             p += len + 1;
@@ -576,7 +575,7 @@ int EBuffer::GetHilitWord(int len, char *str, ChColor &clr, int IgnCase) {
             if (memcmp(p, str, len) == 0) {
                 clr = COUNT_CLR + ((unsigned char*)p)[len];
                 //printf("PLEN %d  %d\n", p[len], COUNT_CLR);
-		return 1;
+                return 1;
             }
             p += len + 1;
         }
@@ -586,13 +585,13 @@ int EBuffer::GetHilitWord(int len, char *str, ChColor &clr, int IgnCase) {
 
         memcpy(s, str, len);
         s[len] = 0;
-        if (BFI(this, BFI_HilitTags)&&TagDefined(s)) {
-	    //clr = 0x0A;
-	    clr = CLR_HexNumber;// Mode->fColorize->Colors[];
+        if (BFI(this, BFI_HilitTags) && TagDefined(s)) {
+            //clr = 0x0A;
+            clr = CLR_HexNumber;// Mode->fColorize->Colors[];
             return 1;
         }
     }
-    
+
     return 0;
 }
 

@@ -22,7 +22,7 @@
 #endif
 
 FileInfo::FileInfo(char *Name, int Type, off_t Size, time_t MTime) {
-    name = new char[strlen (Name) + 1];
+    name = new char[strlen(Name) + 1];
     if (name)
         strcpy(name, Name);
     size = Size;
@@ -110,8 +110,7 @@ int FileFind::FindFirst(FileInfo **fi) {
                            attr,
                            &find, sizeof(find),
                            &count,
-                           FIL_STANDARD)) != 0)
-    {
+                           FIL_STANDARD)) != 0) {
         //fprintf(stderr, "%s: %d\n\n", fullpattern, rc);
         return -1;
     }
@@ -150,18 +149,17 @@ int FileFind::FindFirst(FileInfo **fi) {
         _findclose(dir);
 
     /*if (Flags & ffDIRECTORY)
-     attr |= FILE_DIRECTORY;
+    attr |= FILE_DIRECTORY;
 
-     if (Flags & ffHIDDEN)
-     attr |= FILE_HIDDEN | FILE_SYSTEM; // separate ?
-     */
+    if (Flags & ffHIDDEN)
+    attr |= FILE_HIDDEN | FILE_SYSTEM; // separate ?
+    */
     if (Pattern)
         JoinDirFile(fullpattern, Directory, Pattern);
     else
         JoinDirFile(fullpattern, Directory, "*");
 
-    if ((rc = _findfirst(fullpattern, &find)) == -1)
-    {
+    if ((rc = _findfirst(fullpattern, &find)) == -1) {
         //        fprintf(stderr, "%s: %d\n\n", fullpattern, rc);
         return -1;
     }
@@ -193,18 +191,17 @@ int FileFind::FindFirst(FileInfo **fi) {
         _findclose(dir);
 
     /*if (Flags & ffDIRECTORY)
-     attr |= FILE_DIRECTORY;
+    attr |= FILE_DIRECTORY;
 
-     if (Flags & ffHIDDEN)
-     attr |= FILE_HIDDEN | FILE_SYSTEM; // separate ?
-     */
+    if (Flags & ffHIDDEN)
+    attr |= FILE_HIDDEN | FILE_SYSTEM; // separate ?
+    */
     if (Pattern)
         JoinDirFile(fullpattern, Directory, Pattern);
     else
         JoinDirFile(fullpattern, Directory, "*");
 
-    if ((rc = (int) FindFirstFile(fullpattern, &find)) < 0)
-    {
+    if ((rc = (int) FindFirstFile(fullpattern, &find)) < 0) {
         //fprintf(stderr, "%s: %d\n\n", fullpattern, rc);
         return -1;
     }
@@ -217,9 +214,9 @@ int FileFind::FindFirst(FileInfo **fi) {
     }
 
     /*
-     * since filetime is in UTC format we need to convert it first to
-     * localtime and when we have "correct" time we can use it.
-     */
+    * since filetime is in UTC format we need to convert it first to
+    * localtime and when we have "correct" time we can use it.
+    */
 
     FileTimeToLocalFileTime(&find.ftLastWriteTime, &localft);
     FileTimeToSystemTime(&localft, &st);
@@ -274,14 +271,12 @@ again:
         if (!(Flags & ffFULLPATH)) // need it now
             JoinDirFile(fullpath, Directory, dent->d_name);
 
-        if (Flags && ffLINK)
-        {
+        if (Flags && ffLINK) {
             // if we are handling location of symbolic links, lstat cannot be used
             // instead use normal stat
             if (stat(fullpath, &st) != 0 && 0)
                 goto again;
-        } else
-        {
+        } else {
             if (
 #if defined(UNIX) // must use lstat if available
                 lstat
@@ -312,8 +307,7 @@ again:
 
     if ((rc = DosFindNext(dir,
                           &find, sizeof(find),
-                          &count)) != 0)
-    {
+                          &count)) != 0) {
         //fprintf(stderr, "%d\n\n", rc);
         return -1;
     }
@@ -347,8 +341,7 @@ again:
     int rc;
 
     if ((rc = _findnext(dir,
-                        &find)) != 0)
-    {
+                        &find)) != 0) {
         // fprintf(stderr, "%d\n\n", rc);
         return -1;
     }
@@ -374,8 +367,7 @@ again:
     int rc;
 
     if ((rc = FindNextFile((HANDLE)dir,
-                           &find)) != TRUE)
-    {
+                           &find)) != TRUE) {
         //fprintf(stderr, "%d\n\n", rc);
         return -1;
     }
@@ -387,9 +379,9 @@ again:
     }
 
     /*
-     * since filetime is in UTC format we need to convert it first to
-     * localtime and when we have "correct" time we can use it.
-     */
+    * since filetime is in UTC format we need to convert it first to
+    * localtime and when we have "correct" time we can use it.
+    */
 
     FileTimeToLocalFileTime(&find.ftLastWriteTime, &localft);
     FileTimeToSystemTime(&localft, &st);

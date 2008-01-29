@@ -69,7 +69,7 @@ void EFrame::UpdateMenu() {
 }
 
 EGUI::EGUI(int &argc, char **argv, int XSize, int YSize)
-: GUI(argc, argv, XSize, YSize) {
+        : GUI(argc, argv, XSize, YSize) {
     ActiveMap = 0;
     OverrideMap = 0;
     CharMap[0] = 0;
@@ -90,52 +90,73 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
         EView *View = V->View;
 
         switch (Command) {
-        case ExFileClose:               return FileClose(View, State);
-        case ExFileCloseAll:            return FileCloseAll(View, State);
-        case ExExitEditor:              return ExitEditor(View);
+        case ExFileClose:
+            return FileClose(View, State);
+        case ExFileCloseAll:
+            return FileCloseAll(View, State);
+        case ExExitEditor:
+            return ExitEditor(View);
         case ExIncrementalSearch:
             return View->MView->Win->IncrementalSearch(View);
         }
     }
     switch (Command) {
-    case ExWinRefresh:              view->Repaint(); return 1;
-    case ExWinNext:                 return WinNext(view);
-    case ExWinPrev:                 return WinPrev(view);
-    case ExShowEntryScreen:         return ShowEntryScreen();
-    case ExRunProgram:              return RunProgram(State, view);
-    case ExRunProgramAsync:         return RunProgramAsync(State, view);
-    case ExMainMenu:                return MainMenu(State, view);
-    case ExShowMenu:                return ShowMenu(State, view);
-    case ExLocalMenu:               return LocalMenu(view);
-    case ExFrameNew:                return FrameNew();
-    case ExFrameNext:               return FrameNext(view);
-    case ExFramePrev:               return FramePrev(view);
+    case ExWinRefresh:
+        view->Repaint();
+        return 1;
+    case ExWinNext:
+        return WinNext(view);
+    case ExWinPrev:
+        return WinPrev(view);
+    case ExShowEntryScreen:
+        return ShowEntryScreen();
+    case ExRunProgram:
+        return RunProgram(State, view);
+    case ExRunProgramAsync:
+        return RunProgramAsync(State, view);
+    case ExMainMenu:
+        return MainMenu(State, view);
+    case ExShowMenu:
+        return ShowMenu(State, view);
+    case ExLocalMenu:
+        return LocalMenu(view);
+    case ExFrameNew:
+        return FrameNew();
+    case ExFrameNext:
+        return FrameNext(view);
+    case ExFramePrev:
+        return FramePrev(view);
 
-    case ExWinHSplit:               return WinHSplit(view);
-    case ExWinClose:                return WinClose(view);
-    case ExWinZoom:                 return WinZoom(view);
-    case ExWinResize:               return WinResize(State, view);
-    case ExDesktopSaveAs:           return DesktopSaveAs(State, view);
+    case ExWinHSplit:
+        return WinHSplit(view);
+    case ExWinClose:
+        return WinClose(view);
+    case ExWinZoom:
+        return WinZoom(view);
+    case ExWinResize:
+        return WinResize(State, view);
+    case ExDesktopSaveAs:
+        return DesktopSaveAs(State, view);
     case ExDesktopSave:
         if (DesktopFileName[0] != 0)
             return SaveDesktop(DesktopFileName);
         return 0;
-    case ExDesktopLoad:             return DesktopLoad(State, view);
-    case ExChangeKeys:
-        {
-            char kmaps[64] = "";
-            EEventMap *m;
+    case ExDesktopLoad:
+        return DesktopLoad(State, view);
+    case ExChangeKeys: {
+        char kmaps[64] = "";
+        EEventMap *m;
 
-            if (State.GetStrParam(0, kmaps, sizeof(kmaps)) == 0) {
-                SetOverrideMap(0, 0);
-                return 0;
-            }
-            m = FindEventMap(kmaps);
-            if (m == 0)
-                return 0;
-            SetOverrideMap(m->KeyMap, m->Name);
-            return 1;
+        if (State.GetStrParam(0, kmaps, sizeof(kmaps)) == 0) {
+            SetOverrideMap(0, 0);
+            return 0;
         }
+        m = FindEventMap(kmaps);
+        if (m == 0)
+            return 0;
+        SetOverrideMap(m->KeyMap, m->Name);
+        return 1;
+    }
     }
     return view->ExecCommand(Command, State);
 }
@@ -162,13 +183,12 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
     for (; State.Pos < m->Count; State.Pos++) {
         i = State.Pos;
         if (m->cmds[i].type != CT_COMMAND ||
-            m->cmds[i].u.num == ExNop)
+                m->cmds[i].u.num == ExNop)
             continue;
 
         for (j = 0; j < m->cmds[i].repeat; j++) {
             State.Pos = i + 1;
-            if (ExecCommand(view, m->cmds[i].u.num, State) == 0 && !m->cmds[i].ign)
-            {
+            if (ExecCommand(view, m->cmds[i].u.num, State) == 0 && !m->cmds[i].ign) {
                 return ErFAIL;
             }
         }
@@ -188,7 +208,7 @@ void EGUI::SetMsg(char *Msg) {
         strcat(CharMap, "]");
     }
     if (ActiveModel)
-	ActiveModel->Msg(S_INFO, CharMap);
+        ActiveModel->Msg(S_INFO, CharMap);
 }
 
 void EGUI::SetOverrideMap(EKeyMap *aMap, char *ModeName) {
@@ -281,8 +301,7 @@ void EGUI::DispatchKey(GxView *view, TEvent &Event) {
 }
 
 void EGUI::DispatchCommand(GxView *view, TEvent &Event) {
-    if (Event.Msg.Command > 65536 + 16384)
-    { // hack for PM toolbar
+    if (Event.Msg.Command > 65536 + 16384) { // hack for PM toolbar
         Event.Msg.Command -= 65536 + 16384;
         BeginMacro(view);
         ExState State;
@@ -301,7 +320,7 @@ void EGUI::DispatchEvent(GFrame *frame, GView *view, TEvent &Event) {
     GxView *xview = (GxView *) view;
 
     if (Event.What == evNone ||
-        (Event.What == evMouseMove && Event.Mouse.Buttons == 0))
+            (Event.What == evMouseMove && Event.Mouse.Buttons == 0))
         return ;
 
     if (Event.What == evNotify && Event.Msg.Command == cmPipeRead) {
@@ -318,12 +337,11 @@ void EGUI::DispatchEvent(GFrame *frame, GView *view, TEvent &Event) {
                 DispatchCommand(xview, Event);
             } else {
                 switch (Event.Msg.Command) {
-                case cmClose:
-                    {
-                        assert(ActiveView != 0);
-                        FrameClose(ActiveView->MView->Win);
-                        return;
-                    }
+                case cmClose: {
+                    assert(ActiveView != 0);
+                    FrameClose(ActiveView->MView->Win);
+                    return;
+                }
                 }
             }
         }
@@ -362,7 +380,7 @@ int EGUI::FileCloseX(EView *View, int CreateNew, int XClose) {
         // close everything that can be closed without confirmation if closing all
         if (XClose)
             while (View->Model->Next != View->Model &&
-                   View->Model->Next->CanQuit())
+                    View->Model->Next->CanQuit())
                 delete View->Model->Next;
 
         View->DeleteModel(View->Model);
@@ -499,15 +517,13 @@ int EGUI::ExitEditor(EView *View) {
 
         if (gx->GetStr("Save desktop As",
                        sizeof(DesktopFileName), DesktopFileName,
-                       HIST_DEFAULT) != 0)
-        {
+                       HIST_DEFAULT) != 0) {
             SaveDesktop(DesktopFileName);
         }
     }
 
     while (ActiveModel) {
-        if (View->Model->GetContext() == CONTEXT_ROUTINES)  // Never delete Routine models directly
-        {
+        if (View->Model->GetContext() == CONTEXT_ROUTINES) { // Never delete Routine models directly
             ActiveModel = ActiveModel->Next;
             View->SelectModel(ActiveModel);
         }
@@ -515,7 +531,7 @@ int EGUI::ExitEditor(EView *View) {
         View->Model->DeleteRelated();  // delete related views first
 
         while (View->Model->Next != View->Model &&
-               View->Model->Next->CanQuit())
+                View->Model->Next->CanQuit())
             delete View->Model->Next;
 
         View->DeleteModel(View->Model);
@@ -596,13 +612,13 @@ int EGUI::DesktopSaveAs(ExState &State, GxView *view) {
 }
 
 int EGUI::DesktopLoad(ExState &State, GxView *view) {
-   if (State.GetStrParam(0, DesktopFileName, sizeof(DesktopFileName)) == 0)
-      if (view->GetFile("Load Desktop", sizeof(DesktopFileName), DesktopFileName, HIST_PATH, GF_OPEN) == 0)
-         return 0;
+    if (State.GetStrParam(0, DesktopFileName, sizeof(DesktopFileName)) == 0)
+        if (view->GetFile("Load Desktop", sizeof(DesktopFileName), DesktopFileName, HIST_PATH, GF_OPEN) == 0)
+            return 0;
 
-   if (DesktopFileName[0] != 0)
-      return LoadDesktop(DesktopFileName);
-   return 0;
+    if (DesktopFileName[0] != 0)
+        return LoadDesktop(DesktopFileName);
+    return 0;
 }
 
 int EGUI::FrameNew() {
@@ -797,24 +813,26 @@ int EGUI::CmdLoadFiles(int &argc, char **argv) {
     int ReadOnly = 0;
 
     for (int Arg = 1; Arg < argc; Arg++) {
-	if (!QuoteAll && !QuoteNext && (argv[Arg][0] == '-')) {
-	    switch (argv[Arg][1]) {
-	    case '-':
+        if (!QuoteAll && !QuoteNext && (argv[Arg][0] == '-')) {
+            switch (argv[Arg][1]) {
+            case '-':
                 if (strncmp(argv[Arg], "--debug", 7) != 0)
-		    QuoteAll = 1;
+                    QuoteAll = 1;
                 Arg = argc;
                 break;
-	    case '!':
-	    case 'C':
-	    case 'c':
-	    case 'D':
-	    case 'd':
-	    case 'H':
+            case '!':
+            case 'C':
+            case 'c':
+            case 'D':
+            case 'd':
+            case 'H':
                 // handled before
                 break;
-	    case '+': QuoteNext = 1; break;
-	    case '#':
-	    case 'l':
+            case '+':
+                QuoteNext = 1;
+                break;
+            case '#':
+            case 'l':
                 LineNum = 1;
                 ColNum = 1;
                 if (strchr(argv[Arg], ',')) {
@@ -822,23 +840,29 @@ int EGUI::CmdLoadFiles(int &argc, char **argv) {
                 } else {
                     GotoLine = (1 == sscanf(argv[Arg] + 2, "%d", &LineNum));
                 }
-		// printf("Gotoline = %d, line = %d, col = %d\n", GotoLine, LineNum, ColNum);
+                // printf("Gotoline = %d, line = %d, col = %d\n", GotoLine, LineNum, ColNum);
                 break;
-	    case 'r': ReadOnly = 1; break;
-	    case 'm':
+            case 'r':
+                ReadOnly = 1;
+                break;
+            case 'm':
                 if (argv[Arg][2] == 0) {
                     ModeOverride = 0;
                 } else {
                     ModeOverride = 1;
                     strcpy(Mode, argv[Arg] + 2);
-		}
+                }
                 break;
-	    case 'T': TagsAdd(argv[Arg] + 2); break;
-	    case 't': TagGoto(ActiveView, argv[Arg] + 2); break;
-	    default:
-		DieError(2, "Invalid command line option %s", argv[Arg]);
+            case 'T':
+                TagsAdd(argv[Arg] + 2);
+                break;
+            case 't':
+                TagGoto(ActiveView, argv[Arg] + 2);
+                break;
+            default:
+                DieError(2, "Invalid command line option %s", argv[Arg]);
                 return 0;
-	    }
+            }
         } else {
             char Path[MAXPATH];
 
@@ -925,7 +949,7 @@ void EGUI::EditorCleanup() {
     if (ActiveModel != NULL) {
         EModel *B, *N, *A;
 
-       	B = A = ActiveModel;
+        B = A = ActiveModel;
         do {
             N = B->Next;
             delete B;
@@ -938,14 +962,14 @@ void EGUI::EditorCleanup() {
     SSBuffer = NULL;
 
     if (ActiveView != NULL) {
-       	EView *BW, *NW;
+        EView *BW, *NW;
 
-       	// If EView what is about to be deleted is currently ActiveView, ActiveView moves to next one
-       	// or if there is no next, it will be set as NULL.
-       	while ((BW = ActiveView) != NULL) {
-       		NW = BW->Next;
-       		delete BW;
-       	}
+        // If EView what is about to be deleted is currently ActiveView, ActiveView moves to next one
+        // or if there is no next, it will be set as NULL.
+        while ((BW = ActiveView) != NULL) {
+            NW = BW->Next;
+            delete BW;
+        }
         //EView *BW, *NW, *AW;
         //BW = AW = ActiveView;
         //do {
@@ -966,13 +990,11 @@ void EGUI::Stop() {
     DoSaveHistoryOnExit();
 
     // free macros
-    if (Macros != 0)
-    {
-        while (CMacros--)
-        {
+    if (Macros != 0) {
+        while (CMacros--) {
             free(Macros[CMacros].Name);
 
-            for (int i=0; i<Macros[CMacros].Count; ++i)
+            for (int i = 0; i < Macros[CMacros].Count; ++i)
                 if (Macros[CMacros].cmds[i].type == CT_STRING)
                     free(Macros[CMacros].cmds[i].u.string);
 
@@ -986,35 +1008,32 @@ void EGUI::Stop() {
 
     // free colorizers
     while (EColorize *p = Colorizers) {
-	Colorizers = Colorizers->Next;
-	delete p;
+        Colorizers = Colorizers->Next;
+        delete p;
     }
 
     // free event maps
     while (EEventMap *em = EventMaps) {
-	EventMaps = EventMaps->Next;
-	delete em;
+        EventMaps = EventMaps->Next;
+        delete em;
     }
 
     // free modes
     while (EMode *m = Modes) {
-	Modes = Modes->fNext;
-	delete m;
+        Modes = Modes->fNext;
+        delete m;
     }
 
     // free menus
-    if (Menus)
-    {
+    if (Menus) {
         int mc, c;
 
-        while(MenuCount--)
-        {
+        while (MenuCount--) {
             mc = MenuCount;
 
             free(Menus[mc].Name);
 
-            while(Menus[mc].Count--)
-            {
+            while (Menus[mc].Count--) {
                 c = Menus[mc].Count;
                 free(Menus[mc].Items[c].Name);
             }

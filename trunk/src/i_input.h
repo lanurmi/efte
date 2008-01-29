@@ -27,12 +27,14 @@ public:
     int CurItem;
     unsigned int SelStart;
     unsigned int SelEnd;
-    
+
     ExInput(const char *APrompt, char *ALine, unsigned int AMaxLen, Completer AComp, int Select, int AHistId);
     virtual ~ExInput();
     virtual void Activate(int gotfocus);
-    
-    virtual ExView *GetViewContext() { return Next; }
+
+    virtual ExView *GetViewContext() {
+        return Next;
+    }
     virtual int BeginMacro();
     virtual void HandleEvent(TEvent &Event);
     virtual void UpdateView();

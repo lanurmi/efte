@@ -40,7 +40,7 @@ char *Slash(char *Path, int Add) {
     } else {
         if ((len > 1)
 #if PATHTYPE == PT_DOSISH
-            && ((len > 3) || (Path[1] != ':'))
+                && ((len > 3) || (Path[1] != ':'))
 #endif
            ) {
             if (ISSLASH(Path[len - 1])) {
@@ -58,8 +58,7 @@ char *SlashDir(char *Path) {
         if ((len == 2) && Path[1] == ':') {
             Path[2] = SLASH;
             Path[3] = 0;
-        }
-        else
+        } else
 #endif
             if (!ISSLASH(Path[len - 1])) {
                 struct stat statbuf;
@@ -112,31 +111,29 @@ static int GetDiskCurDir(int drive, char *dir) {
 
 #if defined(__EMX__)
     return (_getcwd1(dir, (char)(drive + 'A' - 1)) == 0) ? 0 : -1;
-#elif defined(OS2)
-    {
-        ULONG len = MAXPATH - 4; // 'c:\0'
+#elif defined(OS2) {
+    ULONG len = MAXPATH - 4; // 'c:\0'
 
-        return (DosQueryCurrentDir(drive, dir, &len) == 0) ? 0 : -1;
-    }
-#elif defined(NT)
-    {
-        char orig[MAXPATH], newdrive[MAXPATH];
+    return (DosQueryCurrentDir(drive, dir, &len) == 0) ? 0 : -1;
+}
+#elif defined(NT) {
+    char orig[MAXPATH], newdrive[MAXPATH];
 
-        // set to new drive, get directory and restore original directory
-        if (!GetCurrentDirectory(sizeof(orig), orig))
-            return -1;
-        newdrive[0] = drive + 'A' - 1;
-        newdrive[1] = ':';
-        newdrive[2] = 0;
-        if (!SetCurrentDirectory(newdrive))
-            return -1;
-        if (!GetCurrentDirectory(sizeof(newdrive), newdrive))
-            return -1;
-        strcpy(dir, newdrive + 3);
+    // set to new drive, get directory and restore original directory
+    if (!GetCurrentDirectory(sizeof(orig), orig))
+        return -1;
+    newdrive[0] = drive + 'A' - 1;
+    newdrive[1] = ':';
+    newdrive[2] = 0;
+    if (!SetCurrentDirectory(newdrive))
+        return -1;
+    if (!GetCurrentDirectory(sizeof(newdrive), newdrive))
+        return -1;
+    strcpy(dir, newdrive + 3);
 
-        SetCurrentDirectory(orig); // ? check
-        return 0;
-    }
+    SetCurrentDirectory(orig); // ? check
+    return 0;
+}
 #endif
 }
 
@@ -209,45 +206,44 @@ int ExpandPath(const char *Path, char *Expand, int ExpandSize) {
     strlcpy(Name, Path, sizeof(Name));
 
     // Normalize slashes
-    for (size_t idx=0; idx < strlen(Name); idx++)
-       if (Name[idx] == '/')
-          Name[idx] = '\\';
+    for (size_t idx = 0; idx < strlen(Name); idx++)
+        if (Name[idx] == '/')
+            Name[idx] = '\\';
 
     if (Name[0] != 0)
-       slashed = ISSLASH(Name[strlen(Name)-1]);
+        slashed = ISSLASH(Name[strlen(Name)-1]);
     Slash(Name, 0);
 
     path = Name;
     switch (Name[0]) {
     case SLASH:
-       break;
+        break;
 
     case 0:
-       slashed = ISSLASH(Name[strlen(Name)-1]);
-       break;
+        slashed = ISSLASH(Name[strlen(Name)-1]);
+        break;
 
-    case '~':
-       {
-          char Name2[MAXPATH];
-          if (Name[1] == SLASH || Name[1] == 0) {
-             path = Name + 1;
-             char *homePath = getenv("HOMEPATH"); // Windows Vista
-             if (homePath == NULL)
+    case '~': {
+        char Name2[MAXPATH];
+        if (Name[1] == SLASH || Name[1] == 0) {
+            path = Name + 1;
+            char *homePath = getenv("HOMEPATH"); // Windows Vista
+            if (homePath == NULL)
                 homePath = getenv("USERPROFILE"); // Windows XP
-             if (homePath == NULL)
+            if (homePath == NULL)
                 strlcpy(Name2, "C:\\", sizeof(Name2)); // Windows 95/98 do not have home path
-             else
+            else
                 strlcpy(Name2, homePath, sizeof(Name2));
-          }
-          if (path[0] != SLASH)
-             Slash(Name2, 1);
-          strlcat(Name2, path, sizeof(Name2));
-          strlcpy(Name, Name2, sizeof(Name));
-       }
-       break;
+        }
+        if (path[0] != SLASH)
+            Slash(Name2, 1);
+        strlcat(Name2, path, sizeof(Name2));
+        strlcpy(Name, Name2, sizeof(Name));
+    }
+    break;
     }
     if (Path[0] != SLASH)
-       Slash(Name, 0);
+        Slash(Name, 0);
     if (Name[0] && Name[1] == ':' && Name[2] == 0) { // '?:'
         int drive = Name[0];
 
@@ -258,7 +254,7 @@ int ExpandPath(const char *Path, char *Expand, int ExpandSize) {
         drive = (int)(toupper(Name[0]) - 'A' + 1);
 
         if (GetDiskCurDir(drive, Expand + 3) == -1)
-           return -1;
+            return -1;
     } else {
 #if defined(__EMX__)
         if (_fullpath(Expand, Name, MAXPATH) == -1) return -1;
@@ -266,61 +262,60 @@ int ExpandPath(const char *Path, char *Expand, int ExpandSize) {
         if (_fullpath(Expand, Name, MAXPATH) == NULL) return -1;
 #endif
     }
-#if defined(__EMX__)
-    {
-        char *p = Expand;
+#if defined(__EMX__) {
+    char *p = Expand;
 
-        if (p && *p) do {
+    if (p && *p) do {
             if (ISSLASH(*p))
                 *p = SLASH;
         } while (*p++);
-    }
+}
 #endif
-    if (slashed)
-       SlashDir(Expand);
-    return 0;
+if (slashed)
+    SlashDir(Expand);
+return 0;
 #endif
 #if PATHTYPE == PT_UNIXISH
-    char Name2[MAXPATH];
-    char *path, *p;
+char Name2[MAXPATH];
+char *path, *p;
 
-    strlcpy(Name, Path, sizeof(Name));
-    switch (Name[0]) {
-    case SLASH:
-        break;
-    case '~':
-        if (Name[1] == SLASH || Name[1] == 0) {
-            path = Name + 1;
-            strlcpy(Name2, getenv("HOME"), sizeof(Name2));
+strlcpy(Name, Path, sizeof(Name));
+switch (Name[0]) {
+case SLASH:
+    break;
+case '~':
+    if (Name[1] == SLASH || Name[1] == 0) {
+        path = Name + 1;
+        strlcpy(Name2, getenv("HOME"), sizeof(Name2));
+    } else {
+        struct passwd *pwd;
+
+        p = Name;
+        p++;
+        while (*p && (*p != SLASH)) p++;
+        if (*p == SLASH) {
+            path = p + 1;
+            *p = 0;
         } else {
-            struct passwd *pwd;
-
-            p = Name;
-            p++;
-            while (*p && (*p != SLASH)) p++;
-            if (*p == SLASH) {
-                path = p + 1;
-                *p = 0;
-            } else {
-                path = p;
-            }
-            pwd = getpwnam(Name + 1);
-            if (pwd == NULL)
-                return -1;
-            strlcpy(Name2, pwd->pw_dir, sizeof(Name2));
+            path = p;
         }
-        if (path[0] != SLASH)
-            Slash(Name2, 1);
-        strlcat(Name2, path, sizeof(Name2));
-        strlcpy(Name, Name2, sizeof(Name));
-        break;
-    default:
-        if (getcwd(Name, MAXPATH) == NULL) return -1;
-        Slash(Name, 1);
-        strlcat(Name, Path, sizeof(Name));
-        break;
+        pwd = getpwnam(Name + 1);
+        if (pwd == NULL)
+            return -1;
+        strlcpy(Name2, pwd->pw_dir, sizeof(Name2));
     }
-    return RemoveDots(Name, Expand);
+    if (path[0] != SLASH)
+        Slash(Name2, 1);
+    strlcat(Name2, path, sizeof(Name2));
+    strlcpy(Name, Name2, sizeof(Name));
+    break;
+default:
+    if (getcwd(Name, MAXPATH) == NULL) return -1;
+    Slash(Name, 1);
+    strlcat(Name, Path, sizeof(Name));
+    break;
+}
+return RemoveDots(Name, Expand);
 #endif
 }
 
@@ -339,8 +334,9 @@ int JustDirectory(const char *Path, char *Dir, int DirSize) {
     if (ExpandPath(Path, Dir, DirSize) == -1)
         strlcpy(Dir, Path, DirSize);
     p = SepRChr(Dir);
-    if (p) { p[1] = 0; }
-    else Dir[0] = 0;
+    if (p) {
+        p[1] = 0;
+    } else Dir[0] = 0;
     return 0;
 }
 
@@ -351,8 +347,7 @@ int JustLastDirectory(const char *Path, char *Dir, int DirSize) {
     int secondLastSlash = lastSlash;
     while (secondLastSlash > 0 && !ISSEP(Path[secondLastSlash - 1])) secondLastSlash--;
 
-    if ((lastSlash - secondLastSlash) >= (DirSize-1))
-    {
+    if ((lastSlash - secondLastSlash) >= (DirSize - 1)) {
         // how unfortunate, we didn't have enough space for directory name
         // just copy as many characters as possible while leaving room for NUL.
         lastSlash = secondLastSlash + DirSize - 2;
@@ -376,8 +371,7 @@ int JustRoot(const char *Path, char *Root, int RootSize) {
 #if PATHTYPE == PT_UNIXISH
     strlcpy(Root, SSLASH, RootSize);
 #else
-    if (RootSize >= 4)
-    {
+    if (RootSize >= 4) {
         strncpy(Root, Path, 3);
         Root[3] = 0;
     }
@@ -392,7 +386,7 @@ int FileExists(const char *Path) {
 int IsFullPath(const char *Path) {
     if (ISSLASH(Path[0])
 #if PATHTYPE == PT_DOSISH
-        || (Path[0] != 0 && Path[1] == ':')
+            || (Path[0] != 0 && Path[1] == ':')
 #endif
        )
         return 1;
@@ -440,13 +434,12 @@ int JoinDirFile(char *Dest, const char *Dir, const char *Name) {
     return 0;
 }
 
-char *SepRChr(char *Dir)
-{
+char *SepRChr(char *Dir) {
     char *p;
     if (Dir && Dir[0]) {
         for (p = Dir + strlen(Dir); p > Dir; p--)
             if (ISSEP(p[-1]))
-                return p-1;
+                return p -1;
     }
     return NULL;
 }
@@ -459,10 +452,12 @@ int RelativePathName(const char *Dir, const char *Path, char *RelPath, int RelPa
 
     if (ExpandPath(Dir, d, sizeof(d)) == -1) return -1;
     if (ExpandPath(Path, p, sizeof(p)) == -1) return -1;
-    dl = strlen (d); pl = strlen (p);
+    dl = strlen(d);
+    pl = strlen(p);
 
     if (dl <= pl) {
-        c = p[dl]; p[dl] = 0;
+        c = p[dl];
+        p[dl] = 0;
         if (filecmp(d, p) == 0) {
             p[dl] = c;
             strlcpy(RelPath, p + dl, RelPathSize);

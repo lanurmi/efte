@@ -130,7 +130,7 @@ int EBuffer::LoadFrom(const char *AFileName) {
                 e = FileBuffer + len;
                 lf = 0;
             }
-	    partLen = e - p; // # of chars in buffer for current line
+            partLen = e - p; // # of chars in buffer for current line
             m = (char *)realloc((void *)m, (lm + partLen) + CHAR_TRESHOLD);
             if (m == NULL)
                 goto fail;
@@ -145,7 +145,7 @@ int EBuffer::LoadFrom(const char *AFileName) {
                     goto fail;
 #if 0
                 { // support for VIM tabsize commands
-                    char *t = strstr(m,"vi:ts=");
+                    char *t = strstr(m, "vi:ts=");
                     int ts = 0;
                     if (t && isdigit(t[6]))
                         ts = atoi(&t[6]);
@@ -157,7 +157,7 @@ int EBuffer::LoadFrom(const char *AFileName) {
                 // Grow the line table if required,
                 if (RCount == RAllocated)
                     if (Allocate(RCount ? (RCount * 2) : 1) == 0)
-			goto fail;
+                        goto fail;
                 if ((LL[RCount++] = new ELine((char *)m, lm)) == 0)
                     goto fail;
                 RGap = RCount;
@@ -182,7 +182,7 @@ int EBuffer::LoadFrom(const char *AFileName) {
             if (Allocate(RCount ? (RCount * 2) : 1) == 0)
                 goto fail;
         if ((LL[RCount++] = new ELine(m, lm)) == 0)
-	    goto fail;
+            goto fail;
         m = NULL;
         RGap = RCount;
     }
@@ -194,7 +194,7 @@ int EBuffer::LoadFrom(const char *AFileName) {
     // this bug has caused serious text corruption which is the worst
     // thing for text editor
     if (m)
-	free(m);
+        free(m);
     m = NULL;
 
     // initialize folding array.
@@ -243,8 +243,8 @@ int EBuffer::LoadFrom(const char *AFileName) {
         // Open first level fold, bookmark "mark1" at column 10 and bookmark "mark2" at column 16.
         // At the end is length of string from BOOK up to end of mark2 - 26 (0x1a).
 
-	for (l = RCount - 1; l >= 0; l--) {
-	    if (LL[l]->Count >= len_start + len_end + 6) {
+        for (l = RCount - 1; l >= 0; l--) {
+            if (LL[l]->Count >= len_start + len_end + 6) {
                 for (int where = 1; where < 3; where++) {
                     // where == 1 - start-of-line
                     // where == 2 - end-of-line
@@ -262,14 +262,15 @@ int EBuffer::LoadFrom(const char *AFileName) {
                             char numbuf[5];
                             int i;
 
-                            memcpy(numbuf, LL[l]->Chars + pos - 5, 4); numbuf[4] = 0;
+                            memcpy(numbuf, LL[l]->Chars + pos - 5, 4);
+                            numbuf[4] = 0;
                             if (1 != sscanf(numbuf, "%x", &i)) continue;
                             pos -= i + 6;
                             if (pos < 0) continue;
                         }
                         if (BFI(this, BFI_SaveFolds) == 2 && pos - 6 >= 0 &&
-                            (memcmp(LL[l]->Chars + pos - 6, "FOLD", 4) == 0 ||
-                             memcmp(LL[l]->Chars + pos - 6, "fold", 4) == 0)) pos -= 6;
+                                (memcmp(LL[l]->Chars + pos - 6, "FOLD", 4) == 0 ||
+                                 memcmp(LL[l]->Chars + pos - 6, "fold", 4) == 0)) pos -= 6;
                         pos -= len_start;
                     }
                     // Check comment start
@@ -302,7 +303,7 @@ int EBuffer::LoadFrom(const char *AFileName) {
                             level = -1;
 
                         if (!isdigit(LL[l]->Chars[pos + 4]) ||
-                            !isdigit(LL[l]->Chars[pos + 5]))
+                                !isdigit(LL[l]->Chars[pos + 5]))
                             level = -1;
 
                         if (level == -1 || open >= 100) continue;
@@ -315,33 +316,42 @@ int EBuffer::LoadFrom(const char *AFileName) {
                         int i, col, startBook;
                         char numbuf[5], buf[256];
 
-                        startBook = pos; pos += 4;
+                        startBook = pos;
+                        pos += 4;
                         while (pos + len_end + 6 + 6 <= LL[l]->Count) {
                             // Read column
-                            memcpy(numbuf, LL[l]->Chars + pos, 4); numbuf[4] = 0;
+                            memcpy(numbuf, LL[l]->Chars + pos, 4);
+                            numbuf[4] = 0;
                             pos += 4;
                             if (1 != sscanf(numbuf, "%x", &col)) {
-                                error = 1; break;
+                                error = 1;
+                                break;
                             }
                             // Read length
-                            memcpy(numbuf, LL[l]->Chars + pos, 2); numbuf[2] = 0;
+                            memcpy(numbuf, LL[l]->Chars + pos, 2);
+                            numbuf[2] = 0;
                             pos += 2;
                             if (1 != sscanf(numbuf, "%x", &i)) {
-                                error = 1; break;
+                                error = 1;
+                                break;
                             }
                             if (pos + i + 6 + len_end > LL[l]->Count || i == 0) {
-                                error = 1; break;
+                                error = 1;
+                                break;
                             }
                             if (i) {
-                                memcpy(buf, LL[l]->Chars + pos, i); buf[i] = 0;
+                                memcpy(buf, LL[l]->Chars + pos, i);
+                                buf[i] = 0;
                                 pos += i;
                                 if (PlaceUserBookmark(buf, EPoint(l, col)) == 0) goto fail;
                             }
                             if (LL[l]->Chars[pos] == 'x') {
                                 // Read total length (just test for correctness)
-                                memcpy(numbuf, LL[l]->Chars + pos + 1, 4); numbuf[4] = 0;
+                                memcpy(numbuf, LL[l]->Chars + pos + 1, 4);
+                                numbuf[4] = 0;
                                 if (1 != sscanf(numbuf, "%x", &i)) {
-                                    error = 1; break;
+                                    error = 1;
+                                    break;
                                 }
                                 if (i != pos - startBook || LL[l]->Chars[pos + 5] != 'b') error = 1;
                                 else pos += 6;
@@ -433,18 +443,16 @@ int EBuffer::SaveTo(char *AFileName) {
 
     if (FileOk && (stat(FileName, &StatBuf) == 0)) {
         if (FileStatus.st_size != StatBuf.st_size ||
-            FileStatus.st_mtime != StatBuf.st_mtime)
-        {
+                FileStatus.st_mtime != StatBuf.st_mtime) {
             switch (View->MView->Win->Choice(GPC_ERROR, "File Changed on Disk",
                                              2,
                                              "&Save",
                                              "&Cancel",
-                                             "%s", FileName))
-            {
+                                             "%s", FileName)) {
             case 0:
                 break;
             case 1:
-            case -1:
+            case - 1:
             default:
                 return 0;
             }
@@ -469,7 +477,7 @@ int EBuffer::SaveTo(char *AFileName) {
     fp = fopen(AFileName, "r+b");
     if (fp != 0)
 #if defined(__IBMCPP__) || defined(__WATCOMC__)
-        if ( chsize  (fileno(fp), 0) != 0)
+        if (chsize(fileno(fp), 0) != 0)
 #else
         if (ftruncate(fileno(fp), 0) != 0)
 #endif // __IBMCPP__ || __WATCOMC__
@@ -497,7 +505,8 @@ int EBuffer::SaveTo(char *AFileName) {
                               FF[f].level);
         }
 
-        bindex = 0; blen = 0;
+        bindex = 0;
+        blen = 0;
         if (BFI(this, BFI_SaveBookmarks) == 1 || BFI(this, BFI_SaveBookmarks) == 2) {
             blen = 4;     // Just after "BOOK"
             while ((bindex = GetUserBookmarkForLine(bindex, l, bname, bpos)) != -1) {
@@ -513,7 +522,7 @@ int EBuffer::SaveTo(char *AFileName) {
         // what - write at 1 = beginning / 2 = end of line
         for (int what = 1; what < 3; what++) {
             if ((BFI(this, BFI_SaveFolds) == what && foldlen) ||
-                (BFI(this, BFI_SaveBookmarks) == what && blen)
+                    (BFI(this, BFI_SaveBookmarks) == what && blen)
                ) {
 
                 if (len_start) {
@@ -569,10 +578,10 @@ int EBuffer::SaveTo(char *AFileName) {
     // make only backups when user have requested a one
     if (BFI(this, BFI_MakeBackups) != 0) {
         if (BFI(this, BFI_KeepBackups) == 0
-            // No backups for CVS logs
-            || this == CvsLogView
-            // No backups for SVN logs
-            || this == SvnLogView
+                // No backups for CVS logs
+                || this == CvsLogView
+                // No backups for SVN logs
+                || this == SvnLogView
            ) {
             unlink(ABackupName);
         }

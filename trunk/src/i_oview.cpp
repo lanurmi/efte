@@ -24,9 +24,13 @@ int ExView::IsActive() {
     return 0;
 }
 
-EEventMap *ExView::GetEventMap() { return 0; }
+EEventMap *ExView::GetEventMap() {
+    return 0;
+}
 
-int ExView::ExecCommand(int /*Command*/, ExState &/*State*/) { return ErFAIL; }
+int ExView::ExecCommand(int /*Command*/, ExState &/*State*/) {
+    return ErFAIL;
+}
 
 int ExView::BeginMacro() {
     return 1;

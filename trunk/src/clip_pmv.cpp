@@ -277,29 +277,29 @@
 #error Prototypes are for 32-bit compiler only
 #endif
 
-HAB    (APIENTRY *p_WinInitialize)(ULONG flOptions);
-BOOL   (APIENTRY *p_WinTerminate)(HAB hab);
-HMQ    (APIENTRY *p_WinCreateMsgQueue)(HAB hab, LONG cmsg);
-BOOL   (APIENTRY *p_WinDestroyMsgQueue)(HMQ hmq);
-BOOL   (APIENTRY *p_WinEmptyClipbrd)(HAB hab);
-BOOL   (APIENTRY *p_WinOpenClipbrd)(HAB hab);
-BOOL   (APIENTRY *p_WinCloseClipbrd)(HAB hab);
-BOOL   (APIENTRY *p_WinSetClipbrdData)(HAB hab, ULONG ulData, ULONG fmt, ULONG rgfFmtInfo);
-ULONG  (APIENTRY *p_WinQueryClipbrdData)(HAB hab, ULONG fmt);
+HAB(APIENTRY *p_WinInitialize)(ULONG flOptions);
+BOOL (APIENTRY *p_WinTerminate)(HAB hab);
+HMQ(APIENTRY *p_WinCreateMsgQueue)(HAB hab, LONG cmsg);
+BOOL (APIENTRY *p_WinDestroyMsgQueue)(HMQ hmq);
+BOOL (APIENTRY *p_WinEmptyClipbrd)(HAB hab);
+BOOL (APIENTRY *p_WinOpenClipbrd)(HAB hab);
+BOOL (APIENTRY *p_WinCloseClipbrd)(HAB hab);
+BOOL (APIENTRY *p_WinSetClipbrdData)(HAB hab, ULONG ulData, ULONG fmt, ULONG rgfFmtInfo);
+ULONG(APIENTRY *p_WinQueryClipbrdData)(HAB hab, ULONG fmt);
 
 static struct impentry {
     ULONG ordinal;
     PFN *pointer;
 } imported_functions[] = {
-    { ORD_WIN32INITIALIZE,     (PFN *) &p_WinInitialize       },
-    { ORD_WIN32TERMINATE,      (PFN *) &p_WinTerminate        },
+    { ORD_WIN32INITIALIZE, (PFN *) &p_WinInitialize       },
+    { ORD_WIN32TERMINATE, (PFN *) &p_WinTerminate        },
     { ORD_WIN32CREATEMSGQUEUE, (PFN *) &p_WinCreateMsgQueue   },
-    { ORD_WIN32DESTROYMSGQUEUE,(PFN *) &p_WinDestroyMsgQueue  },
-    { ORD_WIN32EMPTYCLIPBRD,   (PFN *) &p_WinEmptyClipbrd     },
-    { ORD_WIN32OPENCLIPBRD,    (PFN *) &p_WinOpenClipbrd      },
-    { ORD_WIN32CLOSECLIPBRD,   (PFN *) &p_WinCloseClipbrd     },
+    { ORD_WIN32DESTROYMSGQUEUE, (PFN *) &p_WinDestroyMsgQueue  },
+    { ORD_WIN32EMPTYCLIPBRD, (PFN *) &p_WinEmptyClipbrd     },
+    { ORD_WIN32OPENCLIPBRD, (PFN *) &p_WinOpenClipbrd      },
+    { ORD_WIN32CLOSECLIPBRD, (PFN *) &p_WinCloseClipbrd     },
     { ORD_WIN32SETCLIPBRDDATA, (PFN *) &p_WinSetClipbrdData   },
-    { ORD_WIN32QUERYCLIPBRDDATA,(PFN *)&p_WinQueryClipbrdData },
+    { ORD_WIN32QUERYCLIPBRDDATA, (PFN *)&p_WinQueryClipbrdData },
     { 0, 0 }
 };
 

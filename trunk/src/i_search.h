@@ -15,7 +15,7 @@
 class ExISearch: public ExView {
 public:
     typedef enum { IOk, INoMatch, INoPrev, INoNext } IState;
-    
+
     char ISearchStr[MAXISEARCH + 1];
     EPoint Orig;
     EPoint stack[MAXISEARCH];
@@ -29,14 +29,16 @@ public:
     virtual ~ExISearch();
     virtual void Activate(int gotfocus);
 
-    virtual ExView *GetViewContext() { return Next; }
+    virtual ExView *GetViewContext() {
+        return Next;
+    }
     virtual int BeginMacro();
     virtual void HandleEvent(TEvent &Event);
     virtual void UpdateView();
     virtual void RepaintView();
     virtual void UpdateStatus();
     virtual void RepaintStatus();
-    
+
     void SetState(IState state);
 };
 

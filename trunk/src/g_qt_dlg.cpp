@@ -47,7 +47,7 @@ int DLGGetFile(GView *v, const char *Prompt, unsigned int BufLen, char *FileName
 }
 
 int DLGPickChoice(GView * /*v*/, const char * /*ATitle*/, int /*NSel*/, va_list /*ap*/, int /*Flags*/) {
-    assert(1==0);
+    assert(1 == 0);
     return 0;
 }
 
@@ -62,14 +62,16 @@ const int kMaxButton = 16;
 class QChoiceBox : public QDialog {
     Q_OBJECT
 public:
-    QChoiceBox(QWidget *parent=0, const char *name=0);
+    QChoiceBox(QWidget *parent = 0, const char *name = 0);
 
     void setText(const char *text);
     void addButton(const char *text);
 
     void adjustSize();
 
-    int getChoice() { return buttonActivated; }
+    int getChoice() {
+        return buttonActivated;
+    }
 
 public slots:
     void pressed();
@@ -92,20 +94,19 @@ private:
 
 
 QChoiceBox::QChoiceBox(QWidget *parent, const char *name)
-    : QDialog(parent, name, TRUE)
-{
+        : QDialog(parent, name, TRUE) {
     //initMetaObject();
 
     buttonSelected = -1;
     buttonCount = 0;
     buttonActivated = -1;
     buttonArmed = -1;
-    
+
     label = new QLabel(this, "text");
     CHECK_PTR(label);
     label->setAlignment(AlignLeft);
     QFont font("Helvetica", 12, QFont::Bold);
-    label->setFont(font );
+    label->setFont(font);
 }
 
 void QChoiceBox::setText(const char *text) {
@@ -121,7 +122,7 @@ void QChoiceBox::addButton(const char *text) {
     connect(button[buttonCount], SIGNAL(pressed()), SLOT(pressed()));
     connect(button[buttonCount], SIGNAL(released()), SLOT(released()));
     button[buttonCount]->setFont(QFont("Helvetica", 12, QFont::Bold));
-    button[buttonCount]->setText(text ? text : "?" );
+    button[buttonCount]->setText(text ? text : "?");
     buttonCount++;
 }
 
@@ -134,31 +135,31 @@ void QChoiceBox::adjustSize() {
     }
 
     label->adjustSize();
-        
+
     QString labelStr = label->text();
     int nlines = labelStr.contains('\n');
     QFontMetrics fm = label->fontMetrics();
     nlines += 2;
     int w = QMAX(w_buttons, label->width());
-    int h = button[0]->height() + fm.lineSpacing()*nlines;
-    resize( w + w/3, h + h/3 );
+    int h = button[0]->height() + fm.lineSpacing() * nlines;
+    resize(w + w / 3, h + h / 3);
 }
 
-void QChoiceBox::resizeEvent( QResizeEvent * ) {
+void QChoiceBox::resizeEvent(QResizeEvent *) {
     int i;
-    
+
     for (i = 0; i < buttonCount; i++) {
         button[i]->adjustSize();
     }
     label->adjustSize();
-    int h = (height() - button[0]->height() - label->height())/3;
+    int h = (height() - button[0]->height() - label->height()) / 3;
     int x = 10;
 
     for (i = 0; i < buttonCount; i++) {
         button[i]->move(x, height() - h - button[i]->height());
         x += button[i]->width() + 10;
     }
-    label->move( 10, h );
+    label->move(10, h);
 }
 
 void QChoiceBox::pressed() {
@@ -188,7 +189,7 @@ void QChoiceBox::clicked() {
 int DLGPickChoice(GView *v, char *ATitle, int NSel, va_list ap, int Flags) {
     QChoiceBox *cb = new QChoiceBox();
     CHECK_PTR(cb);
-    cb->setCaption( ATitle );
+    cb->setCaption(ATitle);
 
     for (int i = 0; i < NSel; i++)
         cb->addButton(va_arg(ap, char *));
@@ -197,11 +198,11 @@ int DLGPickChoice(GView *v, char *ATitle, int NSel, va_list ap, int Flags) {
     char *fmt;
     fmt = va_arg(ap, char *);
     vsprintf(msg, fmt, ap);
-    
+
     cb->setText(msg);
-    
+
     int retcode = cb->exec();
-    
+
     delete cb;
     if (retcode == QDialog::Accepted)
         return cb->getChoice();
@@ -209,12 +210,12 @@ int DLGPickChoice(GView *v, char *ATitle, int NSel, va_list ap, int Flags) {
 }
 
 int DLGGetFind(GView *View, SearchReplaceOptions &sr) {
-    assert(1==0);
+    assert(1 == 0);
     return 0;
 }
 
 int DLGGetFindReplace(GView *View, SearchReplaceOptions &sr) {
-    assert(1==0);
+    assert(1 == 0);
     return 0;
 }
 

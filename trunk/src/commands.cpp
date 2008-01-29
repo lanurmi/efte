@@ -10,7 +10,7 @@
 #include "fte.h"
 
 int GetDefaultDirectory(EModel *M, char *Path, int MaxLen) {
-    if (M) 
+    if (M)
         M->GetPath(Path, MaxLen);
     if (!M || Path[0] == 0)
         if (ExpandPath(".", Path, MaxLen) == -1)
@@ -21,7 +21,7 @@ int GetDefaultDirectory(EModel *M, char *Path, int MaxLen) {
 
 int SetDefaultDirectory(EModel *M) {
     char Path[MAXPATH];
-    
+
     if (GetDefaultDirectory(M, Path, sizeof(Path)) == 0)
         return 0;
     if (ChangeDir(Path) == -1)

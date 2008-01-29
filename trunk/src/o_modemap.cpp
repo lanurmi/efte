@@ -29,12 +29,12 @@ void EventMapView::DumpKey(const char *aPrefix, EKey *Key) {
     char Entry[2048] = "";
     char *p;
     int id;
-    
+
     if (aPrefix) {
         strcpy(KeyName, aPrefix);
         strcat(KeyName, "_");
     }
-    GetKeyName(KeyName + strlen(KeyName), sizeof(KeyName)-strlen(KeyName), Key->fKey);
+    GetKeyName(KeyName + strlen(KeyName), sizeof(KeyName) - strlen(KeyName), Key->fKey);
     sprintf(Entry, "%13s   ", KeyName);
     id = Key->Cmd;
     for (int i = 0; i < Macros[id].Count; i++) {
@@ -63,20 +63,20 @@ void EventMapView::DumpKey(const char *aPrefix, EKey *Key) {
     }
     AddLine(Entry);
 }
-    
+
 void EventMapView::DumpMap(const char *aPrefix, EKeyMap *aKeyMap) {
     EKey *Key;
-    
+
     Key = aKeyMap->fKeys;
     while (Key) {
         if (Key->fKeyMap) {
             char Prefix[32] = "";
-            
+
             if (aPrefix) {
                 strcpy(Prefix, aPrefix);
                 strcat(Prefix, "_");
             }
-            GetKeyName(Prefix + strlen(Prefix), sizeof(Prefix)-strlen(Prefix), Key->fKey);
+            GetKeyName(Prefix + strlen(Prefix), sizeof(Prefix) - strlen(Prefix), Key->fKey);
             DumpMap(Prefix, Key->fKeyMap);
         } else {
             DumpKey(aPrefix, Key);
@@ -84,10 +84,10 @@ void EventMapView::DumpMap(const char *aPrefix, EKeyMap *aKeyMap) {
         Key = Key->fNext;
     }
 }
-    
+
 void EventMapView::DumpEventMap(EEventMap *aEventMap) {
     char name[256];
-    
+
     while (aEventMap) {
         strcpy(name, aEventMap->Name);
         if (aEventMap->Parent) {
@@ -144,7 +144,7 @@ int EventMapView::GetContext() {
 }
 
 void EventMapView::DrawLine(PCell B, int Line, int Col, ChColor color, int Width) {
-    if (Line < BCount) 
+    if (Line < BCount)
         if (Col < int(strlen(BList[Line])))
             MoveStr(B, 0, Width, BList[Line] + Col, color, Width);
 }
@@ -167,7 +167,7 @@ void EventMapView::GetName(char *AName, int MaxLen) {
 }
 
 void EventMapView::GetInfo(char *AInfo, int /*MaxLen*/) {
-    sprintf(AInfo, 
+    sprintf(AInfo,
             "%2d %04d/%03d EventMapView (%s)",
             ModelNo,
             Row + 1, Count,

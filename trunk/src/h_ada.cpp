@@ -25,7 +25,7 @@ int Hilit_ADA(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line,
 
     C = 0;
     NC = 0;
-    for(i = 0; i < Line->Count;) {
+    for (i = 0; i < Line->Count;) {
         if (*p != ' ' && *p != 9) firstnw++;
         IF_TAB() else {
             switch (State) {
@@ -34,9 +34,9 @@ int Hilit_ADA(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line,
                 if (isalpha(*p) || *p == '_') {
                     j = 0;
                     while (((i + j) < Line->Count) &&
-                           (isalnum(Line->Chars[i+j]) ||
-                            (Line->Chars[i + j] == '_') ||
-                            (Line->Chars[i + j] == '\''))
+                            (isalnum(Line->Chars[i+j]) ||
+                             (Line->Chars[i + j] == '_') ||
+                             (Line->Chars[i + j] == '\''))
                           ) j++;
                     if (BF->GetHilitWord(j, &Line->Chars[i], Color, 1)) {
                         State = hsAda_Keyword;
@@ -44,7 +44,7 @@ int Hilit_ADA(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line,
                         int x;
                         x = i + j;
                         while ((x < Line->Count) &&
-                               ((Line->Chars[x] == ' ') || (Line->Chars[x] == 9))) x++;
+                                ((Line->Chars[x] == ' ') || (Line->Chars[x] == 9))) x++;
                         if ((x < Line->Count) && (Line->Chars[x] == '(')) {
                             Color = CLR_Function;
                         } else {
@@ -62,12 +62,12 @@ int Hilit_ADA(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line,
                     C += j;
                     State = hsAda_Normal;
                     continue;
-                } else if ((len >= 2) && (*p == '-') && (*(p+1) == '-')) {
+                } else if ((len >= 2) && (*p == '-') && (*(p + 1) == '-')) {
                     State = hsAda_CommentL;
                     Color = CLR_Comment;
-                //hilit2:
+                    //hilit2:
                     ColorNext();
-                hilit:
+hilit:
                     ColorNext();
                     continue;
                 } else if (isdigit(*p)) {

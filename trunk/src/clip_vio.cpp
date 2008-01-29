@@ -32,16 +32,16 @@ int GetClipText(ClipData *cd) {
     int rc;
     ULONG PostCount;
     char *mem;
-    
+
     rc = DosOpenMutexSem(SEM_PREFIX "CLIPSYN", &hmtxSyn);
     if (rc != 0) return -1;
     rc = DosOpenEventSem(SEM_PREFIX "CLIPGET", &hevGet);
     if (rc != 0) return -1;
-/*    rc = DosOpenEventSem(SEM_PREFIX "CLIPPUT", &hevPut);*/
-/*    if (rc != 0) return -1;*/
+    /*    rc = DosOpenEventSem(SEM_PREFIX "CLIPPUT", &hevPut);*/
+    /*    if (rc != 0) return -1;*/
     rc = DosOpenEventSem(SEM_PREFIX "CLIPEND", &hevEnd);
     if (rc != 0) return -1;
-    
+
     DosRequestMutexSem(hmtxSyn, SEM_INDEFINITE_WAIT);
     DosResetEventSem(hevEnd, &PostCount);
     DosPostEventSem(hevGet);
@@ -56,7 +56,7 @@ int GetClipText(ClipData *cd) {
     }
     DosPostEventSem(hevGet);
     DosReleaseMutexSem(hmtxSyn);
-/*    DosCloseEventSem(hevPut);*/
+    /*    DosCloseEventSem(hevPut);*/
     DosCloseEventSem(hevGet);
     DosCloseEventSem(hevEnd);
     DosCloseMutexSem(hmtxSyn);
@@ -67,23 +67,22 @@ int PutClipText(ClipData *cd) {
     int rc;
     ULONG PostCount;
     char *mem;
-    
+
     rc = DosOpenMutexSem(SEM_PREFIX "CLIPSYN", &hmtxSyn);
     if (rc != 0) return -1;
-/*    rc = DosOpenEventSem(SEM_PREFIX "CLIPGET", &hevGet);*/
-/*    if (rc != 0) return -1;*/
+    /*    rc = DosOpenEventSem(SEM_PREFIX "CLIPGET", &hevGet);*/
+    /*    if (rc != 0) return -1;*/
     rc = DosOpenEventSem(SEM_PREFIX "CLIPPUT", &hevPut);
     if (rc != 0) return -1;
     rc = DosOpenEventSem(SEM_PREFIX "CLIPEND", &hevEnd);
     if (rc != 0) return -1;
-    
+
     DosRequestMutexSem(hmtxSyn, SEM_INDEFINITE_WAIT);
     DosResetEventSem(hevEnd, &PostCount);
     if (0 == DosAllocSharedMem((void **)&mem,
                                MEM_PREFIX "CLIPDATA",
                                cd->fLen + 5,
-                               PAG_COMMIT | PAG_READ | PAG_WRITE))
-    {
+                               PAG_COMMIT | PAG_READ | PAG_WRITE)) {
         ULONG L = cd->fLen;
         memcpy((void *)mem, (void *)&L, 4);
         strcpy(mem + 4, cd->fChar);
@@ -93,11 +92,11 @@ int PutClipText(ClipData *cd) {
     DosPostEventSem(hevPut);
     DosReleaseMutexSem(hmtxSyn);
     DosCloseEventSem(hevPut);
-/*    DosCloseEventSem(hevGet); */
+    /*    DosCloseEventSem(hevGet); */
     DosCloseEventSem(hevEnd);
     DosCloseMutexSem(hmtxSyn);
     if (mem)
         DosFreeMem(mem);
     return 0;
-    
+
 }

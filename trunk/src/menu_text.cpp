@@ -33,7 +33,7 @@ public:
 static int GetHOfsItem(int id, int cur) {
     int pos = 2;
     int i, len;
-    
+
     for (i = 0; i < Menus[id].Count; i++) {
         if (i == cur) return pos;
         if (Menus[id].Items[i].Name) {
@@ -48,13 +48,13 @@ static int GetHOfsItem(int id, int cur) {
 static int GetHPosItem(int id, int X) {
     int pos = 1;
     int i, len;
-    
+
     for (i = 0; i < Menus[id].Count; i++) {
         if (Menus[id].Items[i].Name) {
             len = CStrLen(Menus[id].Items[i].Name);
             if (X >= pos && X <= pos + len + 1) return i;
             pos += len + 2;
-        } else 
+        } else
             pos++;
     }
     return -1;
@@ -66,9 +66,9 @@ static int DrawHMenu(int x, int y, int id, int active) {
     int i, len;
     TAttr color1, color2;
     int Cols, Rows;
-    
+
     ConQuerySize(&Cols, &Rows);
-    
+
     MoveChar(B, 0, Cols, ' ', hcMenu_Background, Cols);
     if (id != -1) {
         for (i = 0; i < Menus[id].Count; i++) {
@@ -79,7 +79,7 @@ static int DrawHMenu(int x, int y, int id, int active) {
                 color1 = hcMenu_NormalItem;
                 color2 = hcMenu_NormalChar;
             }
-            
+
             if (Menus[id].Items[i].Name) {
                 len = CStrLen(Menus[id].Items[i].Name);
                 MoveChar(B, pos, Cols, ' ', color1, len + 2);
@@ -105,7 +105,7 @@ static int GetVPosItem(int id, int w, int X, int Y) {
 static int GetVSize(int id, int &X, int &Y) {
     int xsize = 0;
     int len;
-    
+
     Y = Menus[id].Count;
     for (int i = 0; i < Y; i++) {
         len = 0;
@@ -124,9 +124,9 @@ static int DrawVMenu(int x, int y, int id, int active) {
     int i, len;
     TAttr color1, color2;
     int w, h;
-    
+
     if (id == -1) return -1;
-    
+
     GetVSize(id, w, h);
     w += 4;
     h += 2;
@@ -147,16 +147,16 @@ static int DrawVMenu(int x, int y, int id, int active) {
             char name[128];
             char *arg = 0;
             int len2 = 0;
-            
+
             strcpy(name, Menus[id].Items[i].Name);
             arg = strchr(name, '\t');
             if (arg)
                 *arg++ = 0;
 
             len = CStrLen(name);
-            if (arg) 
+            if (arg)
                 len2 = CStrLen(arg);
-            
+
             MoveChar(B, 0, w, ' ', color1, w);
             MoveCh(B, ConGetDrawChar(DCH_V), hcMenu_Background, 1);
             MoveCh(B + w - 1, ConGetDrawChar(DCH_V), hcMenu_Background, 1);
@@ -164,7 +164,7 @@ static int DrawVMenu(int x, int y, int id, int active) {
             MoveCStr(B, 2, len + 2, Menus[id].Items[i].Name, color1, color2, len);
             if (arg)
                 MoveCStr(B, w - len2 - 2, w + 4, arg, color1, color2, len2);
-            
+
             if (Menus[id].Items[i].SubMenu != -1) {
                 MoveCh(B + w - 2, ConGetDrawChar(DCH_RPTR), color1, 1);
             }
@@ -194,21 +194,21 @@ int ExecVertMenu(int x, int y, int id, TEvent &E, UpMenu *up) {
     int dovert = 0;
     int rx;
     int Cols, Rows;
-    
+
     ConQuerySize(&Cols, &Rows);
-    
+
     here.up = up;
-    
+
     if (x < 0) x = 0;
     if (y < 0) y = 0;
 
     GetVSize(id, w, h);
     w += 4;
     h += 2;
-    
+
     if (w > Cols) w = Cols;
     if (h > Rows) h = Rows;
-    
+
     if (x + w > Cols)
         if (up && up->x == 0 && up->y == 0 && up->h == 1) {
             x = Cols - w;
@@ -226,24 +226,24 @@ int ExecVertMenu(int x, int y, int id, TEvent &E, UpMenu *up) {
         }
     if (x < 0) x = 0;
     if (y < 0) y = 0;
-    
+
     here.x = x;
     here.y = y;
     here.w = w;
     here.h = h;
     here.id = id;
     here.vert = 1;
-    
+
     c = (PCell) malloc(w * h * sizeof(TCell));
     if (c)
         ConGetBox(x, y, w, h, c);
-    
+
     SaveC = c;
     SaveX = x;
     SaveY = y;
     SaveW = w;
     SaveH = h;
-    
+
     if (E.What == evMouseMove || E.What == evMouseDown) {
     }
     if (E.What & evMouse) {
@@ -289,29 +289,31 @@ int ExecVertMenu(int x, int y, int id, TEvent &E, UpMenu *up) {
         case evKeyDown:
             switch (kbCode(E.Key.Code)) {
             case kbPgDn:
-            case kbEnd: cur = Menus[id].Count;
-            case kbUp: 
-                {
-                    int xcur = cur;
-                    
-                    do {
-                        cur--;
-                        if (cur < 0) cur = Menus[id].Count - 1;
-                    } while (cur != xcur && Menus[id].Items[cur].Name == 0);
-                }
-                break;
+            case kbEnd:
+                cur = Menus[id].Count;
+            case kbUp: {
+                int xcur = cur;
+
+                do {
+                    cur--;
+                    if (cur < 0) cur = Menus[id].Count - 1;
+                } while (cur != xcur && Menus[id].Items[cur].Name == 0);
+            }
+            break;
             case kbPgUp:
-            case kbHome: cur = -1;
-            case kbDown: 
-                {
-                    int xcur = cur;
-                    do {
-                        cur++;
-                        if (cur >= Menus[id].Count) cur = 0;
-                    } while (cur != xcur && Menus[id].Items[cur].Name == 0);
-                }
+            case kbHome:
+                cur = -1;
+            case kbDown: {
+                int xcur = cur;
+                do {
+                    cur++;
+                    if (cur >= Menus[id].Count) cur = 0;
+                } while (cur != xcur && Menus[id].Items[cur].Name == 0);
+            }
+            break;
+            case kbEsc:
+                abort = -1;
                 break;
-            case kbEsc: abort = -1; break;
             case kbEnter:
                 if (cur != -1) {
                     if (Menus[id].Items[cur].SubMenu < 0) {
@@ -333,9 +335,9 @@ int ExecVertMenu(int x, int y, int id, TEvent &E, UpMenu *up) {
                 if (isAscii(E.Key.Code)) {
                     char cc;
                     int i;
-                    
+
                     cc = char(toupper(char(E.Key.Code & 0xFF)));
-                    
+
                     for (i = 0; i < Menus[id].Count; i++) {
                         if (Menus[id].Items[i].Name) {
                             char *o = strchr(Menus[id].Items[i].Name, '&');
@@ -361,11 +363,10 @@ int ExecVertMenu(int x, int y, int id, TEvent &E, UpMenu *up) {
             break;
         case evMouseDown:
             if (E.Mouse.X >= x && E.Mouse.Y >= y &&
-                E.Mouse.X < x + w && E.Mouse.Y < y + h) 
-            {
+                    E.Mouse.X < x + w && E.Mouse.Y < y + h) {
                 cur = GetVPosItem(id, w, E.Mouse.X - x, E.Mouse.Y - y);
             } else {
-                if (up) 
+                if (up)
                     gui->ConPutEvent(E);
                 abort = -1;
             }
@@ -376,18 +377,16 @@ int ExecVertMenu(int x, int y, int id, TEvent &E, UpMenu *up) {
             if (E.Mouse.Buttons)  {
                 dovert = 1;
                 if (E.Mouse.X >= x && E.Mouse.Y >= y &&
-                    E.Mouse.X < x + w && E.Mouse.Y < y + h)
-                {
+                        E.Mouse.X < x + w && E.Mouse.Y < y + h) {
                     cur = GetVPosItem(id, w, E.Mouse.X - x, E.Mouse.Y - y);
                 } else {
                     UpMenu *p = up;
                     int first = 1;
-                    
+
                     if (wasmouse) {
                         while (p) {
                             if (E.Mouse.X >= p->x && E.Mouse.Y >= p->y &&
-                                E.Mouse.X < p->x + p->w && E.Mouse.Y < p->y + p->h)
-                            {
+                                    E.Mouse.X < p->x + p->w && E.Mouse.Y < p->y + p->h) {
                                 if (first == 1) {
                                     if (p->vert) {
                                         int i = GetVPosItem(p->id, p->w, E.Mouse.X - p->x, E.Mouse.Y - p->y);
@@ -415,8 +414,7 @@ int ExecVertMenu(int x, int y, int id, TEvent &E, UpMenu *up) {
             break;
         case evMouseUp:
             if (E.Mouse.X >= x && E.Mouse.Y >= y &&
-                E.Mouse.X < x + w && E.Mouse.Y < y + h)
-            {
+                    E.Mouse.X < x + w && E.Mouse.Y < y + h) {
                 cur = GetVPosItem(id, w, E.Mouse.X - x, E.Mouse.Y - y);
             }
             if (cur == -1) {
@@ -424,8 +422,7 @@ int ExecVertMenu(int x, int y, int id, TEvent &E, UpMenu *up) {
                     UpMenu *p = up;
                     cur = 0;
                     if (E.Mouse.X >= p->x && E.Mouse.Y >= p->y &&
-                        E.Mouse.X < p->x + p->w && E.Mouse.Y < p->y + p->h)
-                    {
+                            E.Mouse.X < p->x + p->w && E.Mouse.Y < p->y + p->h) {
                         if (p->vert) {
                             int i = GetVPosItem(p->id, p->w, E.Mouse.X - p->x, E.Mouse.Y - p->y);
                             if (i != -1)
@@ -440,15 +437,14 @@ int ExecVertMenu(int x, int y, int id, TEvent &E, UpMenu *up) {
                 } else
                     abort = -1;
                 if (E.Mouse.X >= x && E.Mouse.Y >= y &&
-                    E.Mouse.X < x + w && E.Mouse.Y < y + h);
+                        E.Mouse.X < x + w && E.Mouse.Y < y + h);
                 else {
                     gui->ConPutEvent(E);
                     abort = -3;
                 }
             } else {
                 if (Menus[id].Items[cur].Name != 0 &&
-                    Menus[id].Items[cur].SubMenu == -1)
-                {
+                        Menus[id].Items[cur].SubMenu == -1) {
                     E.What = evCommand;
                     E.Msg.View = frames->Active;
                     E.Msg.Command = Menus[id].Items[cur].Cmd;
@@ -478,21 +474,21 @@ int ExecMainMenu(TEvent &E, char sub) {
     static UpMenu top = { 0, 0, 0, 0, 0, 0, 1 };
     PCell topline[ConMaxCols];
     int Cols, Rows;
-    
+
     ConQuerySize(&Cols, &Rows);
-    
+
     top.x = 0;
     top.y = 0;
     top.h = 1;
     top.w = Cols;
     top.id = id;
     top.vert = 0;
-    
+
     ConGetBox(0, 0, Cols, 1, (PCell) topline);
-    
+
     if (sub != 0) {
         int i;
-        
+
         for (i = 0; i < Menus[id].Count; i++) {
             if (Menus[id].Items[i].Name) {
                 char *o = strchr(Menus[id].Items[i].Name, '&');
@@ -542,7 +538,8 @@ int ExecMainMenu(TEvent &E, char sub) {
             break;
         case evKeyDown:
             switch (kbCode(E.Key.Code)) {
-            case kbEnd: cur = Menus[id].Count;
+            case kbEnd:
+                cur = Menus[id].Count;
             case kbLeft:
                 dovert = 1;
                 {
@@ -553,7 +550,8 @@ int ExecMainMenu(TEvent &E, char sub) {
                     } while (cur != x && Menus[id].Items[cur].Name == 0);
                 }
                 break;
-            case kbHome: cur = -1;
+            case kbHome:
+                cur = -1;
             case kbRight:
                 dovert = 1;
                 {
@@ -564,7 +562,10 @@ int ExecMainMenu(TEvent &E, char sub) {
                     } while (cur != x && Menus[id].Items[cur].Name == 0);
                 }
                 break;
-            case kbEsc: abort = -1; dovert = 0; break;
+            case kbEsc:
+                abort = -1;
+                dovert = 0;
+                break;
             case kbEnter:
                 if (cur != -1) {
                     if (Menus[id].Items[cur].SubMenu == -1) {
@@ -581,9 +582,9 @@ int ExecMainMenu(TEvent &E, char sub) {
                 if (isAscii(E.Key.Code)) {
                     char cc;
                     int i;
-                    
+
                     cc = char(toupper(char(E.Key.Code & 0xFF)));
-                    
+
                     for (i = 0; i < Menus[id].Count; i++) {
                         if (Menus[id].Items[i].Name) {
                             char *o = strchr(Menus[id].Items[i].Name, '&');
@@ -637,8 +638,7 @@ int ExecMainMenu(TEvent &E, char sub) {
                 abort = -1;
             else {
                 if (Menus[id].Items[cur].Name != 0 &&
-                    Menus[id].Items[cur].SubMenu == -1) 
-                {
+                        Menus[id].Items[cur].SubMenu == -1) {
                     E.What = evCommand;
                     E.Msg.View = frames->Active;
                     E.Msg.Command = Menus[id].Items[cur].Cmd;

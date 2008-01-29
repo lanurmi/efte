@@ -32,12 +32,11 @@ int UnTabStr(char *dest, int maxlen, const char *source, int slen) {
 }
 
 #if !defined(HAVE_STRLCPY)
-size_t strlcpy(char *dst, const char *src, size_t size)
-{
+size_t strlcpy(char *dst, const char *src, size_t size) {
     size_t ret = strlen(src);
 
     if (size) {
-        size_t len = (ret >= size) ? size-1 : ret;
+        size_t len = (ret >= size) ? size - 1 : ret;
         memcpy(dst, src, len);
         dst[len] = '\0';
     }
@@ -47,13 +46,12 @@ size_t strlcpy(char *dst, const char *src, size_t size)
 #endif // !HAVE_STRLCPY
 
 #if !defined(HAVE_STRLCAT)
-size_t strlcat(char *dst, const char *src, size_t size)
-{
+size_t strlcat(char *dst, const char *src, size_t size) {
     size_t dst_len = strlen(dst);
     size_t src_len = strlen(src);
 
     if (size) {
-        size_t len = (src_len >= size-dst_len) ? (size-dst_len-1) : src_len;
+        size_t len = (src_len >= size - dst_len) ? (size - dst_len - 1) : src_len;
         memcpy(&dst[dst_len], src, len);
         dst[dst_len + len] = '\0';
     }

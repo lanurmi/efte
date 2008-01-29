@@ -19,15 +19,15 @@ public:
     int OldRow, OldTopRow, OldLeftCol, OldCount;
     EListPort(EList *L, EView *V);
     virtual ~EListPort();
-    
+
     void StorePos();
     void GetPos();
-    
+
     virtual void HandleEvent(TEvent &Event);
     virtual void HandleMouse(TEvent &Event);
 
     void PaintView(int PaintAll);
-    
+
     virtual void UpdateView();
     virtual void RepaintView();
     virtual void UpdateStatus();
@@ -44,20 +44,20 @@ public:
 
     EList(int createFlags, EModel **ARoot, const char *aTitle);
     virtual ~EList();
-    
+
     virtual EViewPort *CreateViewPort(EView *V);
     EListPort *GetViewVPort(EView *V);
     EListPort *GetVPort();
-    
+
     void SetTitle(char *ATitle);
-    
+
     virtual int ExecCommand(int Command, ExState &State);
     virtual EEventMap *GetEventMap();
     virtual int GetContext();
     virtual int BeginMacro();
     void HandleEvent(TEvent &Event);
 
-    
+
     virtual void DrawLine(PCell B, int Line, int Col, ChColor color, int Width);
     virtual char *FormatLine(int Line);
     virtual int IsHilited(int Line);
@@ -67,7 +67,9 @@ public:
 
     int SetPos(int ARow, int ACol);
     void FixPos();
-    virtual int GetRowLength(int ARow) { return 0; };
+    virtual int GetRowLength(int ARow) {
+        return 0;
+    };
 
     virtual void RescanList();
     virtual void UpdateList();

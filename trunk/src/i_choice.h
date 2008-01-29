@@ -20,12 +20,14 @@ public:
     int lTitle;
     int lChoice;
     int MouseCaptured;
-    
+
     ExChoice(const char *ATitle, int NSel, va_list ap /* choices, format, args */);
     virtual ~ExChoice();
     virtual void Activate(int gotfocus);
-    
-    virtual ExView* GetViewContext() { return Next; }
+
+    virtual ExView* GetViewContext() {
+        return Next;
+    }
     virtual int BeginMacro();
     int FindChoiceByPoint(int x, int y);
     virtual void HandleEvent(TEvent &Event);

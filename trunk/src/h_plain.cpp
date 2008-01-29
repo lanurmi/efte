@@ -15,17 +15,16 @@ int Hilit_Plain(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine* Lin
     HILIT_VARS(BF->Mode->fColorize->Colors, Line);
 
     int j = 0;
-    
+
     if (BF->Mode->fColorize->Keywords.TotalCount > 0 ||
-        BF->WordCount > 0)
-    { /* words have to be hilited, go slow */
-        for(i = 0; i < Line->Count;) {
+            BF->WordCount > 0) { /* words have to be hilited, go slow */
+        for (i = 0; i < Line->Count;) {
             IF_TAB() else {
                 if (isalpha(*p) || (*p == '_')) {
                     j = 0;
                     while (((i + j) < Line->Count) &&
-                           (isalnum(Line->Chars[i+j]) ||
-                            (Line->Chars[i + j] == '_'))
+                            (isalnum(Line->Chars[i+j]) ||
+                             (Line->Chars[i + j] == '_'))
                           ) j++;
                     if (BF->GetHilitWord(j, Line->Chars + i, Color, 1)) ;
                     else {
