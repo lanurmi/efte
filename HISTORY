@@ -23,6 +23,7 @@ Revision history
   + Added DesktopLoad command
   + Added oinclude command
   + Modes are now user configurable w/o need to edit actual mode file
+  - Cleaned up code a bit with manual and automatic formatting (astyle)
 
 0.50.1 -- January 17, 2008
   - Forked from FTE (http://fte.sourceforge.net)
