@@ -570,7 +570,7 @@ int EBuffer::Find(SearchReplaceOptions &opt) {
                         ch = 'N';
                         break;
                     case 4:
-                    case - 1:
+                    case -1:
                     default:
                         ch = 'Q';
                         break;
@@ -667,7 +667,7 @@ try_join:
                         ch = 'N';
                         break;
                     case 4:
-                    case - 1:
+                    case -1:
                     default:
                         ch = 'Q';
                         break;
@@ -735,7 +735,7 @@ try_delete:
                         ch = 'N';
                         break;
                     case 4:
-                    case - 1:
+                    case -1:
                     default:
                         ch = 'Q';
                         break;

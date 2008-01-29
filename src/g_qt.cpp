@@ -2006,7 +2006,7 @@ int GUI::OpenPipe(char *Command, EModel *notify) {
                 return -1;
 
             switch (Pipes[i].pid = fork()) {
-            case - 1: /* fail */
+            case -1: /* fail */
                 return -1;
             case 0: /* child */
                 close(pfd[0]);

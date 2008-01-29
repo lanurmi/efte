@@ -452,7 +452,7 @@ int EBuffer::SaveTo(char *AFileName) {
             case 0:
                 break;
             case 1:
-            case - 1:
+            case -1:
             default:
                 return 0;
             }

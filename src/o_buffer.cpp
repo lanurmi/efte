@@ -1074,7 +1074,7 @@ int EBuffer::FileReload(ExState &/*State*/) {
         case 0:
             break;
         case 1:
-        case - 1:
+        case -1:
         default:
             return 0;
         }
@@ -1100,7 +1100,7 @@ int EBuffer::FileSaveAs(char *FName) {
             case 0:
                 break;
             case 1:
-            case - 1:
+            case -1:
             default:
                 return 0;
 
@@ -1143,7 +1143,7 @@ int EBuffer::FileWriteTo(char *FName) {
             case 0:
                 break;
             case 1:
-            case - 1:
+            case -1:
             default:
                 return 0;
             }
@@ -1225,7 +1225,7 @@ int EBuffer::BlockWrite(ExState &State) {
                 Append = 1;
                 break;
             case 2:
-            case - 1:
+            case -1:
             default:
                 return 0;
 
@@ -1491,7 +1491,7 @@ int EBuffer::ConfQuit(GxView *V, int multiFile) {
             case 3: /* Discard */
                 break;
             case 4: /* Cancel */
-            case - 1:
+            case -1:
             default:
                 return 0;
             }
@@ -1517,7 +1517,7 @@ int EBuffer::ConfQuit(GxView *V, int multiFile) {
             case 2: /* Discard */
                 break;
             case 3: /* Cancel */
-            case - 1:
+            case -1:
             default:
                 return 0;
             }
