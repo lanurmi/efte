@@ -42,8 +42,8 @@ int Hilit_IPF(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line,
                 if (isalpha(*p) || *p == '_') {
                     j = 0;
                     while (((i + j) < Line->Count) &&
-                           (isalnum(Line->Chars[i+j]) ||
-                            (Line->Chars[i + j] == '_'))
+                            (isalnum(Line->Chars[i+j]) ||
+                             (Line->Chars[i + j] == '_'))
                           ) j++;
                     if (BF->GetHilitWord(j, &Line->Chars[i], Color, 1)) {
                     }
@@ -90,7 +90,7 @@ int Hilit_IPF(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line,
             default:
                 State = hsIPF_Normal;
                 Color = CLR_Normal;
-            hilit:
+hilit:
                 ColorNext();
                 continue;
             }

@@ -37,19 +37,21 @@ int EBuffer::BeginUndo() {
 
 int EBuffer::EndUndo() {
     int N = US.Num - 1;
-    
+
     assert(N >= 0);
     if (N >= 1) {
         int Order = 1;
-        
+
         while (Order < N) Order <<= 1;
 
         US.Data = (void **) realloc(US.Data, sizeof(void *) * Order);
         US.Top = (int *) realloc(US.Top, sizeof(int) * Order);
         US.Num--;
     } else {
-        free(US.Data); US.Data = 0;
-        free(US.Top); US.Top = 0;
+        free(US.Data);
+        US.Data = 0;
+        free(US.Top);
+        US.Top = 0;
         US.Num = 0;
     }
     return 1;
@@ -68,7 +70,7 @@ int EBuffer::PushUChar(unsigned char ch) {
 int EBuffer::PushUData(void *data, int len) {
     int N;
     int Order = 1;
-    
+
 //    printf("UPUSH: %d %c\n", len, *(char *)data); fflush(stdout);
 
     if (BFI(this, BFI_Undo) == 0) return 0;
@@ -103,10 +105,10 @@ int EBuffer::PushUData(void *data, int len) {
         }
         US.NextCmd = 0;
     }
-    
+
     N = US.Num - 1;
     assert(N >= 0);
-    
+
     if (US.Undo == 0) US.UndoPtr = US.Num;
 
     while (Order < (US.Top[N] + len)) Order <<= 1;
@@ -118,7 +120,7 @@ int EBuffer::PushUData(void *data, int len) {
 
 int EBuffer::GetUData(int No, int pos, void **data, int len) {
     int N;
-    
+
     if (No == -1)
         N = US.Num - 1;
     else
@@ -128,15 +130,15 @@ int EBuffer::GetUData(int No, int pos, void **data, int len) {
     if (N < 0) return 0;
     if (US.Data[N] == 0) return 0;
     if (US.Top[N] == 0) return 0;
-    
+
     if (pos == -1)
         pos = US.Top[N];
-    
-    
-    if (pos == 0) 
+
+
+    if (pos == 0)
         return 0;
 //    printf("N,pos = %d,%d len = %d\n", N, pos, len);
-    
+
     assert(pos >= len);
     *data = ((char *) US.Data[N]) + pos - len;
     return 1;
@@ -164,20 +166,20 @@ int EBuffer::Undo(int undo) {
     unsigned long ACount;
     unsigned long Col;
     void *data;
-    
+
     int No;
     int Pos;
-    
+
     if (BFI(this, BFI_Undo) == 0)
         return 0;
-    
+
     if (undo)
         No = US.UndoPtr - 1;
     else
         No = US.Num - 1;
-    
+
     Pos = US.Top[No];
-    
+
     if (No == 0 && Pos == 0) {
         //puts("bottom");
         return 0;
@@ -185,26 +187,29 @@ int EBuffer::Undo(int undo) {
 //    for (int i = 0; i < Pos; i++) {
 //        printf("%d: %d\n", i, ((char *)US.Data[No])[i]);
 //    }
-    
+
 //    printf("Undo %d %d,%d\n", undo, No, Pos); fflush(stdout);
-    
+
 //    fprintf(stderr, "\nNo = %d, Num = %d\n", No, US.Num);
     UGETC(rc, No, Pos, UndoCmd);
     while (rc == 1) {
 //        printf("%d Undo %d %d,%d\n", UndoCmd, undo, No, Pos); fflush(stdout);
-  //  for (int i = 0; i < Pos; i++) {
+        //  for (int i = 0; i < Pos; i++) {
 //        printf("%d: %d\n", i, ((char *)US.Data[No])[i]);
 //    }
         switch (UndoCmd) {
         case ucInsLine:
-            UGET(rc, No, Pos, Line); if (rc == 0) return 0;
+            UGET(rc, No, Pos, Line);
+            if (rc == 0) return 0;
 //            printf("\tDelLine %d\n", Line);
             if (DelLine(Line) == 0) return 0;
             break;
-            
+
         case ucDelLine:
-            UGET(rc, No, Pos, Line); if (rc == 0) return 0;
-            UGET(rc, No, Pos, Len); if (rc == 0) return 0;
+            UGET(rc, No, Pos, Line);
+            if (rc == 0) return 0;
+            UGET(rc, No, Pos, Len);
+            if (rc == 0) return 0;
             if (GetUData(No, Pos, &data, Len) == 0) return 0;
 //            printf("\tInsLine %d\n", Line);
             if (InsLine(Line, 0) == 0) return 0;
@@ -212,95 +217,118 @@ int EBuffer::Undo(int undo) {
             if (InsText(Line, 0, Len, (char *) data) == 0) return 0;
             Pos -= Len;
             break;
-            
+
         case ucInsChars:
-            UGET(rc, No, Pos, ACount); if (rc == 0) return 0;
-            UGET(rc, No, Pos, Col); if (rc == 0) return 0;
-            UGET(rc, No, Pos, Line); if (rc == 0) return 0;
+            UGET(rc, No, Pos, ACount);
+            if (rc == 0) return 0;
+            UGET(rc, No, Pos, Col);
+            if (rc == 0) return 0;
+            UGET(rc, No, Pos, Line);
+            if (rc == 0) return 0;
 //            printf("\tDelChars %d %d %d\n", Line, Col, ACount);
             if (DelChars(Line, Col, ACount) == 0) return 0;
             break;
-            
+
         case ucDelChars:
-            UGET(rc, No, Pos, Line); if (rc == 0) return 0;
-            UGET(rc, No, Pos, Col); if (rc == 0) return 0;
-            UGET(rc, No, Pos, ACount); if (rc == 0) return 0;
+            UGET(rc, No, Pos, Line);
+            if (rc == 0) return 0;
+            UGET(rc, No, Pos, Col);
+            if (rc == 0) return 0;
+            UGET(rc, No, Pos, ACount);
+            if (rc == 0) return 0;
             if (GetUData(No, Pos, &data, ACount) == 0) return 0;
 //            printf("\tInsChars %d %d %d\n", Line, Col, ACount);
             if (InsChars(Line, Col, ACount, (char *) data) == 0) return 0;
             Pos -= ACount;
             break;
-            
+
         case ucPosition:
-            UGET(rc, No, Pos, Line); if (rc == 0) return 0;
-            UGET(rc, No, Pos, Col); if (rc == 0) return 0;
+            UGET(rc, No, Pos, Line);
+            if (rc == 0) return 0;
+            UGET(rc, No, Pos, Col);
+            if (rc == 0) return 0;
 //            printf("\tSetPos %d %d\n", Line, Col);
             if (SetPos(Col, Line) == 0) return 0;
             break;
-          
-        case ucBlock: 
-            {
-                EPoint P;
-                unsigned long l;
-                
+
+        case ucBlock: {
+            EPoint P;
+            unsigned long l;
+
 //                printf("\tBlock\n");
-                UGET(rc, No, Pos, l); if (rc == 0) return 0;
-                if (BlockMode != (int)l) BlockRedraw();
-                BlockMode = l;
-                UGET(rc, No, Pos, l); if (rc == 0) return 0;   P.Row = l;
-                UGET(rc, No, Pos, l); if (rc == 0) return 0;   P.Col = l;
-                if (SetBE(P) == 0) return 0;
-                UGET(rc, No, Pos, l); if (rc == 0) return 0;   P.Row = l;
-                UGET(rc, No, Pos, l); if (rc == 0) return 0;   P.Col = l;
-                if (SetBB(P) == 0) return 0;
-            }
-            break;
+            UGET(rc, No, Pos, l);
+            if (rc == 0) return 0;
+            if (BlockMode != (int)l) BlockRedraw();
+            BlockMode = l;
+            UGET(rc, No, Pos, l);
+            if (rc == 0) return 0;
+            P.Row = l;
+            UGET(rc, No, Pos, l);
+            if (rc == 0) return 0;
+            P.Col = l;
+            if (SetBE(P) == 0) return 0;
+            UGET(rc, No, Pos, l);
+            if (rc == 0) return 0;
+            P.Row = l;
+            UGET(rc, No, Pos, l);
+            if (rc == 0) return 0;
+            P.Col = l;
+            if (SetBB(P) == 0) return 0;
+        }
+        break;
 
         case ucFoldCreate:
             // puts("ucFoldCreate");
-            UGET(rc, No, Pos, Line); if (rc == 0) return 0;
+            UGET(rc, No, Pos, Line);
+            if (rc == 0) return 0;
             if (FoldDestroy(Line) == 0) return 0;
             break;
-        
+
         case ucFoldDestroy:
             // puts("ucFoldDestroy");
-            {
-                unsigned long level;
-                int ff;
-                
-                UGET(rc, No, Pos, Line); if (rc == 0) return 0;
-                UGET(rc, No, Pos, level); if (rc == 0) return 0;
-                if (FoldCreate(Line) == 0) return 0;
-                
-                ff = FindFold(Line);
-                assert(ff != -1);
-                FF[ff].level = (unsigned char) level;
-            }
-            break;
+        {
+            unsigned long level;
+            int ff;
+
+            UGET(rc, No, Pos, Line);
+            if (rc == 0) return 0;
+            UGET(rc, No, Pos, level);
+            if (rc == 0) return 0;
+            if (FoldCreate(Line) == 0) return 0;
+
+            ff = FindFold(Line);
+            assert(ff != -1);
+            FF[ff].level = (unsigned char) level;
+        }
+        break;
         case ucFoldPromote:
             // puts("ucFoldPromote");
-            UGET(rc, No, Pos, Line); if (rc == 0) return 0;
+            UGET(rc, No, Pos, Line);
+            if (rc == 0) return 0;
             if (FoldDemote(Line) == 0) return 0;
             break;
-            
+
         case ucFoldDemote:
             // puts("ucFoldDemote");
-            UGET(rc, No, Pos, Line); if (rc == 0) return 0;
+            UGET(rc, No, Pos, Line);
+            if (rc == 0) return 0;
             if (FoldPromote(Line) == 0) return 0;
             break;
-            
+
         case ucFoldOpen:
             // puts("ucFoldOpen");
-            UGET(rc, No, Pos, Line); if (rc == 0) return 0;
+            UGET(rc, No, Pos, Line);
+            if (rc == 0) return 0;
             if (FoldClose(Line) == 0) return 0;
             break;
-            
+
         case ucFoldClose:
             // puts("ucFoldClose");
-            UGET(rc, No, Pos, Line); if (rc == 0) return 0;
+            UGET(rc, No, Pos, Line);
+            if (rc == 0) return 0;
             if (FoldOpen(Line) == 0) return 0;
             break;
-            
+
         case ucModified:
 //            printf("\tModified\n");
             Modified = 0;
@@ -308,37 +336,43 @@ int EBuffer::Undo(int undo) {
 
         case ucPlaceUserBookmark:
             //puts ("ucPlaceUserBookmark");
-            UGET(rc, No, Pos, ACount); if (rc == 0) return 0;
+            UGET(rc, No, Pos, ACount);
+            if (rc == 0) return 0;
             if (GetUData(No, Pos, &data, ACount) == 0) return 0;
             Pos -= ACount;
-            UGET(rc, No, Pos, Col); if (rc == 0) return 0;
-            UGET(rc, No, Pos, Line); if (rc == 0) return 0;
-            if (Col==(unsigned long)-1||Line==(unsigned long)-1) {
-                if (RemoveUserBookmark ((const char *)data)==0) return 0;
+            UGET(rc, No, Pos, Col);
+            if (rc == 0) return 0;
+            UGET(rc, No, Pos, Line);
+            if (rc == 0) return 0;
+            if (Col == (unsigned long) - 1 || Line == (unsigned long) - 1) {
+                if (RemoveUserBookmark((const char *)data) == 0) return 0;
             } else {
-                if (PlaceUserBookmark ((const char *)data,EPoint (Line,Col))==0) return 0;
+                if (PlaceUserBookmark((const char *)data, EPoint(Line, Col)) == 0) return 0;
             }
             break;
 
         case ucRemoveUserBookmark:
             //puts("ucRemoveUserBookmark");
-            UGET(rc, No, Pos, ACount); if (rc == 0) return 0;
+            UGET(rc, No, Pos, ACount);
+            if (rc == 0) return 0;
             if (GetUData(No, Pos, &data, ACount) == 0) return 0;
             Pos -= ACount;
-            UGET(rc, No, Pos, Col); if (rc == 0) return 0;
-            UGET(rc, No, Pos, Line); if (rc == 0) return 0;
-            if (PlaceUserBookmark ((const char *)data,EPoint (Line,Col))==0) return 0;
+            UGET(rc, No, Pos, Col);
+            if (rc == 0) return 0;
+            UGET(rc, No, Pos, Line);
+            if (rc == 0) return 0;
+            if (PlaceUserBookmark((const char *)data, EPoint(Line, Col)) == 0) return 0;
             break;
 
         default:
             assert(1 == "Oops: invalid undo command.\n"[0]);
         }
 //        puts("\tok");
-        
+
 //        fprintf(stderr, "\nNo = %d, Num = %d\n", No, US.Num);
         UGETC(rc, No, Pos, UndoCmd);
     }
-    
+
     if (undo)
         US.UndoPtr--;
     else {
@@ -346,22 +380,22 @@ int EBuffer::Undo(int undo) {
         free(US.Data[No]);
         if (EndUndo() == 0) return 0;
     }
-    
+
     return 1;
 }
 
 int EBuffer::Redo() {
     int rc;
-    
+
     if (BFI(this, BFI_Undo) == 0) return 0;
-    
+
 //    US.NextCmd = 0; // disable auto push position
-    
+
     if (US.Num == 0 || US.UndoPtr == US.Num) {
         Msg(S_INFO, "Nothing to redo.");
         return 0;
     }
-    
+
     US.Record = 0;
     rc =  Undo(0);
     US.Record = 1;
@@ -370,16 +404,16 @@ int EBuffer::Redo() {
 
 int EBuffer::Undo() {
     int rc;
-    
+
     if (BFI(this, BFI_Undo) == 0) return 0;
-    
+
     assert(US.Num >= 0);
     assert(US.UndoPtr >= 0);
     if (US.Num == 0 || US.UndoPtr == 0) {
         Msg(S_INFO, "Nothing to undo.");
         return 0;
     }
-    
+
     US.Undo = 1;
     rc = Undo(1);
     US.Undo = 0;

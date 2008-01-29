@@ -23,10 +23,10 @@ class EFrame: public GFrame {
 public:
     EEventMap *CMap;
     EModel *CModel;
-    
+
     EFrame(int XSize, int YSize);
     virtual ~EFrame();
-    
+
     virtual void Update();
     virtual void UpdateMenu();
 };
@@ -39,7 +39,7 @@ public:
 
     EGUI(int &argc, char **argv, int XSize, int YSize);
     virtual ~EGUI();
-    
+
     virtual int ExecCommand(GxView *view, int Command, ExState &State);
     virtual int ExecMacro(GxView *view, int Macro);
     virtual int BeginMacro(GxView *view);
@@ -48,19 +48,19 @@ public:
     void SetOverrideMap(EKeyMap *aMap, char *ModeName);
     void SetMap(EKeyMap *aMap, KeySel *ks);
 //    void CharEvent(TEvent &Event, char Ch);
-    
+
     void DispatchKey(GxView *view, TEvent &Event);
     void DispatchCommand(GxView *view, TEvent &Event);
-    
+
     virtual void DispatchEvent(GFrame *frame, GView *view, TEvent &Event);
-    
+
     int FileCloseX(EView *View, int CreateNew, int XClose = 0);
     int FileClose(EView *View, ExState &State);
     int FileCloseAll(EView *View, ExState &State);
-    
+
     int WinNext(GxView *view);
     int WinPrev(GxView *view);
-    
+
     int WinHSplit(GxView *View);
     int WinClose(GxView *View);
     int WinZoom(GxView *View);
@@ -71,15 +71,15 @@ public:
     int FrameClose(GxView *View);
     int FrameNext(GxView *View);
     int FramePrev(GxView *View);
-    
+
     int ShowEntryScreen();
     int RunProgram(ExState &State, GxView *view);
     int RunProgramAsync(ExState &State, GxView *view);
-    
+
     int MainMenu(ExState &State, GxView *View);
     int ShowMenu(ExState &State, GxView *View);
     int LocalMenu(GxView *View);
-    
+
     int DesktopSaveAs(ExState &State, GxView *View);
     int DesktopLoad(ExState &State, GxView *View);
 
@@ -93,7 +93,7 @@ public:
 
     void EditorCleanup();
     void InterfaceCleanup();
-    
+
     virtual int Start(int &argc, char **argv);
     virtual void Stop();
 };

@@ -56,7 +56,7 @@ void MoveChar(PCell B, int Pos, int Width, const char CCh, TAttr Attr, int Count
 
 void MoveMem(PCell B, int Pos, int Width, const char* Ch, TAttr Attr, int Count) {
     unsigned char *p = (unsigned char *) B;
-    
+
     if (Pos < 0) {
         Count += Pos;
         Ch -= Pos;
@@ -66,14 +66,14 @@ void MoveMem(PCell B, int Pos, int Width, const char* Ch, TAttr Attr, int Count)
     if (Pos + Count > Width) Count = Width - Pos;
     if (Count <= 0) return;
     for (p += sizeof(TCell) * Pos; Count > 0; Count--) {
-        *p++ = (unsigned char) (*Ch++);
+        *p++ = (unsigned char)(*Ch++);
         *p++ = (unsigned char) Attr;
     }
 }
 
 void MoveStr(PCell B, int Pos, int Width, const char* Ch, TAttr Attr, int MaxCount) {
     unsigned char *p = (unsigned char *) B;
-    
+
     if (Pos < 0) {
         MaxCount += Pos;
         Ch -= Pos;
@@ -83,14 +83,14 @@ void MoveStr(PCell B, int Pos, int Width, const char* Ch, TAttr Attr, int MaxCou
     if (Pos + MaxCount > Width) MaxCount = Width - Pos;
     if (MaxCount <= 0) return;
     for (p += sizeof(TCell) * Pos; MaxCount > 0 && (*Ch != 0); MaxCount--) {
-        *p++ = (unsigned char) (*Ch++);
+        *p++ = (unsigned char)(*Ch++);
         *p++ = (unsigned char) Attr;
     }
 }
 
 void MoveCStr(PCell B, int Pos, int Width, const char* Ch, TAttr A0, TAttr A1, int MaxCount) {
     unsigned char *p = (unsigned char *) B;
-    
+
     char was = 0;
     if (Pos < 0) {
         MaxCount += Pos;
@@ -106,8 +106,8 @@ void MoveCStr(PCell B, int Pos, int Width, const char* Ch, TAttr A0, TAttr A1, i
             MaxCount++;
             was = 1;
             continue;
-        } 
-        *p++ = (unsigned char) (*Ch++);
+        }
+        *p++ = (unsigned char)(*Ch++);
         if (was) {
             *p++ = (unsigned char) A1;
             was = 0;
@@ -118,7 +118,7 @@ void MoveCStr(PCell B, int Pos, int Width, const char* Ch, TAttr A0, TAttr A1, i
 
 void MoveAttr(PCell B, int Pos, int Width, TAttr Attr, int Count) {
     unsigned char *p = (unsigned char *) B;
-    
+
     if (Pos < 0) {
         Count += Pos;
         Pos = 0;
@@ -134,7 +134,7 @@ void MoveAttr(PCell B, int Pos, int Width, TAttr Attr, int Count) {
 
 void MoveBgAttr(PCell B, int Pos, int Width, TAttr Attr, int Count) {
     char *p = (char *) B;
-    
+
     if (Pos < 0) {
         Count += Pos;
         Pos = 0;
@@ -179,7 +179,7 @@ void MoveChar(PCell B, int Pos, int Width, const char Ch, TAttr Attr, int Count)
 
 void MoveMem(PCell B, int Pos, int Width, const char* Ch, TAttr Attr, int Count) {
     PCHAR_INFO p = (PCHAR_INFO) B;
-    
+
     if (Pos < 0) {
         Count += Pos;
         Ch -= Pos;
@@ -197,7 +197,7 @@ void MoveMem(PCell B, int Pos, int Width, const char* Ch, TAttr Attr, int Count)
 
 void MoveStr(PCell B, int Pos, int Width, const char* Ch, TAttr Attr, int MaxCount) {
     PCHAR_INFO p = (PCHAR_INFO) B;
-    
+
     if (Pos < 0) {
         MaxCount += Pos;
         Ch -= Pos;
@@ -217,7 +217,7 @@ void MoveCStr(PCell B, int Pos, int Width, const char* Ch, TAttr A0, TAttr A1, i
     PCHAR_INFO p = (PCHAR_INFO) B;
     char was;
     //TAttr A;
-    
+
     if (Pos < 0) {
         MaxCount += Pos;
         Ch -= Pos;
@@ -233,8 +233,8 @@ void MoveCStr(PCell B, int Pos, int Width, const char* Ch, TAttr A0, TAttr A1, i
             MaxCount++;
             was = 1;
             continue;
-        } 
-        p->Char.AsciiChar = (unsigned char) (*Ch++);
+        }
+        p->Char.AsciiChar = (unsigned char)(*Ch++);
         if (was) {
             p->Attributes = A1;
             was = 0;
@@ -246,7 +246,7 @@ void MoveCStr(PCell B, int Pos, int Width, const char* Ch, TAttr A0, TAttr A1, i
 
 void MoveAttr(PCell B, int Pos, int Width, TAttr Attr, int Count) {
     PCHAR_INFO p = (PCHAR_INFO) B;
-    
+
     if (Pos < 0) {
         Count += Pos;
         Pos = 0;
@@ -260,7 +260,7 @@ void MoveAttr(PCell B, int Pos, int Width, TAttr Attr, int Count) {
 
 void MoveBgAttr(PCell B, int Pos, int Width, TAttr Attr, int Count) {
     PCHAR_INFO p = (PCHAR_INFO) B;
-    
+
     if (Pos < 0) {
         Count += Pos;
         Pos = 0;

@@ -30,21 +30,25 @@ void ExISearch::Activate(int gotfocus) {
     ExView::Activate(gotfocus);
 }
 
-int ExISearch::BeginMacro() { return 1; }
+int ExISearch::BeginMacro() {
+    return 1;
+}
 
 void ExISearch::HandleEvent(TEvent &Event) {
     int Case = BFI(Buffer, BFI_MatchCase) ? 0 : SEARCH_NCASE;
-    
+
     ExView::HandleEvent(Event);
     switch (Event.What) {
     case evKeyDown:
         SetState(IOk);
         switch (kbCode(Event.Key.Code)) {
-        case kbEsc: 
+        case kbEsc:
             Buffer->SetPos(Orig.Col, Orig.Row);
-            EndExec(0); 
+            EndExec(0);
             break;
-        case kbEnter: EndExec(1); break;
+        case kbEnter:
+            EndExec(1);
+            break;
         case kbBackSp:
             if (len > 0) {
                 if (stacklen > 0) {
@@ -122,7 +126,7 @@ void ExISearch::HandleEvent(TEvent &Event) {
         default:
             if (isAscii(Event.Key.Code) && (len < MAXISEARCH)) {
                 char Ch = (char) Event.Key.Code;
-                
+
                 stack[stacklen++] = Buffer->CP;
                 ISearchStr[len++] = Ch;
                 ISearchStr[len] = 0;
@@ -161,16 +165,25 @@ void ExISearch::RepaintStatus() {
     char s[MAXISEARCH + 1];
     const char *p;
     int W, H;
-    
+
     ConQuerySize(&W, &H);
-    
+
     switch (state) {
-    case INoMatch: p = " No Match. "; break;
-    case INoPrev: p = " No Prev Match. "; break;
-    case INoNext: p = " No Next Match. "; break;
-    case IOk: default: p = ""; break;
+    case INoMatch:
+        p = " No Match. ";
+        break;
+    case INoPrev:
+        p = " No Prev Match. ";
+        break;
+    case INoNext:
+        p = " No Next Match. ";
+        break;
+    case IOk:
+    default:
+        p = "";
+        break;
     }
-    
+
     sprintf(s, "ISearch [%s]%s", ISearchStr, p);
     MoveCh(B, ' ', 0x17, W);
     MoveStr(B, 0, W, s, 0x17, W);

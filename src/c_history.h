@@ -18,7 +18,7 @@
 
 typedef struct {
     char *Name;
-    int Row,Col;
+    int Row, Col;
 } HBookmark;
 
 typedef struct {

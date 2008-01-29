@@ -14,32 +14,32 @@ static const struct {
     int Num;
     SyntaxProc Proc;
 } HilitModes[] = {
-{ "PLAIN", HILIT_PLAIN, Hilit_Plain },
-{ "C", HILIT_C, Hilit_C },
-{ "REXX", HILIT_REXX, Hilit_REXX },
-{ "FALCON", HILIT_FALCON, Hilit_FALCON },
-{ "PERL", HILIT_PERL, Hilit_PERL },
-{ "MAKE", HILIT_MAKE, Hilit_MAKE },
-{ "IPF", HILIT_IPF, Hilit_IPF },
-{ "Ada", HILIT_ADA, Hilit_ADA },
-{ "MSG", HILIT_MSG, Hilit_MSG },
-{ "SH", HILIT_SH, Hilit_SH },
-{ "PASCAL", HILIT_PASCAL, Hilit_PASCAL },
-{ "TEX", HILIT_TEX, Hilit_TEX },
-{ "FTE", HILIT_FTE, Hilit_FTE },
-{ "CATBS", HILIT_CATBS, Hilit_CATBS },
-{ "SIMPLE", HILIT_SIMPLE, Hilit_SIMPLE },
+    { "PLAIN", HILIT_PLAIN, Hilit_Plain },
+    { "C", HILIT_C, Hilit_C },
+    { "REXX", HILIT_REXX, Hilit_REXX },
+    { "FALCON", HILIT_FALCON, Hilit_FALCON },
+    { "PERL", HILIT_PERL, Hilit_PERL },
+    { "MAKE", HILIT_MAKE, Hilit_MAKE },
+    { "IPF", HILIT_IPF, Hilit_IPF },
+    { "Ada", HILIT_ADA, Hilit_ADA },
+    { "MSG", HILIT_MSG, Hilit_MSG },
+    { "SH", HILIT_SH, Hilit_SH },
+    { "PASCAL", HILIT_PASCAL, Hilit_PASCAL },
+    { "TEX", HILIT_TEX, Hilit_TEX },
+    { "FTE", HILIT_FTE, Hilit_FTE },
+    { "CATBS", HILIT_CATBS, Hilit_CATBS },
+    { "SIMPLE", HILIT_SIMPLE, Hilit_SIMPLE },
 };
 
 static const struct {
     const char *Name;
     int Num;
 } IndentModes[] = {
-{ "C", INDENT_C },
-{ "REXX", INDENT_REXX },
-{ "FALCON", INDENT_FALCON },
-{ "SIMPLE", INDENT_REXX },
-{ "PLAIN", INDENT_PLAIN },
+    { "C", INDENT_C },
+    { "REXX", INDENT_REXX },
+    { "FALCON", INDENT_FALCON },
+    { "SIMPLE", INDENT_REXX },
+    { "PLAIN", INDENT_PLAIN },
 };
 
 EColorize *Colorizers = 0;
@@ -67,7 +67,7 @@ SyntaxProc GetHilitProc(int id) {
 
 int EBuffer::HilitAddWord(const char *Word) {
     if (HilitFindWord(Word) == 1)
-	return 1;
+        return 1;
     WordList = (char **)realloc((void *)WordList, (1 + WordCount) * sizeof(char *));
     if (WordList == 0) return 0;
     WordList[WordCount++] = strdup(Word);
@@ -107,9 +107,9 @@ int EBuffer::HilitWord() {
     PELine L = VLine(CP.Row);
     char s[CK_MAXLEN + 2];
     int P, len = 0;
-    
+
     P = CharOffset(L, CP.Col);
-    while ((P > 0) && ((ChClass(L->Chars[P - 1]) == 1) || (L->Chars[P - 1] == '_'))) 
+    while ((P > 0) && ((ChClass(L->Chars[P - 1]) == 1) || (L->Chars[P - 1] == '_')))
         P--;
     while (len < CK_MAXLEN && P < L->Count && (ChClass(L->Chars[P]) == 1 || L->Chars[P] == '_'))
         s[len++] = L->Chars[P++];
@@ -142,7 +142,7 @@ EColorize::EColorize(const char *AName, const char *AParent) {
 EColorize::~EColorize() {
     free(Name);
 
-    for (int i=0; i<CK_MAXLEN; i++)
+    for (int i = 0; i < CK_MAXLEN; i++)
         free(Keywords.key[i]);
 
     delete hm;
@@ -205,7 +205,7 @@ int HState::GetHilitWord(int len, char *str, ChColor &clr) {
     p = keywords.key[len];
     if (options & STATE_NOCASE) {
         while (p && *p) {
-	    if (strnicmp(p, str, len) == 0) {
+            if (strnicmp(p, str, len) == 0) {
                 clr = COUNT_CLR + ((unsigned char*)p)[len];
                 return 1;
             }
@@ -235,13 +235,11 @@ HMachine::HMachine() {
 HMachine::~HMachine() {
 
     // free states
-    if (state)
-    {
+    if (state) {
         int i;
 
-        while(stateCount--)
-        {
-            for (i=0; i<CK_MAXLEN; i++)
+        while (stateCount--) {
+            for (i = 0; i < CK_MAXLEN; i++)
                 free(state[stateCount].keywords.key[i]);
 
             free(state[stateCount].wordChars);
@@ -251,10 +249,8 @@ HMachine::~HMachine() {
     }
 
     // free transes
-    if (trans)
-    {
-        while(transCount--)
-        {
+    if (trans) {
+        while (transCount--) {
             if (trans[transCount].match) free(trans[transCount].match);
             if (trans[transCount].regexp) RxFree(trans[transCount].regexp);
         }
@@ -265,8 +261,8 @@ HMachine::~HMachine() {
 }
 
 void HMachine::AddState(HState &aState) {
-    state = (HState *)realloc(state, (stateCount + 1) * sizeof(HState) );
-    assert( state );
+    state = (HState *)realloc(state, (stateCount + 1) * sizeof(HState));
+    assert(state);
     state[stateCount] = aState;
     state[stateCount].firstTrans = transCount;
     stateCount++;
@@ -274,8 +270,8 @@ void HMachine::AddState(HState &aState) {
 
 void HMachine::AddTrans(HTrans &aTrans) {
     assert(stateCount > 0);
-    trans = (HTrans *)realloc(trans, (transCount + 1) * sizeof(HTrans) );
-    assert( trans );
+    trans = (HTrans *)realloc(trans, (transCount + 1) * sizeof(HTrans));
+    assert(trans);
     state[stateCount - 1].transCount++;
     trans[transCount] = aTrans;
     transCount++;

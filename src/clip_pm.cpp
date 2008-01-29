@@ -20,12 +20,11 @@ extern HAB hab;
 int GetClipText(ClipData *cd) {
     int rc;
     char *text;
-    
+
     cd->fLen = 0;
     cd->fChar = 0;
     if ((WinOpenClipbrd(hab) == TRUE) &&
-        ((text = (char *) WinQueryClipbrdData(hab, CF_TEXT)) != 0))
-    {
+            ((text = (char *) WinQueryClipbrdData(hab, CF_TEXT)) != 0)) {
         cd->fLen = strlen(text);
         cd->fChar = strdup(text);
     }
@@ -36,11 +35,11 @@ int GetClipText(ClipData *cd) {
 int PutClipText(ClipData *cd) {
     ULONG len;
     void *text;
-    
+
     if (WinOpenClipbrd(hab) == TRUE) {
         WinEmptyClipbrd(hab);
         len = cd->fLen;
-        
+
         if (len) {
             DosAllocSharedMem((void **)&text,
                               0,

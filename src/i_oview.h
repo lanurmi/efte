@@ -18,17 +18,23 @@ class ExView {
 public:
     GxView *Win;
     ExView *Next;
-    
+
     ExView();
     virtual ~ExView();
-    
+
     virtual EEventMap *GetEventMap();
     virtual int ExecCommand(int Command, ExState &State);
-    
+
     virtual void Activate(int gotfocus);
-    virtual int GetContext() { return CONTEXT_NONE; }
-    virtual ExView *GetViewContext() { return this; }
-    virtual ExView *GetStatusContext() { return this; }
+    virtual int GetContext() {
+        return CONTEXT_NONE;
+    }
+    virtual ExView *GetViewContext() {
+        return this;
+    }
+    virtual ExView *GetStatusContext() {
+        return this;
+    }
     virtual int BeginMacro();
     virtual void HandleEvent(TEvent &Event);
     virtual void UpdateView();
@@ -38,10 +44,16 @@ public:
     virtual void Resize(int width, int height);
     virtual void EndExec(int NewResult);
     int IsActive();
-    
-    void Repaint() { RepaintStatus(); RepaintView(); }
-    void Update() { UpdateStatus(); UpdateView(); }
-    
+
+    void Repaint() {
+        RepaintStatus();
+        RepaintView();
+    }
+    void Update() {
+        UpdateStatus();
+        UpdateView();
+    }
+
     int ConPutBox(int X, int Y, int W, int H, PCell Cell);
     int ConScroll(int Way, int X, int Y, int W, int H, TAttr Fill, int Count);
     int ConQuerySize(int *X, int *Y);
@@ -50,8 +62,12 @@ public:
     int ConHideCursor();
     void ConSetInsertState(bool insert);
 
-    virtual int IsModelView() { return 0; }
-    virtual void WnSwitchBuffer(EModel *M) { Next->WnSwitchBuffer(M); }
+    virtual int IsModelView() {
+        return 0;
+    }
+    virtual void WnSwitchBuffer(EModel *M) {
+        Next->WnSwitchBuffer(M);
+    }
 };
 
 #endif

@@ -35,14 +35,14 @@ void EListPort::GetPos() {
 void EListPort::HandleEvent(TEvent &Event) {
     int W = 1;
     int H = 1;
-    
+
     EViewPort::HandleEvent(Event);
-    
+
     if (View && View->MView && View->MView->Win) {
         View->MView->ConQuerySize(&W, &H);
         H--;
     }
-    
+
     switch (Event.What) {
     case evCommand:
         switch (Event.Msg.Command) {
@@ -62,16 +62,15 @@ void EListPort::HandleEvent(TEvent &Event) {
             List->MovePageDown();
             Event.What = evNone;
             break;
-        case cmVScrollMove:
-            {
-                int ypos;
-                
-                ypos = List->Row - List->TopRow;
-                List->TopRow = Event.Msg.Param1;
-                List->Row = List->TopRow + ypos;
-            }
-            Event.What = evNone;
-            break;
+        case cmVScrollMove: {
+            int ypos;
+
+            ypos = List->Row - List->TopRow;
+            List->TopRow = Event.Msg.Param1;
+            List->Row = List->TopRow + ypos;
+        }
+        Event.What = evNone;
+        break;
         case cmHScrollLeft:
             List->ScrollRight(Event.Msg.Param1);
             Event.What = evNone;
@@ -102,13 +101,13 @@ void EListPort::HandleEvent(TEvent &Event) {
         break;
     }
 }
- 
+
 void EListPort::HandleMouse(TEvent &Event) {
     int W, H;
     int x, y, xx, yy;
-    
+
     View->MView->ConQuerySize(&W, &H);
-    
+
     x = Event.Mouse.X;
     y = Event.Mouse.Y;
     yy = y + TopRow;
@@ -116,7 +115,7 @@ void EListPort::HandleMouse(TEvent &Event) {
 //    if (yy >= Selected) yy = Window->Buffer->VCount - 1;
     if (yy < 0) yy = 0;
     if (xx < 0) xx = 0;
-    
+
     switch (Event.What) {
     case evMouseDown:
         if (Event.Mouse.Y == H - 1)
@@ -125,7 +124,7 @@ void EListPort::HandleMouse(TEvent &Event) {
             View->MView->MouseCaptured = 1;
         else
             break;
-        
+
         if (Event.Mouse.Buttons == 1)
             if (yy < List->Count && yy >= 0) {
                 List->SetPos(yy, LeftCol);
@@ -181,7 +180,7 @@ void EListPort::HandleMouse(TEvent &Event) {
 void EListPort::UpdateView() {
     if (OldLeftCol != LeftCol || OldTopRow != TopRow || OldCount != List->Count)
         List->NeedsRedraw = List->NeedsUpdate = 1;
-    
+
     if (List->NeedsUpdate) {
 
         List->UpdateList();
@@ -222,10 +221,10 @@ void EListPort::PaintView(int PaintAll) {
 
     if (List->NeedsRedraw)
         PaintAll = 1;
-    
+
     if (View == 0 || View->MView == 0 || View->MView->Win == 0)
         return ;
-    
+
     View->MView->ConQuerySize(&W, &H);
     H--;
 
@@ -236,10 +235,10 @@ void EListPort::PaintView(int PaintAll) {
             int mark = List->IsMarked(I + TopRow);
             int hilit = List->IsHilited(I + TopRow);
             color = ((Row == I + TopRow) && View->MView->Win->IsActive())
-                ? (mark ? (hilit ? hcList_MarkHilitSel : hcList_MarkSelect ):
-                   (hilit ? hcList_HilitSelect : hcList_Selected)) :
-                (mark ? (hilit ? hcList_MarkHilit : hcList_Marked) :
-                 (hilit ? hcList_Hilited : hcList_Normal));
+                    ? (mark ? (hilit ? hcList_MarkHilitSel : hcList_MarkSelect) :
+                               (hilit ? hcList_HilitSelect : hcList_Selected)) :
+                            (mark ? (hilit ? hcList_MarkHilit : hcList_Marked) :
+                             (hilit ? hcList_Hilited : hcList_Normal));
             MoveChar(B, 0, W, ' ', color, W);
             if (I + TopRow < List->Count)
                 List->DrawLine(B, I + TopRow, LeftCol, color, W);
@@ -257,25 +256,25 @@ void EListPort::RepaintStatus() {
     char s[80];
     int W, H;
     char SColor;
-    
+
     if (View == 0 || View->MView == 0 || View->MView->Win == 0)
         return ;
-    
+
     View->MView->ConQuerySize(&W, &H);
-    
+
     List->UpdateList();
-    
+
     List->FixPos();
-    
+
     if (List->View == View)
         GetPos();
-    
+
     if (View->MView->Win->GetStatusContext() != View->MView)
         return;
-    
+
     View->MView->Win->SetSbVPos(TopRow, H, List->Count + (WeirdScroll ? H - 1 : 0));
     View->MView->Win->SetSbHPos(LeftCol, W, 1024 + (WeirdScroll ? W - 1 : 0));
-    
+
     if (View->MView->IsActive()) // hack
         SColor = hcStatus_Active;
     else
@@ -292,7 +291,7 @@ void EListPort::RepaintStatus() {
     View->MView->ConPutBox(0, H - 1, W, 1, B);
 
     if (View->MView->Win->GetStatusContext() == View->MView &&
-        View->MView->Win->IsActive())
+            View->MView->Win->IsActive())
         View->MView->Win->ConSetCursorPos(0, Row - TopRow);
 }
 
@@ -312,7 +311,7 @@ EList::~EList() {
 EViewPort *EList::CreateViewPort(EView *V) {
     V->Port = new EListPort(this, V);
     AddView(V);
-    
+
     return V->Port;
 }
 
@@ -330,40 +329,63 @@ void EList::SetTitle(char *ATitle) {
     if (View && View->MView)
         View->MView->RepaintStatus();
 }
-    
+
 
 int EList::ExecCommand(int Command, ExState &State) {
     int W = 1;
     int H = 1;
-    
+
     if (View && View->MView && View->MView->Win) {
         View->MView->ConQuerySize(&W, &H);
         H--;
     }
     FixPos();
     switch (Command) {
-    case ExMoveLeft:             return MoveLeft();
-    case ExMoveRight:            return MoveRight();
-    case ExMoveUp:               return MoveUp();
-    case ExMoveDown:             return MoveDown();
-    case ExMovePageUp:           return MovePageUp();
-    case ExMovePageDown:         return MovePageDown();
-    case ExScrollLeft:           return ScrollLeft(8);
-    case ExScrollRight:          return ScrollRight(8);
-    case ExMovePageStart:        return MovePageStart();
-    case ExMovePageEnd:          return MovePageEnd();
-    case ExMoveFileStart:        return MoveFileStart();
-    case ExMoveFileEnd:          return MoveFileEnd();
-    case ExMoveLineStart:        return MoveLineStart();
-    case ExMoveLineEnd:          return MoveLineEnd();
-    case ExRescan:               RescanList();            return ErOK;
-    case ExActivate:             return Activate();
-    case ExListMark:             return Mark();
-    case ExListUnmark:           return Unmark();
-    case ExListToggleMark:       return ToggleMark();
-    case ExListMarkAll:          return MarkAll();
-    case ExListUnmarkAll:        return UnmarkAll();
-    case ExListToggleMarkAll:    return ToggleMarkAll();
+    case ExMoveLeft:
+        return MoveLeft();
+    case ExMoveRight:
+        return MoveRight();
+    case ExMoveUp:
+        return MoveUp();
+    case ExMoveDown:
+        return MoveDown();
+    case ExMovePageUp:
+        return MovePageUp();
+    case ExMovePageDown:
+        return MovePageDown();
+    case ExScrollLeft:
+        return ScrollLeft(8);
+    case ExScrollRight:
+        return ScrollRight(8);
+    case ExMovePageStart:
+        return MovePageStart();
+    case ExMovePageEnd:
+        return MovePageEnd();
+    case ExMoveFileStart:
+        return MoveFileStart();
+    case ExMoveFileEnd:
+        return MoveFileEnd();
+    case ExMoveLineStart:
+        return MoveLineStart();
+    case ExMoveLineEnd:
+        return MoveLineEnd();
+    case ExRescan:
+        RescanList();
+        return ErOK;
+    case ExActivate:
+        return Activate();
+    case ExListMark:
+        return Mark();
+    case ExListUnmark:
+        return Unmark();
+    case ExListToggleMark:
+        return ToggleMark();
+    case ExListMarkAll:
+        return MarkAll();
+    case ExListUnmarkAll:
+        return UnmarkAll();
+    case ExListToggleMarkAll:
+        return ToggleMarkAll();
     }
     return EModel::ExecCommand(Command, State);
 }
@@ -383,7 +405,9 @@ char *EList::FormatLine(int /*Line*/) {
 }
 
 void EList::RescanList() {}
-void EList::UpdateList() { NeedsUpdate = 1; }
+void EList::UpdateList() {
+    NeedsUpdate = 1;
+}
 void EList::FreeList() {}
 
 void EList::FixPos() {
@@ -402,13 +426,13 @@ void EList::FixPos() {
     int scrollJumpY = Min(ScrollJumpY, H / 2);
     //int scrollBorderX = Min(ScrollBorderX, W / 2);
     int scrollBorderY = Min(ScrollBorderY, H / 2);
-    
+
     if (LeftCol < 0) LeftCol = 0;
     if (Row >= Count) Row = Count - 1;
     if (!WeirdScroll)
         if (TopRow + H > Count) TopRow = Count - H;
     if (Row < 0) Row = 0;
-    
+
     if (GetVPort()->ReCenter) {
         TopRow = Row - H / 2;
         GetVPort()->ReCenter = 0;
@@ -423,14 +447,30 @@ void EList::FixPos() {
     }
 }
 
-int EList::GetContext() { return CONTEXT_LIST; }
-int EList::BeginMacro() { return 1; }
-int EList::CanActivate(int /*Line*/) { return 1; }
-int EList::Activate(int /*No*/) { return 0; }
-int EList::IsHilited(int /*Line*/) { return 0; }
-int EList::IsMarked(int /*Line*/) { return 0; }
-int EList::Mark(int /*Line*/) { return 1; }
-int EList::Unmark(int /*Line*/) { return 1; }
+int EList::GetContext() {
+    return CONTEXT_LIST;
+}
+int EList::BeginMacro() {
+    return 1;
+}
+int EList::CanActivate(int /*Line*/) {
+    return 1;
+}
+int EList::Activate(int /*No*/) {
+    return 0;
+}
+int EList::IsHilited(int /*Line*/) {
+    return 0;
+}
+int EList::IsMarked(int /*Line*/) {
+    return 0;
+}
+int EList::Mark(int /*Line*/) {
+    return 1;
+}
+int EList::Unmark(int /*Line*/) {
+    return 1;
+}
 
 int EList::SetPos(int ARow, int ACol) {
     Row = ARow;
@@ -482,32 +522,30 @@ int EList::MoveLineStart() {
 // screen width / 2 from actual length
 int EList::MoveLineEnd() {
     int W, H, len;
-    
+
     View->MView->Win->ConQuerySize(&W, &H);
     H--;
 
     len = GetRowLength(Row);
-    if (len < W)
-    {
-	if (LeftCol != 0)
-	{
-	    LeftCol = 0;
-	    NeedsUpdate = 1;
-	}
+    if (len < W) {
+        if (LeftCol != 0) {
+            LeftCol = 0;
+            NeedsUpdate = 1;
+        }
     } else
-    if (LeftCol != len - W/2) {
-        LeftCol = len - W/2;
-        NeedsUpdate = 1;
-    }
+        if (LeftCol != len - W / 2) {
+            LeftCol = len - W / 2;
+            NeedsUpdate = 1;
+        }
     return ErOK;
 }
 
 int EList::MovePageUp() {
     int W, H;
-    
+
     if (Row == 0)
         return ErFAIL;
-    
+
     View->MView->Win->ConQuerySize(&W, &H);
     H--;
 
@@ -523,13 +561,13 @@ int EList::MovePageUp() {
 
 int EList::MovePageDown() {
     int W, H;
-    
+
     if (Row == Count - 1)
         return ErFAIL;
-    
+
     View->MView->Win->ConQuerySize(&W, &H);
     H--;
-    
+
     Row += H;
     TopRow += H;
     if (Row >= Count)
@@ -568,7 +606,7 @@ int EList::ScrollUp(int Rows) {
 
     TopRow += Rows;
     Row += Rows;
-    
+
     if (Row >= Count)
         Row = Count - 1;
     if (Row < 0)
@@ -582,10 +620,10 @@ int EList::ScrollUp(int Rows) {
 int EList::ScrollDown(int Rows) {
     if (TopRow == 0)
         return ErFAIL;
-    
+
     TopRow -= Rows;
     Row -= Rows;
-    
+
     if (Row < 0)
         Row = 0;
     if (TopRow < 0)
@@ -607,12 +645,12 @@ int EList::MovePageEnd() {
 
     if (Row == Count - 1)
         return ErOK;
-    
+
     View->MView->Win->ConQuerySize(&W, &H);
     H--;
     if (Row == TopRow + H - 1)
         return ErOK;
-    
+
     Row = TopRow + H - 1;
     if (Row >= Count)
         Row = Count - 1;

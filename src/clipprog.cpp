@@ -38,18 +38,17 @@ void clipsrv(void *foo) {
     ULONG len;
     char *text;
     void *shmem = "the text";
-    
+
     hab = NULLHANDLE;
 
     if ((WinOpenClipbrd(hab) == TRUE) &&
-        ((text = (char *) WinQueryClipbrdData(hab, CF_TEXT)) != 0))
-    {
+            ((text = (char *) WinQueryClipbrdData(hab, CF_TEXT)) != 0)) {
         DosGetSharedMem(text, PAG_READ);
         len = strlen(text);
         puts(text);
     }
     WinCloseClipbrd(hab);
-    
+
     len = strlen(shmem);
     if (len) {
         DosAllocSharedMem((void **)&text,
@@ -58,7 +57,7 @@ void clipsrv(void *foo) {
                           PAG_WRITE | PAG_COMMIT | OBJ_GIVEABLE | OBJ_GETTABLE);
         strcpy(text, shmem);
     }
-    
+
     if (WinOpenClipbrd(hab) == TRUE) {
         if (!WinSetClipbrdData(hab, (ULONG) text, CF_TEXT, CFI_POINTER))
             DosBeep(100, 1500);

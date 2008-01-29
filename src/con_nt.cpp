@@ -77,13 +77,11 @@ int codepage;
 
 
 #if 0
-void dbg(const char* s, ...) /*FOLD00*/
-{
+void dbg(const char* s, ...) { /*FOLD00*/
 }
 #else
 
-void dbg(const char* s, ...) /*FOLD00*/
-{
+void dbg(const char* s, ...) { /*FOLD00*/
     char    buf[256];
     va_list args;
 
@@ -194,8 +192,7 @@ static struct {
 struct {
     SHORT VirtCode;
     unsigned long KeyCode;
-} VirtTab[]  =
-{
+} VirtTab[]  = {
     { 112, kbF1 },
     { 113, kbF2 },
     { 114, kbF3 },
@@ -232,8 +229,7 @@ struct {
 char shftwrng[]  = "~!@#$%^&*()_+{}|:\"<>?";
 char shftright[] = "`1234567890-=[]\\;',./";
 
-int ReadConsoleEvent(TEvent *E) /*FOLD00*/
-{
+int ReadConsoleEvent(TEvent *E) { /*FOLD00*/
     /*
      *      Reads and interprets the console event. It is called when console input
      *      handle is signalled. To prevent flashing cursors this routine returns
@@ -250,8 +246,7 @@ int ReadConsoleEvent(TEvent *E) /*FOLD00*/
     ReadConsoleInput(ConIn, &inp, 1, &nread);
     if (nread != 1) return False;                           // Nothing read after signal??
 
-    switch (inp.EventType)
-    {
+    switch (inp.EventType) {
     case WINDOW_BUFFER_SIZE_EVENT:
         //** Resized the window. Make FTE use the new size..
         frames->Resize(inp.Event.WindowBufferSizeEvent.dwSize.X, inp.Event.WindowBufferSizeEvent.dwSize.Y);
@@ -261,20 +256,18 @@ int ReadConsoleEvent(TEvent *E) /*FOLD00*/
     case KEY_EVENT:
         if (inp.Event.KeyEvent.bKeyDown) {
             if ((inp.Event.KeyEvent.dwControlKeyState & CAPSLOCK_ON) &&
-                inp.Event.KeyEvent.wVirtualKeyCode != 106 &&
-                inp.Event.KeyEvent.wVirtualKeyCode != 109 &&
-                inp.Event.KeyEvent.wVirtualKeyCode != 107)
-            {
+                    inp.Event.KeyEvent.wVirtualKeyCode != 106 &&
+                    inp.Event.KeyEvent.wVirtualKeyCode != 109 &&
+                    inp.Event.KeyEvent.wVirtualKeyCode != 107) {
                 if (!(inp.Event.KeyEvent.dwControlKeyState & SHIFT_PRESSED)) {
-                    for (i=0; shftwrng[i]; i++) {
+                    for (i = 0; shftwrng[i]; i++) {
                         if (inp.Event.KeyEvent.uChar.AsciiChar == shftwrng[i]) {
                             inp.Event.KeyEvent.uChar.AsciiChar = shftright[i];
                             break;
                         }
                     }
-                }
-                else {
-                    for (i=0; shftright[i]; i++) {
+                } else {
+                    for (i = 0; shftright[i]; i++) {
                         if (inp.Event.KeyEvent.uChar.AsciiChar == shftright[i]) {
                             inp.Event.KeyEvent.uChar.AsciiChar = shftwrng[i];
                             break;
@@ -284,9 +277,15 @@ int ReadConsoleEvent(TEvent *E) /*FOLD00*/
             }
         }
         //** Skip shift, control and alt key stuff.
-        switch(inp.Event.KeyEvent.wVirtualKeyCode)
-        {       case VK_SHIFT: case VK_CONTROL: case VK_MENU: case VK_PAUSE:
-        case VK_CAPITAL: case VK_LWIN:  case VK_RWIN: case VK_APPS:
+        switch (inp.Event.KeyEvent.wVirtualKeyCode) {
+        case VK_SHIFT:
+        case VK_CONTROL:
+        case VK_MENU:
+        case VK_PAUSE:
+        case VK_CAPITAL:
+        case VK_LWIN:
+        case VK_RWIN:
+        case VK_APPS:
             return False;
         }
 
@@ -318,46 +317,45 @@ int ReadConsoleEvent(TEvent *E) /*FOLD00*/
         // alt-gr + special key and then spacebar
         if (inp.Event.KeyEvent.bKeyDown) {
             if ((inp.Event.KeyEvent.wVirtualKeyCode == 0x20) &&
-                (inp.Event.KeyEvent.wVirtualScanCode == 0x39))
-            {
-                switch(inp.Event.KeyEvent.uChar.AsciiChar)
-                {
-                case '~': Ch = '~'; break;
-                case '^': Ch = '^'; break;
-                case '`': Ch = '`'; break;
-                case 'ï': Ch = 'ï'; break;
+                    (inp.Event.KeyEvent.wVirtualScanCode == 0x39)) {
+                switch (inp.Event.KeyEvent.uChar.AsciiChar) {
+                case '~':
+                    Ch = '~';
+                    break;
+                case '^':
+                    Ch = '^';
+                    break;
+                case '`':
+                    Ch = '`';
+                    break;
+                case 'ï':
+                    Ch = 'ï';
+                    break;
                 }
             }
         }
 
         //** Translate VK codes to FTE codes,
-        if (Ch == 0)
-        {
-            for (I = 0; I < sizeof(VirtTab)/sizeof(VirtTab[0]); I++)
-                if (VirtTab[I].VirtCode == inp.Event.KeyEvent.wVirtualKeyCode)
-                {
+        if (Ch == 0) {
+            for (I = 0; I < sizeof(VirtTab) / sizeof(VirtTab[0]); I++)
+                if (VirtTab[I].VirtCode == inp.Event.KeyEvent.wVirtualKeyCode) {
                     Ch = VirtTab[I].KeyCode;
                     break;
                 }
         }
 
         //** Not a virtual key-> do charscan translation, if needed;
-        if(Ch == 0)
-        {
+        if (Ch == 0) {
             unsigned int     cc = ((inp.Event.KeyEvent.wVirtualScanCode << 8) | (unsigned char)inp.Event.KeyEvent.uChar.AsciiChar);
-            for(I = 0; I < NUMITEMS(TransCharScan); I++)
-            {
-                if(cc == TransCharScan[I].CharScan)
-                {
+            for (I = 0; I < NUMITEMS(TransCharScan); I++) {
+                if (cc == TransCharScan[I].CharScan) {
                     Ch = TransCharScan[I].KeyCode;
                     break;
                 }
             }
         }
-        if (Ch == 0)
-        {
-            if ((Ch = (TKeyCode) (unsigned char)inp.Event.KeyEvent.uChar.AsciiChar) != 0)
-            {
+        if (Ch == 0) {
+            if ((Ch = (TKeyCode)(unsigned char)inp.Event.KeyEvent.uChar.AsciiChar) != 0) {
                 if (flg & kfAlt) Ch = toupper(Ch);
             }
         }
@@ -386,8 +384,7 @@ int ReadConsoleEvent(TEvent *E) /*FOLD00*/
         if (inp.Event.MouseEvent.dwEventFlags & DOUBLE_CLICK)
             E->Mouse.Count = 2;
 
-        if (inp.Event.MouseEvent.dwEventFlags & MOUSE_WHEELED)
-        {
+        if (inp.Event.MouseEvent.dwEventFlags & MOUSE_WHEELED) {
             E->What        = evCommand;
             E->Msg.View    = 0;
             E->Msg.Model   = 0;
@@ -416,23 +413,17 @@ int ReadConsoleEvent(TEvent *E) /*FOLD00*/
             return True;
         }
 
-        if (inp.Event.MouseEvent.dwEventFlags == MOUSE_MOVED)
-        {
+        if (inp.Event.MouseEvent.dwEventFlags == MOUSE_MOVED) {
             E->What = evMouseMove;
             //puts("Move");
-        }
-        else
-        {
+        } else {
             static unsigned short mb = 0;
 
-            if (inp.Event.MouseEvent.dwButtonState & ~mb)
-            {
+            if (inp.Event.MouseEvent.dwButtonState & ~mb) {
                 E->What = evMouseDown;
                 E->Mouse.Buttons = ((unsigned short)inp.Event.MouseEvent.dwButtonState) & ~mb;
                 //puts("Down");
-            }
-            else
-            {
+            } else {
                 E->What = evMouseUp;
                 E->Mouse.Buttons = mb & ~((unsigned short)inp.Event.MouseEvent.dwButtonState);
                 //puts("Up");
@@ -504,7 +495,7 @@ int ConClear(void) { /*FOLD00*/
 
     MoveChar(B, 0, ConMaxCols, ' ', 0x07, 1);
     if ((ConQuerySize(&W, &H) == 0) &&
-        ConSetBox(0, 0, W, H, B[0])) return 0;
+            ConSetBox(0, 0, W, H, B[0])) return 0;
     return -1;
 }
 
@@ -514,8 +505,7 @@ int ConClear(void) { /*FOLD00*/
 /*      CLASS:  tMouHelp is used to control mouse cursor visibility during              */
 /*                      screen updates.                                                                                                 */
 /*--------------------------------------------------------------------------*/
-class tMouHelp
-{
+class tMouHelp {
 protected:
     int     mh_x, mh_y;                     // Current mouse position / 0
     int     mh_valid;
@@ -523,41 +513,36 @@ protected:
 
 public:
     tMouHelp() : mh_x(0), mh_y(0), mh_valid(FALSE), mh_disabled(FALSE)      {}
-    ~tMouHelp()
-    {       if(MouseVisible && mh_disabled) DrawMouse(1);
+    ~tMouHelp() {
+        if (MouseVisible && mh_disabled) DrawMouse(1);
     }
 
-    void    disIfLine(int x, int w, int y)
-    {
-        if(mh_disabled) return;
-        if(! mh_valid)
-        {
+    void    disIfLine(int x, int w, int y) {
+        if (mh_disabled) return;
+        if (! mh_valid) {
             ConQueryMousePos(&mh_x, &mh_y);
             mh_valid = TRUE;
         }
-        if(y == mh_y && mh_x >= x && mh_x < x+y)
-        {
-            mh_disabled= TRUE;
+        if (y == mh_y && mh_x >= x && mh_x < x + y) {
+            mh_disabled = TRUE;
             DrawMouse(0);
         }
     }
 };
 #endif
 
-int ConPutBox(int X, int Y, int W, int H, PCell Cell) /*FOLD00*/
-{
+int ConPutBox(int X, int Y, int W, int H, PCell Cell) { /*FOLD00*/
     int             I;
     PCell           p = Cell;
     COORD           corg, csize;
     SMALL_RECT      rcl;
     BOOL            rc;
 
-    for (I = 0; I < H; I++)
-    {
+    for (I = 0; I < H; I++) {
         corg.X  = corg.Y = 0;
         csize.X = W;
         csize.Y = 1;
-        rcl.Left= X;
+        rcl.Left = X;
         rcl.Top = I + Y;
         rcl.Bottom = I + Y;// + (isWin95 ? 1 : 0);
         rcl.Right = X + W - 1;// + (isWin95 ? 1 : 0);
@@ -571,16 +556,14 @@ int ConPutBox(int X, int Y, int W, int H, PCell Cell) /*FOLD00*/
     return 0;
 }
 
-int ConGetBox(int X, int Y, int W, int H, PCell Cell) /*FOLD00*/
-{
+int ConGetBox(int X, int Y, int W, int H, PCell Cell) { /*FOLD00*/
     int             I;
     USHORT          WW = W << 1;
     PCell           p = Cell;
     COORD           corg, csize;
     SMALL_RECT      rcl;
 
-    for (I = 0; I < H; I++)
-    {
+    for (I = 0; I < H; I++) {
         corg.X = corg.Y = 0;
         csize.X = W;
         csize.Y = 1;
@@ -595,15 +578,13 @@ int ConGetBox(int X, int Y, int W, int H, PCell Cell) /*FOLD00*/
     return 0;
 }
 
-int ConPutLine(int X, int Y, int W, int H, PCell Cell) /*FOLD00*/
-{
+int ConPutLine(int X, int Y, int W, int H, PCell Cell) { /*FOLD00*/
     int             I;
     COORD           corg, csize;
     SMALL_RECT      rcl;
     BOOL rc;
 
-    for (I = 0; I < H; I++)
-    {
+    for (I = 0; I < H; I++) {
         corg.X = corg.Y = 0;
         csize.X = W;
         csize.Y = 1;
@@ -620,8 +601,7 @@ int ConPutLine(int X, int Y, int W, int H, PCell Cell) /*FOLD00*/
     return 0;
 }
 
-int ConSetBox(int X, int Y, int W, int H, TCell Cell) /*FOLD00*/
-{
+int ConSetBox(int X, int Y, int W, int H, TCell Cell) { /*FOLD00*/
     int             I;
     COORD           corg, csize;
     SMALL_RECT      rcl;
@@ -630,8 +610,7 @@ int ConSetBox(int X, int Y, int W, int H, TCell Cell) /*FOLD00*/
     I = W;
     while (I-- > 0) B[I] = Cell;
 
-    for (I = 0; I < H; I++)
-    {
+    for (I = 0; I < H; I++) {
         corg.X = corg.Y = 0;
         csize.X = W;
         csize.Y = 1;
@@ -645,8 +624,7 @@ int ConSetBox(int X, int Y, int W, int H, TCell Cell) /*FOLD00*/
     return 0;
 }
 
-int ConScroll(int Way, int X, int Y, int W, int H, TAttr Fill, int Count) /*FOLD00*/
-{
+int ConScroll(int Way, int X, int Y, int W, int H, TAttr Fill, int Count) { /*FOLD00*/
     TCell           FillCell;
     SMALL_RECT      rect, clip;
     COORD           dest;
@@ -842,7 +820,9 @@ int GUI::ShowEntryScreen() { /*FOLD00*/
     ConHideMouse();
     RestoreScreen();
     SetConsoleActiveScreenBuffer(ConOut);
-    do { gui->ConGetEvent(evKeyDown, &E, -1, 1, 0); } while (E.What != evKeyDown);
+    do {
+        gui->ConGetEvent(evKeyDown, &E, -1, 1, 0);
+    } while (E.What != evKeyDown);
     SetConsoleActiveScreenBuffer(OurConOut);
     ConShowMouse();
     if (frames)
@@ -851,10 +831,10 @@ int GUI::ShowEntryScreen() { /*FOLD00*/
 }
 
 char ConGetDrawChar(int index) { /*FOLD00*/
-    static const char *tab=NULL;
+    static const char *tab = NULL;
 
     if (!tab) {
-        tab=GetGUICharacters ("WindowsNT","Ú¿ÀÙÄ³ÂÃ´ÁÅ\x1AúÄ±°\x1B\x1A");
+        tab = GetGUICharacters("WindowsNT", "Ú¿ÀÙÄ³ÂÃ´ÁÅ\x1AúÄ±°\x1B\x1A");
     }
     assert(index >= 0 && index < (int)strlen(tab));
 
@@ -871,8 +851,8 @@ int GUI::RunProgram(int mode, char *Command) { /*FOLD00*/
 
     if (*Command == 0)      // empty string = shell
         Command = getenv(
-                         "COMSPEC"
-                        );
+                      "COMSPEC"
+                  );
 
     // we don't want ctrl-c or ctrl-break to exit our editor...
     signal(SIGBREAK, SIG_IGN);
@@ -902,8 +882,7 @@ int ConSetTitle(char *Title, char *STitle) { /*FOLD00*/
         JustLastDirectory(Title, buf, sizeof(buf));
 
     strncpy(winTitle, "eFTE - ", sizeof(winTitle) - 1);
-    if (buf[0] != 0) // if there is a file/dir name, stick it in here.
-    {
+    if (buf[0] != 0) { // if there is a file/dir name, stick it in here.
         strncat(winTitle, buf, sizeof(winTitle) - 1 - strlen(winTitle));
         strncat(winTitle, " - ", sizeof(winTitle) - 1 - strlen(winTitle));
     }
@@ -911,7 +890,7 @@ int ConSetTitle(char *Title, char *STitle) { /*FOLD00*/
     winTitle[sizeof(winTitle) - 1] = 0;
     strncpy(winSTitle, STitle, sizeof(winSTitle) - 1);
     winSTitle[sizeof(winSTitle) - 1] = 0;
-    SetConsoleTitle (winTitle);
+    SetConsoleTitle(winTitle);
 
     return 0;
 }
@@ -939,44 +918,43 @@ int ConGetTitle(char *Title, int MaxLen, char *STitle, int SMaxLen) { /*FOLD00*/
 #define PIPE_BUFLEN 4096
 #define PIPEBUF_SZ      4096
 
-class NTHandle
-{
+class NTHandle {
 protected:
     HANDLE  nth_h;
 
 public:
-    operator HANDLE()
-    {       return nth_h;
+    operator HANDLE() {
+        return nth_h;
     }
 
-    void    close()
-    {       if(nth_h != INVALID_HANDLE_VALUE)
-    {
-        CloseHandle(nth_h);
+    void    close() {
+        if (nth_h != INVALID_HANDLE_VALUE) {
+            CloseHandle(nth_h);
+            nth_h = INVALID_HANDLE_VALUE;
+        }
+    }
+
+
+    NTHandle()      {
         nth_h = INVALID_HANDLE_VALUE;
     }
-    }
 
-
-    NTHandle()      {       nth_h = INVALID_HANDLE_VALUE;   }
-
-    ~NTHandle()
-    {       close();
+    ~NTHandle() {
+        close();
     }
 
     NTHandle(const HANDLE& h) : nth_h(h)    {}
     NTHandle(const NTHandle& nth);                          // UNDEFINED (no assgn)
     NTHandle& operator =(const NTHandle& nth);      // UNDEFINED (no assgn)
-    NTHandle& operator =(const HANDLE nth)
-    {       close();
+    NTHandle& operator =(const HANDLE nth) {
+        close();
         nth_h = nth;
-    return *this;
+        return *this;
     }
 };
 
 
-class GPipe
-{
+class GPipe {
 public:
     int     p_used;
     int     p_id;
@@ -1033,14 +1011,11 @@ GPipe GPipe::pipe_ar[MAX_PIPES];
 /*
  *      getFreePipe() locates an unused GPipe structure. It also assigns it's ID.
  */
-GPipe* GPipe::getFreePipe() /*FOLD00*/
-{
+GPipe* GPipe::getFreePipe() { /*FOLD00*/
     int     i;
 
-    for(i = 0; i < MAX_PIPES; i++)
-    {
-        if(! pipe_ar[i].p_used)
-        {
+    for (i = 0; i < MAX_PIPES; i++) {
+        if (! pipe_ar[i].p_used) {
             pipe_ar[i].p_id = i;            // Set pipenr,
             return pipe_ar + i;
         }
@@ -1049,16 +1024,14 @@ GPipe* GPipe::getFreePipe() /*FOLD00*/
 }
 
 
-GPipe* GPipe::getPipe(int id) /*FOLD00*/
-{
+GPipe* GPipe::getPipe(int id) { /*FOLD00*/
     if (id < 0 || id > MAX_PIPES) return NULL;
-    if(! pipe_ar[id].p_used) return NULL;
+    if (! pipe_ar[id].p_used) return NULL;
     return pipe_ar + id;
 }
 
 
-int GPipe::createPipe() /*FOLD00*/
-{
+int GPipe::createPipe() { /*FOLD00*/
     /*
      *      Called from open() to create and open the server and the client pipes.
      */
@@ -1090,36 +1063,34 @@ int GPipe::createPipe() /*FOLD00*/
                                 0, PIPEBUF_SZ,
                                 1000,
                                 0);
-    if(p_pipe_ph == INVALID_HANDLE_VALUE)
+    if (p_pipe_ph == INVALID_HANDLE_VALUE)
         return FALSE;
     PCount++;
 
     /*
-     *      Client side: get a connection to the server's pipe. Do this before the
-     *      call to ConnectNamedPipe() to prevent it from blocking.
-     */
+    *      Client side: get a connection to the server's pipe. Do this before the
+    *      call to ConnectNamedPipe() to prevent it from blocking.
+    */
 
 #if 1
     p_child_ph      = CreateFile(pipename, GENERIC_WRITE, 0, &sa,
                                  OPEN_EXISTING, 0, 0);
 #else
-    p_child_ph      = CreateFile("_test", GENERIC_WRITE|GENERIC_READ, 0, &sa,
+    p_child_ph      = CreateFile("_test", GENERIC_WRITE | GENERIC_READ, 0, &sa,
                                  CREATE_ALWAYS, 0, 0);
 #endif
-    if(p_child_ph == INVALID_HANDLE_VALUE)
+    if (p_child_ph == INVALID_HANDLE_VALUE)
         dbm("CreateFile(client_side_pipe) has failed");
-    else
-    {
+    else {
         //** Server side: aquire connection..
         ok      = TRUE;
-        if(! ConnectNamedPipe(p_pipe_ph, 0))    // Get connect;
-        {
-            if(GetLastError() != ERROR_PIPE_CONNECTED)
+        if (! ConnectNamedPipe(p_pipe_ph, 0)) { // Get connect;
+            if (GetLastError() != ERROR_PIPE_CONNECTED)
                 ok = FALSE;
         }
 
         //** Connect worked?
-        if(!ok)
+        if (!ok)
             dbm("ConnectNmPipe() has failed");
         else
             return TRUE;                            // All opened & ready for action!
@@ -1135,20 +1106,17 @@ int GPipe::createPipe() /*FOLD00*/
 }
 
 
-void GPipe::releasePipe() /*FOLD00*/
-{
+void GPipe::releasePipe() { /*FOLD00*/
     /*
      *      releasePipe() releases all that createPipe() allocates. It's usually
      *      called when an error causes the process to abort.
      */
-    if(p_child_ph != INVALID_HANDLE_VALUE)
-    {
+    if (p_child_ph != INVALID_HANDLE_VALUE) {
         CloseHandle(p_child_ph);
         p_child_ph      = INVALID_HANDLE_VALUE;
     }
 
-    if(p_pipe_ph != 0)
-    {
+    if (p_pipe_ph != 0) {
         //DisconnectNamedPipe(p_pipe_ph);
         CloseHandle(p_pipe_ph);
         p_pipe_ph = INVALID_HANDLE_VALUE;
@@ -1156,8 +1124,7 @@ void GPipe::releasePipe() /*FOLD00*/
 }
 
 
-int GPipe::runCommand() /*FOLD00*/
-{
+int GPipe::runCommand() { /*FOLD00*/
     /*
      *      runCommand() takes the child pipe, dups it onto stdout and stderr while
      *      saving their old assignments, then it spawns
@@ -1176,13 +1143,12 @@ int GPipe::runCommand() /*FOLD00*/
      *  BUG workaround: When using 4NT, it doesn't properly reassign stderr!
      *  This is a bug in 4NT, so if comspec *is* 4nt use cmd.exe instead...
      */
-    if(comspec == 0) return -1;
+    if (comspec == 0) return -1;
     int l = strlen(comspec);
-    if(strnicmp(comspec + (l- sizeof(nt4)+1), nt4, sizeof(nt4)-1) == 0)
-    {
+    if (strnicmp(comspec + (l - sizeof(nt4) + 1), nt4, sizeof(nt4) - 1) == 0) {
         //** It's 4DOS all right..
         args = getenv("SystemRoot");
-        if(args== 0) return -1;
+        if (args == 0) return -1;
         strlcpy(tbuf, args, sizeof(tbuf));                 // Get to c:\winnt
         strlcat(tbuf, "\\system32\\cmd.exe", sizeof(tbuf));
         comspec = tbuf;
@@ -1190,10 +1156,9 @@ int GPipe::runCommand() /*FOLD00*/
 
     int argslen = strlen(comspec) + strlen(p_command) + 120;
     args    = (char *)malloc(argslen);
-    if(args == 0)
+    if (args == 0)
         dbm("malloc() failed for command line..");
-    else
-    {
+    else {
         //** Form a command line for the process;
         strlcpy(args, comspec, argslen);
         strlcat(args, " /c ", argslen);
@@ -1201,9 +1166,9 @@ int GPipe::runCommand() /*FOLD00*/
 
         //** Dup the child handle to get separate handles for stdout and err,
         if (DuplicateHandle(GetCurrentProcess(), p_child_ph, // Source,
-                           GetCurrentProcess(), &errh,          // Destination,
-                           0, True,                                             // Same access, inheritable
-                           DUPLICATE_SAME_ACCESS));
+                            GetCurrentProcess(), &errh,          // Destination,
+                            0, True,                                             // Same access, inheritable
+                            DUPLICATE_SAME_ACCESS));
 
         {
             /* Set up members of STARTUPINFO structure. */
@@ -1213,25 +1178,23 @@ int GPipe::runCommand() /*FOLD00*/
             si.lpReserved2 = NULL;
             si.cbReserved2 = 0;
             si.lpDesktop = NULL;
-/*            si.dwFlags = STARTF_USESTDHANDLES;
-#if 1
-            si.hStdOutput = p_child_ph;
-            si.hStdError    = errh;
-            si.hStdInput    = INVALID_HANDLE_VALUE;
-#else
-            si.hStdOutput = errh;
-            si.hStdError    = p_child_ph;
-            si.hStdInput    = INVALID_HANDLE_VALUE;
-#endif*/
-            if(CreateProcess(NULL, args, NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi))
-            {
+            /*            si.dwFlags = STARTF_USESTDHANDLES;
+            #if 1
+                        si.hStdOutput = p_child_ph;
+                        si.hStdError    = errh;
+                        si.hStdInput    = INVALID_HANDLE_VALUE;
+            #else
+                        si.hStdOutput = errh;
+                        si.hStdError    = p_child_ph;
+                        si.hStdInput    = INVALID_HANDLE_VALUE;
+            #endif*/
+            if (CreateProcess(NULL, args, NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi)) {
                 ok      = TRUE;
                 CloseHandle(pi.hThread);        // Thread handle not needed
                 p_proc_h        = pi.hProcess;  // Return process handle (to get RC)
             }
             CloseHandle(errh);                                      // Close error handle,
-        }
-        else
+        } else
             dbm("DupHandle for stderr failed.");
 
         free(args);                                     // Release command line.
@@ -1246,8 +1209,7 @@ int GPipe::runCommand() /*FOLD00*/
 }
 
 
-void GPipe::closeProc() /*FOLD00*/
-{
+void GPipe::closeProc() { /*FOLD00*/
     /*
      *      closeProc() gets called when a read fails. It assumes the process has
      *      ended, retrieves the process return code, then it closes all handles.
@@ -1257,17 +1219,15 @@ void GPipe::closeProc() /*FOLD00*/
 
     dbg("[closeProc] ");
 
-    if(! GetExitCodeProcess(p_proc_h, &ec)) ec = 0xabcd;
+    if (! GetExitCodeProcess(p_proc_h, &ec)) ec = 0xabcd;
     p_retcode       = ec;                                           // Save return code of process,
-    if(p_proc_h != INVALID_HANDLE_VALUE)    // Close process,
-    {
+    if (p_proc_h != INVALID_HANDLE_VALUE) { // Close process,
         CloseHandle(p_proc_h);
         p_proc_h = INVALID_HANDLE_VALUE;
     }
 
     //** Close the main pipe,
-    if(p_pipe_ph != INVALID_HANDLE_VALUE)
-    {
+    if (p_pipe_ph != INVALID_HANDLE_VALUE) {
         CloseHandle(p_pipe_ph);
         p_pipe_ph = INVALID_HANDLE_VALUE;
     }
@@ -1276,8 +1236,7 @@ void GPipe::closeProc() /*FOLD00*/
 }
 
 
-int GPipe::startRead() /*FOLD00*/
-{
+int GPipe::startRead() { /*FOLD00*/
     /*
      *      postRead() checks if an overlapped READ needs to be posted by checking
      *      the io_posted flag. If that's clear and no termination or closed flag
@@ -1285,16 +1244,13 @@ int GPipe::startRead() /*FOLD00*/
      */
     p_has_data      = FALSE;
     dbg("[postRead ");
-    if(p_io_posted || p_completed)
+    if (p_io_posted || p_completed)
         dbg("no action: %s] ", p_io_posted ? "posted" : "complete");
-    else
-    {
+    else {
         p_ovl.hEvent    = p_data_evh;           // Signal this when done,
-        if(!ReadFile(p_pipe_ph, p_buffer, p_buflen, &p_read_len, NULL))
-        {
+        if (!ReadFile(p_pipe_ph, p_buffer, p_buflen, &p_read_len, NULL)) {
             DWORD   ec = GetLastError();
-            if(ec != ERROR_IO_PENDING)
-            {
+            if (ec != ERROR_IO_PENDING) {
                 //** Something's wrong. Treat as closed pipe for now.
                 closeProc();                            // Close pipe, complete stuff...
                 dbg("postfail] ");
@@ -1308,8 +1264,7 @@ int GPipe::startRead() /*FOLD00*/
 }
 
 
-int GPipe::open(char* command, EModel* notify) /*FOLD00*/
-{
+int GPipe::open(char* command, EModel* notify) { /*FOLD00*/
     memset(&p_ovl, 0, sizeof(p_ovl));               // Clear overlapped,
     p_bufused       = 0;
     p_bufpos        = 0;
@@ -1323,7 +1278,7 @@ int GPipe::open(char* command, EModel* notify) /*FOLD00*/
 
     p_pipe_ph       = INVALID_HANDLE_VALUE;
     p_child_ph      = INVALID_HANDLE_VALUE;
-    if( (p_command = strdup(command)) == 0)
+    if ((p_command = strdup(command)) == 0)
         return -1;
 
     //** Allocate the read buffer;
@@ -1342,16 +1297,12 @@ int GPipe::open(char* command, EModel* notify) /*FOLD00*/
         }
 
 
-        else
-        {
-            if(createPipe())                                // Create server & client pipe.
-            {
-                if(! postRead())
+        else {
+            if (createPipe()) {                             // Create server & client pipe.
+                if (! postRead())
                     dbm("postRead() initial failed.");
-                else
-                {
-                    if(runCommand())
-                    {
+                else {
+                    if (runCommand()) {
                         p_used  = TRUE;
                         return p_id;
                     }
@@ -1367,31 +1318,27 @@ int GPipe::open(char* command, EModel* notify) /*FOLD00*/
 }
 
 
-int GPipe::close() /*FOLD00*/
-{
+int GPipe::close() { /*FOLD00*/
     /*
      *      close() disconnects from the spawned task, closes the pipe and releases
      *      all stuff.
      */
-    if(! p_used) return -1;
-    if(! p_completed)                                               // Overlapped I/O not complete yet?
-    {
+    if (! p_used) return -1;
+    if (! p_completed) {                                            // Overlapped I/O not complete yet?
         //** We *must* wait till the overlapped I/O completes,
-        if(p_io_posted)
-        {
+        if (p_io_posted) {
             GetOverlappedResult(p_pipe_ph, &p_ovl, &p_read_len, TRUE);
             p_io_posted = FALSE;
         }
     }
-    p_completed= TRUE;
+    p_completed = TRUE;
 
     //** Now close all that might be pending,
     free(p_buffer);
     free(p_command);
 
     releasePipe();                                          // Close all pipe stuff,
-    if(p_proc_h != INVALID_HANDLE_VALUE)
-    {
+    if (p_proc_h != INVALID_HANDLE_VALUE) {
         CloseHandle(p_proc_h);
         p_proc_h = INVALID_HANDLE_VALUE;
     }
@@ -1405,8 +1352,7 @@ int GPipe::close() /*FOLD00*/
 }
 
 
-int GPipe::read(void *buffer, int len) /*FOLD00*/
-{
+int GPipe::read(void *buffer, int len) { /*FOLD00*/
     /*
      *      read() is called to get the current data from the pipe. It takes the
      *      #bytes read and returns them. It returns data till the buffer is
@@ -1414,38 +1360,32 @@ int GPipe::read(void *buffer, int len) /*FOLD00*/
      *      the #bytes read. It returns 0 if the buffer's empty.
      */
     dbg("[read ");
-    if(p_has_data)
-    {
-        if(p_bufpos < p_read_len)                               // Data in buffer?
-        {
+    if (p_has_data) {
+        if (p_bufpos < p_read_len) {                            // Data in buffer?
             unsigned        l;
 
             l       = p_read_len - p_bufpos;                // Try to output all,
-            if(l > len) l = len;
-            memcpy(buffer, p_buffer+p_bufpos, l);   // Copy data from the buffer,
+            if (l > len) l = len;
+            memcpy(buffer, p_buffer + p_bufpos, l); // Copy data from the buffer,
             p_bufpos        += l;
             dbg("%u data] ", l);
             return l;                                                       // Data returned,
         }
 
         //** There's nothing left in the buffer. Is the task complete?
-        if(p_completed)
-        {
+        if (p_completed) {
             dbg("no data, complete] ");
             return -1;
         }
 
-        if(! postRead())
-        {
+        if (! postRead()) {
             dbg("post failed-> complete] ");
             return -1;
         }
 
         dbg("nodata, post] ");
         return 0;
-    }
-    else if(p_completed)
-    {
+    } else if (p_completed) {
         dbg("completed] ");
         return -1;
     }
@@ -1455,13 +1395,12 @@ int GPipe::read(void *buffer, int len) /*FOLD00*/
 }
 
 
-int GPipe::getEvent(TEvent* event) /*FOLD00*/
-{
+int GPipe::getEvent(TEvent* event) { /*FOLD00*/
     dbg("[getpipeevent: ");
     event->What = evNone;
 
-    if(! p_used || p_notify == 0) return 0;         // No data.
-    if(! handlePost()) return 0;                            // Again: no data,
+    if (! p_used || p_notify == 0) return 0;        // No data.
+    if (! handlePost()) return 0;                           // Again: no data,
     //** This pipe has data!
     event->What             = evNotify;
     event->Msg.View         = 0;
@@ -1498,21 +1437,19 @@ int GPipe::getEvent(TEvent* event) /*FOLD00*/
  *
  *
  */
-int GUI::OpenPipe(char *Command, EModel *notify) /*FOLD00*/
-{
+int GUI::OpenPipe(char *Command, EModel *notify) { /*FOLD00*/
     GPipe*  gp;
 
-    if( (gp = GPipe::getFreePipe()) == 0)
+    if ((gp = GPipe::getFreePipe()) == 0)
         return -1;                                                      // Out of pipes.
     return gp->open(Command, notify);               // And ask the pipe to init.
 }
 
 
-int GUI::SetPipeView(int id, EModel *notify) /*FOLD00*/
-{
+int GUI::SetPipeView(int id, EModel *notify) { /*FOLD00*/
     GPipe*  p;
 
-    if( (p = GPipe::getPipe(id)) == 0) return -1;
+    if ((p = GPipe::getPipe(id)) == 0) return -1;
     p->lock();
     p->p_notify = notify;
     p->unlock();
@@ -1520,31 +1457,28 @@ int GUI::SetPipeView(int id, EModel *notify) /*FOLD00*/
 }
 
 
-int GUI::ReadPipe(int id, void *buffer, int len) /*FOLD00*/
-{
+int GUI::ReadPipe(int id, void *buffer, int len) { /*FOLD00*/
     //int     l;
     GPipe*  p;
 
-    if( (p = GPipe::getPipe(id)) == 0) return -1;
+    if ((p = GPipe::getPipe(id)) == 0) return -1;
     return p->read(buffer, len);
 }
 
 
-int GUI::ClosePipe(int id) /*FOLD00*/
-{
+int GUI::ClosePipe(int id) { /*FOLD00*/
     GPipe*  p;
 
-    if( (p = GPipe::getPipe(id)) == 0) return -1;
+    if ((p = GPipe::getPipe(id)) == 0) return -1;
     return p->close();
 }
 
 
-static int GetPipeEvent(int id, TEvent *Event) /*FOLD00*/
-{
+static int GetPipeEvent(int id, TEvent *Event) { /*FOLD00*/
     //int     i;
     GPipe*  p;
 
-    if( (p = GPipe::getPipe(id)) == 0) return -1;
+    if ((p = GPipe::getPipe(id)) == 0) return -1;
     return p->getEvent(Event);
 }
 
@@ -1603,17 +1537,16 @@ static int CreatePipeChild(HANDLE &child, HANDLE &hPipe, char *Command) {
     comspec = getenv("COMSPEC");
 
     /*
-     *  BUG workaround: When using 4NT, it doesn't properly reassign stderr!
-     *  This is a bug in 4NT, so if comspec *is* 4nt use cmd.exe instead...
-     */
+    *  BUG workaround: When using 4NT, it doesn't properly reassign stderr!
+    *  This is a bug in 4NT, so if comspec *is* 4nt use cmd.exe instead...
+    */
     if (comspec == 0)
         return -1;
     int l = strlen(comspec);
-    if (strnicmp(comspec + (l- sizeof(nt4)+1), nt4, sizeof(nt4)-1) == 0)
-    {
+    if (strnicmp(comspec + (l - sizeof(nt4) + 1), nt4, sizeof(nt4) - 1) == 0) {
         //** It's 4DOS all right..
         args = getenv("SystemRoot");
-        if(args== 0) return -1;
+        if (args == 0) return -1;
         strlcpy(tbuf, args, sizeof(tbuf));                 // Get to c:\winnt
         strlcat(tbuf, "\\system32\\cmd.exe", sizeof(tbuf));
         comspec = tbuf;
@@ -1621,10 +1554,9 @@ static int CreatePipeChild(HANDLE &child, HANDLE &hPipe, char *Command) {
 
     int argslen = strlen(comspec) + strlen(Command) + 120;
     args    = (char *)malloc(argslen);
-    if(args == 0)
+    if (args == 0)
         dbm("malloc() failed for command line..");
-    else
-    {
+    else {
         //** Form a command line for the process;
         strlcpy(args, comspec, argslen);
         strlcat(args, " /c ", argslen);
@@ -1632,8 +1564,8 @@ static int CreatePipeChild(HANDLE &child, HANDLE &hPipe, char *Command) {
 
         //** Dup the child handle to get separate handles for stdout and err,
         /*if (DuplicateHandle(GetCurrentProcess(), hChildPipe,
-                           GetCurrentProcess(), &errh,
-                           0, True, DUPLICATE_SAME_ACCESS))*/
+        GetCurrentProcess(), &errh,
+        0, True, DUPLICATE_SAME_ACCESS))*/
         //fprintf(stderr, "open NUL\n");
 
         hNul = CreateFile("NUL",
@@ -1658,21 +1590,19 @@ static int CreatePipeChild(HANDLE &child, HANDLE &hPipe, char *Command) {
             si.hStdError    = hChildPipe;
             si.hStdInput    = hNul;//INVALID_HANDLE_VALUE;
 #else
-            si.hStdOutput = errh;
-            si.hStdError    = hChildPipe;
-            si.hStdInput    = INVALID_HANDLE_VALUE;
+si.hStdOutput = errh;
+si.hStdError    = hChildPipe;
+si.hStdInput    = INVALID_HANDLE_VALUE;
 #endif
-            if (CreateProcess(NULL, args, NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi) == TRUE)
-            {
+            if (CreateProcess(NULL, args, NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi) == TRUE) {
                 ok      = TRUE;
                 CloseHandle(pi.hThread);        // Thread handle not needed
                 //fprintf(stderr, "create process success\n");
                 child = pi.hProcess;  // Return process handle (to get RC)
             } else
                 //fprintf(stderr, "create process failed %d\n" + GetLastError());
-            CloseHandle(hNul);                                      // Close error handle,
-        }
-        else
+                CloseHandle(hNul);                                      // Close error handle,
+        } else
             dbm("DupHandle for stderr failed.");
 
         free(args);
@@ -1783,8 +1713,7 @@ int GUI::OpenPipe(char *Command, EModel *notify) {
 
             if ((Pipes[i].Thread = CreateThread(NULL, 32768,
                                                 &PipeThread, &Pipes[i],
-                                                0, &tid)) == NULL)
-            {
+                                                0, &tid)) == NULL) {
                 free(Pipes[i].Command);
                 free(Pipes[i].buffer);
                 CloseHandle(Pipes[i].ResumeRead);
@@ -1891,17 +1820,14 @@ int GetPipeEvent(int i, TEvent *Event) {
 
 #endif
 
-int ConGetEvent(TEventMask EventMask, TEvent *Event, int WaitTime, int Delete) /*FOLD00*/
-{
+int ConGetEvent(TEventMask EventMask, TEvent *Event, int WaitTime, int Delete) { /*FOLD00*/
     //** Any saved events left?
-    if (EventBuf.What != evNone)
-    {
+    if (EventBuf.What != evNone) {
         *Event = EventBuf;
         if (Delete) EventBuf.What = evNone;
         return 0;
     }
-    if (MouseEv.What != evNone)
-    {
+    if (MouseEv.What != evNone) {
         *Event = MouseEv;
         if (Delete) MouseEv.What = evNone;
         return 0;
@@ -1917,30 +1843,23 @@ int ConGetEvent(TEventMask EventMask, TEvent *Event, int WaitTime, int Delete) /
 
     //** Fill the handle array with all active handles for pipes && console,
     o_ar[0] = ConIn;
-    for(i = 0, nh = 1; i < MAX_PIPES; i++)          // For all possible pipes
-    {
+    for (i = 0, nh = 1; i < MAX_PIPES; i++) {       // For all possible pipes
         if (Pipes[i].used)
             o_ar[nh++] = Pipes[i].NewData;
     }
 
-    for(;;)
-    {
+    for (;;) {
         rc = WaitForMultipleObjects(nh, o_ar, FALSE, WaitTime);
-        if(rc != WAIT_FAILED && (rc >= WAIT_OBJECT_0 && rc < WAIT_OBJECT_0+nh))
-        {
+        if (rc != WAIT_FAILED && (rc >= WAIT_OBJECT_0 && rc < WAIT_OBJECT_0 + nh)) {
             i       = rc - WAIT_OBJECT_0;                                   // Get item that signalled new data
-            if(i == 0)                                      // Was console?
-            {
-                if(ReadConsoleEvent(Event))                     // Get console,
+            if (i == 0) {                                   // Was console?
+                if (ReadConsoleEvent(Event))                    // Get console,
                     return 0;                                                       // And exit if valid,
-            }
-            else
-            {
+            } else {
                 GetPipeEvent(i - 1, Event);                     // Read data from pipe.
                 return 0;
             }
-        }
-        else
+        } else
             return -1;                                                              // Something's wrong!
     }
 }

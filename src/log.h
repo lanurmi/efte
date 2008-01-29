@@ -102,11 +102,10 @@ using namespace std;
 /**
  * GlobalLog handles the actual logging.
  */
-class GlobalLog
-{
+class GlobalLog {
     friend class FunctionLog;
 private:
-    char*	m_strLogFile;
+    char* m_strLogFile;
     ofstream    m_ofsLog;
 
     bool        m_bOpened;
@@ -119,21 +118,23 @@ public:
     GlobalLog() : m_strLogFile(NULL), m_bOpened(false) {}
     GlobalLog(char const* strLogFile) : m_strLogFile(strdup(strLogFile)), m_bOpened(false) {}
 
-    virtual ~GlobalLog() {free(m_strLogFile);}
+    virtual ~GlobalLog() {
+        free(m_strLogFile);
+    }
 
-    void SetLogFile(char const* strNewLogFile)
-    {
+    void SetLogFile(char const* strNewLogFile) {
         if (m_strLogFile == NULL ||
-            strNewLogFile == NULL ||
-            strcmp(m_strLogFile,strNewLogFile) != 0)
-        {
+                strNewLogFile == NULL ||
+                strcmp(m_strLogFile, strNewLogFile) != 0) {
             free((void*)m_strLogFile);
             m_strLogFile = strNewLogFile == NULL ? (char *)NULL : strdup(strNewLogFile);
             m_bOpened    = false;
         }
     }
 
-    operator bool() { return !m_ofsLog.fail(); }
+    operator bool() {
+        return !m_ofsLog.fail();
+    }
 
 protected:
     bool OpenLogFile(); // actually open it
@@ -145,8 +146,7 @@ extern GlobalLog globalLog;
  * FunctionLog is the local object that handles logging inside a function.
  * All work is put through here.
  */
-class FunctionLog
-{
+class FunctionLog {
 private:
     GlobalLog&  log;
     char const* func;
@@ -163,13 +163,15 @@ public:
     ostream& RC(unsigned long line);
 
 private:
-    ostream& OutputLine()
-    { return OutputIndent(log()) << '[' << func << "] "; }
+    ostream& OutputLine() {
+        return OutputIndent(log()) << '[' << func << "] ";
+    }
 
 public:
     // output line.
-    ostream& OutputLine(unsigned long line)
-    { return OutputLine() << '{' << line << "} "; }
+    ostream& OutputLine(unsigned long line) {
+        return OutputLine() << '{' << line << "} ";
+    }
 
 private:
     ostream& OutputIndent(ostream& os);
@@ -270,12 +272,14 @@ DECLARE_OSTREAM_FUNC1(char)
 DECLARE_OSTREAM_FUNC2(char, size_t)
 
 ostream& Log__osBinChar(ostream&, char const&);
-inline ostream_func1_char BinChar(char c)
-{ return ostream_func1_char(Log__osBinChar, c); }
+inline ostream_func1_char BinChar(char c) {
+    return ostream_func1_char(Log__osBinChar, c);
+}
 
 ostream& Log__osFillChar(ostream&, char const&, size_t const&);
-inline ostream_func2_char_size_t FillChar(char const& c, size_t const& num)
-{ return ostream_func2_char_size_t(Log__osFillChar, c, num); }
+inline ostream_func2_char_size_t FillChar(char const& c, size_t const& num) {
+    return ostream_func2_char_size_t(Log__osFillChar, c, num);
+}
 
 
 void Log__BinaryData(FunctionLog&, void* bin_data, size_t len, unsigned long line);
@@ -286,7 +290,7 @@ void Log__BinaryData(FunctionLog&, void* bin_data, size_t len, unsigned long lin
 #define LOG while (0) { cout
 #define ENDLINE endl; }
 
-#define STARTFUNC(func) 
+#define STARTFUNC(func)
 #define ENDFUNCRC(rc) return rc
 #define ENDFUNCRC_SAFE(type,rc) return rc
 #define ENDFUNCAS(type,rc) return rc

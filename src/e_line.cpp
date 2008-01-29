@@ -10,9 +10,9 @@
 #include "fte.h"
 
 ELine::ELine(int ACount, const char *AChars) {
-    Chars = NULL; 
-    Count = ACount; 
-    Allocate(Count); 
+    Chars = NULL;
+    Count = ACount;
+    Allocate(Count);
     StateE = 0;
     if (AChars)
         memcpy(Chars, AChars, Count);
@@ -22,24 +22,24 @@ ELine::ELine(int ACount, const char *AChars) {
 
 ELine::ELine(char *AChars, int ACount) {
     Chars = AChars;
-    Count = ACount; 
+    Count = ACount;
     StateE = 0;
 }
 
 ELine::~ELine() {
     if (Chars)
-	free(Chars);
+        free(Chars);
 }
 
-int ELine::Allocate(unsigned int Bytes) { 
+int ELine::Allocate(unsigned int Bytes) {
     unsigned int Allocated;
-    
+
     Allocated = (Bytes | CHAR_TRESHOLD);
-    if (Chars) 
-        Chars = (char *) realloc(Chars, Allocated); 
+    if (Chars)
+        Chars = (char *) realloc(Chars, Allocated);
     else
-        Chars = (char *) malloc(Allocated); 
-    if (Chars == NULL) 
+        Chars = (char *) malloc(Allocated);
+    if (Chars == NULL)
         return 0;
     return 1;
 }
@@ -106,7 +106,7 @@ int EBuffer::CharOffset(ELine *L, int ScreenPos) {
 
 int EBuffer::Allocate(int ACount) {
     PELine *L;
-    
+
     L = (PELine *) realloc(LL, sizeof(PELine) * (ACount + 1));
     if (L == 0 && ACount != 0)
         return 0;
@@ -117,17 +117,17 @@ int EBuffer::Allocate(int ACount) {
 
 int EBuffer::MoveRGap(int RPos) {
     int GapSize = RAllocated - RCount;
-    
+
     if (RGap == RPos) return 1;
     if (RPos < 0 || RPos > RCount) return 0;
-    
+
     if (RGap < RPos) {
         if (RPos - RGap == 1) {
             LL[RGap] = LL[RGap + GapSize];
         } else {
             memmove(LL + RGap,
-                LL + RGap + GapSize,
-                sizeof(PELine) * (RPos - RGap));
+                    LL + RGap + GapSize,
+                    sizeof(PELine) * (RPos - RGap));
         }
     } else {
         if (RGap - RPos == 1) {
@@ -144,7 +144,7 @@ int EBuffer::MoveRGap(int RPos) {
 
 int EBuffer::AllocVis(int ACount) {
     int *V;
-    
+
     V = (int *) realloc(VV, sizeof(int) * (ACount + 1));
     if (V == 0 && ACount != 0) return 0;
     VAllocated = ACount;
@@ -154,10 +154,10 @@ int EBuffer::AllocVis(int ACount) {
 
 int EBuffer::MoveVGap(int VPos) {
     int GapSize = VAllocated - VCount;
-    
+
     if (VGap == VPos) return 1;
     if (VPos < 0 || VPos > VCount) return 0;
-    
+
     if (VGap < VPos) {
         if (VPos - VGap == 1) {
             VV[VGap] = VV[VGap + GapSize];
@@ -181,7 +181,7 @@ int EBuffer::MoveVGap(int VPos) {
 
 int EBuffer::RToV(int No) {
     int L = 0, R = VCount, M, V;
-    
+
     if (No > Vis(VCount - 1) + VCount - 1)   // beyond end
         return -1;
     if (No < VCount) // no folds before (direct match)
@@ -202,14 +202,14 @@ int EBuffer::RToV(int No) {
 
 int EBuffer::RToVN(int No) {
     int L = 0, R = VCount, M, V;
-    
+
     if (No == RCount)
         return VCount;
-    if (No > Vis(VCount - 1) + VCount - 1) 
+    if (No > Vis(VCount - 1) + VCount - 1)
         return VCount - 1;
     if (No < VCount)
         if (Vis(No) == 0) return No;
-    
+
     while (L < R) {
         M = (L + R) >> 1;
         V = Vis(M) + M;

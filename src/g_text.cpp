@@ -60,7 +60,7 @@ public:
     int sbHstart, sbHamount, sbHtotal, sbHupdate;
     int SbVBegin, SbVEnd, SbHBegin, SbHEnd;
     bool insertState;
-    
+
     GViewPeer(GView *view, int XSize, int YSize);
     ~GViewPeer();
 
@@ -72,7 +72,7 @@ public:
 
     int ConSetSize(int X, int Y);
     int ConQuerySize(int *X, int *Y);
-    
+
     int ConSetCursorPos(int X, int Y);
     int ConQueryCursorPos(int *X, int *Y);
     int ConShowCursor();
@@ -82,7 +82,7 @@ public:
 
     int CaptureMouse(int grab);
     int CaptureFocus(int grab);
-    
+
     int QuerySbVPos();
     int SetSbVPos(int Start, int Amount, int Total);
     int SetSbHPos(int Start, int Amount, int Total);
@@ -90,19 +90,19 @@ public:
 
     int DrawScrollBar();
     int UpdateCursor();
-};      
+};
 
 class GFramePeer {
 public:
     int fW, fH;
     GFrame *Frame;
-    
+
     GFramePeer(GFrame *aFrame, int Width, int Height);
     ~GFramePeer();
-    
+
     int ConSetTitle(char *Title, char *STitle);
     int ConGetTitle(char *Title, int MaxLen, char *STitle, int SMaxLen);
-    
+
     int ConSetSize(int X, int Y);
     int ConQuerySize(int *X, int *Y);
 
@@ -155,7 +155,7 @@ int GViewPeer::ConSetBox(int X, int Y, int W, int H, TCell Cell) {
 int GViewPeer::ConScroll(int Way, int X, int Y, int W, int H, TAttr Fill, int Count) {
     return ::ConScroll(Way, X + wX, Y + wY, W, H, Fill, Count);
 }
-    
+
 int GViewPeer::ConSetSize(int X, int Y) {
     wW = X;
     wH = Y;
@@ -263,9 +263,8 @@ int GViewPeer::QuerySbVPos() {
 
 int GViewPeer::SetSbVPos(int Start, int Amount, int Total) {
     if (sbVstart != Start ||
-        sbVamount != Amount ||
-        sbVtotal != Total)
-    {
+            sbVamount != Amount ||
+            sbVtotal != Total) {
         sbVstart = Start;
         sbVamount = Amount;
         sbVtotal = Total;
@@ -277,9 +276,8 @@ int GViewPeer::SetSbVPos(int Start, int Amount, int Total) {
 
 int GViewPeer::SetSbHPos(int Start, int Amount, int Total) {
     if (sbHstart != Start ||
-        sbHamount != Amount ||
-        sbHtotal != Total)
-    {
+            sbHamount != Amount ||
+            sbHtotal != Total) {
         sbHstart = Start;
         sbHamount = Amount;
         sbHtotal = Total;
@@ -305,7 +303,7 @@ int GViewPeer::DrawScrollBar() {
     int W, H;
     char fore = ConGetDrawChar(DCH_HFORE);
     char back = ConGetDrawChar(DCH_HBACK);
-    
+
     ConQuerySize(&W, &H);
 
     if (ShowVScroll) {
@@ -313,9 +311,9 @@ int GViewPeer::DrawScrollBar() {
         ConPutBox(W, 0, 1, 1, B);
         MoveCh(B, ConGetDrawChar(DCH_ADOWN), hcScrollBar_Arrows, 1);
         ConPutBox(W, H - 1, 1, 1, B);
-        
+
         NRows = H - 2;
-        
+
         if (sbVtotal <= NRows) {
             SbVBegin = 0;
             SbVEnd = NRows - 1;
@@ -323,7 +321,7 @@ int GViewPeer::DrawScrollBar() {
             SbVBegin = NRows * sbVstart / sbVtotal;
             SbVEnd   = SbVBegin + NRows * sbVamount / sbVtotal;
         }
-        
+
         for (I = 0; I < NRows; I++) {
             if (I >= SbVBegin && I <= SbVEnd)
                 MoveCh(B, fore, hcScrollBar_Fore, 1);
@@ -337,9 +335,9 @@ int GViewPeer::DrawScrollBar() {
         ConPutBox(0, H, 1, 1, B);
         MoveCh(B, ConGetDrawChar(DCH_ARIGHT), hcScrollBar_Arrows, 1);
         ConPutBox(W - 1, H, 1, 1, B);
-        
+
         NCols = W - 2;
-        
+
         if (sbHtotal <= NCols) {
             SbHBegin = 0;
             SbHEnd = NCols - 1;
@@ -361,7 +359,7 @@ int GViewPeer::DrawScrollBar() {
         MoveCh(B, ' ', hcScrollBar_Arrows, 1);
         ConPutBox(W, H, 1, 1, B);
     }
-        
+
     return 0;
 }
 
@@ -385,7 +383,7 @@ GView::~GView() {
 int GView::ConClear() {
     int W, H;
     TDrawBuffer B;
-    
+
     ConQuerySize(&W, &H);
     MoveChar(B, 0, W, ' ', 0x07, 1);
     ConSetBox(0, 0, W, H, B[0]);
@@ -441,7 +439,7 @@ int GView::ConHideCursor() {
 }
 
 int GView::ConCursorVisible() {
-    return Peer->ConCursorVisible(); 
+    return Peer->ConCursorVisible();
 }
 
 void GView::ConSetInsertState(bool insert) {
@@ -493,7 +491,7 @@ int GView::Execute() {
     int SaveRc = Result;
     int NewResult;
     int didFocus = 0;
-    
+
     if (FocusCapture == 0) {
         if (CaptureFocus(1) == 0) return -1;
         didFocus = 1;
@@ -545,7 +543,7 @@ int GFramePeer::ConQuerySize(int *X, int *Y) {
     if (X) *X = fW;
     if (Y) *Y = fH;
     return 1;
-}   
+}
 
 //int GFrame::ConQuerySize(int *X, int *Y) {
 //    ::ConQuerySize(X, Y);
@@ -594,7 +592,7 @@ GFrame::~GFrame() {
     }
     Next = Prev = 0;
     if (Menu)
-	free(Menu);
+        free(Menu);
 }
 
 int GFrame::ConSetTitle(char *Title, char *STitle) {
@@ -615,11 +613,11 @@ int GFrame::ConQuerySize(int *X, int *Y) {
 
 int GFrame::ConSplitView(GView *view, GView *newview) {
     int dmy;
-    
+
     newview->Parent = this;
     newview->Peer->wX = 0;
     ConQuerySize(&newview->Peer->wW, &dmy);
-    if (ShowVScroll) 
+    if (ShowVScroll)
         newview->Peer->wW--;
     newview->Peer->wY = view->Peer->wY + view->Peer->wH / 2;
     newview->Peer->wH = view->Peer->wH - view->Peer->wH / 2;
@@ -647,10 +645,10 @@ int GFrame::AddView(GView *view) {
         return ConSplitView(Active, view);
     } else {
         int W, H;
-        
+
         view->Parent = this;
         view->Prev = view->Next = 0;
-        
+
         view->Peer->wX = 0;
         if (ShowMenuBar)
             view->Peer->wY = 1;
@@ -671,7 +669,7 @@ int GFrame::AddView(GView *view) {
 
 void GFrame::Update() {
     GView *v = Active;
-    
+
     UpdateMenu();
     while (v) {
         v->Update();
@@ -681,7 +679,7 @@ void GFrame::Update() {
             v->Peer->sbHupdate = 0;
         }
         v = v->Next;
-        if (v == Active) 
+        if (v == Active)
             break;
     }
 }
@@ -693,7 +691,7 @@ void GFrame::UpdateMenu() {
 
 void GFrame::Repaint() {
     GView *v = Active;
-    
+
     if (ShowMenuBar)
         DrawMenuBar();
     while (v) {
@@ -704,7 +702,7 @@ void GFrame::Repaint() {
             v->Peer->sbHupdate = 0;
         }
         v = v->Next;
-        if (v == Active) 
+        if (v == Active)
             break;
     }
 }
@@ -714,7 +712,7 @@ void GFrame::InsertView(GView *prev, GView *view) {
     if (prev) {
         view->Prev = prev;
         view->Next = prev->Next;
-	prev->Next = view;
+        prev->Next = view;
         view->Next->Prev = view;
     } else {
         view->Prev = view->Next = view;
@@ -728,7 +726,7 @@ void GFrame::InsertView(GView *prev, GView *view) {
 
 void GFrame::RemoveView(GView *view) {
     if (!view) return ;
-    
+
     if (Active == view)
         Active->Activate(0);
     if (view->Next == view) {
@@ -737,7 +735,7 @@ void GFrame::RemoveView(GView *view) {
     } else {
         view->Next->Prev = view->Prev;
         view->Prev->Next = view->Next;
-        
+
         if (Top == view) {
             Top = view->Next;
             Top->Peer->wY -= view->Peer->wH;
@@ -746,7 +744,7 @@ void GFrame::RemoveView(GView *view) {
             view->Prev->ConSetSize(view->Prev->Peer->wW,
                                    view->Prev->Peer->wH + view->Peer->wH + (ShowHScroll ? 1 : 0));
         }
-        
+
         if (Active == view) {
             Active = view->Prev;
             Active->Activate(1);
@@ -756,13 +754,13 @@ void GFrame::RemoveView(GView *view) {
 
 void GFrame::SelectNext(int back) {
     GView *c = Active;
-    
+
     if (c == 0 && Top == 0)
         return;
-    
+
     if (FocusCapture != 0)
         return ;
-    
+
     else if (c == 0)
         c = Active = Top;
     else
@@ -774,7 +772,7 @@ void GFrame::SelectNext(int back) {
     if (c != Active) {
         if (c)
             c->Activate(0);
-        if (Active) 
+        if (Active)
             Active->Activate(1);
     }
 }
@@ -782,10 +780,10 @@ void GFrame::SelectNext(int back) {
 int GFrame::SelectView(GView *view) {
     if (Top == 0)
         return 0;
-    
+
     if (FocusCapture != 0)
         view = view;
-    
+
     if (Active)
         Active->Activate(0);
     Active = view;
@@ -797,8 +795,8 @@ int GFrame::SelectView(GView *view) {
 void GFrame::Resize(int width, int height) {
     GView *V;
     int count = 0;
-    
-    
+
+
     V = Top;
     while (V) {
         count++;
@@ -808,25 +806,25 @@ void GFrame::Resize(int width, int height) {
         ::ConSetSize(16, 2 * count + 1);
         return;
     }
-    
+
     if (!Top)
         return;
-    
+
     if (ShowVScroll)
         width--;
     if (ShowHScroll)
         height--;
-    
+
 //    fprintf(stderr, "Resize: %d %d\n", width, height);
-    
+
     V = Top->Prev;
-    
+
     while (V != Top) {
         int h, y;
-        
+
         h = V->Peer->wH;
         y = V->Peer->wY;
-        
+
         if (y >= height - 2) {
             y = height - 2;
         }
@@ -890,8 +888,7 @@ int GUI::ConFlush(void) {
     return 0;
 }
 
-static inline int scrollBreak(TEvent &E)
-{
+static inline int scrollBreak(TEvent &E) {
     return (E.What == evMouseUp);
 }
 
@@ -899,7 +896,7 @@ static void HandleVScroll(GView *view, TEvent &E) {
     int y; //, x
     int wY, wH;
     TEvent E1;
-    
+
     //x = E.Mouse.X;
     y = E.Mouse.Y;
     wY = view->Peer->wY;
@@ -964,7 +961,7 @@ static void HandleVScroll(GView *view, TEvent &E) {
         } while (1);
     } else {
         int delta = y - 1 - view->Peer->SbVBegin - wY;
-        
+
         do {
             E1.What = evCommand;
             E1.Msg.View = view;
@@ -988,7 +985,7 @@ static void HandleHScroll(GView *view, TEvent &E) {
     int x; //, x
     int wX, wW;
     TEvent E1;
-    
+
     //x = E.Mouse.X;
     x = E.Mouse.X;
     wX = view->Peer->wX;
@@ -1053,7 +1050,7 @@ static void HandleHScroll(GView *view, TEvent &E) {
         } while (1);
     } else {
         int delta = x - 1 - view->Peer->SbHBegin - wX;
-        
+
         do {
             E1.What = evCommand;
             E1.Msg.View = view;
@@ -1075,27 +1072,25 @@ static void HandleHScroll(GView *view, TEvent &E) {
 
 void GUI::ProcessEvent() {
     TEvent E;
-    
+
     E = NextEvent;
     if (E.What != evNone) {
         NextEvent.What = evNone;
     }
     if (E.What == evNone &&
-       ( ConGetEvent(evMouse | evCommand | evKeyboard, &E, 0, 1, 0) == -1 ||
-          E.What == evNone )
-       )
-    {
+            (ConGetEvent(evMouse | evCommand | evKeyboard, &E, 0, 1, 0) == -1 ||
+             E.What == evNone)
+       ) {
         frames->Update();
-        while(ConGetEvent(evMouse | evCommand | evKeyboard, &E, -1, 1, 0) == -1 ||
-           (E.What == evMouseMove && E.Mouse.Buttons == 0));
+        while (ConGetEvent(evMouse | evCommand | evKeyboard, &E, -1, 1, 0) == -1 ||
+                (E.What == evMouseMove && E.Mouse.Buttons == 0));
     }
     if (E.What != evNone) {
         GView *view = frames->Active;
 
         if (E.What & evMouse) {
             if (E.What == evMouseDown && E.Mouse.Y == 0 && ShowMenuBar &&
-                MouseCapture == 0 && FocusCapture == 0)
-            {
+                    MouseCapture == 0 && FocusCapture == 0) {
                 frames->Update(); // sync before menu
                 if (ExecMainMenu(E, 0) == -1) {
                     if (E.What == evCommand && E.Msg.Command == cmResize) {
@@ -1110,11 +1105,10 @@ void GUI::ProcessEvent() {
             }
             if (E.What == evMouseDown && MouseCapture == 0 && FocusCapture == 0) {
                 GView *V = frames->Active;
-                
+
                 while (V) {
                     if (E.Mouse.Y >= V->Peer->wY &&
-                        E.Mouse.Y <  V->Peer->wY + V->Peer->wH + (ShowHScroll ? 1 : 0))
-                    {
+                            E.Mouse.Y <  V->Peer->wY + V->Peer->wH + (ShowHScroll ? 1 : 0)) {
                         frames->SelectView(V);
                         view = V;
                         break;
@@ -1125,20 +1119,17 @@ void GUI::ProcessEvent() {
                 }
             }
             if (ShowVScroll && ShowHScroll && E.What == evMouseDown &&
-                MouseCapture == 0 && FocusCapture == 0 &&
-                E.Mouse.Y == view->Peer->wY + view->Peer->wH &&
-                E.Mouse.X == view->Peer->wX + view->Peer->wW)
-            {
+                    MouseCapture == 0 && FocusCapture == 0 &&
+                    E.Mouse.Y == view->Peer->wY + view->Peer->wH &&
+                    E.Mouse.X == view->Peer->wX + view->Peer->wW) {
             } else {
                 if (ShowVScroll && E.What == evMouseDown && MouseCapture == 0 && FocusCapture == 0 &&
-                    E.Mouse.X == view->Peer->wX + view->Peer->wW)
-                {
+                        E.Mouse.X == view->Peer->wX + view->Peer->wW) {
                     HandleVScroll(view, E);
                     return ;
                 }
                 if (ShowHScroll && E.What == evMouseDown && MouseCapture == 0 && FocusCapture == 0 &&
-                    E.Mouse.Y == view->Peer->wY + view->Peer->wH)
-                {
+                        E.Mouse.Y == view->Peer->wY + view->Peer->wH) {
                     HandleHScroll(view, E);
                     return ;
                 }
@@ -1150,52 +1141,50 @@ void GUI::ProcessEvent() {
         }
         if (E.What == evCommand) {
             switch (E.Msg.Command) {
-            case cmResize: 
-                {
-                    int X, Y;
+            case cmResize: {
+                int X, Y;
 
-                    ConQuerySize(&X, &Y);
-                    frames->Resize(X, Y);
-                }
-                break;
-            case cmMainMenu:
-                {
-                    char Sub = (char)E.Msg.Param1;
+                ConQuerySize(&X, &Y);
+                frames->Resize(X, Y);
+            }
+            break;
+            case cmMainMenu: {
+                char Sub = (char)E.Msg.Param1;
 
-                    frames->Update(); // sync before menu
-                    if (::ExecMainMenu(E, Sub) != 1) {;
-                        if (E.What == evCommand && E.Msg.Command == cmResize) {
-                            int X, Y;
+                frames->Update(); // sync before menu
+                if (::ExecMainMenu(E, Sub) != 1) {
+                    ;
+                    if (E.What == evCommand && E.Msg.Command == cmResize) {
+                        int X, Y;
 
-                            ConQuerySize(&X, &Y);
-                            frames->Resize(X, Y);
-                        }
-                        E.What = evNone;
+                        ConQuerySize(&X, &Y);
+                        frames->Resize(X, Y);
                     }
+                    E.What = evNone;
                 }
-                break;
-            case cmPopupMenu:
-                {
-                    int id = E.Msg.Param1;
-                    int Cols, Rows;
-                    
-                    if (id == -1) return;
-                    frames->ConQuerySize(&Cols, &Rows);
-                    int x = Cols / 2, y = Rows / 2;
-                    ConQueryMousePos(&x, &y);
-                    
-                    frames->Update(); // sync before menu
-                    if (::ExecVertMenu(x, y, id, E, 0) != 1) {
-                        if (E.What == evCommand && E.Msg.Command == cmResize) {
-                            int X, Y;
+            }
+            break;
+            case cmPopupMenu: {
+                int id = E.Msg.Param1;
+                int Cols, Rows;
 
-                            ConQuerySize(&X, &Y);
-                            frames->Resize(X, Y);
-                        }
-                        E.What = evNone;
+                if (id == -1) return;
+                frames->ConQuerySize(&Cols, &Rows);
+                int x = Cols / 2, y = Rows / 2;
+                ConQueryMousePos(&x, &y);
+
+                frames->Update(); // sync before menu
+                if (::ExecVertMenu(x, y, id, E, 0) != 1) {
+                    if (E.What == evCommand && E.Msg.Command == cmResize) {
+                        int X, Y;
+
+                        ConQuerySize(&X, &Y);
+                        frames->Resize(X, Y);
                     }
+                    E.What = evNone;
                 }
-                break;
+            }
+            break;
             }
         }
         if (E.What != evNone)
@@ -1220,7 +1209,7 @@ int GUI::multiFrame() {
 
 void DieError(int rc, const char *msg, ...) {
     va_list ap;
-    
+
     va_start(ap, msg);
     vfprintf(stderr, msg, ap);
     va_end(ap);

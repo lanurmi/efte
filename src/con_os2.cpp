@@ -85,7 +85,7 @@ static void DrawCursor(int Show) {
     if (Show == 1)
         vci.attr = 1;
     else
-        vci.attr = (SHORT)-1;
+        vci.attr = (SHORT) - 1;
     VioSetCurType(&vci, 0);
 }
 
@@ -100,8 +100,8 @@ static void DrawMouse(int Show) {
         npr.row = 0;
         npr.col = 0;
         ConQuerySize(&W, &H);
-        npr.cCol = (USHORT) (W - 1);
-        npr.cRow = (USHORT) (H - 1);
+        npr.cCol = (USHORT)(W - 1);
+        npr.cRow = (USHORT)(H - 1);
         MouRemovePtr(&npr, MouseHandle);
     }
 }
@@ -203,19 +203,19 @@ int ReadKbdEvent(TEvent *Event, int Wait) {
     KeyCode = 0;
     KeyFlags = 0;
 
-/*   printf("Key: %X %X %X %X %X \n", (unsigned long) ki.bNlsShift, (unsigned long) ki.fbStatus, (unsigned long) Flags, (unsigned long) CharCode, (unsigned long) ScanCode);*/
+    /*   printf("Key: %X %X %X %X %X \n", (unsigned long) ki.bNlsShift, (unsigned long) ki.fbStatus, (unsigned long) Flags, (unsigned long) CharCode, (unsigned long) ScanCode);*/
 
     if ((Flags & (LEFTSHIFT | RIGHTSHIFT)) != 0) KeyFlags |= kfShift;
     if ((Flags & (LEFTCONTROL | RIGHTCONTROL)) != 0) KeyFlags |= kfCtrl;
 
-/*    cpCount = sizeof(cpList);*/
-/*    rc = DosQueryCp(sizeof(cpList), cpList, &cpCount);  // get active code page*/
+    /*    cpCount = sizeof(cpList);*/
+    /*    rc = DosQueryCp(sizeof(cpList), cpList, &cpCount);  // get active code page*/
     if (CharCode != 0) {
         if ((Flags & (LEFTALT)) != 0) KeyFlags |= kfAlt;
     } else {
         if ((Flags & (LEFTALT | RIGHTALT)) != 0) KeyFlags |= kfAlt;
     }
-/*    if (rc != 0) printf("rc = %d\n", rc);*/
+    /*    if (rc != 0) printf("rc = %d\n", rc);*/
 
     if (CharScan == 0) { /* shift/alt/ctrl/caps/scroll/num */
 
@@ -223,7 +223,7 @@ int ReadKbdEvent(TEvent *Event, int Wait) {
         KeyCode = CharCode;
         KeyFlags |= kfAltXXX;
     } else { /* now check special combinations */
-        for (I = 0; I < sizeof(TransCharScan)/sizeof(TransCharScan[0]); I++)
+        for (I = 0; I < sizeof(TransCharScan) / sizeof(TransCharScan[0]); I++)
             if (TransCharScan[I].CharScan == CharScan) {
                 KeyCode = TransCharScan[I].KeyCode;
                 break;
@@ -232,7 +232,7 @@ int ReadKbdEvent(TEvent *Event, int Wait) {
             if ((CharCode == 0) || (CharCode == 0xE0)) {
                 if (CharCode == 0xE0)
                     KeyFlags |= kfGray;
-                for (I = 0; I < sizeof(TransScan)/sizeof(TransScan[0]); I++)
+                for (I = 0; I < sizeof(TransScan) / sizeof(TransScan[0]); I++)
                     if (TransScan[I].ScanCode == ScanCode) {
                         KeyCode = TransScan[I].KeyCode;
                         break;
@@ -279,10 +279,9 @@ int ReadMouseEvent(TEvent *Event, ULONG EventMask) {
             }
         }
         if ((LastMouseEvent.What == evMouseDown || LastMouseEvent.What == evMouseMove)
-            &&
-            (LastMouseEvent.Mouse.Buttons)
-            && (EventMask & evMouseAuto))
-        {
+                &&
+                (LastMouseEvent.Mouse.Buttons)
+                && (EventMask & evMouseAuto)) {
             if (TM_DIFF(CurTime, LastEventTime) >= MouseAutoDelay) {
                 LastMouseEvent.What = evMouseAuto;
                 *Event = LastMouseEvent;
@@ -297,9 +296,9 @@ int ReadMouseEvent(TEvent *Event, ULONG EventMask) {
     Event->Mouse.X = mi.col;
     Event->Mouse.Y = mi.row;
     State = mi.fs;
-    Btn = Buttons = ((State & (2 | 4))?1:0) |
-                    ((State & (8 | 16))?2:0) |
-                    ((State & (32 | 64))?4:0);
+    Btn = Buttons = ((State & (2 | 4)) ? 1 : 0) |
+                    ((State & (8 | 16)) ? 2 : 0) |
+                    ((State & (32 | 64)) ? 4 : 0);
     if (Buttons != PrevButtons) {
         Buttons ^= PrevButtons;
         if (PrevButtons & Buttons)
@@ -309,7 +308,7 @@ int ReadMouseEvent(TEvent *Event, ULONG EventMask) {
     } else {
         Event->What = evMouseMove;
         if (Event->Mouse.X == LastMouseEvent.Mouse.X &&
-            Event->Mouse.Y == LastMouseEvent.Mouse.Y)
+                Event->Mouse.Y == LastMouseEvent.Mouse.Y)
             return 0;
     }
     Event->Mouse.Buttons = Buttons;
@@ -337,11 +336,11 @@ int ReadMouseEvent(TEvent *Event, ULONG EventMask) {
             LastClickCount = 1;
         DosQuerySysInfo(QSV_MS_COUNT, QSV_MS_COUNT, &LastClickTime, 4);
     }
-/*    if (Event->What == evMouseMove) {
-        LastClick = 0;
-        LastClickCount = 0;
-        LastClickTime = 0;
-    }*/
+    /*    if (Event->What == evMouseMove) {
+            LastClick = 0;
+            LastClickCount = 0;
+            LastClickTime = 0;
+        }*/
     {
         KBDINFO ki;
         USHORT Flags;
@@ -370,7 +369,7 @@ int ConClear() {
 
     MoveChar(B, 0, ConMaxCols, ' ', 0x07, 1);
     if ((ConQuerySize(&W, &H) == 0) &&
-        ConSetBox(0, 0, W, H, B[0])) return 0;
+            ConSetBox(0, 0, W, H, B[0])) return 0;
     return -1;
 }
 
@@ -437,12 +436,12 @@ int ConPutLine(int X, int Y, int W, int H, PCell Cell) {
         ConQueryMousePos(&MX, &MY);
 
     for (I = 0; I < H; I++) {
-    if (MouseVisible)
-        if (Y + I == MY)
-            if (MX >= X && MX < X + W) {
-                DrawMouse(0);
-                MouseHidden = 1;
-            }
+        if (MouseVisible)
+            if (Y + I == MY)
+                if (MX >= X && MX < X + W) {
+                    DrawMouse(0);
+                    MouseHidden = 1;
+                }
         VioWrtCellStr((PCH)p, (USHORT)(W << 1), (USHORT)(Y + I), (USHORT)X, 0);
 
         if (MouseHidden) {
@@ -457,7 +456,7 @@ int ConSetBox(int X, int Y, int W, int H, TCell Cell) {
     int I;
     int MX, MY;
     int MouseHidden = 0;
-    unsigned char *p = (unsigned char *) &Cell;
+    unsigned char *p = (unsigned char *) & Cell;
     if (MouseVisible)
         ConQueryMousePos(&MX, &MY);
 
@@ -620,7 +619,7 @@ int ConInit(int XSize, int YSize) {
         return 0;
 
     EventBuf.What = evNone;
-    MousePresent = (MouOpen(NULL, &MouseHandle) == 0) ?1:0;
+    MousePresent = (MouOpen(NULL, &MouseHandle) == 0) ? 1 : 0;
 
     if (MousePresent)
         MouSetEventMask(&MevMask, MouseHandle);
@@ -650,7 +649,7 @@ int ConSuspend() {
 
     ki = SaveKbdState;
     ki.fsMask &= ~(KEYBOARD_ECHO_OFF | KEYBOARD_BINARY_MODE);
-    ki.fsMask |=  (KEYBOARD_ECHO_ON | KEYBOARD_ASCII_MODE);
+    ki.fsMask |= (KEYBOARD_ECHO_ON | KEYBOARD_ASCII_MODE);
     assert(0 == KbdSetStatus(&ki, 0));
 
     ConHideMouse();
@@ -670,8 +669,8 @@ int ConContinue() {
 
     ki = SaveKbdState;
     ki.fsMask &= ~(KEYBOARD_ECHO_ON | KEYBOARD_ASCII_MODE);
-    ki.fsMask |=  (KEYBOARD_ECHO_OFF | KEYBOARD_BINARY_MODE);
-    assert(KbdSetStatus (&ki, 0) == 0);
+    ki.fsMask |= (KEYBOARD_ECHO_OFF | KEYBOARD_BINARY_MODE);
+    assert(KbdSetStatus(&ki, 0) == 0);
 
     vi.cb = 6;
     vi.type = 2;
@@ -722,8 +721,8 @@ int ConGetEvent(TEventMask EventMask, TEvent *Event, int WaitTime, int Delete) {
 
     ki = SaveKbdState;
     ki.fsMask &= ~(KEYBOARD_ECHO_ON | KEYBOARD_ASCII_MODE);
-    ki.fsMask |=  (KEYBOARD_ECHO_OFF | KEYBOARD_BINARY_MODE);
-    assert(KbdSetStatus (&ki, 0) == 0);
+    ki.fsMask |= (KEYBOARD_ECHO_OFF | KEYBOARD_BINARY_MODE);
+    assert(KbdSetStatus(&ki, 0) == 0);
 
     while ((WaitTime == -1) || (WaitTime >= 0)) {
         if ((ReadKbdEvent(Event, WaitTime) == 1) && (EventMask & evKeyboard)) break;
@@ -812,7 +811,9 @@ int GUI::ShowEntryScreen() {
 
     ConHideMouse();
     RestoreScreen();
-    do { gui->ConGetEvent(evKeyDown, &E, -1, 1, 0); } while (E.What != evKeyDown);
+    do {
+        gui->ConGetEvent(evKeyDown, &E, -1, 1, 0);
+    } while (E.What != evKeyDown);
     ConShowMouse();
     if (frames)
         frames->Repaint();
@@ -830,7 +831,7 @@ static int CreatePipeChild(PID &pid, HPIPE &hfPipe, char *Command) {
     ULONG ulAction;
     //ULONG ulNew;
     HPIPE hfChildPipe;
-    HFILE hfNewStdOut = (HFILE)-1, hfNewStdErr = (HFILE)-1;
+    HFILE hfNewStdOut = (HFILE) - 1, hfNewStdErr = (HFILE) - 1;
     HFILE hfStdOut = 1, hfStdErr = 2;
     int rc;
 
@@ -838,31 +839,31 @@ static int CreatePipeChild(PID &pid, HPIPE &hfPipe, char *Command) {
     PCount++;
 
     rc = DosCreateNPipe(szPipe, &hfPipe,
-                         NP_NOINHERIT | NP_ACCESS_INBOUND,
-                         NP_NOWAIT | NP_TYPE_BYTE | NP_READMODE_BYTE | 1,
-                         0, 4096, 0);
+                        NP_NOINHERIT | NP_ACCESS_INBOUND,
+                        NP_NOWAIT | NP_TYPE_BYTE | NP_READMODE_BYTE | 1,
+                        0, 4096, 0);
     if (rc != 0)
         return -1;
 
-    rc = DosConnectNPipe (hfPipe);
+    rc = DosConnectNPipe(hfPipe);
     if (rc != 0 && rc != ERROR_PIPE_NOT_CONNECTED) {
         DosClose(hfPipe);
         return -1;
     }
 
-    rc = DosSetNPHState (hfPipe, NP_WAIT | NP_READMODE_BYTE);
+    rc = DosSetNPHState(hfPipe, NP_WAIT | NP_READMODE_BYTE);
     if (rc != 0) {
         DosClose(hfPipe);
         return -1;
     }
 
-    rc = DosOpen (szPipe, &hfChildPipe, &ulAction, 0,
-                  FILE_NORMAL,
-                  OPEN_ACTION_OPEN_IF_EXISTS | OPEN_ACTION_FAIL_IF_NEW,
-                  OPEN_ACCESS_WRITEONLY | OPEN_SHARE_DENYREADWRITE,
-                  NULL);
+    rc = DosOpen(szPipe, &hfChildPipe, &ulAction, 0,
+                 FILE_NORMAL,
+                 OPEN_ACTION_OPEN_IF_EXISTS | OPEN_ACTION_FAIL_IF_NEW,
+                 OPEN_ACCESS_WRITEONLY | OPEN_SHARE_DENYREADWRITE,
+                 NULL);
     if (rc != 0) {
-        DosClose (hfPipe);
+        DosClose(hfPipe);
         return -1;
     }
 
@@ -946,7 +947,7 @@ static void _LNK_CONV PipeThread(void *p) {
     //fprintf(stderr, "Pipe: Begin: %d %s\n", pipe->id, Args);
     while (1) {
         //fprintf(stderr, "Waiting on pipe\n");
-            //fread(pipe->buffer, 1, pipe->buflen, fp);
+        //fread(pipe->buffer, 1, pipe->buflen, fp);
         rc = DosRead(hfPipe, pipe->buffer, pipe->buflen, &used);
         if (rc < 0)
             used = 0;
@@ -978,7 +979,7 @@ static void _LNK_CONV PipeThread(void *p) {
                       &pid,
                       pid);
     pipe->RetCode = rc_code.codeResult;
-            // pclose(fp);
+    // pclose(fp);
     pipe->reading = 0;
     DosPostEventSem(pipe->NewData);
     DosReleaseMutexSem(pipe->Access);
@@ -1000,8 +1001,7 @@ int GUI::OpenPipe(char *Command, EModel *notify) {
             Pipes[i].Command = strdup(Command);
             Pipes[i].notify = notify;
             Pipes[i].DoTerm = 0;
-            if ((Pipes[i].buffer = (char *)malloc(PIPE_BUFLEN)) == 0)
-            {
+            if ((Pipes[i].buffer = (char *)malloc(PIPE_BUFLEN)) == 0) {
                 free(Pipes[i].Command);
                 return -1;
             }
@@ -1129,8 +1129,8 @@ int GUI::RunProgram(int mode, char *Command) {
 
     if (Command == 0 || *Command == 0)  // empty string = shell
         Command = getenv(
-                         "COMSPEC"
-                        );
+                      "COMSPEC"
+                  );
 
     rc = system(Command);
 
@@ -1146,48 +1146,48 @@ int GUI::RunProgram(int mode, char *Command) {
 }
 
 int ConSetTitle(char *Title, char *STitle) {
-/*    HSWITCH hsw;
-    SWCNTRL sw;
-    HAB hab;
-    PID pid;
-    TID tid;
+    /*    HSWITCH hsw;
+        SWCNTRL sw;
+        HAB hab;
+        PID pid;
+        TID tid;
 
-    static PVOID Shmem = NULL;
+        static PVOID Shmem = NULL;
 
-    if (Shmem == NULL)
-        DosAllocSharedMem(&Shmem, NULL, 4096,
-                          PAG_COMMIT | PAG_READ | PAG_WRITE | OBJ_GIVEABLE);
+        if (Shmem == NULL)
+            DosAllocSharedMem(&Shmem, NULL, 4096,
+                              PAG_COMMIT | PAG_READ | PAG_WRITE | OBJ_GIVEABLE);
 
-    strcpy(Shmem, Title);
+        strcpy(Shmem, Title);
 
-    hab = WinInitialize(0);
+        hab = WinInitialize(0);
 
-    hsw = WinQuerySwitchHandle(NULLHANDLE, getpid());
+        hsw = WinQuerySwitchHandle(NULLHANDLE, getpid());
 
-    if (WinQuerySwitchEntry(hsw, &sw) != 0)
-        printf("\x7\n");
-    else {
+        if (WinQuerySwitchEntry(hsw, &sw) != 0)
+            printf("\x7\n");
+        else {
 
-        strncpy (sw.szSwtitle, Title, MAXNAMEL - 1);
-        sw.szSwtitle[MAXNAMEL-1] = 0;
+            strncpy (sw.szSwtitle, Title, MAXNAMEL - 1);
+            sw.szSwtitle[MAXNAMEL-1] = 0;
 
-        printf("hwnd: %X, hwndIcon: %X, pid: %d\n",
-               sw.hwnd,
-               sw.hwndIcon,
-               sw.idProcess);
+            printf("hwnd: %X, hwndIcon: %X, pid: %d\n",
+                   sw.hwnd,
+                   sw.hwndIcon,
+                   sw.idProcess);
 
-        WinQueryWindowProcess(sw.hwnd, &pid, &tid);
+            WinQueryWindowProcess(sw.hwnd, &pid, &tid);
 
-        DosGiveSharedMem(Shmem, pid, PAG_READ | PAG_WRITE);
+            DosGiveSharedMem(Shmem, pid, PAG_READ | PAG_WRITE);
 
-        printf("txt 1: %d\n", WinSetWindowText(sw.hwnd, Shmem));
-//        printf("txt 2: %d\n", WinSetWindowText(Wsw.hwndIcon, Shmem));
+            printf("txt 1: %d\n", WinSetWindowText(sw.hwnd, Shmem));
+    //        printf("txt 2: %d\n", WinSetWindowText(Wsw.hwndIcon, Shmem));
 
-        WinChangeSwitchEntry(hsw, &sw);
-    }
+            WinChangeSwitchEntry(hsw, &sw);
+        }
 
-    WinTerminate(hab);
-  */
+        WinTerminate(hab);
+      */
     return 0;
 }
 

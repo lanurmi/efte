@@ -48,8 +48,8 @@
 #    define strnicmp strncasecmp
 #    define stricmp strcasecmp
 #    define filecmp strcmp
-     //#    define memicmp strncasecmp   // FIX, fails for nulls
-     extern "C" int memicmp(const void *s1, const void *s2, size_t n);
+//#    define memicmp strncasecmp   // FIX, fails for nulls
+extern "C" int memicmp(const void *s1, const void *s2, size_t n);
 #endif
 
 #if defined(OS2)

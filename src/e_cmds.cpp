@@ -10,59 +10,59 @@
 #include "fte.h"
 
 int EBuffer::MoveLeft() {
-   if (CP.Col == 0) {
-      if ( CursorWithinEOL == 1 && MoveUp() )
-         return MoveLineEnd();
-      else
-         return 0;
-   }
-   SetPos(CP.Col - 1, CP.Row, tmLeft);
-   return 1;
+    if (CP.Col == 0) {
+        if (CursorWithinEOL == 1 && MoveUp())
+            return MoveLineEnd();
+        else
+            return 0;
+    }
+    SetPos(CP.Col - 1, CP.Row, tmLeft);
+    return 1;
 }
 
 int EBuffer::MoveRight() {
-   if ( CursorWithinEOL == 1 && CP.Col == LineLen() ) {
-      if ( MoveDown() )
-         return MoveLineStart();
-      else
-         return 0;
-   }
-   SetPos(CP.Col + 1, CP.Row, tmRight);
-   return 1;
+    if (CursorWithinEOL == 1 && CP.Col == LineLen()) {
+        if (MoveDown())
+            return MoveLineStart();
+        else
+            return 0;
+    }
+    SetPos(CP.Col + 1, CP.Row, tmRight);
+    return 1;
 }
 
 int EBuffer::MoveUp() {
-   if ( LastUpDownColumn == -1 )
-      LastUpDownColumn = CP.Col;
+    if (LastUpDownColumn == -1)
+        LastUpDownColumn = CP.Col;
 
-   if (CP.Row == 0) return 0;
+    if (CP.Row == 0) return 0;
 
-   SetPos(CP.Col, CP.Row - 1, tmLeft);
+    SetPos(CP.Col, CP.Row - 1, tmLeft);
 
-   if ( CursorWithinEOL == 1 ) {
-      MoveLineEnd();
-      if ( CP.Col > LastUpDownColumn )
-         SetPos( LastUpDownColumn, CP.Row );
-   }
+    if (CursorWithinEOL == 1) {
+        MoveLineEnd();
+        if (CP.Col > LastUpDownColumn)
+            SetPos(LastUpDownColumn, CP.Row);
+    }
 
-   return 1;
+    return 1;
 }
 
 int EBuffer::MoveDown() {
-   if ( LastUpDownColumn == -1 )
-      LastUpDownColumn = CP.Col;
+    if (LastUpDownColumn == -1)
+        LastUpDownColumn = CP.Col;
 
-   if (CP.Row == VCount - 1) return 0;
+    if (CP.Row == VCount - 1) return 0;
 
-   SetPos(CP.Col, CP.Row + 1, tmLeft);
+    SetPos(CP.Col, CP.Row + 1, tmLeft);
 
-   if ( CursorWithinEOL == 1 ) {
-      MoveLineEnd();
-      if ( CP.Col > LastUpDownColumn )
-         SetPos( LastUpDownColumn, CP.Row );
-   }
+    if (CursorWithinEOL == 1) {
+        MoveLineEnd();
+        if (CP.Col > LastUpDownColumn)
+            SetPos(LastUpDownColumn, CP.Row);
+    }
 
-   return 1;
+    return 1;
 }
 
 int EBuffer::MovePrev() {
@@ -84,10 +84,10 @@ int EBuffer::MoveWordLeftX(int start) {
         int wS = start, wE = 1 - start;
         PELine L = VLine(CP.Row);
         int C, P;
-        
+
         C = CP.Col;
         P = CharOffset(L, C);
-        
+
         if (P > L->Count) P = L->Count;
         if (P > 0) {
             while ((P > 0) && (WGETBIT(Flags.WordChars, L->Chars[P - 1]) == wE)) P--;
@@ -103,12 +103,12 @@ int EBuffer::MoveWordRightX(int start) {
     PELine L = VLine(CP.Row);
     int C, P;
     int wS = start, wE = 1 - start;
-    
+
     C = CP.Col;
     P = CharOffset(L, C);
-    
+
     if (P >= L->Count) return 0;
-    
+
     while ((P < L->Count) && (WGETBIT(Flags.WordChars, L->Chars[P]) == wS)) P++;
     while ((P < L->Count) && (WGETBIT(Flags.WordChars, L->Chars[P]) == wE)) P++;
     C = ScreenPos(L, P);
@@ -159,10 +159,10 @@ int EBuffer::MoveWordOrCapLeft() {
     if (CP.Col > 0) {
         PELine L = VLine(CP.Row);
         int C, P;
-        
+
         C = CP.Col;
         P = CharOffset(L, C);
-        
+
         if (P > L->Count) P = L->Count;
         if (P > 0) {
             while ((P > 0) && (WGETBIT(Flags.WordChars, L->Chars[P - 1]) == 0)) P--;
@@ -177,12 +177,12 @@ int EBuffer::MoveWordOrCapLeft() {
 int EBuffer::MoveWordOrCapRight() {
     PELine L = VLine(CP.Row);
     int C, P;
-    
+
     C = CP.Col;
     P = CharOffset(L, C);
-    
+
     if (P >= L->Count) return 0;
-    
+
     while ((P < L->Count) && (WGETBIT(Flags.CapitalChars, L->Chars[P]) == 1)) P++;
     while ((P < L->Count) && (WGETBIT(Flags.WordChars, L->Chars[P]) == 1) && (WGETBIT(Flags.CapitalChars, L->Chars[P]) == 0)) P++;
     while ((P < L->Count) && (WGETBIT(Flags.WordChars, L->Chars[P]) == 0)) P++;
@@ -209,7 +209,7 @@ int EBuffer::MoveWordOrCapEndLeft() {
 
         C = CP.Col;
         P = CharOffset(L, C);
-        
+
         if (P > L->Count) P = L->Count;
         if (P > 0) {
             while ((P > 0) && (WGETBIT(Flags.WordChars, L->Chars[P - 1]) == 1) && (WGETBIT(Flags.CapitalChars, L->Chars[P - 1]) == 0)) P--;
@@ -224,12 +224,12 @@ int EBuffer::MoveWordOrCapEndLeft() {
 int EBuffer::MoveWordOrCapEndRight() {
     PELine L = VLine(CP.Row);
     int C, P;
-    
+
     C = CP.Col;
     P = CharOffset(L, C);
-    
+
     if (P >= L->Count) return 0;
-    
+
     while ((P < L->Count) && (WGETBIT(Flags.WordChars, L->Chars[P]) == 0)) P++;
     while ((P < L->Count) && (WGETBIT(Flags.CapitalChars, L->Chars[P]) == 1)) P++;
     while ((P < L->Count) && (WGETBIT(Flags.WordChars, L->Chars[P]) == 1) && (WGETBIT(Flags.CapitalChars, L->Chars[P]) == 0)) P++;
@@ -281,7 +281,7 @@ int EBuffer::MovePageStart() {
 }
 
 int EBuffer::MovePageEnd() {
-    SetNearPos(CP.Col, 
+    SetNearPos(CP.Col,
                GetVPort()->TP.Row +
                GetVPort()->Rows - 1, tmLeft);
     return 1;
@@ -318,7 +318,7 @@ int EBuffer::MoveBlockEnd() {
 int EBuffer::MoveFirstNonWhite() {
     int C = 0, P = 0;
     PELine L = VLine(CP.Row);
-    
+
     while (C < L->Count) {
         if (L->Chars[C] == ' ') P++;
         else if (L->Chars[C] == 9) P = NextTab(P, BFI(this, BFI_TabSize));
@@ -332,7 +332,7 @@ int EBuffer::MoveFirstNonWhite() {
 int EBuffer::MoveLastNonWhite() {
     int C = LineLen(), P;
     PELine L = VLine(CP.Row);
-    
+
     while (C > 0) {
         if (L->Chars[C - 1] == ' ' || L->Chars[C - 1] == 9) C--;
         else break;
@@ -345,7 +345,7 @@ int EBuffer::MoveLastNonWhite() {
 int EBuffer::MovePrevEqualIndent() {
     int L = VToR(CP.Row);
     int I = LineIndented(L);
-    
+
     while (--L >= 0)
         if ((RLine(L)->Count > 0) && (LineIndented(L) == I))
             return SetPosR(I, L);
@@ -355,7 +355,7 @@ int EBuffer::MovePrevEqualIndent() {
 int EBuffer::MoveNextEqualIndent() {
     int L = VToR(CP.Row);
     int I = LineIndented(L);
-    
+
     while (L++ < RCount - 1)
         if ((RLine(L)->Count > 0) && (LineIndented(L) == I))
             return SetPosR(I, L);
@@ -364,14 +364,14 @@ int EBuffer::MoveNextEqualIndent() {
 
 int EBuffer::MoveNextTab() {
     int P = CP.Col;
-    
+
     P = NextTab(P, BFI(this, BFI_TabSize));
     return SetPos(P, CP.Row);
 }
 
 int EBuffer::MovePrevTab() {
     int P = CP.Col;
-    
+
     if (P > 0) {
         P = ((P - 1) / BFI(this, BFI_TabSize)) * BFI(this, BFI_TabSize);
         return SetPos(P, CP.Row);
@@ -387,7 +387,7 @@ int EBuffer::MoveLineTop() {
 int EBuffer::MoveLineCenter() {
     if (View) {
         int Row = CP.Row - GetVPort()->Rows / 2;
-        
+
         if (Row < 0) Row = 0;
         if (GetVPort()->SetTop(GetVPort()->TP.Col, Row) == 0) return 0;
     }
@@ -397,7 +397,7 @@ int EBuffer::MoveLineCenter() {
 int EBuffer::MoveLineBottom() {
     if (View) {
         int Row = CP.Row - GetVPort()->Rows + 1;
-        
+
         if (Row < 0) Row = 0;
         if (GetVPort()->SetTop(GetVPort()->TP.Col, Row) == 0) return 0;
     }
@@ -437,7 +437,7 @@ int EBuffer::SavePos() {
 int EBuffer::MoveTabStart() {
     PELine X = VLine(CP.Row);
     int C = CharOffset(X, CP.Col);
-    
+
     if (C < X->Count)
         if (X->Chars[C] == 9)
             return SetPos(ScreenPos(X, C), CP.Row);
@@ -447,7 +447,7 @@ int EBuffer::MoveTabStart() {
 int EBuffer::MoveTabEnd() {
     PELine X = VLine(CP.Row);
     int C = CharOffset(X, CP.Col);
-    
+
     if (C < X->Count)
         if (X->Chars[C] == 9)
             if (ScreenPos(X, C) < CP.Col)
@@ -462,7 +462,7 @@ int EBuffer::ScrollLeft(int Cols) {
     return 1;
 }
 
-int EBuffer::ScrollRight(int Cols) {  
+int EBuffer::ScrollRight(int Cols) {
     int C = GetVPort()->TP.Col;
     if (SetNearPos(CP.Col - Cols, CP.Row, tmLeft) == 0) return 0;
     if (GetVPort()->SetTop(C - Cols, GetVPort()->TP.Row) == 0) return 0;
@@ -515,10 +515,10 @@ int EBuffer::MoveEndLinePageFile() {
 
 int EBuffer::KillLine() {
     int Y = VToR(CP.Row);
-    
+
     if (Y == RCount - 1) {
         if (DelText(Y, 0, LineLen())) return 1;
-    } else 
+    } else
         if (DelLine(Y)) return 1;
     return 0;
 }
@@ -541,7 +541,7 @@ int EBuffer::KillCharPrev() {
     } else {
         if (!MovePrev()) return 0;
         if (DelText(CP.Row, CP.Col, 1)) return 1;
-    } 
+    }
     return 0;
 }
 
@@ -554,7 +554,7 @@ int EBuffer::KillWord() {
         int P = CharOffset(L, CP.Col);
         int C;
         int Class = ChClassK(L->Chars[P]);
-        
+
         while ((P < L->Count) && (ChClassK(L->Chars[P]) == Class)) P++;
         C = ScreenPos(L, P);
         if (DelText(Y, CP.Col, C - CP.Col) == 0) return 0;
@@ -564,7 +564,7 @@ int EBuffer::KillWord() {
 
 int EBuffer::KillWordPrev() {
     int Y = VToR(CP.Row);
-    
+
     if (CP.Col == 0) {
         if (KillCharPrev() == 0) return 0;
     } else if (CP.Col > LineLen()) {
@@ -574,7 +574,7 @@ int EBuffer::KillWordPrev() {
         int P = CharOffset(L, CP.Col);
         int C;
         int Class = ChClassK(L->Chars[P - 1]);
-        
+
         while ((P > 0) && (ChClassK(L->Chars[P - 1]) == Class)) P--;
         C = ScreenPos(L, P);
         if (DelText(Y, C, CP.Col - C) == 0) return 0;
@@ -606,7 +606,7 @@ int EBuffer::KillWordOrCap() {
 
 int EBuffer::KillWordOrCapPrev() {
     int Y = VToR(CP.Row);
-    
+
     if (CP.Col == 0) {
         if (KillCharPrev() == 0) return 0;
     } else if (CP.Col > LineLen()) {
@@ -662,13 +662,12 @@ int EBuffer::KillBlockOrCharPrev() {
 
 int EBuffer::BackSpace() {
     int Y = VToR(CP.Row);
-    
+
     if (CheckBlock() == 1 && BFI(this, BFI_BackSpKillBlock)) {
         if (BlockKill() == 0)
             return 0;
     } else if (BFI(this, BFI_WordWrap) == 2 && CP.Row > 0 && !IsLineBlank(Y - 1) &&
-               CP.Col <= BFI(this, BFI_LeftMargin) && CP.Col <= LineIndented(Y))
-    {
+               CP.Col <= BFI(this, BFI_LeftMargin) && CP.Col <= LineIndented(Y)) {
         if (SetPos(LineLen(Y - 1), CP.Row - 1) == 0) return 0;
     } else if (CP.Col == 0) {
         if (CP.Row > 0)
@@ -680,7 +679,7 @@ int EBuffer::BackSpace() {
         if (BFI(this, BFI_BackSpUnindents) && (LineIndented(Y) == CP.Col)) {
             int C = CP.Col, C1 = 0;
             int L = VToR(CP.Row);
-            
+
             C1 = C;
             while (L > 0 && (IsLineBlank(L - 1) || (C1 = LineIndented(L - 1)) >= C)) L--;
             if (L == 0) C1 = 0;
@@ -693,7 +692,7 @@ int EBuffer::BackSpace() {
         } else if (BFI(this, BFI_BackSpKillTab)) {
             int P;
             int C = CP.Col, C1;
-            
+
             P = CharOffset(RLine(Y), C - 1);
             C1 = ScreenPos(RLine(Y), P);
             if (SetPos(C1, CP.Row) == 0) return 0;
@@ -701,18 +700,18 @@ int EBuffer::BackSpace() {
         } else {
             if (MovePrev() == 0) return 0;
 
-	    ELine *L = RLine(Y);
+            ELine *L = RLine(Y);
             int C = CharOffset(L, CP.Col);
 
             if (L->Count > 0 && L->Chars[C] == 9) {
                 /* We're on top of tab character. Skip over all spaces and
                    tabs so that only the last space/tab gets deleted. */
                 while (C < L->Count &&
-                       (L->Chars[C+1] == 9 || L->Chars[C+1] == ' ')) C++;
+                        (L->Chars[C+1] == 9 || L->Chars[C+1] == ' ')) C++;
             }
 
             if (DelText(Y, ScreenPos(L, C), 1) == 0) return 0;
-        } 
+        }
     }
     if (BFI(this, BFI_WordWrap) == 2) {
         if (DoWrap(0) == 0) return 0;
@@ -733,7 +732,7 @@ int EBuffer::Delete() {
         if (BFI(this, BFI_DeleteKillTab)) {
             int P;
             int C = CP.Col, C1;
-            
+
             P = CharOffset(RLine(Y), C);
             C1 = ScreenPos(RLine(Y), P + 1);
             if (DelText(Y, C, C1 - C) == 0) return 0;
@@ -745,12 +744,12 @@ int EBuffer::Delete() {
                 /* We're on top of tab character. Skip over all spaces and
                    tabs so that only the last space/tab gets deleted. */
                 while (C < L->Count &&
-                       (L->Chars[C+1] == '\t' || L->Chars[C+1] == ' ')) C++;
+                        (L->Chars[C+1] == '\t' || L->Chars[C+1] == ' ')) C++;
             }
 
             if (DelText(Y, ScreenPos(L, C), 1) == 0) return 0;
         }
-    } else 
+    } else
         if (LineJoin() == 0) return 0;
     if (BFI(this, BFI_WordWrap) == 2) {
         if (DoWrap(0) == 0) return 0;
@@ -778,7 +777,7 @@ int EBuffer::LineAdd() {
 int EBuffer::LineSplit() {
     if (SplitLine(VToR(CP.Row), CP.Col) == 0) return 0;
     if (BFI(this, BFI_Trim))
-	if (TrimLine(VToR(CP.Row)) == 0) return 0;
+        if (TrimLine(VToR(CP.Row)) == 0) return 0;
     return 1;
 }
 
@@ -790,24 +789,24 @@ int EBuffer::LineJoin() {
 int EBuffer::LineNew() {
     if (SplitLine(VToR(CP.Row), CP.Col) == 0)
         return 0;
-    
+
     if (!MoveDown())
         return 0;
-    
+
     if (CP.Col > 0) {
-        
+
         if (!MoveLineStart())
             return 0;
-        
+
         //int Indent = LineIndented(VToR(CP.Row));
-        
+
         if (!LineIndent())
             return 0;
-        
+
         //if (Indent > 0)
         //  if (InsText(Row, C, Indent, 0) == 0)
         //    return 0;
-        
+
         if (BFI(this, BFI_Trim))
             if (TrimLine(VToR(CP.Row - 1)) == 0)
                 return 0;
@@ -820,13 +819,23 @@ int EBuffer::LineIndent() {
 
     if (BFI(this, BFI_AutoIndent)) {
         int L = VToR(CP.Row);
-        
+
         switch (BFI(this, BFI_IndentMode)) {
-        case INDENT_C: rc = Indent_C(this, L, 1); break;
-        case INDENT_REXX: rc = Indent_REXX(this, L, 1); break;
-        case INDENT_FALCON: rc = Indent_FALCON(this, L, 1); break;
-        case INDENT_SIMPLE: rc = Indent_SIMPLE(this, L, 1); break;
-        default: rc = Indent_Plain(this, L, 1); break;
+        case INDENT_C:
+            rc = Indent_C(this, L, 1);
+            break;
+        case INDENT_REXX:
+            rc = Indent_REXX(this, L, 1);
+            break;
+        case INDENT_FALCON:
+            rc = Indent_FALCON(this, L, 1);
+            break;
+        case INDENT_SIMPLE:
+            rc = Indent_SIMPLE(this, L, 1);
+            break;
+        default:
+            rc = Indent_Plain(this, L, 1);
+            break;
         }
     }
     if (rc == 0) return 0;
@@ -867,7 +876,7 @@ int EBuffer::TypeChar(char aCh) { // does abbrev expansion if appropriate
         int C, P, P1, C1, Len, R;
         char Str[256];
         EAbbrev *ab;
-        
+
         R = VToR(CP.Row);
         C = CP.Col;
         P = CharOffset(L, C);
@@ -879,7 +888,7 @@ int EBuffer::TypeChar(char aCh) { // does abbrev expansion if appropriate
             Len = P1 - P;
             C = ScreenPos(L, P);
             assert(C1 - C == Len);
-	    if (Len > 0 && Len < int (sizeof(Str))) {
+            if (Len > 0 && Len < int (sizeof(Str))) {
                 //fprintf(stderr, "TypeChar 2\n");
                 memcpy(Str, L->Chars + P, Len);
                 Str[Len] = 0;
@@ -916,12 +925,12 @@ int EBuffer::InsertString(const char *aStr, int aCount) {
     int P;
     int C, L;
     int Y = VToR(CP.Row);
-    
+
     if (BFI(this, BFI_InsertKillBlock) == 1)
         if (CheckBlock() == 1)
             if (BlockKill() == 0)
                 return 0;
-    
+
     if (BFI(this, BFI_Insert) == 0)
         if (CP.Col < LineLen())
             if (KillChar() == 0)
@@ -944,17 +953,17 @@ int EBuffer::InsertString(const char *aStr, int aCount) {
         int P, C = CP.Col;
         PELine LP;
         int L;
-        
+
         if (C > BFI(this, BFI_RightMargin)) {
             L = CP.Row;
-            
+
             C = BFI(this, BFI_RightMargin);
             P = CharOffset(LP = RLine(L), C);
             while ((C > BFI(this, BFI_LeftMargin)) &&
-                   ((LP->Chars[P] != ' ') &&
-                    (LP->Chars[P] != 9)))
+                    ((LP->Chars[P] != ' ') &&
+                     (LP->Chars[P] != 9)))
                 C = ScreenPos(LP, --P);
-            
+
             if (P <= BFI(this, BFI_LeftMargin)) {
                 C = BFI(this, BFI_RightMargin);
             } else
@@ -969,15 +978,15 @@ int EBuffer::InsertString(const char *aStr, int aCount) {
 
 int EBuffer::InsertSpacesToTab(int TSize) {
     int P = CP.Col, P1;
-    
+
     if (BFI(this, BFI_InsertKillBlock) == 1)
         if (CheckBlock() == 1)
             if (BlockKill() == 0)
                 return 0;
-    
+
     if (TSize <= 0)
         TSize = BFI(this, BFI_TabSize);
-    
+
     P1 = NextTab(P, TSize);
     if (BFI(this, BFI_Insert) == 0) {
         if (CP.Col < LineLen())
@@ -990,7 +999,7 @@ int EBuffer::InsertSpacesToTab(int TSize) {
 
 int EBuffer::InsertTab() {
     return (BFI(this, BFI_SpaceTabs)) ?
-	InsertSpacesToTab(BFI(this, BFI_TabSize)) : InsertChar(9);
+           InsertSpacesToTab(BFI(this, BFI_TabSize)) : InsertChar(9);
 }
 
 int EBuffer::InsertSpace() {
@@ -999,7 +1008,7 @@ int EBuffer::InsertSpace() {
 
 int EBuffer::LineIndented(int Row, const char *indentchars) {
     ELine *l;
-    
+
     if (Row < 0) return 0;
     if (Row >= RCount) return 0;
     l = RLine(Row);
@@ -1016,7 +1025,7 @@ int EBuffer::LineIndentedCharCount(ELine *l, const char *indentchars) {
         indentchars = " \t";
     CC = l->Count;
     PC = l->Chars;
-    for(i = 0; i < CC; i++) {
+    for (i = 0; i < CC; i++) {
         if (! strchr(indentchars, PC[i]))
             break;
     }
@@ -1026,19 +1035,19 @@ int EBuffer::LineIndentedCharCount(ELine *l, const char *indentchars) {
 int EBuffer::IndentLine(int Row, int Indent) {
     int I, C;
     int Ind = Indent;
-    
+
     if (Row < 0) return 0;
     if (Row >= RCount) return 0;
     if (Indent < 0) Indent = 0;
     I = LineIndented(Row);
     if (Indent != I) {
-        if (I > 0) 
+        if (I > 0)
             if (DelText(Row, 0, I) == 0) return 0;
         if (Indent > 0) {
             C = 0;
             if (BFI(this, BFI_IndentWithTabs)) {
                 char ch = 9;
-                
+
                 while (BFI(this, BFI_TabSize) <= Indent) {
                     if (InsText(Row, C, 1, &ch) == 0) return 0;
                     Indent -= BFI(this, BFI_TabSize);
@@ -1067,14 +1076,14 @@ int EBuffer::CanRedo() {
 int EBuffer::IsLineBlank(int Row) {
     PELine X = RLine(Row);
     int P;
-    
-    for (P = 0; P < X->Count; P++) 
+
+    for (P = 0; P < X->Count; P++)
         if (X->Chars[P] != ' ' && X->Chars[P] != 9)
             return 0;
     return 1;
 }
 
-#define WFAIL(x) return 0	/*do { puts(#x "\x7"); return -1; } while (0) */
+#define WFAIL(x) return 0 /*do { puts(#x "\x7"); return -1; } while (0) */
 
 int EBuffer::DoWrap(int WrapAll) {
     int L, Len, C, P, Ind;
@@ -1082,18 +1091,18 @@ int EBuffer::DoWrap(int WrapAll) {
     int Left = BFI(this, BFI_LeftMargin), Right = BFI(this, BFI_RightMargin);
     int FirstParaLine;
     int NoChange = 0, NoChangeX = 0;
-    
+
     if (Left >= Right) return 0;
-    
+
     L = VToR(CP.Row);
-    
+
     FirstParaLine = 0;
     if (L > 0)
         if (IsLineBlank(L - 1)) FirstParaLine = L;
-    
+
     while (L < RCount) {
         NoChange = 1;
-        
+
         if (VToR(CP.Row) != L || L != FirstParaLine) {
             if (VToR(CP.Row) == L)
                 if (CP.Col <= LineIndented(L))
@@ -1104,39 +1113,37 @@ int EBuffer::DoWrap(int WrapAll) {
             NoChange = 0;
         }
         Len = LineLen(L);
-        
+
         if (IsLineBlank(L)) break;
-        
+
         if (Len < Right) {
             int firstwordbeg = -1;
             int firstwordend = -1;
             int X;
             PELine lp;
-            
+
             if (L < RCount - 1) {
                 IndentLine(L + 1, 0);
                 if ((ScreenPos(RLine(L + 1), RLine(L + 1)->Count) == 0) ||
-                    (RLine(L + 1)->Chars[0] == '>') || (RLine(L + 1)->Chars[0] == '<')) break;
+                        (RLine(L + 1)->Chars[0] == '>') || (RLine(L + 1)->Chars[0] == '<')) break;
             } else
                 break;
             if (L + 1 >= RCount) break;
-            
+
             lp = RLine(L + 1);
             for (X = 0; X < lp->Count; X++) {
-                if (firstwordbeg == -1 && 
-                    ((lp->Chars[X] != ' ') && (lp->Chars[X] != '\t')))
-                {
+                if (firstwordbeg == -1 &&
+                        ((lp->Chars[X] != ' ') && (lp->Chars[X] != '\t'))) {
                     firstwordbeg = X;
                 } else if (firstwordend == -1 &&
-                           ((lp->Chars[X] == ' ' || lp->Chars[X] == '\t')))
-                {
+                           ((lp->Chars[X] == ' ' || lp->Chars[X] == '\t'))) {
                     firstwordend = X - 1;
                 }
             }
             if (firstwordbeg != -1)
                 if (firstwordend == -1)
                     firstwordend = lp->Count;
-            
+
             if (firstwordend == -1) break;
             if (Right - Len > firstwordend - firstwordbeg) {
                 if (JoinLine(L, Len + 1) == 0) WFAIL(3);
@@ -1147,11 +1154,11 @@ int EBuffer::DoWrap(int WrapAll) {
         } else if (Len > Right) {
             C = Right;
             P = CharOffset(LP = RLine(L), C);
-            while ((C > Left) && 
-                   ((LP->Chars[P] != ' ') &&
-                    (LP->Chars[P] != 9)))
+            while ((C > Left) &&
+                    ((LP->Chars[P] != ' ') &&
+                     (LP->Chars[P] != 9)))
                 C = ScreenPos(LP, --P);
-            
+
             if (P <= Left) {
                 L++;
                 continue;
@@ -1211,7 +1218,7 @@ int EBuffer::LineCenter() {
 int EBuffer::InsPrevLineChar() {
     int L = VToR(CP.Row);
     int C = CP.Col, P;
-    
+
     if (L > 0) {
         L--;
         if (C < LineLen(L)) {
@@ -1226,7 +1233,7 @@ int EBuffer::InsPrevLineToEol() {
     int L = VToR(CP.Row);
     int C = CP.Col, P;
     int Len;
-    
+
     if (L > 0) {
         L--;
         P = CharOffset(RLine(L), C);
@@ -1247,14 +1254,14 @@ int EBuffer::LineDuplicate() {
 int EBuffer::TrimLine(int Row) {
     PELine L = RLine(Row);
     int P, X, E;
-    
+
     if (L->Count == 0) return 1;
     P = L->Count;
     while ((P > 0) && ((L->Chars[P - 1] == ' ') || (L->Chars[P - 1] == 9)))
         P--;
     X = ScreenPos(L, P);
     E = ScreenPos(L, L->Count);
-    if (E - X > 0) 
+    if (E - X > 0)
         if (DelText(Row, X, E - X, 1) == 0) return 0;
     return 1;
 }
@@ -1273,7 +1280,7 @@ int EBuffer::FileTrim() {
 int EBuffer::BlockTrim() {
     EPoint B, E;
     int L;
-    
+
     AutoExtend = 0;
     if (CheckBlock() == 0) return 0;
     if (RCount <= 0) return 0;
@@ -1310,26 +1317,63 @@ int EBuffer::BlockTrim() {
     return 1;
 
 
-int EBuffer::ToggleAutoIndent() { TOGGLE(AutoIndent); }
-int EBuffer::ToggleInsert() { TOGGLE(Insert); }
-int EBuffer::ToggleExpandTabs() { TOGGLE_R(ExpandTabs); }
-int EBuffer::ToggleShowTabs() { TOGGLE_R(ShowTabs); }
-int EBuffer::ToggleUndo() { FreeUndo(); TOGGLE(Undo); }
-int EBuffer::ToggleReadOnly() { TOGGLE(ReadOnly); }
-int EBuffer::ToggleKeepBackups() { TOGGLE(KeepBackups); }
-int EBuffer::ToggleMatchCase() { TOGGLE(MatchCase); }
-int EBuffer::ToggleBackSpKillTab() { TOGGLE(BackSpKillTab); }
-int EBuffer::ToggleDeleteKillTab() { TOGGLE(DeleteKillTab); }
-int EBuffer::ToggleSpaceTabs() { TOGGLE(SpaceTabs); }
-int EBuffer::ToggleIndentWithTabs() { TOGGLE(IndentWithTabs); }
-int EBuffer::ToggleBackSpUnindents() { TOGGLE(BackSpUnindents); }
-int EBuffer::ToggleTrim() { TOGGLE(Trim); }
-int EBuffer::ToggleShowMarkers() { TOGGLE_R(ShowMarkers); }
-int EBuffer::ToggleHilitTags() { TOGGLE_R(HilitTags); }
-int EBuffer::ToggleShowBookmarks() { TOGGLE_R(ShowBookmarks); }
-int EBuffer::ToggleMakeBackups() { TOGGLE(MakeBackups); }
+int EBuffer::ToggleAutoIndent() {
+    TOGGLE(AutoIndent);
+}
+int EBuffer::ToggleInsert() {
+    TOGGLE(Insert);
+}
+int EBuffer::ToggleExpandTabs() {
+    TOGGLE_R(ExpandTabs);
+}
+int EBuffer::ToggleShowTabs() {
+    TOGGLE_R(ShowTabs);
+}
+int EBuffer::ToggleUndo() {
+    FreeUndo();
+    TOGGLE(Undo);
+}
+int EBuffer::ToggleReadOnly() {
+    TOGGLE(ReadOnly);
+}
+int EBuffer::ToggleKeepBackups() {
+    TOGGLE(KeepBackups);
+}
+int EBuffer::ToggleMatchCase() {
+    TOGGLE(MatchCase);
+}
+int EBuffer::ToggleBackSpKillTab() {
+    TOGGLE(BackSpKillTab);
+}
+int EBuffer::ToggleDeleteKillTab() {
+    TOGGLE(DeleteKillTab);
+}
+int EBuffer::ToggleSpaceTabs() {
+    TOGGLE(SpaceTabs);
+}
+int EBuffer::ToggleIndentWithTabs() {
+    TOGGLE(IndentWithTabs);
+}
+int EBuffer::ToggleBackSpUnindents() {
+    TOGGLE(BackSpUnindents);
+}
+int EBuffer::ToggleTrim() {
+    TOGGLE(Trim);
+}
+int EBuffer::ToggleShowMarkers() {
+    TOGGLE_R(ShowMarkers);
+}
+int EBuffer::ToggleHilitTags() {
+    TOGGLE_R(HilitTags);
+}
+int EBuffer::ToggleShowBookmarks() {
+    TOGGLE_R(ShowBookmarks);
+}
+int EBuffer::ToggleMakeBackups() {
+    TOGGLE(MakeBackups);
+}
 
-int EBuffer::ToggleWordWrap() { 
+int EBuffer::ToggleWordWrap() {
     BFI(this, BFI_WordWrap) = (BFI(this, BFI_WordWrap) + 1) % 3;
     /*Msg(INFO,
         "WordWrap is now %s.",

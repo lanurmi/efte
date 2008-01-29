@@ -56,8 +56,18 @@ void ExInput::HandleEvent(TEvent &Event) {
     switch (Event.What) {
     case evKeyDown:
         switch (kbCode(Event.Key.Code)) {
-        case kbLeft: if (Pos > 0) Pos--; SelStart = SelEnd = 0; TabCount = 0; Event.What = evNone; break;
-        case kbRight: Pos++; SelStart = SelEnd = 0; TabCount = 0; Event.What = evNone; break;
+        case kbLeft:
+            if (Pos > 0) Pos--;
+            SelStart = SelEnd = 0;
+            TabCount = 0;
+            Event.What = evNone;
+            break;
+        case kbRight:
+            Pos++;
+            SelStart = SelEnd = 0;
+            TabCount = 0;
+            Event.What = evNone;
+            break;
         case kbLeft | kfCtrl:
             if (Pos > 0) {
                 Pos--;
@@ -71,32 +81,44 @@ void ExInput::HandleEvent(TEvent &Event) {
             TabCount = 0;
             Event.What = evNone;
             break;
-        case kbRight | kfCtrl:
-            {
-                unsigned int len = strlen(Line);
-                if (Pos < len) {
+        case kbRight | kfCtrl: {
+            unsigned int len = strlen(Line);
+            if (Pos < len) {
+                Pos++;
+                while (Pos < len) {
+                    if (isalnum(Line[Pos]) && !isalnum(Line[Pos - 1]))
+                        break;
                     Pos++;
-                    while (Pos < len) {
-                        if (isalnum(Line[Pos]) && !isalnum(Line[Pos - 1]))
-                            break;
-                        Pos++;
-                    }
                 }
             }
+        }
+        SelStart = SelEnd = 0;
+        TabCount = 0;
+        Event.What = evNone;
+        break;
+        case kbHome:
+            Pos = 0;
             SelStart = SelEnd = 0;
             TabCount = 0;
             Event.What = evNone;
             break;
-        case kbHome: Pos = 0; SelStart = SelEnd = 0; TabCount = 0; Event.What = evNone; break;
-        case kbEnd: Pos = strlen(Line); SelStart = SelEnd = 0; TabCount = 0; Event.What = evNone; break;
-        case kbEsc: EndExec(0); Event.What = evNone; break;
-        case kbEnter: 
+        case kbEnd:
+            Pos = strlen(Line);
+            SelStart = SelEnd = 0;
+            TabCount = 0;
+            Event.What = evNone;
+            break;
+        case kbEsc:
+            EndExec(0);
+            Event.What = evNone;
+            break;
+        case kbEnter:
             AddInputHistory(HistId, Line);
             EndExec(1);
-            Event.What = evNone; 
+            Event.What = evNone;
             break;
         case kbBackSp | kfCtrl | kfShift:
-            SelStart = SelEnd = 0; 
+            SelStart = SelEnd = 0;
             Pos = 0;
             Line[0] = 0;
             TabCount = 0;
@@ -107,16 +129,16 @@ void ExInput::HandleEvent(TEvent &Event) {
                     Pos = strlen(Line);
                 } else {
                     char Ch;
-                    
+
                     if (Pos > 0) do {
-                        Pos--;
-                        memmove(Line + Pos, Line + Pos + 1, strlen(Line + Pos + 1) + 1);
-                        if (Pos == 0) break;
-                        Ch = Line[Pos - 1];
-                    } while (Pos > 0 && Ch != '\\' && Ch != '/' && Ch != '.' && isalnum(Ch));
+                            Pos--;
+                            memmove(Line + Pos, Line + Pos + 1, strlen(Line + Pos + 1) + 1);
+                            if (Pos == 0) break;
+                            Ch = Line[Pos - 1];
+                        } while (Pos > 0 && Ch != '\\' && Ch != '/' && Ch != '.' && isalnum(Ch));
                 }
             }
-            SelStart = SelEnd = 0; 
+            SelStart = SelEnd = 0;
             TabCount = 0;
             Event.What = evNone;
             break;
@@ -160,35 +182,34 @@ void ExInput::HandleEvent(TEvent &Event) {
             Event.What = evNone;
             break;
         case kbIns | kfShift:
-        case 'V'   | kfCtrl:
-            {
-                int len;
+        case 'V'   | kfCtrl: {
+            int len;
 
-                if (SystemClipboard)
-                    GetPMClip(0);
-                
-                if (SSBuffer == 0) break;
-                if (SSBuffer->RCount == 0) break;
+            if (SystemClipboard)
+                GetPMClip(0);
 
-                if (SelStart < SelEnd) {
-                    memmove(Line + SelStart, Line + SelEnd, strlen(Line + SelEnd) + 1);
-                    Pos = SelStart;
-                    SelStart = SelEnd = 0;
-                }
+            if (SSBuffer == 0) break;
+            if (SSBuffer->RCount == 0) break;
 
-                len = SSBuffer->LineChars(0);
-                if (strlen(Line) + len < MaxLen) {
-                    memmove(Line + Pos + len, Line + Pos, strlen(Line + Pos) + 1);
-                    memcpy(Line + Pos, SSBuffer->RLine(0)->Chars, len);
-                    TabCount = 0;
-                    Event.What = evNone;
-                    Pos += len;
-                }
+            if (SelStart < SelEnd) {
+                memmove(Line + SelStart, Line + SelEnd, strlen(Line + SelEnd) + 1);
+                Pos = SelStart;
+                SelStart = SelEnd = 0;
             }
-            break;
+
+            len = SSBuffer->LineChars(0);
+            if (strlen(Line) + len < MaxLen) {
+                memmove(Line + Pos + len, Line + Pos, strlen(Line + Pos) + 1);
+                memcpy(Line + Pos, SSBuffer->RLine(0)->Chars, len);
+                TabCount = 0;
+                Event.What = evNone;
+                Pos += len;
+            }
+        }
+        break;
         case kbUp:
             SelStart = SelEnd = 0;
-            if (CurItem == 0) 
+            if (CurItem == 0)
                 strcpy(CurStr, Line);
             CurItem += 2;
         case kbDown:
@@ -197,10 +218,10 @@ void ExInput::HandleEvent(TEvent &Event) {
             CurItem--;
             {
                 int cnt = CountInputHistory(HistId);
-                
+
                 if (CurItem > cnt) CurItem = cnt;
                 if (CurItem < 0) CurItem = 0;
-                
+
                 if (CurItem == 0)
                     strcpy(Line, CurStr);
                 else if (GetInputHistory(HistId, Line, MaxLen, CurItem));
@@ -236,23 +257,22 @@ void ExInput::HandleEvent(TEvent &Event) {
         case 'Q' | kfCtrl:
             Event.What = evKeyDown;
             Event.Key.Code = Win->GetChar(0);
-        default:
-            {
-                char Ch;
+        default: {
+            char Ch;
 
-                if (GetCharFromEvent(Event, &Ch) && (strlen(Line) < MaxLen)) {
-                    if (SelStart < SelEnd) {
-                        memmove(Line + SelStart, Line + SelEnd, strlen(Line + SelEnd) + 1);
-                        Pos = SelStart;
-                        SelStart = SelEnd = 0;
-                    }
-                    memmove(Line + Pos + 1, Line + Pos, strlen(Line + Pos) + 1);
-                    Line[Pos++] = Ch;
-                    TabCount = 0;
-                    Event.What = evNone;
+            if (GetCharFromEvent(Event, &Ch) && (strlen(Line) < MaxLen)) {
+                if (SelStart < SelEnd) {
+                    memmove(Line + SelStart, Line + SelEnd, strlen(Line + SelEnd) + 1);
+                    Pos = SelStart;
+                    SelStart = SelEnd = 0;
                 }
+                memmove(Line + Pos + 1, Line + Pos, strlen(Line + Pos) + 1);
+                Line[Pos++] = Ch;
+                TabCount = 0;
+                Event.What = evNone;
             }
-            break;
+        }
+        break;
         }
         Event.What = evNone;
         break;
@@ -278,18 +298,18 @@ void ExInput::UpdateStatus() {
 void ExInput::RepaintStatus() {
     TDrawBuffer B;
     int W, H, FLen, FPos;
-    
+
     ConQuerySize(&W, &H);
-    
+
     FPos = strlen(Prompt) + 2;
     FLen = W - FPos;
-    
-    if (Pos > strlen(Line)) 
+
+    if (Pos > strlen(Line))
         Pos = strlen(Line);
     //if (Pos < 0) Pos = 0;
     if (LPos + FLen <= Pos) LPos = Pos - FLen + 1;
     if (Pos < LPos) LPos = Pos;
-    
+
     MoveChar(B, 0, W, ' ', hcEntry_Field, W);
     MoveStr(B, 0, W, Prompt, hcEntry_Prompt, FPos);
     MoveChar(B, FPos - 2, W, ':', hcEntry_Prompt, 1);

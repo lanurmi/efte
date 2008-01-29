@@ -50,78 +50,112 @@ static RxNode *NewEscape(const char **const Regexp) {
     char Ch = **Regexp;
     ++*Regexp;
     switch (Ch) {
-      case 0: return 0;
-      case 'a': Ch = '\a'; break;
-      case 'b': Ch = '\b'; break;
-      case 'f': Ch = '\f'; break;
-      case 'n': Ch = '\n'; break;
-      case 'r': Ch = '\r'; break;
-      case 't': Ch = '\t'; break;
-      case 'v': Ch = '\v'; break;
-      case 'e': Ch = 27; break;
-      case 's': return NewNode(RE_WSPACE);
-      case 'S': return NewNode(RE_NWSPACE);
-      case 'U': return NewNode(RE_UPPER);
-      case 'L': return NewNode(RE_LOWER);
-      case 'w': return NewNode(RE_WORD);
-      case 'W': return NewNode(RE_NWORD);
-      case 'd': return NewNode(RE_DIGIT);
-      case 'D': return NewNode(RE_NDIGIT);
-      case 'C': return NewNode(RE_CASE);
-      case 'c': return NewNode(RE_NCASE);
-      case 'N':
-        {
-            unsigned int N = 0;
-            unsigned int A = 0;
-            if (**Regexp == 0) return 0;
-            N = toupper(**Regexp) - 48; if (N > 9) return 0;
-            (*Regexp)++;
-            A = N * 100;
-            if (**Regexp == 0) return 0;
-            N = toupper(**Regexp) - 48; if (N > 9) return 0;
-            (*Regexp)++;
-            A = A + N * 10;
-            if (**Regexp == 0) return 0;
-            N = toupper(**Regexp) - 48; if (N > 9) return 0;
-            (*Regexp)++;
-            A = A + N;
-            Ch = (char)A;
-        }
+    case 0:
+        return 0;
+    case 'a':
+        Ch = '\a';
         break;
-    case 'o':
-        {
-            unsigned int N = 0;
-            unsigned int A = 0;
-            if (**Regexp == 0) return 0;
-            N = toupper(**Regexp) - 48; if (N > 7) return 0;
-            (*Regexp)++;
-            A = N * 64;
-            if (**Regexp == 0) return 0;
-            N = toupper(**Regexp) - 48; if (N > 7) return 0;
-            (*Regexp)++;
-            A = A + N * 8;
-            if (**Regexp == 0) return 0;
-            N = toupper(**Regexp) - 48; if (N > 7) return 0;
-            (*Regexp)++;
-            A = A + N;
-            Ch = (char)A;
-        }
+    case 'b':
+        Ch = '\b';
         break;
-    case 'x':
-        {
-            unsigned int N = 0;
-            unsigned int A = 0;
-            if (**Regexp == 0) return 0;
-            N = toupper(**Regexp) - 48; if (N > 9) N = N + 48 - 65 + 10; if (N > 15) return 0;
-            (*Regexp)++;
-            A = N << 4;
-            if (**Regexp == 0) return 0;
-            N = toupper(**Regexp) - 48; if (N > 9) N = N + 48 - 65 + 10; if (N > 15) return 0;
-            (*Regexp)++;
-            A = A + N;
-            Ch = (char)A;
-        }
+    case 'f':
+        Ch = '\f';
         break;
+    case 'n':
+        Ch = '\n';
+        break;
+    case 'r':
+        Ch = '\r';
+        break;
+    case 't':
+        Ch = '\t';
+        break;
+    case 'v':
+        Ch = '\v';
+        break;
+    case 'e':
+        Ch = 27;
+        break;
+    case 's':
+        return NewNode(RE_WSPACE);
+    case 'S':
+        return NewNode(RE_NWSPACE);
+    case 'U':
+        return NewNode(RE_UPPER);
+    case 'L':
+        return NewNode(RE_LOWER);
+    case 'w':
+        return NewNode(RE_WORD);
+    case 'W':
+        return NewNode(RE_NWORD);
+    case 'd':
+        return NewNode(RE_DIGIT);
+    case 'D':
+        return NewNode(RE_NDIGIT);
+    case 'C':
+        return NewNode(RE_CASE);
+    case 'c':
+        return NewNode(RE_NCASE);
+    case 'N': {
+        unsigned int N = 0;
+        unsigned int A = 0;
+        if (**Regexp == 0) return 0;
+        N = toupper(**Regexp) - 48;
+        if (N > 9) return 0;
+        (*Regexp)++;
+        A = N * 100;
+        if (**Regexp == 0) return 0;
+        N = toupper(**Regexp) - 48;
+        if (N > 9) return 0;
+        (*Regexp)++;
+        A = A + N * 10;
+        if (**Regexp == 0) return 0;
+        N = toupper(**Regexp) - 48;
+        if (N > 9) return 0;
+        (*Regexp)++;
+        A = A + N;
+        Ch = (char)A;
+    }
+    break;
+    case 'o': {
+        unsigned int N = 0;
+        unsigned int A = 0;
+        if (**Regexp == 0) return 0;
+        N = toupper(**Regexp) - 48;
+        if (N > 7) return 0;
+        (*Regexp)++;
+        A = N * 64;
+        if (**Regexp == 0) return 0;
+        N = toupper(**Regexp) - 48;
+        if (N > 7) return 0;
+        (*Regexp)++;
+        A = A + N * 8;
+        if (**Regexp == 0) return 0;
+        N = toupper(**Regexp) - 48;
+        if (N > 7) return 0;
+        (*Regexp)++;
+        A = A + N;
+        Ch = (char)A;
+    }
+    break;
+    case 'x': {
+        unsigned int N = 0;
+        unsigned int A = 0;
+        if (**Regexp == 0) return 0;
+        N = toupper(**Regexp) - 48;
+        if (N > 9) N = N + 48 - 65 + 10;
+        if (N > 15) return 0;
+        (*Regexp)++;
+        A = N << 4;
+        if (**Regexp == 0) return 0;
+        N = toupper(**Regexp) - 48;
+        if (N > 9) N = N + 48 - 65 + 10;
+        if (N > 15) return 0;
+        (*Regexp)++;
+        A = A + N;
+        Ch = (char)A;
+    }
+    break;
     }
     return NewChar(Ch);
 }
@@ -152,80 +186,104 @@ static RxNode *NewSet(const char ** const Regexp) {
 
     while (**Regexp) {
         switch (Ch = *((*Regexp)++)) {
-          case ']':
+        case ']':
             if (doset == 1) return 0;
             {
-                RxNode *N = NewNode(s?RE_INSET:RE_NOTINSET);
+                RxNode *N = NewNode(s ? RE_INSET : RE_NOTINSET);
                 N->fChar = (char *) malloc(sizeof(set));
                 N->fLen = sizeof(set);
                 if (N->fChar == 0) return 0;
                 memcpy(N->fChar, (char *) set, sizeof(set));
                 return N;
             }
-          case '\\':
+        case '\\':
             switch (Ch = *((*Regexp)++)) {
-              case 0: return 0;
-              case 'a': Ch = '\a'; break;
-              case 'b': Ch = '\b'; break;
-              case 'f': Ch = '\f'; break;
-              case 'n': Ch = '\n'; break;
-              case 'r': Ch = '\r'; break;
-              case 't': Ch = '\t'; break;
-              case 'v': Ch = '\v'; break;
-              case 'e': Ch = 27; break;
-              case 'N':
-                  {
-                      unsigned int N = 0;
-                      unsigned int A = 0;
-                      if (**Regexp == 0) return 0;
-                      N = toupper(**Regexp) - 48; if (N > 9) return 0;
-                      (*Regexp)++;
-                      A = N * 100;
-                      if (**Regexp == 0) return 0;
-                      N = toupper(**Regexp) - 48; if (N > 9) return 0;
-                      (*Regexp)++;
-                      A = A + N * 10;
-                      if (**Regexp == 0) return 0;
-                      N = toupper(**Regexp) - 48; if (N > 9) return 0;
-                      (*Regexp)++;
-                      A = A + N;
-                      Ch = (unsigned char)A;
-                  }
-                  break;
-            case 'o':
-                {
-                    unsigned int N = 0;
-                    unsigned int A = 0;
-                    if (**Regexp == 0) return 0;
-                    N = toupper(**Regexp) - 48; if (N > 7) return 0;
-                    (*Regexp)++;
-                    A = N * 64;
-                    if (**Regexp == 0) return 0;
-                    N = toupper(**Regexp) - 48; if (N > 7) return 0;
-                    (*Regexp)++;
-                    A = A + N * 8;
-                    if (**Regexp == 0) return 0;
-                    N = toupper(**Regexp) - 48; if (N > 7) return 0;
-                    (*Regexp)++;
-                    A = A + N;
-                    Ch = (unsigned char)A;
-                }
+            case 0:
+                return 0;
+            case 'a':
+                Ch = '\a';
                 break;
-            case 'x':
-                {
-                    unsigned int N = 0;
-                    unsigned int A = 0;
-                    if (**Regexp == 0) return 0;
-                    N = toupper(**Regexp) - 48; if (N > 9) N = N + 48 - 65 + 10; if (N > 15) return 0;
-                    (*Regexp)++;
-                    A = N << 4;
-                    if (**Regexp == 0) return 0;
-                    N = toupper(**Regexp) - 48; if (N > 9) N = N + 48 - 65 + 10; if (N > 15) return 0;
-                    (*Regexp)++;
-                    A = A + N;
-                    Ch = (unsigned char)A;
-                }
+            case 'b':
+                Ch = '\b';
                 break;
+            case 'f':
+                Ch = '\f';
+                break;
+            case 'n':
+                Ch = '\n';
+                break;
+            case 'r':
+                Ch = '\r';
+                break;
+            case 't':
+                Ch = '\t';
+                break;
+            case 'v':
+                Ch = '\v';
+                break;
+            case 'e':
+                Ch = 27;
+                break;
+            case 'N': {
+                unsigned int N = 0;
+                unsigned int A = 0;
+                if (**Regexp == 0) return 0;
+                N = toupper(**Regexp) - 48;
+                if (N > 9) return 0;
+                (*Regexp)++;
+                A = N * 100;
+                if (**Regexp == 0) return 0;
+                N = toupper(**Regexp) - 48;
+                if (N > 9) return 0;
+                (*Regexp)++;
+                A = A + N * 10;
+                if (**Regexp == 0) return 0;
+                N = toupper(**Regexp) - 48;
+                if (N > 9) return 0;
+                (*Regexp)++;
+                A = A + N;
+                Ch = (unsigned char)A;
+            }
+            break;
+            case 'o': {
+                unsigned int N = 0;
+                unsigned int A = 0;
+                if (**Regexp == 0) return 0;
+                N = toupper(**Regexp) - 48;
+                if (N > 7) return 0;
+                (*Regexp)++;
+                A = N * 64;
+                if (**Regexp == 0) return 0;
+                N = toupper(**Regexp) - 48;
+                if (N > 7) return 0;
+                (*Regexp)++;
+                A = A + N * 8;
+                if (**Regexp == 0) return 0;
+                N = toupper(**Regexp) - 48;
+                if (N > 7) return 0;
+                (*Regexp)++;
+                A = A + N;
+                Ch = (unsigned char)A;
+            }
+            break;
+            case 'x': {
+                unsigned int N = 0;
+                unsigned int A = 0;
+                if (**Regexp == 0) return 0;
+                N = toupper(**Regexp) - 48;
+                if (N > 9) N = N + 48 - 65 + 10;
+                if (N > 15) return 0;
+                (*Regexp)++;
+                A = N << 4;
+                if (**Regexp == 0) return 0;
+                N = toupper(**Regexp) - 48;
+                if (N > 9) N = N + 48 - 65 + 10;
+                if (N > 15) return 0;
+                (*Regexp)++;
+                A = A + N;
+                Ch = (unsigned char)A;
+            }
+            break;
             case 's':
                 c += 4;
                 SETOP(set, '\n');
@@ -296,7 +354,7 @@ static RxNode *NewSet(const char ** const Regexp) {
         } else if (doset == 1) {
             C2 = Ch;
             if (C2 < C1) return 0;
-            for(i = C1; i <= C2; i++) SETOP(set, i);
+            for (i = C1; i <= C2; i++) SETOP(set, i);
             doset = 0;
             continue;
         }
@@ -511,13 +569,27 @@ static RxNode *RxComp(const char **const Regexp) {
             while (N->fNext) N = N->fNext;
             CHECK(AddNode(&F, &N, NewNode(RE_GROUP | RE_CLOSE | RE_MEM | C)));
             break;
-        case '\\':CHECK(AddNode(&F, &N, NewEscape(Regexp)));     break;
-        case '[': CHECK(AddNode(&F, &N, NewSet(Regexp)));        break;
-        case '^': CHECK(AddNode(&F, &N, NewNode(RE_ATBOL)));     break;
-        case '$': CHECK(AddNode(&F, &N, NewNode(RE_ATEOL)));     break;
-        case '.': CHECK(AddNode(&F, &N, NewNode(RE_ANY)));       break;
-        case '<': CHECK(AddNode(&F, &N, NewNode(RE_ATBOW)));     break;
-        case '>': CHECK(AddNode(&F, &N, NewNode(RE_ATEOW)));     break;
+        case '\\':
+            CHECK(AddNode(&F, &N, NewEscape(Regexp)));
+            break;
+        case '[':
+            CHECK(AddNode(&F, &N, NewSet(Regexp)));
+            break;
+        case '^':
+            CHECK(AddNode(&F, &N, NewNode(RE_ATBOL)));
+            break;
+        case '$':
+            CHECK(AddNode(&F, &N, NewNode(RE_ATEOL)));
+            break;
+        case '.':
+            CHECK(AddNode(&F, &N, NewNode(RE_ANY)));
+            break;
+        case '<':
+            CHECK(AddNode(&F, &N, NewNode(RE_ATBOW)));
+            break;
+        case '>':
+            CHECK(AddNode(&F, &N, NewNode(RE_ATEOW)));
+            break;
         default:
             --*Regexp;
             CHECK(AddNode(&F, &N, NewChar(**Regexp)));
@@ -641,13 +713,13 @@ int RxMatch(RxNode *rx) {
         case RE_ATBOW:
             if (rex >= eop) return 0;
             if (rex > bop) {
-                if ((ChClass(*rex) != 1) || (ChClass(*(rex-1)) != 0)) return 0;
+                if ((ChClass(*rex) != 1) || (ChClass(*(rex - 1)) != 0)) return 0;
             }
             break;
         case RE_ATEOW:
             if (rex <= bop) return 0;
             if (rex < eop) {
-                if ((ChClass(*rex) != 0) || (ChClass(*(rex-1)) != 1)) return 0;
+                if ((ChClass(*rex) != 0) || (ChClass(*(rex - 1)) != 1)) return 0;
             }
             break;
         case RE_CHAR:
@@ -716,10 +788,10 @@ int RxMatch(RxNode *rx) {
 
                     if (n->fWhat & RE_OPEN) {
                         //                        if (match->Open[b] == -1)
-                        match->Open[b] = (int) (save - bop);
+                        match->Open[b] = (int)(save - bop);
                     } else {
                         //                        if (match->Close[b] == -1)
-                        match->Close[b] = (int) (save - bop);
+                        match->Close[b] = (int)(save - bop);
                     }
                     return 1;
                 }
@@ -754,8 +826,8 @@ int RxTry(RxNode *rx, const char *s) {
     for (int i = 0; i < NSEXPS; i++)
         match->Open[i] = match->Close[i] = -1;
     if (RxMatch(rx)) {
-        match->Open[0] = (int) (s - bop);
-        match->Close[0] = (int) (rex - bop);
+        match->Open[0] = (int)(s - bop);
+        match->Close[0] = (int)(rex - bop);
         return 1;
     }
     flags = fl;
@@ -899,9 +971,15 @@ int RxReplace(const char *rep, const char *Src, int /*len*/, RxMatchRes match, c
         case '\\':
             switch (Ch = *rep++) {
             case '0':
-            case '1': case '2': case '3':
-            case '4': case '5': case '6':
-            case '7': case '8': case '9':
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+            case '9':
                 n = Ch - 48;
 
                 if (match.Open[n] != -1 && match.Close[n] != -1) {
@@ -911,76 +989,150 @@ int RxReplace(const char *rep, const char *Src, int /*len*/, RxMatchRes match, c
             case 0:
                 if (dest) free(dest);
                 return -1; // error
-            case 'r': Ch = '\r'; add(&dlen, &dest, &Ch, 1, flag); break;
-            case 'n': Ch = '\n'; add(&dlen, &dest, &Ch, 1, flag); break;
-            case 'b': Ch = '\b'; add(&dlen, &dest, &Ch, 1, flag); break;
-            case 'a': Ch = '\a'; add(&dlen, &dest, &Ch, 1, flag); break;
-            case 't': Ch = '\t'; add(&dlen, &dest, &Ch, 1, flag); break;
-            case 'U': flag |= FLAG_UP_CASE; break;
-            case 'u': flag |= FLAG_UP_NEXT; break;
-            case 'L': flag |= FLAG_DOWN_CASE; break;
-            case 'l': flag |= FLAG_DOWN_NEXT; break;
+            case 'r':
+                Ch = '\r';
+                add(&dlen, &dest, &Ch, 1, flag);
+                break;
+            case 'n':
+                Ch = '\n';
+                add(&dlen, &dest, &Ch, 1, flag);
+                break;
+            case 'b':
+                Ch = '\b';
+                add(&dlen, &dest, &Ch, 1, flag);
+                break;
+            case 'a':
+                Ch = '\a';
+                add(&dlen, &dest, &Ch, 1, flag);
+                break;
+            case 't':
+                Ch = '\t';
+                add(&dlen, &dest, &Ch, 1, flag);
+                break;
+            case 'U':
+                flag |= FLAG_UP_CASE;
+                break;
+            case 'u':
+                flag |= FLAG_UP_NEXT;
+                break;
+            case 'L':
+                flag |= FLAG_DOWN_CASE;
+                break;
+            case 'l':
+                flag |= FLAG_DOWN_NEXT;
+                break;
             case 'E':
-            case 'e': flag &= ~(FLAG_UP_CASE | FLAG_DOWN_CASE); break;
-            case 'x':
-                {
-                    int N = 0;
-                    int A = 0;
-
-                    if (*rep == 0) { free(dest); return 0; }
-                    N = toupper(*rep) - 48; if (N > 9) N = N + 48 - 65 + 10; if (N > 15) return 0;
-                    rep++;
-                    A = N << 4;
-                    if (*rep == 0) { free(dest); return 0; }
-                    N = toupper(*rep) - 48; if (N > 9) N = N + 48 - 65 + 10; if (N > 15) return 0;
-                    rep++;
-                    A = A + N;
-                    Ch = (char)A;
-                }
-                add(&dlen, &dest, &Ch, 1, flag);
+            case 'e':
+                flag &= ~(FLAG_UP_CASE | FLAG_DOWN_CASE);
                 break;
-            case 'd':
-                {
-                    int N = 0;
-                    int A = 0;
+            case 'x': {
+                int N = 0;
+                int A = 0;
 
-                    if (*rep == 0) { free(dest); return 0; }
-                    N = toupper(*rep) - 48; if (N > 9) { free(dest); return 0; }
-                    rep++;
-                    A = N * 100;
-                    if (*rep == 0) { free(dest); return 0; }
-                    N = toupper(*rep) - 48; if (N > 9) { free(dest); return 0; }
-                    rep++;
-                    A = N * 10;
-                    if (*rep == 0) { free(dest); return 0; }
-                    N = toupper(*rep) - 48; if (N > 9) { free(dest); return 0; }
-                    rep++;
-                    A = A + N;
-                    Ch = (char)A;
+                if (*rep == 0) {
+                    free(dest);
+                    return 0;
                 }
-                add(&dlen, &dest, &Ch, 1, flag);
-                break;
-            case 'o':
-                {
-                    int N = 0;
-                    int A = 0;
+                N = toupper(*rep) - 48;
+                if (N > 9) N = N + 48 - 65 + 10;
+                if (N > 15) return 0;
+                rep++;
+                A = N << 4;
+                if (*rep == 0) {
+                    free(dest);
+                    return 0;
+                }
+                N = toupper(*rep) - 48;
+                if (N > 9) N = N + 48 - 65 + 10;
+                if (N > 15) return 0;
+                rep++;
+                A = A + N;
+                Ch = (char)A;
+            }
+            add(&dlen, &dest, &Ch, 1, flag);
+            break;
+            case 'd': {
+                int N = 0;
+                int A = 0;
 
-                    if (*rep == 0) { free(dest); return 0; }
-                    N = toupper(*rep) - 48; if (N > 7) { free(dest); return 0; }
-                    rep++;
-                    A = N * 64;
-                    if (*rep == 0) { free(dest); return 0; }
-                    N = toupper(*rep) - 48; if (N > 7) { free(dest); return 0; }
-                    rep++;
-                    A = N * 8;
-                    if (*rep == 0) { free(dest); return 0; }
-                    N = toupper(*rep) - 48; if (N > 7) { free(dest); return 0; }
-                    rep++;
-                    A = A + N;
-                    Ch = (char)A;
+                if (*rep == 0) {
+                    free(dest);
+                    return 0;
                 }
-                add(&dlen, &dest, &Ch, 1, flag);
-                break;
+                N = toupper(*rep) - 48;
+                if (N > 9) {
+                    free(dest);
+                    return 0;
+                }
+                rep++;
+                A = N * 100;
+                if (*rep == 0) {
+                    free(dest);
+                    return 0;
+                }
+                N = toupper(*rep) - 48;
+                if (N > 9) {
+                    free(dest);
+                    return 0;
+                }
+                rep++;
+                A = N * 10;
+                if (*rep == 0) {
+                    free(dest);
+                    return 0;
+                }
+                N = toupper(*rep) - 48;
+                if (N > 9) {
+                    free(dest);
+                    return 0;
+                }
+                rep++;
+                A = A + N;
+                Ch = (char)A;
+            }
+            add(&dlen, &dest, &Ch, 1, flag);
+            break;
+            case 'o': {
+                int N = 0;
+                int A = 0;
+
+                if (*rep == 0) {
+                    free(dest);
+                    return 0;
+                }
+                N = toupper(*rep) - 48;
+                if (N > 7) {
+                    free(dest);
+                    return 0;
+                }
+                rep++;
+                A = N * 64;
+                if (*rep == 0) {
+                    free(dest);
+                    return 0;
+                }
+                N = toupper(*rep) - 48;
+                if (N > 7) {
+                    free(dest);
+                    return 0;
+                }
+                rep++;
+                A = N * 8;
+                if (*rep == 0) {
+                    free(dest);
+                    return 0;
+                }
+                N = toupper(*rep) - 48;
+                if (N > 7) {
+                    free(dest);
+                    return 0;
+                }
+                rep++;
+                A = A + N;
+                Ch = (char)A;
+            }
+            add(&dlen, &dest, &Ch, 1, flag);
+            break;
             default:
                 add(&dlen, &dest, &Ch, 1, flag);
                 break;
@@ -1003,22 +1155,54 @@ static void RxDump(int N, RxNode *n) {
     while (n) {
         for (int i = 0; i < N; i++) printf("    ");
         switch (n->fWhat) {
-        case RE_NOTHING:   printf("NOTHING\n"); break;
-        case RE_CHAR:      printf("CHAR '%.1s'\n", n->fChar); break;
-        case RE_ATBOL:     printf("^\n"); break;
-        case RE_ATEOL:     printf("$\n"); break;
-        case RE_ANY:       printf(".\n"); break;
-        case RE_INSET:     printf("[\n"/*, n->fChar*/); break;
-        case RE_NOTINSET:  printf("[^\n"/*, n->fChar*/); break;
-        case RE_ATBOW:     printf("<\n"); break;
-        case RE_ATEOW:     printf(">\n"); break;
-        case RE_WSPACE:    printf("WSPACE\n"); break;
-        case RE_NWSPACE:   printf("NWSPACE\n"); break;
-        case RE_UPPER:     printf("UPPER\n"); break;
-        case RE_LOWER:     printf("LOWER\n"); break;
-        case RE_JUMP:      printf("JUMP\n"); break;
-        case RE_BREAK:     printf("BREAK\n"); break;
-        case RE_END:       printf("END\n"); break;
+        case RE_NOTHING:
+            printf("NOTHING\n");
+            break;
+        case RE_CHAR:
+            printf("CHAR '%.1s'\n", n->fChar);
+            break;
+        case RE_ATBOL:
+            printf("^\n");
+            break;
+        case RE_ATEOL:
+            printf("$\n");
+            break;
+        case RE_ANY:
+            printf(".\n");
+            break;
+        case RE_INSET:
+            printf("[\n"/*, n->fChar*/);
+            break;
+        case RE_NOTINSET:
+            printf("[^\n"/*, n->fChar*/);
+            break;
+        case RE_ATBOW:
+            printf("<\n");
+            break;
+        case RE_ATEOW:
+            printf(">\n");
+            break;
+        case RE_WSPACE:
+            printf("WSPACE\n");
+            break;
+        case RE_NWSPACE:
+            printf("NWSPACE\n");
+            break;
+        case RE_UPPER:
+            printf("UPPER\n");
+            break;
+        case RE_LOWER:
+            printf("LOWER\n");
+            break;
+        case RE_JUMP:
+            printf("JUMP\n");
+            break;
+        case RE_BREAK:
+            printf("BREAK\n");
+            break;
+        case RE_END:
+            printf("END\n");
+            break;
         default:
             if (n->fWhat & RE_GROUP) {
                 if (n->fWhat & RE_MEM) {
@@ -1072,7 +1256,7 @@ int main() {
     TEST(0, "{aa}?C", "xxb");
     TEST(1, "^aa", "aa");
     TEST(0, "^aa", "baa");
-    TEST(1, "^aa$" ,"aa");
+    TEST(1, "^aa$" , "aa");
     TEST(0, "^aa$", "baab");
     TEST(1, "a*b", "aaab");
     TEST(0, "a*b", "aaaa");
@@ -1113,10 +1297,15 @@ int main() {
     TEST(1, "{a{a{a{a|a}|{a|a}a}a}a|a}", "aaaaaaaaaaaaaaaaa");
 
     while (1) {
-        printf("Regexp: "); fflush(stdout); gets(line);
+        printf("Regexp: ");
+        fflush(stdout);
+        gets(line);
         if (!*line) break;
-        a = RxCompile(line); RxDump(0, a);
-        printf("String: "); fflush(stdout); gets(line);
+        a = RxCompile(line);
+        RxDump(0, a);
+        printf("String: ");
+        fflush(stdout);
+        gets(line);
         printf("rc = %d\n", RxExec(a, line, strlen(line), line, &b));
         for (int i = 0; i < NSEXPS; i++) {
             if (b.Open[i] != -1) {

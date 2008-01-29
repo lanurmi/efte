@@ -67,8 +67,7 @@ ChColor hcChoice_NormalChar = 0x1E;
 static const struct {
     const char *Name;
     ChColor *C;
-} Colors[] = 
-{
+} Colors[] = {
     { "Status.Normal",     &hcStatus_Normal },
     { "Status.Active",     &hcStatus_Active },
 
@@ -133,7 +132,7 @@ int SetColor(const char *ColorV, const char *Value) {
         return 0;
 
     ChColor C = ChColor(ColFg | (ColBg << 4));
-    for (unsigned i = 0; i < sizeof(Colors)/sizeof(Colors[0]); i++) {
+    for (unsigned i = 0; i < sizeof(Colors) / sizeof(Colors[0]); i++) {
         if (strcmp(ColorV, Colors[i].Name) == 0) {
             *Colors[i].C = C;
             return 1;

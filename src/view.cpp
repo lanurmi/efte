@@ -142,57 +142,109 @@ int EView::BeginMacro() {
 
 int EView::ExecCommand(int Command, ExState &State) {
     switch (Command) {
-    case ExSwitchTo:            return SwitchTo(State);
-    case ExFilePrev:            return FilePrev();
-    case ExFileNext:            return FileNext();
-    case ExFileLast:            return FileLast();
-    case ExFileOpen:            return FileOpen(State);
-    case ExFileOpenInMode:      return FileOpenInMode(State);
-    case ExFileSaveAll:         return FileSaveAll();
-    case ExListRoutines:        return ViewRoutines(State);
-    case ExDirOpen:             return DirOpen(State);
-    case ExViewMessages:        return ViewMessages(State);
-    case ExCompile:             return Compile(State);
-    case ExRunCompiler:         return RunCompiler(State);
-    case ExCompilePrevError:    return CompilePrevError(State);
-    case ExCompileNextError:    return CompileNextError(State);
-    case ExCvs:                 return Cvs(State);
-    case ExRunCvs:              return RunCvs(State);
-    case ExViewCvs:             return ViewCvs(State);
-    case ExClearCvsMessages:    return ClearCvsMessages(State);
-    case ExCvsDiff:             return CvsDiff(State);
-    case ExRunCvsDiff:          return RunCvsDiff(State);
-    case ExViewCvsDiff:         return ViewCvsDiff(State);
-    case ExCvsCommit:           return CvsCommit(State);
-    case ExRunCvsCommit:        return RunCvsCommit(State);
-    case ExViewCvsLog:          return ViewCvsLog(State);
-    case ExSvn:                 return Svn(State);
-    case ExRunSvn:              return RunSvn(State);
-    case ExViewSvn:             return ViewSvn(State);
-    case ExClearSvnMessages:    return ClearSvnMessages(State);
-    case ExSvnDiff:             return SvnDiff(State);
-    case ExRunSvnDiff:          return RunSvnDiff(State);
-    case ExViewSvnDiff:         return ViewSvnDiff(State);
-    case ExSvnCommit:           return SvnCommit(State);
-    case ExRunSvnCommit:        return RunSvnCommit(State);
-    case ExViewSvnLog:          return ViewSvnLog(State);
-    case ExViewBuffers:         return ViewBuffers(State);
-    case ExShowKey:             return ShowKey(State);
-    case ExToggleSysClipboard:  return ToggleSysClipboard(State);
-    case ExSetPrintDevice:      return SetPrintDevice(State);
-    case ExShowVersion:         return ShowVersion();
-    case ExViewModeMap:         return ViewModeMap(State);
-    case ExClearMessages:       return ClearMessages();
-    case ExTagNext:             return TagNext(this);
-    case ExTagPrev:             return TagPrev(this);
-    case ExTagPop:              return TagPop(this);
-    case ExTagClear:            TagClear(); return 1;
-    case ExTagLoad:             return TagLoad(State);
-    case ExShowHelp:            return SysShowHelp(State, 0);
-    case ExConfigRecompile:     return ConfigRecompile(State);
-    case ExRemoveGlobalBookmark:return RemoveGlobalBookmark(State);
-    case ExGotoGlobalBookmark:  return GotoGlobalBookmark(State);
-    case ExPopGlobalBookmark:   return PopGlobalBookmark();
+    case ExSwitchTo:
+        return SwitchTo(State);
+    case ExFilePrev:
+        return FilePrev();
+    case ExFileNext:
+        return FileNext();
+    case ExFileLast:
+        return FileLast();
+    case ExFileOpen:
+        return FileOpen(State);
+    case ExFileOpenInMode:
+        return FileOpenInMode(State);
+    case ExFileSaveAll:
+        return FileSaveAll();
+    case ExListRoutines:
+        return ViewRoutines(State);
+    case ExDirOpen:
+        return DirOpen(State);
+    case ExViewMessages:
+        return ViewMessages(State);
+    case ExCompile:
+        return Compile(State);
+    case ExRunCompiler:
+        return RunCompiler(State);
+    case ExCompilePrevError:
+        return CompilePrevError(State);
+    case ExCompileNextError:
+        return CompileNextError(State);
+    case ExCvs:
+        return Cvs(State);
+    case ExRunCvs:
+        return RunCvs(State);
+    case ExViewCvs:
+        return ViewCvs(State);
+    case ExClearCvsMessages:
+        return ClearCvsMessages(State);
+    case ExCvsDiff:
+        return CvsDiff(State);
+    case ExRunCvsDiff:
+        return RunCvsDiff(State);
+    case ExViewCvsDiff:
+        return ViewCvsDiff(State);
+    case ExCvsCommit:
+        return CvsCommit(State);
+    case ExRunCvsCommit:
+        return RunCvsCommit(State);
+    case ExViewCvsLog:
+        return ViewCvsLog(State);
+    case ExSvn:
+        return Svn(State);
+    case ExRunSvn:
+        return RunSvn(State);
+    case ExViewSvn:
+        return ViewSvn(State);
+    case ExClearSvnMessages:
+        return ClearSvnMessages(State);
+    case ExSvnDiff:
+        return SvnDiff(State);
+    case ExRunSvnDiff:
+        return RunSvnDiff(State);
+    case ExViewSvnDiff:
+        return ViewSvnDiff(State);
+    case ExSvnCommit:
+        return SvnCommit(State);
+    case ExRunSvnCommit:
+        return RunSvnCommit(State);
+    case ExViewSvnLog:
+        return ViewSvnLog(State);
+    case ExViewBuffers:
+        return ViewBuffers(State);
+    case ExShowKey:
+        return ShowKey(State);
+    case ExToggleSysClipboard:
+        return ToggleSysClipboard(State);
+    case ExSetPrintDevice:
+        return SetPrintDevice(State);
+    case ExShowVersion:
+        return ShowVersion();
+    case ExViewModeMap:
+        return ViewModeMap(State);
+    case ExClearMessages:
+        return ClearMessages();
+    case ExTagNext:
+        return TagNext(this);
+    case ExTagPrev:
+        return TagPrev(this);
+    case ExTagPop:
+        return TagPop(this);
+    case ExTagClear:
+        TagClear();
+        return 1;
+    case ExTagLoad:
+        return TagLoad(State);
+    case ExShowHelp:
+        return SysShowHelp(State, 0);
+    case ExConfigRecompile:
+        return ConfigRecompile(State);
+    case ExRemoveGlobalBookmark:
+        return RemoveGlobalBookmark(State);
+    case ExGotoGlobalBookmark:
+        return GotoGlobalBookmark(State);
+    case ExPopGlobalBookmark:
+        return PopGlobalBookmark();
     }
     return Model ? Model->ExecCommand(Command, State) : 0;
 }
@@ -204,15 +256,14 @@ void EView::HandleEvent(TEvent &Event) {
         Port->HandleEvent(Event);
     if (Event.What == evCommand) {
         switch (Event.Msg.Command) {
-        case cmDroppedFile:
-            {
-                char *file = (char *)Event.Msg.Param2;
+        case cmDroppedFile: {
+            char *file = (char *)Event.Msg.Param2;
 
-                if (IsDirectory(file))
-                    OpenDir(file);
-                MultiFileLoad(0, file, NULL, this);
-            }
-            break;
+            if (IsDirectory(file))
+                OpenDir(file);
+            MultiFileLoad(0, file, NULL, this);
+        }
+        break;
         }
     }
 }
@@ -271,8 +322,8 @@ void EView::DeleteModel(EModel *M) {
 
 int EView::FilePrev() {
     if (Model) {
-        EModel *n=Model->Prev;
-        if (IgnoreBufferList&&n&&n->GetContext ()==CONTEXT_BUFFERS) n=n->Prev;
+        EModel *n = Model->Prev;
+        if (IgnoreBufferList && n && n->GetContext() == CONTEXT_BUFFERS) n = n->Prev;
         SelectModel(n);
         return 1;
     }
@@ -281,8 +332,8 @@ int EView::FilePrev() {
 
 int EView::FileNext() {
     if (Model) {
-        EModel *n=Model->Next;
-        if (IgnoreBufferList&&n&&n->GetContext ()==CONTEXT_BUFFERS) n=n->Next;
+        EModel *n = Model->Next;
+        if (IgnoreBufferList && n && n->GetContext() == CONTEXT_BUFFERS) n = n->Next;
         SelectModel(n);
         return 1;
     }
@@ -291,8 +342,8 @@ int EView::FileNext() {
 
 int EView::FileLast() {
     if (Model) {
-        EModel *n=Model->Next;
-        if (IgnoreBufferList&&n&&n->GetContext ()==CONTEXT_BUFFERS) n=n->Next;
+        EModel *n = Model->Next;
+        if (IgnoreBufferList && n && n->GetContext() == CONTEXT_BUFFERS) n = n->Next;
         SwitchToModel(n);
         return 1;
     }
@@ -348,7 +399,7 @@ int EView::FileOpen(ExState &State) {
         if (MView->Win->GetFile("Open file", sizeof(FName), FName, HIST_PATH, GF_OPEN) == 0) return 0;
     }
 
-    if( strlen( FName ) == 0 ) return 0;
+    if (strlen(FName) == 0) return 0;
 
     if (IsDirectory(FName))
         return OpenDir(FName);
@@ -374,7 +425,7 @@ int EView::FileOpenInMode(ExState &State) {
     if (IsDirectory(FName))
         return OpenDir(FName);
 
-    if( strlen( FName ) == 0 ) return 0;
+    if (strlen(FName) == 0) return 0;
 
     return MultiFileLoad(0, FName, Mode, this);
 }
@@ -504,8 +555,7 @@ int EView::OpenDir(char *Path) {
         EModel *x = Model;
         while (x) {
             if (x->GetContext() == CONTEXT_DIRECTORY) {
-                if (filecmp(((EDirectory *)x)->Path, XPath) == 0)
-                {
+                if (filecmp(((EDirectory *)x)->Path, XPath) == 0) {
                     dir = (EDirectory *)x;
                     break;
                 }
@@ -533,7 +583,7 @@ int EView::Compile(ExState &State) {
     if (State.GetStrParam(this, Command, sizeof(Command)) == 0) {
         if (Model->GetContext() == CONTEXT_FILE) {
             EBuffer *B = (EBuffer *)Model;
-            if (BFS(B, BFS_CompileCommand) != 0) 
+            if (BFS(B, BFS_CompileCommand) != 0)
                 strcpy(Cmd, BFS(B, BFS_CompileCommand));
         }
         if (Cmd[0] == 0)
@@ -559,7 +609,7 @@ int EView::RunCompiler(ExState &State) {
     if (State.GetStrParam(this, Command, sizeof(Command)) == 0) {
         if (Model->GetContext() == CONTEXT_FILE) {
             EBuffer *B = (EBuffer *)Model;
-            if (BFS(B, BFS_CompileCommand) != 0) 
+            if (BFS(B, BFS_CompileCommand) != 0)
                 strcpy(Command, BFS(B, BFS_CompileCommand));
         }
         if (Command[0] == 0)
@@ -571,7 +621,7 @@ int EView::RunCompiler(ExState &State) {
 int EView::Compile(char *Command) {
     char Dir[MAXPATH] = "";
     EMessages *msgs;
-    
+
     if (CompilerMsgs != 0) {
         strcpy(Dir, CompilerMsgs->Directory);
         CompilerMsgs->RunPipe(Dir, Command);
@@ -640,8 +690,7 @@ int EView::TagLoad(ExState &State) {
     char FullTag[MAXPATH];
 
     char const* pTagFile = getenv("TAGFILE");
-    if (pTagFile == NULL)
-    {
+    if (pTagFile == NULL) {
         pTagFile = "tags";
     }
     if (ExpandPath(pTagFile, Tag, sizeof(Tag)) == -1)
@@ -718,7 +767,7 @@ int EView::GetStrVar(int var, char *str, int buflen) {
     //}
     return Model->GetStrVar(var, str, buflen);
 }
-                      
+
 int EView::GetIntVar(int var, int *value) {
     //switch (var) {
     //}
@@ -772,16 +821,16 @@ int EView::Cvs(char *Options) {
     }
 
     switch (Model->GetContext()) {
-        case CONTEXT_FILE:
-            if (JustFileName(((EBuffer *)Model)->FileName, OnFiles, sizeof(buf)) != 0) return 0; // OnFiles points to buf
-            break;
-        case CONTEXT_CVSDIFF:
-            OnFiles = strdup(CvsDiffView->OnFiles);
-            break;
-        case CONTEXT_CVS:
-            OnFiles = ((ECvs *)Model)->MarkedAsList();
-            if (!OnFiles) OnFiles = strdup(((ECvs *)Model)->OnFiles);
-            break;
+    case CONTEXT_FILE:
+        if (JustFileName(((EBuffer *)Model)->FileName, OnFiles, sizeof(buf)) != 0) return 0; // OnFiles points to buf
+        break;
+    case CONTEXT_CVSDIFF:
+        OnFiles = strdup(CvsDiffView->OnFiles);
+        break;
+    case CONTEXT_CVS:
+        OnFiles = ((ECvs *)Model)->MarkedAsList();
+        if (!OnFiles) OnFiles = strdup(((ECvs *)Model)->OnFiles);
+        break;
     }
 
     if (CvsView != 0) {
@@ -864,16 +913,16 @@ int EView::CvsDiff(char *Options) {
     }
 
     switch (Model->GetContext()) {
-        case CONTEXT_FILE:
-            if (JustFileName(((EBuffer *)Model)->FileName, OnFiles, sizeof(buf)) != 0) return 0; // OnFiles points to buf
-            break;
-        case CONTEXT_CVSDIFF:
-            OnFiles = strdup(CvsDiffView->OnFiles);
-            break;
-        case CONTEXT_CVS:
-            OnFiles = ((ECvs *)Model)->MarkedAsList();
-            if (!OnFiles) OnFiles = strdup(((ECvs *)Model)->OnFiles);
-            break;
+    case CONTEXT_FILE:
+        if (JustFileName(((EBuffer *)Model)->FileName, OnFiles, sizeof(buf)) != 0) return 0; // OnFiles points to buf
+        break;
+    case CONTEXT_CVSDIFF:
+        OnFiles = strdup(CvsDiffView->OnFiles);
+        break;
+    case CONTEXT_CVS:
+        OnFiles = ((ECvs *)Model)->MarkedAsList();
+        if (!OnFiles) OnFiles = strdup(((ECvs *)Model)->OnFiles);
+        break;
     }
 
     if (CvsDiffView != 0) {
@@ -942,19 +991,20 @@ int EView::CvsCommit(char *Options) {
     }
 
     switch (Model->GetContext()) {
-        case CONTEXT_FILE:
-            if (JustFileName(((EBuffer *)Model)->FileName, OnFiles, sizeof(buf)) != 0) return 0; // OnFiles points to buf
-            break;
-        case CONTEXT_CVSDIFF:
-            OnFiles = strdup(CvsDiffView->OnFiles);
-            break;
-        case CONTEXT_CVS:
-            OnFiles = ((ECvs *)Model)->MarkedAsList();
-            if (!OnFiles) OnFiles = strdup(((ECvs *)Model)->OnFiles);
-            break;
+    case CONTEXT_FILE:
+        if (JustFileName(((EBuffer *)Model)->FileName, OnFiles, sizeof(buf)) != 0) return 0; // OnFiles points to buf
+        break;
+    case CONTEXT_CVSDIFF:
+        OnFiles = strdup(CvsDiffView->OnFiles);
+        break;
+    case CONTEXT_CVS:
+        OnFiles = ((ECvs *)Model)->MarkedAsList();
+        if (!OnFiles) OnFiles = strdup(((ECvs *)Model)->OnFiles);
+        break;
     }
 
-    if (CvsView == 0) cvs = new ECvs(0, &ActiveModel);else cvs = CvsView;
+    if (CvsView == 0) cvs = new ECvs(0, &ActiveModel);
+    else cvs = CvsView;
     SwitchToModel(cvs);
     cvs->RunCommit(Dir, Command, OnFiles);
     if (OnFiles != buf) free(OnFiles);
@@ -1016,16 +1066,16 @@ int EView::Svn(char *Options) {
     }
 
     switch (Model->GetContext()) {
-        case CONTEXT_FILE:
-            if (JustFileName(((EBuffer *)Model)->FileName, OnFiles, sizeof(buf)) != 0) return 0; // OnFiles points to buf
-            break;
-        case CONTEXT_SVNDIFF:
-            OnFiles = strdup(SvnDiffView->OnFiles);
-            break;
-        case CONTEXT_SVN:
-            OnFiles = ((ESvn *)Model)->MarkedAsList();
-            if (!OnFiles) OnFiles = strdup(((ESvn *)Model)->OnFiles);
-            break;
+    case CONTEXT_FILE:
+        if (JustFileName(((EBuffer *)Model)->FileName, OnFiles, sizeof(buf)) != 0) return 0; // OnFiles points to buf
+        break;
+    case CONTEXT_SVNDIFF:
+        OnFiles = strdup(SvnDiffView->OnFiles);
+        break;
+    case CONTEXT_SVN:
+        OnFiles = ((ESvn *)Model)->MarkedAsList();
+        if (!OnFiles) OnFiles = strdup(((ESvn *)Model)->OnFiles);
+        break;
     }
 
     if (SvnView != 0) {
@@ -1108,16 +1158,16 @@ int EView::SvnDiff(char *Options) {
     }
 
     switch (Model->GetContext()) {
-        case CONTEXT_FILE:
-            if (JustFileName(((EBuffer *)Model)->FileName, OnFiles, sizeof(buf)) != 0) return 0; // OnFiles points to buf
-            break;
-        case CONTEXT_SVNDIFF:
-            OnFiles = strdup(SvnDiffView->OnFiles);
-            break;
-        case CONTEXT_SVN:
-            OnFiles = ((ESvn *)Model)->MarkedAsList();
-            if (!OnFiles) OnFiles = strdup(((ESvn *)Model)->OnFiles);
-            break;
+    case CONTEXT_FILE:
+        if (JustFileName(((EBuffer *)Model)->FileName, OnFiles, sizeof(buf)) != 0) return 0; // OnFiles points to buf
+        break;
+    case CONTEXT_SVNDIFF:
+        OnFiles = strdup(SvnDiffView->OnFiles);
+        break;
+    case CONTEXT_SVN:
+        OnFiles = ((ESvn *)Model)->MarkedAsList();
+        if (!OnFiles) OnFiles = strdup(((ESvn *)Model)->OnFiles);
+        break;
     }
 
     if (SvnDiffView != 0) {
@@ -1186,19 +1236,20 @@ int EView::SvnCommit(char *Options) {
     }
 
     switch (Model->GetContext()) {
-        case CONTEXT_FILE:
-            if (JustFileName(((EBuffer *)Model)->FileName, OnFiles, sizeof(buf)) != 0) return 0; // OnFiles points to buf
-            break;
-        case CONTEXT_SVNDIFF:
-            OnFiles = strdup(SvnDiffView->OnFiles);
-            break;
-        case CONTEXT_SVN:
-            OnFiles = ((ESvn *)Model)->MarkedAsList();
-            if (!OnFiles) OnFiles = strdup(((ESvn *)Model)->OnFiles);
-            break;
+    case CONTEXT_FILE:
+        if (JustFileName(((EBuffer *)Model)->FileName, OnFiles, sizeof(buf)) != 0) return 0; // OnFiles points to buf
+        break;
+    case CONTEXT_SVNDIFF:
+        OnFiles = strdup(SvnDiffView->OnFiles);
+        break;
+    case CONTEXT_SVN:
+        OnFiles = ((ESvn *)Model)->MarkedAsList();
+        if (!OnFiles) OnFiles = strdup(((ESvn *)Model)->OnFiles);
+        break;
     }
 
-    if (SvnView == 0) svn = new ESvn(0, &ActiveModel);else svn = SvnView;
+    if (SvnView == 0) svn = new ESvn(0, &ActiveModel);
+    else svn = SvnView;
     SwitchToModel(svn);
     svn->RunCommit(Dir, Command, OnFiles);
     if (OnFiles != buf) free(OnFiles);

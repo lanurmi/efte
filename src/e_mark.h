@@ -13,10 +13,16 @@ public:
     int setBuffer(EBuffer *aBuffer);
     int removeBuffer(EBuffer *aBuffer);
 
-    char *getName() { return Name; }
-    char *getFileName() { return FileName; }
+    char *getName() {
+        return Name;
+    }
+    char *getFileName() {
+        return FileName;
+    }
     EPoint &getPoint();
-    EBuffer *getBuffer() { return Buffer; }
+    EBuffer *getBuffer() {
+        return Buffer;
+    }
 private:
     /* bookmark */
     char *Name;

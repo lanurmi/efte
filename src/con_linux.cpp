@@ -11,9 +11,9 @@
 
 #define USE_GPM     //uncomment here to use GPM
 #define USE_SCRNMAP // use USER translation table instead of direct mapping
-      // The translation table is assumed to be invertible (more or less).
-      // How do we get other translation tables from kernel, the USER one
-      // is null mapping by default (not very useful)?
+// The translation table is assumed to be invertible (more or less).
+// How do we get other translation tables from kernel, the USER one
+// is null mapping by default (not very useful)?
 
 // PROBLEM: we use raw mode, and this disables the console
 // switching (consoles cannot be switched when the editor is busy).
@@ -194,23 +194,23 @@ int ConInit(int /*XSize*/, int /*YSize*/) {
 #endif
     sprintf(vcsname, "/dev/vcsa%d", VtNum);
 
-     /*
-      * This is the _only_ place that we use our extra privs if any,
-      * If there is an error, we drop them prior to calling recovery
-      * functions, if we succeed we go back as well.
-      *
-      * Ben Collins <bcollins@debian.org>
-      */
-     extern uid_t effuid;
-     extern gid_t effgid;
+    /*
+     * This is the _only_ place that we use our extra privs if any,
+     * If there is an error, we drop them prior to calling recovery
+     * functions, if we succeed we go back as well.
+     *
+     * Ben Collins <bcollins@debian.org>
+     */
+    extern uid_t effuid;
+    extern gid_t effgid;
 
-     seteuid(effuid);
-     setegid(effgid);
-     VcsFd = open(vcsname, O_RDWR);
-     setuid(getuid());
-     setgid(getgid());
+    seteuid(effuid);
+    setegid(effgid);
+    VcsFd = open(vcsname, O_RDWR);
+    setuid(getuid());
+    setgid(getgid());
 
-     if (VcsFd == -1) {
+    if (VcsFd == -1) {
         perror("open");
         die("failed to open /dev/vcsa*");
     }
@@ -241,7 +241,7 @@ int ConInit(int /*XSize*/, int /*YSize*/) {
     tmp = tcgetattr(VtFd, &newt);
     if (tmp) fprintf(stderr, "tcsetattr = %d\n", tmp);
 
-    newt.c_lflag &= ~ (ICANON | ECHO | ISIG);
+    newt.c_lflag &= ~(ICANON | ECHO | ISIG);
     newt.c_iflag = 0;
     newt.c_cc[VMIN] = 16;
     newt.c_cc[VTIME] = 1;
@@ -258,7 +258,7 @@ int ConInit(int /*XSize*/, int /*YSize*/) {
     /* get keyboard diacritics table */
     if (ioctl(VtFd, KDGKBDIACR, &diacr_table) != 0) {
         perror("Could not get diacritics table");
-        diacr_table.kb_cnt=0;
+        diacr_table.kb_cnt = 0;
     }
 
     signal(SIGWINCH, SigWindowChanged);
@@ -322,7 +322,7 @@ int ConContinue() {
     struct termios newt;
     int tmp;
 
-    newt.c_lflag &= ~ (ICANON | ECHO | ISIG);
+    newt.c_lflag &= ~(ICANON | ECHO | ISIG);
     newt.c_iflag = 0;
     newt.c_cc[VMIN] = 16;
     newt.c_cc[VTIME] = 1;
@@ -405,7 +405,10 @@ int ConPutBox(int X, int Y, int W, int H, PCell Cell) {
     int i, hidden = 0;
 
     for (i = 0; i < H; i++) {
-        if (LastMouseY == Y + i) { mouseHide(); hidden = 1; }
+        if (LastMouseY == Y + i) {
+            mouseHide();
+            hidden = 1;
+        }
         lseek(VcsFd, 4 + ((Y + i) * VideoCols + X) * 2, SEEK_SET);
         conwrite(VcsFd, Cell, 2 * W);
         Cell += W;
@@ -418,7 +421,10 @@ int ConGetBox(int X, int Y, int W, int H, PCell Cell) {
     int i, hidden = 0;
 
     for (i = 0; i < H; i++) {
-        if (LastMouseY == Y + i) { mouseHide(); hidden = 1; }
+        if (LastMouseY == Y + i) {
+            mouseHide();
+            hidden = 1;
+        }
         lseek(VcsFd, 4 + ((Y + i) * VideoCols + X) * 2, SEEK_SET);
         conread(VcsFd, Cell, 2 * W);
         Cell += W;
@@ -431,7 +437,10 @@ int ConPutLine(int X, int Y, int W, int H, PCell Cell) {
     int i, hidden = 0;
 
     for (i = 0; i < H; i++) {
-        if (LastMouseY == Y + i) { mouseHide(); hidden = 1; }
+        if (LastMouseY == Y + i) {
+            mouseHide();
+            hidden = 1;
+        }
         lseek(VcsFd, 4 + ((Y + i) * VideoCols + X) * 2, SEEK_SET);
         conwrite(VcsFd, Cell, 2 * W);
         if (hidden) mouseShow();
@@ -612,8 +621,12 @@ int ConPutEvent(TEvent Event) {
     return 0;
 }
 
-int ConFlush(void) {return 0;  }
-int ConGrabEvents(TEventMask /*EventMask*/) { return 0; }
+int ConFlush(void) {
+    return 0;
+}
+int ConGrabEvents(TEventMask /*EventMask*/) {
+    return 0;
+}
 
 static int shift_state = 0;
 static int lock_state = 0;
@@ -624,72 +637,72 @@ static const struct {
     unsigned long KeySym;
     unsigned long KeyCode;
 } KeyTrans[] = {
-{ K(KT_FN, K_F1),               kbF1 },
-{ K(KT_FN, K_F2),               kbF2 },
-{ K(KT_FN, K_F3),               kbF3 },
-{ K(KT_FN, K_F4),               kbF4 },
-{ K(KT_FN, K_F5),               kbF5 },
-{ K(KT_FN, K_F6),               kbF6 },
-{ K(KT_FN, K_F7),               kbF7 },
-{ K(KT_FN, K_F8),               kbF8 },
-{ K(KT_FN, K_F9),               kbF9 },
-{ K(KT_FN, K_F10),              kbF10 },
-{ K(KT_FN, K_F11),              kbF11 },
-{ K(KT_FN, K_F12),              kbF12 },
-{ K(KT_FN, K_INSERT),           kbIns | kfGray },
-{ K(KT_FN, K_REMOVE),           kbDel | kfGray },
-{ K(KT_FN, K_FIND),             kbHome | kfGray },
-{ K(KT_FN, K_SELECT),           kbEnd | kfGray },
-{ K(KT_FN, K_PGUP),             kbPgUp | kfGray },
-{ K(KT_FN, K_PGDN),             kbPgDn | kfGray },
-{ K(KT_CUR, K_UP),              kbUp | kfGray },
-{ K(KT_CUR, K_DOWN),            kbDown | kfGray },
-{ K(KT_CUR, K_LEFT),            kbLeft | kfGray },
-{ K(KT_CUR, K_RIGHT),           kbRight | kfGray },
-{ K(KT_SPEC, K_ENTER),          kbEnter },
-{ K(KT_PAD, K_PENTER),          kbEnter | kfGray },
-{ K(KT_PAD, K_PPLUS),           '+' | kfGray },
-{ K(KT_PAD, K_PMINUS),          '-' | kfGray },
-{ K(KT_PAD, K_PSTAR),           '*' | kfGray },
-{ K(KT_PAD, K_PSLASH),          '/' | kfGray },
-{ K(KT_PAD, K_P0),              kbIns },
-{ K(KT_PAD, K_PDOT),            kbDel },
-{ K(KT_PAD, K_P1),              kbEnd },
-{ K(KT_PAD, K_P2),              kbDown },
-{ K(KT_PAD, K_P3),              kbPgDn },
-{ K(KT_PAD, K_P4),              kbLeft },
-{ K(KT_PAD, K_P5),              kbCenter },
-{ K(KT_PAD, K_P6),              kbRight },
-{ K(KT_PAD, K_P7),              kbHome },
-{ K(KT_PAD, K_P8),              kbUp },
-{ K(KT_PAD, K_P9),              kbPgUp },
-{ K(KT_FN, K_PAUSE),            kbPause },
-{ K(KT_LATIN, 27),              kbEsc },
-{ K(KT_LATIN, 13),              kbEnter },
-{ K(KT_LATIN, 8),               kbBackSp },
-{ K(KT_LATIN, 127),             kbDel },
-{ K(KT_LATIN, 9),               kbTab },
-{ K(KT_SHIFT, KG_SHIFT),        kbShift | kfSpecial | kfModifier },
-{ K(KT_SHIFT, KG_SHIFTL),       kbShift | kfSpecial | kfModifier },
-{ K(KT_SHIFT, KG_SHIFTR),       kbShift | kfSpecial | kfModifier | kfGray },
-{ K(KT_SHIFT, KG_CTRL),         kbCtrl | kfSpecial | kfModifier },
-{ K(KT_SHIFT, KG_CTRLL),        kbCtrl | kfSpecial | kfModifier },
-{ K(KT_SHIFT, KG_CTRLR),        kbCtrl | kfSpecial | kfModifier | kfGray },
-{ K(KT_SHIFT, KG_ALT),          kbAlt | kfSpecial | kfModifier },
-{ K(KT_SHIFT, KG_ALTGR),        kbAlt | kfSpecial | kfModifier | kfGray },
-{ 0, 0 }
+    { K(KT_FN, K_F1),               kbF1 },
+    { K(KT_FN, K_F2),               kbF2 },
+    { K(KT_FN, K_F3),               kbF3 },
+    { K(KT_FN, K_F4),               kbF4 },
+    { K(KT_FN, K_F5),               kbF5 },
+    { K(KT_FN, K_F6),               kbF6 },
+    { K(KT_FN, K_F7),               kbF7 },
+    { K(KT_FN, K_F8),               kbF8 },
+    { K(KT_FN, K_F9),               kbF9 },
+    { K(KT_FN, K_F10),              kbF10 },
+    { K(KT_FN, K_F11),              kbF11 },
+    { K(KT_FN, K_F12),              kbF12 },
+    { K(KT_FN, K_INSERT),           kbIns | kfGray },
+    { K(KT_FN, K_REMOVE),           kbDel | kfGray },
+    { K(KT_FN, K_FIND),             kbHome | kfGray },
+    { K(KT_FN, K_SELECT),           kbEnd | kfGray },
+    { K(KT_FN, K_PGUP),             kbPgUp | kfGray },
+    { K(KT_FN, K_PGDN),             kbPgDn | kfGray },
+    { K(KT_CUR, K_UP),              kbUp | kfGray },
+    { K(KT_CUR, K_DOWN),            kbDown | kfGray },
+    { K(KT_CUR, K_LEFT),            kbLeft | kfGray },
+    { K(KT_CUR, K_RIGHT),           kbRight | kfGray },
+    { K(KT_SPEC, K_ENTER),          kbEnter },
+    { K(KT_PAD, K_PENTER),          kbEnter | kfGray },
+    { K(KT_PAD, K_PPLUS),           '+' | kfGray },
+    { K(KT_PAD, K_PMINUS),          '-' | kfGray },
+    { K(KT_PAD, K_PSTAR),           '*' | kfGray },
+    { K(KT_PAD, K_PSLASH),          '/' | kfGray },
+    { K(KT_PAD, K_P0),              kbIns },
+    { K(KT_PAD, K_PDOT),            kbDel },
+    { K(KT_PAD, K_P1),              kbEnd },
+    { K(KT_PAD, K_P2),              kbDown },
+    { K(KT_PAD, K_P3),              kbPgDn },
+    { K(KT_PAD, K_P4),              kbLeft },
+    { K(KT_PAD, K_P5),              kbCenter },
+    { K(KT_PAD, K_P6),              kbRight },
+    { K(KT_PAD, K_P7),              kbHome },
+    { K(KT_PAD, K_P8),              kbUp },
+    { K(KT_PAD, K_P9),              kbPgUp },
+    { K(KT_FN, K_PAUSE),            kbPause },
+    { K(KT_LATIN, 27),              kbEsc },
+    { K(KT_LATIN, 13),              kbEnter },
+    { K(KT_LATIN, 8),               kbBackSp },
+    { K(KT_LATIN, 127),             kbDel },
+    { K(KT_LATIN, 9),               kbTab },
+    { K(KT_SHIFT, KG_SHIFT),        kbShift | kfSpecial | kfModifier },
+    { K(KT_SHIFT, KG_SHIFTL),       kbShift | kfSpecial | kfModifier },
+    { K(KT_SHIFT, KG_SHIFTR),       kbShift | kfSpecial | kfModifier | kfGray },
+    { K(KT_SHIFT, KG_CTRL),         kbCtrl | kfSpecial | kfModifier },
+    { K(KT_SHIFT, KG_CTRLL),        kbCtrl | kfSpecial | kfModifier },
+    { K(KT_SHIFT, KG_CTRLR),        kbCtrl | kfSpecial | kfModifier | kfGray },
+    { K(KT_SHIFT, KG_ALT),          kbAlt | kfSpecial | kfModifier },
+    { K(KT_SHIFT, KG_ALTGR),        kbAlt | kfSpecial | kfModifier | kfGray },
+    { 0, 0 }
 };
 
 static const struct {
     unsigned long KeySym;
     char Diacr;
 } DeadTrans[] = {
-{ K_DGRAVE, '`' },
-{ K_DACUTE, '\'' },
-{ K_DCIRCM, '^' },
-{ K_DTILDE, '~' },
-{ K_DDIERE, '"' },
-{ K_DCEDIL, ',' }
+    { K_DGRAVE, '`' },
+    { K_DACUTE, '\'' },
+    { K_DCIRCM, '^' },
+    { K_DTILDE, '~' },
+    { K_DDIERE, '"' },
+    { K_DCEDIL, ',' }
 };
 
 int GetKeyEvent(TEvent *Event) {
@@ -719,7 +732,7 @@ int GetKeyEvent(TEvent *Event) {
 
     int ksv = KVAL(keysym);
 
-    switch(KTYP(keysym)) {
+    switch (KTYP(keysym)) {
     case KT_SHIFT:
         // :-(((, have to differentiate between shifts.
         if (ksv == KG_SHIFT) {
@@ -757,27 +770,25 @@ int GetKeyEvent(TEvent *Event) {
 
     if (shift_final & ((1 << KG_SHIFT) |
                        (1 << KG_SHIFTL) |
-                       (1 << KG_SHIFTR)))
-    {
+                       (1 << KG_SHIFTR))) {
         shift_final |= (1 << KG_SHIFT);
-        shift_final &= ~( (1 << KG_SHIFTL) | (1 << KG_SHIFTR) );
+        shift_final &= ~((1 << KG_SHIFTL) | (1 << KG_SHIFTR));
     }
     if (shift_final & ((1 << KG_CTRL) |
                        (1 << KG_CTRLL) |
-                       (1 << KG_CTRLR)))
-    {
+                       (1 << KG_CTRLR))) {
         shift_final |= (1 << KG_CTRL);
-        shift_final &= ~( (1 << KG_CTRLL) | (1 << KG_CTRLR) );
+        shift_final &= ~((1 << KG_CTRLL) | (1 << KG_CTRLR));
     }
 
     ShiftFlags = 0;
     if ((shift_final & (1 << KG_SHIFT)) ||
-        (shift_final & (1 << KG_SHIFTL)) ||
-        (shift_final & (1 << KG_SHIFTR)))
+            (shift_final & (1 << KG_SHIFTL)) ||
+            (shift_final & (1 << KG_SHIFTR)))
         ShiftFlags |= kfShift;
     if ((shift_final & (1 << KG_CTRL)) ||
-        (shift_final & (1 << KG_CTRLL)) ||
-        (shift_final & (1 << KG_CTRLR)))
+            (shift_final & (1 << KG_CTRLL)) ||
+            (shift_final & (1 << KG_CTRLR)))
         ShiftFlags |= kfCtrl;
 //    if ((shift_final & (1 << KG_ALT)) ||
 //        (shift_final & (1 << KG_ALTGR)))
@@ -791,23 +802,23 @@ int GetKeyEvent(TEvent *Event) {
         slock_state = 0;
 
     KeyCode = 0;
-    if (key == 14 && keysym == K(KT_LATIN,127)) {
+    if (key == 14 && keysym == K(KT_LATIN, 127)) {
         // we are running on a system with broken backspace key
         KeyCode = kbBackSp;
-    } else for(unsigned int i = 0; i < sizeof(KeyTrans) / sizeof(KeyTrans[0]); i++) {
-        if (KeyTrans[i].KeySym == keysym) {
-            KeyCode = KeyTrans[i].KeyCode;
-            break;
+    } else for (unsigned int i = 0; i < sizeof(KeyTrans) / sizeof(KeyTrans[0]); i++) {
+            if (KeyTrans[i].KeySym == keysym) {
+                KeyCode = KeyTrans[i].KeyCode;
+                break;
+            }
         }
-    }
     if (KeyCode == 0) {
         switch (KTYP(keysym)) {
         case KT_CONS:
         case KT_FN:
-        //case KT_SPEC:
+            //case KT_SPEC:
         case KT_LOCK:
         case KT_SLOCK:
-        //case KT_META:
+            //case KT_META:
         case KT_CUR:
 
         default:
@@ -860,11 +871,11 @@ int GetKeyEvent(TEvent *Event) {
                 dead_key = 0;
                 return -1;
             }
-            if (! (ShiftFlags & (kfAlt | kfCtrl)) && dead_key) {
+            if (!(ShiftFlags & (kfAlt | kfCtrl)) && dead_key) {
                 for (int i = 0; (unsigned) i < diacr_table.kb_cnt; i++) {
                     if (diacr_table.kbdiacr[i].base == KeyCode &&
-                        diacr_table.kbdiacr[i].diacr == dead_key) {
-                        KeyCode=diacr_table.kbdiacr[i].result;
+                            diacr_table.kbdiacr[i].diacr == dead_key) {
+                        KeyCode = diacr_table.kbdiacr[i].result;
                         break;
                     }
                 }
@@ -910,18 +921,42 @@ int GetKeyEvent(TEvent *Event) {
 
 //            switch (kbCode(Event->Key.Code) | kfCtrl) {
             switch (kbCode(Event->Key.Code)) {
-            case kfAlt | kfCtrl | kbF1: vc = 1; break;
-            case kfAlt | kfCtrl | kbF2: vc = 2; break;
-            case kfAlt | kfCtrl | kbF3: vc = 3; break;
-            case kfAlt | kfCtrl | kbF4: vc = 4; break;
-            case kfAlt | kfCtrl | kbF5: vc = 5; break;
-            case kfAlt | kfCtrl | kbF6: vc = 6; break;
-            case kfAlt | kfCtrl | kbF7: vc = 7; break;
-            case kfAlt | kfCtrl | kbF8: vc = 8; break;
-            case kfAlt | kfCtrl | kbF9: vc = 9; break;
-            case kfAlt | kfCtrl | kbF10: vc = 10; break;
-            case kfAlt | kfCtrl | kbF11: vc = 11; break;
-            case kfAlt | kfCtrl | kbF12: vc = 12; break;
+            case kfAlt | kfCtrl | kbF1:
+                vc = 1;
+                break;
+            case kfAlt | kfCtrl | kbF2:
+                vc = 2;
+                break;
+            case kfAlt | kfCtrl | kbF3:
+                vc = 3;
+                break;
+            case kfAlt | kfCtrl | kbF4:
+                vc = 4;
+                break;
+            case kfAlt | kfCtrl | kbF5:
+                vc = 5;
+                break;
+            case kfAlt | kfCtrl | kbF6:
+                vc = 6;
+                break;
+            case kfAlt | kfCtrl | kbF7:
+                vc = 7;
+                break;
+            case kfAlt | kfCtrl | kbF8:
+                vc = 8;
+                break;
+            case kfAlt | kfCtrl | kbF9:
+                vc = 9;
+                break;
+            case kfAlt | kfCtrl | kbF10:
+                vc = 10;
+                break;
+            case kfAlt | kfCtrl | kbF11:
+                vc = 11;
+                break;
+            case kfAlt | kfCtrl | kbF12:
+                vc = 12;
+                break;
             }
             if (vc != -1) {
                 /* perform the console switch */
@@ -944,7 +979,7 @@ int GetMouseEvent(TEvent *Event) {
 
     Event->What = evNone;
     int rc = Gpm_GetEvent(&e);
-    if (rc == 0) { 
+    if (rc == 0) {
         Gpm_Close();
         GpmFd = -1;
     } else if (rc == -1) {
@@ -958,7 +993,7 @@ int GetMouseEvent(TEvent *Event) {
             Event->What = evMouseUp;
         else return 0;
 
-        Event->Mouse.Count =   (e.type & GPM_SINGLE) ? 1
+        Event->Mouse.Count = (e.type & GPM_SINGLE) ? 1
                              : (e.type & GPM_DOUBLE) ? 2
                              : (e.type & GPM_TRIPLE) ? 3 : 1;
         Event->Mouse.Buttons =
@@ -983,8 +1018,7 @@ int GetMouseEvent(TEvent *Event) {
             ((e.modifiers & 4) ? kfCtrl : 0);
 
         if (LastMouseX != e.x ||
-            LastMouseY != e.y)
-        {
+                LastMouseY != e.y) {
             mouseHide();
             LastMouseX = e.x;
             LastMouseY = e.y;
@@ -1036,8 +1070,7 @@ GUI::~GUI() {
     RestoreScreen();
     ::ConDone();
 
-    if(SavedScreen)
-    {
+    if (SavedScreen) {
         free(SavedScreen);
         SavedScreen = 0;
     }
@@ -1060,7 +1093,9 @@ int GUI::ShowEntryScreen() {
 
     ConHideMouse();
     RestoreScreen();
-    do { gui->ConGetEvent(evKeyDown, &E, -1, 1, 0); } while (E.What != evKeyDown);
+    do {
+        gui->ConGetEvent(evKeyDown, &E, -1, 1, 0);
+    } while (E.What != evKeyDown);
     ConShowMouse();
     if (frames)
         frames->Repaint();
@@ -1082,7 +1117,7 @@ int GUI::OpenPipe(char *Command, EModel *notify) {
                 return -1;
 
             switch (Pipes[i].pid = fork()) {
-            case -1: /* fail */
+            case - 1: /* fail */
                 return -1;
             case 0: /* child */
                 signal(SIGPIPE, SIG_DFL);
@@ -1182,13 +1217,13 @@ int GUI::RunProgram(int /*mode*/, char *Command) {
 }
 
 char ConGetDrawChar(int idx) {
-    static const char *tab=NULL;
+    static const char *tab = NULL;
 
     if (!tab) {
         if (getenv("ISOCONSOLE")) {
-            tab=GetGUICharacters ("Linux","++++-|+++++>.*-^v :[>");
+            tab = GetGUICharacters("Linux", "++++-|+++++>.*-^v :[>");
         } else {
-            tab=GetGUICharacters ("Linux","Ú¿ÀÙÄ³ÂÃ´ÁÅ\x1AúÄ±°\x1B\x1A");
+            tab = GetGUICharacters("Linux", "Ú¿ÀÙÄ³ÂÃ´ÁÅ\x1AúÄ±°\x1B\x1A");
 //            tab=GetGUICharacters ("Linux","\x0D\x0C\x0E\x0B\x12\x19____+>\x1F\x01\x12 ");
         }
     }

@@ -10,7 +10,7 @@
 #ifndef __FILESYS_H__
 #define __FILESYS_H__
 
-#define SDOT   "."    
+#define SDOT   "."
 
 #ifdef UNIX
 #define SLASH  '/'

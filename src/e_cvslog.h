@@ -13,31 +13,31 @@
 
 #include "e_buffer.h"
 
-class ECvsLog:public EBuffer {
-    public:
-        ECvsLog (int createFlags,EModel **ARoot,char *Directory,char *OnFiles);
-        ~ECvsLog ();
+class ECvsLog: public EBuffer {
+public:
+    ECvsLog(int createFlags, EModel **ARoot, char *Directory, char *OnFiles);
+    ~ECvsLog();
 
-        // List files into buffer
-        // p        - line where to print
-        // fCount   - number of files which will be printed
-        // title    - title
-        // cnt      - total number of files
-        // position - positions of files in list
-        // len      - length of files
-        // status   - status of files
-        // list     - list of filenames
-        // incexc   - status of files to print/not to print
-        // exc      - incexc is exclusion
-        void ListFiles (int &p,const int fCount,const char *title,const int cnt,const int *position,const int *len,const char *status,const char *list,const char *excinc,const int exc=0);
+    // List files into buffer
+    // p        - line where to print
+    // fCount   - number of files which will be printed
+    // title    - title
+    // cnt      - total number of files
+    // position - positions of files in list
+    // len      - length of files
+    // status   - status of files
+    // list     - list of filenames
+    // incexc   - status of files to print/not to print
+    // exc      - incexc is exclusion
+    void ListFiles(int &p, const int fCount, const char *title, const int cnt, const int *position, const int *len, const char *status, const char *list, const char *excinc, const int exc = 0);
 
-        virtual int CanQuit ();
-        virtual int ConfQuit (GxView *V,int multiFile=0);
-        virtual EViewPort *CreateViewPort (EView *V);
+    virtual int CanQuit();
+    virtual int ConfQuit(GxView *V, int multiFile = 0);
+    virtual EViewPort *CreateViewPort(EView *V);
 
-        virtual void GetName(char *AName, int MaxLen);
-        virtual void GetInfo(char *AInfo, int MaxLen);
-        virtual void GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen);
+    virtual void GetName(char *AName, int MaxLen);
+    virtual void GetInfo(char *AInfo, int MaxLen);
+    virtual void GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen);
 };
 
 extern ECvsLog *CvsLogView;

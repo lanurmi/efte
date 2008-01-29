@@ -55,7 +55,7 @@ int EBuffer::CheckBlock() {
     if (BB.Row == -1 || BE.Row == -1) return 0;
     if (BB.Row >= RCount) BB.Row = RCount - 1;
     if (BE.Row >= RCount) BE.Row = RCount - 1;
-    switch(BlockMode) {
+    switch (BlockMode) {
     case bmLine:
         BB.Col = 0;
         BE.Col = 0;
@@ -101,7 +101,7 @@ int EBuffer::BlockEnd() {
 }
 
 int EBuffer::BlockUnmark() {
-    EPoint Null(-1,-1);
+    EPoint Null(-1, -1);
 
     SetBB(BE);
     SetBE(Null);
@@ -212,7 +212,7 @@ int EBuffer::BlockPaste(int clipboard) {
     B.Row = VToR(CP.Row);
     B.Col = CP.Col;
     BL = B.Row;
-    switch(BlockMode) {
+    switch (BlockMode) {
     case bmLine:
         B.Col = 0;
         for (L = 0; L < SSBuffer->RCount; L++) {
@@ -355,14 +355,12 @@ int EBuffer::BlockKill() {
 // remove selected text and paste information from clipboard to replace it
 int EBuffer::BlockPasteOver(int clipboard) {
     // if there is existing selection, remove it's contents
-    if (CheckBlock())
-    {
+    if (CheckBlock()) {
         BlockKill();
     }
 
     // paste text from clipboard
-    if (BlockPaste(clipboard))
-    {
+    if (BlockPaste(clipboard)) {
         // go to end of selection
         SetPos(BE.Col, BE.Row);
 
@@ -454,7 +452,7 @@ int EBuffer::BlockClear() {
 
 int EBuffer::BlockMarkStream() {
     if (BlockMode != bmStream) BlockUnmark();
-    BlockMode= bmStream;
+    BlockMode = bmStream;
     if (AutoExtend) AutoExtend = 0;
     else {
         BlockUnmark();
@@ -465,7 +463,7 @@ int EBuffer::BlockMarkStream() {
 
 int EBuffer::BlockMarkLine() {
     if (BlockMode != bmLine) BlockUnmark();
-    BlockMode= bmLine;
+    BlockMode = bmLine;
     if (AutoExtend) AutoExtend = 0;
     else {
         BlockUnmark();
@@ -476,7 +474,7 @@ int EBuffer::BlockMarkLine() {
 
 int EBuffer::BlockMarkColumn() {
     if (BlockMode != bmColumn) BlockUnmark();
-    BlockMode= bmColumn;
+    BlockMode = bmColumn;
     if (AutoExtend) AutoExtend = 0;
     else {
         BlockUnmark();
@@ -527,8 +525,13 @@ int EBuffer::BlockExtendEnd() {
     E = BE;
     switch (BlockMode) {
     case bmLine:
-        if (ExtendGrab & 1) { B.Row = VToR(CP.Row); B.Col = 0; }
-        else if (ExtendGrab & 2) { E.Row = VToR(CP.Row); E.Col = 0; }
+        if (ExtendGrab & 1) {
+            B.Row = VToR(CP.Row);
+            B.Col = 0;
+        } else if (ExtendGrab & 2) {
+            E.Row = VToR(CP.Row);
+            E.Col = 0;
+        }
         if (B.Row > E.Row) {
             T = B;
             B = E;
@@ -536,10 +539,15 @@ int EBuffer::BlockExtendEnd() {
         }
         break;
     case bmStream:
-        if (ExtendGrab & 1) { B.Col = CP.Col; B.Row = VToR(CP.Row); }
-        else if (ExtendGrab & 2) { E.Col = CP.Col; E.Row = VToR(CP.Row); }
+        if (ExtendGrab & 1) {
+            B.Col = CP.Col;
+            B.Row = VToR(CP.Row);
+        } else if (ExtendGrab & 2) {
+            E.Col = CP.Col;
+            E.Row = VToR(CP.Row);
+        }
         if ((B.Row > E.Row) ||
-            ((B.Row == E.Row) && (B.Col > E.Col))) {
+                ((B.Row == E.Row) && (B.Col > E.Col))) {
             T = B;
             B = E;
             E = T;
@@ -717,8 +725,7 @@ int EBuffer::BlockWriteTo(const char *AFileName, int Append) {
     Msg(S_INFO, "Wrote %s, %d lines, %d bytes.", AFileName, lc, bc);
     return 1;
 error:
-    if(fp != NULL)
-    {
+    if (fp != NULL) {
         fclose(fp);
         unlink(AFileName);
     }
@@ -748,10 +755,16 @@ int EBuffer::BlockReadFrom(const char *AFileName, int blockMode) {
     SystemClipboard = 0;
 
     switch (blockMode) {
-    case bmColumn: rc = BlockPasteColumn(); break;
-    case bmLine:   rc = BlockPasteLine(); break;
+    case bmColumn:
+        rc = BlockPasteColumn();
+        break;
+    case bmLine:
+        rc = BlockPasteLine();
+        break;
     default:
-    case bmStream: rc = BlockPasteStream(); break;
+    case bmStream:
+        rc = BlockPasteStream();
+        break;
     }
 
     SystemClipboard = savesys;
@@ -813,7 +826,7 @@ static int _LNK_CONV SortProc(const void *A, const void *B) {
                     lB = SortMaxCol - SortMinCol;
             }
             if (BFI(SortBuffer, BFI_MatchCase) == 1)
-                rc = memcmp(LA->Chars+ PA, LB->Chars + PB, (lA < lB) ? lA : lB);
+                rc = memcmp(LA->Chars + PA, LB->Chars + PB, (lA < lB) ? lA : lB);
             else
                 rc = memicmp(LA->Chars + PA, LB->Chars + PB, (lA < lB) ? lA : lB);
             if (rc == 0) {
@@ -963,8 +976,7 @@ int EBuffer::BlockEnTab() {
                 C1 = C;
                 O1 = O;
             } else if (((C % BFI(this, BFI_TabSize)) == (BFI(this, BFI_TabSize) - 1)) &&
-                       (C - C1 > 0))
-            { // reached a tab and can put one
+                       (C - C1 > 0)) { // reached a tab and can put one
                 int N = BFI(this, BFI_TabSize);
                 if (O - O1 + 1 < N) {
                     N = O - O1 + 1;
@@ -1033,9 +1045,9 @@ int EBuffer::BlockMarkFunction() {
     if (BlockUnmark() == 0)
         return 0;
 
-    if ((by = FindFunction( 0, -1)) == -1)
+    if ((by = FindFunction(0, -1)) == -1)
         return 0;
-    if ((ey = FindFunction(+1, +1)) == -1)
+    if ((ey = FindFunction( + 1, + 1)) == -1)
         return 0;
 
     //** Start and end are known. Set the block;
@@ -1052,9 +1064,9 @@ int EBuffer::IndentFunction() {
     EPoint P = CP;
     int by, ey;
 
-    if ((by = FindFunction( 0, -1)) == -1)
+    if ((by = FindFunction(0, -1)) == -1)
         return 0;
-    if ((ey = FindFunction(+1, +1)) == -1)
+    if ((ey = FindFunction( + 1, + 1)) == -1)
         return 0;
 
     //Draw(by, ey); ?
@@ -1077,7 +1089,7 @@ int EBuffer::MoveFunctionPrev() {
 }
 
 int EBuffer::MoveFunctionNext() {
-    int line = FindFunction(+1, +1);
+    int line = FindFunction( + 1, + 1);
 
     if (line == -1)
         return 0;

@@ -462,7 +462,7 @@ int TagDefined(const char *Tag) {
 
     if (CTags == 0)
         return 0;
-    
+
     while (L < R) {
         M = (L + R) / 2;
         cmp = strcmp(Tag, TagMem + TagD[TagI[M]].Tag);
@@ -496,10 +496,10 @@ int TagComplete(char **Words, int *WordsPos, int WordsMax, char *Tag) {
         c = strncmp(Tag, TagMem + TagD[TagI[M]].Tag, len);
         if (c == 0) {
             while (M > 0 &&
-                   strncmp(Tag, TagMem + TagD[TagI[M - 1]].Tag, len) == 0)
+                    strncmp(Tag, TagMem + TagD[TagI[M - 1]].Tag, len) == 0)
                 M--;            // find begining
             int N = M, w = 0;
-            while(strncmp(Tag, TagMem + TagD[TagI[N]].Tag, len) == 0) {
+            while (strncmp(Tag, TagMem + TagD[TagI[N]].Tag, len) == 0) {
                 // the first word is not tested for previous match
                 if (!w || strcmp(TagMem + TagD[TagI[N]].Tag,
                                  TagMem + TagD[TagI[N-1]].Tag)) {
@@ -571,13 +571,11 @@ int TagPop(EView *View) { /*FOLD00*/
     if (T) {
         TStack = T->Next;
 
-        if (CurrentTag)
-        {
+        if (CurrentTag) {
             free(CurrentTag);
             CurrentTag = NULL;
         }
-        if (T->CurrentTag)
-        {
+        if (T->CurrentTag) {
             CurrentTag = strdup(T->CurrentTag);
         }
         TagPosition = T->TagPos;

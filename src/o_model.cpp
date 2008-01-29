@@ -138,13 +138,28 @@ int EModel::ConfQuit(GxView * /*V*/, int /*multiFile*/) {
     return 1;
 }
 
-int EModel::GetContext() { return CONTEXT_NONE; }
-EEventMap *EModel::GetEventMap() { return 0; }
-int EModel::BeginMacro() { return 1; }
-void EModel::GetName(char *AName, int /*MaxLen*/) { *AName = 0; }
-void EModel::GetPath(char *APath, int /*MaxLen*/) { *APath = 0; }
-void EModel::GetInfo(char *AInfo, int /*MaxLen*/) { *AInfo = 0; }
-void EModel::GetTitle(char *ATitle, int /*MaxLen*/, char *ASTitle, int /*SMaxLen*/) { *ATitle = 0; *ASTitle = 0; }
+int EModel::GetContext() {
+    return CONTEXT_NONE;
+}
+EEventMap *EModel::GetEventMap() {
+    return 0;
+}
+int EModel::BeginMacro() {
+    return 1;
+}
+void EModel::GetName(char *AName, int /*MaxLen*/) {
+    *AName = 0;
+}
+void EModel::GetPath(char *APath, int /*MaxLen*/) {
+    *APath = 0;
+}
+void EModel::GetInfo(char *AInfo, int /*MaxLen*/) {
+    *AInfo = 0;
+}
+void EModel::GetTitle(char *ATitle, int /*MaxLen*/, char *ASTitle, int /*SMaxLen*/) {
+    *ATitle = 0;
+    *ASTitle = 0;
+}
 void EModel::NotifyPipe(int /*PipeId*/) { }
 
 void EModel::NotifyDelete(EModel * /*Deleted*/) {
@@ -152,7 +167,10 @@ void EModel::NotifyDelete(EModel * /*Deleted*/) {
 void EModel::DeleteRelated() {
 }
 
-EViewPort::EViewPort(EView *V) { View = V; ReCenter = 0; }
+EViewPort::EViewPort(EView *V) {
+    View = V;
+    ReCenter = 0;
+}
 EViewPort::~EViewPort() {}
 void EViewPort::HandleEvent(TEvent &/*Event*/) { }
 void EViewPort::UpdateView() { }

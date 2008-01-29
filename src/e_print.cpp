@@ -19,7 +19,7 @@ int EBuffer::BlockPrint() {
     FILE *fp;
     int bc = 0, lc = 0;
     int error = 0;
-    
+
     AutoExtend = 0;
     if (CheckBlock() == 0) return 0;
     if (RCount == 0) return 0;
@@ -41,19 +41,19 @@ int EBuffer::BlockPrint() {
         Z = -1;
         LL = RLine(L);
         switch (BlockMode) {
-          case bmLine:
+        case bmLine:
             if (L < E.Row) {
                 A = 0;
                 Z = LL->Count;
             }
             break;
-          case bmColumn:
+        case bmColumn:
             if (L < E.Row) {
                 A = CharOffset(LL, B.Col);
                 Z = CharOffset(LL, E.Col);
             }
             break;
-          case bmStream:
+        case bmStream:
             if (B.Row == E.Row) {
                 A = CharOffset(LL, B.Col);
                 Z = CharOffset(LL, E.Col);
@@ -129,7 +129,7 @@ int EBuffer::FilePrint() {
     FILE *fp;
     unsigned long ByteCount = 0;
     int BChars;
-  
+
     Msg(S_INFO, "Printing %s to %s...", FileName, PrintDevice);
 #if !defined(__IBMCPP__) && !defined(__WATCOMC__)
     if (PrintDevice[0] == '|')
