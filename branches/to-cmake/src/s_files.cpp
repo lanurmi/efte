@@ -116,7 +116,8 @@ static int GetDiskCurDir(int drive, char *dir) {
 
     return (DosQueryCurrentDir(drive, dir, &len) == 0) ? 0 : -1;
 }
-#elif defined(NT) {
+#elif defined(NT)
+{
     char orig[MAXPATH], newdrive[MAXPATH];
 
     // set to new drive, get directory and restore original directory
@@ -262,7 +263,8 @@ int ExpandPath(const char *Path, char *Expand, int ExpandSize) {
         if (_fullpath(Expand, Name, MAXPATH) == NULL) return -1;
 #endif
     }
-#if defined(__EMX__) {
+#if defined(__EMX__)
+    {
     char *p = Expand;
 
     if (p && *p) do {
