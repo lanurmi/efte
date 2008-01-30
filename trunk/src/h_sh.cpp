@@ -144,7 +144,7 @@ int Hilit_SH(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, 
                     //while (len > 0 && (isdigit(*p)))
                     //ColorNext();
                     //continue;
-                } else if (len > 3 && parenCount < 2 && bracketCount < 1 && *p == '<' && p[1] == '<') {
+                } else if (len > 3 && parenCount < 1 && bracketCount < 1 && *p == '<' && p[1] == '<') {
 
                     // !!! this is a hack, doesn't work properly -- Mark
 
