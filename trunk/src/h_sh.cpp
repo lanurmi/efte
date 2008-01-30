@@ -22,6 +22,8 @@ int Hilit_SH(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, 
     int CommandStr = 0;
 
     int isEOF = 0;
+    int parenCount = 0;
+    int bracketCount = 0;
     for (i = 0; i < Line->Count;) {
         if (State == hsSH_EOF && 0 == i) {
             //printf("i=%d, len=%d, strlen(seof)=%d, seof=%s, Line-Chars=%s\n",
@@ -40,6 +42,12 @@ int Hilit_SH(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, 
 
             if (!isspace(*p))
                 CommandStr++;
+            switch( *p ) {
+                case '(': parenCount++; break;
+                case ')': parenCount--; break;
+                case '[': bracketCount++; break;
+                case ']': bracketCount--; break;
+            }
             Color = CLR_Normal;
             switch (State) {
             case hsSH_Normal:
@@ -136,7 +144,7 @@ int Hilit_SH(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, 
                     //while (len > 0 && (isdigit(*p)))
                     //ColorNext();
                     //continue;
-                } else if (len > 3 && *p == '<' && p[1] == '<') {
+                } else if (len > 3 && parenCount < 2 && bracketCount < 1 && *p == '<' && p[1] == '<') {
 
                     // !!! this is a hack, doesn't work properly -- Mark
 
