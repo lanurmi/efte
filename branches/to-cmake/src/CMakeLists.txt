@@ -12,24 +12,31 @@
 
 OPTION( USE_DEFAULT_CONFIG
   "Use a simple default configuration when system config cannot be found" ON)
-OPTION( USE_GPM "Compile console versions with gpm support" ON )
-OPTION( USE_XMB "Use libxmb to draw fonts with locale support" ON)
-OPTION( USE_LOCALE "Use locale" ON )
-OPTION( USE_XICON "Use libxicon to supply icons for the X version" ON )
+OPTION( USE_GPM        "Compile console versions with gpm support" ON )
+OPTION( USE_XMB        "Use libxmb to draw fonts with locale support" ON)
+OPTION( USE_LOCALE     "Use normal locale support" ON )
+OPTION( USE_XLOCALE    "Use X11 compiled in support" OFF )
+OPTION( USE_XICON      "Use libxicon to supply icons for the X version" ON )
 OPTION( USE_HARD_REMAP "Keyboard remapping by XEFTE" OFF )
-OPTION( USE_XTINIT "Use XtInitialize on init" OFF )
-OPTION( USE_LOGGING "Enable trace logging within efte" ON )
+OPTION( USE_XTINIT     "Use XtInitialize on init" OFF )
+OPTION( USE_LOGGING    "Enable trace logging within efte" ON )
 
 # Setup global options right now platform dependent options will appear later
 # more near thier actual use
 
 IF( USE_DEFAULT_CONFIG )
   ADD_DEFINITIONS( -DDEFAULT_INTERNAL_CONFIG )
+  SET( DEFAULT_CONFIG_HEADER defcfg.h )
+ELSE( USE_DEFAULT_CONFIG )
+  SET( DEFAULT_CONFIG_HEADER "" )
 ENDIF( USE_DEFAULT_CONFIG )
 
 IF( USE_LOCALE )
   ADD_DEFINITIONS( -DUSE_LOCALE )
 ENDIF( USE_LOCALE )
+IF( USE_XLOCALE )
+  ADD_DEFINITIONS( -DX_LOCALE )
+ENDIF( USE_XLOCALE )
 
 IF( NOT USE_LOGGING )
   ADD_DEFINITIONS( -DFTE_NO_LOGGING )
@@ -55,13 +62,13 @@ SET( BASE_FTE_SOURCES
   o_buffer.cpp o_buflist.cpp o_cvs.cpp o_cvsbase.cpp o_cvsdiff.cpp o_directory.cpp
   o_list.cpp o_messages.cpp o_model.cpp o_modemap.cpp o_routine.cpp o_svn.cpp
   o_svnbase.cpp o_svndiff.cpp s_direct.cpp s_files.cpp s_string.cpp
-  s_util.cpp view.cpp )
+  s_util.cpp view.cpp ${DEFAULT_CONFIG_HEADER} )
 SET( UNIX_SOURCES e_unix.cpp memicmp.cpp )
 SET( XFTE_SOURCES clip_x11.cpp con_i18n.cpp con_x11.cpp g_nodlg.cpp g_text.cpp
   menu_text.cpp )
 SET( NFTE_SOURCES clip_no.cpp con_ncurses.cpp g_nodlg.cpp g_text.cpp g_unix_pipe.cpp
   menu_text.cpp )
-SET( VFTE_SOURCES clip_no.cpp con_linux.cpp g_nodlg.cpp g_text.cpp )
+SET( VFTE_SOURCES clip_no.cpp con_linux.cpp g_nodlg.cpp g_text.cpp menu_text.cpp )
 SET( WFTE_SOURCES clip_os2.cpp con_nt.cpp e_win32.cpp g_nodlg.cpp g_text.cpp
   menu_text.cpp )
 
@@ -71,6 +78,8 @@ SET( WFTE_SOURCES clip_os2.cpp con_nt.cpp e_win32.cpp g_nodlg.cpp g_text.cpp
 #
 # =============================================================================
 
+SET( SYSTEM_LIBS "" )
+
 IF( UNIX AND ${CMAKE_SYSTEM_NAME} MATCHES "Darwin" )
   SET( OSX 1 )
 ENDIF( UNIX AND ${CMAKE_SYSTEM_NAME} MATCHES "Darwin" )
@@ -79,8 +88,31 @@ IF( CMAKE_COMPILER_IS_GNUCC )
   SET( CMAKE_CXX_FLAGS "-pedantic -Wall -Wpointer-arith -Wconversion -Wwrite-strings -Winline -fno-rtti -fno-exceptions" )
 ENDIF( CMAKE_COMPILER_IS_GNUCC )
 
-IF( WIN32 )
+IF( CMAKE_SYSTEM_NAME MATCHES "HP/UX" )
+  ADD_DEFINITIONS( -DHPUX -D_HPUX_SOURCE -DCAST_FD_SET_INT )
+ENDIF( CMAKE_SYSTEM_NAME MATCHES "HP/UX" )
+IF( CMAKE_SYSTEM_NAME MATCHES "AIX" )
+  ADD_DEFINITIONS( -DAIX -D_BSD_INCLUDES -DNO_NEW_CPP_FEATURES )
+ENDIF( CMAKE_SYSTEM_NAME MATCHES "AIX" )
+IF( CMAKE_SYSTEM_NAME MATCHES "Irix" )
+  ADD_DEFINITIONS( -DIRIX -DNO_NEW_CPP_FEATURES )
+  SET( CMAKE_CXX_FLAGS "-OPT:Olimit=3000" ) # -xc++
+ENDIF( CMAKE_SYSTEM_NAME MATCHES "Irix" )
+IF( CMAKE_SYSTEM_NAME MATCHES "SunOS" ) # Solaris
+  ADD_DEFINITIONS( -DSUNOS -DNO_NEW_CPP_FEATURES )
+ENDIF( CMAKE_SYSTEM_NAME MATCHES "SunOS" )
+IF( CMAKE_SYSTEM_NAME MATCHES "SCO" )
+  ADD_DEFINITIONS( -DSCO )
+  SET( CMAKE_CXX_FLAGS "-b elf" )
+  SET( SYSTEM_LIBS ${SYSTEM_LIBS} socket )
+ENDIF( CMAKE_SYSTEM_NAME MATCHES "SCO" )
+IF( CMAKE_SYSTEM_NAME MATCHES "NCR" )
+  ADD_DEFINITIONS( -DNCR )
+  SET( CMAKE_CXX_FLAGS "-w3" )
+  SET( SYSTEM_LIBS ${SYSTEM_LIBS} socket nsl c ucb )
+ENDIF( CMAKE_SYSTEM_NAME MATCHES "NCR" )
 
+IF( WIN32 )
   IF( BORLAND )
   ENDIF( BORLAND )
 
@@ -91,38 +123,13 @@ IF( WIN32 )
   ENDIF( MINGW)
 
   IF( MSVC )
+    ADD_DEFINITIONS( -D_CRT_NONSTDC_NO_WARNINGS -D_CRT_SECURE_NO_WARNINGS -DMSVC )
+    SET( SYSTEM_LIBS ${SYSTEM_LIBS} user32.lib )
   ENDIF( MSVC )
 
   IF( WATCOM )
   ENDIF( WATCOM )
-
 ENDIF( WIN32 )
-
-# =============================================================================
-#
-# PLATFORM INDEPENDENT BUILDS
-#
-# =============================================================================
-
-# Configuration compiler
-ADD_EXECUTABLE( cefte ${CFTE_SOURCES} )
-GET_TARGET_PROPERTY( CEFTE_EXE cefte LOCATION )
-
-# Program to convert our default config into an includable .h
-ADD_EXECUTABLE( bin2c bin2c.cpp )
-GET_TARGET_PROPERTY( BIN2C_EXE bin2c LOCATION )
-
-# Builds our default config
-ADD_CUSTOM_COMMAND(
-  OUTPUT defcfg.cnf
-  COMMAND ${CEFTE_EXE} defcfg.fte defcfg.cnf
-  DEPENDS cefte )
-
-# Convert our default config to ain includable .h
-ADD_CUSTOM_COMMAND(
-  OUTPUT defcfg.h
-  COMMAND ${BIN2C_EXE} defcfg.cnf > defcfg.h
-  DEPENDS bin2c defcfg.cnf )
 
 # =============================================================================
 #
@@ -130,12 +137,7 @@ ADD_CUSTOM_COMMAND(
 #
 # =============================================================================
 
-IF( OSX )
-
-  # TODO: Create OSX build
-
-ELSEIF( UNIX )
-
+IF( UNIX )
   IF( USE_XMB )
     ADD_DEFINITIONS( -DUSE_XMB )
   ENDIF( USE_XMB)
@@ -153,28 +155,72 @@ ELSEIF( UNIX )
   IF( X11_LIBRARIES )
     MESSAGE( STATUS "X11 found on system, X11 enabled efte will be built" )
     INCLUDE_DIRECTORIES( ${X11_INCLUDE_DIR} )
-    ADD_EXECUTABLE( efte defcfg.h ${BASE_FTE_SOURCES} ${UNIX_SOURCES} ${XFTE_SOURCES} )
+    ADD_EXECUTABLE( efte ${BASE_FTE_SOURCES} ${UNIX_SOURCES} ${XFTE_SOURCES} )
 
     FIND_LIBRARY( XPM_LIBRARY Xpm )
     IF( NOT XPM_LIBRARY )
       MESSAGE( SEND_ERROR "Could not find Xpm library which is required for X11 version" )
     ENDIF( NOT XPM_LIBRARY )
-    TARGET_LINK_LIBRARIES( efte ${X11_LIBRARIES} ${XPM_LIBRARY} ) # TODO: Search for XPM
+    TARGET_LINK_LIBRARIES( efte ${X11_LIBRARIES} ${XPM_LIBRARY} ${SYSTEM_LIBS} )
+  ELSE( X11_LIBRARIES )
+    MESSAGE( STATUS "X11 not found, X11 enabled efte will not be built" )
   ENDIF( X11_LIBRARIES )
 
   INCLUDE(FindCurses)
   IF( CURSES_LIBRARY )
-    MESSAGE( STATUS "Curses found on system, curses enabled nefte will be built" )
-    ADD_EXECUTABLE( nefte defcfg.h ${BASE_FTE_SOURCES} ${UNIX_SOURCES} ${NFTE_SOURCES} )
-    TARGET_LINK_LIBRARIES( nefte ${CURSES_LIBRARY} gpm ) #TODO: Search for GPM
+    MESSAGE( STATUS "Curses found on system, nefte and vefte will be built" )
+
+    SET( EXTRA_NFTE_LIBS "" )
+    IF( USE_GPM )
+      FIND_LIBRARY( GPM_LIBRARY gpm )
+      IF( NOT GPM_LIBRARY )
+        MESSAGE( SEND_ERROR "Could not find gpm library" )
+        MESSAGE( SEND_ERROR "Please install or disable the use of gpm:" )
+        MESSAGE( SEND_ERROR "Add: -DWITH_GPM=OFF to your cmake command line" )
+      ELSE( NOT GPM_LIBRARY )
+        SET( EXTRA_NFTE_LIBS ${EXTRA_NFTE_LIBS} ${GPM_LIBRARY} )
+      ENDIF( NOT GPM_LIBRARY )
+    ENDIF( USE_GPM )
+
+    ADD_EXECUTABLE( nefte ${BASE_FTE_SOURCES} ${UNIX_SOURCES} ${NFTE_SOURCES} )
+    TARGET_LINK_LIBRARIES( nefte ${CURSES_LIBRARY} ${EXTRA_NFTE_LIBS} ${SYSTEM_LIBS} )
+    IF( LINUX )
+      ADD_EXECUTABLE( vefte ${BASE_FTE_SOURCES} ${UNIX_SOURCES} ${VFTE_SOURCES} )
+      TARGET_LINK_LIBRARIES( vefte ${CURSES_LIBRARY} ${EXTRA_NFTE_LIBS} ${SYSTEM_LIBS} )
+    ENDIF( LINUX )
+  ELSE( CURSES_LIBRARY )
+    MESSAGE( STATUS, "Curses not found, nefte nor vefte will be built" )
   ENDIF( CURSES_LIBRARY )
-
 ELSEIF( WIN32 )
-
-  # TODO: This will only work with MSVC... change
-
-  ADD_DEFINITIONS( -DNT -D_CRT_NONSTDC_NO_WARNINGS -D_CRT_SECURE_NO_WARNINGS -DNTCONSOLE -DMSVC -D_CONSOLE -DWIN32 )
+  ADD_DEFINITIONS( -DNT -DNTCONSOLE -DWIN32 -D_CONSOLE )
   ADD_EXECUTABLE( efte defcfg.h ${BASE_FTE_SOURCES} ${WFTE_SOURCES} )
-  TARGET_LINK_LIBRARIES( efte user32.lib )
+  TARGET_LINK_LIBRARIES( efte ${SYSTEM_LIBS} )
+ENDIF( UNIX )
 
-ENDIF( OSX )
+# =============================================================================
+#
+# PLATFORM INDEPENDENT BUILDS
+#
+# =============================================================================
+
+# Configuration compiler
+ADD_EXECUTABLE( cefte ${CFTE_SOURCES} )
+GET_TARGET_PROPERTY( CEFTE_EXE cefte LOCATION )
+
+IF( USE_DEFAULT_CONFIG )
+  # Program to convert our default config into an includable .h
+  ADD_EXECUTABLE( bin2c bin2c.cpp )
+  GET_TARGET_PROPERTY( BIN2C_EXE bin2c LOCATION )
+
+  # Builds our default config
+  ADD_CUSTOM_COMMAND(
+    OUTPUT defcfg.cnf
+    COMMAND ${CEFTE_EXE} ${CMAKE_CURRENT_SOURCE_DIR}/defcfg.fte ${CMAKE_CURRENT_SOURCE_DIR}/defcfg.cnf
+    DEPENDS cefte )
+
+  # Convert our default config to ain includable .h
+  ADD_CUSTOM_COMMAND(
+    OUTPUT defcfg.h
+    COMMAND ${BIN2C_EXE} ${CMAKE_CURRENT_SOURCE_DIR}/defcfg.cnf > ${CMAKE_CURRENT_SOURCE_DIR}/defcfg.h
+    DEPENDS bin2c defcfg.cnf )
+ENDIF( USE_DEFAULT_CONFIG )
