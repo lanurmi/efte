@@ -352,7 +352,7 @@ static void try_fontset_load(const char *fs) {
     fontSet = XCreateFontSet(display, fs, &miss, &nMiss, &def);
 
     if (fontSet == NULL) {
-        fprintf(stderr, "XFTE Warning: unable to open font \"%s\":\n"
+        fprintf(stderr, "xeFTE Warning: unable to open font \"%s\":\n"
                 " Missing count: %d\n", fs, nMiss);
         for (int i = 0; i < nMiss; i++)
             fprintf(stderr, "  %s\n", miss[i]);
