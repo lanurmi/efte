@@ -22,7 +22,7 @@ typedef enum {
     //<cmd_cursor> Cursor Movement
 
     //& <A HREF="modes.html#ms.CursorTroughTabs">CursorTroughTabs</A>
-    
+
     ExMoveDown,
     /// Move cursor to next line.
     ExMoveUp,
@@ -157,7 +157,7 @@ typedef enum {
     // ExCursorPush,
     // ExCursorPop,
 
-    
+
     //<cmd_delete> Deleting Text
     ExKillLine,
     /// Delete current line. If the line is the last line in the file,
@@ -376,7 +376,7 @@ typedef enum {
     /// Toggle case of characters in selected block
     ExBlockTrans,
     /// Translate characters in selected block.
-    
+
     ExInsertString,
     /// Insert argument string at cursor position
     ExInsertSpace,
@@ -400,7 +400,7 @@ typedef enum {
     ExCompleteWord,
     /// Complete current word to last word starting with the
     /// same prefix.
-    
+
     ExFilePrev,
     /// Switch to previous file in ring.
     ExFileNext,

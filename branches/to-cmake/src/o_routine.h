@@ -18,13 +18,13 @@ public:
     int SearchLen;
     char SearchString[MAXISEARCH];
     int SearchPos[MAXISEARCH];
-    
+
     RoutineView(int createFlags, EModel **ARoot, EBuffer *AB);
     virtual ~RoutineView();
     virtual EEventMap *GetEventMap();
     virtual int ExecCommand(int Command, ExState &State);
     virtual void HandleEvent(TEvent &Event);
-    virtual int getMatchingLine (int start, int direction);
+    virtual int getMatchingLine(int start, int direction);
     virtual void DrawLine(PCell B, int Line, int Col, ChColor color, int Width);
     virtual char* FormatLine(int Line);
     virtual int Activate(int No);

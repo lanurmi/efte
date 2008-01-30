@@ -70,6 +70,6 @@ void ExModelView::Resize(int width, int height) {
 }
 
 void ExModelView::WnSwitchBuffer(EModel *B) {
-   if (View)
-       View->SwitchToModel(B);
+    if (View)
+        View->SwitchToModel(B);
 }

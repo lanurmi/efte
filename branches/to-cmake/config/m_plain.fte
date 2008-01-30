@@ -55,3 +55,5 @@ mode PLAIN {
     UndoMoves           = 0;         # undo cursor movement commands
     WordWrap            = 0;         # word wrap (off = 0, line = 1, paragraph=2)
 }
+
+oinclude 'mym_plain.fte';

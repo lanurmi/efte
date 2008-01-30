@@ -28,7 +28,7 @@ public:
     GView *Next, *Prev;
     GViewPeer *Peer;
     int Result;
-    
+
     GView(GFrame *parent, int XSize, int YSize);
     virtual ~GView();
 
@@ -48,20 +48,20 @@ public:
     int ConHideCursor();
     int ConCursorVisible();
     void ConSetInsertState(bool insert);
-    
+
     int CaptureMouse(int grab);
     int CaptureFocus(int grab);
-    
+
     virtual int Execute();
     void EndExec(int NewResult);
-    
+
     int QuerySbVPos();
     int SetSbVPos(int Start, int Amount, int Total);
     int SetSbHPos(int Start, int Amount, int Total);
     int ExpandHeight(int DeltaY);
-    
+
     int IsActive();
-    
+
     virtual void Update();
     virtual void Repaint();
     virtual void Activate(int gotfocus);
@@ -75,33 +75,33 @@ public:
     GView *Top, *Active;
     GFramePeer *Peer;
     char *Menu;
-    
+
     GFrame(int XSize, int YSize);
     virtual ~GFrame();
-    
+
     int ConSetTitle(char *Title, char *STitle);
     int ConGetTitle(char *Title, int MaxLen, char *STitle, int SMaxLen);
-    
+
     int ConSetSize(int X, int Y);
     int ConQuerySize(int *X, int *Y);
-    
+
     int AddView(GView *view);
     int ConSplitView(GView *view, GView *newview);
     int ConCloseView(GView *view);
     int ConResizeView(GView *view, int DeltaY);
     int SelectView(GView *view);
-    
+
     virtual void Update();
     virtual void Repaint();
     virtual void UpdateMenu();
-    
+
     void InsertView(GView *Prev, GView *view);
     void RemoveView(GView *view);
     void SelectNext(int back);
-    
+
     void Resize(int width, int height);
     void DrawMenuBar();
-    
+
     int ExecMainMenu(char Sub);
     int SetMenu(const char *Name);
     char *QueryMenu();
@@ -117,11 +117,11 @@ class GUI {
 public:
     GUI(int &argc, char **argv, int XSize, int YSize);
     virtual ~GUI();
-    
+
     int ConSuspend();
     int ConContinue();
     int ShowEntryScreen();
-    
+
     void ProcessEvent();
     virtual void DispatchEvent(GFrame *frame, GView *view, TEvent &Event);
     int ConGetEvent(TEventMask EventMask, TEvent *Event, int WaitTime, int Delete, GView **view);
@@ -136,7 +136,7 @@ public:
     void StopLoop();
 
     int RunProgram(int mode, char *Command);
-    
+
     int OpenPipe(char *Command, EModel *notify);
     int SetPipeView(int id, EModel *notify);
     int ReadPipe(int id, void *buffer, int len);

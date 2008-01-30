@@ -27,7 +27,7 @@ const char *GetCommandName(int Command) {
     if (Command & CMD_EXT) {
         Command &= ~CMD_EXT;
         if ((Command < 0) ||
-            (Command >= CMacros))
+                (Command >= CMacros))
             return "?INVALID?";
         if (Macros[Command].Name)
             return Macros[Command].Name;
@@ -44,8 +44,8 @@ int CmdNum(char *Cmd) {
     int i;
 
     for (i = 0;
-         i < int(sizeof(Command_Table) / sizeof(Command_Table[0]));
-         i++)
+            i < int(sizeof(Command_Table) / sizeof(Command_Table[0]));
+            i++)
         if (strcmp(Cmd, Command_Table[i].Name) == 0)
             return Command_Table[i].CmdId;
     for (i = 0; i < CMacros; i++)
@@ -179,10 +179,10 @@ EKey *SetKey(EEventMap *aMap, const char *aKey) {
 static void InitWordChars() {
     static int init = 0;
     if (init == 0) {
-	for (int i = 0; i < 256; i++)
+        for (int i = 0; i < 256; i++)
             // isalnum???
-	    //if (isdigit(i) || isalpha(i)
-	    //    || (i >= 'A' && i <= 'Z')
+            //if (isdigit(i) || isalpha(i)
+            //    || (i >= 'A' && i <= 'Z')
             //    || (i >= 'a' && i <= 'z') || (i == '_')) {
             if (isalnum(i) || (i == '_')) {
                 WSETBIT(DefaultBufferFlags.WordChars, i, 1);
@@ -228,8 +228,7 @@ EMode::EMode(EMode *aMode, EEventMap *Map, const char *aName) {
         Flags = aMode->Flags;
 
         // duplicate strings in flags to allow them be freed
-        for (int i=0; i<BFS_COUNT; i++)
-        {
+        for (int i = 0; i < BFS_COUNT; i++) {
             if (aMode->Flags.str[i] != 0)
                 Flags.str[i] = strdup(aMode->Flags.str[i]);
         }
@@ -272,7 +271,7 @@ EMode::~EMode() {
     RxFree(MatchLineRx);
 
     // free strings from flags
-    for (int i=0; i<BFS_COUNT; i++)
+    for (int i = 0; i < BFS_COUNT; i++)
         free(Flags.str[i]);
 }
 
@@ -285,10 +284,9 @@ EKeyMap::~EKeyMap() {
     // free keys
     EKey *e;
 
-    while((e = fKeys) != NULL)
-    {
-	fKeys = fKeys->fNext;
-	delete e;
+    while ((e = fKeys) != NULL) {
+        fKeys = fKeys->fNext;
+        delete e;
     }
 }
 
@@ -353,8 +351,7 @@ EEventMap::~EEventMap() {
 
     // free menu[]
     {
-        for (int i = 0; i < EM_MENUS; i++)
-        {
+        for (int i = 0; i < EM_MENUS; i++) {
             free(Menu[i]);
         }
     }
@@ -363,10 +360,8 @@ EEventMap::~EEventMap() {
     {
         EAbbrev *ab;
 
-        for (int i = 0; i < ABBREV_HASH; i++)
-        {
-            while((ab = abbrev[i]) != NULL)
-            {
+        for (int i = 0; i < ABBREV_HASH; i++) {
+            while ((ab = abbrev[i]) != NULL) {
                 abbrev[i] = abbrev[i]->next;
                 delete ab;
             }
@@ -472,24 +467,44 @@ int ParseKey(const char *Key, KeySel &ks) {
     while ((*p) && ((p[1] == '+') || (p[1] == '-'))) {
         if (p[1] == '-') {
             switch (p[0]) {
-            case 'A': ks.Mask |= kfAlt; break;
-            case 'C': ks.Mask |= kfCtrl; break;
-            case 'S': ks.Mask |= kfShift; break;
-            case 'G': ks.Mask |= kfGray; break;
-            case 'X': ks.Mask |= kfSpecial; break;
+            case 'A':
+                ks.Mask |= kfAlt;
+                break;
+            case 'C':
+                ks.Mask |= kfCtrl;
+                break;
+            case 'S':
+                ks.Mask |= kfShift;
+                break;
+            case 'G':
+                ks.Mask |= kfGray;
+                break;
+            case 'X':
+                ks.Mask |= kfSpecial;
+                break;
             }
         } else if (p[1] == '+') {
             switch (p[0]) {
-            case 'A': KeyFlags |= kfAlt; break;
-            case 'C': KeyFlags |= kfCtrl; break;
-            case 'S': KeyFlags |= kfShift; break;
-            case 'G': KeyFlags |= kfGray; break;
-            case 'X': KeyFlags |= kfSpecial; break;
+            case 'A':
+                KeyFlags |= kfAlt;
+                break;
+            case 'C':
+                KeyFlags |= kfCtrl;
+                break;
+            case 'S':
+                KeyFlags |= kfShift;
+                break;
+            case 'G':
+                KeyFlags |= kfGray;
+                break;
+            case 'X':
+                KeyFlags |= kfSpecial;
+                break;
             }
         }
         p += 2;
     }
-    for (i = 0; i < int(sizeof(KeyList)/sizeof(KeyList[0])); i++)
+    for (i = 0; i < int(sizeof(KeyList) / sizeof(KeyList[0])); i++)
         if (strcmp((const char *)p, KeyList[i].Name) == 0) {
             ks.Key = KeyList[i].Key;
             break;
@@ -534,7 +549,7 @@ int GetKeyName(char *Key, int KeySize, KeySel &ks) {
         else
             strlcat(Key, c, KeySize);
     } else {
-        for (int i = 0; i < int(sizeof(KeyList)/sizeof(KeyList[0])); i++)
+        for (int i = 0; i < int(sizeof(KeyList) / sizeof(KeyList[0])); i++)
             if (KeyList[i].Key == keyCode(ks.Key)) {
                 strlcat(Key, KeyList[i].Name, KeySize);
                 break;
@@ -557,8 +572,7 @@ EKey::EKey(char *aKey, EKeyMap *aKeyMap) {
     fKeyMap = aKeyMap;
 }
 
-EKey::~EKey()
-{
+EKey::~EKey() {
     // if there is child keymaps delete them
     delete fKeyMap;
 }
@@ -648,9 +662,9 @@ int NewCommand(const char *Name) {
 int ExState::GetStrParam(EView *view, char *str, int maxlen) {
     assert(maxlen >= 0);
     if (Macro == -1
-	|| Pos == -1
-	|| Pos >= Macros[Macro].Count)
-	return 0;
+            || Pos == -1
+            || Pos >= Macros[Macro].Count)
+        return 0;
     if (Macros[Macro].cmds[Pos].type == CT_STRING) {
         if (maxlen > 0) {
             strncpy(str, Macros[Macro].cmds[Pos].u.string, maxlen);
@@ -682,9 +696,9 @@ int ExState::GetStrParam(EView *view, char *str, int maxlen) {
 
 int ExState::GetIntParam(EView *view, int *value) {
     if (Macro == -1
-	|| Pos == -1
-	|| Pos >= Macros[Macro].Count)
-	return 0;
+            || Pos == -1
+            || Pos >= Macros[Macro].Count)
+        return 0;
     if (Macros[Macro].cmds[Pos].type == CT_NUMBER) {
         *value = Macros[Macro].cmds[Pos].u.num;
         Pos++;
@@ -701,7 +715,7 @@ int HashStr(const char *p, int maxim) {
     unsigned int i = 1;
 
     while (p && *p) {
-        i += i ^ (i << 3) ^ (unsigned int)(*p) ^ (i >> 3);
+        i += i ^(i << 3) ^(unsigned int)(*p) ^(i >> 3);
         p++;
     }
     return i % maxim;

@@ -50,7 +50,7 @@ char *MakeBackup(char *FileName, char *NewName) {
     /* try 1 */
     strcpy(NewName, FileName);
     strcat(NewName, "~");
-    if (!IsSameFile(FileName,NewName)) {
+    if (!IsSameFile(FileName, NewName)) {
         if (access(NewName, 0) == 0)                 // Backup already exists?
             unlink(NewName);                         // Then delete the file..
         if (access(FileName, 0) != 0)                // Original found?
@@ -62,11 +62,11 @@ char *MakeBackup(char *FileName, char *NewName) {
             return NewName; /* file not found */
 #endif
     }
-    
+
     /* try 2: 8.3 */
     strcpy(NewName, FileName);
     NewName[l-1] = '~';
-    if (!IsSameFile(FileName,NewName)) {
+    if (!IsSameFile(FileName, NewName)) {
         if (access(NewName, 0) == 0)                   // Backup exists?
             unlink(NewName);                           // Then delete;
         if (access(FileName, 0) != 0)                  // Original exists?
@@ -86,15 +86,36 @@ int GetCharFromEvent(TEvent &E, char *Ch) {
     *Ch = 0;
     if (E.Key.Code & kfModifier)
         return 0;
-    if (kbCode(E.Key.Code) == kbEsc) { *Ch = 27; return 1; }
-    if (kbCode(E.Key.Code) == kbEnter) { *Ch = 13; return 1; }
-    if (kbCode(E.Key.Code) == (kbEnter | kfCtrl)) { *Ch = 10; return 1; }
-    if (kbCode(E.Key.Code) == kbBackSp) { *Ch = 8; return 1; }
-    if (kbCode(E.Key.Code) == (kbBackSp | kfCtrl)) { *Ch = 127; return 1; }
-    if (kbCode(E.Key.Code) == kbTab) { *Ch = 9; return 1; }
-    if (kbCode(E.Key.Code) == kbDel) { *Ch = 127; return 1; }
+    if (kbCode(E.Key.Code) == kbEsc) {
+        *Ch = 27;
+        return 1;
+    }
+    if (kbCode(E.Key.Code) == kbEnter) {
+        *Ch = 13;
+        return 1;
+    }
+    if (kbCode(E.Key.Code) == (kbEnter | kfCtrl)) {
+        *Ch = 10;
+        return 1;
+    }
+    if (kbCode(E.Key.Code) == kbBackSp) {
+        *Ch = 8;
+        return 1;
+    }
+    if (kbCode(E.Key.Code) == (kbBackSp | kfCtrl)) {
+        *Ch = 127;
+        return 1;
+    }
+    if (kbCode(E.Key.Code) == kbTab) {
+        *Ch = 9;
+        return 1;
+    }
+    if (kbCode(E.Key.Code) == kbDel) {
+        *Ch = 127;
+        return 1;
+    }
     if (keyType(E.Key.Code) == kfCtrl) {
-        *Ch = (char) (E.Key.Code & 0x1F);
+        *Ch = (char)(E.Key.Code & 0x1F);
         return 1;
     }
     if (isAscii(E.Key.Code)) {
@@ -134,7 +155,7 @@ int CompletePath(const char *Base, char *Match, int Count) {
         *namep = 0;
         namep++;
     }
-    
+
     len = strlen(namep);
     strcpy(Match, dirp);
     SlashDir(Match);
@@ -150,22 +171,20 @@ int CompletePath(const char *Base, char *Match, int Count) {
         return 0;
     rc = ff->FindFirst(&fi);
     while (rc == 0) {
-	const char *dname = fi->Name();
+        const char *dname = fi->Name();
 
         // filter out unwanted files
         if ((strcmp(dname, ".") != 0) &&
-            (strcmp(dname, "..") != 0) &&
-            (!CompletionFilter || RxExec(CompletionFilter, dname, strlen(dname), dname, &RM) != 1))
-        {
+                (strcmp(dname, "..") != 0) &&
+                (!CompletionFilter || RxExec(CompletionFilter, dname, strlen(dname), dname, &RM) != 1)) {
             if ((
 #if defined(UNIX)
-                strncmp
+                        strncmp
 #else // os2, nt, ...
-                strnicmp
+                        strnicmp
 #endif
-                (namep, dname, len) == 0)
-                && (dname[0] != '.' || namep[0] == '.'))
-            {
+                        (namep, dname, len) == 0)
+                    && (dname[0] != '.' || namep[0] == '.')) {
                 count++;
                 if (Count == count) {
                     Slash(Match, 1);
@@ -176,10 +195,10 @@ int CompletePath(const char *Base, char *Match, int Count) {
 #else
                         fi->Type() == fiDIRECTORY
 #endif
-                       )
+                    )
                         Slash(Match, 1);
                 } else if (Count == -1) {
-                    
+
                     if (!hascname) {
                         strcpy(cname, dname);
                         hascname = 1;

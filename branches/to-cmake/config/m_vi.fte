@@ -1,6 +1,4 @@
-
-does not work at this time. needs fixing
-
+# does not work at this time. needs fixing
 #
 # just an experiment, do not take this seriously :)
 # 
@@ -103,3 +101,5 @@ mode VI_YANK: MODEOPTS {
     key [0]   { BlockUnmark; BlockMarkStream; MoveLineStart; BlockMarkStream; BlockCopy; MovePrevPos; ChangeKeys 'VIMODE' }
     key [w]   { KillWord; ChangeKeys 'VIMODE' }
 }
+
+oinclude 'mym_vi.fte';

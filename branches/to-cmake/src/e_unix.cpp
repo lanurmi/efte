@@ -35,8 +35,8 @@ int EView::SysShowHelp(ExState &State, const char *word) {
         word = wordAsk;
     }
 
-    snprintf(file, sizeof(file)-1, "/tmp/efte%d-man-%s", getpid(), word);
-    snprintf(command, sizeof(command)-1, "%s %s %s >'%s' 2>&1", HelpCommand, options, word, file);
+    snprintf(file, sizeof(file) - 1, "/tmp/efte%d-man-%s", getpid(), word);
+    snprintf(command, sizeof(command) - 1, "%s %s %s >'%s' 2>&1", HelpCommand, options, word, file);
 
     /// !!! why is this needed ???
 #define SYSCALL(call) while(((call) == -1) && (errno == EINTR))
@@ -48,8 +48,8 @@ int EView::SysShowHelp(ExState &State, const char *word) {
     if ((pid = fork()) == 0) {
         close(1);
         SYSCALL(err = open(file, O_CREAT | O_WRONLY | O_APPEND, S_IRWXU));
-	if (err != -1) {
-	    close(2);
+        if (err != -1) {
+            close(2);
             //dup(1); // ignore error output
             close(0);
             assert(open("/dev/null", O_RDONLY) == 0);
@@ -77,7 +77,7 @@ int EView::SysShowHelp(ExState &State, const char *word) {
     err = FileLoad(0, file, "CATBS", this);
     unlink(file);
 
-    if (err == 0){
+    if (err == 0) {
         Msg(S_ERROR, "Error code %d retrieving manpage for %s", err, word);
         return 0;
     }

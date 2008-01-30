@@ -47,3 +47,5 @@ mode IDL: C {      # IDL Mode
     CommentStart        = ' /*';
     CommentEnd          = '*/';
 }
+
+oinclude 'mym_idl.fte';

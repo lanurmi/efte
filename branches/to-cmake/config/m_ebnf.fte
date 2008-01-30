@@ -32,3 +32,5 @@ mode EBNF: PLAIN {
     MultiLineHilit      = 1;
     AutoHilitParen      = 1;
 }
+
+oinclude 'mym_ebnf.fte';

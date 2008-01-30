@@ -13,7 +13,7 @@
 
 int Indent_SIMPLE(EBuffer *B, int Line, int /*PosCursor*/) {
     int Pos, Old;
-    
+
     if (Line == 0) {
         Pos = 0;
     } else {

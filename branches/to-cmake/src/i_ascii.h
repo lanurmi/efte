@@ -13,12 +13,14 @@
 class ExASCII: public ExView {
 public:
     int Pos, LPos;
-    
+
     ExASCII();
     virtual ~ExASCII();
     virtual void Activate(int gotfocus);
-    
-    virtual ExView* GetViewContext() { return Next; }
+
+    virtual ExView* GetViewContext() {
+        return Next;
+    }
     virtual int BeginMacro();
     virtual void HandleEvent(TEvent &Event);
     virtual void UpdateView();

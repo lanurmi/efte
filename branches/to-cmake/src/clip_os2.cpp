@@ -12,10 +12,10 @@
 
 int GetPMClip(int clipboard) {
     ClipData cd;
-    unsigned int i,j, l, dx;
+    unsigned int i, j, l, dx;
     EPoint P;
 
-    if (clipboard!=0) {
+    if (clipboard != 0) {
         // only one clipboard supported
         return 0;
     }
@@ -27,7 +27,8 @@ int GetPMClip(int clipboard) {
         for (i = 0; i < cd.fLen; i++) {
             if (cd.fChar[i] == 0x0A) {
                 SSBuffer->AssertLine(l);
-                P.Col = 0; P.Row = l++;
+                P.Col = 0;
+                P.Row = l++;
                 dx = 0;
                 if ((i > 0) && (cd.fChar[i-1] == 0x0D)) dx++;
                 SSBuffer->InsertLine(P, i - j - dx, cd.fChar + j);
@@ -37,15 +38,16 @@ int GetPMClip(int clipboard) {
         if (j < cd.fLen) { // remainder
             i = cd.fLen;
             SSBuffer->AssertLine(l);
-            P.Col = 0; P.Row = l++;
+            P.Col = 0;
+            P.Row = l++;
             dx = 0;
             if ((i > 0) && (cd.fChar[i-1] == 0x0D)) dx++;
             SSBuffer->InsText(P.Row, P.Col, i - j - dx, cd.fChar + j);
             j = i + 1;
-	}
+        }
 
-	// now that we don't need cd.fChar anymore, free it
-	free(cd.fChar);
+        // now that we don't need cd.fChar anymore, free it
+        free(cd.fChar);
     }
     return 0;
 }
@@ -58,7 +60,7 @@ int PutPMClip(int clipboard) {
     ClipData cd;
     int rc;
 
-    if (clipboard!=0) {
+    if (clipboard != 0) {
         // only one clipboard supported
         return 0;
     }
@@ -78,5 +80,5 @@ int PutPMClip(int clipboard) {
     cd.fLen = l;
     rc = (PutClipText(&cd) == 0);
     free(p);
-    return rc?1:0;
+    return rc ? 1 : 0;
 }

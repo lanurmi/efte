@@ -17,18 +17,18 @@ char DesktopFileName[256] = "";
 int SaveDesktop(char *FileName) {
     FILE *fp;
     EModel *M;
-    
+
     fp = fopen(FileName, "w");
     if (fp == 0)
         return 0;
-    
+
     setvbuf(fp, FileBuffer, _IOFBF, sizeof(FileBuffer));
-    
+
     fprintf(fp, DESKTOP_VER);
-    
+
     M = ActiveModel;
     while (M) {
-        switch(M->GetContext()) {
+        switch (M->GetContext()) {
         case CONTEXT_FILE:
             if (M != CvsLogView) {
                 EBuffer *B = (EBuffer *)M;
@@ -36,12 +36,11 @@ int SaveDesktop(char *FileName) {
             }
             break;
 
-        case CONTEXT_DIRECTORY:
-            {
-                EDirectory *D = (EDirectory *)M;
-                fprintf(fp, "D|%d|%s\n", D->ModelNo, D->Path);
-            }
-            break;
+        case CONTEXT_DIRECTORY: {
+            EDirectory *D = (EDirectory *)M;
+            fprintf(fp, "D|%d|%s\n", D->ModelNo, D->Path);
+        }
+        break;
         }
         M = M->Next;
         if (M == ActiveModel)
@@ -66,11 +65,10 @@ int LoadDesktop(char *FileName) {
         return 0;
 
     //setvbuf(fp, FileBuffer, _IOFBF, sizeof(FileBuffer));
-    
+
     if (fgets(line, sizeof(line), fp) == 0 ||
-        (strcmp(line, DESKTOP_VER) != 0 &&
-        (strcmp(line, DESKTOP_VER1) != 0)))
-    {
+            (strcmp(line, DESKTOP_VER) != 0 &&
+             (strcmp(line, DESKTOP_VER1) != 0))) {
         fclose(fp);
         return 0;
     }
@@ -139,7 +137,7 @@ int LoadDesktop(char *FileName) {
                 else
                     break;
                 file = p;
-                
+
                 markIndex.insert(name, file, P);
             }
         }

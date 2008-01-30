@@ -209,7 +209,7 @@ colorize TEXINFO {
 
 }
 
-mode TEXINFO: PLAIN {
+mode TEXINFO: MARKUP {
     FileNameRx          = /\.\cTEXI$/;
     HilitOn             = 1;
     Colorizer           = 'TEXINFO';
@@ -219,3 +219,5 @@ mode TEXINFO: PLAIN {
     CommentStart        = ' %';
     CommentEnd          = '';
 }
+
+oinclude 'mym_texi.fte';

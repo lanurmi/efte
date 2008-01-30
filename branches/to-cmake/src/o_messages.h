@@ -19,8 +19,7 @@ typedef struct {
     EBuffer *Buf;
 } Error;
 
-struct aDir
-{
+struct aDir {
     aDir*       next;
     char*       name;
 };
@@ -29,7 +28,7 @@ class EMessages: public EList {
 public:
     char *Command;
     char *Directory;
-    
+
     int ErrCount;
     Error **ErrList;
     int Running;
@@ -41,7 +40,7 @@ public:
     int MatchCount;
     char MsgBuf[4096];
     aDir*   curr_dir;                       // top of dir stack.
-    
+
     EMessages(int createFlags, EModel **ARoot, char *Dir, char *ACommand);
     ~EMessages();
     void freeDirStack();
@@ -51,14 +50,16 @@ public:
     void FindErrorFile(int err);
     void AddFileError(EBuffer *B, int err);
     void FindFileErrors(EBuffer *B);
-    
-    virtual int GetContext() { return CONTEXT_MESSAGES; }
+
+    virtual int GetContext() {
+        return CONTEXT_MESSAGES;
+    }
     virtual EEventMap *GetEventMap();
     virtual int ExecCommand(int Command, ExState &State);
 
     void AddError(Error *p);
-    void AddError(char *file, int line, char *msg, const char *text, int hilit=0);
-    
+    void AddError(char *file, int line, char *msg, const char *text, int hilit = 0);
+
     void FreeErrors();
     int GetLine(char *Line, int maxim);
     void GetErrors();
@@ -79,7 +80,7 @@ public:
 
 
     int RunPipe(char *Dir, char *Command);
-    
+
     int CompilePrevError(EView *V);
     int CompileNextError(EView *V);
 };

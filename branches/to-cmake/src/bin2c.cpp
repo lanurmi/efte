@@ -9,7 +9,8 @@ int main(int argc, char **argv) {
     int i, n = 1, len;
 
     if (argc != 2) {
-        fprintf(stderr, "Usage: %s filename\n", argv[0]);        exit(1);
+        fprintf(stderr, "Usage: %s filename\n", argv[0]);
+        exit(1);
     }
 
     if ((fd = open(argv[1], O_RDONLY | O_BINARY)) == -1) {

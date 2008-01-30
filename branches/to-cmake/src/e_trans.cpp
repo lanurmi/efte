@@ -19,7 +19,8 @@ int ParseTrans(unsigned char *S, unsigned char *D, TransTable tab) {
     if (S == 0 || D == 0)
         return 0;
 
-    strncpy((char *)Dest, (char *)D, sizeof(Dest) - 1); Dest[sizeof(Dest) - 1] = 0;
+    strncpy((char *)Dest, (char *)D, sizeof(Dest) - 1);
+    Dest[sizeof(Dest) - 1] = 0;
     D = Dest;
 
     // no translation

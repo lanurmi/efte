@@ -16,3 +16,5 @@ mode CATBS: PLAIN {
     Colorizer           = 'CATBS';
     ReadOnly            = 1; # this mode cannot edit properly
 }
+
+oinclude 'mym_catbs.fte';

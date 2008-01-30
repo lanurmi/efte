@@ -48,7 +48,7 @@ static void Usage() {
            "  -T[<tagfile>]     Load tags file at startup.\n"
            "  -t<tag>           Locate specified tag.\n"
 //           "       -p        Load files into already running eFTE.\n"
-        );
+          );
 }
 
 #ifndef UNIX
@@ -133,8 +133,7 @@ static int GetConfigFileName(int /*argc*/, char **argv, char *ConfigFileName) {
 
             char *extPtr;
 
-            if ((extPtr = findPathExt(CfgName)) != NULL)
-            {
+            if ((extPtr = findPathExt(CfgName)) != NULL) {
                 *extPtr = 0;
                 strlcat(CfgName, ".cnf", sizeof(CfgName));
             }
@@ -147,7 +146,7 @@ static int GetConfigFileName(int /*argc*/, char **argv, char *ConfigFileName) {
         return 1;
 
 #if defined(UNIX)
-    for (unsigned int i = 0; i < sizeof(Unix_RCPaths)/sizeof(Unix_RCPaths[0]); i++) {
+    for (unsigned int i = 0; i < sizeof(Unix_RCPaths) / sizeof(Unix_RCPaths[0]); i++) {
         if (access(Unix_RCPaths[i], 0) == 0) {
             strlcpy(ConfigFileName, Unix_RCPaths[i], MAXPATH);
             return 1;
@@ -179,7 +178,7 @@ static int CmdLoadConfiguration(int &argc, char **argv) {
 #else
                     JustDirectory(argv[0], path, sizeof(path));
 #endif
-                    Slash(path,1);
+                    Slash(path, 1);
                     strlcat(path, "efte.log", sizeof(path));
                     if (debug_clean) unlink(path);
 
@@ -188,8 +187,7 @@ static int CmdLoadConfiguration(int &argc, char **argv) {
 #else
                     printf("--debug, --debugclean disabled\n");
 #endif
-                }
-                else
+                } else
                     QuoteAll = 1;
             } else if (argv[Arg][1] == '!') {
                 ign = 1;
@@ -199,12 +197,10 @@ static int CmdLoadConfiguration(int &argc, char **argv) {
                 Usage();
                 return 0;
             } else if (argv[Arg][1] == 'c' || argv[Arg][1] == 'C') {
-                if (argv[Arg][2])
-                {
+                if (argv[Arg][2]) {
                     ExpandPath(argv[Arg] + 2, ConfigFileName, sizeof(ConfigFileName));
                     haveConfig = 1;
-                }
-                else
+                } else
                     ign = 1;
             }
         }
@@ -212,7 +208,7 @@ static int CmdLoadConfiguration(int &argc, char **argv) {
     if (!haveConfig && GetConfigFileName(argc, argv, ConfigFileName) == 0) {
         // should we default to internal
 #ifdef DEFAULT_INTERNAL_CONFIG
-       ign = 1;
+        ign = 1;
 #endif
     }
 
@@ -266,12 +262,12 @@ static int CmdLoadConfiguration(int &argc, char **argv) {
 
 int main(int argc, char **argv) {
 #if defined(_DEBUG) && defined(MSVC) && defined(MSVCDEBUG)
-   _CrtSetReportMode( _CRT_WARN, _CRTDBG_MODE_FILE );
-   _CrtSetReportFile( _CRT_WARN, _CRTDBG_FILE_STDERR );
-   _CrtSetReportMode( _CRT_ERROR, _CRTDBG_MODE_FILE );
-   _CrtSetReportFile( _CRT_ERROR, _CRTDBG_FILE_STDERR );
-   _CrtSetReportMode( _CRT_ASSERT, _CRTDBG_MODE_FILE );
-   _CrtSetReportFile( _CRT_ASSERT, _CRTDBG_FILE_STDERR );
+    _CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_FILE);
+    _CrtSetReportFile(_CRT_WARN, _CRTDBG_FILE_STDERR);
+    _CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_FILE);
+    _CrtSetReportFile(_CRT_ERROR, _CRTDBG_FILE_STDERR);
+    _CrtSetReportMode(_CRT_ASSERT, _CRTDBG_MODE_FILE);
+    _CrtSetReportFile(_CRT_ASSERT, _CRTDBG_FILE_STDERR);
 #endif //_DEBUG && MSVC && MSVCDEBUG
 
 #if defined(__EMX__) || (defined(NT) && defined(MSVC) && !defined(__WATCOMC__))

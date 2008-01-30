@@ -671,7 +671,7 @@ colorize HTML {
     h_trans { 0, '>', '>', 'Comment' }
 }
 
-mode HTML: PLAIN {
+mode HTML: MARKUP {
     FileNameRx          = /\.\c{S?HTML?}$/;
     HilitOn             = 1;
     Colorizer           = "HTML";
@@ -684,3 +684,5 @@ mode HTML: PLAIN {
     CommentStart        = " <!--";
     CommentEnd          = "-->";
 }
+
+oinclude 'mym_html.fte';

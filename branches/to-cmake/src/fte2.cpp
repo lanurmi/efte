@@ -15,7 +15,7 @@
 #define UNIX_RCPATHS 3
 
 /* Actual locations */
-char *Unix_RCPaths[UNIX_RCPATHS]={
+char *Unix_RCPaths[UNIX_RCPATHS] = {
     "/usr/local/etc/efte/system.fterc",
     "/etc/efte/system.fterc",
     "/usr/X11R6/lib/X11/xefte/system.fterc",
@@ -38,16 +38,16 @@ static void Usage() {
            "   -!                Ignore config file, use builtin defaults (also -c).\n"
            "   -c[<.cnf>]        Use specified configuration file (no arg=builtin).\n"
            "   -d[<.dsk>]        Load/Save desktop from <.dsk> (no arg=disable desktop).\n"
-/*
-           "   -h[<.his>]        Load/Save history from <.his> (no arg=disable history).\n"
-*/
+           /*
+                      "   -h[<.his>]        Load/Save history from <.his> (no arg=disable history).\n"
+           */
            "   -m[<mode>]        Override mode for remaining files (no arg=no override).\n"
            "   -l<line>[,<col>]  Go to line (and column) in next file.\n"
            "   -r                Open next file as read-only.\n"
            "   -T[<tagfile>]     Load tags file at startup.\n"
            "   -t<tag>           Locate specified tag.\n"
 //           "       -p        Load files into already running FTE.\n"
-        );
+          );
 }
 
 /*
@@ -94,7 +94,7 @@ char *getProgramName(char *name) {
 static int GetConfigFileName(int argc, char **argv, char *ConfigFileName) {
     int i;
     char CfgName[MAXPATH] = "";
-    
+
     if (ConfigFileName[0] == 0) {
 #if defined(UNIX)
         // ? use ./.efterc if by current user ?
@@ -127,21 +127,18 @@ static int GetConfigFileName(int argc, char **argv, char *ConfigFileName) {
         strcpy(ConfigFileName, CfgName);
     }
 //    printf("Trying '%s'...",ConfigFileName);
-    if (access(ConfigFileName, 0) == 0)
-    {
+    if (access(ConfigFileName, 0) == 0) {
 //        printf("success, loading!\n");
         return 1;
     }
 //    printf("failed!\n");
 
 #if defined(UNIX_RCPATHS)
-    for (i=0;i<UNIX_RCPATHS;i++)
-    {
+    for (i = 0;i < UNIX_RCPATHS;i++) {
 //        printf("Trying '%s'...",Unix_RCPaths[i]);
-        if (access(Unix_RCPaths[i],0) == 0)
-        {
+        if (access(Unix_RCPaths[i], 0) == 0) {
 //            printf("success, loading!\n");
-            strcpy(ConfigFileName,Unix_RCPaths[i]);
+            strcpy(ConfigFileName, Unix_RCPaths[i]);
             return 1;
         }
 //        printf("failed!\n");
@@ -161,7 +158,7 @@ static int CmdLoadConfiguration(int &argc, char **argv) {
 
     for (Arg = 1; Arg < argc; Arg++) {
         if (!QuoteAll && !QuoteNext && (argv[Arg][0] == '-')) {
-            if (stricmp(argv[Arg],"--help")==0) {
+            if (stricmp(argv[Arg], "--help") == 0) {
                 Usage();
                 return 0;
             } else if (argv[Arg][1] == '-') {
@@ -181,13 +178,13 @@ static int CmdLoadConfiguration(int &argc, char **argv) {
             } else if (argv[Arg][1] == 'h') {
                 Usage();
                 return 0;
-            } 
-        } 
+            }
+        }
     }
 
     if (GetConfigFileName(argc, argv, ConfigFileName) == 0)
         ; // should we default to internal (NOT?)
-        
+
     if (ign) {
         if (UseDefaultConfig() == -1)
             DieError(1, "Error in internal configuration??? FATAL!");
@@ -219,7 +216,7 @@ static int CmdLoadConfiguration(int &argc, char **argv) {
                     KeepHistory = 1;
                 }
             }
-        } 
+        }
     }
     return 1;
 }
@@ -234,7 +231,7 @@ static int CmdLoadFiles(int &argc, char **argv) {
     char Mode[32];
     int LCount = 0;
     int ReadOnly = 0;
-    
+
     for (int Arg = 1; Arg < argc; Arg++) {
         if (!QuoteAll && !QuoteNext && (argv[Arg][0] == '-')) {
             if (argv[Arg][1] == '-') {
@@ -261,12 +258,12 @@ static int CmdLoadFiles(int &argc, char **argv) {
             } else if (argv[Arg][1] == 'r') {
                 ReadOnly = 1;
             } else if (argv[Arg][1] == 'm') {
-               if (argv[Arg][2] == 0) {
-                   ModeOverride = 0;
-               } else {
-                   ModeOverride = 1;
-                   strcpy(Mode, argv[Arg] + 2);
-               }
+                if (argv[Arg][2] == 0) {
+                    ModeOverride = 0;
+                } else {
+                    ModeOverride = 1;
+                    strcpy(Mode, argv[Arg] + 2);
+                }
             } else if (argv[Arg][1] == 'T') {
                 TagsAdd(argv[Arg] + 2);
             } else if (argv[Arg][1] == 't') {
@@ -298,11 +295,11 @@ static int CmdLoadFiles(int &argc, char **argv) {
                     ((EBuffer *)MM)->SetNearPosR(ColNum - 1, LineNum - 1);
                 } else {
                     int r, c;
-                    
+
                     if (RetrieveFPos(((EBuffer *)MM)->FileName, r, c) == 1)
                         ((EBuffer *)MM)->SetNearPosR(c, r);
                 }
-                
+
                 if (ReadOnly) {
                     ReadOnly = 0;
                     BFI(((EBuffer *)MM), BFI_ReadOnly) = 1;
@@ -328,7 +325,7 @@ static void DoLoadHistoryOnEntry(int &argc, char **argv) {
 #endif
     } else {
         char p[256];
-        
+
         ExpandPath(HistoryFileName, p);
         if (IsDirectory(p)) {
             Slash(p, 1);
@@ -340,7 +337,7 @@ static void DoLoadHistoryOnEntry(int &argc, char **argv) {
         }
         strcpy(HistoryFileName, p);
     }
-    
+
     if (KeepHistory && FileExists(HistoryFileName))
         LoadHistory(HistoryFileName);
 }
@@ -368,7 +365,7 @@ void DoLoadDesktopOnEntry(int &argc, char **argv) {
 #endif
     } else {
         char p[MAXPATH];
-        
+
         ExpandPath(DesktopFileName, p);
         if (IsDirectory(p)) {
             Slash(p, 1);
@@ -394,7 +391,7 @@ static void EditorInit() {
 static void EditorCleanup() {
     EModel *B, *N, *A;
     EView *BW, *NW, *AW;
-    
+
     if (MM) {
         B = A = MM;
         while (B != A) {
@@ -407,7 +404,7 @@ static void EditorCleanup() {
 
     delete SS;
     SS = 0;
-    
+
     if (VV) {
         BW = AW = VV;
         while (BW != AW) {
@@ -422,17 +419,17 @@ static void EditorCleanup() {
 static int InterfaceInit(int &argc, char **argv) {
     GxView *view;
     ExModelView *edit;
-    
+
     new EGUI(argc, argv, ScreenSizeX, ScreenSizeY);
     if (gui == 0)
         DieError(1, "Failed to initialize display\n");
-    
+
     new EFrame(ScreenSizeX, ScreenSizeY);
     if (frames == 0)
         DieError(1, "Failed to create window\n");
-    
+
     //frames->SetMenu("Main"); //??
-    
+
     view = new GxView(frames);
     if (view == 0)
         DieError(1, "Failed to create view\n");
@@ -457,7 +454,7 @@ int main(int argc, char **argv) {
 #if defined(__EMX__)
     argv[0] = getProgramName(argv[0]);
 #endif
-    
+
     if (CmdLoadConfiguration(argc, argv) == 0)
         return 1;
 
@@ -470,7 +467,7 @@ int main(int argc, char **argv) {
 
     if (MM == 0) {
         char Path[MAXPATH];
-        
+
         GetDefaultDirectory(0, Path, sizeof(Path));
         MM = new EDirectory(&MM, Path);
         assert(MM != 0);
@@ -484,7 +481,7 @@ int main(int argc, char **argv) {
     DoSaveHistoryOnExit();
     EditorCleanup();
     InterfaceCleanup();
-    
+
 #if defined(OS2)
     if (_heapchk() != _HEAPOK)
         DieError(0, "Heap memory is corrupt.");

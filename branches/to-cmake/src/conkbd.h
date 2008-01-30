@@ -29,7 +29,7 @@
 #define keyCode(x) ((x) & 0x000FFFFF)
 #define kbCode(x) (((x) & 0x0FFFFFFF) & ~(kfGray | kfAltXXX))
 #define isAscii(x) ((((x) & (kfAlt | kfCtrl)) == 0) && (keyCode(x) < 256))
-                                  
+
 #define kbF1         (kfSpecial | 0x101)
 #define kbF2         (kfSpecial | 0x102)
 #define kbF3         (kfSpecial | 0x103)
@@ -58,7 +58,7 @@
 #define kbSpace      32
 
 #define kbBackSp     (kfSpecial | 8)
-#define kbTab        (kfSpecial | 9) 
+#define kbTab        (kfSpecial | 9)
 #define kbEnter      (kfSpecial | 13)
 #define kbEsc        (kfSpecial | 27)
 

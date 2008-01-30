@@ -20,7 +20,7 @@
  * - Positioning
  * - Block marking
  */
- 
+
 #define ucInsLine          1
 #define ucDelLine          2
 #define ucInsChars         3

@@ -16,10 +16,10 @@ GxView::GxView(GFrame *Parent): GView(Parent, -1, -1) {
 
 GxView::~GxView() {
     while (Top) {
-	ExView *V = Top;
-	Top = Top->Next;
-	V->Win = 0;
-	delete V;
+        ExView *V = Top;
+        Top = Top->Next;
+        V->Win = 0;
+        delete V;
     }
 }
 
@@ -128,7 +128,7 @@ void GxView::Update() {
     if (Top) {
         Top->Update();
     }// else
-       // Repaint();
+    // Repaint();
 }
 
 void GxView::Repaint() {
@@ -309,11 +309,9 @@ int GxView::ICompleteWord(EView *View) {
         ExComplete *c = new ExComplete((EBuffer *)View->Model);
         if (c != NULL) {
 
-            if (c->IsSimpleCase())
-            {
+            if (c->IsSimpleCase()) {
                 rc = c->DoCompleteWord();
-            } else
-            {
+            } else {
                 PushView(c);
                 rc = Execute();
                 PopView();

@@ -34,33 +34,31 @@ HMUX hmuxWait;
 void _LNK_CONV clipsrv(void *foo) {
     HAB hab;
     HMQ hmq;
-    
+
     hab = WinInitialize(0);
     hmq = WinCreateMsgQueue(hab, 0);
-    
+
     while (1) {
         ULONG ulPostCount;
         ULONG Cmd;
         ULONG len;
         char *text;
         void *shmem;
-        
+
         WinWaitMuxWaitSem(hmuxWait, SEM_INDEFINITE_WAIT, &Cmd);
         switch (Cmd) {
         case CMD_GET:
             DosResetEventSem(hevGet, &ulPostCount);
-            
+
             shmem = 0;
             if ((WinOpenClipbrd(hab) == TRUE) &&
-                ((text = (char *) WinQueryClipbrdData(hab, CF_TEXT)) != 0))
-            {
+                    ((text = (char *) WinQueryClipbrdData(hab, CF_TEXT)) != 0)) {
                 len = strlen(text);
                 puts(text);
                 if (0 == DosAllocSharedMem(&shmem,
                                            MEM_PREFIX "CLIPDATA",
                                            len + 5,
-                                           PAG_COMMIT | PAG_WRITE | PAG_READ))
-                {
+                                           PAG_COMMIT | PAG_WRITE | PAG_READ)) {
                     memcpy(shmem, (void *)&len, 4);
                     memcpy((void *)(((char *)shmem) + sizeof(ULONG)), text, len + 1);
                 } else {
@@ -72,8 +70,7 @@ void _LNK_CONV clipsrv(void *foo) {
                 if (0 == DosAllocSharedMem(&shmem,
                                            MEM_PREFIX "CLIPDATA",
                                            4,
-                                           PAG_COMMIT | PAG_WRITE | PAG_READ))
-                {
+                                           PAG_COMMIT | PAG_WRITE | PAG_READ)) {
                     memcpy(shmem, (void *)&len, 4);
                 }
             }
@@ -83,14 +80,13 @@ void _LNK_CONV clipsrv(void *foo) {
             DosResetEventSem(hevGet, &ulPostCount);
             if (shmem) DosFreeMem(shmem);
             break;
-            
+
         case CMD_PUT:
             DosResetEventSem(hevPut, &ulPostCount);
-            
-            if (0 == DosGetNamedSharedMem(&shmem, 
+
+            if (0 == DosGetNamedSharedMem(&shmem,
                                           MEM_PREFIX "CLIPDATA",
-                                          PAG_READ | PAG_WRITE))
-            {
+                                          PAG_READ | PAG_WRITE)) {
                 if (WinOpenClipbrd(hab) == TRUE) {
                     WinEmptyClipbrd(hab);
                     len = strlen((char *)shmem + 4);
@@ -102,7 +98,7 @@ void _LNK_CONV clipsrv(void *foo) {
                         strcpy(text, ((char *)shmem) + 4);
                         if (!WinSetClipbrdData(hab, (ULONG) text, CF_TEXT, CFI_POINTER))
                             DosBeep(100, 1500);
-                        
+
                     }
                     WinCloseClipbrd(hab);
                 } else {
@@ -125,40 +121,40 @@ void _LNK_CONV clipsrv(void *foo) {
 int main() {
     SEMRECORD sem[2];
     int rc;
-    
-    rc = DosCreateMutexSem(SEM_PREFIX "CLIPSYN", 
+
+    rc = DosCreateMutexSem(SEM_PREFIX "CLIPSYN",
                            &hmtxSyn,
                            0,
                            0);
     if (rc != 0) return 1;
     puts("CLIPSYN");
-    
-    rc = DosCreateEventSem(SEM_PREFIX "CLIPEND", 
+
+    rc = DosCreateEventSem(SEM_PREFIX "CLIPEND",
                            &hevEnd,
-                           0, 
+                           0,
                            0);
     if (rc != 0) return 1;
     puts("CLIPEND");
-    
-    rc = DosCreateEventSem(SEM_PREFIX "CLIPGET", 
+
+    rc = DosCreateEventSem(SEM_PREFIX "CLIPGET",
                            &hevGet,
-                           0, 
+                           0,
                            0);
     if (rc != 0) return 1;
     puts("CLIPGET");
-    
+
     rc = DosCreateEventSem(SEM_PREFIX "CLIPPUT",
                            &hevPut,
                            0,
                            0);
     if (rc != 0) return 1;
     puts("CLIPPUT");
-    
+
     sem[0].hsemCur = (PULONG) hevGet;
     sem[0].ulUser = CMD_GET;
     sem[1].hsemCur = (PULONG) hevPut;
     sem[1].ulUser = CMD_PUT;
-    
+
     rc = DosCreateMuxWaitSem(0,
                              &hmuxWait,
                              2,
@@ -166,19 +162,19 @@ int main() {
                              DCMW_WAIT_ANY);
     if (rc != 0) return 1;
     puts("CLIPMUX");
-    
+
     hab = WinInitialize(0);
-    
+
     hmq = WinCreateMsgQueue(hab, 0);
 #if defined(__EMX__) || defined(__TOS_OS2__)
     _beginthread(clipsrv, NULL, 8192, 0);
 #else
     _beginthread(clipsrv, 8192, 0);
 #endif
-    while (WinGetMsg (hab, &qmsg, 0, 0, 0))
-        WinDispatchMsg (hab, &qmsg);
-    
-    
+    while (WinGetMsg(hab, &qmsg, 0, 0, 0))
+        WinDispatchMsg(hab, &qmsg);
+
+
     WinDestroyMsgQueue(hmq);
     WinTerminate(hab);
     return 0;

@@ -24,15 +24,15 @@ int Hilit_REXX(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
 
     C = 0;
     NC = 0;
-    for(i = 0; i < Line->Count;) {
+    for (i = 0; i < Line->Count;) {
         if (*p != ' ' && *p != 9) firstnw++;
         IF_TAB() else {
-            switch(State) {
+            switch (State) {
             case hsREXX_Comment:
                 Color = CLR_Comment;
-                if ((len >= 2) && (*p == '*') && (*(p+1) == '/')) {
+                if ((len >= 2) && (*p == '*') && (*(p + 1) == '/')) {
                     ColorNext();
-                set_normal:
+set_normal:
                     ColorNext();
                     State = hsREXX_Normal;
                     continue;
@@ -56,8 +56,8 @@ int Hilit_REXX(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
 
                     j = 0;
                     while (((i + j) < Line->Count) &&
-                           (isalnum(Line->Chars[i+j]) ||
-                            (Line->Chars[i + j] == '_'))
+                            (isalnum(Line->Chars[i+j]) ||
+                             (Line->Chars[i + j] == '_'))
                           ) j++;
                     if (wascall) {
                         State = hsREXX_Normal;
@@ -90,12 +90,12 @@ int Hilit_REXX(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
                     C += j;
                     State = hsREXX_Normal;
                     continue;
-                } else if ((len >= 2) && ( (*p == '/') && (*(p+1) == '*') )) {
+                } else if ((len >= 2) && ((*p == '/') && (*(p + 1) == '*'))) {
                     State = hsREXX_Comment;
                     Color = CLR_Comment;
                     //hilit2:
                     ColorNext();
-                hilit:
+hilit:
                     ColorNext();
                     continue;
                 } else if ((len >= 2) && (*p == '-') && (p[1] == '-')) {
@@ -107,7 +107,7 @@ int Hilit_REXX(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
                 } else if (isdigit(*p)) {
                     Color = CLR_Number;
                     ColorNext();
-                    while(len && isdigit(*p)) ColorNext();
+                    while (len && isdigit(*p)) ColorNext();
                     continue;
                 } else if (*p == '\'') {
                     State = hsREXX_String1;
@@ -161,8 +161,8 @@ static int Match2(int Len, int Pos, hsState *StateMap, const char *Text, const c
     int L = strlen(String);
 
     int i;
-    for( i = 0; i < Pos; i++ )
-        if( Text[i] != ' ' ) return 0;
+    for (i = 0; i < Pos; i++)
+        if (Text[i] != ' ') return 0;
 
     if (Pos + L <= Len)
         if (StateMap == NULL || IsState(StateMap + Pos, State, L))
@@ -193,47 +193,45 @@ static int SearchMatch(int Count, EBuffer *B, int Row, int Ctx) {
         if (B->GetMap(Row, &StateLen, &StateMap) == 0) return -1;
         Pos = L - 1;
         if (L > 0) while (Pos >= 0) {
-            if (isalpha(P[Pos])) {
-                if( Ctx == 1 || Ctx == 3 ) {
-                if (Match(L, Pos, StateMap, P, "do", hsREXX_Keyword) ||
-                        Match(L, Pos, StateMap, P, "loop", hsREXX_Keyword) ||
-                    Match(L, Pos, StateMap, P, "select", hsREXX_Keyword ))
-                {
-                    Count++;
-                        if (Count == 0) {
-                        if (StateMap)
-                            free(StateMap);
-                            if( Ctx == 3 )
-                        return B->LineIndented(Row);
-                            else
-                                return B->LineIndented(Row) + REXX_BASE_INDENT;
-                    }
-                } else if (Match(L, Pos, StateMap, P, "end", hsREXX_Keyword)) {
-                    Count--;
-                }
-                } else if( Ctx == 4 ) {
-                    if (Match2(L, Pos, StateMap, P, "class", hsREXX_Keyword) )
-                    {
-                        if (StateMap)
-                            free(StateMap);
-                        return B->LineIndented(Row) + REXX_BASE_INDENT;
-                    }
-                }
-                if (Ctx == 2 && Count == 0) {
-                    if (Match(L, Pos, StateMap, P, "if", hsREXX_Keyword)) {
-                        ICount++;
-                        if (ICount == 0) {
+                if (isalpha(P[Pos])) {
+                    if (Ctx == 1 || Ctx == 3) {
+                        if (Match(L, Pos, StateMap, P, "do", hsREXX_Keyword) ||
+                                Match(L, Pos, StateMap, P, "loop", hsREXX_Keyword) ||
+                                Match(L, Pos, StateMap, P, "select", hsREXX_Keyword)) {
+                            Count++;
+                            if (Count == 0) {
+                                if (StateMap)
+                                    free(StateMap);
+                                if (Ctx == 3)
+                                    return B->LineIndented(Row);
+                                else
+                                    return B->LineIndented(Row) + REXX_BASE_INDENT;
+                            }
+                        } else if (Match(L, Pos, StateMap, P, "end", hsREXX_Keyword)) {
+                            Count--;
+                        }
+                    } else if (Ctx == 4) {
+                        if (Match2(L, Pos, StateMap, P, "class", hsREXX_Keyword)) {
                             if (StateMap)
                                 free(StateMap);
-                            return B->LineIndented(Row);
+                            return B->LineIndented(Row) + REXX_BASE_INDENT;
                         }
-                    } else if (Match(L, Pos, StateMap, P, "else", hsREXX_Keyword)) {
-                        ICount--;
+                    }
+                    if (Ctx == 2 && Count == 0) {
+                        if (Match(L, Pos, StateMap, P, "if", hsREXX_Keyword)) {
+                            ICount++;
+                            if (ICount == 0) {
+                                if (StateMap)
+                                    free(StateMap);
+                                return B->LineIndented(Row);
+                            }
+                        } else if (Match(L, Pos, StateMap, P, "else", hsREXX_Keyword)) {
+                            ICount--;
+                        }
                     }
                 }
+                Pos--;
             }
-            Pos--;
-        }
         if (StateMap) free(StateMap);
         Row--;
     }
@@ -249,7 +247,7 @@ static int CheckLabel(EBuffer *B, int Line) {
         return 0;
 
     while ((P < L->Count) &&
-           (L->Chars[P] == ' ' || L->Chars[P] == 9)) P++;
+            (L->Chars[P] == ' ' || L->Chars[P] == 9)) P++;
     while (P < L->Count) {
         if (Cnt > 0)
             if (L->Chars[P] == ':') return 1;
@@ -277,70 +275,70 @@ static int SearchBackContext(EBuffer *B, int Row, char &ChFind) {
         if (B->GetMap(Row, &StateLen, &StateMap) == 0) return 0;
         Pos = L - 1;
         if (L > 0) while (Pos >= 0) {
-            if (CheckLabel(B, Row) == 1) {
-                Count++;
-                ChFind = 'p';
-                if (Count == 0) {
-                    if (StateMap)
-                        free(StateMap);
-                    return B->LineIndented(Row);
+                if (CheckLabel(B, Row) == 1) {
+                    Count++;
+                    ChFind = 'p';
+                    if (Count == 0) {
+                        if (StateMap)
+                            free(StateMap);
+                        return B->LineIndented(Row);
+                    }
                 }
+                if (isalpha(P[Pos]) && (Pos == 0 || !isalpha(P[Pos - 1]))) {
+                    if (Match(L, Pos, StateMap, P, "do", hsREXX_Keyword) || Match(L, Pos, StateMap, P, "loop", hsREXX_Keyword)) {
+                        Count++;
+                        ChFind = 'd';
+                        //} else if (Match(L, Pos, StateMap, P, "procedure", hsREXX_Keyword)) {
+                        //Count++;
+                        //ChFind = 'p';
+                    } else if (Match(L, Pos, StateMap, P, "select", hsREXX_Keyword)) {
+                        Count++;
+                        ChFind = 's';
+                    } else if (Match(L, Pos, StateMap, P, "method", hsREXX_Keyword)) {
+                        Count++;
+                        ChFind = 'm';
+                    } else if (Match(L, Pos, StateMap, P, "properties", hsREXX_Keyword)) {
+                        Count++;
+                        ChFind = 'r';
+                    } else if (Match2(L, Pos, StateMap, P, "class", hsREXX_Keyword)) {
+                        Count++;
+                        ChFind = 'c';
+                        if (StateMap)
+                            free(StateMap);
+                        return B->LineIndented(Row) + REXX_BASE_INDENT;
+                    } else if (Match(L, Pos, StateMap, P, "otherwise", hsREXX_Keyword) && Count == 0) {
+                        //Count++;
+                        ChFind = 'o';
+                        if (StateMap)
+                            free(StateMap);
+                        return B->LineIndented(Row);
+                    } else if (Match(L, Pos, StateMap, P, "end", hsREXX_Keyword)) {
+                        Count--;
+                        ChFind = 'e';
+                    } else if (is_blank < 5 && Match(L, Pos, StateMap, P, "then", hsREXX_Keyword)) {
+                        ChFind = 't';
+                        if (StateMap)
+                            free(StateMap);
+                        return B->LineIndented(Row);
+                    } else if (is_blank < 5 && Match(L, Pos, StateMap, P, "else", hsREXX_Keyword)) {
+                        ChFind = 'e';
+                        if (StateMap)
+                            free(StateMap);
+                        return B->LineIndented(Row);
+                    } else {
+                        is_blank++;
+                        Pos--;
+                        continue;
+                    }
+                    if (Count == 0) {
+                        if (StateMap)
+                            free(StateMap);
+                        return B->LineIndented(Row);
+                    }
+                }
+                if (P[Pos] != ' ' && P[Pos] != 9) is_blank++;
+                Pos--;
             }
-            if (isalpha(P[Pos]) && (Pos == 0 || !isalpha(P[Pos - 1]))) {
-                if (Match(L, Pos, StateMap, P, "do", hsREXX_Keyword) || Match(L, Pos, StateMap, P, "loop", hsREXX_Keyword)) {
-                    Count++;
-                    ChFind = 'd';
-                    //} else if (Match(L, Pos, StateMap, P, "procedure", hsREXX_Keyword)) {
-                    //Count++;
-                    //ChFind = 'p';
-                } else if (Match(L, Pos, StateMap, P, "select", hsREXX_Keyword)) {
-                    Count++;
-                    ChFind = 's';
-                } else if (Match(L, Pos, StateMap, P, "method", hsREXX_Keyword)) {
-                    Count++;
-                    ChFind = 'm';
-                } else if (Match(L, Pos, StateMap, P, "properties", hsREXX_Keyword)) {
-                    Count++;
-                    ChFind = 'r';
-                } else if (Match2(L, Pos, StateMap, P, "class", hsREXX_Keyword)) {
-                    Count++;
-                    ChFind = 'c';
-                    if (StateMap)
-                        free(StateMap);
-                    return B->LineIndented(Row) + REXX_BASE_INDENT;
-                } else if (Match(L, Pos, StateMap, P, "otherwise", hsREXX_Keyword) && Count == 0) {
-                    //Count++;
-                    ChFind = 'o';
-                    if (StateMap)
-                        free(StateMap);
-                    return B->LineIndented(Row);
-                } else if (Match(L, Pos, StateMap, P, "end", hsREXX_Keyword)) {
-                    Count--;
-                    ChFind = 'e';
-                } else if (is_blank < 5 && Match(L, Pos, StateMap, P, "then", hsREXX_Keyword)) {
-                    ChFind = 't';
-                    if (StateMap)
-                        free(StateMap);
-                    return B->LineIndented(Row);
-                } else if (is_blank < 5 && Match(L, Pos, StateMap, P, "else", hsREXX_Keyword)) {
-                    ChFind = 'e';
-                    if (StateMap)
-                        free(StateMap);
-                    return B->LineIndented(Row);
-                } else {
-                    is_blank++;
-                    Pos--;
-                    continue;
-                }
-                if (Count == 0) {
-                    if (StateMap)
-                        free(StateMap);
-                    return B->LineIndented(Row);
-                }
-            }
-            if (P[Pos] != ' ' && P[Pos] != 9) is_blank++;
-            Pos--;
-        }
         if (StateMap) free(StateMap);
         Row--;
     }
@@ -369,7 +367,7 @@ static int IndentComment(EBuffer *B, int Row, int /*StateLen*/, hsState * /*Stat
             I = 0;
         if (B->RLine(Row - 1)->StateE == hsREXX_Comment)
             //if (LookAt(B, Row - 1, I, "/*", hsREXX_Comment, 0))
-                I += 1;
+            I += 1;
     }
     return I;
 }

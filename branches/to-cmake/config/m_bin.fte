@@ -28,3 +28,5 @@ mode BIN: PLAIN { # Binary Mode
     AutoHilitParen      = 0;
     Abbreviations       = 0;
 }
+
+oinclude 'mym_bin.fte';

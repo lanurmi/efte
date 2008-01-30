@@ -70,3 +70,5 @@ mode CMAKE: PLAIN {
     CommentStart       = '/*';
     CommentEnd         = '*/';
 }
+
+oinclude 'mym_cmake.fte';

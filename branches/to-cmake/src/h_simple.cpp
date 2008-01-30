@@ -59,7 +59,7 @@ int Hilit_SIMPLE(EBuffer *BF, int LN, PCell B, int Pos, int Width, ELine *Line, 
         sleep(5);
     }*/
 
-    for (i = 0; i < Line->Count; ) {
+    for (i = 0; i < Line->Count;) {
         // Check for infinite loops
         if (i == lastPos) {
             if (++iterCount > hm->stateCount) {
@@ -166,7 +166,8 @@ int Hilit_SIMPLE(EBuffer *BF, int LN, PCell B, int Pos, int Width, ELine *Line, 
                 }
                 //fprintf(stderr, "next state\n");
                 goto next_state;
-            next_trans: /* */;
+next_trans: /* */
+                ;
             }
             if (st->wordChars != 0) {
                 int j;
@@ -174,7 +175,7 @@ int Hilit_SIMPLE(EBuffer *BF, int LN, PCell B, int Pos, int Width, ELine *Line, 
 
                 j = 0;
                 while (((i + j) < Line->Count) &&
-                       (WGETBIT(st->wordChars, Line->Chars[i + j]))) j++;
+                        (WGETBIT(st->wordChars, Line->Chars[i + j]))) j++;
 
                 //GP (fix)
                 Color = st->color;
@@ -189,9 +190,8 @@ int Hilit_SIMPLE(EBuffer *BF, int LN, PCell B, int Pos, int Width, ELine *Line, 
                         goto next_state;
                     }
                 } else {
-                    if (st->GetHilitWord(j, &Line->Chars[i], Color ) ||
-                        BF->GetHilitWord(j, &Line->Chars[i], Color,  BFI( BF, BFI_MatchCase ) ? 0 : 1))
-                    {
+                    if (st->GetHilitWord(j, &Line->Chars[i], Color) ||
+                            BF->GetHilitWord(j, &Line->Chars[i], Color,  BFI(BF, BFI_MatchCase) ? 0 : 1)) {
                         if (st->nextKwdMatchedState != -1)
                             State = st->nextKwdMatchedState;
                     } else {
@@ -206,17 +206,17 @@ int Hilit_SIMPLE(EBuffer *BF, int LN, PCell B, int Pos, int Width, ELine *Line, 
                             }
                         }
                     }
-                    
+
                     if (State >= hm->stateCount)
                         State = 0;
-                    
+
                     // highlight/tag as next state
                     if (st->options & STATE_TAGASNEXT) {
                         MState = State;
                         st = hm->state + State;
                         Color = st->color;
                     }
-                    
+
                     if (StateMap)
                         memset(StateMap + i, MState, j);
                     if (B)
@@ -238,7 +238,8 @@ int Hilit_SIMPLE(EBuffer *BF, int LN, PCell B, int Pos, int Width, ELine *Line, 
         IF_TAB()
         else
             ColorNext();
-    next_state: /* */;
+next_state: /* */
+        ;
     }
 
     /* check if there are any matches for EOL */
@@ -249,7 +250,7 @@ int Hilit_SIMPLE(EBuffer *BF, int LN, PCell B, int Pos, int Width, ELine *Line, 
         matchFlags = tr->matchFlags;
         match = tr->match;
         nextState = tr->nextState;
-        
+
         if (((i > 0) && (matchFlags & MATCH_MUST_BOL)) || (matchFlags & MATCH_REGEXP))
             continue;
 
@@ -264,7 +265,8 @@ int Hilit_SIMPLE(EBuffer *BF, int LN, PCell B, int Pos, int Width, ELine *Line, 
             break;
         }
     }
-end_parse: ;
+end_parse:
+    ;
     *ECol = C;
     return 0;
 }

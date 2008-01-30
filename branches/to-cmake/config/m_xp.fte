@@ -108,7 +108,7 @@ colorize XPE {
     h_trans { 3, '$', '', 'Normal' }
 }
 
-mode XPE: PLAIN {
+mode XPE: SOURCE {
     FileNameRx          = /\.\cXPE$/;
     HilitOn             = 1;
     Colorizer           = 'XPE';
@@ -118,3 +118,5 @@ mode XPE: PLAIN {
     CommentStart        = ' /*';
     CommentEnd          = '*/';
 }
+
+oinclude 'mym_xp.fte';

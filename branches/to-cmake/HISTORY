@@ -12,7 +12,7 @@ Revision history
   - First release of eFTE
   - Branded FTE to be eFTE
   - Removed DJGPP support
-  + Added CursorWrap and CursorWithinEOL
+  + Added CursorWithinEOL
   + Added searching in the Routine List
   + Added new mode for CMake files
   + Windows XP and Vista now expand ~ to be the users home directory
@@ -21,6 +21,9 @@ Revision history
   ! WM_COMMAND now set in X11 binary
   - Removed partially implemented block cursor sizing
   + Added DesktopLoad command
+  + Added oinclude command
+  + Modes are now user configurable w/o need to edit actual mode file
+  - Cleaned up code a bit with manual and automatic formatting (astyle)
 
 0.50.1 -- January 17, 2008
   - Forked from FTE (http://fte.sourceforge.net)

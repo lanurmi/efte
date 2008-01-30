@@ -79,7 +79,7 @@ colorize LDSGML {
     h_trans { 0, '>', '/', 'Command' }
 }
 
-mode LDSGML: PLAIN {
+mode LDSGML: MARKUP {
     FileNameRx          = /\.\c{SGML?}$/;
     HilitOn             = 1;
     Colorizer           = "LDSGML";
@@ -92,3 +92,5 @@ mode LDSGML: PLAIN {
     CommentStart        = " <!--";
     CommentEnd          = "-->";
 }
+
+oinclude 'mym_ldsgml.fte';

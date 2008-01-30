@@ -12,12 +12,14 @@
 EBuffer *FindFile(char *FileName) {
     EModel *M;
     EBuffer *B;
-    
+
     M = ActiveModel;
     while (M) {
         if (M->GetContext() == CONTEXT_FILE) {
             B = (EBuffer *)M;
-            if (filecmp(B->FileName, FileName) == 0) { return B; }
+            if (filecmp(B->FileName, FileName) == 0) {
+                return B;
+            }
         }
         M = M->Next;
         if (M == ActiveModel) break;
@@ -45,7 +47,7 @@ int FileLoad(int createFlags, const char *FileName, const char *Mode, EView *Vie
     EBuffer *B;
 
     assert(View != 0);
-    
+
     if (ExpandPath(FileName, Name, sizeof(Name)) == -1) {
         View->MView->Win->Choice(GPC_ERROR, "Error", 1, "O&K", "Invalid path: %s.", FileName);
         return 0;
@@ -75,7 +77,7 @@ int MultiFileLoad(int createFlags, const char *FileName, const char *Mode, EView
 
     assert(View != 0);
 
-    JustDirectory(FileName, fX, sizeof (fX));
+    JustDirectory(FileName, fX, sizeof(fX));
     if (fX[0] == 0) strcpy(fX, ".");
     JustFileName(FileName, FName, sizeof(FName));
     if (ExpandPath(fX, FPath, sizeof(FPath)) == -1) return 0;

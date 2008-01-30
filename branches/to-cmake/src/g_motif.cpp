@@ -179,8 +179,8 @@ static void SetColor(int i) {
     k = 65535 - 20480;
     z = (i > 7) ? (20480) : 0;
     Colors[i].blue  = k * (j & 1) + z;
-    Colors[i].green = k * ((j & 2)?1:0) + z;
-    Colors[i].red   = k * ((j & 4)?1:0) + z;
+    Colors[i].green = k * ((j & 2) ? 1 : 0) + z;
+    Colors[i].red   = k * ((j & 4) ? 1 : 0) + z;
     Colors[i].flags = DoRed | DoGreen | DoBlue;
 }
 
@@ -316,15 +316,19 @@ static struct {
 
 void ConvertKeyToEvent(KeySym key, KeySym key1, char *keyname, int etype, int state, TEvent *Event) {
     unsigned int myState = 0;
-    int i,k;
+    int i, k;
 
 
     DEBUG(("key: \n"));
     Event->What = evNone;
 
     switch (etype) {
-    case KeyPress:   Event->What = evKeyDown; break;
-    case KeyRelease: Event->What = evKeyUp; break;
+    case KeyPress:
+        Event->What = evKeyDown;
+        break;
+    case KeyRelease:
+        Event->What = evKeyUp;
+        break;
     }
 
     if (state & ShiftMask) myState |= kfShift;
@@ -339,12 +343,12 @@ void ConvertKeyToEvent(KeySym key, KeySym key1, char *keyname, int etype, int st
         if (myState == kfShift) myState = 0;
         if (myState & kfCtrl) {
             if (((key >= 'A') && (key < 'A' + 32)) ||
-                ((key >= 'a') && (key < 'a' + 32)))
+                    ((key >= 'a') && (key < 'a' + 32)))
                 key &= 0x1F;
         }
         if (myState & kfAlt) {
             if (((key >= 'A') && (key <= 'Z')) ||
-                ((key >= 'a') && (key <= 'z')))
+                    ((key >= 'a') && (key <= 'z')))
                 key &= ~0x20;
         }
         Event->Key.Code = key | myState;
@@ -383,8 +387,7 @@ void ConvertClickToEvent(int type, int xx, int yy, int button, int state, TEvent
     Event->Mouse.Y = yy / cyChar;
     if (Event->What == evMouseMove)
         if (LastMouseX == Event->Mouse.X &&
-            LastMouseY == Event->Mouse.Y)
-        {
+                LastMouseY == Event->Mouse.Y) {
             Event->What = evNone;
             return;
         }
@@ -397,9 +400,15 @@ void ConvertClickToEvent(int type, int xx, int yy, int button, int state, TEvent
         if (state & Button3Mask) Event->Mouse.Buttons |= 2;
     } else {
         switch (button) {
-        case Button1: Event->Mouse.Buttons |= 1; break;
-        case Button2: Event->Mouse.Buttons |= 4; break;
-        case Button3: Event->Mouse.Buttons |= 2; break;
+        case Button1:
+            Event->Mouse.Buttons |= 1;
+            break;
+        case Button2:
+            Event->Mouse.Buttons |= 4;
+            break;
+        case Button3:
+            Event->Mouse.Buttons |= 2;
+            break;
         }
     }
     Event->Mouse.Count = 1;
@@ -485,8 +494,7 @@ void ProcessXEvents(XEvent *event, TEvent *Event, GViewPeer *Peer) {
 
 static void CloseWindow(Widget w, GFramePeer *frame, XEvent *event, Boolean *cont) {
     if (event->type != ClientMessage ||
-        ((XClientMessageEvent *)event)->data.l[0] != WM_DELETE_WINDOW)
-    {
+            ((XClientMessageEvent *)event)->data.l[0] != WM_DELETE_WINDOW) {
         return ;
     }
     NextEvent.What = evCommand;
@@ -494,19 +502,19 @@ static void CloseWindow(Widget w, GFramePeer *frame, XEvent *event, Boolean *con
     *cont = False;
 }
 
-void MainCallback (Widget w, mItem *item, XtPointer callData) {
+void MainCallback(Widget w, mItem *item, XtPointer callData) {
     DEBUG(("Main: %d\n", item->Cmd));
     NextEvent.What = evCommand;
     NextEvent.Msg.Command = item->Cmd;
 }
 
-void PopupCallback (Widget w, mItem *item, XtPointer callData) {
+void PopupCallback(Widget w, mItem *item, XtPointer callData) {
     DEBUG(("Popup: %d\n", item->Cmd));
     NextEvent.What = evCommand;
     NextEvent.Msg.Command = item->Cmd;
 }
 
-void MenuPopdownCb (Widget w, mItem *item, XtPointer callData) {
+void MenuPopdownCb(Widget w, mItem *item, XtPointer callData) {
     DEBUG(("Popdown: %d\n", item->Cmd));
     if (LPopupMenu != 0) {
         XtDestroyWidget(XtParent(LPopupMenu));
@@ -636,23 +644,23 @@ GViewPeer::GViewPeer(GView *view, int XSize, int YSize) {
                                  XmNspacing, 0,
                                  0);
 
-    TextWin = XtVaCreateManagedWidget ("TextWin",
-                                       xmDrawingAreaWidgetClass, ScrollWin,
-                                       XmNmarginHeight, 0,
-                                       XmNmarginWidth, 0,
-                                       XmNhighlightThickness, 0,
-                                       XmNshadowThickness, 0,
-                                       XmNwidthInc,  cxChar,
-                                       XmNheightInc, cyChar,
-                                       XmNwidth, cxChar * 80,
-                                       XmNheight, cyChar * 30,
-                                       0);
+    TextWin = XtVaCreateManagedWidget("TextWin",
+                                      xmDrawingAreaWidgetClass, ScrollWin,
+                                      XmNmarginHeight, 0,
+                                      XmNmarginWidth, 0,
+                                      XmNhighlightThickness, 0,
+                                      XmNshadowThickness, 0,
+                                      XmNwidthInc,  cxChar,
+                                      XmNheightInc, cyChar,
+                                      XmNwidth, cxChar * 80,
+                                      XmNheight, cyChar * 30,
+                                      0);
 
     /*    XSetWindowColormap(display, XtWindow(TextWin), colormap);*/
 
-    XtVaSetValues (ScrollWin,
-                   XmNworkWindow, TextWin,
-                   0);
+    XtVaSetValues(ScrollWin,
+                  XmNworkWindow, TextWin,
+                  0);
 
     SbVert = XtVaCreateManagedWidget("VScrollBar",
                                      xmScrollBarWidgetClass, ScrollWin,
@@ -749,8 +757,7 @@ void GViewPeer::DrawCursor(int Show) {
         return;
 
     if (cX >= wW || cY >= wW ||
-        cX + 1 > wW || cY + 1 > wH)
-    {
+            cX + 1 > wW || cY + 1 > wH) {
         //fprintf(stderr, "%d %d  %d %d %d %d\n", ScreenCols, ScreenRows, X, Y, W, H);
         return;
     }
@@ -791,8 +798,7 @@ int GViewPeer::ConPutBox(int X, int Y, int W, int H, PCell Cell) {
         return - 1;
 
     if (X >= wW || Y >= wH ||
-        X + W > wW || Y + H > wH)
-    {
+            X + W > wW || Y + H > wH) {
         //fprintf(stderr, "%d %d  %d %d %d %d\n", ScreenCols, ScreenRows, X, Y, W, H);
         return -1;
     }
@@ -811,7 +817,7 @@ int GViewPeer::ConPutBox(int X, int Y, int W, int H, PCell Cell) {
                 ops = ps;
                 ox = x;
                 olen = len;
-                while ((len > 0) && (*(unsigned short *) c == *(unsigned short *)ps)) x++, len--, ps+=2, c+=2, skip++;
+                while ((len > 0) && (*(unsigned short *) c == *(unsigned short *)ps)) x++, len--, ps += 2, c += 2, skip++;
                 if (len <= 0) break;
                 if (skip <= 4) {
                     ps = ops;
@@ -821,8 +827,9 @@ int GViewPeer::ConPutBox(int X, int Y, int W, int H, PCell Cell) {
             }
             p = ps;
             l = 1;
-            temp[0] = *ps++; attr = *ps++;
-            while ((l < len) && ((unsigned char) (ps[1]) == attr)) {
+            temp[0] = *ps++;
+            attr = *ps++;
+            while ((l < len) && ((unsigned char)(ps[1]) == attr)) {
                 temp[l++] = *ps++;
                 ps++;
             }
@@ -856,8 +863,10 @@ int GViewPeer::ConPutBox(int X, int Y, int W, int H, PCell Cell) {
 void GViewPeer::UpdateWindow(int xx, int yy, int ww, int hh) {
     PCell p;
     int i;
-    ww /= cxChar; ww += 2;
-    hh /= cyChar; hh += 2;
+    ww /= cxChar;
+    ww += 2;
+    hh /= cyChar;
+    hh += 2;
     xx /= cxChar;
     yy /= cyChar;
     if (xx + ww > wW) ww = wW - xx;
@@ -950,8 +959,10 @@ int GViewPeer::ConSetSize(int X, int Y) {
         *p++ = 0x07;
     }
     if (ScreenBuffer) {
-        MX = wW; if (X < MX) MX = X;
-        MY = wH; if (Y < MY) MY = Y;
+        MX = wW;
+        if (X < MX) MX = X;
+        MY = wH;
+        if (Y < MY) MY = Y;
         if (X < MX) MX = X;
         p = NewBuffer;
         for (i = 0; i < MY; i++) {
@@ -1027,9 +1038,8 @@ int GViewPeer::QuerySbVPos() {
 
 int GViewPeer::SetSbVPos(int Start, int Amount, int Total) {
     if (sbVstart != Start ||
-        sbVamount != Amount ||
-        sbVtotal != Total)
-    {
+            sbVamount != Amount ||
+            sbVtotal != Total) {
         sbVstart = Start;
         sbVamount = Amount;
         sbVtotal = Total;
@@ -1059,9 +1069,8 @@ int GViewPeer::SetSbVPos(int Start, int Amount, int Total) {
 
 int GViewPeer::SetSbHPos(int Start, int Amount, int Total) {
     if (sbHstart != Start ||
-        sbHamount != Amount ||
-        sbHtotal != Total)
-    {
+            sbHamount != Amount ||
+            sbHtotal != Total) {
         sbHstart = Start;
         sbHamount = Amount;
         sbHtotal = Total;
@@ -1299,11 +1308,11 @@ GFramePeer::GFramePeer(GFrame *frame, int Width, int Height) {
                                        xmPanedWindowWidgetClass, MainWin,
                                        XmNmarginHeight, 0,
                                        XmNmarginWidth, 0,
-                                       0 );
+                                       0);
 
-    XtVaSetValues (MainWin,
-                   XmNworkWindow, PanedWin,
-                   0);
+    XtVaSetValues(MainWin,
+                  XmNworkWindow, PanedWin,
+                  0);
 
     if (Width != -1 && Height != -1)
         ConSetSize(Width, Height);
@@ -1606,7 +1615,7 @@ Widget CreateMotifMenu(Widget parent, int menu, int main, XtCallbackProc MenuPro
                                                CreateMotifMenu(hmenu,
                                                                Menus[menu].Items[i].SubMenu,
                                                                0, MenuProc),
-                                               NULL );
+                                               NULL);
             } else {
                 item = XtVaCreateManagedWidget(s,
                                                xmPushButtonWidgetClass, hmenu,
@@ -1648,10 +1657,10 @@ int GFrame::SetMenu(const char *Name) {
     Menu = strdup(Name);
 
     Peer->MenuBar = CreateMotifMainMenu(Peer->MainWin, Name);
-    XtManageChild (Peer->MenuBar);
-    XtVaSetValues (Peer->MainWin,
-                   XmNmenuBar, Peer->MenuBar,
-                   0);
+    XtManageChild(Peer->MenuBar);
+    XtVaSetValues(Peer->MainWin,
+                  XmNmenuBar, Peer->MenuBar,
+                  0);
 
     return 1;
 }
@@ -1665,8 +1674,8 @@ int GFrame::PopupMenu(const char *Name) {
 
     LPopupMenu = CreateMotifMenu(Peer->MainWin, id, 2, (XtCallbackProc)PopupCallback);
     XtAddCallback(XtParent(LPopupMenu), XmNpopdownCallback, MenuPopdownCb, 0);
-    XmMenuPosition (LPopupMenu, (XButtonEvent *)&LastRelease);
-    XtManageChild (LPopupMenu);
+    XmMenuPosition(LPopupMenu, (XButtonEvent *)&LastRelease);
+    XtManageChild(LPopupMenu);
     return 1;
 }
 
@@ -1743,9 +1752,13 @@ void GUI::DispatchEvent(GFrame *frame, GView *view, TEvent &Event) {
     }
 }
 
-int GUI::ConSuspend(void) { return 0; }
+int GUI::ConSuspend(void) {
+    return 0;
+}
 
-int GUI::ConContinue(void) { return 0; }
+int GUI::ConContinue(void) {
+    return 0;
+}
 
 int GUI::ConGetEvent(TEventMask EventMask, TEvent *Event, int WaitTime, int Delete, GView **view) {
     //return ::ConGetEvent(EventMask, Event, WaitTime, Delete, view);
@@ -1765,7 +1778,7 @@ int GUI::ConFlush(void) {
 void GUI::ProcessEvent() {
     static int need_update = 1;
 
-    if (need_update && XtAppPending(AppContext) == 0 ) {
+    if (need_update && XtAppPending(AppContext) == 0) {
         frames->Update();
         need_update = 0;
     }
@@ -1800,7 +1813,7 @@ int GUI::RunProgram(char *Command) {
         strlcat(Cmd, " -ls &", sizeof(Cmd));
     else {
         strlcat(Cmd, " -e ", sizeof(Cmd));
-	strlcat(Cmd, Command, sizeof(Cmd));
+        strlcat(Cmd, Command, sizeof(Cmd));
         if (mode == RUN_ASYNC)
             strlcat(Cmd, " &", sizeof(Cmd));
     }

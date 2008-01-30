@@ -24,7 +24,7 @@ RoutineView::RoutineView(int createFlags, EModel **ARoot, EBuffer *AB): EList(cr
         }
     {
         char CTitle[256];
-    
+
         sprintf(CTitle, "Routines %s: %d",
                 Buffer->FileName,
                 Buffer->rlst.Count);
@@ -56,7 +56,7 @@ int RoutineView::ExecCommand(int Command, ExState &State) {
             return ErOK;
         }
         return ErFAIL;
-        
+
     case ExCloseActivate:
         CancelSearch();
         return ErFAIL;
@@ -68,40 +68,40 @@ void RoutineView::HandleEvent(TEvent &Event) {
     int resetSearch = 1;
     EModel::HandleEvent(Event);
     switch (Event.What) {
-        case evKeyUp:
+    case evKeyUp:
+        resetSearch = 0;
+        break;
+    case evKeyDown:
+        switch (kbCode(Event.Key.Code)) {
+        case kbBackSp:
             resetSearch = 0;
+            if (SearchLen > 0) {
+                SearchString[--SearchLen] = 0;
+                Row = SearchPos[SearchLen];
+                Msg(S_INFO, "Search: [%s]", SearchString);
+            } else
+                Msg(S_INFO, "");
             break;
-        case evKeyDown:
-            switch (kbCode(Event.Key.Code)) {
-                case kbBackSp:
-                    resetSearch = 0;
-                    if (SearchLen > 0) {
-                        SearchString[--SearchLen] = 0;
-                        Row = SearchPos[SearchLen];
-                        Msg(S_INFO, "Search: [%s]", SearchString);
-                    } else
-                        Msg(S_INFO, "");
-                    break;
-                case kbEsc:
-                    Msg(S_INFO, "");
-                    break;
-                default:
-                    resetSearch = 0;
-                    if (isAscii(Event.Key.Code) && (SearchLen < MAXISEARCH)) {
-                        char Ch = (char) Event.Key.Code;
+        case kbEsc:
+            Msg(S_INFO, "");
+            break;
+        default:
+            resetSearch = 0;
+            if (isAscii(Event.Key.Code) && (SearchLen < MAXISEARCH)) {
+                char Ch = (char) Event.Key.Code;
 
-                        SearchPos[SearchLen] = Row;
-                        SearchString[SearchLen] = Ch;
-                        SearchString[++SearchLen] = 0;
-                        int i = getMatchingLine(Row, 1);
-                        if (i == -1)
-                            SearchString[--SearchLen] = 0;
-                        else
-                            Row = i;
-                        Msg(S_INFO, "Search: [%s]", SearchString);
-                    }
-                    break;
+                SearchPos[SearchLen] = Row;
+                SearchString[SearchLen] = Ch;
+                SearchString[++SearchLen] = 0;
+                int i = getMatchingLine(Row, 1);
+                if (i == -1)
+                    SearchString[--SearchLen] = 0;
+                else
+                    Row = i;
+                Msg(S_INFO, "Search: [%s]", SearchString);
             }
+            break;
+        }
     }
     if (resetSearch) {
         SearchLen = 0;
@@ -113,20 +113,21 @@ void RoutineView::HandleEvent(TEvent &Event) {
  * Direction should be 1 for ascending and -1 for descending.
  * Returns line found or -1 if none.
  */
-int RoutineView::getMatchingLine (int start, int direction) {
-   int i = start;
-   do {
-      char *str = Buffer->RLine(Buffer->rlst.Lines[i])->Chars;
-      for (int j = 0; str[j]; j++) {
-         if ( str[j] == SearchString[0] && strnicmp(SearchString, str + j, SearchLen) == 0) {
-            return i;
-         }
-      }
-      i += direction;
-      if (i == Count) i = 0; else if (i == -1) i = Count - 1;
-   } while (i != start);
+int RoutineView::getMatchingLine(int start, int direction) {
+    int i = start;
+    do {
+        char *str = Buffer->RLine(Buffer->rlst.Lines[i])->Chars;
+        for (int j = 0; str[j]; j++) {
+            if (str[j] == SearchString[0] && strnicmp(SearchString, str + j, SearchLen) == 0) {
+                return i;
+            }
+        }
+        i += direction;
+        if (i == Count) i = 0;
+        else if (i == -1) i = Count - 1;
+    } while (i != start);
 
-   return -1;
+    return -1;
 }
 
 void RoutineView::DrawLine(PCell B, int Line, int Col, ChColor color, int Width) {
@@ -137,7 +138,7 @@ void RoutineView::DrawLine(PCell B, int Line, int Col, ChColor color, int Width)
         len = UnTabStr(str, sizeof(str),
                        Buffer->RLine(Buffer->rlst.Lines[Line])->Chars,
                        Buffer->RLine(Buffer->rlst.Lines[Line])->Count);
-                    
+
         if (len > Col)
             MoveStr(B, 0, Width, str + Col, color, len - Col);
     }
@@ -146,7 +147,7 @@ void RoutineView::DrawLine(PCell B, int Line, int Col, ChColor color, int Width)
 char* RoutineView::FormatLine(int Line) {
     char *p = 0;
     PELine L = Buffer->RLine(Buffer->rlst.Lines[Line]);
-    
+
     p = (char *) malloc(L->Count + 1);
     if (p) {
         memcpy(p, L->Chars, L->Count);

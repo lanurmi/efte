@@ -14,7 +14,7 @@ colorize FTE {
 
     keyword 'Editor_Keywords' {
         'mode', 'object', 'key', 'keyword', 'color', 'menu', 'submenu', 'item',
-        'extern', 'include', 'sub', 'eventmap', 'abbrev', 'colorize',
+        'extern', 'include', 'oinclude', 'sub', 'eventmap', 'abbrev', 'colorize',
         'h_state', 'h_trans', 'h_words', 'h_wtype', 'submenucond',
         'color_palette',
     };
@@ -81,9 +81,9 @@ colorize FTE {
         'ShowKey', 'ShowMenu', 'ShowPosition', 'ShowVersion', 'SwitchTo',
         'TagClear', 'TagFind', 'TagFindWord', 'TagGoto', 'TagLoad', 'TagNext',
         'TagPop', 'TagPrev', 'ToggleAutoIndent', 'ToggleBackSpKillTab',
-        'ToggleBackSpUnindents', 'ToggleDeleteKillTab', 'ToggleExpandTabs',
+        'ToggleBackSpUnindents', 'ToggleDeleteKillTab', 'ToggleExpandTabs', 'ToggleHilitTags',
         'ToggleIndentWithTabs', 'ToggleInsert', 'ToggleKeepBackups',
-        'ToggleMatchCase', 'ToggleReadOnly', 'ToggleShowMarkers',
+        'ToggleMakeBackups', 'ToggleMatchCase', 'ToggleReadOnly', 'ToggleShowBookmarks', 'ToggleShowMarkers',
         'ToggleShowTabs', 'ToggleSpaceTabs', 'ToggleSysClipboard', 'ToggleTrim',
         'ToggleUndo', 'ToggleWordWrap', 'TypeChar', 'Undo', 'ViewBuffers',
         'RunCvs', 'RunCvsCommit', 'Cvs', 'CvsDiff', 'ViewCvs', 'ViewCvsDiff', 'ViewCvsLog', 'ClearCvsMessages',
@@ -99,13 +99,13 @@ colorize FTE {
         'C_FirstLevelIndent', 'C_FirstLevelWidth', 'C_Indent', 'C_ParenDelta',
         'Colorizer', 'CommentEnd', 'CommentStart', 'CompileCommand',
         'CompileRx', 'CompletionFilter', 'CursorBlink', 'CursorInsertMask', 'CursorOverMask', 
-        'CursorThroughTabs', 'CursorWithinEOL', 'CursorWrap','CvsCommand', 'CvsIgnoreRx',
+        'CursorThroughTabs', 'CursorWithinEOL', 'CvsCommand', 'CvsIgnoreRx',
         'DefaultModeName', 'DefFindOpt', 'DefFindReplaceOpt', 'DeleteKillBlock',
         'DeleteKillTab', 'DetectLineSep', 'ExpandTabs', 'FileNameRx',
         'FirstLineRx', 'ForceNewLine', 'FunctionUsesContinuation', 'HelpCommand', 'HilitOn', 'HilitTags',
         'IgnoreBufferList', 'IndentMode', 'IndentWithTabs', 'Insert', 'InsertKillBlock',
         'KeepBackups', 'KeepHistory', 'KeepMessages', 'LeftMargin', 'LineChar',
-        'LoadDesktopOnEntry', 'LoadMargin', 'MatchCase', 'MultiLineHilit',
+        'LoadDesktopOnEntry', 'LoadMargin', 'MakeBackups', 'MatchCase', 'MultiLineHilit',
         'OpenAfterClose', 'PersistentBlocks', 'PMDisableAccel', 'PrintDevice',
         'ReadOnly', 'ReassignModelIds', 'RecheckReadOnly', 'REXX_Do_Offset', 'REXX_Indent', 'RightMargin',
         'RoutineRegexp', 'SaveBookmarks', 'SaveDesktopOnExit', 'SaveFolds', 'ScrollBorderX',
@@ -119,7 +119,7 @@ colorize FTE {
     };
 }
 
-mode FTE: PLAIN {
+mode FTE: SOURCE {
     FileNameRx          = /\.\cfte$/;
     HilitOn             = 1;
     Colorizer           = 'FTE';
@@ -133,3 +133,5 @@ mode FTE: PLAIN {
 
     RoutineRegexp       = /^{mode}|{sub}|{menu}|{object}|{eventmap}|{colorize} /;
 }
+
+oinclude 'mym_fte.fte';

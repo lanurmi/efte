@@ -127,7 +127,7 @@ colorize ASM370 {
     h_wtype { 0, 0, 0, 'i', 'a-zA-Z0-9_$@' }
 }
 
-mode ASM370: PLAIN {
+mode ASM370: SOURCE {
     FileNameRx          = /\.\c{{CPY}|{MLC}}$/;
     HilitOn             = 1;
     Colorizer           = 'ASM370';
@@ -140,3 +140,5 @@ mode ASM370: PLAIN {
     AutoIndent          = 1;
     Trim                = 1;
 }
+
+oinclude 'mym_asm370.fte';

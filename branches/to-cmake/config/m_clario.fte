@@ -45,7 +45,7 @@ colorize CLARION {
     };
 }
 
-mode CLARION: PLAIN {       # CLARION mode
+mode CLARION: SOURCE {       # CLARION mode
     FileNameRx          = '\\.\\c{CLW}$';
     Colorizer           = 'CLARION';
     HilitOn             = 1;
@@ -61,3 +61,5 @@ mode CLARION: PLAIN {       # CLARION mode
 #    CommentStart        = ' --';
 #    CommentEnd          = '';
 }
+
+oinclude 'mym_clario.fte';

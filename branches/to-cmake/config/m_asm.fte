@@ -151,7 +151,7 @@ colorize ASM {
     h_wtype { 0, 0, 0, 'i', 'a-zA-Z0-9_$@' }
 }
 
-mode ASM: PLAIN {
+mode ASM: SOURCE {
     FileNameRx          = /\.\cASM$/;
     HilitOn             = 1;
     Colorizer           = 'ASM';
@@ -161,3 +161,5 @@ mode ASM: PLAIN {
     CommentStart        = ' ;';
     CommentEnd          = '';
 }
+
+oinclude 'mym_asm.fte';

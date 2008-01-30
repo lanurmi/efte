@@ -15,12 +15,12 @@ public:
     char **BList;
     int BCount;
     EEventMap *EMap;
-    
+
     void AddLine(const char *Line);
     void DumpKey(const char *aPrefix, EKey *Key);
     void DumpMap(const char *aPrefix, EKeyMap *aKeyMap);
     void DumpEventMap(EEventMap *aEventMap);
-    
+
     EventMapView(int createFlags, EModel **ARoot, EEventMap *Map);
     virtual ~EventMapView();
 

@@ -13,8 +13,7 @@ ESvnDiff       *SvnDiffView = 0;
 
 ESvnDiff::ESvnDiff(int createFlags, EModel ** ARoot, char *ADir, char *ACommand,
                    char *AOnFiles):
-ESvnBase(createFlags, ARoot, "SVN diff")
-{
+        ESvnBase(createFlags, ARoot, "SVN diff") {
     SvnDiffView = this;
     CurrFile = 0;
     CurrLine = 0;
@@ -23,15 +22,13 @@ ESvnBase(createFlags, ARoot, "SVN diff")
     RunPipe(ADir, ACommand, AOnFiles);
 }
 
-ESvnDiff::~ESvnDiff()
-{
+ESvnDiff::~ESvnDiff() {
     SvnDiffView = 0;
     free(CurrFile);
 }
 
 void
-ESvnDiff::ParseFromTo(char *line, int /*len */ )
-{
+ESvnDiff::ParseFromTo(char *line, int /*len */) {
     char           *start;
     char           *end;
 
@@ -41,11 +38,11 @@ ESvnDiff::ParseFromTo(char *line, int /*len */ )
     start = strchr(line, '+');
 
     CurrLine = strtol(start, &end, 10) - 1;
-    if(*end == ',')
+    if (*end == ',')
         ToLine = CurrLine + atoi(end + 1);
     else
         ToLine = CurrLine + 1;
-    if(!(CurrLine < ToLine && ToLine > 0))
+    if (!(CurrLine < ToLine && ToLine > 0))
         CurrLine = ToLine = 0;
 }
 
@@ -55,69 +52,47 @@ ESvnDiff::ParseFromTo(char *line, int /*len */ )
 //AddLine(CurrFile, CurrLine, line);    - output and tofile in line, default color
 //AddLine(CurrFile, CurrLine, line, 1); - output and tofile in line, color 1
 void
-ESvnDiff::ParseLine(char *line, int len)
-{
-    if(len > 8 && strncmp(line, "+++ ", 4) == 0)
-    {
+ESvnDiff::ParseLine(char *line, int len) {
+    if (len > 8 && strncmp(line, "+++ ", 4) == 0) {
         //"+++ test.txt\t...."
         free(CurrFile);
         CurrFile = strdup(line + 4);
         strtok(CurrFile, " \t");
         CurrLine = ToLine = InToFile = 0;
         AddLine(CurrFile, -1, line);
-    }
-    else
-    {
-        if(len > 8 && strncmp(line, "@@ ", 3) == 0)
-        {
+    } else {
+        if (len > 8 && strncmp(line, "@@ ", 3) == 0) {
             // To file or to hunk
-            if(strcmp(line + len - 3, " @@") == 0)
-            {
+            if (strcmp(line + len - 3, " @@") == 0) {
                 // "@@ -1,20 +1,20 @@"
                 // To hunk
-                if(CurrFile)
-                {
+                if (CurrFile) {
                     ParseFromTo(line, len);
                     AddLine(CurrFile, CurrLine, line, 2);
-                }
-                else
-                {
+                } else {
                     AddLine(0, -1, line);
                 }
-            }
-            else
-            {
+            } else {
                 AddLine(0, -1, line);
             }
-        }
-        else
-        {
-            if(CurrLine < ToLine)
-            {
+        } else {
+            if (CurrLine < ToLine) {
                 // Diff line (markable, if CurrFile is set, also hilited)
-                if(*line == '+')
-                {
+                if (*line == '+') {
                     //"+(new line from file)"
                     AddLine(CurrFile, CurrLine, line, 1);
                     CurrLine++;
-                }
-                else
-                {
-                    if(*line == '-')
-                    {
+                } else {
+                    if (*line == '-') {
                         //"-(deleted line from file)"
                         AddLine(0, -1, line);
-                    }
-                    else
-                    {
+                    } else {
                         //" (line without change)"
                         AddLine(CurrFile, CurrLine, line);
                         CurrLine++;
                     }
                 }
-            }
-            else
-            {
+            } else {
                 AddLine(0, -1, line);
             }
         }
@@ -125,8 +100,7 @@ ESvnDiff::ParseLine(char *line, int len)
 }
 
 int
-ESvnDiff::RunPipe(char *ADir, char *ACommand, char *AOnFiles)
-{
+ESvnDiff::RunPipe(char *ADir, char *ACommand, char *AOnFiles) {
     FreeLines();
     free(CurrFile);
     CurrLine = ToLine = InToFile = 0;
@@ -135,10 +109,8 @@ ESvnDiff::RunPipe(char *ADir, char *ACommand, char *AOnFiles)
 }
 
 int
-ESvnDiff::ExecCommand(int Command, ExState & State)
-{
-    switch (Command)
-    {
+ESvnDiff::ExecCommand(int Command, ExState & State) {
+    switch (Command) {
     case ExBlockCopy:
         return BlockCopy(0);
     case ExBlockCopyAppend:
@@ -148,16 +120,13 @@ ESvnDiff::ExecCommand(int Command, ExState & State)
 }
 
 int
-ESvnDiff::BlockCopy(int Append)
-{
-    if(SSBuffer == 0)
+ESvnDiff::BlockCopy(int Append) {
+    if (SSBuffer == 0)
         return ErFAIL;
-    if(Append)
-    {
-        if(SystemClipboard)
+    if (Append) {
+        if (SystemClipboard)
             GetPMClip(0);
-    }
-    else
+    } else
         SSBuffer->Clear();
     SSBuffer->BlockMode = bmLine;
     // How to set these two ?
@@ -166,14 +135,11 @@ ESvnDiff::BlockCopy(int Append)
     BFI(SSBuffer, BFI_Undo) = 0;
     // Go through list of marked lines
     int             last = -1,
-        tl = 0;
-    for(int i = 0; i < LineCount; i++)
-    {
-        if(Lines[i]->Status & 2)
-        {
+                           tl = 0;
+    for (int i = 0; i < LineCount; i++) {
+        if (Lines[i]->Status & 2) {
             // Marked
-            if(last != i - 1 && tl)
-            {
+            if (last != i - 1 && tl) {
                 // Gap between this and last marked line
                 SSBuffer->InsLine(tl++, 0);
             }
@@ -182,14 +148,13 @@ ESvnDiff::BlockCopy(int Append)
             last = i;
         }
     }
-    if(SystemClipboard)
+    if (SystemClipboard)
         PutPMClip(0);
     return ErOK;
 }
 
 // Event map - this name is used in config files when defining eventmap
 EEventMap      *
-ESvnDiff::GetEventMap()
-{
+ESvnDiff::GetEventMap() {
     return FindEventMap("SVNDIFF");
 }

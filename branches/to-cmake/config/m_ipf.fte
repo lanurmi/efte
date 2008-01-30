@@ -67,7 +67,7 @@ colorize IPF {
     h_wtype { 2, 2, 2, '', 'a-zA-Z0-9_' }
 }
 
-mode IPF: PLAIN {                       # .IPF files
+mode IPF: SOURCE {                       # .IPF files
     FileNameRx          = /\.\cIPF$/;
     HilitOn             = 1;
     Colorizer           = 'IPF';
@@ -79,3 +79,5 @@ mode IPF: PLAIN {                       # .IPF files
     CommentStart        = '.*';
     CommentEnd          = '';
 }
+
+oinclude 'mym_ipf.fte';

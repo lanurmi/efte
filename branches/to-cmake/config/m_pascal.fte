@@ -133,7 +133,7 @@ colorize PASCAL {
     h_trans { 0, '->', '(', 'Normal' }
 }
 
-mode PASCAL: PLAIN {      # Pascal Mode
+mode PASCAL: SOURCE {      # Pascal Mode
     FileNameRx          = /\.\cPAS$/;
     HilitOn             = 1;
     Colorizer           = 'PASCAL';
@@ -150,3 +150,5 @@ mode PASCAL: PLAIN {      # Pascal Mode
 
     RoutineRegexp       = '^{procedure}|{function}>';
 }
+
+oinclude 'mym_pascal.fte';

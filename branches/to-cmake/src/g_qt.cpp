@@ -65,7 +65,7 @@ class QEText: public QWidget {
     Q_OBJECT
 public:
     GViewPeer   *view;
-    
+
     QEText(GViewPeer *peer, QWidget *parent = 0, const char *name = 0);
     virtual ~QEText();
 
@@ -73,7 +73,7 @@ public:
     void ActiveEvent(TEvent &Event);
 protected:
     void handleMouse(QMouseEvent *qe);
-        
+
     virtual void resizeEvent(QResizeEvent *qe);
     virtual void paintEvent(QPaintEvent *qe);
     virtual void mousePressEvent(QMouseEvent *qe);
@@ -91,7 +91,7 @@ public:
     QEText      *text;
     QScrollBar  *horz;
     QScrollBar  *vert;
-    
+
     QEView(GViewPeer *peer, QWidget *parent = 0, const char *name = 0);
     virtual ~QEView();
 
@@ -138,7 +138,7 @@ class GViewPeer {
 public:
     QEView *qView;
     GC GCs[256];
-    
+
     GView *View;
 //    int wX, wY;
     int wW, wH, wState, wRefresh;
@@ -148,10 +148,10 @@ public:
     int VertPos, HorzPos;
     bool insertState;
     unsigned char *ScreenBuffer;
-    
+
     GViewPeer(GView *view, int XSize, int YSize);
     ~GViewPeer();
-    
+
     int AllocBuffer();
     void DrawCursor(/*QPainter *painter, */int Show);
     void UpdateWindow(int xx, int yy, int ww, int hh);
@@ -164,7 +164,7 @@ public:
 
     int ConSetSize(int X, int Y);
     int ConQuerySize(int *X, int *Y);
-    
+
     int ConSetCursorPos(int X, int Y);
     int ConQueryCursorPos(int *X, int *Y);
     int ConShowCursor();
@@ -181,19 +181,19 @@ public:
     int PMShowCursor();
     int PMHideCursor();
     int PMSetCursorPos();
-};      
+};
 
 class GFramePeer {
 public:
     GFrame *Frame;
     QEFrame *qFrame;
-    
+
     GFramePeer(GFrame *aFrame, int Width, int Height);
     ~GFramePeer();
-    
+
     int ConSetTitle(char *Title, char *STitle);
     int ConGetTitle(char *Title, int MaxLen, char *STitle, int SMaxLen);
-    
+
     int ConSetSize(int X, int Y);
     int ConQuerySize(int *X, int *Y);
     void MapFrame();
@@ -233,7 +233,7 @@ static QColor colors[16] = {
     Qt::darkMagenta,
     Qt::darkYellow,
     Qt::gray,
-    
+
     Qt::darkGray,
     Qt::blue,
     Qt::green,
@@ -277,7 +277,7 @@ static int qHasEvent() {
 
 static void qGetEvent(TEvent &Event) {
     qEvent *q = event_head;
-    
+
     Event = q->event;
     event_head = q->next;
     if (!event_head)
@@ -289,8 +289,7 @@ void ConSetInsertState(bool insert) {
     //insertState = insert;
 }
 
-QEView::QEView(GViewPeer *peer, QWidget *parent, const char *name): QFrame(parent, name)
-{
+QEView::QEView(GViewPeer *peer, QWidget *parent, const char *name): QFrame(parent, name) {
     view = peer;
 
     text = new QEText(peer, this);
@@ -302,7 +301,7 @@ QEView::QEView(GViewPeer *peer, QWidget *parent, const char *name): QFrame(paren
     horz->show();
     vert->show();
 
-    setFrameStyle(Panel|Sunken);
+    setFrameStyle(Panel | Sunken);
     setLineWidth(EDIT_BORDER);
 
     connect(vert, SIGNAL(valueChanged(int)), SLOT(sbVmoveTo(int)));
@@ -311,7 +310,7 @@ QEView::QEView(GViewPeer *peer, QWidget *parent, const char *name): QFrame(paren
     connect(vert, SIGNAL(nextLine()), SLOT(sbVmoveDown()));
     connect(vert, SIGNAL(prevPage()), SLOT(sbVpageUp()));
     connect(vert, SIGNAL(nextPage()), SLOT(sbVpageDown()));
-    
+
     connect(horz, SIGNAL(valueChanged(int)), SLOT(sbHmoveTo(int)));
     connect(horz, SIGNAL(sliderMoved(int)), SLOT(sbHmoveTo(int)));
     connect(horz, SIGNAL(prevLine()), SLOT(sbHmoveLeft()));
@@ -431,7 +430,7 @@ void QEText::resizeEvent(QResizeEvent *qe) {
     DEBUGX(("A: %X\n", qe));
     QWidget::resizeEvent(qe);
     DEBUGX(("B\n"));
-    
+
     X = qe->size().width();
     Y = qe->size().height(); //qe->size().height() - frameWidth() * 2;
     DEBUGX(("Resize %d, %d\n", X, Y));
@@ -504,7 +503,7 @@ void QEText::handleMouse(QMouseEvent *qe) {
         NextEvent.Mouse.KeyMask |= kfCtrl;
     if (state & AltButton)
         NextEvent.Mouse.KeyMask |= kfAlt;
-    
+
     NextEvent.Mouse.Count = 1;
     if (qe->type() == QEvent::MouseButtonDblClick)
         NextEvent.Mouse.Count = 2;
@@ -530,44 +529,44 @@ static struct {
     unsigned int q_code;
     TKeyCode keyCode;
 } key_table[] = {
-{ Qt::Key_Escape,     kbEsc },
-{ Qt::Key_Tab,        kbTab },
-{ Qt::Key_Backtab,    kbTab | kfShift },
-{ Qt::Key_Backspace,  kbBackSp },
-{ Qt::Key_Return,     kbEnter },
-{ Qt::Key_Enter,      kbEnter },
-{ Qt::Key_Insert,     kbIns },
-{ Qt::Key_Delete,     kbDel },
-{ Qt::Key_Pause,      kbPause },
-{ Qt::Key_Print,      kbPrtScr },
-{ Qt::Key_SysReq,     kbSysReq },
-{ Qt::Key_Home,       kbHome },
-{ Qt::Key_End,        kbEnd },
-{ Qt::Key_Left,       kbLeft },
-{ Qt::Key_Up,         kbUp },
-{ Qt::Key_Right,      kbRight },
-{ Qt::Key_Down,       kbDown },
-{ Qt::Key_Prior,      kbPgUp },
-{ Qt::Key_Next,       kbPgDn },
-{ Qt::Key_Shift,      kbShift | kfModifier },
-{ Qt::Key_Control,    kbCtrl | kfModifier },
-{ Qt::Key_Meta,       kbAlt | kfModifier },
-{ Qt::Key_Alt,        kbAlt | kfModifier },
-{ Qt::Key_CapsLock,   kbCapsLock | kfModifier },
-{ Qt::Key_NumLock,    kbNumLock | kfModifier },
-{ Qt::Key_ScrollLock, kbScrollLock | kfModifier },
-{ Qt::Key_F1,         kbF1 },
-{ Qt::Key_F2,         kbF2 },
-{ Qt::Key_F3,         kbF3 },
-{ Qt::Key_F4,         kbF4 },
-{ Qt::Key_F5,         kbF5 },
-{ Qt::Key_F6,         kbF6 },
-{ Qt::Key_F7,         kbF7 },
-{ Qt::Key_F8,         kbF8 },
-{ Qt::Key_F9,         kbF9 },
-{ Qt::Key_F10,        kbF10 },
-{ Qt::Key_F11,        kbF11 },
-{ Qt::Key_F12,        kbF12 },
+    { Qt::Key_Escape,     kbEsc },
+    { Qt::Key_Tab,        kbTab },
+    { Qt::Key_Backtab,    kbTab | kfShift },
+    { Qt::Key_Backspace,  kbBackSp },
+    { Qt::Key_Return,     kbEnter },
+    { Qt::Key_Enter,      kbEnter },
+    { Qt::Key_Insert,     kbIns },
+    { Qt::Key_Delete,     kbDel },
+    { Qt::Key_Pause,      kbPause },
+    { Qt::Key_Print,      kbPrtScr },
+    { Qt::Key_SysReq,     kbSysReq },
+    { Qt::Key_Home,       kbHome },
+    { Qt::Key_End,        kbEnd },
+    { Qt::Key_Left,       kbLeft },
+    { Qt::Key_Up,         kbUp },
+    { Qt::Key_Right,      kbRight },
+    { Qt::Key_Down,       kbDown },
+    { Qt::Key_Prior,      kbPgUp },
+    { Qt::Key_Next,       kbPgDn },
+    { Qt::Key_Shift,      kbShift | kfModifier },
+    { Qt::Key_Control,    kbCtrl | kfModifier },
+    { Qt::Key_Meta,       kbAlt | kfModifier },
+    { Qt::Key_Alt,        kbAlt | kfModifier },
+    { Qt::Key_CapsLock,   kbCapsLock | kfModifier },
+    { Qt::Key_NumLock,    kbNumLock | kfModifier },
+    { Qt::Key_ScrollLock, kbScrollLock | kfModifier },
+    { Qt::Key_F1,         kbF1 },
+    { Qt::Key_F2,         kbF2 },
+    { Qt::Key_F3,         kbF3 },
+    { Qt::Key_F4,         kbF4 },
+    { Qt::Key_F5,         kbF5 },
+    { Qt::Key_F6,         kbF6 },
+    { Qt::Key_F7,         kbF7 },
+    { Qt::Key_F8,         kbF8 },
+    { Qt::Key_F9,         kbF9 },
+    { Qt::Key_F10,        kbF10 },
+    { Qt::Key_F11,        kbF11 },
+    { Qt::Key_F12,        kbF12 },
 };
 
 void QEText::ActiveEvent(TEvent &Event) {
@@ -582,12 +581,12 @@ void QEText::handleKeyPressEvent(QKeyEvent *qe) {
     int state = qe->state();
     int ascii = qe->ascii();
     unsigned int key = qe->key();
-    
+
     DEBUGX(("key: %d, ascii: %d(%c) state:%X\n",
-           qe->key(),
-           qe->ascii(),
-           qe->ascii(),
-           qe->state()));
+            qe->key(),
+            qe->ascii(),
+            qe->ascii(),
+            qe->state()));
 
     keyFlags = 0;
     if (state & ShiftButton)
@@ -598,7 +597,7 @@ void QEText::handleKeyPressEvent(QKeyEvent *qe) {
         keyFlags |= kfAlt;
 
     keyCode = 0;
-    for (unsigned i = 0; i < (sizeof(key_table)/sizeof(key_table[0])); i++) {
+    for (unsigned i = 0; i < (sizeof(key_table) / sizeof(key_table[0])); i++) {
         if (key == key_table[i].q_code) {
             keyCode = key_table[i].keyCode;
             break;
@@ -642,8 +641,7 @@ void QEText::focusOutEvent(QFocusEvent *qe) {
     DEBUGX(("lost focus\n"));
 }
 
-QEFrame::QEFrame(GFramePeer *peer, QWidget *parent, const char *name): QFrame(parent, name)
-{
+QEFrame::QEFrame(GFramePeer *peer, QWidget *parent, const char *name): QFrame(parent, name) {
     frame = peer;
     menubar = 0;
     //setAcceptFocus(TRUE);
@@ -658,7 +656,7 @@ void QEFrame::resizeEvent(QResizeEvent *qe) {
     int cy, ch;
 
     GView *p;
-    
+
     if (menubar) {
         h -= menubar->height();
         y += menubar->height();
@@ -667,24 +665,24 @@ void QEFrame::resizeEvent(QResizeEvent *qe) {
     p = frame->Frame->Top;
     count = 0;
     if (p) do {
-        count++;
-        p = p->Next;
-    } while (p != frame->Frame->Top);
+            count++;
+            p = p->Next;
+        } while (p != frame->Frame->Top);
 
     DEBUGX(("count: %d size: %d %d\n", count, w, h));
 
     p = frame->Frame->Top;
     cur = 0;
     if (p) do {
-        ch = h / count;
-        if (p->Next == frame->Frame->Top)
-            ch = h - (h / count) * (count - 1);
-        cy = y + h * cur / count;
-        cur++;
-        DEBUGX(("setting: %d %d %d %d\n", x, cy, w, ch));
-        p->Peer->qView->setViewPos(x, cy, w, ch);
-        p = p->Next;
-    } while (p != frame->Frame->Top);
+            ch = h / count;
+            if (p->Next == frame->Frame->Top)
+                ch = h - (h / count) * (count - 1);
+            cy = y + h * cur / count;
+            cur++;
+            DEBUGX(("setting: %d %d %d %d\n", x, cy, w, ch));
+            p->Peer->qView->setViewPos(x, cy, w, ch);
+            p = p->Next;
+        } while (p != frame->Frame->Top);
 
 //    frame->Frame->Top->Peer->qView->SetViewGeom(x, y, w, h);
 }
@@ -723,10 +721,10 @@ void ProcessXEvents(XEvent *event, TEvent *Event, GViewPeer *Peer) {
     char keyName[32];
     char keyName1[32];
     static int hasConfig = 0;
-    
+
     Event->What = evNone;
     Event->Msg.View = Peer->View;
-    
+
     switch (event->type) {
     case ButtonRelease:
     case ButtonPress:
@@ -736,10 +734,10 @@ void ProcessXEvents(XEvent *event, TEvent *Event, GViewPeer *Peer) {
     case KeyPress:
     case KeyRelease:
         state = keyEvent->state;
-        
+
         keyEvent1 = *keyEvent;
         keyEvent1.state &= ~(ShiftMask | ControlMask | Mod1Mask | Mod2Mask | Mod3Mask | Mod4Mask);
-        
+
         XLookupString(keyEvent, keyName, sizeof(keyName), &key, 0);
         XLookupString(&keyEvent1, keyName1, sizeof(keyName1), &key1, 0);
         //key1 = XLookupKeysym(keyEvent, 0);
@@ -753,8 +751,7 @@ void ProcessXEvents(XEvent *event, TEvent *Event, GViewPeer *Peer) {
 
 static void CloseWindow(Widget w, GFramePeer *frame, XEvent *event, Boolean *cont) {
     if (event->type != ClientMessage ||
-        ((XClientMessageEvent *)event)->data.l[0] != WM_DELETE_WINDOW)
-    {
+            ((XClientMessageEvent *)event)->data.l[0] != WM_DELETE_WINDOW) {
         return ;
     }
     NextEvent.What = evCommand;
@@ -766,9 +763,9 @@ static void CloseWindow(Widget w, GFramePeer *frame, XEvent *event, Boolean *con
 ///////////////////////////////////////////////////////////////////////////
 
 GViewPeer::GViewPeer(GView *view, int XSize, int YSize) {
-    
+
     View = view;
-    
+
     //    wX = 0;
     //    wY = 0;
     wW = XSize;
@@ -788,8 +785,8 @@ GViewPeer::GViewPeer(GView *view, int XSize, int YSize) {
     VertPos = HorzPos = -1;
 
     for (int jj = 0; jj < 256; jj++)
-         GCs[jj] = 0;
-    
+        GCs[jj] = 0;
+
     qView = new QEView(this, frames->Peer->qFrame);
     qView->show();
 }
@@ -801,7 +798,7 @@ GViewPeer::~GViewPeer() {
 int GViewPeer::AllocBuffer() {
     int i;
     unsigned char *p;
-    
+
     ScreenBuffer = (unsigned char *)malloc(2 * wW * wH);
     if (ScreenBuffer == NULL) return -1;
     for (i = 0, p = ScreenBuffer; i < wW * wH; i++) {
@@ -820,17 +817,16 @@ void GViewPeer::DrawCursor(/*QPainter *painter, */int Show) {
 
     if (qView->text->winId() == 0)
         return ;
-        
+
     if (!(wState & sfFocus))
         Show = 0;
 
     if (cX >= wW || cY >= wW ||
-        cX + 1 > wW || cY + 1 > wH)
-    {
+            cX + 1 > wW || cY + 1 > wH) {
         DEBUGX(("bounds %d %d\n", wW, wH));
         return;
     }
-    
+
     DEBUGX(("DrawCursor %d %d\n", cX, cY));
     //    if (!XtIsManaged(TextWin)) return ;
 
@@ -844,7 +840,7 @@ void GViewPeer::DrawCursor(/*QPainter *painter, */int Show) {
 
         if (GCs[attr] == 0) {
             XGCValues gcv;
-            
+
             gcv.foreground = colors[attr & 0xF].pixel();
             gcv.background = colors[(attr >> 4) & 0xF].pixel();
             gcv.font = fontStruct->fid;
@@ -874,20 +870,19 @@ int GViewPeer::ConPutBox(int X, int Y, int W, int H, PCell Cell) {
     int len, x, l, ox, olen, skip;
     //int local_painter = 0;
 
-    
+
     if (!(View && View->Parent))
         return 1;
 
     if (qView->text->winId() == 0)
         return 1;
-    
+
     //if (Visibility == VisibilityFullyObscured)
     //    return - 1;
-        
+
     if (X >= wW || Y >= wH ||
-        X + W > wW || Y + H > wH)
-    {
-        DEBUGX(("bounds %d %d\n",wW, wH));
+            X + W > wW || Y + H > wH) {
+        DEBUGX(("bounds %d %d\n", wW, wH));
         return -1;
     }
 
@@ -899,7 +894,7 @@ int GViewPeer::ConPutBox(int X, int Y, int W, int H, PCell Cell) {
     }
     qView->Painter->setBackgroundMode(OpaqueMode);
     qView->Painter->setFont(Font);*/
-        
+
     DEBUGX(("PutBox %d | %d %d %d %d | %d %d\n", wRefresh, X, Y, W, H, wW, wH));
     for (i = 0; i < H; i++) {
         len = W;
@@ -913,7 +908,7 @@ int GViewPeer::ConPutBox(int X, int Y, int W, int H, PCell Cell) {
                 ops = ps;
                 ox = x;
                 olen = len;
-                while ((len > 0) && (*(unsigned short *) c == *(unsigned short *)ps)) x++, len--, ps+=2, c+=2, skip++;
+                while ((len > 0) && (*(unsigned short *) c == *(unsigned short *)ps)) x++, len--, ps += 2, c += 2, skip++;
                 if (len <= 0) break;
                 if (skip <= 4) {
                     ps = ops;
@@ -923,12 +918,13 @@ int GViewPeer::ConPutBox(int X, int Y, int W, int H, PCell Cell) {
             }
             p = ps;
             l = 1;
-            temp[0] = *ps++; attr = *ps++;
-            while ((l < len) && ((unsigned char) (ps[1]) == attr)) {
+            temp[0] = *ps++;
+            attr = *ps++;
+            while ((l < len) && ((unsigned char)(ps[1]) == attr)) {
                 temp[l++] = *ps++;
                 ps++;
             }
-            
+
             /*qView->Painter->setPen(colors[attr & 0xF]);
             qView->Painter->setBackgroundColor(colors[(attr >> 4) & 0xF]);
 
@@ -951,7 +947,7 @@ int GViewPeer::ConPutBox(int X, int Y, int W, int H, PCell Cell) {
                              /*qView->frameWidth() +*/ x * cxChar,
                              /*qView->frameWidth() +*/ fontStruct->max_bounds.ascent + (Y + i) * cyChar,
                              (char *)temp, l);
-            
+
             x += l;
             len -= l;
         }
@@ -974,8 +970,10 @@ int GViewPeer::ConPutBox(int X, int Y, int W, int H, PCell Cell) {
 void GViewPeer::UpdateWindow(int xx, int yy, int ww, int hh) {
     PCell p;
     int i;
-    ww /= cxChar; ww += 2;
-    hh /= cyChar; hh += 2;
+    ww /= cxChar;
+    ww += 2;
+    hh /= cyChar;
+    hh += 2;
     xx /= cxChar;
     yy /= cyChar;
     if (xx + ww > wW) ww = wW - xx;
@@ -992,7 +990,7 @@ void GViewPeer::UpdateWindow(int xx, int yy, int ww, int hh) {
 
 int GViewPeer::ConGetBox(int X, int Y, int W, int H, PCell Cell) {
     int i;
-    
+
     for (i = 0; i < H; i++) {
         memcpy(Cell, CursorXYPos(X, Y + i), 2 * W);
         Cell += W;
@@ -1002,7 +1000,7 @@ int GViewPeer::ConGetBox(int X, int Y, int W, int H, PCell Cell) {
 
 int GViewPeer::ConPutLine(int X, int Y, int W, int H, PCell Cell) {
     int i;
-    
+
     for (i = 0; i < H; i++) {
         if (ConPutBox(X, Y + i, W, 1, Cell) != 0) return -1;
     }
@@ -1012,7 +1010,7 @@ int GViewPeer::ConPutLine(int X, int Y, int W, int H, PCell Cell) {
 int GViewPeer::ConSetBox(int X, int Y, int W, int H, TCell Cell) {
     TDrawBuffer B;
     int i;
-    
+
     for (i = 0; i < W; i++) B[i] = Cell;
     ConPutLine(X, Y, W, H, B);
     return 0;
@@ -1056,8 +1054,8 @@ int GViewPeer::ConScroll(int Way, int X, int Y, int W, int H, TAttr Fill, int Co
         XCopyArea(display, qView->text->winId(), qView->text->winId(), GCs[Fill],
                   fw + X * cxChar,
                   fw + Y * cyChar,
-                  W * cxChar, 
-                  (H - Count) * cyChar, 
+                  W * cxChar,
+                  (H - Count) * cyChar,
                   fw + X * cxChar,
                   fw + (Y + Count)* cyChar
                  );
@@ -1071,7 +1069,7 @@ int GViewPeer::ConScroll(int Way, int X, int Y, int W, int H, TAttr Fill, int Co
 
     /*TCell Cell;
     int l;
-    
+
     MoveCh(&Cell, ' ', Fill, 1);
     QPainter painter;
     painter.begin(qView);
@@ -1118,7 +1116,7 @@ int GViewPeer::ConSetSize(int X, int Y) {
     unsigned char *p;
     int i;
     int MX, MY;
-    
+
     p = NewBuffer = (unsigned char *) malloc(X * Y * 2);
     if (NewBuffer == NULL) return -1;
     for (i = 0; i < X * Y; i++) {
@@ -1126,8 +1124,10 @@ int GViewPeer::ConSetSize(int X, int Y) {
         *p++ = 0x07;
     }
     if (ScreenBuffer) {
-	MX = wW; if (X < MX) MX = X;
-        MY = wH; if (Y < MY) MY = Y;
+        MX = wW;
+        if (X < MX) MX = X;
+        MY = wH;
+        if (Y < MY) MY = Y;
         if (X < MX) MX = X;
         p = NewBuffer;
         for (i = 0; i < MY; i++) {
@@ -1188,7 +1188,7 @@ int GViewPeer::ConShowCursor() {
 
 int GViewPeer::ConHideCursor() {
     cVisible = 0;
-  //  DrawCursor(0);
+    //  DrawCursor(0);
     return 1;
 }
 
@@ -1211,13 +1211,12 @@ int GViewPeer::QuerySbVPos() {
 
 int GViewPeer::SetSbVPos(int Start, int Amount, int Total) {
     if (sbVstart != Start ||
-        sbVamount != Amount ||
-        sbVtotal != Total)
-    {
+            sbVamount != Amount ||
+            sbVtotal != Total) {
         sbVstart = Start;
         sbVamount = Amount;
         sbVtotal = Total;
-        
+
         if (View->Parent == 0)
             return 0;
         if (Amount < 1 || Start + Amount > Total) {
@@ -1235,16 +1234,15 @@ int GViewPeer::SetSbVPos(int Start, int Amount, int Total) {
 
 int GViewPeer::SetSbHPos(int Start, int Amount, int Total) {
     if (sbHstart != Start ||
-        sbHamount != Amount ||
-        sbHtotal != Total)
-    {
+            sbHamount != Amount ||
+            sbHtotal != Total) {
         sbHstart = Start;
         sbHamount = Amount;
         sbHtotal = Total;
-        
+
         if (View->Parent == 0)
             return 0;
-        
+
         if (Amount < 1 || Start + Amount > Total) {
             qView->horz->setRange(0, 0);
             qView->horz->setSteps(0, 0);
@@ -1300,7 +1298,7 @@ GView::~GView() {
 int GView::ConClear() {
     int W, H;
     TDrawBuffer B;
-    
+
     ConQuerySize(&W, &H);
     MoveChar(B, 0, W, ' ', 0x07, 1);
     ConSetBox(0, 0, W, H, B[0]);
@@ -1356,7 +1354,7 @@ int GView::ConHideCursor() {
 }
 
 int GView::ConCursorVisible() {
-    return Peer->ConCursorVisible(); 
+    return Peer->ConCursorVisible();
 }
 
 void GView::ConSetInsertState(bool insert) {
@@ -1399,7 +1397,7 @@ void GView::EndExec(int NewResult) {
 int GView::Execute() {
     int SaveRc = Result;
     int NewResult;
-    
+
     Result = -2;
     while (Result == -2 && frames != 0)
         gui->ProcessEvent();
@@ -1462,7 +1460,7 @@ int GFramePeer::ConQuerySize(int *X, int *Y) {
 //    if (X) *X = fW;
 //    if (Y) *Y = fH;
     return 1;
-}   
+}
 
 //int GFrame::ConQuerySize(int *X, int *Y) {
 //    ::ConQuerySize(X, Y);
@@ -1570,7 +1568,7 @@ int GFrame::ConQuerySize(int *X, int *Y) {
 
 int GFrame::ConSplitView(GView *view, GView *newview) {
     int dmy;
-    
+
     newview->Parent = this;
 //    newview->Peer->wX = 0;
     ConQuerySize(&newview->Peer->wW, &dmy);
@@ -1596,10 +1594,10 @@ int GFrame::AddView(GView *view) {
         return ConSplitView(Top, view);
     } else {
 //        int W, H;
-        
+
         view->Parent = this;
         view->Prev = view->Next = 0;
-        
+
 //        view->Peer->wX = 0;
 //        view->Peer->wY = 0;
 //        ConQuerySize(&W, &H);
@@ -1611,12 +1609,12 @@ int GFrame::AddView(GView *view) {
 
 void GFrame::Update() {
     GView *v = Active;
-    
+
     UpdateMenu();
     while (v) {
         v->Update();
         v = v->Next;
-        if (v == Active) 
+        if (v == Active)
             break;
     }
 }
@@ -1626,11 +1624,11 @@ void GFrame::UpdateMenu() {
 
 void GFrame::Repaint() {
     GView *v = Active;
-    
+
     while (v) {
         v->Repaint();
         v = v->Next;
-        if (v == Active) 
+        if (v == Active)
             break;
     }
 }
@@ -1654,7 +1652,7 @@ void GFrame::InsertView(GView *Prev, GView *view) {
 
 void GFrame::RemoveView(GView *view) {
     if (!view) return ;
-    
+
     if (Active == view)
         Active->Activate(0);
     if (view->Next == view) {
@@ -1663,7 +1661,7 @@ void GFrame::RemoveView(GView *view) {
     } else {
         view->Next->Prev = view->Prev;
         view->Prev->Next = view->Next;
-        
+
         if (Top == view) {
             Top = view->Next;
 //            Top->Peer->wY -= view->Peer->wH;
@@ -1672,7 +1670,7 @@ void GFrame::RemoveView(GView *view) {
 //            view->Prev->ConSetSize(view->Prev->Peer->wW,
 //                                   view->Prev->Peer->wH + view->Peer->wH);
         }
-        
+
         if (Active == view) {
             Active = view->Prev;
             Active->Activate(1);
@@ -1682,7 +1680,7 @@ void GFrame::RemoveView(GView *view) {
 
 void GFrame::SelectNext(int back) {
     GView *c = Active;
-    
+
     if (c == 0 && Top == 0)
         return;
     else if (c == 0)
@@ -1704,10 +1702,10 @@ void GFrame::SelectNext(int back) {
 int GFrame::SelectView(GView *view) {
     if (Top == 0)
         return 0;
-    
+
     if (FocusCapture != 0 || MouseCapture != 0)
         return 0;
-    
+
     if (Active)
         Active->Activate(0);
     Active = view;
@@ -1721,10 +1719,10 @@ int GFrame::SelectView(GView *view) {
 void GFrame::Resize(int width, int height) {
     if (!Top)
         return;
-    
+
     if (width < 8 || height < 2)
         return;
-    
+
     if (Top == Top->Next) {
         Top->ConSetSize(width, height);
     } else {
@@ -1757,7 +1755,7 @@ QPopupMenu *QEFrame::CreatePopup(QWidget *parent, int Id, int do_connect) {
                 CHECK_PTR(submenu);
 
                 menu->insertItem(Menus[Id].Items[i].Name,
-                                    submenu);
+                                 submenu);
             } else {
                 menu->insertItem(Menus[Id].Items[i].Name,
                                  Menus[Id].Items[i].Cmd);
@@ -1787,7 +1785,7 @@ QMenuBar *QEFrame::CreateMenuBar(QWidget *parent, int Id) {
                 CHECK_PTR(submenu);
 
                 menu->insertItem(Menus[Id].Items[i].Name,
-                                    submenu);
+                                 submenu);
             } else {
                 menu->insertItem(Menus[Id].Items[i].Name,
                                  Menus[Id].Items[i].Cmd);
@@ -1848,18 +1846,18 @@ GUI::GUI(int &argc, char **argv, int XSize, int YSize) {
     new QApplication(argc, argv);
 
     display = qt_xdisplay();
-    
+
     char *fs = getenv("VIOFONT");
     fontStruct = NULL;
     if (fs == 0 && WindowFont[0] != 0)
         fs = WindowFont;
-    if (fs) 
+    if (fs)
         fontStruct = XLoadQueryFont(display, fs);
-    if (fontStruct == NULL) 
+    if (fontStruct == NULL)
         fontStruct = XLoadQueryFont(display, "8x13");
     if (fontStruct == NULL)
         fontStruct = XLoadQueryFont(display, "fixed");
-    if (fontStruct == NULL) 
+    if (fontStruct == NULL)
         return ;
 
     cxChar = fontStruct->max_bounds.width;
@@ -1883,9 +1881,13 @@ void GUI::DispatchEvent(GFrame *frame, GView *view, TEvent &Event) {
     }
 }
 
-int GUI::ConSuspend(void) { return 0; }
+int GUI::ConSuspend(void) {
+    return 0;
+}
 
-int GUI::ConContinue(void) { return 0; }
+int GUI::ConContinue(void) {
+    return 0;
+}
 
 int GUI::ConGetEvent(TEventMask EventMask, TEvent *Event, int WaitTime, int Delete, GView **view) {
     //return ::ConGetEvent(EventMask, Event, WaitTime, Delete, view);
@@ -1907,7 +1909,7 @@ void GUI::ProcessEvent() {
 
     /* should process until no more events,
      * but this is close enough */
-    
+
     if (need_update)
         QTimer::singleShot(10, frames->Peer->qFrame, SLOT(timerDone()));
 
@@ -1969,8 +1971,8 @@ int GUI::RunProgram(int mode, char *Command) {
         strncat(Cmd, " -ls &", sizeof(Cmd));
     else {
         strncat(Cmd, " -e ", sizeof(Cmd));
-	strncat(Cmd, Command, sizeof(Cmd));
-	if (mode == RUN_ASYNC)
+        strncat(Cmd, Command, sizeof(Cmd));
+        if (mode == RUN_ASYNC)
             strncat(Cmd, " &", sizeof(Cmd));
     }
 
@@ -1991,18 +1993,18 @@ int GUI::RunProgram(int mode, char *Command) {
   */
 int GUI::OpenPipe(char *Command, EModel *notify) {
     int i;
-    
+
     for (i = 0; i < MAX_PIPES; i++) {
         if (Pipes[i].used == 0) {
             int pfd[2];
-            
+
             Pipes[i].id = i;
             Pipes[i].notify = notify;
             Pipes[i].stopped = 1;
-            
+
             if (pipe((int *)pfd) == -1)
                 return -1;
-            
+
             switch (Pipes[i].pid = fork()) {
             case -1: /* fail */
                 return -1;
@@ -2034,14 +2036,14 @@ int GUI::SetPipeView(int id, EModel *notify) {
         return -1;
     DEBUGX(("Pipe View: %d %08X\n", id, notify));
     Pipes[id].notify = notify;
-    if (notify != Pipes[id].notify) 
+    if (notify != Pipes[id].notify)
         if (notify) {
             //Pipes[id].input =
             //    XtAppAddInput(AppContext, Pipes[id].fd, XtInputReadMask, PipeCallback, &Pipes[id]);
         } else {
             //if (Pipes[id].input != 0) {
             //    XtRemoveInput(Pipes[id].input);
-          //      Pipes[id].input = 0;
+            //      Pipes[id].input = 0;
             //}
         }
     return 0;
@@ -2049,20 +2051,20 @@ int GUI::SetPipeView(int id, EModel *notify) {
 
 int GUI::ReadPipe(int id, void *buffer, int len) {
     int rc;
-    
+
     if (id < 0 || id > MAX_PIPES)
         return -1;
     if (Pipes[id].used == 0)
         return -1;
     DEBUGX(("Pipe Read: Get %d %d\n", id, len));
-    
+
     rc = read(Pipes[id].fd, buffer, len);
     DEBUGX(("Pipe Read: Got %d %d\n", id, len));
     if (rc == 0) {
         //if (Pipes[id].input != 0) {
-            //XtRemoveInput(Pipes[id].input);
-       //     Pipes[id].input = 0;
-       // }
+        //XtRemoveInput(Pipes[id].input);
+        //     Pipes[id].input = 0;
+        // }
         close(Pipes[id].fd);
         return -1;
     }
@@ -2075,7 +2077,7 @@ int GUI::ReadPipe(int id, void *buffer, int len) {
 
 int GUI::ClosePipe(int id) {
     int status;
-    
+
     if (id < 0 || id > MAX_PIPES)
         return -1;
     if (Pipes[id].used == 0)
@@ -2086,7 +2088,9 @@ int GUI::ClosePipe(int id) {
     return WEXITSTATUS(status);
 }
 
-int GUI::multiFrame() { return 1; }
+int GUI::multiFrame() {
+    return 1;
+}
 
 int GetXSelection(int *len, char **data, int clipboard) {
     QClipboard *cb = QApplication::clipboard();
@@ -2142,7 +2146,7 @@ int SetXSelection(int len, char *data, int clipboard) {
 
 void DieError(int rc, const char *msg, ...) {
     va_list ap;
-    
+
     va_start(ap, msg);
     vfprintf(stderr, msg, ap);
     va_end(ap);
@@ -2151,8 +2155,8 @@ void DieError(int rc, const char *msg, ...) {
 
 char ConGetDrawChar(int index) {
     static char tab[] = "\x0D\x0C\x0E\x0B\x12\x19____+>\x1F\x01\x12 ";
-    
+
     assert(index >= 0 && index < (int)strlen(tab));
-    
+
     return tab[index];
 }

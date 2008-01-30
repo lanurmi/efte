@@ -45,7 +45,7 @@ int Hilit_TEX(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line,
                 if (isalpha(*p)) {
                     j = 0;
                     while (((i + j) < Line->Count) &&
-                           (isalnum(Line->Chars[i+j])/* ||
+                            (isalnum(Line->Chars[i+j])/* ||
                            (Line->Chars[i + j] == '_')*/)
                           ) j++;
                     if (BF->GetHilitWord(j, &Line->Chars[i], Color, 0)) {
@@ -72,7 +72,7 @@ int Hilit_TEX(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line,
             default:
                 State = hsTEX_Normal;
                 Color = CLR_Normal;
-            hilit:
+hilit:
                 ColorNext();
                 continue;
             }

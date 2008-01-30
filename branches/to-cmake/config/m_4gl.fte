@@ -226,7 +226,7 @@ colorize GL {
 
 }
 
-mode GL: PLAIN {      # 4GL Mode
+mode GL: SOURCE {      # 4GL Mode
     FileNameRx          = /\.\c{4GL}|{4BL}$/;
     HilitOn             = 1;
     Colorizer           = 'GL';
@@ -256,3 +256,5 @@ mode GL: PLAIN {      # 4GL Mode
 #    BackSpUnindents = 0;
 #    SpaceTabs = 0;
 }
+
+oinclude 'mym_4gl.fte';

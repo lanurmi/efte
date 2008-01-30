@@ -120,7 +120,7 @@ colorize ASM51 {
 
 }
 
-mode ASM51: PLAIN {      # C/C++ Mode
+mode ASM51: SOURCE {      # C/C++ Mode
     FileNameRx          = /\.\c{a51}}$/;
     HilitOn             = 1;
     Colorizer           = 'ASM51';
@@ -143,3 +143,5 @@ mode ASM51: PLAIN {      # C/C++ Mode
     CommentStart        = ' ;';
     CommentEnd          = '';
 }
+
+oinclude 'mym_a51.fte';

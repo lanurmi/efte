@@ -21,8 +21,7 @@ static InputHistory inputHistory = { 0, 0, 0 };
 void ClearHistory() { /*FOLD00*/
 
     // free filenames from all entries
-    while(FPHistoryCount--)
-    {
+    while (FPHistoryCount--) {
         free(FPHistory[FPHistoryCount]->FileName);
         free(FPHistory[FPHistoryCount]);
     }
@@ -32,8 +31,7 @@ void ClearHistory() { /*FOLD00*/
 
     // free input history
     {
-        while(inputHistory.Count--)
-        {
+        while (inputHistory.Count--) {
             free(inputHistory.Line[inputHistory.Count]);
         }
         free(inputHistory.Line);
@@ -43,24 +41,24 @@ void ClearHistory() { /*FOLD00*/
 
 int SaveHistory(char *FileName) { /*FOLD00*/
     FILE *fp;
-    
+
     fp = fopen(FileName, "w");
     if (fp == 0)
         return 0;
     setvbuf(fp, FileBuffer, _IOFBF, sizeof(FileBuffer));
     fprintf(fp, HISTORY_VER);
     if (FPHistory) { // file position history
-        int i,j;
+        int i, j;
         for (i = 0; i < FPHistoryCount; i++) {
             fprintf(fp, "F|%d|%d|%s\n",
                     FPHistory[i]->Row,
                     FPHistory[i]->Col,
                     FPHistory[i]->FileName);
-            for (j=0;j<FPHistory[i]->BookCount;j++)
-                fprintf (fp,"B|%d|%d|%s\n",
-                         FPHistory[i]->Books[j]->Row,
-                         FPHistory[i]->Books[j]->Col,
-                         FPHistory[i]->Books[j]->Name);
+            for (j = 0;j < FPHistory[i]->BookCount;j++)
+                fprintf(fp, "B|%d|%d|%s\n",
+                        FPHistory[i]->Books[j]->Row,
+                        FPHistory[i]->Books[j]->Col,
+                        FPHistory[i]->Books[j]->Name);
         }
     }
     { // input history, store in reverse order to preserve order when loading
@@ -76,9 +74,9 @@ int LoadHistory(char *FileName) { /*FOLD00*/
     FILE *fp;
     char line[2048];
     char *p, *e;
-    FPosHistory *last=NULL;
+    FPosHistory *last = NULL;
     HBookmark **nb;
-    
+
     fp = fopen(FileName, "r");
     if (fp == 0)
         return 0;
@@ -86,8 +84,7 @@ int LoadHistory(char *FileName) { /*FOLD00*/
     setvbuf(fp, FileBuffer, _IOFBF, sizeof(FileBuffer));
 
     if (fgets(line, sizeof(line), fp) == 0 ||
-        strcmp(line, HISTORY_VER) != 0)
-    {
+            strcmp(line, HISTORY_VER) != 0) {
         fclose(fp);
         return 0;
     }
@@ -113,16 +110,17 @@ int LoadHistory(char *FileName) { /*FOLD00*/
             if (e == 0)
                 break;
             *e = 0;
-            last=NULL;
+            last = NULL;
             if (UpdateFPos(p, r, c) == 0)
                 break;
             // Get current file's record for storing bookmarks
-            L=0;R=FPHistoryCount;
+            L = 0;
+            R = FPHistoryCount;
             while (L < R) {
                 M = (L + R) / 2;
                 cmp = filecmp(p, FPHistory[M]->FileName);
                 if (cmp == 0) {
-                    last=FPHistory[M];
+                    last = FPHistory[M];
                     break;
                 } else if (cmp < 0) {
                     R = M;
@@ -152,21 +150,21 @@ int LoadHistory(char *FileName) { /*FOLD00*/
                 if (e == 0)
                     break;
                 *e = 0;
-                nb=(HBookmark **)realloc (last->Books,sizeof (HBookmark *)*(last->BookCount+1));
+                nb = (HBookmark **)realloc(last->Books, sizeof(HBookmark *) * (last->BookCount + 1));
                 if (nb) {
-                    last->Books=nb;
-                    nb[last->BookCount]=(HBookmark *)malloc (sizeof (HBookmark));
+                    last->Books = nb;
+                    nb[last->BookCount] = (HBookmark *)malloc(sizeof(HBookmark));
                     if (nb[last->BookCount]) {
-                        nb[last->BookCount]->Row=r;
-                        nb[last->BookCount]->Col=c;
-                        nb[last->BookCount]->Name=strdup (p);
+                        nb[last->BookCount]->Row = r;
+                        nb[last->BookCount]->Col = c;
+                        nb[last->BookCount]->Name = strdup(p);
                         last->BookCount++;
                     }
                 }
             }
         } else if (line[0] == 'I' && line[1] == '|') { // input history
             int i;
-            
+
             p = line + 2;
             i = strtol(p, &e, 10);
             if (e == p)
@@ -226,15 +224,14 @@ int UpdateFPos(char *FileName, int Row, int Col) { /*FOLD00*/
     N = 64;
     while (N <= FPHistoryCount) N *= 2;
     NH = (FPosHistory **)realloc((void *)FPHistory, N * sizeof(FPosHistory *));
-    if (NH == 0)
-    {
+    if (NH == 0) {
         free(fp->FileName);
         free(fp);
         return 0;
     }
 
     FPHistory = NH;
-    
+
     if (L < FPHistoryCount)
         memmove(FPHistory + L + 1,
                 FPHistory + L,
@@ -302,7 +299,7 @@ int AddInputHistory(int Id, char *String) { /*FOLD00*/
 
 int CountInputHistory(int Id) { /*FOLD00*/
     int i, c = 0;
-    
+
     for (i = 0; i < inputHistory.Count; i++)
         if (inputHistory.Id[i] == Id) c++;
     return c;
@@ -312,7 +309,7 @@ int GetInputHistory(int Id, char *String, int len, int Nth) { /*FOLD00*/
     int i = 0;
 
     assert(len > 0);
-    
+
     while (i < inputHistory.Count) {
         if (inputHistory.Id[i] == Id) {
             Nth--;
@@ -331,27 +328,28 @@ int GetInputHistory(int Id, char *String, int len, int Nth) { /*FOLD00*/
  * Get bookmarks for given Buffer (file) from history.
  */
 int RetrieveBookmarks(EBuffer *buffer) { /*FOLD00*/
-    int L = 0, R = FPHistoryCount, M,i;
+    int L = 0, R = FPHistoryCount, M, i;
     int cmp;
     HBookmark *bmk;
     char name[256+4] = "_BMK";
     EPoint P;
 
-    assert(buffer!=NULL);
-    if (FPHistoryCount==0) return 1;
+    assert(buffer != NULL);
+    if (FPHistoryCount == 0) return 1;
     while (L < R) {
         M = (L + R) / 2;
         cmp = filecmp(buffer->FileName, FPHistory[M]->FileName);
         if (cmp == 0) {
             // Now "copy" bookmarks to Buffer
-            for (i=0;i<FPHistory[M]->BookCount;i++) {
-                bmk=FPHistory[M]->Books[i];
-                strcpy (name+4,bmk->Name);
-                P.Row=bmk->Row;P.Col=bmk->Col;
-                if (P.Row<0) P.Row=0;
-                else if (P.Row>=buffer->RCount) P.Row=buffer->RCount-1;
-                if (P.Col<0) P.Col=0;
-                buffer->PlaceBookmark(name,P);
+            for (i = 0;i < FPHistory[M]->BookCount;i++) {
+                bmk = FPHistory[M]->Books[i];
+                strcpy(name + 4, bmk->Name);
+                P.Row = bmk->Row;
+                P.Col = bmk->Col;
+                if (P.Row < 0) P.Row = 0;
+                else if (P.Row >= buffer->RCount) P.Row = buffer->RCount - 1;
+                if (P.Col < 0) P.Col = 0;
+                buffer->PlaceBookmark(name, P);
             }
             return 1;
         } else if (cmp < 0) {
@@ -367,16 +365,16 @@ int RetrieveBookmarks(EBuffer *buffer) { /*FOLD00*/
  * Store given Buffer's bookmarks to history.
  */
 int StoreBookmarks(EBuffer *buffer) { /*FOLD00*/
-    int L = 0, R = FPHistoryCount, M,i,j;
+    int L = 0, R = FPHistoryCount, M, i, j;
     int cmp;
     char *name;
     EPoint P;
     HBookmark *bmk;
 
-    assert (buffer!=NULL);
-    if (RetrieveFPos (buffer->FileName,i,j)==0) {
+    assert(buffer != NULL);
+    if (RetrieveFPos(buffer->FileName, i, j) == 0) {
         // File not found in FPHistory -> add it
-        if (UpdateFPos (buffer->FileName,0,0)==0) return 0;
+        if (UpdateFPos(buffer->FileName, 0, 0) == 0) return 0;
     }
     // Now file is surely in FPHistory
     while (L < R) {
@@ -384,35 +382,36 @@ int StoreBookmarks(EBuffer *buffer) { /*FOLD00*/
         cmp = filecmp(buffer->FileName, FPHistory[M]->FileName);
         if (cmp == 0) {
             // First delete previous bookmarks
-            for (i=0;i<FPHistory[M]->BookCount;i++) {
-                bmk=FPHistory[M]->Books[i];
-                if (bmk->Name) free (bmk->Name);
-                free (bmk);
+            for (i = 0;i < FPHistory[M]->BookCount;i++) {
+                bmk = FPHistory[M]->Books[i];
+                if (bmk->Name) free(bmk->Name);
+                free(bmk);
             }
-            free (FPHistory[M]->Books);
-            FPHistory[M]->Books=NULL;
+            free(FPHistory[M]->Books);
+            FPHistory[M]->Books = NULL;
             // Now add new bookmarks - first get # of books to store
-            for (i=j=0;(i=buffer->GetUserBookmarkForLine(i,-1,name,P))>=0;j++);
-            FPHistory[M]->BookCount=j;
+            for (i = j = 0;(i = buffer->GetUserBookmarkForLine(i, -1, name, P)) >= 0;j++);
+            FPHistory[M]->BookCount = j;
             if (j) {
                 // Something to store
-                FPHistory[M]->Books=(HBookmark **)malloc (sizeof (HBookmark *)*j);
+                FPHistory[M]->Books = (HBookmark **)malloc(sizeof(HBookmark *) * j);
                 if (FPHistory[M]->Books) {
-                    for (i=j=0;(i=buffer->GetUserBookmarkForLine(i,-1,name,P))>=0;j++) {
-                        bmk=FPHistory[M]->Books[j]=(HBookmark *)malloc (sizeof (HBookmark));
+                    for (i = j = 0;(i = buffer->GetUserBookmarkForLine(i, -1, name, P)) >= 0;j++) {
+                        bmk = FPHistory[M]->Books[j] = (HBookmark *)malloc(sizeof(HBookmark));
                         if (bmk) {
-                            bmk->Row=P.Row;bmk->Col=P.Col;
-                            bmk->Name=strdup (name);
+                            bmk->Row = P.Row;
+                            bmk->Col = P.Col;
+                            bmk->Name = strdup(name);
                         } else {
                             // Only part set
-                            FPHistory[M]->BookCount=j;
+                            FPHistory[M]->BookCount = j;
                             return 0;
                         }
                     }
                     return 1;
                 } else {
                     // Alloc error
-                    FPHistory[M]->BookCount=0;
+                    FPHistory[M]->BookCount = 0;
                     return 0;
                 }
             }

@@ -30,14 +30,14 @@ int Hilit_FTE(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line,
 
     for (i = 0; i < Line->Count;) {
         IF_TAB() else {
-            switch(State) {
+            switch (State) {
             default:
             case hsFTE_Normal:
                 if (isalpha(*p) || *p == '_') {
                     j = 0;
                     while (((i + j) < Line->Count) &&
-                           (isalnum(Line->Chars[i+j]) ||
-                            (Line->Chars[i + j] == '_'))
+                            (isalnum(Line->Chars[i+j]) ||
+                             (Line->Chars[i + j] == '_'))
                           ) j++;
                     if (BF->GetHilitWord(j, &Line->Chars[i], Color)) {
                         State = hsFTE_Keyword;
@@ -103,9 +103,9 @@ int Hilit_FTE(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line,
             case hsFTE_String1:
                 Color = CLR_String;
                 if ((len >= 2) && (*p == '\\')) {
-                hilit2:
+hilit2:
                     ColorNext();
-                hilit:
+hilit:
                     ColorNext();
                     continue;
                 } else if (*p == '\'') {
@@ -152,7 +152,7 @@ int Hilit_FTE(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line,
         State = hsFTE_Normal;
 
     if ((len1 == 0) || (*last != '\\')) {
-        switch(State) {
+        switch (State) {
         case hsFTE_CPP:
         case hsFTE_String1:
         case hsFTE_String2:

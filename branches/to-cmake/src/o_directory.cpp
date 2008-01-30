@@ -79,7 +79,7 @@ void EDirectory::DrawLine(PCell B, int Line, int Col, ChColor color, int Width) 
 
         strcat(s, Files[Line]->Name());
         s[strlen(s) + 1] = '\0';
-        s[strlen(s)] = (Files[Line]->Type() == fiDIRECTORY)? SLASH : ' ';
+        s[strlen(s)] = (Files[Line]->Type() == fiDIRECTORY) ? SLASH : ' ';
 
         if (Col < int(strlen(s)))
             MoveStr(B, 0, Width, s + Col, color, Width);
@@ -130,8 +130,7 @@ void EDirectory::RescanList() {
         assert(fi != 0);
         if (strcmp(fi->Name(), ".") != 0) {
             Files = (FileInfo **)realloc((void *)Files, ((FCount | 255) + 1) * sizeof(FileInfo *));
-            if (Files == 0)
-            {
+            if (Files == 0) {
                 delete fi;
                 delete ff;
                 return;
@@ -350,8 +349,7 @@ int EDirectory::RescanDir() {
     RescanList();
     if (CName[0] != 0) {
         for (int i = 0; i < FCount; i++) {
-            if (filecmp(Files[i]->Name(), CName) == 0)
-            {
+            if (filecmp(Files[i]->Name(), CName) == 0) {
                 Row = i;
                 break;
             }
@@ -382,8 +380,7 @@ int EDirectory::FmChDir(const char *Name) {
     RescanList();
     if (CName[0] != 0) {
         for (int i = 0; i < FCount; i++) {
-            if (filecmp(Files[i]->Name(), CName) == 0)
-            {
+            if (filecmp(Files[i]->Name(), CName) == 0) {
                 Row = i;
                 break;
             }
@@ -393,8 +390,7 @@ int EDirectory::FmChDir(const char *Name) {
     return 1;
 }
 
-int EDirectory::FmRmDir(char const* Name)
-{
+int EDirectory::FmRmDir(char const* Name) {
     char FilePath[256];
     strcpy(FilePath, Path);
     Slash(FilePath, 1);
@@ -406,24 +402,18 @@ int EDirectory::FmRmDir(char const* Name)
                                  2, "O&K", "&Cancel",
                                  "Remove %s?", Name);
 
-    if (choice == 0)
-    {
-        if (unlink(FilePath) == 0)
-        {
+    if (choice == 0) {
+        if (unlink(FilePath) == 0) {
             // put the cursor to the previous row
             --Row;
 
             // There has to be a more efficient way of doing this ...
             return RescanDir();
-        }
-        else
-        {
+        } else {
             Msg(S_INFO, "Failed to remove %s", Name);
             return 0;
         }
-    }
-    else
-    {
+    } else {
         Msg(S_INFO, "Cancelled");
         return 0;
     }
@@ -458,8 +448,7 @@ void EDirectory::GetInfo(char *AInfo, int /*MaxLen*/) {
     if (buf[0] == '\0') // if there is no filename, try the directory name.
         JustLastDirectory(Path, buf, sizeof(buf));
 
-    if (buf[0] != 0) // if there is a file/dir name, stick it in here.
-    {
+    if (buf[0] != 0) { // if there is a file/dir name, stick it in here.
         strncat(winTitle, buf, sizeof(winTitle) - 1 - strlen(winTitle));
         strncat(winTitle, "/ - ", sizeof(winTitle) - 1 - strlen(winTitle));
     }
@@ -471,11 +460,11 @@ void EDirectory::GetInfo(char *AInfo, int /*MaxLen*/) {
             ModelNo,
             Row + 1, FCount,
             winTitle);
-/*    sprintf(AInfo,
-            "%2d %04d/%03d %-150s",
-            ModelNo,
-            Row + 1, FCount,
-            Path);*/
+    /*    sprintf(AInfo,
+                "%2d %04d/%03d %-150s",
+                ModelNo,
+                Row + 1, FCount,
+                Path);*/
 }
 
 void EDirectory::GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen) {
@@ -516,6 +505,12 @@ int EDirectory::ChangeDir(ExState &State) {
     return RescanDir();
 }
 
-int EDirectory::GetContext() { return CONTEXT_DIRECTORY; }
-char *EDirectory::FormatLine(int /*Line*/) { return 0; }
-int EDirectory::CanActivate(int /*Line*/) { return 1; }
+int EDirectory::GetContext() {
+    return CONTEXT_DIRECTORY;
+}
+char *EDirectory::FormatLine(int /*Line*/) {
+    return 0;
+}
+int EDirectory::CanActivate(int /*Line*/) {
+    return 1;
+}

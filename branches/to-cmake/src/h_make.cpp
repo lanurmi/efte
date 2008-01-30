@@ -18,8 +18,8 @@ int Hilit_MAKE(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
     HILIT_VARS(BF->Mode->fColorize->Colors, Line);
     int len1 = len;
     char *last = p + len1 - 1;
-    
-    for(i = 0; i < Line->Count;) {
+
+    for (i = 0; i < Line->Count;) {
         if (i == 0 && *p == 9) {
             State = hsMAKE_Command;
             Color = CLR_Command;
@@ -36,7 +36,7 @@ int Hilit_MAKE(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
                     goto hilit;
                 }
             }
-            switch(State) {
+            switch (State) {
             case hsMAKE_Comment:
                 Color = CLR_Comment;
                 goto hilit;
@@ -44,21 +44,21 @@ int Hilit_MAKE(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
             case hsMAKE_DotCmd:
                 Color = CLR_Directive;
                 goto hilit;
-                
+
             case hsMAKE_Command:
                 Color = CLR_Command;
                 goto hilit;
-                
+
             default:
                 State = hsMAKE_Normal;
                 Color = CLR_Normal;
-            hilit:
+hilit:
                 ColorNext();
                 continue;
             }
         }
     }
-    if((len1 == 0) || (*last != '\\')) {
+    if ((len1 == 0) || (*last != '\\')) {
         if (State == hsMAKE_Comment || State == hsMAKE_DotCmd || State == hsMAKE_Command)
             State = hsMAKE_Normal;
     }

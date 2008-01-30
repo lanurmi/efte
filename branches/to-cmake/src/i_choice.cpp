@@ -13,15 +13,15 @@ ExChoice::ExChoice(const char *ATitle, int NSel, va_list ap): ExView() {
     char msg[1024];
     int i;
     char *fmt;
-    
+
     Cur = 0;
     MouseCaptured = 0;
-    
+
     Title = strdup(ATitle);
     lTitle = strlen(Title);
     NOpt = NSel;
     lChoice = 0;
-    
+
     for (i = 0; i < NSel; i++) {
         SOpt[i] = strdup(va_arg(ap, char *));
         lChoice += CStrLen(SOpt[i]) + 1;
@@ -49,19 +49,19 @@ int ExChoice::BeginMacro() {
 int ExChoice::FindChoiceByPoint(int x, int y) {
     int pos, i;
     int W, H;
-    
+
     Win->ConQuerySize(&W, &H);
-    
+
     if (y != H - 1)
         return -1;
-    
+
     pos = W - lChoice;
     if (x < pos)
         return -1;
-    
+
     for (i = 0; i < NOpt; i++) {
         int clen = CStrLen(SOpt[i]);
-        
+
         if (x > pos && x <= pos + clen)
             return i;
         pos += clen + 1;
@@ -71,27 +71,49 @@ int ExChoice::FindChoiceByPoint(int x, int y) {
 
 void ExChoice::HandleEvent(TEvent &Event) {
     int i;
-    
+
     switch (Event.What) {
     case evKeyDown:
         switch (kbCode(Event.Key.Code)) {
         case kbTab | kfShift:
-        case kbLeft: if (Cur == -1) Cur = 0; Cur--; if (Cur < 0) Cur = NOpt - 1; Event.What = evNone; break;
+        case kbLeft:
+            if (Cur == -1) Cur = 0;
+            Cur--;
+            if (Cur < 0) Cur = NOpt - 1;
+            Event.What = evNone;
+            break;
         case kbTab:
-        case kbRight: if (Cur == -1) Cur = 0; Cur++; if (Cur >= NOpt) Cur = 0; Event.What = evNone; break;
-        case kbHome: Cur = 0; Event.What = evNone; break;
-        case kbEnd: Cur = NOpt - 1; Event.What = evNone; break;
-        case kbEnter: if (Cur >= 0 && NOpt > 0) EndExec(Cur); Event.What = evNone; break;
-        case kbEsc: EndExec(-1); Event.What = evNone; break;
+        case kbRight:
+            if (Cur == -1) Cur = 0;
+            Cur++;
+            if (Cur >= NOpt) Cur = 0;
+            Event.What = evNone;
+            break;
+        case kbHome:
+            Cur = 0;
+            Event.What = evNone;
+            break;
+        case kbEnd:
+            Cur = NOpt - 1;
+            Event.What = evNone;
+            break;
+        case kbEnter:
+            if (Cur >= 0 && NOpt > 0) EndExec(Cur);
+            Event.What = evNone;
+            break;
+        case kbEsc:
+            EndExec(-1);
+            Event.What = evNone;
+            break;
         default:
             if (isAscii(Event.Key.Code)) {
                 char c = char(Event.Key.Code & 0xFF);
                 char s[3];
-                
+
                 s[0] = '&';
                 s[1] = (char)(toupper((char)c) & 0xFF);
                 s[2] = 0;
-                
+
                 for (i = 0; i < NOpt; i++) {
                     if (strstr(SOpt[i], s) != 0) {
                         Win->EndExec(i);
@@ -125,7 +147,7 @@ void ExChoice::HandleEvent(TEvent &Event) {
         Cur = FindChoiceByPoint(Event.Mouse.X, Event.Mouse.Y);
         Event.What = evNone;
         if (Cur >= 0 && Cur < NOpt && NOpt > 0)
-            EndExec(Cur); 
+            EndExec(Cur);
         else
             Cur = 0;
         break;
@@ -153,20 +175,20 @@ void ExChoice::RepaintStatus() {
     int W, H;
     int pos, i;
     TAttr color1, color2;
-    
+
     ConQuerySize(&W, &H);
-    
-    
+
+
     if (Cur != -1) {
         if (Cur >= NOpt) Cur = NOpt - 1;
         if (Cur < 0) Cur = 0;
     }
-    
+
     MoveCh(B, ' ', hcChoice_Background, W);
     MoveStr(B, 0, W, Title, hcChoice_Title, W);
     MoveChar(B, lTitle, W, ':', hcChoice_Background, 1);
     MoveStr(B, lTitle + 2, W, Prompt, hcChoice_Param, W);
-    
+
     pos = W - lChoice;
     for (i = 0; i < NOpt; i++) {
         if (i == Cur) {

@@ -13,129 +13,133 @@
 
 #define MAXREGEXP 32
 
-static int CvsIgnoreRegexpCount=0;
+static int CvsIgnoreRegexpCount = 0;
 static RxNode *CvsIgnoreRegexp[MAXREGEXP];
 
-int AddCvsIgnoreRegexp (const char *regexp) {
-    if (CvsIgnoreRegexpCount>=MAXREGEXP) return 0;
-    if ((CvsIgnoreRegexp[CvsIgnoreRegexpCount]=RxCompile (regexp))==NULL) return 0;
+int AddCvsIgnoreRegexp(const char *regexp) {
+    if (CvsIgnoreRegexpCount >= MAXREGEXP) return 0;
+    if ((CvsIgnoreRegexp[CvsIgnoreRegexpCount] = RxCompile(regexp)) == NULL) return 0;
     CvsIgnoreRegexpCount++;
     return 1;
 }
 
-void FreeCvsIgnoreRegexp () {
+void FreeCvsIgnoreRegexp() {
     while (CvsIgnoreRegexpCount--) {
-        RxFree (CvsIgnoreRegexp[CvsIgnoreRegexpCount]);
+        RxFree(CvsIgnoreRegexp[CvsIgnoreRegexpCount]);
     }
 }
 
-ECvsBase::ECvsBase (int createFlags,EModel **ARoot,const char *title):EList (createFlags,ARoot,title) {
-    LineCount=0;
-    Lines=0;
-    Running=0;
-    BufLen=0;
-    BufPos=0;
-    Command=0;
-    Directory=0;
-    OnFiles=0;
-    ReturnCode=-1;
-    PipeId=-1;
+ECvsBase::ECvsBase(int createFlags, EModel **ARoot, const char *title): EList(createFlags, ARoot, title) {
+    LineCount = 0;
+    Lines = 0;
+    Running = 0;
+    BufLen = 0;
+    BufPos = 0;
+    Command = 0;
+    Directory = 0;
+    OnFiles = 0;
+    ReturnCode = -1;
+    PipeId = -1;
 }
 
-ECvsBase::~ECvsBase () {
-    gui->ClosePipe (PipeId);
-    FreeLines ();
-    free (Command);
-    free (Directory);
-    free (OnFiles);
+ECvsBase::~ECvsBase() {
+    gui->ClosePipe(PipeId);
+    FreeLines();
+    free(Command);
+    free(Directory);
+    free(OnFiles);
 }
 
-void ECvsBase::FreeLines () {
+void ECvsBase::FreeLines() {
     if (Lines) {
-        for (int i=0;i<LineCount;i++) {
-            if (Lines[i]->Buf&&Lines[i]->Line>=0) {
+        for (int i = 0;i < LineCount;i++) {
+            if (Lines[i]->Buf && Lines[i]->Line >= 0) {
                 // Has buffer and line == bookmark -> remove it
                 char book[16];
-                sprintf (book,"_CVS.%d",i);
-                Lines[i]->Buf->RemoveBookmark (book);
+                sprintf(book, "_CVS.%d", i);
+                Lines[i]->Buf->RemoveBookmark(book);
             }
-            free (Lines[i]->Msg);
-            free (Lines[i]->File);
-            free (Lines[i]);
+            free(Lines[i]->Msg);
+            free(Lines[i]->File);
+            free(Lines[i]);
         }
-        free (Lines);
+        free(Lines);
     }
-    LineCount=0;
-    Lines=0;
-    BufLen=BufPos=0;
+    LineCount = 0;
+    Lines = 0;
+    BufLen = BufPos = 0;
 }
 
-void ECvsBase::AddLine (char *file,int line,const char* msg,int status) {
+void ECvsBase::AddLine(char *file, int line, const char* msg, int status) {
     CvsLine *l;
 
-    l=(CvsLine *)malloc (sizeof (CvsLine));
-    if (l!=0) {
-        l->File=file?strdup (file):0;
-        l->Line=line;
-        l->Msg=msg?strdup (msg):0;
-        l->Buf=0;
-        l->Status=status;
+    l = (CvsLine *)malloc(sizeof(CvsLine));
+    if (l != 0) {
+        l->File = file ? strdup(file) : 0;
+        l->Line = line;
+        l->Msg = msg ? strdup(msg) : 0;
+        l->Buf = 0;
+        l->Status = status;
 
         LineCount++;
-        Lines=(CvsLine **)realloc (Lines,sizeof (CvsLine *)*LineCount);
-        Lines[LineCount-1]=l;
-        FindBuffer (LineCount-1);
+        Lines = (CvsLine **)realloc(Lines, sizeof(CvsLine *) * LineCount);
+        Lines[LineCount-1] = l;
+        FindBuffer(LineCount - 1);
 
-        UpdateList ();
+        UpdateList();
     }
 }
 
-void ECvsBase::FindBuffer (int line) {
-    assert (line>=0&&line<LineCount);
-    if (Lines[line]->File!=0) {
+void ECvsBase::FindBuffer(int line) {
+    assert(line >= 0 && line < LineCount);
+    if (Lines[line]->File != 0) {
         EBuffer *B;
-        Lines[line]->Buf=0;
+        Lines[line]->Buf = 0;
         char path[MAXPATH];
-        strcpy (path,Directory);Slash (path,1);strcat (path,Lines[line]->File);
-        B=FindFile (path);
-        if (B!=0&&B->Loaded!=0) AssignBuffer (B,line);
+        strcpy(path, Directory);
+        Slash(path, 1);
+        strcat(path, Lines[line]->File);
+        B = FindFile(path);
+        if (B != 0 && B->Loaded != 0) AssignBuffer(B, line);
     }
 }
 
-void ECvsBase::AssignBuffer (EBuffer *B,int line) {
-    assert (line>=0&&line<LineCount);
+void ECvsBase::AssignBuffer(EBuffer *B, int line) {
+    assert(line >= 0 && line < LineCount);
 
     char book[16];
     EPoint P;
 
-    Lines[line]->Buf=B;
-    if (Lines[line]->Line>=0) {
-        sprintf (book,"_CVS.%d",line);
-        P.Col=0;
-        P.Row=Lines[line]->Line;
-        if (P.Row>=B->RCount)
-            P.Row=B->RCount-1;
-        B->PlaceBookmark (book,P);
+    Lines[line]->Buf = B;
+    if (Lines[line]->Line >= 0) {
+        sprintf(book, "_CVS.%d", line);
+        P.Col = 0;
+        P.Row = Lines[line]->Line;
+        if (P.Row >= B->RCount)
+            P.Row = B->RCount - 1;
+        B->PlaceBookmark(book, P);
     }
 }
 
-void ECvsBase::FindFileLines (EBuffer *B) {
+void ECvsBase::FindFileLines(EBuffer *B) {
     char path[MAXPATH];
     char *pos;
-    strcpy (path,Directory);Slash (path,1);pos=path+strlen (path);
-    for (int i=0;i<LineCount;i++)
-        if (Lines[i]->Buf==0&&Lines[i]->File!=0) {
-            strcpy (pos,Lines[i]->File);
-            if (filecmp (B->FileName,path)==0) {
-                AssignBuffer (B,i);
+    strcpy(path, Directory);
+    Slash(path, 1);
+    pos = path + strlen(path);
+    for (int i = 0;i < LineCount;i++)
+        if (Lines[i]->Buf == 0 && Lines[i]->File != 0) {
+            strcpy(pos, Lines[i]->File);
+            if (filecmp(B->FileName, path) == 0) {
+                AssignBuffer(B, i);
             }
         }
 }
 
-void ECvsBase::NotifyDelete (EModel *Deleting) {
-    for (int i=0;i<LineCount;i++) {
-        if (Lines[i]->Buf==Deleting) {
-            Lines[i]->Buf=0;
+void ECvsBase::NotifyDelete(EModel *Deleting) {
+    for (int i = 0;i < LineCount;i++) {
+        if (Lines[i]->Buf == Deleting) {
+            Lines[i]->Buf = 0;
         }
     }
 }
@@ -152,7 +156,7 @@ int ECvsBase::GetLine(char *Line, int max) {
         rc = gui->ReadPipe(PipeId, MsgBuf + BufLen, sizeof(MsgBuf) - BufLen);
         //fprintf(stderr, "GetLine: ReadPipe rc = %d\n", rc);
         if (rc == -1) {
-            ContinuePipe ();
+            ContinuePipe();
         }
         if (rc > 0)
             BufLen += rc;
@@ -193,237 +197,240 @@ int ECvsBase::GetLine(char *Line, int max) {
     return 1;
 }
 
-void ECvsBase::ParseLine (char *line,int) {
-    AddLine (0,-1,line);
+void ECvsBase::ParseLine(char *line, int) {
+    AddLine(0, -1, line);
 }
 
-void ECvsBase::NotifyPipe (int APipeId) {
-    if (APipeId==PipeId) {
+void ECvsBase::NotifyPipe(int APipeId) {
+    if (APipeId == PipeId) {
         char line[1024];
         RxMatchRes RM;
         int i;
 
         while (GetLine((char *)line, sizeof(line))) {
-            int len=strlen (line);
-            if (len>0&&line[len-1]=='\n') line[--len]=0;
-            for (i=0;i<CvsIgnoreRegexpCount;i++)
-                if (RxExec (CvsIgnoreRegexp[i],line,len,line,&RM)==1) break;
-            if (i==CvsIgnoreRegexpCount) ParseLine (line,len);
+            int len = strlen(line);
+            if (len > 0 && line[len-1] == '\n') line[--len] = 0;
+            for (i = 0;i < CvsIgnoreRegexpCount;i++)
+                if (RxExec(CvsIgnoreRegexp[i], line, len, line, &RM) == 1) break;
+            if (i == CvsIgnoreRegexpCount) ParseLine(line, len);
         }
         if (!Running) {
             char s[30];
 
-            sprintf (s,"[done, status=%d]",ReturnCode);
-            AddLine (0,-1,s);
+            sprintf(s, "[done, status=%d]", ReturnCode);
+            AddLine(0, -1, s);
         }
     }
 }
 
-int ECvsBase::RunPipe (char *ADir,char *ACommand,char *AOnFiles) {
-    free (Command);
-    free (Directory);
-    free (OnFiles);
+int ECvsBase::RunPipe(char *ADir, char *ACommand, char *AOnFiles) {
+    free(Command);
+    free(Directory);
+    free(OnFiles);
 
-    Command=strdup (ACommand);
-    Directory=strdup (ADir);
-    OnFiles=strdup (AOnFiles);
+    Command = strdup(ACommand);
+    Directory = strdup(ADir);
+    OnFiles = strdup(AOnFiles);
 
-    ReturnCode=-1;
-    Row=LineCount-1;
-    OnFilesPos=OnFiles;
+    ReturnCode = -1;
+    Row = LineCount - 1;
+    OnFilesPos = OnFiles;
 
     {
         char s[2*MAXPATH*4];
 
-        sprintf (s,"[running cvs in '%s']",Directory);
-        AddLine (0,-1,s);
+        sprintf(s, "[running cvs in '%s']", Directory);
+        AddLine(0, -1, s);
     }
 
-    ChangeDir (Directory);
-    return ContinuePipe ();
+    ChangeDir(Directory);
+    return ContinuePipe();
 }
 
-int ECvsBase::ContinuePipe () {
+int ECvsBase::ContinuePipe() {
     char RealCommand[2048];
     size_t space;
 
     if (!OnFilesPos) {
         // At the end of all files, terminate
-        ClosePipe ();
+        ClosePipe();
         return 0;
     } else if (Running) {
         // Already running, close the pipe and continue
-        ReturnCode=gui->ClosePipe (PipeId);
+        ReturnCode = gui->ClosePipe(PipeId);
     } else {
         // Not running -> set to Running mode
-        Running=1;
+        Running = 1;
     }
 
     // Make real command with some files from OnFiles, update OnFilesPos
-    strcat (strcpy (RealCommand,Command)," ");
-    space=sizeof (RealCommand)-strlen (RealCommand)-1;
-    if (space>=strlen (OnFilesPos)) {
-        strcat (RealCommand,OnFilesPos);
-        OnFilesPos=NULL;
+    strcat(strcpy(RealCommand, Command), " ");
+    space = sizeof(RealCommand) - strlen(RealCommand) - 1;
+    if (space >= strlen(OnFilesPos)) {
+        strcat(RealCommand, OnFilesPos);
+        OnFilesPos = NULL;
     } else {
-        char c=OnFilesPos[space];
-        OnFilesPos[space]=0;
-        char *s=strrchr (OnFilesPos,' ');
-        OnFilesPos[space]=c;
+        char c = OnFilesPos[space];
+        OnFilesPos[space] = 0;
+        char *s = strrchr(OnFilesPos, ' ');
+        OnFilesPos[space] = c;
         if (!s) {
-            ClosePipe ();
+            ClosePipe();
             return 0;
         }
-        *s=0;
-        strcat (RealCommand,OnFilesPos);
-        OnFilesPos=s+1;
-        while (*OnFilesPos==' ') OnFilesPos++;
-        if (!*OnFilesPos) OnFilesPos=NULL;
+        *s = 0;
+        strcat(RealCommand, OnFilesPos);
+        OnFilesPos = s + 1;
+        while (*OnFilesPos == ' ') OnFilesPos++;
+        if (!*OnFilesPos) OnFilesPos = NULL;
     }
 
-    BufLen=BufPos=0;
+    BufLen = BufPos = 0;
 
     {
-        char s[sizeof (RealCommand)+32];
+        char s[sizeof(RealCommand)+32];
 
-        sprintf (s,"[continuing: '%s']",RealCommand);
-        AddLine (0,-1,s);
+        sprintf(s, "[continuing: '%s']", RealCommand);
+        AddLine(0, -1, s);
     }
 
-    PipeId=gui->OpenPipe (RealCommand,this);
+    PipeId = gui->OpenPipe(RealCommand, this);
     return 0;
 }
 
-void ECvsBase::ClosePipe () {
+void ECvsBase::ClosePipe() {
     ReturnCode = gui->ClosePipe(PipeId);
     PipeId = -1;
     Running = 0;
 }
 
-void ECvsBase::DrawLine (PCell B,int Line,int Col,ChColor color,int Width) {
-    if (Line<LineCount)
-        if (Col<(int)strlen (Lines[Line]->Msg)) {
+void ECvsBase::DrawLine(PCell B, int Line, int Col, ChColor color, int Width) {
+    if (Line < LineCount)
+        if (Col < (int)strlen(Lines[Line]->Msg)) {
             char str[1024];
             int len;
 
-            len=UnTabStr (str,sizeof (str),Lines[Line]->Msg,strlen (Lines[Line]->Msg));
-            if (len>Col) MoveStr (B,0,Width,str+Col,color,Width);
+            len = UnTabStr(str, sizeof(str), Lines[Line]->Msg, strlen(Lines[Line]->Msg));
+            if (len > Col) MoveStr(B, 0, Width, str + Col, color, Width);
         }
 }
 
-char *ECvsBase::FormatLine (int Line) {
-    if (Line<LineCount) return strdup (Lines[Line]->Msg);else return 0;
+char *ECvsBase::FormatLine(int Line) {
+    if (Line < LineCount) return strdup(Lines[Line]->Msg);
+    else return 0;
 }
 
-void ECvsBase::UpdateList () {
-    if (LineCount<=Row||Row>=Count-1) Row=LineCount-1;
-    Count=LineCount;
-    EList::UpdateList ();
+void ECvsBase::UpdateList() {
+    if (LineCount <= Row || Row >= Count - 1) Row = LineCount - 1;
+    Count = LineCount;
+    EList::UpdateList();
 }
 
-int ECvsBase::Activate (int No) {
-    ShowLine (View,No);
+int ECvsBase::Activate(int No) {
+    ShowLine(View, No);
     return 1;
 }
 
 int ECvsBase::CanActivate(int Line) {
-    return Line<LineCount&&Lines[Line]->File;
+    return Line < LineCount && Lines[Line]->File;
 }
 
-int ECvsBase::IsHilited (int Line) {
-    return Line<LineCount&&(Lines[Line]->Status&1);
+int ECvsBase::IsHilited(int Line) {
+    return Line < LineCount && (Lines[Line]->Status&1);
 }
 
-int ECvsBase::IsMarked (int Line) {
-    return Line<LineCount&&(Lines[Line]->Status&2);
+int ECvsBase::IsMarked(int Line) {
+    return Line < LineCount && (Lines[Line]->Status&2);
 }
 
-int ECvsBase::Mark (int Line) {
-    if (Line<LineCount) {
-        if (Lines[Line]->Status&4) Lines[Line]->Status|=2;
+int ECvsBase::Mark(int Line) {
+    if (Line < LineCount) {
+        if (Lines[Line]->Status&4) Lines[Line]->Status |= 2;
         return 1;
     } else return 0;
 }
 
-int ECvsBase::Unmark (int Line) {
-    if (Line<LineCount) {
-        if (Lines[Line]->Status&4) Lines[Line]->Status&=~2;
+int ECvsBase::Unmark(int Line) {
+    if (Line < LineCount) {
+        if (Lines[Line]->Status&4) Lines[Line]->Status &= ~2;
         return 1;
     } else return 0;
 }
 
 int ECvsBase::ExecCommand(int Command, ExState &State) {
     switch (Command) {
-        case ExChildClose:
-            if (Running == 0 || PipeId == -1)
-                break;
-            ClosePipe ();
-            {
-                char s[30];
+    case ExChildClose:
+        if (Running == 0 || PipeId == -1)
+            break;
+        ClosePipe();
+        {
+            char s[30];
 
-                sprintf(s, "[aborted, status=%d]", ReturnCode);
-                AddLine(0, -1, s);
-            }
-            return ErOK;
+            sprintf(s, "[aborted, status=%d]", ReturnCode);
+            AddLine(0, -1, s);
+        }
+        return ErOK;
 
-        case ExActivateInOtherWindow:
-            ShowLine(View->Next, Row);
-            return ErOK;
+    case ExActivateInOtherWindow:
+        ShowLine(View->Next, Row);
+        return ErOK;
     }
     return EList::ExecCommand(Command, State);
 }
 
-void ECvsBase::ShowLine (EView *V,int line) {
-    if (line>=0&&line<LineCount&&Lines[line]->File) {
-        if (Lines[line]->Buf!=0) {
-            V->SwitchToModel (Lines[line]->Buf);
-            if (Lines[line]->Line!=-1) {
+void ECvsBase::ShowLine(EView *V, int line) {
+    if (line >= 0 && line < LineCount && Lines[line]->File) {
+        if (Lines[line]->Buf != 0) {
+            V->SwitchToModel(Lines[line]->Buf);
+            if (Lines[line]->Line != -1) {
                 char book[16];
-                sprintf(book,"_CVS.%d",line);
-                Lines[line]->Buf->GotoBookmark (book);
+                sprintf(book, "_CVS.%d", line);
+                Lines[line]->Buf->GotoBookmark(book);
             }
         } else {
             char path[MAXPATH];
-            strcpy (path,Directory);Slash (path,1);strcat (path,Lines[line]->File);
-            if (FileLoad (0,path,0,V)==1) {
-                V->SwitchToModel (ActiveModel);
-                if (Lines[line]->Line!=-1) ((EBuffer *)ActiveModel)->CenterNearPosR (0,Lines[line]->Line);
+            strcpy(path, Directory);
+            Slash(path, 1);
+            strcat(path, Lines[line]->File);
+            if (FileLoad(0, path, 0, V) == 1) {
+                V->SwitchToModel(ActiveModel);
+                if (Lines[line]->Line != -1)((EBuffer *)ActiveModel)->CenterNearPosR(0, Lines[line]->Line);
             }
         }
     }
 }
 
 // Event map - this name is used in config files when defining eventmap
-EEventMap *ECvsBase::GetEventMap () {
-    return FindEventMap ("CVSBASE");
+EEventMap *ECvsBase::GetEventMap() {
+    return FindEventMap("CVSBASE");
 }
 
 // Shown in "Closing xxx..." message when closing model
-void ECvsBase::GetName (char *AName,int MaxLen) {
-    strncpy (AName,Title,MaxLen);
+void ECvsBase::GetName(char *AName, int MaxLen) {
+    strncpy(AName, Title, MaxLen);
 }
 
 // Shown in buffer list
-void ECvsBase::GetInfo (char *AInfo,int MaxLen) {
+void ECvsBase::GetInfo(char *AInfo, int MaxLen) {
     char format[128];
 
-    sprintf (format,"%2d %04d/%03d %s (%%.%is) ",ModelNo,Row,Count,Title,MaxLen-24-(int)strlen (Title));
-    sprintf (AInfo,format,Command);
+    sprintf(format, "%2d %04d/%03d %s (%%.%is) ", ModelNo, Row, Count, Title, MaxLen - 24 - (int)strlen(Title));
+    sprintf(AInfo, format, Command);
 }
 
 // Used to get default directory of model
-void ECvsBase::GetPath (char *APath,int MaxLen) {
-    strncpy (APath,Directory,MaxLen);
-    APath[MaxLen-1]=0;
-    Slash (APath,0);
+void ECvsBase::GetPath(char *APath, int MaxLen) {
+    strncpy(APath, Directory, MaxLen);
+    APath[MaxLen-1] = 0;
+    Slash(APath, 0);
 }
 
 // Normal and short title (normal for window, short for icon in X)
 void ECvsBase::GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen) {
     char format[128];
 
-    sprintf (format,"%s: %%.%is",Title,MaxLen-4-(int)strlen (Title));
-    sprintf (ATitle,format,Command);
-    strncpy (ASTitle,Title,SMaxLen);
-    ASTitle[SMaxLen-1]=0;
+    sprintf(format, "%s: %%.%is", Title, MaxLen - 4 - (int)strlen(Title));
+    sprintf(ATitle, format, Command);
+    strncpy(ASTitle, Title, SMaxLen);
+    ASTitle[SMaxLen-1] = 0;
 }

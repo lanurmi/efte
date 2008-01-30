@@ -18,7 +18,7 @@
 int Hilit_MSG(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine* Line, hlState& State, hsState *StateMap, int *ECol) {
     HILIT_VARS(BF->Mode->fColorize->Colors, Line);
     int is_head = 0, is_quote = 0, is_space = 0, is_tag = 0, is_control = 0;
-    
+
     if (Line->Count > 0) {
         if (State == hsMSG_Header) {
             if (Line->Chars[0] == ' ' || Line->Chars[0] == '\t') is_head = 1;
@@ -27,9 +27,9 @@ int Hilit_MSG(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine* Line,
         }
         if (State == hsMSG_Normal) {
             if (Line->Count >= 2 &&
-                Line->Chars[0] == '-' &&
-                Line->Chars[1] == '-' &&
-                (Line->Count == 2 || Line->Chars[2] == ' '))
+                    Line->Chars[0] == '-' &&
+                    Line->Chars[1] == '-' &&
+                    (Line->Count == 2 || Line->Chars[2] == ' '))
                 is_tag = 1;
             else if (Line->Count >= 2 &&
                      Line->Chars[0] == '.' &&
@@ -53,15 +53,19 @@ int Hilit_MSG(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine* Line,
             else if (Line->Count > 0 && Line->Chars[0] == '\x01')
                 is_control = 1;
             else for (i = 0; i < Line->Count; i++) {
-                if (i < 30 && Line->Chars[i] == ':' && i < Line->Count - 1 && Line->Chars[i+1] == ' ' && !is_space) { is_head = 1; break; }
-                else if (i < 5 && Line->Chars[i] == '>') { is_quote = 1; break; }
-                else if (Line->Chars[i] == '<' ||
-                         (Line->Chars[i] == ' ' && i > 0) ||
-                         Line->Chars[i] == '\t') break;
-                else if (Line->Chars[i] == ' ' || Line->Chars[i] == '\t')
-                    is_space = 0;
-            }
-        }   
+                    if (i < 30 && Line->Chars[i] == ':' && i < Line->Count - 1 && Line->Chars[i+1] == ' ' && !is_space) {
+                        is_head = 1;
+                        break;
+                    } else if (i < 5 && Line->Chars[i] == '>') {
+                        is_quote = 1;
+                        break;
+                    } else if (Line->Chars[i] == '<' ||
+                               (Line->Chars[i] == ' ' && i > 0) ||
+                               Line->Chars[i] == '\t') break;
+                    else if (Line->Chars[i] == ' ' || Line->Chars[i] == '\t')
+                        is_space = 0;
+                }
+        }
     }
     if (is_head) {
         State = hsMSG_Header;
@@ -82,17 +86,16 @@ int Hilit_MSG(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine* Line,
 
     ChColor DefColor = Color;
     int j = 0;
-    
+
     if (BF->Mode->fColorize->Keywords.TotalCount > 0 ||
-        BF->WordCount > 0)
-    { /* words have to be hilited, go slow */
-        for(i = 0; i < Line->Count;) {
+            BF->WordCount > 0) { /* words have to be hilited, go slow */
+        for (i = 0; i < Line->Count;) {
             IF_TAB() else {
                 if (isalpha(*p) || (*p == '_')) {
                     j = 0;
                     while (((i + j) < Line->Count) &&
-                           (isalnum(Line->Chars[i+j]) ||
-                            (Line->Chars[i + j] == '_'))
+                            (isalnum(Line->Chars[i+j]) ||
+                             (Line->Chars[i + j] == '_'))
                           ) j++;
                     if (BF->GetHilitWord(j, Line->Chars + i, Color, 1)) ;
                     else {

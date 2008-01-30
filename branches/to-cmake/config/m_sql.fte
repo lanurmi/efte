@@ -1,5 +1,5 @@
 #
-#
+# SQL mode
 #
 
 colorize SQL {
@@ -124,7 +124,7 @@ colorize SQL {
     h_trans { 0, '$', '', 'String' }
 }
 
-mode SQL: PLAIN {      # SQL Mode
+mode SQL: SOURCE {      # SQL Mode
     FileNameRx          = /\.\cSQL$/;
     HilitOn             = 1;
     Colorizer           = 'SQL';
@@ -139,3 +139,5 @@ mode SQL: PLAIN {      # SQL Mode
     CommentStart        = ' /*';
     CommentEnd          = '*/';
 }
+
+oinclude 'mym_sql.fte';

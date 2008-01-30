@@ -151,9 +151,9 @@ static GC GCs[256];
 static char winTitle[256] = "eFTE";
 static char winSTitle[256] = "eFTE";
 
-static unsigned char* CurSelectionData[3] = {NULL,NULL,NULL};
-static int CurSelectionLen[3] = {0,0,0};
-static int CurSelectionOwn[3] = {0,0,0};
+static unsigned char* CurSelectionData[3] = {NULL, NULL, NULL};
+static int CurSelectionLen[3] = {0, 0, 0};
+static int CurSelectionOwn[3] = {0, 0, 0};
 static Time now;
 
 typedef struct _IncrementalSelectionInfo {
@@ -177,25 +177,25 @@ static int ErrorHandler(Display *, XErrorEvent *ee) {
     return 1;
 }
 
-static Atom GetXClip (int clipboard) {
-    if (clipboard==1) {
+static Atom GetXClip(int clipboard) {
+    if (clipboard == 1) {
         return XA_PRIMARY;
     }
-    if (clipboard==2) {
+    if (clipboard == 2) {
         return XA_SECONDARY;
     }
     return XA_CLIPBOARD;
 }
 
 
-static int GetFTEClip (Atom clip) {
-    if (clip==XA_CLIPBOARD) {
+static int GetFTEClip(Atom clip) {
+    if (clip == XA_CLIPBOARD) {
         return 0;
     }
-    if (clip==XA_PRIMARY) {
+    if (clip == XA_PRIMARY) {
         return 1;
     }
-    if (clip==XA_SECONDARY) {
+    if (clip == XA_SECONDARY) {
         return 2;
     }
     return -1;
@@ -217,8 +217,7 @@ static int AllocBuffer() {
 
 static struct {
     int r, g, b;
-} dcolors[] =
-{
+} dcolors[] = {
     {   0,   0,   0 },  //     black
     {   0,   0, 160 },  // darkBlue
     {   0, 160,   0 },  // darkGreen
@@ -238,17 +237,16 @@ static struct {
 };
 
 static void SetColor(int i) {
-    assert (0 <= i && i <= 15);
+    assert(0 <= i && i <= 15);
 
     if (RGBColorValid [i]) {
         Colors[i].blue  = (RGBColor[i].b << 8) | RGBColor[i].b;
         Colors[i].green = (RGBColor[i].g << 8) | RGBColor[i].g;
         Colors[i].red   = (RGBColor[i].r << 8) | RGBColor[i].r;
-    }
-    else {
-    Colors[i].blue  = (dcolors[i].b << 8) | dcolors[i].b;
-    Colors[i].green = (dcolors[i].g << 8) | dcolors[i].g;
-    Colors[i].red   = (dcolors[i].r << 8) | dcolors[i].r;
+    } else {
+        Colors[i].blue  = (dcolors[i].b << 8) | dcolors[i].b;
+        Colors[i].green = (dcolors[i].g << 8) | dcolors[i].g;
+        Colors[i].red   = (dcolors[i].r << 8) | dcolors[i].r;
     }
     Colors[i].flags = DoRed | DoGreen | DoBlue;
 }
@@ -320,8 +318,7 @@ static int InitXColors() {
     return 0;
 }
 
-static int InitXGCs()
-{
+static int InitXGCs() {
     unsigned int i;
     unsigned long mask = GCForeground | GCBackground;
     XGCValues gcv;
@@ -341,33 +338,31 @@ static int InitXGCs()
 }
 
 #ifdef USE_XMB
-static void try_fontset_load(const char *fs)
-{
+static void try_fontset_load(const char *fs) {
     char *def = NULL;
     char **miss = NULL;
     int nMiss = 0;
 
     if (fontSet)
-	return;
+        return;
 
     if (!fs || !*fs)
-	return;
+        return;
 
     fontSet = XCreateFontSet(display, fs, &miss, &nMiss, &def);
 
     if (fontSet == NULL) {
-	fprintf(stderr, "XFTE Warning: unable to open font \"%s\":\n"
-		" Missing count: %d\n", fs, nMiss);
-	for(int i = 0; i < nMiss; i++)
-	    fprintf(stderr, "  %s\n", miss[i]);
-	if (def != NULL)
-	    fprintf(stderr, " def_ret: %s\n", def);
+        fprintf(stderr, "XFTE Warning: unable to open font \"%s\":\n"
+                " Missing count: %d\n", fs, nMiss);
+        for (int i = 0; i < nMiss; i++)
+            fprintf(stderr, "  %s\n", miss[i]);
+        if (def != NULL)
+            fprintf(stderr, " def_ret: %s\n", def);
     }
 }
 #endif
 
-static int InitXFonts(void)
-{
+static int InitXFonts(void) {
     char *fs = getenv("VIOFONT");
     if (fs == NULL && WindowFont[0] != 0)
         fs = WindowFont;
@@ -375,14 +370,14 @@ static int InitXFonts(void)
     if (!useXMB) {
         fontStruct = NULL;
 
-	if (fs != NULL) {
-	    char *s = 0;
+        if (fs != NULL) {
+            char *s = 0;
 
-	    s = strchr(fs, ',');
-	    if (s != NULL)
-		*s = 0;
-	    fontStruct = XLoadQueryFont(display, fs);
-	}
+            s = strchr(fs, ',');
+            if (s != NULL)
+                *s = 0;
+            fontStruct = XLoadQueryFont(display, fs);
+        }
         if (fontStruct == NULL)
             fontStruct = XLoadQueryFont(display, "8x13");
         if (fontStruct == NULL)
@@ -394,13 +389,13 @@ static int InitXFonts(void)
     }
 #ifdef USE_XMB
     else {
-	try_fontset_load(getenv("VIOFONT"));
-	try_fontset_load(WindowFont);
-	try_fontset_load("-misc-*-r-normal-*");
-	try_fontset_load("*fixed*");
+        try_fontset_load(getenv("VIOFONT"));
+        try_fontset_load(WindowFont);
+        try_fontset_load("-misc-*-r-normal-*");
+        try_fontset_load("*fixed*");
 
-	if (fontSet == NULL)
-	    return -1;
+        if (fontSet == NULL)
+            return -1;
 
         XFontSetExtents *xE = XExtentsOfFontSet(fontSet);
 
@@ -414,8 +409,7 @@ static int InitXFonts(void)
     return 0;
 }
 
-static int SetupXWindow(int argc, char **argv)
-{
+static int SetupXWindow(int argc, char **argv) {
     unsigned long mask;
     XSetWindowAttributes setWindowAttributes;
 
@@ -424,18 +418,18 @@ static int SetupXWindow(int argc, char **argv)
 #endif
 
 #ifdef USE_XTINIT
-    XtAppContext  	app_context;
+    XtAppContext   app_context;
     XtToolkitInitialize();
     app_context = XtCreateApplicationContext();
-    if (( display = XtOpenDisplay(app_context, NULL, argv[0], "efte",
-                            NULL, 0, &argc, argv)) == NULL)
-       DieError(1, "%s:  Can't open display\n", argv[0]);
+    if ((display = XtOpenDisplay(app_context, NULL, argv[0], "efte",
+                                 NULL, 0, &argc, argv)) == NULL)
+        DieError(1, "%s:  Can't open display\n", argv[0]);
 #else
     char *ds = getenv("DISPLAY");
     if (!ds)
-	DieError(1, "$DISPLAY not set? This version of efte must be run under X11.");
+        DieError(1, "$DISPLAY not set? This version of efte must be run under X11.");
     if ((display = XOpenDisplay(ds)) == NULL)
-	DieError(1, "XeFTE Fatal: could not open display: %s!", ds);
+        DieError(1, "XeFTE Fatal: could not open display: %s!", ds);
 #endif
 
     colormap = DefaultColormap(display, DefaultScreen(display));
@@ -461,13 +455,13 @@ static int SetupXWindow(int argc, char **argv)
     i18n_ctx = useI18n ? i18n_open(display, win, &mask) : 0;
 
     if (InitXFonts() != 0)
-	DieError(1, "XeFTE Fatal: could not open any font!");
+        DieError(1, "XeFTE Fatal: could not open any font!");
 
     /* >KeyReleaseMask shouldn't be set for correct key mapping */
     /* we set it anyway, but not pass to XmbLookupString -- mark */
     mask |= ExposureMask | StructureNotifyMask | VisibilityChangeMask |
-        FocusChangeMask | KeyPressMask | KeyReleaseMask |
-        ButtonPressMask | ButtonReleaseMask | ButtonMotionMask | PropertyChangeMask;
+            FocusChangeMask | KeyPressMask | KeyReleaseMask |
+            ButtonPressMask | ButtonReleaseMask | ButtonMotionMask | PropertyChangeMask;
     XSelectInput(display, win, mask);
 
     wm_protocols = XInternAtom(display, "WM_PROTOCOLS", False);
@@ -572,22 +566,23 @@ static int SetupXWindow(int argc, char **argv)
     }
     if (i == ICON_COUNT) {
         // Everything OK, can create property
-        CARD32 *iconBuffer = (CARD32 *)malloc(iconBufferSize * sizeof(CARD32));
+        long *iconBuffer = (long *)malloc(iconBufferSize * sizeof(long));
         if (iconBuffer) {
-            CARD32 *b = iconBuffer;
+            long *b = iconBuffer;
             for (i = 0; i < ICON_COUNT; i++) {
                 XpmImage &xpm = xpmImage[i];
                 CARD32 *&colors = xpmColors[i];
-                *b++ = xpm.width; *b++ = xpm.height;
+                *b++ = xpm.width;
+                *b++ = xpm.height;
                 for (j = 0; j < xpm.width * xpm.height; j++) {
                     *b++ = colors[xpm.data[j]];
                 }
-	    }
-	    Atom at = XInternAtom(display, "_NET_WM_ICON", False);
-	    if (at != None)
-		XChangeProperty(display, win, at,
-				XA_CARDINAL, 32, PropModeReplace,
-				(unsigned char *)iconBuffer, iconBufferSize);
+            }
+            Atom at = XInternAtom(display, "_NET_WM_ICON", False);
+            if (at != None)
+                XChangeProperty(display, win, at,
+                                XA_CARDINAL, 32, PropModeReplace,
+                                (unsigned char *)iconBuffer, iconBufferSize);
             free(iconBuffer);
         }
     }
@@ -645,8 +640,7 @@ int ConSetTitle(char *Title, char *STitle) {
         JustLastDirectory(Title, buf, sizeof(buf));
 
     strncpy(winTitle, "eFTE - ", sizeof(winTitle) - 1);
-    if (buf[0] != 0) // if there is a file/dir name, stick it in here.
-    {
+    if (buf[0] != 0) { // if there is a file/dir name, stick it in here.
         strncat(winTitle, buf, sizeof(winTitle) - 1 - strlen(winTitle));
         strncat(winTitle, " - ", sizeof(winTitle) - 1 - strlen(winTitle));
     }
@@ -678,23 +672,23 @@ void DrawCursor(int Show) {
         if (Show)
             attr ^= insertState ? CursorInsertMask : CursorOverMask;
         if (!useXMB)
-	    XDrawImageString(display, win, GCs[attr],
-			     CursorX * FontCX,
-			     fontStruct->max_bounds.ascent + CursorY * FontCY,
+            XDrawImageString(display, win, GCs[attr],
+                             CursorX * FontCX,
+                             fontStruct->max_bounds.ascent + CursorY * FontCY,
                              (char *)p, 1);
 #ifdef USE_XMB
         else
-	    XmbDrawImageString(display, win, fontSet, GCs[attr],
-			       CursorX * FontCX, FontCYD + CursorY * FontCY,
-			       (char *)p, 1);
+            XmbDrawImageString(display, win, fontSet, GCs[attr],
+                               CursorX * FontCX, FontCYD + CursorY * FontCY,
+                               (char *)p, 1);
 #endif
 #if 0
         if (Show) {
-	    int cs = (CursorStart * FontCY + FontCY / 2) / 100;
-	    int ce = (CursorEnd   * FontCY + FontCY / 2) / 100;
-	    XFillRectangle (display, win, GCs[p[1]],
-	                    CursorX * FontCX, CursorY * FontCY + cs,
-			    FontCX, ce - cs);
+            int cs = (CursorStart * FontCY + FontCY / 2) / 100;
+            int ce = (CursorEnd   * FontCY + FontCY / 2) / 100;
+            XFillRectangle(display, win, GCs[p[1]],
+                           CursorX * FontCX, CursorY * FontCY + cs,
+                           FontCX, ce - cs);
         }
 #endif
     }
@@ -708,7 +702,7 @@ int ConPutBox(int X, int Y, int W, int H, PCell Cell) {
 
 
     if (X >= (int) ScreenCols || Y >= (int) ScreenRows ||
-        X + W > (int) ScreenCols || Y + H > (int) ScreenRows) {
+            X + W > (int) ScreenCols || Y + H > (int) ScreenRows) {
         //fprintf(stderr, "%d %d  %d %d %d %d\n", ScreenCols, ScreenRows, X, Y, W, H);
         return -1;
     }
@@ -719,7 +713,7 @@ int ConPutBox(int X, int Y, int W, int H, PCell Cell) {
         len = W;
         p = CursorXYPos(X, Y + i);
         ps = (unsigned char *) Cell;
-	x = X;
+        x = X;
         while (len > 0) {
             if (!Refresh) {
                 c = CursorXYPos(x, Y + i);
@@ -727,10 +721,9 @@ int ConPutBox(int X, int Y, int W, int H, PCell Cell) {
                 ops = ps;
                 ox = x;
                 olen = len;
-                while ((len > 0) && c[0] == ps[0] && c[1] == ps[1] )
-                {
-                    ps+=2;
-                    c+=2;
+                while ((len > 0) && c[0] == ps[0] && c[1] == ps[1]) {
+                    ps += 2;
+                    c += 2;
                     x++;
                     len--;
                     skip++;
@@ -744,12 +737,13 @@ int ConPutBox(int X, int Y, int W, int H, PCell Cell) {
             }
             p = ps;
             l = 1;
-            temp[0] = *ps++; attr = *ps++;
-            while ((l < len) && ((unsigned char) (ps[1]) == attr)) {
+            temp[0] = *ps++;
+            attr = *ps++;
+            while ((l < len) && ((unsigned char)(ps[1]) == attr)) {
                 temp[l++] = *ps++;
                 ps++;
-	    }
-	    if (!useXMB)
+            }
+            if (!useXMB)
                 XDrawImageString(display, win, GCs[((unsigned)attr) & 0xFF],
                                  x * FontCX, fontStruct->max_bounds.ascent +
                                  (Y + i) * FontCY,
@@ -761,17 +755,18 @@ int ConPutBox(int X, int Y, int W, int H, PCell Cell) {
                                    x * FontCX, FontCYD + (Y + i) * FontCY,
                                    (char *)temp, l);
 #endif
-	    //temp[l] = 0; printf("%s\n", temp);
+            //temp[l] = 0; printf("%s\n", temp);
             len -= l;
             x += l;
-	}
-/*	if (x < ScreenCols - 1) {
-	    printf("XX %d   %d   %d\n", X, x, W);
-	    XFillRectangle(display, win, GCs[15 * 16 + 7],
-			   x * FontCX, (Y + i) * FontCY,
-			   (ScreenCols - x - 1) * FontCX, FontCY);
-	}
-*/        p = CursorXYPos(X, Y + i);
+        }
+        /* if (x < ScreenCols - 1) {
+             printf("XX %d   %d   %d\n", X, x, W);
+             XFillRectangle(display, win, GCs[15 * 16 + 7],
+              x * FontCX, (Y + i) * FontCY,
+              (ScreenCols - x - 1) * FontCX, FontCY);
+         }
+        */
+        p = CursorXYPos(X, Y + i);
         memcpy(p, Cell, W * 2);
         if (i + Y == CursorY)
             DrawCursor(1);
@@ -803,7 +798,7 @@ int ConSetBox(int X, int Y, int W, int H, TCell Cell) {
     int i;
 
     for (i = 0; i < W; i++)
-	B[i] = Cell;
+        B[i] = Cell;
     ConPutLine(X, Y, W, H, B);
     return 0;
 }
@@ -815,18 +810,18 @@ int ConScroll(int Way, int X, int Y, int W, int H, TAttr Fill, int Count) {
     MoveCh(&Cell, ' ', Fill, 1);
     DrawCursor(0);
     if (Way == csUp) {
-	XCopyArea(display, win, win, GCs[0],
-		  X * FontCX,
+        XCopyArea(display, win, win, GCs[0],
+                  X * FontCX,
                   (Y + Count) * FontCY,
                   W * FontCX,
                   (H - Count) * FontCY,
-		  X * FontCX,
+                  X * FontCX,
                   Y * FontCY);
-	for (l = 0; l < H - Count; l++)
-	    memcpy(CursorXYPos(X, Y + l), CursorXYPos(X, Y + l + Count), 2 * W);
+        for (l = 0; l < H - Count; l++)
+            memcpy(CursorXYPos(X, Y + l), CursorXYPos(X, Y + l + Count), 2 * W);
 
-	if (ConSetBox(X, Y + l, W, Count, Cell) == -1)
-	    return -1;
+        if (ConSetBox(X, Y + l, W, Count, Cell) == -1)
+            return -1;
     } else if (Way == csDown) {
         XCopyArea(display, win, win, GCs[0],
                   X * FontCX,
@@ -835,11 +830,11 @@ int ConScroll(int Way, int X, int Y, int W, int H, TAttr Fill, int Count) {
                   (H - Count) * FontCY,
                   X * FontCX,
                   (Y + Count) * FontCY);
-	for (l = H - 1; l >= Count; l--)
+        for (l = H - 1; l >= Count; l--)
             memcpy(CursorXYPos(X, Y + l), CursorXYPos(X, Y + l - Count), 2 * W);
 
-	if (ConSetBox(X, Y, W, Count, Cell) == -1)
-	    return -1;
+        if (ConSetBox(X, Y, W, Count, Cell) == -1)
+            return -1;
     }
     DrawCursor(1);
     return 0;
@@ -862,10 +857,10 @@ int ConSetSize(int X, int Y) {
     }
     MX = ScreenCols;
     if (X < MX)
-	MX = X;
+        MX = X;
     MY = ScreenRows;
     if (Y < MY)
-	MY = Y;
+        MY = Y;
     p = NewBuffer;
     for (i = 0; i < MY; i++) {
         memcpy(p, CursorXYPos(0, i), MX * 2);
@@ -962,12 +957,13 @@ void UpdateWindow(int xx, int yy, int ww, int hh) {
     XFlush(display);
     i = XEventsQueued(display, QueuedAfterReading);
     while (i-- > 0) {
-	XEvent e;
-	XNextEvent(display, &e);
+    XEvent e;
+    XNextEvent(display, &e);
     }
     // sleep(1);*/
 
-    ww /= FontCX; ww += 2;
+    ww /= FontCX;
+    ww += 2;
     hh /= FontCY;
     xx /= FontCX;
     yy /= FontCY;
@@ -978,9 +974,11 @@ void UpdateWindow(int xx, int yy, int ww, int hh) {
      * of some basic behavior of FTE editor
      * THIS IS TEMPORAL FIX AND SHOULD BE SOLVED IN GENERAL WAY !
      */
-    hh *= 3; yy -= hh; hh += hh + 2;
+    hh *= 3;
+    yy -= hh;
+    hh += hh + 2;
     if (yy < 0)
-	yy = 0;
+        yy = 0;
     if (xx + ww > (int)ScreenCols) ww = ScreenCols - xx;
     if (yy + hh > (int)ScreenRows) hh = ScreenRows - yy;
     Refresh = 1;
@@ -999,8 +997,10 @@ void UpdateWindow(int xx, int yy, int ww, int hh) {
 void ResizeWindow(int ww, int hh) {
     int ox = ScreenCols;
     int oy = ScreenRows;
-    ww /= FontCX; if (ww <= 4) ww = 4;
-    hh /= FontCY; if (hh <= 2) hh = 2;
+    ww /= FontCX;
+    if (ww <= 4) ww = 4;
+    hh /= FontCY;
+    if (hh <= 2) hh = 2;
     if ((int)ScreenCols != ww || (int)ScreenRows != hh) {
         Refresh = 0;
         ConSetSize(ww, hh);
@@ -1050,7 +1050,7 @@ static struct {
     { XK_KP_Right,       kbRight | kfGray },
     { XK_KP_End,         kbEnd | kfGray },
     { XK_KP_Down,        kbDown | kfGray },
-    { XK_KP_Next,        kbPgDn| kfGray },
+    { XK_KP_Next,        kbPgDn | kfGray },
     { XK_Num_Lock,       kbNumLock },
     { XK_Caps_Lock,      kbCapsLock },
     { XK_Print,          kbPrtScr },
@@ -1101,8 +1101,12 @@ void ConvertKeyToEvent(KeySym key, KeySym key1, char */*keyname*/, char */*keyna
     Event->What = evNone;
 
     switch (etype) {
-    case KeyPress:   Event->What = evKeyDown; break;
-    case KeyRelease: Event->What = evKeyUp; break;
+    case KeyPress:
+        Event->What = evKeyDown;
+        break;
+    case KeyRelease:
+        Event->What = evKeyUp;
+        break;
     default:
         return ;
     }
@@ -1170,8 +1174,8 @@ void ConvertClickToEvent(int type, int xx, int yy, int button, int state, TEvent
     Event->Mouse.X = xx / FontCX;
     Event->Mouse.Y = yy / FontCY;
     if (Event->What == evMouseMove)
-	if (LastMouseX == Event->Mouse.X
-	    && LastMouseY == Event->Mouse.Y) {
+        if (LastMouseX == Event->Mouse.X
+                && LastMouseY == Event->Mouse.Y) {
             Event->What = evNone;
             return;
         }
@@ -1184,9 +1188,15 @@ void ConvertClickToEvent(int type, int xx, int yy, int button, int state, TEvent
         if (state & Button3Mask) Event->Mouse.Buttons |= 2;
     } else {
         switch (button) {
-        case Button1: Event->Mouse.Buttons |= 1; break;
-        case Button2: Event->Mouse.Buttons |= 4; break;
-        case Button3: Event->Mouse.Buttons |= 2; break;
+        case Button1:
+            Event->Mouse.Buttons |= 1;
+            break;
+        case Button2:
+            Event->Mouse.Buttons |= 4;
+            break;
+        case Button3:
+            Event->Mouse.Buttons |= 2;
+            break;
         case Button4:
         case Button5:
             if (type == ButtonPress) {
@@ -1198,9 +1208,7 @@ void ConvertClickToEvent(int type, int xx, int yy, int button, int state, TEvent
                         Event->Msg.Command = cmVScrollUp; // fix core to use count
                     else
                         Event->Msg.Command = cmVScrollDown;
-                }
-                else
-                {
+                } else {
                     Event->Msg.Param1 = 3;
                     if (button == Button4)
                         Event->Msg.Command = cmVScrollUp;
@@ -1251,14 +1259,14 @@ void ConvertClickToEvent(int type, int xx, int yy, int button, int state, TEvent
 
 void ProcessXEvents(TEvent *Event) {
     XEvent event;
-    XAnyEvent *anyEvent = (XAnyEvent *) &event;
-    XExposeEvent *exposeEvent = (XExposeEvent *) &event;
-    XButtonEvent *buttonEvent = (XButtonEvent *) &event;
-    XKeyEvent *keyEvent = (XKeyEvent *) &event;
+    XAnyEvent *anyEvent = (XAnyEvent *) & event;
+    XExposeEvent *exposeEvent = (XExposeEvent *) & event;
+    XButtonEvent *buttonEvent = (XButtonEvent *) & event;
+    XKeyEvent *keyEvent = (XKeyEvent *) & event;
     XKeyEvent keyEvent1;
-    XConfigureEvent *configureEvent = (XConfigureEvent *) &event;
-    XGraphicsExposeEvent *gexposeEvent = (XGraphicsExposeEvent *) &event;
-    XMotionEvent *motionEvent = (XMotionEvent *) &event;
+    XConfigureEvent *configureEvent = (XConfigureEvent *) & event;
+    XGraphicsExposeEvent *gexposeEvent = (XGraphicsExposeEvent *) & event;
+    XMotionEvent *motionEvent = (XMotionEvent *) & event;
     KeySym key, key1;
     int state;
     char keyName[32];
@@ -1271,7 +1279,7 @@ void ProcessXEvents(TEvent *Event) {
 #else
     //int rc =
 #endif
-        XNextEvent(display, &event);
+    XNextEvent(display, &event);
 
     if (XFilterEvent(&event, None))
         return;
@@ -1298,10 +1306,10 @@ void ProcessXEvents(TEvent *Event) {
 
                     if (send == 0) {
                         // Was sent - remove from memory
-			if (prev_isi)
-			    prev_isi->next = isi->next;
-			else
-			    incrementalSelections = isi->next;
+                        if (prev_isi)
+                            prev_isi->next = isi->next;
+                        else
+                            incrementalSelections = isi->next;
                         XFree(isi->data);
                         delete isi;
                     }
@@ -1314,9 +1322,9 @@ void ProcessXEvents(TEvent *Event) {
 
     switch (event.type) {
     case Expose:
-	//fprintf(stderr, "EXPOSE\tx:%3d  y:%3d  w:%3d  h:%3d\n",
-	//	exposeEvent->x, exposeEvent->y,
-	//	exposeEvent->width, exposeEvent->height);
+        //fprintf(stderr, "EXPOSE\tx:%3d  y:%3d  w:%3d  h:%3d\n",
+        // exposeEvent->x, exposeEvent->y,
+        // exposeEvent->width, exposeEvent->height);
         UpdateWindow(exposeEvent->x,
                      exposeEvent->y,
                      exposeEvent->width,
@@ -1324,29 +1332,29 @@ void ProcessXEvents(TEvent *Event) {
         break;
     case GraphicsExpose:
         /* catch up same events to speed up this a bit */
-	state = XEventsQueued(display, QueuedAfterReading);
+        state = XEventsQueued(display, QueuedAfterReading);
         // printf("Event %d\n", state);
-	while (state-- > 0) {
-	    XEvent e;
-	    XGraphicsExposeEvent *ge = (XGraphicsExposeEvent *) &e;
+        while (state-- > 0) {
+            XEvent e;
+            XGraphicsExposeEvent *ge = (XGraphicsExposeEvent *) & e;
 
-	    if (XCheckTypedWindowEvent(display, win, GraphicsExpose, &e)) {
-		if (gexposeEvent->x == ge->x
-		    && gexposeEvent->y == ge->y
-		    && gexposeEvent->width == ge->width
-		    && gexposeEvent->height == ge->height) {
-		    // fprintf(stderr, "found the same gexpose event\n");
-		    continue;
-		} else {
-		    // fprintf(stderr, "caught different gexpose event\n");
-		    XPutBackEvent(display, &e);
-		}
-	    }
-	    break;
-	}
-	//fprintf(stderr, "GEXPOSE\tx:%3d  y:%3d  w:%3d  h:%3d\n",
-	//	gexposeEvent->x, gexposeEvent->y,
-	//	gexposeEvent->width, gexposeEvent->height);
+            if (XCheckTypedWindowEvent(display, win, GraphicsExpose, &e)) {
+                if (gexposeEvent->x == ge->x
+                        && gexposeEvent->y == ge->y
+                        && gexposeEvent->width == ge->width
+                        && gexposeEvent->height == ge->height) {
+                    // fprintf(stderr, "found the same gexpose event\n");
+                    continue;
+                } else {
+                    // fprintf(stderr, "caught different gexpose event\n");
+                    XPutBackEvent(display, &e);
+                }
+            }
+            break;
+        }
+        //fprintf(stderr, "GEXPOSE\tx:%3d  y:%3d  w:%3d  h:%3d\n",
+        // gexposeEvent->x, gexposeEvent->y,
+        // gexposeEvent->width, gexposeEvent->height);
         UpdateWindow(gexposeEvent->x,
                      gexposeEvent->y,
                      gexposeEvent->width,
@@ -1354,8 +1362,8 @@ void ProcessXEvents(TEvent *Event) {
         break;
     case ConfigureNotify:
         while ((XPending(display) > 0) &&
-               XCheckTypedWindowEvent(display, win,
-                                      ConfigureNotify, &event))
+                XCheckTypedWindowEvent(display, win,
+                                       ConfigureNotify, &event))
             XSync(display, 0);
         ResizeWindow(configureEvent->width, configureEvent->height);
         Event->What = evCommand;
@@ -1382,7 +1390,7 @@ void ProcessXEvents(TEvent *Event) {
         if (!i18n_ctx || event.type == KeyRelease)
             XLookupString(keyEvent, keyName, sizeof(keyName), &key, 0);
         else {
-	    i18n_lookup_sym(keyEvent, keyName, sizeof(keyName), &key, i18n_ctx->xic);
+            i18n_lookup_sym(keyEvent, keyName, sizeof(keyName), &key, i18n_ctx->xic);
             if (!key)
                 break;
         }
@@ -1398,156 +1406,153 @@ void ProcessXEvents(TEvent *Event) {
         break;
     case ClientMessage:
         if (event.xclient.message_type == wm_protocols
-            && event.xclient.format == 32
-            && (Atom)event.xclient.data.l[0] == wm_delete_window)
-        {
+                && event.xclient.format == 32
+                && (Atom)event.xclient.data.l[0] == wm_delete_window) {
             Event->What = evCommand;
             Event->Msg.Command = cmClose;
         }
         break;
-    case SelectionClear:
-        {
-            int clip = GetFTEClip(event.xselectionclear.selection);
-            if (clip >= 0) {
-                Window owner = XGetSelectionOwner(display, GetXClip(clip));
-                if (owner != win) {
-                    if (CurSelectionData[clip] != NULL)
-                        free(CurSelectionData[clip]);
-                    CurSelectionData[clip] = NULL;
-                    CurSelectionLen[clip] = 0;
-                    CurSelectionOwn[clip] = 0;
-                }
+    case SelectionClear: {
+        int clip = GetFTEClip(event.xselectionclear.selection);
+        if (clip >= 0) {
+            Window owner = XGetSelectionOwner(display, GetXClip(clip));
+            if (owner != win) {
+                if (CurSelectionData[clip] != NULL)
+                    free(CurSelectionData[clip]);
+                CurSelectionData[clip] = NULL;
+                CurSelectionLen[clip] = 0;
+                CurSelectionOwn[clip] = 0;
             }
         }
-        break;
-    case SelectionRequest:
-        {
-            // SelectionRequest:
-            //   owner     - selection owner (should be fte window)
-            //   selection - selection (clipboard)
-            //   target    - target type to which the selection should be converted
-            //   property  - target property - place data to this property of requestor's window, set correct type
-            //   requestor - selection requestor
-            //   time      - request time - owner should provide selection if it owned it at this time
-            //  Note: Old clients use None property - in this case the right property is stored in target field.
-            //  On error refuse request by sending notification with None property.
-            //
-            // SelectionNotify:
-            //   requestor -
-            //   selection - should be copied from request
-            //   target    - -- copy --
-            //   property  - -- copy -- or None if on error - request could not be fulfilled
-            //   time      - -- copy --
+    }
+    break;
+    case SelectionRequest: {
+        // SelectionRequest:
+        //   owner     - selection owner (should be fte window)
+        //   selection - selection (clipboard)
+        //   target    - target type to which the selection should be converted
+        //   property  - target property - place data to this property of requestor's window, set correct type
+        //   requestor - selection requestor
+        //   time      - request time - owner should provide selection if it owned it at this time
+        //  Note: Old clients use None property - in this case the right property is stored in target field.
+        //  On error refuse request by sending notification with None property.
+        //
+        // SelectionNotify:
+        //   requestor -
+        //   selection - should be copied from request
+        //   target    - -- copy --
+        //   property  - -- copy -- or None if on error - request could not be fulfilled
+        //   time      - -- copy --
 
-            static unsigned char empty[] = "";
-            XEvent notify;
-            Bool notifySent = False;
-            int clip = GetFTEClip(event.xselectionrequest.selection);
+        static unsigned char empty[] = "";
+        XEvent notify;
+        Bool notifySent = False;
+        int clip = GetFTEClip(event.xselectionrequest.selection);
 
-            notify.type = SelectionNotify;
-            notify.xselection.requestor = event.xselectionrequest.requestor;
-            notify.xselection.selection = event.xselectionrequest.selection;
-            notify.xselection.target = event.xselectionrequest.target;
-            notify.xselection.time = event.xselectionrequest.time;
-            // Prefill for "unknown/bad request" case
-            notify.xselection.property = None;
+        notify.type = SelectionNotify;
+        notify.xselection.requestor = event.xselectionrequest.requestor;
+        notify.xselection.selection = event.xselectionrequest.selection;
+        notify.xselection.target = event.xselectionrequest.target;
+        notify.xselection.time = event.xselectionrequest.time;
+        // Prefill for "unknown/bad request" case
+        notify.xselection.property = None;
 
-            if (clip >= 0) {
-                if (event.xselectionrequest.target == proptype_targets) {
-                    // Return targets - to what types data can be rendered
-                    Atom type_list[] = {
-                        XA_STRING,
-                        proptype_text
+        if (clip >= 0) {
+            if (event.xselectionrequest.target == proptype_targets) {
+                // Return targets - to what types data can be rendered
+                Atom type_list[] = {
+                    XA_STRING,
+                    proptype_text
 #ifdef USE_XMB
-                        , proptype_compound_text
+                    , proptype_compound_text
 #ifdef X_HAVE_UTF8_STRING
-                        , proptype_utf8_string
+                    , proptype_utf8_string
 #endif
 #endif
-		    };
+                };
 
-                    XChangeProperty(display,
-                                    event.xselectionrequest.requestor,
-                                    event.xselectionrequest.property,
-                                    XA_ATOM,
-                                    32, PropModeReplace,
-                                    (unsigned char *)&type_list, sizeof(type_list) / sizeof(*type_list));
-                    notify.xselection.property = event.xselectionrequest.property;
+                XChangeProperty(display,
+                                event.xselectionrequest.requestor,
+                                event.xselectionrequest.property,
+                                XA_ATOM,
+                                32, PropModeReplace,
+                                (unsigned char *)&type_list, sizeof(type_list) / sizeof(*type_list));
+                notify.xselection.property = event.xselectionrequest.property;
 #ifdef USE_XMB
-                } else if (event.xselectionrequest.target == XA_STRING) {
+            } else if (event.xselectionrequest.target == XA_STRING) {
 #else
-                } else if (event.xselectionrequest.target == XA_STRING || event.xselectionrequest.target == proptype_text) {
+            } else if (event.xselectionrequest.target == XA_STRING || event.xselectionrequest.target == proptype_text) {
 #endif
-                    // No conversion, just the string we have (in fact we should convert to ISO Latin-1)
-                    SendSelection(&notify, event.xselectionrequest.property, XA_STRING,
-                                  (CurSelectionData[clip] ? CurSelectionData[clip] : empty), CurSelectionLen[clip], False);
-                    notifySent = True;
+                // No conversion, just the string we have (in fact we should convert to ISO Latin-1)
+                SendSelection(&notify, event.xselectionrequest.property, XA_STRING,
+                              (CurSelectionData[clip] ? CurSelectionData[clip] : empty), CurSelectionLen[clip], False);
+                notifySent = True;
 #ifdef USE_XMB
-                } else {
-                    // Convert to requested type
-                    XTextProperty text_property;
-                    char *text_list[1] = {(char *)(CurSelectionData[clip] ? CurSelectionData[clip] : empty)};
+            } else {
+                // Convert to requested type
+                XTextProperty text_property;
+                char *text_list[1] = {(char *)(CurSelectionData[clip] ? CurSelectionData[clip] : empty)};
 
-                    XICCEncodingStyle style =
-                        event.xselectionrequest.target == XA_STRING ? XStringStyle :
-                        event.xselectionrequest.target == proptype_text ? XStdICCTextStyle :
-                        event.xselectionrequest.target == proptype_compound_text ? XCompoundTextStyle :
+                XICCEncodingStyle style =
+                    event.xselectionrequest.target == XA_STRING ? XStringStyle :
+                    event.xselectionrequest.target == proptype_text ? XStdICCTextStyle :
+                    event.xselectionrequest.target == proptype_compound_text ? XCompoundTextStyle :
 #ifdef X_HAVE_UTF8_STRING
-                        event.xselectionrequest.target == proptype_utf8_string ? XUTF8StringStyle :
+                    event.xselectionrequest.target == proptype_utf8_string ? XUTF8StringStyle :
 #endif
-                        (XICCEncodingStyle)-1;
+                    (XICCEncodingStyle) - 1;
 
-                    if (style != -1) {
-                        // Can convert
-                        if (XmbTextListToTextProperty(display, text_list, 1, style, &text_property) == Success) {
-                            if (text_property.format == 8) {
-                                // SendSelection supports only 8-bit data (should be always, just safety check)
-                                SendSelection(&notify, event.xselectionrequest.property, text_property.encoding,
-                                              text_property.value, text_property.nitems, True);
-                                notifySent = True;
-                            } else {
-                                // Bad format - just cleanup
-                                XFree(text_property.value);
-                            }
+                if (style != -1) {
+                    // Can convert
+                    if (XmbTextListToTextProperty(display, text_list, 1, style, &text_property) == Success) {
+                        if (text_property.format == 8) {
+                            // SendSelection supports only 8-bit data (should be always, just safety check)
+                            SendSelection(&notify, event.xselectionrequest.property, text_property.encoding,
+                                          text_property.value, text_property.nitems, True);
+                            notifySent = True;
+                        } else {
+                            // Bad format - just cleanup
+                            XFree(text_property.value);
                         }
                     }
+                }
 #endif
-                }
-            }
-
-            if (!notifySent) XSendEvent(display, notify.xselection.requestor, False, 0L, &notify);
-
-            // Now clean too old incremental selections
-            IncrementalSelectionInfo *isi = incrementalSelections, *prev_isi = NULL;
-            time_t tnow = time(NULL);
-
-            while (isi) {
-                if (isi->lastUse + SELECTION_MAX_AGE < tnow) {
-                    IncrementalSelectionInfo *next_isi = isi->next;
-                    if (prev_isi) prev_isi->next = isi->next; else incrementalSelections = isi->next;
-                    XFree(isi->data);
-                    delete isi;
-                    isi = next_isi;
-                } else {
-                    prev_isi = isi;
-                    isi = isi->next;
-                }
             }
         }
-        break;
+
+        if (!notifySent) XSendEvent(display, notify.xselection.requestor, False, 0L, &notify);
+
+        // Now clean too old incremental selections
+        IncrementalSelectionInfo *isi = incrementalSelections, *prev_isi = NULL;
+        time_t tnow = time(NULL);
+
+        while (isi) {
+            if (isi->lastUse + SELECTION_MAX_AGE < tnow) {
+                IncrementalSelectionInfo *next_isi = isi->next;
+                if (prev_isi) prev_isi->next = isi->next;
+                else incrementalSelections = isi->next;
+                XFree(isi->data);
+                delete isi;
+                isi = next_isi;
+            } else {
+                prev_isi = isi;
+                isi = isi->next;
+            }
+        }
+    }
+    break;
     }
 }
 
-static void FlashCursor ()
-{
+static void FlashCursor() {
     struct timeval tv;
-    if (!CursorBlink || gettimeofday (&tv, NULL) != 0)
+    if (!CursorBlink || gettimeofday(&tv, NULL) != 0)
         return;
 
     unsigned long OldTime = CursorLastTime;
     CursorLastTime = tv.tv_sec * 1000 + tv.tv_usec / 1000;
     if (OldTime / CursorFlashInterval != CursorLastTime / CursorFlashInterval)
-	DrawCursor(CursorVisible);
+        DrawCursor(CursorVisible);
 }
 
 static TEvent Pending = { evNone };
@@ -1579,7 +1584,7 @@ int ConGetEvent(TEventMask EventMask, TEvent *Event, int WaitTime, int Delete) {
 
     // We can't sleep for too much since we have to flash the cursor
     if (CursorBlink && ((WaitTime == -1)
-			|| (WaitTime > (int)CursorFlashInterval))
+                        || (WaitTime > (int)CursorFlashInterval))
        )
         WaitTime = CursorFlashInterval;
 
@@ -1587,7 +1592,7 @@ int ConGetEvent(TEventMask EventMask, TEvent *Event, int WaitTime, int Delete) {
     while (Event->What == evNone) {
         Event->What = evNone;
         while (XPending(display) > 0) {
-	    FlashCursor();
+            FlashCursor();
             ProcessXEvents(Event);
             if (Event->What != evNone) {
                 while ((Event->What == evMouseMove) && (Queued.What == evNone)) {
@@ -1627,12 +1632,11 @@ int ConGetEvent(TEventMask EventMask, TEvent *Event, int WaitTime, int Delete) {
             }
         } else if ((WaitTime == -1 || WaitTime > MouseAutoRepeat) && (LastMouseEvent.What == evMouseDown || LastMouseEvent.What == evMouseMove)
                    &&
-                   (LastMouseEvent.Mouse.Buttons) && (EventMask & evMouse))
-        {
+                   (LastMouseEvent.Mouse.Buttons) && (EventMask & evMouse)) {
             timeout.tv_sec = 0;
             timeout.tv_usec = MouseAutoRepeat * 1000;
             rc = select(sizeof(fd_set) * 8,
-                        FD_SET_CAST() &read_fds, NULL, NULL,
+                        FD_SET_CAST() & read_fds, NULL, NULL,
                         &timeout);
             if (rc == 0) {
                 LastMouseEvent.What = evMouseAuto;
@@ -1641,13 +1645,13 @@ int ConGetEvent(TEventMask EventMask, TEvent *Event, int WaitTime, int Delete) {
             }
         } else if (WaitTime == -1) {
             rc = select(sizeof(fd_set) * sizeof(char),
-                        FD_SET_CAST() &read_fds, NULL, NULL,
+                        FD_SET_CAST() & read_fds, NULL, NULL,
                         NULL);
         } else {
             timeout.tv_sec = 0;
             timeout.tv_usec = WaitTime * 1000 + 1;
             rc = select(sizeof(fd_set) * sizeof(char),
-                        FD_SET_CAST() &read_fds, NULL, NULL,
+                        FD_SET_CAST() & read_fds, NULL, NULL,
                         &timeout);
         }
 
@@ -1804,7 +1808,7 @@ static int ConvertSelection(Atom selection, Atom type, int *len, char **data) {
 
         // Now read data
         pos = 0;
-        while(1) {
+        while (1) {
             // Wait for new value notification
             do {
                 if (!WaitForXEvent(PropertyNotify, &event)) {
@@ -1991,13 +1995,13 @@ GUI::GUI(int &argc, char **argv, int XSize, int YSize) {
                    || (strcmp(argv[c], "--noxmb") == 0))
             useXMB = 0;
         else if ((strcmp(argv[c], "-no18n") == 0)
-                   || (strcmp(argv[c], "--noi18n") == 0))
+                 || (strcmp(argv[c], "--noi18n") == 0))
             useI18n = 0;
         else if (strcmp(argv[c], "-name") == 0) {
             if (c + 1 < argc) {
-                strncpy (res_name, argv [++c], sizeof (res_name));
+                strncpy(res_name, argv [++c], sizeof(res_name));
                 res_name[sizeof(res_name)-1] = '\0'; // ensure termination
-	    }
+            }
         } else
             argv[o++] = argv[c];
     }
@@ -2005,7 +2009,7 @@ GUI::GUI(int &argc, char **argv, int XSize, int YSize) {
     argv[argc] = 0;
 
     if (::ConInit(XSize, YSize) == 0
-        && SetupXWindow(argc, argv) == 0)
+            && SetupXWindow(argc, argv) == 0)
         gui = this;
     else
         gui = NULL;
@@ -2016,17 +2020,17 @@ GUI::GUI(int &argc, char **argv, int XSize, int YSize) {
 GUI::~GUI() {
     i18n_destroy(&i18n_ctx);
     for (int i = 0; i < 256; i++)
-	XFreeGC(display, GCs[i]);
+        XFreeGC(display, GCs[i]);
 #ifdef USE_XMB
     if (fontSet)
-	XFreeFontSet(display, fontSet);
+        XFreeFontSet(display, fontSet);
 #endif
     if (fontStruct)
         XFreeFont(display, fontStruct);
     XDestroyWindow(display, win);
     XCloseDisplay(display);
 
-    for (int i=0; i<3; i++) {
+    for (int i = 0; i < 3; i++) {
         if (CurSelectionData[i] != NULL) {
             free(CurSelectionData[i]);
         }
@@ -2160,7 +2164,7 @@ int GUI::RunProgram(int mode, char *Command) {
         strlcat(Cmd, " -ls &", sizeof(Cmd));
     else {
         strlcat(Cmd, " -e ", sizeof(Cmd));
-	strlcat(Cmd, Command, sizeof(Cmd));
+        strlcat(Cmd, Command, sizeof(Cmd));
         if (mode == RUN_ASYNC)
             strlcat(Cmd, " &", sizeof(Cmd));
     }
@@ -2168,10 +2172,10 @@ int GUI::RunProgram(int mode, char *Command) {
 }
 
 char ConGetDrawChar(int idx) {
-    static const char *tab=NULL;
+    static const char *tab = NULL;
 
     if (!tab) {
-        tab=GetGUICharacters ("X11","\x0D\x0C\x0E\x0B\x12\x19____+>\x1F\x01\x12 ");
+        tab = GetGUICharacters("X11", "\x0D\x0C\x0E\x0B\x12\x19____+>\x1F\x01\x12 ");
     }
     assert(idx >= 0 && idx < (int) strlen(tab));
 

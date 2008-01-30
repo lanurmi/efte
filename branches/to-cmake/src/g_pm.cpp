@@ -123,13 +123,13 @@ public:
     int sbVstart, sbVamount, sbVtotal;
     int sbHstart, sbHamount, sbHtotal;
     bool insertState;
-    
+
     HWND hwndView;
     HWND hwndVscroll, hwndHscroll;
     HWND hwndWorker;
     PMData *pmData;
     int OldMouseX, OldMouseY;
-    
+
     GViewPeer(GView *view, int XSize, int YSize);
     ~GViewPeer();
 
@@ -141,14 +141,14 @@ public:
 
     int ConSetSize(int X, int Y);
     int ConQuerySize(int *X, int *Y);
-    
+
     int ConSetCursorPos(int X, int Y);
     int ConQueryCursorPos(int *X, int *Y);
     int ConShowCursor();
     int ConHideCursor();
     int ConCursorVisible();
     void ConSetInsertState(bool insert);
-    
+
     int QuerySbVPos();
     int SetSbVPos(int Start, int Amount, int Total);
     int SetSbHPos(int Start, int Amount, int Total);
@@ -167,13 +167,13 @@ public:
     HWND menuBar;
     HWND hwndToolBar;
     PFNWP oldFrameProc;
-    
+
     GFramePeer(GFrame *aFrame, int Width, int Height);
     ~GFramePeer();
-    
+
     int ConSetTitle(char *Title, char *STitle);
     int ConGetTitle(char *Title, int MaxLen, char *STitle, int SMaxLen);
-    
+
     int ConSetSize(int X, int Y);
     int ConQuerySize(int *X, int *Y);
     void MapFrame();
@@ -229,9 +229,9 @@ HMQ hmq = 0;
 HMQ hmqW = 0;
 HMTX hmtxPMData = 0;
 ULONG cxScreen, cyScreen,
-      cyTitleBar, //cyMenuBar,
-      cxBorder, cyBorder,
-      cxScrollBar, cyScrollBar;
+cyTitleBar, //cyMenuBar,
+cxBorder, cyBorder,
+cxScrollBar, cyScrollBar;
 SHORT reportSize = 1;
 TEvent EventBuf = { evNone };
 HWND hwndCreatorUser, hwndCreatorWorker;
@@ -244,8 +244,7 @@ struct {
     HBITMAP handle;
     int cmd;
     int flags;
-} tools[] =
-{
+} tools[] = {
 //    { 101, 0, ExExitEditor, MIS_BITMAP },
 //    { 0, 0, 0, MIS_SEPARATOR },
     { 102, 0, ExFileOpen, MIS_BITMAP },
@@ -278,16 +277,16 @@ HWND CreateToolBar(HWND parent, HWND owner, int id) {
     int i;
     MENUITEM item;
     HPS ps;
-    
+
     menu = WinCreateWindow(parent,
                            WC_MENU, "menu", WS_VISIBLE | MS_ACTIONBAR,
                            0, 0, 0, 0,
                            owner, HWND_TOP, id, 0, 0);
 
     //WinEnableWindowUpdate(hmenu, FALSE);
-    
+
     ps = WinGetPS(menu);
-    for (i = 0; i < sizeof(tools)/sizeof(tools[0]); i++) {
+    for (i = 0; i < sizeof(tools) / sizeof(tools[0]); i++) {
         if (tools[i].handle == 0 && (tools[i].flags & MIS_BITMAP)) {
             tools[i].handle = GpiLoadBitmap(ps, NULLHANDLE, tools[i].id, 0, 0);
         }
@@ -310,8 +309,7 @@ HWND CreateToolBar(HWND parent, HWND owner, int id) {
 
 #define CMD(x) ((x) + 16384 + 8192)
 
-ToolBarItem tools[] =
-{
+ToolBarItem tools[] = {
     //   { tiBITMAP, 101, CMD(ExExitEditor), 0, 0 },
     { tiBITMAP, 102, CMD(ExFileOpen), 0, 0 },
     { tiBITMAP, 103, CMD(ExFileSave), 0, 0 },
@@ -350,17 +348,16 @@ HWND CreateToolBar(HWND parent, HWND owner, int id) {
     }
 
     hps = WinGetPS(parent);
-    
-    for (i = 0; i < sizeof(tools)/sizeof(tools[0]); i++)
-    {
+
+    for (i = 0; i < sizeof(tools) / sizeof(tools[0]); i++) {
         if (tools[i].hBitmap == 0 && (tools[i].ulType == tiBITMAP))
             tools[i].hBitmap = GpiLoadBitmap(hps, NULLHANDLE, tools[i].ulId, 0, 0);
     }
-    
+
     WinReleasePS(hps);
-    
+
     return CreateToolBar(parent, owner, id,
-                         sizeof(tools)/sizeof(tools[0]),
+                         sizeof(tools) / sizeof(tools[0]),
                          tools);
 }
 
@@ -372,14 +369,14 @@ HWND CreatePMMenu(HWND parent, HWND owner, int menu, int id, int style) {
     MENUITEM item;
     char s[256];
     char *p;
-    
-    hmenu = WinCreateWindow(parent, 
+
+    hmenu = WinCreateWindow(parent,
                             WC_MENU, "menu", style & ~MS_CONDITIONALCASCADE,
-                            0, 0, 0, 0, 
+                            0, 0, 0, 0,
                             owner, HWND_TOP, id, 0, 0);
-    
+
     //WinEnableWindowUpdate(hmenu, FALSE);
-    
+
     for (i = 0; i < Menus[menu].Count; i++) {
         memset((void *)&item, 0, sizeof(item));
         item.iPosition = i;
@@ -410,9 +407,9 @@ HWND CreatePMMenu(HWND parent, HWND owner, int menu, int id, int style) {
         if (Menus[menu].Items[i].Name) {
             strcpy(s, Menus[menu].Items[i].Name);
             p = strchr(s, '&');
-            if (p) 
+            if (p)
                 (*p) = '~';
-            p = (char *)&s;
+            p = (char *) & s;
         } else {
             p = 0;
         }
@@ -431,7 +428,7 @@ HWND CreatePMMainMenu(HWND parent, HWND owner, char *Name) {
     int id = GetMenuId(Name);
     HWND main;
 
-    assert (id != -1);
+    assert(id != -1);
 
     main = CreatePMMenu(parent, owner, id, FID_MENU, MS_ACTIONBAR);
     return main;
@@ -443,11 +440,11 @@ void InsertHistory(HWND hwnd, int id, int maxlen) {
     int i, count;
     char *str;
     count = CountInputHistory(id);
-    
+
     str = (char *)malloc(maxlen + 1);
     if (str == 0)
         return;
-    
+
     for (i = 0; i < count; i++) {
         if (GetInputHistory(id, str, maxlen, i + 1) == 1)
             WinInsertLboxItem(hwnd, LIT_END, str);
@@ -459,12 +456,12 @@ MRESULT EXPENTRY FileDlgProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
     FILEDLG *dlg;
 
     dlg = (FILEDLG *)WinQueryWindowULong(hwnd, QWL_USER);
-    
+
     switch (msg) {
     case WM_INITDLG:
         WinSendMsg(hwnd, WM_SETICON,
                    MPFROMLONG(WinLoadPointer(HWND_DESKTOP, 0, 1)), 0);
-        
+
         InsertHistory(WinWindowFromID(hwnd, DID_FILENAME_ED), HIST_PATH, MAXPATH);
         WinInvalidateRect(hwnd, 0, TRUE);
         WinRestoreWindowPos("eFTEPM",
@@ -479,7 +476,7 @@ MRESULT EXPENTRY FileDlgProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
                               ((dlg->fl & FDS_SAVEAS_DIALOG) ? "FileSaveDlg" : "FileOpenDlg"),
                               hwnd);
             break;
-            
+
         case DID_CANCEL:
             WinShowWindow(hwnd, FALSE);
             WinStoreWindowPos("eFTEPM",
@@ -500,9 +497,9 @@ MRESULT EXPENTRY FileDlgProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
 
 int DLGGetFile(GView *View, const char *Prompt, unsigned int BufLen, char *FileName, int Flags) {
     FILEDLG dlg;
-    
+
     memset((void *)&dlg, 0, sizeof(dlg));
-    
+
     dlg.cbSize = sizeof(dlg);
     dlg.fl =
         /*FDS_CENTER |*/ FDS_CUSTOM |
@@ -516,7 +513,7 @@ int DLGGetFile(GView *View, const char *Prompt, unsigned int BufLen, char *FileN
     if (!LONGFROMMR(WinSendMsg(View->Parent->Peer->hwndFrame,
                                UWM_FILEDIALOG, MPFROMP(&dlg), 0)))
         return 0;
-    
+
     if (dlg.lReturn == DID_OK) {
         strncpy(FileName, dlg.szFullFile, BufLen);
         FileName[BufLen - 1] = 0;
@@ -552,12 +549,12 @@ static int DoChoice(HWND hwndFrame, ChoiceInfo *choice) {
     int cp, cd;
     char msgbox[100];
     int SPC = 4;
-    
+
     sprintf(msgbox, "MsgBox: %s", choice->Title);
-    
+
     cxBorder = WinQuerySysValue(HWND_DESKTOP, SV_CXDLGFRAME);
     cyBorder = WinQuerySysValue(HWND_DESKTOP, SV_CYDLGFRAME);
-    
+
     hwndDlg = WinCreateStdWindow(HWND_DESKTOP,
                                  WS_VISIBLE,
                                  &flFrame,
@@ -566,12 +563,12 @@ static int DoChoice(HWND hwndFrame, ChoiceInfo *choice) {
                                  0,
                                  0,
                                  0, 0);
-    
+
     WinSendMsg(hwndDlg, WM_SETICON,
                MPFROMLONG(WinLoadPointer(HWND_DESKTOP, 0, 1)), 0);
-    
+
     WinSetOwner(hwndDlg, hwndFrame);
-    
+
     x = SPC;
     for (i = 0; i < choice->NSel; i++) {
         char button[60];
@@ -579,26 +576,26 @@ static int DoChoice(HWND hwndFrame, ChoiceInfo *choice) {
         p = strchr(button, '&');
         if (p)
             *p = '~';
-        
+
         hwndButton[i] =
             WinCreateWindow(hwndDlg,
                             WC_BUTTON,
                             button,
-                            WS_VISIBLE | BS_PUSHBUTTON | BS_AUTOSIZE | ((i == 0) ? BS_DEFAULT | WS_TABSTOP | WS_GROUP: 0),
+                            WS_VISIBLE | BS_PUSHBUTTON | BS_AUTOSIZE | ((i == 0) ? BS_DEFAULT | WS_TABSTOP | WS_GROUP : 0),
                             cxBorder + x, SPC + cyBorder, 0, 0,
-                            hwndDlg, ((i == 0) ? HWND_TOP: hwndButton[i - 1]),
+                            hwndDlg, ((i == 0) ? HWND_TOP : hwndButton[i - 1]),
                             200 + i,
                             NULL, NULL);
-        
+
         WinQueryWindowPos(hwndButton[i], &swp);
         x += SPC + swp.cx;
     }
-    
+
     fmt = va_arg(choice->ap, char *);
     vsprintf(msg, fmt, choice->ap);
     strncpy((PCHAR)Prompt, msg, sizeof(Prompt));
     Prompt[sizeof(Prompt) - 1] = 0;
-    
+
     hwndStatic = WinCreateWindow(hwndDlg,
                                  WC_STATIC,
                                  Prompt,
@@ -607,23 +604,23 @@ static int DoChoice(HWND hwndFrame, ChoiceInfo *choice) {
                                  hwndDlg, HWND_TOP,
                                  100,
                                  NULL, NULL);
-    
+
     WinRestoreWindowPos("eFTEPM", msgbox, hwndDlg);
-    
+
     xw = cxScreen / 2;
     if (x - SPC > xw)
         xw = x - SPC;
-    
+
     yw = 0;
     ps = WinGetPS(hwndStatic);
-    
+
     cp = 0;
     for (;;) {
         tr.xLeft = 0;
         tr.xRight = xw;
         tr.yTop = cyScreen / 2;
         tr.yBottom = 0;
-        
+
         cd = WinDrawText(ps, -1, (Prompt + cp),
                          &tr,
                          0, 0,
@@ -634,56 +631,56 @@ static int DoChoice(HWND hwndFrame, ChoiceInfo *choice) {
         cp += cd;
         yw += tr.yTop - tr.yBottom;
     }
-    
+
     WinReleasePS(ps);
-    
+
     WinSetWindowPos(hwndStatic, 0,
                     cxBorder + SPC,
                     cyBorder + SPC + swp.cy + SPC,
                     xw, yw, SWP_MOVE | SWP_SIZE);
-    
+
     WinQueryWindowPos(hwndStatic, &swp1);
     WinQueryWindowPos(hwndButton[0], &swp);
-    
+
     nx = cxBorder + SPC + xw + SPC + cxBorder;
     ny = cyBorder + SPC + swp.cy + SPC + swp1.cy + SPC + cyTitleBar + cyBorder;
-    
+
     WinQueryWindowPos(hwndDlg, &swp);
-    
+
     x = swp.x;
     y = swp.y + swp.cy - ny;
-    
+
     if (y < cyBorder) y = - cyBorder;
     if (y + ny >= cyScreen + cyBorder) y = cyScreen - ny + cyBorder;
     if (x + nx >= cxScreen + cxBorder) x = cxScreen - nx + cxBorder;
     if (x < -cxBorder) x = -cxBorder;
-    
+
     WinSetWindowPos(hwndDlg, 0,
                     x, y,
                     nx, ny,
                     SWP_SIZE | SWP_SHOW | SWP_MOVE | SWP_ACTIVATE);
-    
+
     WinSubclassWindow(hwndDlg, (PFNWP) WinDefDlgProc);
-    
+
     if (choice->Flags & (GPC_ERROR | GPC_FATAL))
         WinAlarm(HWND_DESKTOP, WA_ERROR);
     else if (choice->Flags & (GPC_CONFIRM))
         WinAlarm(HWND_DESKTOP, WA_NOTE);
     else if (choice->Flags & (GPC_WARNING))
         WinAlarm(HWND_DESKTOP, WA_WARNING);
-    
+
     rc = LONGFROMMR(WinSendMsg(hwndFrame, UWM_PROCESSDLG,
                                MPFROMLONG(hwndDlg), 0));
-    
+
     WinStoreWindowPos("eFTEPM", msgbox, hwndDlg);
-    
+
     WinSendMsg(hwndFrame, UWM_DESTROYHWND, MPFROMLONG(hwndDlg), 0);
     if (rc == DID_CANCEL || rc == DID_ERROR)
         return choice->NSel - 1;
-    
+
     if (rc >= 200 && rc < choice->NSel + 200)
         return rc - 200;
-    
+
     return 0;
 }
 
@@ -710,7 +707,7 @@ MRESULT EXPENTRY PromptDlgProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
     case WM_INITDLG:
         WinSendMsg(hwnd, WM_SETICON,
                    MPFROMLONG(WinLoadPointer(HWND_DESKTOP, 0, 1)), 0);
-        
+
         WinSendDlgItemMsg(hwnd, IDE_FIELD, EM_SETTEXTLIMIT, MPFROMLONG(PromptInfo.MaxLen), 0);
         WinSetDlgItemText(hwnd, IDE_FIELD, PromptInfo.Entry);
         InsertHistory(WinWindowFromID(hwnd, IDE_FIELD), PromptInfo.HistId, PromptInfo.MaxLen);
@@ -719,19 +716,19 @@ MRESULT EXPENTRY PromptDlgProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
         WinInvalidateRect(hwnd, 0, TRUE);
         WinRestoreWindowPos("eFTEPM", "PromptDlg", hwnd);
         return WinDefDlgProc(hwnd, msg, mp1, mp2);
-        
+
     case WM_COMMAND:
         switch (SHORT1FROMMP(mp1)) {
         case DID_OK:
             WinQueryDlgItemText(hwnd, IDE_FIELD, PromptInfo.MaxLen, PromptInfo.Entry);
             PromptInfo.Entry[PromptInfo.MaxLen - 1] = 0;
             AddInputHistory(PromptInfo.HistId, PromptInfo.Entry);
-            
+
             WinShowWindow(hwnd, FALSE);
             WinStoreWindowPos("eFTEPM", "PromptDlg", hwnd);
             WinDismissDlg(hwnd, TRUE);
             return (MRESULT)FALSE;
-            
+
         case DID_CANCEL:
             WinShowWindow(hwnd, FALSE);
             WinStoreWindowPos("eFTEPM", "PromptDlg", hwnd);
@@ -757,9 +754,9 @@ int DLGGetStr(GView *View, const char *Prompt, unsigned int BufLen, char *Str, i
     PromptInfo.HistId = HistId;
 
     if (LONGFROMMR(WinSendMsg(View->Parent->Peer->hwndFrame,
-                   UWM_DLGBOX, MPFROMP(PFNWP(PromptDlgProc)), MPFROMLONG(IDD_PROMPT))) != DID_OK)
+                              UWM_DLGBOX, MPFROMP(PFNWP(PromptDlgProc)), MPFROMLONG(IDD_PROMPT))) != DID_OK)
         return 0;
-    
+
     return 1;
 }
 
@@ -771,7 +768,7 @@ MRESULT EXPENTRY FindDlgProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
     case WM_INITDLG:
         WinSendMsg(hwnd, WM_SETICON,
                    MPFROMLONG(WinLoadPointer(HWND_DESKTOP, 0, 1)), 0);
-        
+
         WinSendDlgItemMsg(hwnd, IDE_FIND, EM_SETTEXTLIMIT, MPFROMLONG(MAXSEARCH), 0);
         WinSetDlgItemText(hwnd, IDE_FIND, SearchOpt.strSearch);
         InsertHistory(WinWindowFromID(hwnd, IDE_FIND), HIST_SEARCH, MAXSEARCH);
@@ -782,7 +779,7 @@ MRESULT EXPENTRY FindDlgProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
         WinCheckButton(hwnd, IDC_GLOBAL, (SearchOpt.Options & SEARCH_GLOBAL) ? 1 : 0);
         WinCheckButton(hwnd, IDC_REVERSE, (SearchOpt.Options & SEARCH_BACK) ? 1 : 0);
         WinCheckButton(hwnd, IDC_ALLOCCURENCES, (SearchOpt.Options & SEARCH_ALL) ? 1 : 0);
-        WinCheckButton(hwnd, IDC_JOINLINE, (SearchOpt.Options & SEARCH_JOIN) ? 1: 0);
+        WinCheckButton(hwnd, IDC_JOINLINE, (SearchOpt.Options & SEARCH_JOIN) ? 1 : 0);
         if (ReplaceDlg) {
             WinSendDlgItemMsg(hwnd, IDE_REPLACE, EM_SETTEXTLIMIT, MPFROMLONG(MAXSEARCH), 0);
             WinSetDlgItemText(hwnd, IDE_REPLACE, SearchOpt.strReplace);
@@ -794,7 +791,7 @@ MRESULT EXPENTRY FindDlgProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
         WinInvalidateRect(hwnd, 0, TRUE);
         WinRestoreWindowPos("eFTEPM", ReplaceDlg ? "ReplaceDlg" : "FindDlg", hwnd);
         return WinDefDlgProc(hwnd, msg, mp1, mp2);
-        
+
     case WM_COMMAND:
         switch (SHORT1FROMMP(mp1)) {
         case DID_OK:
@@ -805,7 +802,7 @@ MRESULT EXPENTRY FindDlgProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
             WinQueryDlgItemText(hwnd, IDE_FIND, MAXSEARCH, SearchOpt.strSearch);
             SearchOpt.strSearch[MAXSEARCH - 1] = 0;
             AddInputHistory(HIST_SEARCH, SearchOpt.strSearch);
-            
+
             if (WinQueryButtonCheckstate(hwnd, IDC_IGNORECASE))
                 SearchOpt.Options |= SEARCH_NCASE;
             if (WinQueryButtonCheckstate(hwnd, IDC_REGEXPS))
@@ -822,7 +819,7 @@ MRESULT EXPENTRY FindDlgProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
                 SearchOpt.Options |= SEARCH_ALL;
             if (WinQueryButtonCheckstate(hwnd, IDC_JOINLINE))
                 SearchOpt.Options |= SEARCH_JOIN;
-            
+
             if (ReplaceDlg) {
                 WinQueryDlgItemText(hwnd, IDE_REPLACE, MAXSEARCH, SearchOpt.strReplace);
                 SearchOpt.strReplace[MAXSEARCH - 1] = 0;
@@ -834,12 +831,12 @@ MRESULT EXPENTRY FindDlgProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
                 if (WinQueryButtonCheckstate(hwnd, IDC_DELETELINE))
                     SearchOpt.Options |= SEARCH_DELETE;
             }
-            
+
             WinShowWindow(hwnd, FALSE);
             WinStoreWindowPos("eFTEPM", ReplaceDlg ? "ReplaceDlg" : "FindDlg", hwnd);
             WinDismissDlg(hwnd, TRUE);
             return (MRESULT)FALSE;
-            
+
         case DID_CANCEL:
             WinShowWindow(hwnd, FALSE);
             WinStoreWindowPos("eFTEPM", ReplaceDlg ? "ReplaceDlg" : "FindDlg", hwnd);
@@ -862,24 +859,24 @@ int DLGGetFind(GView *View, SearchReplaceOptions &sr) {
     ReplaceDlg = 0;
 
     if (LONGFROMMR(WinSendMsg(View->Parent->Peer->hwndFrame, UWM_DLGBOX,
-                   PVOIDFROMMP(PFNWP(FindDlgProc)), MPFROMLONG(IDD_FIND))) != DID_OK)
+                              PVOIDFROMMP(PFNWP(FindDlgProc)), MPFROMLONG(IDD_FIND))) != DID_OK)
         return 0;
-    
+
     sr = SearchOpt;
-    
+
     return 1;
 }
 
 int DLGGetFindReplace(GView *View, SearchReplaceOptions &sr) {
     SearchOpt = sr;
     ReplaceDlg = 1;
-    
+
     if (LONGFROMMR(WinSendMsg(View->Parent->Peer->hwndFrame, UWM_DLGBOX,
-                   PVOIDFROMMP(PFNWP(FindDlgProc)), MPFROMLONG(IDD_FINDREPLACE))) != DID_OK)
+                              PVOIDFROMMP(PFNWP(FindDlgProc)), MPFROMLONG(IDD_FINDREPLACE))) != DID_OK)
         return 0;
-    
+
     sr = SearchOpt;
-    
+
     return 1;
 }
 
@@ -888,49 +885,49 @@ struct {
     TKeyCode kc;
     char *name;
 } lvirt[] = {
-{ VK_F1, kbF1, "F1" },
-{ VK_F2, kbF2, "F2" },
-{ VK_F3, kbF3, "F3" },
-{ VK_F4, kbF4, "F4" },
-{ VK_F5, kbF5, "F5" },
-{ VK_F6, kbF6, "F6" },
-{ VK_F7, kbF7, "F7" },
-{ VK_F8, kbF8, "F8" },
-{ VK_F9, kbF9, "F9" },
-{ VK_F10, kbF10, "F10" },
-{ VK_F11, kbF11, "F11" },
-{ VK_F12, kbF12, "F12" },
+    { VK_F1, kbF1, "F1" },
+    { VK_F2, kbF2, "F2" },
+    { VK_F3, kbF3, "F3" },
+    { VK_F4, kbF4, "F4" },
+    { VK_F5, kbF5, "F5" },
+    { VK_F6, kbF6, "F6" },
+    { VK_F7, kbF7, "F7" },
+    { VK_F8, kbF8, "F8" },
+    { VK_F9, kbF9, "F9" },
+    { VK_F10, kbF10, "F10" },
+    { VK_F11, kbF11, "F11" },
+    { VK_F12, kbF12, "F12" },
 
-{ VK_ESC, kbEsc, "Esc" },
-{ VK_ENTER, kbEnter | kfGray, "Enter" },
-{ VK_NEWLINE, kbEnter, "Enter" },
-{ VK_BACKSPACE, kbBackSp, "BackSp" },
-{ VK_SPACE, kbSpace, "Space" },
-{ VK_TAB, kbTab, "Tab" },
-{ VK_BACKTAB, kbTab | kfShift, "Tab" },
+    { VK_ESC, kbEsc, "Esc" },
+    { VK_ENTER, kbEnter | kfGray, "Enter" },
+    { VK_NEWLINE, kbEnter, "Enter" },
+    { VK_BACKSPACE, kbBackSp, "BackSp" },
+    { VK_SPACE, kbSpace, "Space" },
+    { VK_TAB, kbTab, "Tab" },
+    { VK_BACKTAB, kbTab | kfShift, "Tab" },
 
-{ VK_UP, kbUp, "Up" },
-{ VK_DOWN, kbDown, "Down" },
-{ VK_LEFT, kbLeft, "Left" },
-{ VK_RIGHT, kbRight, "Right" },
-{ VK_HOME, kbHome, "Home" },
-{ VK_END, kbEnd, "End" },
-{ VK_PAGEDOWN, kbPgDn, "PgDn" },
-{ VK_PAGEUP, kbPgUp, "PgUp" },
-{ VK_INSERT, kbIns, "Ins" },
-{ VK_DELETE, kbDel, "Del" },
+    { VK_UP, kbUp, "Up" },
+    { VK_DOWN, kbDown, "Down" },
+    { VK_LEFT, kbLeft, "Left" },
+    { VK_RIGHT, kbRight, "Right" },
+    { VK_HOME, kbHome, "Home" },
+    { VK_END, kbEnd, "End" },
+    { VK_PAGEDOWN, kbPgDn, "PgDn" },
+    { VK_PAGEUP, kbPgUp, "PgUp" },
+    { VK_INSERT, kbIns, "Ins" },
+    { VK_DELETE, kbDel, "Del" },
 
-{ VK_CTRL, kbCtrl | kfModifier, "Ctrl" },
-{ VK_ALT, kbAlt | kfModifier, "Alt" },
-{ VK_ALTGRAF, kbAlt | kfModifier, "Alt" },
-{ VK_SHIFT, kbShift | kfModifier, "Shift" },
-{ VK_CAPSLOCK, kbCapsLock | kfModifier, "CapsLock" },
-{ VK_NUMLOCK, kbNumLock | kfModifier, "NumLock" },
-{ VK_SCRLLOCK, kbScrollLock | kfModifier, "ScrollLock" },
-{ VK_BREAK, kbBreak, "Break" },
-{ VK_PAUSE, kbPause, "Pause" },
-{ VK_PRINTSCRN, kbPrtScr, "PrtScr" },
-{ VK_SYSRQ, kbSysReq, "SysReq", },
+    { VK_CTRL, kbCtrl | kfModifier, "Ctrl" },
+    { VK_ALT, kbAlt | kfModifier, "Alt" },
+    { VK_ALTGRAF, kbAlt | kfModifier, "Alt" },
+    { VK_SHIFT, kbShift | kfModifier, "Shift" },
+    { VK_CAPSLOCK, kbCapsLock | kfModifier, "CapsLock" },
+    { VK_NUMLOCK, kbNumLock | kfModifier, "NumLock" },
+    { VK_SCRLLOCK, kbScrollLock | kfModifier, "ScrollLock" },
+    { VK_BREAK, kbBreak, "Break" },
+    { VK_PAUSE, kbPause, "Pause" },
+    { VK_PRINTSCRN, kbPrtScr, "PrtScr" },
+    { VK_SYSRQ, kbSysReq, "SysReq", },
 };
 
 char *ConvertKey(int ch, int virt, int flags, int scan, TEvent &Event) {
@@ -938,13 +935,13 @@ char *ConvertKey(int ch, int virt, int flags, int scan, TEvent &Event) {
     static char name[40];
     char keyname[40];
     TKeyCode keyCode = 0;
-    
+
     strcpy(keyname, "UNKNOWN");
-    
+
     //printf("ch:%d, virt:%d, flags:%d, scan:%d\n", ch, virt, flags, scan);
-    
+
     name[0] = 0;
-    
+
     if (flags & KC_CTRL)
         keyFlags |= kfCtrl;
     if (flags & KC_ALT)
@@ -953,29 +950,43 @@ char *ConvertKey(int ch, int virt, int flags, int scan, TEvent &Event) {
         keyFlags |= kfShift;
     if ((ch != 0xE0) && ((ch & 0xFF) == 0xE0))
         keyFlags |= kfGray;
-    
+
     if (keyFlags == kfAlt) {// do not produce anything on alt+XXX
         switch (scan) {
-        case 71: case 72: case 73:
-        case 75: case 76: case 77:
-        case 79: case 80: case 81:
-        case 82: case 83:
+        case 71:
+        case 72:
+        case 73:
+        case 75:
+        case 76:
+        case 77:
+        case 79:
+        case 80:
+        case 81:
+        case 82:
+        case 83:
             return name;
         }
     }
     if (ch != 0 && (flags & KC_CHAR)) {
         switch (scan) {
-        case 71: case 72: case 73:
-        case 75: case 76: case 77:
-        case 79: case 80: case 81:
-        case 82: case 83:
+        case 71:
+        case 72:
+        case 73:
+        case 75:
+        case 76:
+        case 77:
+        case 79:
+        case 80:
+        case 81:
+        case 82:
+        case 83:
             virt = 0;
         }
     }
     {
         int i;
 
-        for (i = 0; i < (sizeof(lvirt)/sizeof(lvirt[0])); i++)
+        for (i = 0; i < (sizeof(lvirt) / sizeof(lvirt[0])); i++)
             if (lvirt[i].vk == virt) {
                 keyCode = lvirt[i].kc;
                 strcpy(keyname, lvirt[i].name);
@@ -985,7 +996,7 @@ char *ConvertKey(int ch, int virt, int flags, int scan, TEvent &Event) {
     if (keyCode == 0) {
         char c[2];
 
-        if( ch == 0 && scan == 86 ){
+        if (ch == 0 && scan == 86) {
             // Fix for OS/2 bug with UK keyboard layout
             // This is shift-'\' (to the left of Z), which returns 0
             ch = '|';
@@ -993,7 +1004,7 @@ char *ConvertKey(int ch, int virt, int flags, int scan, TEvent &Event) {
 
         c[0] = char(ch);
         c[1] = 0;
-        
+
         if (ch == '+' && scan == 78)
             keyCode = '+' | kfGray;
         else if (ch == '-' && scan == 74)
@@ -1007,20 +1018,20 @@ char *ConvertKey(int ch, int virt, int flags, int scan, TEvent &Event) {
             //if (keyFlags == kfShift)
             //    keyFlags = 0;
         }
-        
+
         keyname[0] = 0;
-        
+
         if (keyCode & kfGray)
             strcpy(keyname, "G+");
-        
+
         strcat(keyname, c);
     }
-    
+
     if ((keyFlags & (kfAlt | kfSpecial | kfGray)) == kfAlt) {
         if (keyCode >= 'a' && keyCode <= 'z')
             keyCode -= 'a' - 'A';
     }
-    
+
     if ((keyFlags & (kfCtrl | kfAlt | kfSpecial | kfGray)) == kfCtrl) {
         if (keyCode >= 'a' && keyCode < 'a' + 32)
             keyCode -= 'a' - 1;
@@ -1031,9 +1042,9 @@ char *ConvertKey(int ch, int virt, int flags, int scan, TEvent &Event) {
     if (keyFlags & kfCtrl)
         if (keyCode < 32)
             keyCode += 64;
-    
+
     keyCode |= keyFlags;
-    
+
     if (keyCode & kfKeyUp)
         strcat(name, "UP ");
     else
@@ -1047,7 +1058,7 @@ char *ConvertKey(int ch, int virt, int flags, int scan, TEvent &Event) {
     if (keyCode & kfShift)
         strcat(name, "S+");
     strcat(name, keyname);
-    
+
     Event.What = evKeyDown;
     if (flags & KC_KEYUP) {
         keyFlags |= kfKeyUp;
@@ -1067,15 +1078,15 @@ MRESULT CreateChild(HWND parent, GViewPeer *peer, PMData *pmData) {
                                      szClient, "eFTE",
                                      WS_VISIBLE, 0, 0, 0, 0,
                                      NULLHANDLE, HWND_TOP, FID_CLIENT,
-                                     (void *)&ptr, NULL);
+                                     (void *) & ptr, NULL);
 
     assert(peer->hwndView != NULLHANDLE);
-    
+
     peer->hwndVscroll = WinCreateWindow(parent,
                                         WC_SCROLLBAR, "",
                                         WS_VISIBLE | SBS_VERT | SBS_AUTOTRACK, 0, 0, 0, 0,
                                         peer->hwndView, HWND_TOP, 0,
-                                        (void *)&ptr, NULL);
+                                        (void *) & ptr, NULL);
 
     assert(peer->hwndVscroll != NULLHANDLE);
 
@@ -1083,63 +1094,63 @@ MRESULT CreateChild(HWND parent, GViewPeer *peer, PMData *pmData) {
                                         WC_SCROLLBAR, "",
                                         WS_VISIBLE | SBS_HORZ | SBS_AUTOTRACK, 0, 0, 0, 0,
                                         peer->hwndView, HWND_TOP, 0,
-                                        (void *)&ptr, NULL);
+                                        (void *) & ptr, NULL);
 
     assert(peer->hwndHscroll != NULLHANDLE);
-    
+
     return (MRESULT)TRUE;
 }
 
 BOOL CalcFrameSWP(HWND hwnd, PSWP pswp, BOOL bFrame) {
     BOOL bSuccess;
     RECTL rcl;
-    
+
     rcl.xLeft = pswp->x;
     rcl.yBottom = pswp->y;
     rcl.xRight = pswp->x + pswp->cx;
     rcl.yTop = pswp->y + pswp->cy;
-    
+
     bSuccess = WinCalcFrameRect(hwnd, &rcl, bFrame);
-    
+
     pswp->x = rcl.xLeft;
     pswp->y = rcl.yBottom;
     pswp->cx = rcl.xRight - rcl.xLeft;
     pswp->cy = rcl.yTop - rcl.yBottom;
-    
+
     return bSuccess;
 }
 
 MRESULT EXPENTRY FrameWndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
     GFramePeer *peer = (GFramePeer *) WinQueryWindowULong(hwnd, QWL_USER);
-    
+
     if (peer) switch (msg) {
-    case UWM_DESTROY:
-        WinDestroyWindow(hwnd);
-        return 0;
-    
-    case UWM_DESTROYHWND:
-        WinDestroyWindow(LONGFROMMP(mp1));
-        return 0;
+        case UWM_DESTROY:
+            WinDestroyWindow(hwnd);
+            return 0;
 
-    case UWM_FILEDIALOG:
-        return MRFROMLONG(WinFileDlg(HWND_DESKTOP, hwnd, (FILEDLG *)PVOIDFROMMP(mp1)));
+        case UWM_DESTROYHWND:
+            WinDestroyWindow(LONGFROMMP(mp1));
+            return 0;
 
-    case UWM_DLGBOX:
-        return MRFROMLONG(WinDlgBox(HWND_DESKTOP, hwnd,
-                                    PFNWP(PVOIDFROMMP(mp1)), 0, LONGFROMMP(mp2), NULL));
+        case UWM_FILEDIALOG:
+            return MRFROMLONG(WinFileDlg(HWND_DESKTOP, hwnd, (FILEDLG *)PVOIDFROMMP(mp1)));
 
-    case UWM_PROCESSDLG:
-        return MRFROMLONG(WinProcessDlg(HWNDFROMMP(mp1)));
+        case UWM_DLGBOX:
+            return MRFROMLONG(WinDlgBox(HWND_DESKTOP, hwnd,
+                                        PFNWP(PVOIDFROMMP(mp1)), 0, LONGFROMMP(mp2), NULL));
 
-    case UWM_CHOICE:
-        return MRFROMLONG(DoChoice(hwnd, (ChoiceInfo *)PVOIDFROMMP(mp1)));
+        case UWM_PROCESSDLG:
+            return MRFROMLONG(WinProcessDlg(HWNDFROMMP(mp1)));
 
-    case UWM_CREATECHILD:
-        //DosBeep(2500, 1000);
-        return CreateChild(hwnd, (GViewPeer *)PVOIDFROMMP(mp1), (PMData *)PVOIDFROMMP(mp2));
-            
-    case WM_TRANSLATEACCEL:
-        // check for keys not to be translated
+        case UWM_CHOICE:
+            return MRFROMLONG(DoChoice(hwnd, (ChoiceInfo *)PVOIDFROMMP(mp1)));
+
+        case UWM_CREATECHILD:
+            //DosBeep(2500, 1000);
+            return CreateChild(hwnd, (GViewPeer *)PVOIDFROMMP(mp1), (PMData *)PVOIDFROMMP(mp2));
+
+        case WM_TRANSLATEACCEL:
+            // check for keys not to be translated
         {
             QMSG *qmsg = (QMSG *)mp1;
             USHORT vk = SHORT2FROMMP((qmsg->mp2));
@@ -1147,14 +1158,14 @@ MRESULT EXPENTRY FrameWndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
             USHORT ch = SHORT1FROMMP((qmsg->mp2));
 
             if ((vk == VK_MENU || vk == VK_F1) && fl == 0 ||
-                vk == VK_NEWLINE && fl == KC_ALT ||
-                vk == VK_ENTER && fl == KC_ALT ||
-                vk == VK_SPACE && fl == KC_ALT)
+                    vk == VK_NEWLINE && fl == KC_ALT ||
+                    vk == VK_ENTER && fl == KC_ALT ||
+                    vk == VK_SPACE && fl == KC_ALT)
                 return (MRESULT)FALSE;
 
             if ((ch >= 'A' && ch <= 'Z' || ch >= 'a' && ch <= 'z') &&
-                (fl & KC_ALT))
-                    return (MRESULT)FALSE;
+                    (fl & KC_ALT))
+                return (MRESULT)FALSE;
 
             if (PMDisableAccel)
                 if (fl & KC_ALT)
@@ -1164,44 +1175,43 @@ MRESULT EXPENTRY FrameWndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
         }
         break;
 
-    /*case WM_CALCFRAMERECT:
-        {
-            PRECTL rcl = (PRECTL)PVOIDFROMMP(mp1);
-            USHORT isFrame = SHORT1FROMMP(mp2);
-            BOOL fSuccess = LONGFROMMR(peer->oldFrameProc(hwnd, msg, mp1, mp2));
+        /*case WM_CALCFRAMERECT:
+            {
+                PRECTL rcl = (PRECTL)PVOIDFROMMP(mp1);
+                USHORT isFrame = SHORT1FROMMP(mp2);
+                BOOL fSuccess = LONGFROMMR(peer->oldFrameProc(hwnd, msg, mp1, mp2));
 
-            if (ShowToolBar && fSuccess) {
-                SWP swpToolBar;
-                HWND hwndToolBar = WinWindowFromID(hwnd, FID_MTOOLBAR);
+                if (ShowToolBar && fSuccess) {
+                    SWP swpToolBar;
+                    HWND hwndToolBar = WinWindowFromID(hwnd, FID_MTOOLBAR);
 
-                WinQueryWindowPos(hwndToolBar, &swpToolBar);
-                WinSendMsg(hwndToolBar,
-                           WM_ADJUSTWINDOWPOS,
-                           MPFROMP(&swpToolBar),
-                           MPARAM(0));
+                    WinQueryWindowPos(hwndToolBar, &swpToolBar);
+                    WinSendMsg(hwndToolBar,
+                               WM_ADJUSTWINDOWPOS,
+                               MPFROMP(&swpToolBar),
+                               MPARAM(0));
 
-                if (isFrame)
-                    rcl->yTop -= swpToolBar.cy;
-                else
-                    rcl->yTop += swpToolBar.cy;
-            }
+                    if (isFrame)
+                        rcl->yTop -= swpToolBar.cy;
+                    else
+                        rcl->yTop += swpToolBar.cy;
+                }
 
-            return MRFROMLONG(fSuccess);
-        }*/
-        
-    case WM_QUERYTRACKINFO:
-        {
+                return MRFROMLONG(fSuccess);
+            }*/
+
+        case WM_QUERYTRACKINFO: {
             MRESULT mr;
-            
+
             mr = peer->oldFrameProc(hwnd, msg, mp1, mp2);
-            
+
             if (mr == (MRESULT)FALSE)
                 return mr;
-            
+
             DosRequestMutexSem(hmtxPMData, SEM_INDEFINITE_WAIT);
             if ((SHORT1FROMMP(mp1) & TF_MOVE) != TF_MOVE) {
                 PTRACKINFO pti;
-                
+
                 pti = (PTRACKINFO) PVOIDFROMMP(mp2);
                 pti->cxGrid = peer->Frame->Top->Peer->pmData->cxChar;
                 pti->cyGrid = peer->Frame->Top->Peer->pmData->cyChar;
@@ -1213,8 +1223,7 @@ MRESULT EXPENTRY FrameWndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
             return mr;
         }
 
-    case WM_MINMAXFRAME:
-        {
+        case WM_MINMAXFRAME: {
             PSWP pswp = (PSWP) PVOIDFROMMP(mp1);
 
             if (pswp->fl & SWP_MAXIMIZE) {
@@ -1248,7 +1257,7 @@ MRESULT EXPENTRY FrameWndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
                 } else {
                     swpToolBar.cy = 0;
                 }
-                
+
                 DosRequestMutexSem(hmtxPMData, SEM_INDEFINITE_WAIT);
 
                 pswp->cx = cxScreen - cxScrollBar;
@@ -1261,11 +1270,11 @@ MRESULT EXPENTRY FrameWndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
                     v = v->Prev;
                     if (v == peer->Frame->Top) break;
                 }
-            
+
                 pswp->cy -= cnt * cyScrollBar;
-                
+
                 if (pswp->cy < 0) pswp->cy = 0;
-                
+
                 if (v) {
                     pswp->cx /= v->Peer->pmData->cxChar;
                     if (pswp->cx > MAXXSIZE)
@@ -1277,12 +1286,12 @@ MRESULT EXPENTRY FrameWndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
                         pswp->cy = MAXYSIZE;
                     pswp->cy *= v->Peer->pmData->cyChar;
                 }
-                
+
                 pswp->cy += cnt * cyScrollBar;
 
                 pswp->cx += cxBorder * 2 + cxScrollBar;
                 pswp->cy += cyBorder * 2 + cyTitleBar + swpMenu.cy + swpToolBar.cy;
-                
+
                 pswp->y = cyScreen - pswp->cy + cyBorder;
 
                 DosReleaseMutexSem(hmtxPMData);
@@ -1291,10 +1300,9 @@ MRESULT EXPENTRY FrameWndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
         }
         break;
 
-    case WM_ADJUSTWINDOWPOS:
-        {
+        case WM_ADJUSTWINDOWPOS: {
             PSWP pswp = (PSWP) PVOIDFROMMP(mp1);
-            
+
             if (pswp->fl & (SWP_SIZE | SWP_MOVE | SWP_MAXIMIZE)) {
                 GView *v;
                 int cnt;
@@ -1302,14 +1310,14 @@ MRESULT EXPENTRY FrameWndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
 
                 if (pswp->cx < 0 || pswp->cy <= cyTitleBar + 2 * cyBorder)
                     break;
-                
+
                 DosRequestMutexSem(hmtxPMData, SEM_INDEFINITE_WAIT);
                 //printf("Before 1: %d %d | %d %d\n", pswp->cx, pswp->x, pswp->cy, pswp->y);
                 CalcFrameSWP(hwnd, pswp, TRUE);
 
                 if (ShowToolBar) {
                     HWND hwndToolBar = WinWindowFromID(hwnd, FID_MTOOLBAR);
-                    
+
                     WinQueryWindowPos(hwndToolBar, &swpToolBar);
                     swpToolBar.x = 0;
                     swpToolBar.y = 0;
@@ -1322,11 +1330,11 @@ MRESULT EXPENTRY FrameWndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
                 } else {
                     swpToolBar.cy = 0;
                 }
-                
+
                 pswp->cy -= swpToolBar.cy;
-                
+
                 pswp->cx -= cxScrollBar;
-                
+
                 cnt = 0;
                 v = peer->Frame->Top;
                 while (v) {
@@ -1334,26 +1342,26 @@ MRESULT EXPENTRY FrameWndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
                     v = v->Prev;
                     if (v == peer->Frame->Top) break;
                 }
-                
+
                 pswp->cy -= cnt * cyScrollBar;
                 //if (pswp->cy < 0) pswp->cy = 0;
-                
+
                 if (v) {
                     pswp->cx /= v->Peer->pmData->cxChar;
                     //if (pswp->cx < 8) pswp->cx = 8;
                     if (pswp->cx > MAXXSIZE)
                         pswp->cx = MAXXSIZE;
                     pswp->cx *= v->Peer->pmData->cxChar;
-                    
+
                     pswp->cy /= v->Peer->pmData->cyChar;
                     //if (pswp->cy < cnt * 2) pswp->cy = cnt * 2;
                     if (pswp->cy > MAXYSIZE)
                         pswp->cy = MAXYSIZE;
                     pswp->cy *= v->Peer->pmData->cyChar;
                 }
-                
+
                 pswp->cy += cnt * cyScrollBar;
-                
+
                 pswp->cx += cxScrollBar;
                 pswp->cy += swpToolBar.cy;
                 CalcFrameSWP(hwnd, pswp, FALSE);
@@ -1361,12 +1369,11 @@ MRESULT EXPENTRY FrameWndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
             }
         }
         break;
-    
-    case WM_QUERYFRAMECTLCOUNT:
-        {
+
+        case WM_QUERYFRAMECTLCOUNT: {
             SHORT sCount = SHORT1FROMMR(peer->oldFrameProc(hwnd, msg, mp1, mp2));
             GView *v;
-            
+
             DosRequestMutexSem(hmtxPMData, SEM_INDEFINITE_WAIT);
             v = peer->Frame->Top;
             while (v) {
@@ -1379,9 +1386,8 @@ MRESULT EXPENTRY FrameWndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
             DosReleaseMutexSem(hmtxPMData);
             return MRESULT(sCount - 1);
         }
-    
-    case WM_FORMATFRAME:
-        {
+
+        case WM_FORMATFRAME: {
             SHORT sCount = SHORT1FROMMR(peer->oldFrameProc(hwnd, msg, mp1, mp2));
             PSWP pswp;
             HWND Bhwnd;
@@ -1406,7 +1412,7 @@ MRESULT EXPENTRY FrameWndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
                 v = v->Prev;
                 if (v == peer->Frame->Top) break;
             }
-            
+
             if (cnt == 0) {
                 DosReleaseMutexSem(hmtxPMData);
                 return MRFROMSHORT(sCount);
@@ -1443,7 +1449,7 @@ MRESULT EXPENTRY FrameWndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
                 } else if (ShowToolBar == 2) {
                     pswp[sCount].y = y;
                     pswp[sCount].cy = swpToolBar.cy;
-                    
+
                     y += swpToolBar.cy;
                     h -= swpToolBar.cy;
                     if (prcl)
@@ -1451,7 +1457,7 @@ MRESULT EXPENTRY FrameWndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
                 }
                 sCount++;
             }
-            
+
             ctl = 0;
             v = peer->Frame->Top;
 
@@ -1511,7 +1517,7 @@ MRESULT EXPENTRY FrameWndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
             DosReleaseMutexSem(hmtxPMData);
             return MRFROMSHORT(sCount);
         }
-    }
+        }
     return peer->oldFrameProc(hwnd, msg, mp1, mp2);
 }
 
@@ -1521,7 +1527,7 @@ MRESULT EXPENTRY FrameWndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
         break;
     case WM_DESTROY:
         break;
-        
+
     case WM_BUTTON1DOWN:
     case WM_BUTTON1UP:
     case WM_MOUSEMOVE:
@@ -1577,19 +1583,19 @@ MRESULT EXPENTRY AVIOWndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
     SIZEL  sizl;
     PDRAGINFO pDragInfo;
     PDRAGITEM pDragItem;
-    
+
     switch (msg) {
     case WM_CREATE:
         ptr = (PMPTR *)mp1;
         pmData = ptr ? (PMData *)ptr->p : 0;
         assert(pmData != 0);
         assert(WinSetWindowULong(hwnd, QWL_USER, (ULONG)pmData) == TRUE);
-        
+
         hdc = WinOpenWindowDC(hwnd);
         VioCreatePS(&pmData->hvps, MAXYSIZE, MAXXSIZE, 0, 1, 0);
         sizl.cx = sizl.cy = 0;
         pmData->hps = GpiCreatePS(hab, hdc, &sizl,
-                          PU_PELS | GPIF_DEFAULT | GPIT_MICRO | GPIA_ASSOC);
+                                  PU_PELS | GPIF_DEFAULT | GPIT_MICRO | GPIA_ASSOC);
         VioAssociate(hdc, pmData->hvps);
         if (WindowFont[0] != 0) {
             int x, y;
@@ -1608,19 +1614,18 @@ MRESULT EXPENTRY AVIOWndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
         GpiDestroyPS(pmData->hps);
         pmData->Peer->pmData = 0;
         return 0;
-    
-    case UWM_DESTROY:
-        {
-            GViewPeer *Peer = pmData->Peer;
-            WinDestroyWindow(Peer->hwndVscroll);
-            WinDestroyWindow(Peer->hwndHscroll);
-            WinDestroyWindow(Peer->hwndView);
-        }
-        return 0;
-        
+
+    case UWM_DESTROY: {
+        GViewPeer *Peer = pmData->Peer;
+        WinDestroyWindow(Peer->hwndVscroll);
+        WinDestroyWindow(Peer->hwndHscroll);
+        WinDestroyWindow(Peer->hwndView);
+    }
+    return 0;
+
     case WM_ERASEBACKGROUND:
         return (MRESULT) FALSE;
-        
+
     case WM_CLOSE:
         if (WinPostMsg(pmData->hwndWorker, msg, mp1, mp2) == FALSE) {
             WinMessageBox(HWND_DESKTOP, HWND_DESKTOP,
@@ -1642,12 +1647,12 @@ MRESULT EXPENTRY AVIOWndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
                 DosReleaseMutexSem(hmtxPMData);
                 break;
             }
-            
+
             Peer->wW = cxClient / pmData->cxChar;
             Peer->wH = cyClient / pmData->cyChar;
             if (hwnd == WinQueryFocus(HWND_DESKTOP)) {
                 WinDestroyCursor(hwnd);
-                WinCreateCursor(hwnd, 
+                WinCreateCursor(hwnd,
                                 pmData->cxChar * Peer->cX,
                                 pmData->cyChar * (Peer->wH - Peer->cY - 1),
                                 pmData->cxChar, pmData->cyChar,
@@ -1673,12 +1678,12 @@ MRESULT EXPENTRY AVIOWndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
                           0, MB_OK | MB_ERROR | MB_APPLMODAL | MB_MOVEABLE);
         }
         break;
-    
+
     case WM_SETFOCUS:
         DosRequestMutexSem(hmtxPMData, SEM_INDEFINITE_WAIT);
         {
             GViewPeer *Peer = pmData->Peer;
-            
+
             if (SHORT1FROMMP(mp2)) {
                 WinCreateCursor(hwnd,
                                 pmData->cxChar * Peer->cX,
@@ -1700,7 +1705,7 @@ MRESULT EXPENTRY AVIOWndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
                           0, MB_OK | MB_ERROR | MB_APPLMODAL | MB_MOVEABLE);
         }
         break;
-        
+
     case WM_VSCROLL:
         if (WinPostMsg(pmData->hwndWorker, msg, mp1, mp2) == FALSE) {
             WinMessageBox(HWND_DESKTOP, HWND_DESKTOP,
@@ -1708,7 +1713,7 @@ MRESULT EXPENTRY AVIOWndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
                           0, MB_OK | MB_ERROR | MB_APPLMODAL | MB_MOVEABLE);
         }
         return 0;
-        
+
     case WM_HSCROLL:
         if (WinPostMsg(pmData->hwndWorker, msg, mp1, mp2) == FALSE) {
             WinMessageBox(HWND_DESKTOP, HWND_DESKTOP,
@@ -1716,7 +1721,7 @@ MRESULT EXPENTRY AVIOWndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
                           0, MB_OK | MB_ERROR | MB_APPLMODAL | MB_MOVEABLE);
         }
         return 0;
-        
+
     case WM_COMMAND:
         if (SHORT1FROMMP(mp1) >= 8192) {
             if (WinPostMsg(pmData->hwndWorker, msg, mp1, mp2) == FALSE) {
@@ -1735,19 +1740,18 @@ MRESULT EXPENTRY AVIOWndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
         }
         return (MRESULT) TRUE;
 
-    case WM_MOUSEMOVE:
-        {
-            long b;
-            b = 0;
-            if (WinGetKeyState(HWND_DESKTOP, VK_BUTTON1) & 0x8000)
-                b |= 1;
-            if (WinGetKeyState(HWND_DESKTOP, VK_BUTTON2) & 0x8000)
-                b |= 2;
-            if (WinGetKeyState(HWND_DESKTOP, VK_BUTTON3) & 0x8000)
-                b |= 4;
-            if (b == 0)
-                break;
-        }
+    case WM_MOUSEMOVE: {
+        long b;
+        b = 0;
+        if (WinGetKeyState(HWND_DESKTOP, VK_BUTTON1) & 0x8000)
+            b |= 1;
+        if (WinGetKeyState(HWND_DESKTOP, VK_BUTTON2) & 0x8000)
+            b |= 2;
+        if (WinGetKeyState(HWND_DESKTOP, VK_BUTTON3) & 0x8000)
+            b |= 4;
+        if (b == 0)
+            break;
+    }
     case WM_BUTTON1DOWN:
     case WM_BUTTON1DBLCLK:
     case WM_BUTTON1UP:
@@ -1768,43 +1772,41 @@ MRESULT EXPENTRY AVIOWndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
         DosRequestMutexSem(hmtxPMData, SEM_INDEFINITE_WAIT);
         {
             GViewPeer *Peer = pmData->Peer;
-            
+
             WinBeginPaint(hwnd, pmData->hps, NULL);
             if (Peer->wH > 0 && Peer->wH <= MAXYSIZE &&
-                Peer->wW > 0 && Peer->wW <= MAXXSIZE)
+                    Peer->wW > 0 && Peer->wW <= MAXXSIZE)
                 VioShowBuf(0, (SHORT)(MAXXSIZE * Peer->wH * 2), pmData->hvps);
             WinEndPaint(pmData->hps);
         }
         DosReleaseMutexSem(hmtxPMData);
         return 0;
 
-    case DM_DRAGOVER:
-        {
-            char buf[1024] = "";
-            pDragInfo = (PDRAGINFO) mp1;
-            DrgAccessDraginfo( pDragInfo );
-            pDragItem = DrgQueryDragitemPtr( pDragInfo, 0 );
+    case DM_DRAGOVER: {
+        char buf[1024] = "";
+        pDragInfo = (PDRAGINFO) mp1;
+        DrgAccessDraginfo(pDragInfo);
+        pDragItem = DrgQueryDragitemPtr(pDragInfo, 0);
 
-            // Don't accept multi select and non-file
-            DrgQueryNativeRMF(pDragItem, sizeof(buf), buf);
+        // Don't accept multi select and non-file
+        DrgQueryNativeRMF(pDragItem, sizeof(buf), buf);
 
-            if (pDragInfo->cditem > 1 || strstr(buf, "DRM_OS2FILE") == 0)
-                return (MRFROM2SHORT((DOR_NEVERDROP), (DO_UNKNOWN)));
-            else
-                return (MRFROM2SHORT((DOR_DROP), (DO_UNKNOWN)));
-        }
-        
-    case DM_DROP:
-        {
-            pDragInfo = (PDRAGINFO)mp1;
-            DrgAccessDraginfo(pDragInfo);
-            pDragItem = DrgQueryDragitemPtr(pDragInfo, 0);
+        if (pDragInfo->cditem > 1 || strstr(buf, "DRM_OS2FILE") == 0)
+            return (MRFROM2SHORT((DOR_NEVERDROP), (DO_UNKNOWN)));
+        else
+            return (MRFROM2SHORT((DOR_DROP), (DO_UNKNOWN)));
+    }
 
-            DrgQueryStrName(pDragItem->hstrContainerName,100,dragname);
-            DrgQueryStrName(pDragItem->hstrSourceName,100,dragname+strlen(dragname));
-            WinPostMsg(pmData->hwndWorker, UWM_DROPPEDFILE, 0, 0);
-        }
-        break;
+    case DM_DROP: {
+        pDragInfo = (PDRAGINFO)mp1;
+        DrgAccessDraginfo(pDragInfo);
+        pDragItem = DrgQueryDragitemPtr(pDragInfo, 0);
+
+        DrgQueryStrName(pDragItem->hstrContainerName, 100, dragname);
+        DrgQueryStrName(pDragItem->hstrSourceName, 100, dragname + strlen(dragname));
+        WinPostMsg(pmData->hwndWorker, UWM_DROPPEDFILE, 0, 0);
+    }
+    break;
     }
     return WinDefWindowProc(hwnd, msg, mp1, mp2);
 }
@@ -1822,123 +1824,119 @@ MRESULT EXPENTRY ObjectWndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
 
 MRESULT EXPENTRY CreatorWndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
     switch (msg) {
-    case UWM_CREATEWORKER:
-        {
-            GViewPeer *peer = (GViewPeer *)mp1;
-            PMData *pmData = (PMData *)mp2;
-            PMPTR ptr;
+    case UWM_CREATEWORKER: {
+        GViewPeer *peer = (GViewPeer *)mp1;
+        PMData *pmData = (PMData *)mp2;
+        PMPTR ptr;
 
-            ptr.len = sizeof(ptr);
-            ptr.p = peer;
+        ptr.len = sizeof(ptr);
+        ptr.p = peer;
 
-            //DosBeep(2500, 1000);
-            
-            peer->hwndWorker = pmData->hwndWorker =
-                WinCreateWindow(HWND_OBJECT,
-                                szObject,
-                                "Worker",
-                                0,
-                                0, 0, 0, 0,
-                                HWND_OBJECT, HWND_TOP,
-                                0, (void *)&ptr, NULL);
+        //DosBeep(2500, 1000);
 
-            assert(peer->hwndWorker != NULLHANDLE);
-            
-            return (MRESULT)TRUE;
+        peer->hwndWorker = pmData->hwndWorker =
+                               WinCreateWindow(HWND_OBJECT,
+                                               szObject,
+                                               "Worker",
+                                               0,
+                                               0, 0, 0, 0,
+                                               HWND_OBJECT, HWND_TOP,
+                                               0, (void *) & ptr, NULL);
+
+        assert(peer->hwndWorker != NULLHANDLE);
+
+        return (MRESULT)TRUE;
+    }
+
+    case UWM_CREATEFRAME: {
+        GFramePeer *peer = (GFramePeer *)PVOIDFROMMP(mp1);
+        FRAMECDATA fcdata;
+
+        fcdata.cb = sizeof(FRAMECDATA);
+        fcdata.flCreateFlags = flFrame;
+        fcdata.hmodResources = 0;
+        fcdata.idResources   = 1;
+
+        //DosBeep(2500, 1000);
+
+        peer->hwndFrame = WinCreateWindow(HWND_DESKTOP,
+                                          WC_FRAME, NULL, 0, 0, 0, 0, 0,
+                                          hwndCreatorUser, HWND_TOP, 1,
+                                          &fcdata, NULL);
+
+        assert(peer->hwndFrame != NULLHANDLE);
+
+        WinSetWindowULong(peer->hwndFrame, QWL_USER, (ULONG)peer);
+
+        peer->oldFrameProc = WinSubclassWindow(peer->hwndFrame, (PFNWP) FrameWndProc);
+
+        if (ShowToolBar) {
+            peer->hwndToolBar = CreateToolBar(peer->hwndFrame, peer->hwndFrame, FID_MTOOLBAR);
+            assert(peer->hwndToolBar != NULLHANDLE);
         }
-        
-    case UWM_CREATEFRAME:
-        {
-            GFramePeer *peer = (GFramePeer *)PVOIDFROMMP(mp1);
-            FRAMECDATA fcdata;
 
-            fcdata.cb = sizeof(FRAMECDATA);
-            fcdata.flCreateFlags = flFrame;
-            fcdata.hmodResources = 0;
-            fcdata.idResources   = 1;
-            
-            //DosBeep(2500, 1000);
-            
-            peer->hwndFrame = WinCreateWindow(HWND_DESKTOP,
-                                              WC_FRAME, NULL, 0, 0, 0, 0, 0,
-                                              hwndCreatorUser, HWND_TOP, 1,
-                                              &fcdata, NULL);
 
-            assert(peer->hwndFrame != NULLHANDLE);
+        return (MRESULT)TRUE;
+    }
 
-            WinSetWindowULong(peer->hwndFrame, QWL_USER, (ULONG)peer);
-            
-            peer->oldFrameProc = WinSubclassWindow(peer->hwndFrame, (PFNWP) FrameWndProc);
-            
-            if (ShowToolBar) {
-                peer->hwndToolBar = CreateToolBar(peer->hwndFrame, peer->hwndFrame, FID_MTOOLBAR);
-                assert(peer->hwndToolBar != NULLHANDLE);
+    case UWM_CREATEMAINMENU: {
+        GFramePeer *peer = (GFramePeer *)mp1;
+        char *Menu = (char *)PVOIDFROMMP(mp2);
+        HWND hwnd, hwndMenu;
+        char font[256];
+        ULONG AttrFound = 0;
+        LONG len = -1;
+
+        hwnd = WinWindowFromID(peer->hwndFrame, FID_MENU);
+        if (hwnd != NULLHANDLE) {
+            if (len == -1) {
+                AttrFound = 0;
+                len = WinQueryPresParam(hwnd, PP_FONTNAMESIZE, PP_FONTHANDLE, &AttrFound, sizeof(font), font, 0);
             }
-
-            
-            return (MRESULT)TRUE;
+            WinDestroyWindow(hwnd);
         }
 
-    case UWM_CREATEMAINMENU:
-        {
-            GFramePeer *peer = (GFramePeer *)mp1;
-            char *Menu = (char *)PVOIDFROMMP(mp2);
-            HWND hwnd, hwndMenu;
-            char font[256];
-            ULONG AttrFound = 0;
-            LONG len = -1;
-            
-            hwnd = WinWindowFromID(peer->hwndFrame, FID_MENU);
-            if (hwnd != NULLHANDLE) {
-                if (len == -1) {
-                    AttrFound = 0;
-                    len = WinQueryPresParam(hwnd, PP_FONTNAMESIZE, PP_FONTHANDLE, &AttrFound, sizeof(font), font, 0);
-                }
-                WinDestroyWindow(hwnd);
-            }
-            
-            hwndMenu = CreatePMMainMenu(peer->hwndFrame, peer->hwndFrame, Menu);
-            
-            if (len > 0)
-                WinSetPresParam(hwndMenu, AttrFound, len, font);
-            WinSendMsg(peer->hwndFrame, WM_UPDATEFRAME, MPFROMLONG(FCF_MENU), 0);
+        hwndMenu = CreatePMMainMenu(peer->hwndFrame, peer->hwndFrame, Menu);
 
-            return (MRESULT)hwndMenu;
+        if (len > 0)
+            WinSetPresParam(hwndMenu, AttrFound, len, font);
+        WinSendMsg(peer->hwndFrame, WM_UPDATEFRAME, MPFROMLONG(FCF_MENU), 0);
+
+        return (MRESULT)hwndMenu;
+    }
+
+    case UWM_CREATEPOPUPMENU: {
+        GFramePeer *peer = (GFramePeer *)mp1;
+        int MenuId = LONGFROMMP(mp2);
+
+        static HWND hwnd = 0;
+        POINTL ptl;
+        char font[256];
+        ULONG AttrFound = 0;
+        ULONG len;
+
+        if (hwnd != 0) {
+            WinDestroyWindow(hwnd);
+            hwnd = 0;
         }
 
-    case UWM_CREATEPOPUPMENU:
-        {
-            GFramePeer *peer = (GFramePeer *)mp1;
-            int MenuId = LONGFROMMP(mp2);
-            
-            static HWND hwnd = 0;
-            POINTL ptl;
-            char font[256];
-            ULONG AttrFound = 0;
-            ULONG len;
-            
-            if (hwnd != 0) {
-                WinDestroyWindow(hwnd);
-                hwnd = 0;
-            }
-            
-            hwnd = CreatePMMenu(HWND_DESKTOP, peer->hwndFrame, MenuId, 0, 0);
-            
-            WinQueryMsgPos(hab, &ptl);
-            
-            len = WinQueryPresParam(peer->menuBar, PP_FONTNAMESIZE, PP_FONTHANDLE, &AttrFound, sizeof(font), font, 0);
-            if (len > 0)
-                WinSetPresParam(hwnd, AttrFound, len, font);
-            
-            WinPopupMenu(HWND_DESKTOP, peer->Frame->Active->Peer->hwndView, hwnd,
-                         ptl.x, ptl.y,
-                         0,
-                         PU_HCONSTRAIN  | PU_VCONSTRAIN |
-                         PU_NONE | PU_KEYBOARD |
-                         PU_MOUSEBUTTON1 | PU_MOUSEBUTTON2 | PU_MOUSEBUTTON3);
+        hwnd = CreatePMMenu(HWND_DESKTOP, peer->hwndFrame, MenuId, 0, 0);
 
-            return (MRESULT)TRUE;
-        }
+        WinQueryMsgPos(hab, &ptl);
+
+        len = WinQueryPresParam(peer->menuBar, PP_FONTNAMESIZE, PP_FONTHANDLE, &AttrFound, sizeof(font), font, 0);
+        if (len > 0)
+            WinSetPresParam(hwnd, AttrFound, len, font);
+
+        WinPopupMenu(HWND_DESKTOP, peer->Frame->Active->Peer->hwndView, hwnd,
+                     ptl.x, ptl.y,
+                     0,
+                     PU_HCONSTRAIN  | PU_VCONSTRAIN |
+                     PU_NONE | PU_KEYBOARD |
+                     PU_MOUSEBUTTON1 | PU_MOUSEBUTTON2 | PU_MOUSEBUTTON3);
+
+        return (MRESULT)TRUE;
+    }
     }
     return WinDefWindowProc(hwnd, msg, mp1, mp2);
 }
@@ -1947,10 +1945,10 @@ int ConGetEvent(TEventMask EventMask, TEvent *Event, int WaitTime, int Delete, G
     QMSG qmsg;
     GFrame *f;
     GView *v;
-    
-    if (view) 
+
+    if (view)
         *view = 0;
-    
+
     if (EventBuf.What != evNone) {
         *Event = EventBuf;
         if (Delete) EventBuf.What = evNone;
@@ -1958,7 +1956,7 @@ int ConGetEvent(TEventMask EventMask, TEvent *Event, int WaitTime, int Delete, G
     }
     EventBuf.What = evNone;
     Event->What = evNone;
-    
+
     //DosBeep(800, 10);
 
     if (WaitTime != -1) {
@@ -1967,9 +1965,9 @@ int ConGetEvent(TEventMask EventMask, TEvent *Event, int WaitTime, int Delete, G
     }
     if (WinGetMsg(hab, &qmsg, NULLHANDLE, 0, 0) == FALSE)
         return -1;
-    
+
     //DosBeep(800, 10);
-    
+
     f = frames;
     while (f) {
         v = f->Top;
@@ -1983,15 +1981,15 @@ int ConGetEvent(TEventMask EventMask, TEvent *Event, int WaitTime, int Delete, G
                 if (view)
                     *view = v;
                 switch (qmsg.msg) {
-                /*case WM_ACTIVATE:
-                case WM_SETSELECTION:
-                    if (SHORT1FROMMP(qmsg.mp1) == TRUE) {
-                        if (!v->IsActive())
-                            v->Parent->SelectView(v);
-                        DosBeep(800, 10);
-                        return 0;
-                    }
-                    break;*/
+                    /*case WM_ACTIVATE:
+                    case WM_SETSELECTION:
+                        if (SHORT1FROMMP(qmsg.mp1) == TRUE) {
+                            if (!v->IsActive())
+                                v->Parent->SelectView(v);
+                            DosBeep(800, 10);
+                            return 0;
+                        }
+                        break;*/
                 case WM_SETFOCUS:
                     if (SHORT1FROMMP(qmsg.mp2) == TRUE) {
                         if (!v->IsActive())
@@ -2000,7 +1998,7 @@ int ConGetEvent(TEventMask EventMask, TEvent *Event, int WaitTime, int Delete, G
                         return 0;
                     }
                     break;
-                    
+
                 case UWM_NOTIFY:
                     //DosBeep(200, 200);
                     Event->What = evNotify;
@@ -2021,13 +2019,13 @@ int ConGetEvent(TEventMask EventMask, TEvent *Event, int WaitTime, int Delete, G
                     Event->Msg.Param2 = &dragname;
                     frames = f;
                     return 0;
-                    
+
                 case WM_SIZE:
                     frames = f;
                     //DosBeep(500, 500);
                     v->Resize(v->Peer->wW, v->Peer->wH);
                     return 0;
-                    
+
                 case WM_VSCROLL:
                     //DosBeep(200, 2000);
                     if (!v->IsActive())
@@ -2042,44 +2040,43 @@ int ConGetEvent(TEventMask EventMask, TEvent *Event, int WaitTime, int Delete, G
                         Event->Msg.Command = cmVScrollUp;
                         Event->Msg.Param1 = 1;
                         break;
-                        
+
                     case SB_LINEDOWN:
                         Event->What = evCommand;
                         Event->Msg.Command = cmVScrollDown;
                         Event->Msg.Param1 = 1;
                         break;
-                        
+
                     case SB_PAGEUP:
                         Event->What = evCommand;
                         Event->Msg.Command = cmVScrollPgUp;
                         break;
-                        
+
                     case SB_PAGEDOWN:
                         Event->What = evCommand;
                         Event->Msg.Command = cmVScrollPgDn;
                         break;
-                        
+
                     case SB_ENDSCROLL:
                         WinSetFocus(HWND_DESKTOP, v->Parent->Active->Peer->hwndView);
                         /* no break */
                     case SB_SLIDERPOSITION:
-                    case SB_SLIDERTRACK:
-                        {
-                            SHORT x = SHORT1FROMMP(qmsg.mp2);
-                            
-                            if (x != 0) {
-                                Event->What = evCommand;
-                                Event->Msg.Command = cmVScrollMove;
-                                if (v->Peer->sbVtotal > 32000)
-                                    Event->Msg.Param1 = (x - 1) * v->Peer->sbVtotal / 32000;
-                                else
-                                    Event->Msg.Param1 = x - 1;
-                            }
+                    case SB_SLIDERTRACK: {
+                        SHORT x = SHORT1FROMMP(qmsg.mp2);
+
+                        if (x != 0) {
+                            Event->What = evCommand;
+                            Event->Msg.Command = cmVScrollMove;
+                            if (v->Peer->sbVtotal > 32000)
+                                Event->Msg.Param1 = (x - 1) * v->Peer->sbVtotal / 32000;
+                            else
+                                Event->Msg.Param1 = x - 1;
                         }
-                        break;
+                    }
+                    break;
                     }
                     return 0;
-                    
+
                 case WM_HSCROLL:
                     //DosBeep(800, 2000);
                     if (!v->IsActive())
@@ -2094,44 +2091,43 @@ int ConGetEvent(TEventMask EventMask, TEvent *Event, int WaitTime, int Delete, G
                         Event->Msg.Command = cmHScrollLeft;
                         Event->Msg.Param1 = 1;
                         break;
-                        
+
                     case SB_LINEDOWN:
                         Event->What = evCommand;
                         Event->Msg.Command = cmHScrollRight;
                         Event->Msg.Param1 = 1;
                         break;
-                        
+
                     case SB_PAGEUP:
                         Event->What = evCommand;
                         Event->Msg.Command = cmHScrollPgLt;
                         break;
-                        
+
                     case SB_PAGEDOWN:
                         Event->What = evCommand;
                         Event->Msg.Command = cmHScrollPgRt;
                         break;
-                        
+
                     case SB_ENDSCROLL:
                         WinSetFocus(HWND_DESKTOP, v->Parent->Active->Peer->hwndView);
                         /* no break */
                     case SB_SLIDERPOSITION:
-                    case SB_SLIDERTRACK:
-                        {
-                            SHORT x = SHORT1FROMMP(qmsg.mp2);
-                            
-                            if (x != 0) {
-                                Event->What = evCommand;
-                                Event->Msg.Command = cmHScrollMove;
-                                if (v->Peer->sbHtotal > 32000)
-                                    Event->Msg.Param1 = (x - 1) * v->Peer->sbHtotal / 32000;
-                                else
-                                    Event->Msg.Param1 = x - 1;
-                            }
+                    case SB_SLIDERTRACK: {
+                        SHORT x = SHORT1FROMMP(qmsg.mp2);
+
+                        if (x != 0) {
+                            Event->What = evCommand;
+                            Event->Msg.Command = cmHScrollMove;
+                            if (v->Peer->sbHtotal > 32000)
+                                Event->Msg.Param1 = (x - 1) * v->Peer->sbHtotal / 32000;
+                            else
+                                Event->Msg.Param1 = x - 1;
                         }
-                        break;
+                    }
+                    break;
                     }
                     return 0;
-                
+
                 case WM_CLOSE:
                     //DosBeep(500, 1500);
                     frames = f;
@@ -2139,7 +2135,7 @@ int ConGetEvent(TEventMask EventMask, TEvent *Event, int WaitTime, int Delete, G
                     Event->Msg.View = v->Parent->Active;
                     Event->Msg.Command = cmClose;
                     return 0;
-                    
+
                 case WM_COMMAND:
                     //DosBeep(50, 2500);
                     if (SHORT1FROMMP(qmsg.mp1) >= 8192) {
@@ -2150,7 +2146,7 @@ int ConGetEvent(TEventMask EventMask, TEvent *Event, int WaitTime, int Delete, G
                         return 0;
                     }
                     break;
-                    
+
                 case WM_CHAR:
                     //DosBeep(50, 500);
                     Event->What = evNone;
@@ -2162,14 +2158,14 @@ int ConGetEvent(TEventMask EventMask, TEvent *Event, int WaitTime, int Delete, G
                                *Event);
                     frames = f;
                     return 0;
-                
+
                 case WM_BUTTON1DOWN:
                 case WM_BUTTON2DOWN:
                 case WM_BUTTON3DOWN:
                 case WM_BUTTON1DBLCLK:
                 case WM_BUTTON2DBLCLK:
                 case WM_BUTTON3DBLCLK:
-                    if (!v->IsActive()) 
+                    if (!v->IsActive())
                         v->Parent->SelectView(v);
                 case WM_BUTTON1UP:
                 case WM_BUTTON2UP:
@@ -2191,34 +2187,34 @@ int ConGetEvent(TEventMask EventMask, TEvent *Event, int WaitTime, int Delete, G
 //                    printf("KeyFlags: %d\n", Event->Mouse.KeyMask);
                     //DosBeep(2000, 50);
                     frames = f;
-                
+
                     switch (qmsg.msg) {
                     case WM_BUTTON1DOWN:
                         Event->What = evMouseDown;
                         v->Peer->OldMouseX = Event->Mouse.X;
                         v->Peer->OldMouseY = Event->Mouse.Y;
                         return 0;
-                    
+
                     case WM_BUTTON1DBLCLK:
                         Event->What = evMouseDown;
                         Event->Mouse.Count = 2;
                         v->Peer->OldMouseX = Event->Mouse.X;
                         v->Peer->OldMouseY = Event->Mouse.Y;
                         return 0;
-                    
+
                     case WM_BUTTON1UP:
                         Event->What = evMouseUp;
                         v->Peer->OldMouseX = Event->Mouse.X;
                         v->Peer->OldMouseY = Event->Mouse.Y;
                         return 0;
-                
+
                     case WM_BUTTON2DOWN:
                         Event->What = evMouseDown;
                         Event->Mouse.Buttons = 2;
                         v->Peer->OldMouseX = Event->Mouse.X;
                         v->Peer->OldMouseY = Event->Mouse.Y;
                         return 0;
-                    
+
                     case WM_BUTTON2DBLCLK:
                         Event->What = evMouseDown;
                         Event->Mouse.Buttons = 2;
@@ -2226,21 +2222,21 @@ int ConGetEvent(TEventMask EventMask, TEvent *Event, int WaitTime, int Delete, G
                         v->Peer->OldMouseX = Event->Mouse.X;
                         v->Peer->OldMouseY = Event->Mouse.Y;
                         return 0;
-                
+
                     case WM_BUTTON2UP:
                         Event->What = evMouseUp;
                         Event->Mouse.Buttons = 2;
                         v->Peer->OldMouseX = Event->Mouse.X;
                         v->Peer->OldMouseY = Event->Mouse.Y;
                         return 0;
-                
+
                     case WM_BUTTON3DOWN:
                         Event->What = evMouseDown;
                         Event->Mouse.Buttons = 4;
                         v->Peer->OldMouseX = Event->Mouse.X;
                         v->Peer->OldMouseY = Event->Mouse.Y;
                         return 0;
-                
+
                     case WM_BUTTON3DBLCLK:
                         Event->What = evMouseDown;
                         Event->Mouse.Buttons = 4;
@@ -2248,14 +2244,14 @@ int ConGetEvent(TEventMask EventMask, TEvent *Event, int WaitTime, int Delete, G
                         v->Peer->OldMouseX = Event->Mouse.X;
                         v->Peer->OldMouseY = Event->Mouse.Y;
                         return 0;
-                
+
                     case WM_BUTTON3UP:
                         Event->What = evMouseUp;
                         Event->Mouse.Buttons = 4;
                         v->Peer->OldMouseX = Event->Mouse.X;
                         v->Peer->OldMouseY = Event->Mouse.Y;
                         return 0;
-                
+
                     case WM_MOUSEMOVE:
                         Event->What = evMouseMove;
                         Event->Mouse.Buttons = 0;
@@ -2265,19 +2261,17 @@ int ConGetEvent(TEventMask EventMask, TEvent *Event, int WaitTime, int Delete, G
                             Event->Mouse.Buttons |= 2;
                         if (WinGetKeyState(HWND_DESKTOP, VK_BUTTON3) & 0x8000)
                             Event->Mouse.Buttons |= 4;
-                        
+
                         if (Event->Mouse.Buttons != 0) {
                             if (Event->Mouse.X != v->Peer->OldMouseX ||
-                                Event->Mouse.Y != v->Peer->OldMouseY) 
-                            {
+                                    Event->Mouse.Y != v->Peer->OldMouseY) {
                                 v->Peer->OldMouseX = Event->Mouse.X;
                                 v->Peer->OldMouseY = Event->Mouse.Y;
                                 return 0;
                             } else  if (Event->Mouse.X >= 0 &&
                                         Event->Mouse.Y >= 0 &&
                                         Event->Mouse.X < v->Peer->wW &&
-                                        Event->Mouse.Y < v->Peer->wH)
-                            {
+                                        Event->Mouse.Y < v->Peer->wH) {
                                 Event->What = evNone;
                             }
                         }
@@ -2302,7 +2296,7 @@ int ConGetEvent(TEventMask EventMask, TEvent *Event, int WaitTime, int Delete, G
 static void _LNK_CONV WorkThread(void *) {
     habW = WinInitialize(0);
     hmqW = WinCreateMsgQueue(hab, 0);
-    
+
     hwndCreatorWorker = WinCreateWindow(HWND_OBJECT,
                                         szCreator,
                                         "Creator",
@@ -2312,24 +2306,24 @@ static void _LNK_CONV WorkThread(void *) {
                                         0, NULL, NULL);
 
     assert(hwndCreatorWorker != 0);
-    
+
     // work thread started
     DosPostEventSem(WorkerStarted);
 
     ULONG ulPostCount;
     DosWaitEventSem(StartInterface, SEM_INDEFINITE_WAIT);
     DosResetEventSem(StartInterface, &ulPostCount);
-        
+
     //DosBeep(200, 200);
     if (gui->Start(gui->fArgc, gui->fArgv) == 0) {
         gui->doLoop = 1;
         //DosBeep(500, 500);
         while (gui->doLoop)
             gui->ProcessEvent();
-        
+
         gui->Stop();
     }
-    
+
     WinDestroyMsgQueue(hmqW);
     WinTerminate(habW);
     //DosBeep(500, 500);
@@ -2341,7 +2335,7 @@ static void _LNK_CONV WorkThread(void *) {
 
 GViewPeer::GViewPeer(GView *view, int XSize, int YSize) {
     HWND parent;
-    
+
     View = view;
 //    wX = 0;
 //    wY = 0;
@@ -2356,19 +2350,19 @@ GViewPeer::GViewPeer(GView *view, int XSize, int YSize) {
     wState = 0;
     cVisible = 1;
     OldMouseX = OldMouseY = 0xFFFF;
-    
+
     pmData = (PMData *)malloc(sizeof(PMData));
-    
+
     pmData->Peer = this;
     pmData->hvps = 0;
     pmData->cxChar = 8;
     pmData->cyChar = 14;
     pmData->hwndWorker = 0;
-        
+
     parent = View->Parent->Peer->hwndFrame;
-    
+
     WinSendMsg(hwndCreatorWorker, UWM_CREATEWORKER, MPFROMP(this), MPFROMP(pmData));
-    
+
     WinSendMsg(parent, UWM_CREATECHILD, MPFROMP(this), MPFROMP(pmData));
 }
 
@@ -2385,8 +2379,7 @@ int GViewPeer::ConPutBox(int X, int Y, int W, int H, PCell Cell) {
 
     DosRequestMutexSem(hmtxPMData, SEM_INDEFINITE_WAIT);
     if (Y < 0 || Y >= wH || X < 0 || X >= wW ||
-        Y + H < 0 || Y + H > wH || X + W < 0 || X + W > wW)
-    {
+            Y + H < 0 || Y + H > wH || X + W < 0 || X + W > wW) {
         //fprintf(stderr,
         //       "X:%d, Y:%d, W:%d, H:%d, wW:%d, wH:%d\n",
         //        X, Y, W, H, wW, wH);
@@ -2409,11 +2402,10 @@ int GViewPeer::ConGetBox(int X, int Y, int W, int H, PCell Cell) {
     int I;
     USHORT WW = (USHORT)(W << 1);
     char *p = (char *) Cell;
-    
+
     DosRequestMutexSem(hmtxPMData, SEM_INDEFINITE_WAIT);
     if (Y < 0 || Y >= wH || X < 0 || X >= wW ||
-        Y + H < 0 || Y + H > wH || X + W < 0 || X + W > wW)
-    {
+            Y + H < 0 || Y + H > wH || X + W < 0 || X + W > wW) {
         //fprintf(stderr,
         //       "X:%d, Y:%d, W:%d, H:%d, wW:%d, wH:%d\n",
         //       X, Y, W, H, wW, wH);
@@ -2432,11 +2424,10 @@ int GViewPeer::ConPutLine(int X, int Y, int W, int H, PCell Cell) {
     int I;
     char *p = (char *) Cell;
     int Hidden = 0;
-    
+
     DosRequestMutexSem(hmtxPMData, SEM_INDEFINITE_WAIT);
     if (Y < 0 || Y >= wH || X < 0 || X >= wW ||
-        Y + H < 0 || Y + H > wH || X + W < 0 || X + W > wW)
-    {
+            Y + H < 0 || Y + H > wH || X + W < 0 || X + W > wW) {
         //fprintf(stderr,
         //        "X:%d, Y:%d, W:%d, H:%d, wW:%d, wH:%d\n",
         //        X, Y, W, H, wW, wH);
@@ -2456,13 +2447,12 @@ int GViewPeer::ConPutLine(int X, int Y, int W, int H, PCell Cell) {
 
 int GViewPeer::ConSetBox(int X, int Y, int W, int H, TCell Cell) {
     int I;
-    char *p = (char *) &Cell;
+    char *p = (char *) & Cell;
     int Hidden = 0;
-    
+
     DosRequestMutexSem(hmtxPMData, SEM_INDEFINITE_WAIT);
     if (Y < 0 || Y >= wH || X < 0 || X >= wW ||
-        Y + H < 0 || Y + H > wH || X + W < 0 || X + W > wW)
-    {
+            Y + H < 0 || Y + H > wH || X + W < 0 || X + W > wW) {
         //fprintf(stderr,
         //        "X:%d, Y:%d, W:%d, H:%d, wW:%d, wH:%d\n",
         //        X, Y, W, H, wW, wH);
@@ -2483,11 +2473,10 @@ int GViewPeer::ConSetBox(int X, int Y, int W, int H, TCell Cell) {
 int GViewPeer::ConScroll(int Way, int X, int Y, int W, int H, TAttr Fill, int Count) {
     TCell FillCell = (TCell)(Fill << 8);
     int Hidden = 0;
-    
+
     DosRequestMutexSem(hmtxPMData, SEM_INDEFINITE_WAIT);
     if (Y < 0 || Y >= wH || X < 0 || X >= wW ||
-        Y + H < 0 || Y + H > wH || X + W < 0 || X + W > wW)
-    {
+            Y + H < 0 || Y + H > wH || X + W < 0 || X + W > wW) {
         //fprintf(stderr,
         //        "X:%d, Y:%d, W:%d, H:%d, wW:%d, wH:%d\n",
         //        X, Y, W, H, wW, wH);
@@ -2591,16 +2580,15 @@ int GViewPeer::QuerySbVPos() {
 
 int GViewPeer::SetSbVPos(int Start, int Amount, int Total) {
     if (sbVstart != Start ||
-        sbVamount != Amount ||
-        sbVtotal != Total)
-    {
+            sbVamount != Amount ||
+            sbVtotal != Total) {
         sbVstart = Start;
         sbVamount = Amount;
         sbVtotal = Total;
-        
+
         if (View->Parent == 0)
             return 0;
-        
+
         WinEnableWindowUpdate(hwndVscroll, FALSE);
         if (sbVamount < sbVtotal) {
             if (sbVtotal > 32000) {
@@ -2634,16 +2622,15 @@ int GViewPeer::SetSbVPos(int Start, int Amount, int Total) {
 
 int GViewPeer::SetSbHPos(int Start, int Amount, int Total) {
     if (sbHstart != Start ||
-        sbHamount != Amount ||
-        sbHtotal != Total)
-    {
+            sbHamount != Amount ||
+            sbHtotal != Total) {
         sbHstart = Start;
         sbHamount = Amount;
         sbHtotal = Total;
-        
+
         if (View->Parent == 0)
             return 0;
-        
+
         WinEnableWindowUpdate(hwndHscroll, FALSE);
         if (sbHtotal > sbHamount) {
             if (sbHtotal > 32000) {
@@ -2738,7 +2725,7 @@ GView::~GView() {
 int GView::ConClear() {
     int W, H;
     TDrawBuffer B;
-    
+
     ConQuerySize(&W, &H);
     MoveChar(B, 0, W, ' ', 0x07, 1);
     ConSetBox(0, 0, W, H, B[0]);
@@ -2794,7 +2781,7 @@ int GView::ConHideCursor() {
 }
 
 int GView::ConCursorVisible() {
-    return Peer->ConCursorVisible(); 
+    return Peer->ConCursorVisible();
 }
 
 void GView::ConSetInsertState(bool insert) {
@@ -2838,7 +2825,7 @@ int GView::Execute() {
     int SaveRc = Result;
     int NewResult;
     int didFocus = 0;
-    
+
     if (FocusCapture == 0) {
         if (CaptureFocus(1) == 0) return -1;
         didFocus = 1;
@@ -2929,7 +2916,7 @@ int GFramePeer::ConQuerySize(int *X, int *Y) {
 //    if (X) *X = fW;
 //    if (Y) *Y = fH;
     return 1;
-}   
+}
 
 int GFramePeer::ConSetTitle(char *Title, char *STitle) {
     char szTitle[256] = {0};
@@ -2955,7 +2942,7 @@ int GFramePeer::ConGetTitle(char *Title, int MaxLen, char *STitle, int SMaxLen) 
 void GFramePeer::MapFrame() {
     if (frames != frames->Next || WinRestoreWindowPos("eFTEPM", "Frame1", hwndFrame) == FALSE) {
         WinQueryTaskSizePos(hab, 0, &swp);
-        
+
         WinSetWindowPos(hwndFrame, HWND_TOP,
                         swp.x,
                         swp.y,
@@ -2992,7 +2979,7 @@ void GFramePeer::SizeFrame() {
     } else {
         swpToolBar.cy = 0;
     }
-    
+
     WinQueryWindowPos(hwndMenu, &swpMenu);
     WinSendMsg(hwndMenu,
                WM_ADJUSTWINDOWPOS,
@@ -3009,7 +2996,7 @@ void GFramePeer::SizeFrame() {
         ptl.y += v->Peer->wH * v->Peer->pmData->cyChar + cyScrollBar;
         if (v == Frame->Top) break;
     }
-    
+
     reportSize = 0;
     DosReleaseMutexSem(hmtxPMData);
     WinQueryWindowPos(hwndFrame, &swp);
@@ -3074,12 +3061,12 @@ GFrame::GFrame(int XSize, int YSize) {
 GFrame::~GFrame() {
     GView *P = Top, *Q;
     if (P) do {
-        Q = P;
-        P = Q->Next;
-        Q->Parent = 0;
-        delete Q;
-    } while (P != Top);
-    
+            Q = P;
+            P = Q->Next;
+            Q->Parent = 0;
+            delete Q;
+        } while (P != Top);
+
     Top = Active = 0;
     if (Peer) {
         delete Peer;
@@ -3141,10 +3128,10 @@ int GFrame::AddView(GView *view) {
         return ConSplitView(Active, view);
     } else {
 //        int W, H;
-        
+
         view->Parent = this;
         view->Prev = view->Next = 0;
-        
+
 //        view->Peer->wX = 0;
 //        view->Peer->wY = 0;
 //        ConQuerySize(&W, &H);
@@ -3156,12 +3143,12 @@ int GFrame::AddView(GView *view) {
 
 void GFrame::Update() {
     GView *v = Active;
-    
+
     UpdateMenu();
     while (v) {
         v->Update();
         v = v->Next;
-        if (v == Active) 
+        if (v == Active)
             break;
     }
 }
@@ -3171,11 +3158,11 @@ void GFrame::UpdateMenu() {
 
 void GFrame::Repaint() {
     GView *v = Active;
-    
+
     while (v) {
         v->Repaint();
         v = v->Next;
-        if (v == Active) 
+        if (v == Active)
             break;
     }
 }
@@ -3199,7 +3186,7 @@ void GFrame::InsertView(GView *Prev, GView *view) {
 
 void GFrame::RemoveView(GView *view) {
     if (!view) return ;
-    
+
     if (Active == view)
         Active->Activate(0);
     if (view->Next == view) {
@@ -3208,7 +3195,7 @@ void GFrame::RemoveView(GView *view) {
     } else {
         view->Next->Prev = view->Prev;
         view->Prev->Next = view->Next;
-        
+
         if (Top == view) {
             Top = view->Next;
             Top->ConSetSize(Top->Peer->wW, Top->Peer->wH + view->Peer->wH + 1);
@@ -3216,7 +3203,7 @@ void GFrame::RemoveView(GView *view) {
             view->Prev->ConSetSize(view->Prev->Peer->wW,
                                    view->Prev->Peer->wH + view->Peer->wH + 1);
         }
-        
+
         if (Active == view) {
             Active = view->Prev;
             WinSetFocus(HWND_DESKTOP, Active->Peer->hwndView);
@@ -3228,7 +3215,7 @@ void GFrame::RemoveView(GView *view) {
 
 void GFrame::SelectNext(int back) {
     GView *c = Active;
-    
+
     if (c == 0 && Top == 0)
         return;
     else if (c == 0)
@@ -3249,10 +3236,10 @@ void GFrame::SelectNext(int back) {
 int GFrame::SelectView(GView *view) {
     if (Top == 0)
         return 0;
-    
+
     if (FocusCapture != 0 || MouseCapture != 0)
         return 0;
-    
+
     if (Active)
         Active->Activate(0);
     Active = view;
@@ -3267,10 +3254,10 @@ int GFrame::SelectView(GView *view) {
 void GFrame::Resize(int width, int height) {
     if (!Top)
         return;
-    
+
     if (width < 8 || height < 2)
         return;
-    
+
     if (Top == Top->Next) {
         Top->ConSetSize(width, height);
     } else {
@@ -3281,7 +3268,7 @@ int GFrame::SetMenu(const char *Name) {
     //WinAlarm(HWND_DESKTOP, WA_NOTE);
     if (Menu && Name && strcmp(Name, Menu) == 0)
         return 1;
-    
+
     free(Menu);
     Menu = strdup(Name);
 
@@ -3295,7 +3282,7 @@ int GFrame::SetMenu(const char *Name) {
 
 int GFrame::ExecMainMenu(char Sub) {
     HWND hwnd;
-    
+
     hwnd = WinWindowFromID(Peer->hwndFrame, FID_MENU);
     if (Sub != 0) {
         int count = LONGFROMMR(WinSendMsg(hwnd, MM_QUERYITEMCOUNT, 0, 0));
@@ -3305,7 +3292,7 @@ int GFrame::ExecMainMenu(char Sub) {
         char srch[3] = "~x";
 
         srch[1] = (char)toupper(Sub);
-        
+
         //puts("mainmenu");
         for (SHORT i = 0; i < count; i++) {
             id = SHORT1FROMMR(WinSendMsg(hwnd, MM_ITEMIDFROMPOSITION, MPFROMSHORT(i), 0));
@@ -3340,7 +3327,7 @@ int GFrame::PopupMenu(const char *Name) {
 
     if (id == -1)
         return 0;
-            
+
 
     WinSendMsg(hwndCreatorUser,
                UWM_CREATEPOPUPMENU,
@@ -3403,7 +3390,7 @@ GUI::GUI(int &argc, char **argv, int XSize, int YSize) {
     ULONG ulPostCount;
     DosWaitEventSem(WorkerStarted, SEM_INDEFINITE_WAIT);
     DosResetEventSem(WorkerStarted, &ulPostCount);
-    
+
     gui = this;
 }
 
@@ -3424,9 +3411,13 @@ void GUI::DispatchEvent(GFrame *frame, GView *view, TEvent &Event) {
     }
 }
 
-int GUI::ConSuspend(void) { return 0; }
+int GUI::ConSuspend(void) {
+    return 0;
+}
 
-int GUI::ConContinue(void) { return 0; }
+int GUI::ConContinue(void) {
+    return 0;
+}
 
 int GUI::ConGetEvent(TEventMask EventMask, TEvent *Event, int WaitTime, int Delete, GView **view) {
     return ::ConGetEvent(EventMask, Event, WaitTime, Delete, view);
@@ -3487,26 +3478,26 @@ int GUI::RunProgram(int mode, char *Command) {
     PID pid;
     ULONG sid;
     int ArgsSize;
-    
+
     Prog = getenv("COMSPEC");
 
     ArgsSize = 3 + strlen(Command) + 1;
-    
+
     Args = (char *)malloc(ArgsSize);
     if (Args == NULL) {
         return -1;
     }
-    
+
     if (*Command != 0) {
         strlcpy(Args, "/c ", ArgsSize);
         strlcat(Args, Command, ArgsSize);
     } else {
         Args[0] = 0;
     }
-    
+
     {
         STARTDATA sd;
-        
+
         memset((void *)&sd, 0, sizeof(sd));
         sd.Length = sizeof(sd);
         sd.Related = SSF_RELATED_INDEPENDENT;
@@ -3526,9 +3517,9 @@ int GUI::RunProgram(int mode, char *Command) {
         sd.ObjectBuffLen = sizeof(FailBuf);
         rc = DosStartSession(&sd, &sid, &pid);
     }
-    
+
     free(Args);
-    
+
     return rc;
 }
 
@@ -3545,42 +3536,42 @@ static int CreatePipeChild(ULONG *sid, PID *pid, HPIPE &hfPipe, char *Command) {
     ULONG ulAction;
     //ULONG ulNew;
     HPIPE hfChildPipe;
-    HFILE hfNewStdOut = (HFILE)-1, hfNewStdErr = (HFILE)-1;
+    HFILE hfNewStdOut = (HFILE) - 1, hfNewStdErr = (HFILE) - 1;
     HFILE hfStdOut = (HFILE)1, hfStdErr = (HFILE)2;
     int rc;
-    
+
     sprintf(szPipe, "\\PIPE\\eFTE%d\\CHILD%d", getpid(), PCount);
     PCount++;
-    
+
     rc = DosCreateNPipe(szPipe, &hfPipe,
                         NP_NOINHERIT | NP_ACCESS_INBOUND,
                         NP_NOWAIT | NP_TYPE_BYTE | NP_READMODE_BYTE | 1,
                         0, 4096, 0);
     if (rc != 0)
         return -1;
-    
-    rc = DosConnectNPipe (hfPipe);
+
+    rc = DosConnectNPipe(hfPipe);
     if (rc != 0 && rc != ERROR_PIPE_NOT_CONNECTED) {
         DosClose(hfPipe);
         return -1;
     }
-    
-    rc = DosSetNPHState (hfPipe, NP_WAIT | NP_READMODE_BYTE);
+
+    rc = DosSetNPHState(hfPipe, NP_WAIT | NP_READMODE_BYTE);
     if (rc != 0) {
         DosClose(hfPipe);
         return -1;
     }
-    
-    rc = DosOpen (szPipe, &hfChildPipe, &ulAction, 0,
-                  FILE_NORMAL,
-                  OPEN_ACTION_OPEN_IF_EXISTS | OPEN_ACTION_FAIL_IF_NEW,
-                  OPEN_ACCESS_WRITEONLY | OPEN_SHARE_DENYREADWRITE,
-                  NULL);
+
+    rc = DosOpen(szPipe, &hfChildPipe, &ulAction, 0,
+                 FILE_NORMAL,
+                 OPEN_ACTION_OPEN_IF_EXISTS | OPEN_ACTION_FAIL_IF_NEW,
+                 OPEN_ACCESS_WRITEONLY | OPEN_SHARE_DENYREADWRITE,
+                 NULL);
     if (rc != 0) {
-        DosClose (hfPipe);
+        DosClose(hfPipe);
         return -1;
     }
-    
+
     // Duplicate handles
     DosDupHandle(hfStdOut, &hfNewStdOut);
     DosDupHandle(hfStdErr, &hfNewStdErr);
@@ -3591,9 +3582,9 @@ static int CreatePipeChild(ULONG *sid, PID *pid, HPIPE &hfPipe, char *Command) {
     DosDupHandle(hfChildPipe, &hfStdOut);
     DosDupHandle(hfChildPipe, &hfStdErr);
     // Let started program inherit handles from parent
-    
+
     Prog = getenv("COMSPEC");
-    
+
 #if 0
     Args = (char *)malloc(strlen(Prog) + 1
                           + 3 + strlen(Command) + 1
@@ -3602,7 +3593,7 @@ static int CreatePipeChild(ULONG *sid, PID *pid, HPIPE &hfPipe, char *Command) {
         DosClose(hfPipe);
         return -1;
     }
-    
+
     strcpy(Args, Prog);
     arglen = strlen(Args) + 1;
     strcpy(Args + arglen, "/c ");
@@ -3617,12 +3608,12 @@ static int CreatePipeChild(ULONG *sid, PID *pid, HPIPE &hfPipe, char *Command) {
         DosClose(hfPipe);
         return -1;
     }
-    
+
     strlcpy(Args, "/c ", ArgsSize);
     strlcat(Args, Command, ArgsSize);
 #endif
-    
-    
+
+
 #if 0
     rc = DosExecPgm(FailBuf, sizeof(FailBuf),
                     EXEC_ASYNCRESULT, // | EXEC_BACKGROUND,
@@ -3654,28 +3645,28 @@ static int CreatePipeChild(ULONG *sid, PID *pid, HPIPE &hfPipe, char *Command) {
         rc = DosStartSession(&sd, sid, pid);
     }
 #endif
-    
+
     free(Args);
-    
+
     // Get back original handles
     DosDupHandle(hfNewStdOut, &hfStdOut);
     DosDupHandle(hfNewStdErr, &hfStdErr);
     // Close the duplicated handles - no longer needed
     DosClose(hfNewStdOut);
     DosClose(hfNewStdErr);
-    
+
     DosClose(hfChildPipe); // pipe one way, close out write end
-    
+
     if (rc != 0) {
         DosClose(hfPipe);
         return -1;
     }
-    
+
 #if 0
     pid = rc_code.codeTerminate; // get pid when successful
     sid = 0;
 #endif
-    
+
     return 0;
 }
 
@@ -3691,11 +3682,11 @@ static void _LNK_CONV PipeThread(void *p) {
     RESULTCODES rc_code;
 #endif
     int rc;
-    
+
     hab = WinInitialize(0);
-    
+
     rc = CreatePipeChild(&sid, &pid, hfPipe, pipe->Command);
-    
+
     if (rc != 0) {
         DosRequestMutexSem(pipe->Access, SEM_INDEFINITE_WAIT);
         pipe->reading = 0;
@@ -3750,7 +3741,7 @@ static void _LNK_CONV PipeThread(void *p) {
 
 int GUI::OpenPipe(char *Command, EModel *notify) {
     int i;
-    
+
     for (i = 0; i < MAX_PIPES; i++) {
         if (Pipes[i].used == 0) {
             Pipes[i].reading = 1;
@@ -3764,20 +3755,20 @@ int GUI::OpenPipe(char *Command, EModel *notify) {
             Pipes[i].DoTerm = 0;
             if ((Pipes[i].buffer = (char *)malloc(PIPE_BUFLEN)) == 0)
                 return -1;
-            
+
             if (0 != DosCreateMutexSem(0, &Pipes[i].Access, 0, 0)) {
                 free(Pipes[i].Command);
                 free(Pipes[i].buffer);
                 return -1;
             }
-            
+
             if (0 != DosCreateEventSem(0, &Pipes[i].ResumeRead, 0, 0)) {
                 free(Pipes[i].Command);
                 free(Pipes[i].buffer);
                 DosCloseMutexSem(Pipes[i].Access);
                 return -1;
             }
-            
+
             Pipes[i].tid = _beginthread(PipeThread,
                                         FAKE_BEGINTHREAD_NULL
                                         16384, &Pipes[i]);
@@ -3805,7 +3796,7 @@ int GUI::SetPipeView(int id, EModel *notify) {
 int GUI::ReadPipe(int id, void *buffer, int len) {
     int l;
     //ULONG ulPostCount;
-    
+
     if (id < 0 || id > MAX_PIPES)
         return -1;
     if (Pipes[id].used == 0)
@@ -3820,7 +3811,7 @@ int GUI::ReadPipe(int id, void *buffer, int len) {
         if (l > Pipes[id].bufused - Pipes[id].bufpos) {
             l = Pipes[id].bufused - Pipes[id].bufpos;
         }
-        memcpy(buffer, 
+        memcpy(buffer,
                Pipes[id].buffer + Pipes[id].bufpos,
                l);
         Pipes[id].bufpos += l;
@@ -3868,7 +3859,7 @@ int GUI::multiFrame() {
 void DieError(int rc, const char *msg, ...) {
     va_list ap;
     char str[1024];
-    
+
     va_start(ap, msg);
     vsprintf(str, msg, ap);
     va_end(ap);
@@ -3884,8 +3875,8 @@ void DieError(int rc, const char *msg, ...) {
 
 char ConGetDrawChar(int index) {
     static char tab[] = "\xDA\xBF\xC0\xD9\xC4\xB3\xC2\xC3\xB4\xC1\xC5\x1A\xFA\x04\xC4\x18\x19\xB1\xB0\x1B\x1A";
-    
+
     assert(index >= 0 && index < (signed)strlen(tab));
-    
+
     return tab[index];
 }

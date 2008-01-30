@@ -14,13 +14,13 @@
 extern "C" {
 #endif
 
-typedef struct {
-    unsigned long fLen;
-    char *fChar;
-} ClipData;
+    typedef struct {
+        unsigned long fLen;
+        char *fChar;
+    } ClipData;
 
-int GetClipText(ClipData *cd);
-int PutClipText(ClipData *cd);
+    int GetClipText(ClipData *cd);
+    int PutClipText(ClipData *cd);
 
 #ifdef __cplusplus
 }

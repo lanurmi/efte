@@ -255,7 +255,7 @@ colorize SGML {
 
 }
 
-mode SGML: PLAIN {
+mode SGML: MARKUP {
     FileNameRx          = /\.\c{SGML?}|{SGML?}$/;
     HilitOn             = 1;
     Colorizer           = "SGML";
@@ -275,3 +275,5 @@ mode SGML: PLAIN {
     IndentMode          = "Plain";
     Trim                = 1;
 }
+
+oinclude 'mym_sgml.fte';

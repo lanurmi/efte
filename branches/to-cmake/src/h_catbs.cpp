@@ -16,7 +16,7 @@
 int Hilit_CATBS(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, hlState &State, hsState *StateMap, int *ECol) {
     HILIT_VARS(BF->Mode->fColorize->Colors, Line);
     int CL = 0; //(LN == BF->VToR(BF->CP.Row)) ? 1 : 0;
-    
+
     for (i = 0; i < Line->Count;) {
         IF_TAB() else {
             switch (State) {

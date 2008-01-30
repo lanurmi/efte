@@ -51,7 +51,7 @@ colorize Ada {
     h_trans { 0, '$', '', 'Normal' }
 }
 
-mode Ada: PLAIN {               # Ada mode
+mode Ada: SOURCE {               # Ada mode
     FileNameRx          = '\\.\\c{ADS}|{ADB}$';
     Colorizer           = 'Ada';
     HilitOn             = 1;
@@ -68,3 +68,5 @@ mode Ada: PLAIN {               # Ada mode
     CommentStart        = ' --';
     CommentEnd          = '';
 }
+
+oinclude 'mym_ada.fte';
