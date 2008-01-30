@@ -111,12 +111,14 @@ static int GetDiskCurDir(int drive, char *dir) {
 
 #if defined(__EMX__)
     return (_getcwd1(dir, (char)(drive + 'A' - 1)) == 0) ? 0 : -1;
-#elif defined(OS2) {
+#elif defined(OS2)
+{
     ULONG len = MAXPATH - 4; // 'c:\0'
 
     return (DosQueryCurrentDir(drive, dir, &len) == 0) ? 0 : -1;
 }
-#elif defined(NT) {
+#elif defined(NT)
+{
     char orig[MAXPATH], newdrive[MAXPATH];
 
     // set to new drive, get directory and restore original directory
