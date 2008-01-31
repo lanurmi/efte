@@ -440,6 +440,7 @@ static const OrdLookup global_string[] = {
     MODE_FLG(SvnLogMode),
     MODE_FLG(XShellCommand),
     MODE_FLG(RGBColor),
+    MODE_FLG(BackupDirectory),
     { 0, 0 },
 };
 

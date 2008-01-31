@@ -93,7 +93,7 @@ colorize FTE {
     };
     keyword 'Editor_Keywords3' {
         'Abbreviations', 'AddCR', 'AddLF', 'AutoHilitParen', 'AutoIndent',
-        'BackSpKillBlock', 'BackSpKillTab', 'BackSpUnindents', 'C_BraceOfs',
+        'BackSpKillBlock', 'BackSpKillTab', 'BackSpUnindents', 'BackupDirectory', 'C_BraceOfs',
         'C_CaseDelta', 'C_CaseOfs', 'C_ClassDelta', 'C_ClassOfs', 'C_ColonOfs',
         'C_CommentDelta', 'C_CommentOfs', 'C_Continuation',
         'C_FirstLevelIndent', 'C_FirstLevelWidth', 'C_Indent', 'C_ParenDelta',
