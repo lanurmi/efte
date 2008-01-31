@@ -70,7 +70,7 @@ SET( NFTE_SOURCES clip_no.cpp con_ncurses.cpp g_nodlg.cpp g_text.cpp g_unix_pipe
   menu_text.cpp )
 SET( VFTE_SOURCES clip_no.cpp con_linux.cpp g_nodlg.cpp g_text.cpp menu_text.cpp )
 SET( WFTE_SOURCES clip_os2.cpp con_nt.cpp e_win32.cpp g_nodlg.cpp g_text.cpp
-  menu_text.cpp )
+  menu_text.cpp ftewin32.rc )
 
 # =============================================================================
 #
@@ -114,6 +114,7 @@ ENDIF( CMAKE_SYSTEM_NAME MATCHES "NCR" )
 
 IF( WIN32 )
   IF( BORLAND )
+    ADD_DEFINITIONS( -DBCPP )
   ENDIF( BORLAND )
 
   IF( CYGWIN )
@@ -124,7 +125,6 @@ IF( WIN32 )
 
   IF( MSVC )
     ADD_DEFINITIONS( -D_CRT_NONSTDC_NO_WARNINGS -D_CRT_SECURE_NO_WARNINGS -DMSVC )
-    SET( SYSTEM_LIBS ${SYSTEM_LIBS} user32.lib )
   ENDIF( MSVC )
 
   IF( WATCOM )
