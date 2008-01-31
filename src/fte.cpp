@@ -16,9 +16,11 @@
 #if defined(UNIX)
 /* default locations for the configuration files */
 const char *Unix_RCPaths[] = {
-    "/usr/local/etc/efte/system.fterc",
     "/etc/efte/system.fterc",
-    "/usr/X11R6/lib/X11/efte/system.fterc",
+    "/usr/share/efte/system.fterc",
+    "/opt/share/efte/system.fterc",
+    "/usr/local/share/efte/system.fterc",
+    "/opt/local/share/efte/system.fterc",
 };
 
 // variables used by vfte
@@ -105,7 +107,15 @@ static int GetConfigFileName(int /*argc*/, char **argv, char *ConfigFileName) {
 
     char CfgName[MAXPATH] = "";
 
+
     if (ConfigFileName[0] == 0) {
+        // Try for a efte.cnf in the current directory
+        strlcpy(CfgName, "efte.cnf", sizeof(CfgName));
+        if (access(CfgName, 0) == 0) {
+            strlcpy(ConfigFileName, CfgName, MAXPATH);
+            return 1;
+        }
+
 #if defined(UNIX)
         // ? use ./.efterc if by current user ?
         ExpandPath("~/.efterc", CfgName, sizeof(CfgName));
