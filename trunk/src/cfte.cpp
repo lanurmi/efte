@@ -75,7 +75,7 @@ static void Fail(CurPos &cp, const char *s, ...) {
     cleanup(1);
 }
 
-static int LoadFile(const char *WhereName, const char *CfgName, int Level = 1, int optional = 1);
+static int LoadFile(const char *WhereName, const char *CfgName, int Level = 1, int optional = 0);
 static void DefineWord(const char *w);
 
 static void PutObject(CurPos &cp, int xtag, int xlen, void *obj) {
@@ -1893,58 +1893,43 @@ static int LoadFile(const char *WhereName, const char *CfgName, int Level, int o
     if (IsFullPath(CfgName)) {
         strlcpy(Cfg, CfgName, sizeof(Cfg));
     } else {
-        // here we will try relative to a number of places.
-        // 1. User's .fte directory.
-        // 2. System's "local config" directory.
-        // 3. /usr/share/fte (FHS compliant - from Gentoo)
-        // 3. Initial file's directory.
-        // 4. Current directory.
-        // This means that a user's directory will always win out,
-        // allowing a given user to always be able to override everything,
-        // followed by a system standard to override anything.
-
-        // #'s 1 and 2 are unix-only.
 #ifdef UNIX
-        // 1. User's .fte directory.
+#define SEARCH_PATH_LEN 12
         char tmp[MAXPATH];
-        sprintf(tmp, "~/.efte/%s", CfgName);
-        ExpandPath(tmp, Cfg, sizeof(Cfg));
-        //fprintf(stderr, "Looking for %s\n", Cfg);
-        if (!FileExists(Cfg)) {
-            // 2. try "local config".
-            sprintf(tmp, "%slocalconfig/%s", StartDir, CfgName);
+        char dirs[SEARCH_PATH_LEN][MAXPATH];
+        snprintf(dirs[0],  MAXPATH, "%s", CfgName);
+        snprintf(dirs[1],  MAXPATH, "~/.efte/%s", CfgName);
+        snprintf(dirs[2],  MAXPATH, "/etc/efte/local/%s", CfgName);
+        snprintf(dirs[3],  MAXPATH, "/usr/share/efte/local/%s", CfgName);
+        snprintf(dirs[4],  MAXPATH, "/opt/share/efte/local/%s", CfgName);
+        snprintf(dirs[5],  MAXPATH, "/usr/local/share/efte/local/%s", CfgName);
+        snprintf(dirs[6],  MAXPATH, "/opt/local/share/efte/local/%s", CfgName);
+        snprintf(dirs[7],  MAXPATH, "/etc/efte/config/%s", CfgName);
+        snprintf(dirs[8],  MAXPATH, "/usr/share/efte/config/%s", CfgName);
+        snprintf(dirs[9],  MAXPATH, "/opt/share/efte/config/%s", CfgName);
+        snprintf(dirs[10], MAXPATH, "/usr/local/share/efte/config/%s", CfgName);
+        snprintf(dirs[11], MAXPATH, "/opt/local/share/efte/config/%s", CfgName);
+
+        bool found = false;
+
+        for (int idx=0; idx<SEARCH_PATH_LEN; idx++) {
+            sprintf(tmp, dirs[idx], CfgName);
             ExpandPath(tmp, Cfg, sizeof(Cfg));
-            //fprintf(stderr, "Looking for %s\n", Cfg);
-            if (!FileExists(Cfg)) {
-                // 3. /usr/share/efte
-                sprintf(tmp, "/usr/share/efte/%s", CfgName);
-                ExpandPath(tmp, Cfg, sizeof(Cfg));
-                if (!FileExists(Cfg)) {
-                    sprintf(tmp, "/usr/local/share/efte/%s", CfgName);
-                    ExpandPath(tmp, Cfg, sizeof(Cfg));
-                    //fprintf(stderr, "Looking for %s\n", Cfg);
-                    if (!FileExists(Cfg)) {
-                        sprintf(tmp, "./%s", CfgName);
-                        ExpandPath(tmp, Cfg, sizeof(Cfg));
-                        //fprintf(stderr, "Looking for %s\n", Cfg);
-                        if (!FileExists(Cfg)) {
-                            sprintf(tmp, "%sconfig/%s", StartDir, CfgName);
-                            ExpandPath(tmp, Cfg, sizeof(Cfg));
-                            //fprintf(stderr, "Looking for %s\n", Cfg);
-                            if (!FileExists(Cfg)) {
-                                if (optional)
-                                    return -1;
-                                else
-                                    fprintf(stderr, "Cannot find '%s' in:\n"
-                                            "\t~/.efte,\n""\t%slocalconfig,\n\t/usr/share/efte,\n"
-                                            "\t%sconfig, or\n"
-                                            "\t.",
-                                            CfgName, StartDir, StartDir);
-                            }
-                        }
-                    }
-                }
+            if (FileExists(Cfg)) {
+                found = true;
+                break;
             }
+        }
+
+        if (found == false && optional == 1)
+            return -1;
+        else if (found == false) {
+            fprintf(stderr, "Cannot find '%s' in any of the following locations:\n", CfgName);
+            for (int idx=0; idx<SEARCH_PATH_LEN; idx++) {
+                snprintf(tmp, MAXPATH, dirs[idx], CfgName);
+                fprintf(stderr, "   %s\n", tmp);
+            }
+            return -1;
         }
 #else // UNIX
         SlashDir(last);
