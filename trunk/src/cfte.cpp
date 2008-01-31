@@ -1716,7 +1716,7 @@ static int ParseConfigFile(CurPos &cp) {
                 if (Parse(cp) != P_STRING) Fail(cp, "String expected");
                 fn = GetString(cp);
 
-                if (LoadFile(cp.name, fn) != 0) {
+                if (LoadFile(cp.name, fn, 1, 1) != 0) {
                     GetOp(cp, P_EOS);
                     continue; // This is an optional include
                 }
@@ -1894,21 +1894,22 @@ static int LoadFile(const char *WhereName, const char *CfgName, int Level, int o
         strlcpy(Cfg, CfgName, sizeof(Cfg));
     } else {
 #ifdef UNIX
-#define SEARCH_PATH_LEN 12
+#define SEARCH_PATH_LEN 13
         char tmp[MAXPATH];
         char dirs[SEARCH_PATH_LEN][MAXPATH];
         snprintf(dirs[0],  MAXPATH, "%s", CfgName);
-        snprintf(dirs[1],  MAXPATH, "~/.efte/%s", CfgName);
-        snprintf(dirs[2],  MAXPATH, "/etc/efte/local/%s", CfgName);
-        snprintf(dirs[3],  MAXPATH, "/usr/share/efte/local/%s", CfgName);
-        snprintf(dirs[4],  MAXPATH, "/opt/share/efte/local/%s", CfgName);
-        snprintf(dirs[5],  MAXPATH, "/usr/local/share/efte/local/%s", CfgName);
-        snprintf(dirs[6],  MAXPATH, "/opt/local/share/efte/local/%s", CfgName);
-        snprintf(dirs[7],  MAXPATH, "/etc/efte/config/%s", CfgName);
-        snprintf(dirs[8],  MAXPATH, "/usr/share/efte/config/%s", CfgName);
-        snprintf(dirs[9],  MAXPATH, "/opt/share/efte/config/%s", CfgName);
-        snprintf(dirs[10], MAXPATH, "/usr/local/share/efte/config/%s", CfgName);
-        snprintf(dirs[11], MAXPATH, "/opt/local/share/efte/config/%s", CfgName);
+        snprintf(dirs[1],  MAXPATH, "./config/%s", CfgName);
+        snprintf(dirs[2],  MAXPATH, "~/.efte/%s", CfgName);
+        snprintf(dirs[3],  MAXPATH, "/etc/efte/local/%s", CfgName);
+        snprintf(dirs[4],  MAXPATH, "/usr/share/efte/local/%s", CfgName);
+        snprintf(dirs[5],  MAXPATH, "/opt/share/efte/local/%s", CfgName);
+        snprintf(dirs[6],  MAXPATH, "/usr/local/share/efte/local/%s", CfgName);
+        snprintf(dirs[7],  MAXPATH, "/opt/local/share/efte/local/%s", CfgName);
+        snprintf(dirs[8],  MAXPATH, "/etc/efte/config/%s", CfgName);
+        snprintf(dirs[9],  MAXPATH, "/usr/share/efte/config/%s", CfgName);
+        snprintf(dirs[10], MAXPATH, "/opt/share/efte/config/%s", CfgName);
+        snprintf(dirs[11], MAXPATH, "/usr/local/share/efte/config/%s", CfgName);
+        snprintf(dirs[12], MAXPATH, "/opt/local/share/efte/config/%s", CfgName);
 
         bool found = false;
 
