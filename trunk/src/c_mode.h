@@ -215,7 +215,7 @@ extern EBufferFlags DefaultBufferFlags;
 #define FLAG_Falcon_Indent      69
 #define FLAG_Falcon_Paren_Delta 70
 #define FLAG_Falcon_Max_Paren   71
-
+#define FLAG_BackupDirectory    72
 
 #define EM_MENUS 2
 #define EM_MainMenu 0

@@ -98,6 +98,7 @@ char SvnLogMode[32] = "PLAIN";
 int ReassignModelIds = 0;
 int RecheckReadOnly = 0;
 char XShellCommand[256] = "xterm";
+char BackupDirectory[MAXPATH] = "";
 
 // Which characters to get. defaultCharacters if not set, rest filled
 // with defaultCharacters if too short
@@ -440,6 +441,9 @@ static int SetGlobalString(long what, const char *string) {
         break;
     case FLAG_HelpCommand:
         strlcpy(HelpCommand, string, sizeof(HelpCommand));
+        break;
+    case FLAG_BackupDirectory:
+        strlcpy(BackupDirectory, string, MAXPATH);
         break;
     case FLAG_GUICharacters:
         AppendGUICharacters(string);
