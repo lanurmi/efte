@@ -264,7 +264,8 @@ int ExpandPath(const char *Path, char *Expand, int ExpandSize) {
         if (_fullpath(Expand, Name, MAXPATH) == NULL) return -1;
 #endif
     }
-#if defined(__EMX__) {
+#if defined(__EMX__)
+    {
     char *p = Expand;
 
     if (p && *p) do {
