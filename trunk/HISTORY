@@ -26,6 +26,8 @@ Revision history
   - Cleaned up code a bit with manual and automatic formatting (astyle)
   - Converted from Makefiles to CMake on Win32, Unixes and OS/X
   + Configuration compiler and loading is now much smarter
+  - Moved all documentation to the wiki where it is now user editable
+    as well as developer editable.
 
 0.50.1 -- January 17, 2008
   - Forked from FTE (http://fte.sourceforge.net)
