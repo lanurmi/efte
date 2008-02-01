@@ -166,8 +166,11 @@ int EGUI::BeginMacro(GxView *view) {
     return 1;
 }
 
+
+
+// Lothar was seriously here
 int EGUI::ExecMacro(GxView *view, int Macro) {
-    int i, j;
+    int i, j, branchoffset;
     ExMacro *m;
     ExState State;
 
@@ -177,25 +180,66 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
     if (BeginMacro(view) == -1)
         return ErFAIL;
 
-    State.Macro = Macro;
     State.Pos = 0;
+    State.Macro = Macro;
+//    fprintf(stderr, "----\n");
     m = &Macros[State.Macro];
+
     for (; State.Pos < m->Count; State.Pos++) {
         i = State.Pos;
+
+//        fprintf(stderr, "State.Pos: %d\n", i);
         if (m->cmds[i].type != CT_COMMAND ||
-                m->cmds[i].u.num == ExNop)
+            m->cmds[i].u.num == ExNop)
             continue;
 
-        for (j = 0; j < m->cmds[i].repeat; j++) {
+        // probably faster when running first time outside of loop, and enter loop only if repeat count given.
+        // consider to use repeat count of 0 for single command execution, and <n> for the number of additional
+        // times that command needs to be performed.
+
+
+//        for (j = 0; j < m->cmds[i].repeat; j++) {
+        for (j=m->cmds[i].repeat; j; --j) {
             State.Pos = i + 1;
-            if (ExecCommand(view, m->cmds[i].u.num, State) == 0 && !m->cmds[i].ign) {
+
+            // name "branchoffset" is not appropriate anymore - because it isn't
+            branchoffset=ExecCommand(view, m->cmds[i].u.num, State);
+
+            // if (command_at[i] != any branch) {         // only fail if not branching
+            if ( branchoffset == 0 && !m->cmds[i].ign) {
+                fprintf(stderr, "ExecCommand fail@State.Pos %d\n", State.Pos);
                 return ErFAIL;
+            }
+            // }
+
+            if (branchoffset & COMMANDISABRANCH) {   // a branch was executed
+                if (branchoffset&1) {                // asked to take branch?
+                    fprintf(stderr, "Branch slot %d, taking branch to offset ",i);
+                    fprintf(stderr, "%d\n",m->cmds[i].repeat);
+                    i++;                             // will just do a skip for now
+//                    i+=(m->cmds[i].repeat);
+                } else {                             // don't take branch
+                    fprintf(stderr, "Branch slot %d, not taking branch.\n",i);
+                }
+                break;                  // leave command repeat loop - doesn't make sense to repeat branch command
+
+            } else {
+                if (branchoffset != 1) {
+                    fprintf(stderr, "ExecCommand shouldn't but did return %d\n", branchoffset);
+               }
             }
         }
         State.Pos = i;
     }
     return ErOK;
 }
+
+
+
+
+
+
+
 
 void EGUI::SetMsg(char *Msg) {
     char CharMap[128] = "";

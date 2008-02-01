@@ -23,6 +23,13 @@ typedef enum {
 
     //& <A HREF="modes.html#ms.CursorTroughTabs">CursorTroughTabs</A>
 
+    // ----------------------------------------------------
+    // additions to script interpreter extensions
+    ExUnconditionalBranch,
+    ExConditionalBranch,
+    ExSkip,
+    // ----------------------------------------------------
+
     ExMoveDown,
     /// Move cursor to next line.
     ExMoveUp,

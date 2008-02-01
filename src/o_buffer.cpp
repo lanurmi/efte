@@ -735,6 +735,19 @@ int EBuffer::ExecCommand(int Command, ExState &State) {
     case ExSetIndentWithTabs:
         return SetIndentWithTabs(State);
 
+
+        // additions to script interpreter extensions
+        // ----------------------------------------------------
+
+    case ExUnconditionalBranch:
+        return UnconditionalBranch() ;
+    case ExConditionalBranch:
+        return ConditionalBranch() ;
+    case ExSkip:
+        return Skip() ;
+        // ----------------------------------------------------
+
+
         // stuff with UI
     case ExMoveToLine:
         return MoveToLine(State);

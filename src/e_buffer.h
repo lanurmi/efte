@@ -453,6 +453,14 @@ public:
 // Editing Routines
 /////////////////////////////////////////////////////////////////////////////
 
+
+    // ----------------------------------------------------
+    // additions to script interpreter extensions
+    int     UnconditionalBranch();
+    int     ConditionalBranch();
+    int     Skip();
+    // ----------------------------------------------------
+
     int     MoveLeft();
     int     MoveRight();
     int     MoveUp();

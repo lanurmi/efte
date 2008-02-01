@@ -747,3 +747,7 @@ int EList::ToggleMarkAll() {
     }
     return ErOK;
 }
+
+// int Elist::Skip()  {
+//    NeedsRedraw = 0;
+// }
