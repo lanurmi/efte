@@ -11,14 +11,14 @@
 #define __CONFIG_H
 
 #include "sysdep.h"
-#include "stack.h"
+#include "u_stack.h"
 
 // sorry, i need to add a few globals
 // this is an array of bits.
 // commands may flag branch conditions in here
 // by shifting left, and setting (or not) bit 0
 extern int BranchCondition;
-extern Stack stack;
+extern CircularStack ParamStack;
 
 // branch class of commands have their own return values.
 // bitmasked, for slightly easier detection

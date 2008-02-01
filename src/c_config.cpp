@@ -101,7 +101,7 @@ char XShellCommand[256] = "xterm";
 char BackupDirectory[MAXPATH] = "";
 
 /* Scripting Support */
-Stack stack;
+CircularStack ParamStack;
 
 // Which characters to get. defaultCharacters if not set, rest filled
 // with defaultCharacters if too short
