@@ -13,6 +13,8 @@
 #include "ftever.h"
 #include "sysdep.h"
 
+#include "stack.h"
+
 #ifdef NEED_LOG_H
 #include "log.h"
 #endif // NEED_LOG_H
