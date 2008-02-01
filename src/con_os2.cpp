@@ -1027,7 +1027,7 @@ int GUI::OpenPipe(char *Command, EModel *notify) {
                 return -1;
             }
 
-#if defined(__MT__) || defined(__MULTI__)
+#if defined(__WATCOMC__) || defined(__MT__) || defined(__MULTI__)
             Pipes[i].tid = _beginthread(PipeThread,
                                         FAKE_BEGINTHREAD_NULL
                                         16384, &Pipes[i]);
