@@ -90,3 +90,10 @@ StackItem *Stack::peek( int offset ) {
 
     return &this->items[peekAt];
 }
+
+void Stack::pop(int count) {
+    for (int idx=0; idx < count; idx++) {
+        this->items[this->position].empty();
+        this->dec();
+    }
+}
