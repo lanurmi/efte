@@ -48,8 +48,20 @@ char *MakeBackup(char *FileName, char *NewName) {
         return NULL;
 
     /* try 1 */
-    strcpy(NewName, FileName);
-    strcat(NewName, "~");
+    if (strlen(BackupDirectory) > 0) {
+        char TmpFileName[MAXPATH];
+        char TmpBackupName[MAXPATH];
+
+        strcpy(TmpFileName, FileName);
+
+        for (int idx=0; idx < strlen(TmpFileName); idx++)
+            if (TmpFileName[idx] == '/' || TmpFileName[idx] == '\\')
+                TmpFileName[idx] = '_';
+        snprintf(TmpBackupName, MAXPATH, "%s/%s", BackupDirectory, TmpFileName);
+        ExpandPath(TmpBackupName, NewName, MAXPATH);
+    } else
+        snprintf(NewName, MAXPATH, "%s~", FileName);
+
     if (!IsSameFile(FileName, NewName)) {
         if (access(NewName, 0) == 0)                 // Backup already exists?
             unlink(NewName);                         // Then delete the file..
