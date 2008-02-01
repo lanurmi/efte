@@ -690,7 +690,11 @@ int DLGPickChoice(GView *View, const char *ATitle, int NSel, va_list ap, int Fla
 
     choice.Title = (char *)ATitle;
     choice.NSel = NSel;
+#if defined(__WATCOMC__)
+    memcpy(&choice.ap, &ap, sizeof(choice.ap));
+#else
     choice.ap = ap;
+#endif
     choice.Flags = Flags;
     return LONGFROMMR(WinSendMsg(View->Parent->Peer->hwndFrame, UWM_CHOICE, MPFROMP(&choice), 0));
 }
@@ -3879,4 +3883,7 @@ char ConGetDrawChar(int index) {
     assert(index >= 0 && index < (signed)strlen(tab));
 
     return tab[index];
+}
+
+void ConSetInsertState(bool) {
 }
