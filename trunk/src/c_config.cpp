@@ -100,6 +100,9 @@ int RecheckReadOnly = 0;
 char XShellCommand[256] = "xterm";
 char BackupDirectory[MAXPATH] = "";
 
+/* Scripting Support */
+Stack stack;
+
 // Which characters to get. defaultCharacters if not set, rest filled
 // with defaultCharacters if too short
 // List of GUICharacters is freed, only one item remains
