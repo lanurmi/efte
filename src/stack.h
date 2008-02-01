@@ -1,5 +1,3 @@
-#ifndef STACK_H
-#define STACK_H
 
 #define MAXSTACK    16
 
@@ -42,7 +40,5 @@ public:
     void push( int num );
     void push( const char *string );
     StackItem *peek( int offset=0 );
+    void pop(int count=1);
 };
-
-#endif /* STACK_H */
-
