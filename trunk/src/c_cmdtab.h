@@ -26,6 +26,7 @@ const struct {
     TAB(UnconditionalBranch),
     TAB(ConditionalBranch),
     TAB(Skip),
+    TAB(Push),
 // ----------------------------------------------------
     TAB(MoveLeft),
     TAB(MoveRight),

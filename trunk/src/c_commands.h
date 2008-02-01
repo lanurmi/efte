@@ -28,6 +28,8 @@ typedef enum {
     ExUnconditionalBranch,
     ExConditionalBranch,
     ExSkip,
+    ExPush,
+    /// Push a number or string onto the stack
     // ----------------------------------------------------
 
     ExMoveDown,

@@ -193,6 +193,12 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
             m->cmds[i].u.num == ExNop)
             continue;
 
+        switch (m->cmds[i].u.num) {
+        case ExPush:
+            // Handle Push
+            break;
+        }
+
         // probably faster when running first time outside of loop, and enter loop only if repeat count given.
         // consider to use repeat count of 0 for single command execution, and <n> for the number of additional
         // times that command needs to be performed.
