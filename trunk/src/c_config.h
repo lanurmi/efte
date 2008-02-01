@@ -12,6 +12,19 @@
 
 #include "sysdep.h"
 
+// sorry, i need to add a few globals
+// this is an array of bits.
+// commands may flag branch conditions in here
+// by shifting left, and setting (or not) bit 0
+extern int BranchCondition;
+
+// branch class of commands have their own return values.
+// bitmasked, for slightly easier detection
+#define COMMANDISABRANCH 0x80000000
+#define TAKEBRANCH       0x00000001  // signal to macro execution loop "branch"
+#define TAKEBRANCHNOT    0x00000000  // signal to macro execution loop "don'tbranch"
+
+// --- those are not mine :*)
 extern int ScreenSizeX;
 extern int ScreenSizeY;
 extern bool CursorBlink;
@@ -50,7 +63,6 @@ extern char SvnLogMode[32];
 extern int ReassignModelIds;
 extern int RecheckReadOnly;
 extern char XShellCommand[256];
-extern char BackupDirectory[MAXPATH];
 
 const char *GetGUICharacters(const char *which, const char *defChars);
 int LoadConfig(int argc, char **argv, char *CfgFileName);

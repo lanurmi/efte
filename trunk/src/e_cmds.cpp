@@ -8,19 +8,55 @@
  */
 
 #include "fte.h"
+int BranchCondition = 0;
 
-int EBuffer::MoveLeft() {
-    if (CP.Col == 0) {
-        if (CursorWithinEOL == 1 && MoveUp())
-            return MoveLineEnd();
-        else
-            return 0;
-    }
-    SetPos(CP.Col - 1, CP.Row, tmLeft);
-    return 1;
+
+int TestBranchCondition()  {
+    int TestCondition = (BranchCondition & 1);
+    BranchCondition = (BranchCondition >> 1);
+    return (TestCondition);
 }
 
+
+int SetBranchCondition(int cond)  {
+    BranchCondition = (BranchCondition << 1);
+    if (cond) BranchCondition++;
+}
+
+
+int EBuffer::UnconditionalBranch() {
+    return COMMANDISABRANCH|TAKEBRANCH;
+}
+
+
+int EBuffer::ConditionalBranch() {
+    return (COMMANDISABRANCH|TestBranchCondition());
+}
+
+
+int EBuffer::Skip() {
+    return (COMMANDISABRANCH|TestBranchCondition());
+}
+
+
+int EBuffer::MoveLeft() {
+    if (CP.Col) {                // cursor can be moved to left
+        SetBranchCondition(1);
+        SetPos(CP.Col - 1, CP.Row, tmLeft);
+        return 1;
+    }
+    SetBranchCondition(0);       // cursor at begin of line
+    if (CursorWithinEOL == 1 && MoveUp())
+        return MoveLineEnd();
+    else {
+        //            return 0;
+        return 1;
+    }
+}
+
+
 int EBuffer::MoveRight() {
+
     if (CursorWithinEOL == 1 && CP.Col == LineLen()) {
         if (MoveDown())
             return MoveLineStart();
