@@ -18,7 +18,7 @@ int TestBranchCondition()  {
 }
 
 
-int SetBranchCondition(int cond)  {
+void SetBranchCondition(int cond)  {
     BranchCondition = (BranchCondition << 1);
     if (cond) BranchCondition++;
 }
