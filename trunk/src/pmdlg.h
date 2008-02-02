@@ -1,3 +1,13 @@
+/*
+ * pmdlg.h
+ *
+ * Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
+ *
+ * You may distribute under the terms of either the GNU General Public
+ * License or the Artistic License, as specified in the README file.
+ *
+ */
+
 #define IDD_PROMPT      300
 #define IDS_PROMPT      301
 #define IDE_FIELD       302

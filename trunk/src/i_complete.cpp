@@ -1,5 +1,6 @@
 /*    i_complete.cpp
  *
+ *    Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
  *    Copyright (c) 1998, Zdenek Kabelac
  *
  *    You may distribute under the terms of either the GNU General Public

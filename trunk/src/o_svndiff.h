@@ -1,6 +1,11 @@
 /*
  * o_svndiff.h
  *
+ * Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
+ *
+ * You may distribute under the terms of either the GNU General Public
+ * License or the Artistic License, as specified in the README file.
+ *
  * S.Pinigin copy o_cvsdiff.h and replace cvs/Cvs/CVS to svn/Svn/SVN.
  *
  * Class showing output from SVN diff command. Allows copying of lines
