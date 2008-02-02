@@ -27,7 +27,12 @@
 #include "console.h"
 #include "c_hilit.h"
 
+#include "u_stack.h"
+
 #define slen(s) ((s) ? (strlen(s) + 1) : 0)
+
+
+CircularStack CondStack;
 
 typedef struct {
     char *Name;
@@ -541,6 +546,11 @@ static int Lookup(const OrdLookup *where, char *what) {
 #define K_SVNIGNRX     23
 #define K_OINCLUDE     24   // Optional include, i.e. do not fail if it does not exist.
 
+enum {
+    COND_IF = 1,
+    COND_ENDIF
+};
+
 typedef char Word[64];
 
 static const OrdLookup CfgKW[] = {
@@ -584,6 +594,12 @@ static const OrdLookup CfgVar[] = {
     { "Word", mvWord },
     { "Line", mvLine },
     { "FTEVer", mvFTEVer },
+    { 0, 0 },
+};
+
+static const OrdLookup ConditionalKW[] = {
+    { "If", COND_IF },
+    { "EndIf", COND_ENDIF },
     { 0, 0 },
 };
 
@@ -687,7 +703,6 @@ static int GetWord(CurPos &cp, char *w) {
     *p = 0;
     return 0;
 }
-
 
 static int Parse(CurPos &cp) {
     while (cp.c < cp.z) {
@@ -916,11 +931,24 @@ static int ParseCommands(CurPos &cp, char *Name) {
 
             if (GetWord(cp, cmd) == -1) Fail(cp, "Syntax error");
             Command = CmdNum(cmd);
-            if (Command == 0)
-                Fail(cp, "Unrecognised command: %s", cmd);
-            PutNumber(cp, CF_COMMAND, Command);
-            PutNumber(cp, CF_INT, cnt);
-            PutNumber(cp, CF_INT, ign);
+            if (Command != 0) {
+                PutNumber(cp, CF_COMMAND, Command);
+                PutNumber(cp, CF_INT, cnt);
+                PutNumber(cp, CF_INT, ign);
+            } else {
+                Command = Lookup(ConditionalKW, cmd);
+                if (Command == 0)
+                    Fail(cp, "Unrecognised command: %s", cmd);
+                else {
+                    switch(Command) {
+                    case COND_IF:
+                        break;
+
+                    case COND_ENDIF:
+                        break;
+                    }
+                }
+            }
             ign = 0;
             cnt = 1;
         } else if (p == P_STRING) {

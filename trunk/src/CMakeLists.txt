@@ -51,7 +51,7 @@ ENDIF( NOT USE_LOGGING )
 #
 # =============================================================================
 
-SET( CFTE_SOURCES cfte.cpp s_files.cpp s_string.cpp )
+SET( CFTE_SOURCES cfte.cpp s_files.cpp s_string.cpp u_stack.cpp )
 SET( BASE_FTE_SOURCES
   c_bind.cpp c_color.cpp c_config.cpp c_desktop.cpp c_hilit.cpp c_history.cpp
   c_mode.cpp commands.cpp e_block.cpp e_buffer.cpp e_cmds.cpp e_cvslog.cpp
