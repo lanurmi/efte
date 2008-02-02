@@ -30,18 +30,6 @@
 
 WWW: http://efte.sourceforge.net
 
-Current Authors (alphabetical order):
-    Jeremy Cowgar..... jeremy_c@users.sourceforge.net
-    Lauri Nurmi....... lanurmi@users.sourceforge.net
-    Timo Sirainen..... cras@users.sourceforge.net
-
-Original Author: Marko Macek
-Original URL:    http://fte.sourceforge.net
-
-FTE Contributors:
-  - F.Jalvingh
-    NT/Win95/DOS port.
-  - Markus F.X.J. Oberhumer <markus.oberhumer@jk.uni-linz.ac.at>
-    DOS port (DJGPP)
-
+See file AUTHORS for a list of eFTE authors.
 See file HISTORY for a list of recent changes.
+
