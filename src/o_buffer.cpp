@@ -739,13 +739,14 @@ int EBuffer::ExecCommand(int Command, ExState &State) {
 
         // additions to script interpreter extensions
         // ----------------------------------------------------
-
-    case ExUnconditionalBranch:
-        return UnconditionalBranch() ;
-    case ExConditionalBranch:
-        return ConditionalBranch() ;
-    case ExSkip:
-        return Skip() ;
+    case ExPlus:
+        return Plus();
+    case ExMinus:
+        return Minus();
+    case ExMul:
+        return Mul();
+    case ExDiv:
+        return Div();
         // ----------------------------------------------------
 
 

@@ -14,20 +14,11 @@
 #include "sysdep.h"
 #include "u_stack.h"
 
-// sorry, i need to add a few globals
-// this is an array of bits.
 // commands may flag branch conditions in here
 // by shifting left, and setting (or not) bit 0
 extern int BranchCondition;
 extern CircularStack ParamStack;
 
-// branch class of commands have their own return values.
-// bitmasked, for slightly easier detection
-#define COMMANDISABRANCH 0x80000000
-#define TAKEBRANCH       0x00000001  // signal to macro execution loop "branch"
-#define TAKEBRANCHNOT    0x00000000  // signal to macro execution loop "don'tbranch"
-
-// --- those are not mine :*)
 extern int ScreenSizeX;
 extern int ScreenSizeY;
 extern bool CursorBlink;

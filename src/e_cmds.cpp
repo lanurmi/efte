@@ -12,11 +12,6 @@
 int BranchCondition = 0;
 
 
-int TestBranchCondition()  {
-    int TestCondition = (BranchCondition & 1);
-    BranchCondition = (BranchCondition >> 1);
-    return (TestCondition);
-}
 
 
 void SetBranchCondition(int cond)  {
@@ -25,18 +20,27 @@ void SetBranchCondition(int cond)  {
 }
 
 
-int EBuffer::UnconditionalBranch() {
-    return COMMANDISABRANCH|TAKEBRANCH;
+int EBuffer::Plus() {
+    ParamStack.push(ParamStack.pop()+ParamStack.pop());
+    return 1;
 }
 
-
-int EBuffer::ConditionalBranch() {
-    return (COMMANDISABRANCH|TestBranchCondition());
+int EBuffer::Minus() {
+    int tos=ParamStack.pop();
+    ParamStack.push(+ParamStack.pop()-tos);
+    return 1;
 }
 
+int EBuffer::Mul() {
+    ParamStack.push(ParamStack.pop()*ParamStack.pop());
+    return 1;
+}
 
-int EBuffer::Skip() {
-    return (COMMANDISABRANCH|TestBranchCondition());
+int EBuffer::Div() {
+    int tos=ParamStack.pop();
+    if (!tos) return 0;           // div by 0
+    ParamStack.push(+ParamStack.pop()/tos);
+    return 1;
 }
 
 

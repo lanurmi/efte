@@ -127,7 +127,6 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
         return FrameNext(view);
     case ExFramePrev:
         return FramePrev(view);
-
     case ExWinHSplit:
         return WinHSplit(view);
     case ExWinClose:
@@ -159,6 +158,8 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
         return 1;
     }
     }
+
+//    fprintf(stderr, "ExecCommand: %d\n",State);
     return view->ExecCommand(Command, State);
 }
 
@@ -170,6 +171,15 @@ int EGUI::BeginMacro(GxView *view) {
 
 
 // Lothar was seriously here
+
+int TestBranchCondition()  {
+    int TestCondition = (BranchCondition & 1);
+    BranchCondition = (BranchCondition >> 1);
+    return (TestCondition);
+}
+
+
+
 int EGUI::ExecMacro(GxView *view, int Macro) {
     int i, j, branchoffset;
     ExMacro *m;
@@ -183,57 +193,41 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
 
     State.Pos = 0;
     State.Macro = Macro;
-//    fprintf(stderr, "----\n");
+
     m = &Macros[State.Macro];
 
     for (; State.Pos < m->Count; State.Pos++) {
         i = State.Pos;
 
-//        fprintf(stderr, "State.Pos: %d\n", i);
         if (m->cmds[i].type != CT_COMMAND ||
             m->cmds[i].u.num == ExNop)
             continue;
 
         switch (m->cmds[i].u.num) {
         case ExPush:
-            // Handle Push
+            ParamStack.push(m->cmds[i].repeat);
             break;
-        }
-
-        // probably faster when running first time outside of loop, and enter loop only if repeat count given.
-        // consider to use repeat count of 0 for single command execution, and <n> for the number of additional
-        // times that command needs to be performed.
-
-
-//        for (j = 0; j < m->cmds[i].repeat; j++) {
-        for (j=m->cmds[i].repeat; j; --j) {
-            State.Pos = i + 1;
-
-            // name "branchoffset" is not appropriate anymore - because it isn't
-            branchoffset=ExecCommand(view, m->cmds[i].u.num, State);
-
-            // if (command_at[i] != any branch) {         // only fail if not branching
-            if ( branchoffset == 0 && !m->cmds[i].ign) {
-                fprintf(stderr, "ExecCommand fail@State.Pos %d\n", State.Pos);
-                return ErFAIL;
+        case ExSkip:
+            i += ParamStack.pop();
+            break;
+        case ExUnconditionalBranch:
+            i += m->cmds[i].repeat;
+            break;
+        case ExConditionalBranch:
+            if (TestBranchCondition()) {
+                i += m->cmds[i].repeat;
             }
-            // }
-
-            if (branchoffset & COMMANDISABRANCH) {   // a branch was executed
-                if (branchoffset&1) {                // asked to take branch?
-                    fprintf(stderr, "Branch slot %d, taking branch to offset ",i);
-                    fprintf(stderr, "%d\n",m->cmds[i].repeat);
-                    i++;                             // will just do a skip for now
-//                    i+=(m->cmds[i].repeat);
-                } else {                             // don't take branch
-                    fprintf(stderr, "Branch slot %d, not taking branch.\n",i);
+            break;
+        default:
+            for (j=(m->cmds[i].repeat); j; --j) {
+                State.Pos = i + 1;
+                branchoffset=ExecCommand(view, m->cmds[i].u.num, State);
+                if ( branchoffset == 0 && !m->cmds[i].ign) {
+                    return ErFAIL;
                 }
-                break;                  // leave command repeat loop - doesn't make sense to repeat branch command
-
-            } else {
-                if (branchoffset != 1) {
+                if (branchoffset-1) {
                     fprintf(stderr, "ExecCommand shouldn't but did return %d\n", branchoffset);
-               }
+                }
             }
         }
         State.Pos = i;
@@ -241,6 +235,119 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
     return ErOK;
 }
 
+
+
+
+/*
+ // same thing as avove but replete with diagnostis
+int EGUI::ExecMacro(GxView *view, int Macro) {
+    int i, j, branchoffset;
+    ExMacro *m;
+    ExState State;
+
+    if (Macro == -1)
+        return ErFAIL;
+
+    if (BeginMacro(view) == -1)
+        return ErFAIL;
+
+    State.Pos = 0;
+    State.Macro = Macro;
+
+    fprintf(stderr, "---- ExecMacro %d ----\n",Macro);
+
+    m = &Macros[State.Macro];
+
+    for (; State.Pos < m->Count; State.Pos++) {
+        i = State.Pos;
+        fprintf(stderr, "Execution Pointer: %d\n",i);
+
+        if (m->cmds[i].type != CT_COMMAND ||
+            m->cmds[i].u.num == ExNop)
+            continue;
+
+
+        int literal, tos;
+        switch (m->cmds[i].u.num)
+        {
+        case ExPush:
+            literal = m->cmds[i].repeat;
+            ParamStack.push(literal);
+            fprintf(stderr, "Pushed %d\n",literal);
+            break;
+
+        case ExSkip:
+            tos=ParamStack.pop();
+            fprintf(stderr, "Skip popped %d\n",tos);
+            fprintf(stderr, "Skip execution pointer before: %d\n",i);
+            fprintf(stderr, "Skip         State.Pos before: %d\n",State.Pos);
+            i += tos;
+            State.Pos+=tos;
+            fprintf(stderr, "Skip execution pointer after : %d\n",i);
+            fprintf(stderr, "Skip         State.Pos after : %d\n",State.Pos);
+            break;
+
+        case ExUnconditionalBranch:
+            tos = m->cmds[i].repeat;
+            fprintf(stderr, "Branch offset %d\n",tos);
+            fprintf(stderr, "Branch execution pointer before: %d\n",i);
+            fprintf(stderr, "Branch         State.Pos before: %d\n",State.Pos);
+            i += tos;
+            State.Pos+=tos;
+            fprintf(stderr, "Branch execution pointer after: %d\n",i);
+            fprintf(stderr, "Branch         State.Pos after: %d\n",State.Pos);
+            break;
+
+        case ExConditionalBranch:
+            if (TestBranchCondition()) {
+                tos = m->cmds[i].repeat;
+                fprintf(stderr, "0Branch offset %d\n",tos);
+                fprintf(stderr, "0Branch execution pointer before: %d\n",i);
+                fprintf(stderr, "0Branch         State.Pos before: %d\n",State.Pos);
+                i += tos;
+                State.Pos+=tos;
+                fprintf(stderr, "0Branch execution pointer after : %d\n",i);
+                fprintf(stderr, "0Branch         State.Pos after : %d\n",State.Pos);
+            }
+            break;
+
+
+        default:
+            fprintf(stderr, "ExecCommand, 1st invocation, execution pointer: %d\n",i);
+            fprintf(stderr, "ExecCommand, 1st invocation,         State.Pos: %d\n",State.Pos);
+            branchoffset=ExecCommand(view, m->cmds[i].u.num, State);
+            // if (command_at[i] != any branch) {         // only fail if not branching
+
+            if ( branchoffset == 0 && !m->cmds[i].ign) {
+                fprintf(stderr, "ExecCommand fail@State.Pos %d\n", State.Pos);
+                return ErFAIL;
+            }
+
+
+            for (j=(m->cmds[i].repeat)-1; j; --j) {
+                State.Pos = i + 1;
+                fprintf(stderr, "Repeat command, execution pointer: %d\n",i);
+                fprintf(stderr, "Repeat command,         State.Pos: %d\n",State.Pos);
+                fprintf(stderr, "Repeat command,         count=%d\n",j);
+                branchoffset=ExecCommand(view, m->cmds[i].u.num, State);
+                // if (command_at[i] != any branch) {         // only fail if not branching
+                if ( branchoffset == 0 && !m->cmds[i].ign) {
+                    fprintf(stderr, "ExecCommand fail@State.Pos %d\n", State.Pos);
+                    return ErFAIL;
+                }
+                // }
+
+                if (branchoffset != 1) {
+                    fprintf(stderr, "ExecCommand shouldn't but did return %d\n", branchoffset);
+                }
+            }
+
+        }
+        State.Pos = i;
+    }
+    return ErOK;
+}
+*/
 
 
 

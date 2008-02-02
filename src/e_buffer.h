@@ -457,9 +457,10 @@ public:
 
     // ----------------------------------------------------
     // additions to script interpreter extensions
-    int     UnconditionalBranch();
-    int     ConditionalBranch();
-    int     Skip();
+    int     Plus();
+    int     Minus();
+    int     Mul();
+    int     Div();
     // ----------------------------------------------------
 
     int     MoveLeft();
