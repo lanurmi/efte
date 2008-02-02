@@ -1,4 +1,12 @@
-
+#
+# fte-ownt.mak
+#
+# Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
+#
+#
+# You may distribute under the terms of either the GNU General Public
+# License or the Artistic License, as specified in the README file.
+#
 #----------------------------------------------------------------------------
 #
 # Makefile for NT version of eFTE using OpenWatcom 1.4

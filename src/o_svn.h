@@ -1,6 +1,12 @@
 /*
  * o_svn.h
  *
+ * Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
+ *
+ * You may distribute under the terms of either the GNU General Public
+ * License or the Artistic License, as specified in the README file.
+ *
+ *
  * S.Pinigin copy o_cvs.h and replace cvs/Cvs/CVS to svn/Svn/SVN.
  *
  * Class providing access to most of SVN commands.
