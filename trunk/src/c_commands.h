@@ -29,8 +29,11 @@ typedef enum {
     ExUnconditionalBranch,
     ExConditionalBranch,
     ExSkip,
-    ExPush,
-    /// Push a number or string onto the stack
+    ExPush,         // Push a number or string onto the stack
+    ExPlus,         // add top two stack items
+    ExMinus,        // sibtract tos from nos
+    ExMul,          // multiply top stack items
+    ExDiv,          // divide tos by nos
     // ----------------------------------------------------
 
     ExMoveDown,

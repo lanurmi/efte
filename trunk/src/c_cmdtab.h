@@ -28,6 +28,10 @@ const struct {
     TAB(ConditionalBranch),
     TAB(Skip),
     TAB(Push),
+    TAB(Plus),
+    TAB(Minus),
+    TAB(Mul),
+    TAB(Div),
 // ----------------------------------------------------
     TAB(MoveLeft),
     TAB(MoveRight),
