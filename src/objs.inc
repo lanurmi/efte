@@ -71,6 +71,7 @@ o_svn.$(OEXT) \
 o_svndiff.$(OEXT) \
 s_files.$(OEXT) \
 s_direct.$(OEXT) \
+u_stack.$(OEXT) \
 s_util.$(OEXT) \
 s_string.$(OEXT) \
 view.$(OEXT) \
