@@ -1,7 +1,8 @@
 CFTE_OBJS = \
 cfte.$(OEXT) \
 s_files.$(OEXT) \
-s_string.$(OEXT)
+s_string.$(OEXT) \
+u_stack.$(OEXT)
 
 OBJS = \
 indent.$(OEXT) \
