@@ -963,6 +963,8 @@ static int ParseCommands(CurPos &cp, char *Name) {
                     Fail(cp, "Unrecognised command: %s", cmd);
                 else {
 
+                    fprintf(stderr,"   pos: %d\n", pos);
+
 // ---------------------------------- flow control compiling statements -------------------------------
                     switch(Command) {
                         fprintf(stderr,"   command=%ld\n", Command);
@@ -997,7 +999,7 @@ static int ParseCommands(CurPos &cp, char *Name) {
                     case COND_ENDIF:
                         fprintf(stderr,"ENDIF\n");
                         CondStack.dup();
-                        if (CondStackPairedWith(COND_IF) | CondStackPairedWith(COND_ELSE)) {  // bitwise or because second test must be performed too (it also does a need stack pop)
+                        if (CondStackPairedWith(COND_IF) | CondStackPairedWith(COND_ELSE)) {  // bitwise or because second test must be performed too (it also does a needed stack pop)
                             resolveaddress = CondStack.pop();
                             resolveoffset = CompilationPointer - resolveaddress;
                             fprintf(stderr,"   resolve branch at %d to jump to %d\n", resolveaddress, resolveoffset+resolveaddress);
