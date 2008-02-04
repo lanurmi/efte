@@ -953,7 +953,7 @@ static int ParseCommands(CurPos &cp, char *Name) {
 
             if (GetWord(cp, cmd) == -1) Fail(cp, "Syntax error");
             Command = CmdNum(cmd);
-            if (Command != 0) {
+            if (Command) {
                 PutNumber(cp, CF_COMMAND, Command);
                 PutNumber(cp, CF_INT, cnt);
                 PutNumber(cp, CF_INT, ign);
@@ -965,12 +965,14 @@ static int ParseCommands(CurPos &cp, char *Name) {
 
 // ---------------------------------- flow control compiling statements -------------------------------
                     switch(Command) {
+                        fprintf(stderr,"   command=%ld\n", Command);
+
 
                     case COND_IF:
                         fprintf(stderr,"IF\n");
                         CondStack.push(CompilationPointer);
-                        fprintf(stderr,"   would compile a ConditionalBranch at %d\n", CompilationPointer);
-                        // PutNumber(cp, CF_COMMAND, ConditionalBranch);                   // compile a ConditionalBranch
+                        fprintf(stderr,"   compile a ConditionalBranch at %d\n", CompilationPointer);
+//                       PutNumber(cp, CF_COMMAND, ConditionalBranch);                   // compile a ConditionalBranch
                         CompilationPointer++;                                              // PutWhatever will propably do that
                         CondStack.push(COND_IF);                                           // allow test for proper nesting
                         break;
@@ -978,16 +980,16 @@ static int ParseCommands(CurPos &cp, char *Name) {
                     case COND_ELSE:
                         fprintf(stderr,"ELSE\n");
                         if (CondStackPairedWith(COND_IF)) {
-                            resolveaddress = CondStack.pop();                          // there is the corresponding If
+                            resolveaddress = CondStack.pop();                              // there is the matching If
                             resolveoffset = CompilationPointer - resolveaddress + 1;
-                            fprintf(stderr,"   would resolve branch at %d to jump to %d\n", resolveaddress, resolveoffset+resolveaddress);
+                            fprintf(stderr,"   resolve branch at %d to jump to %d\n", resolveaddress, resolveoffset+resolveaddress);
                             // Command.repeat(at_resolveaddres) = resolveoffset);
                         } else {
-                            fprintf(stderr,"** nested improperly: Else needs a previous If\n");
+                            fprintf(stderr,"** unstructured: Else needs a previous If\n");
                         }
                         CondStack.push(CompilationPointer);
                         CondStack.push(COND_ELSE);                                         //  allow test for proper nesting
-                        fprintf(stderr,"   would compile UnconditionalBranch at %d\n", CompilationPointer);
+                        fprintf(stderr,"   compile UnconditionalBranch at %d\n", CompilationPointer);
                         // PutNumber(cp, CF_COMMAND, UnconditionalBranch);                 // compile an UnonditionalBranch
                         CompilationPointer++;                                              // PutWhatever will propably do that
                         break;
@@ -998,10 +1000,10 @@ static int ParseCommands(CurPos &cp, char *Name) {
                         if (CondStackPairedWith(COND_IF) | CondStackPairedWith(COND_ELSE)) {  // bitwise or because second test must be performed too (it also does a need stack pop)
                             resolveaddress = CondStack.pop();
                             resolveoffset = CompilationPointer - resolveaddress;
-                            fprintf(stderr,"   would resolve branch at %d to jump to %d\n", resolveaddress, resolveoffset+resolveaddress);
+                            fprintf(stderr,"   resolve branch at %d to jump to %d\n", resolveaddress, resolveoffset+resolveaddress);
                             // Command.repeat(at_resolveaddres) = resolveoffset);
                         } else {
-                            fprintf(stderr,"** nested improperly: EndIf needs a previous If or Else\n");
+                            fprintf(stderr,"** unstructured: EndIf needs a previous If or Else\n");
                         }
                         break;
 
@@ -1014,10 +1016,10 @@ static int ParseCommands(CurPos &cp, char *Name) {
                     case COND_WHILE:                                                       // while is almost identical to an IF
                         fprintf(stderr,"WHILE\n");
                         if (!CondStackPairedWith(COND_BEGIN)) {
-                            fprintf(stderr,"** nested improperly: While needs a previous Begin\n");
+                            fprintf(stderr,"** unstructured: While needs a previous Begin\n");
                         }
                         CondStack.push(CompilationPointer);
-                        fprintf(stderr,"   would compile a ConditionalBranch at %d\n", CompilationPointer);
+                        fprintf(stderr,"   compile a ConditionalBranch at %d\n", CompilationPointer);
                         // PutNumber(cp, CF_COMMAND, ConditionalBranch);                   // compile a ConditionalBranch
                         CompilationPointer++;                                              // PutWhatever will propably do that
                         CondStack.push(COND_WHILE);                                        // allow test for proper nesting
@@ -1028,15 +1030,16 @@ static int ParseCommands(CurPos &cp, char *Name) {
                         if (CondStackPairedWith(COND_WHILE)) {
 // resolve the branch, compiled by WHILE:
                             resolveaddress = CondStack.pop();
-                            resolveoffset = CompilationPointer - resolveaddress;
-                            fprintf(stderr,"   would resolve branch at %d to jump to %d\n", resolveaddress, resolveoffset+resolveaddress);
+                            resolveoffset = CompilationPointer - resolveaddress + 1;
+                            fprintf(stderr,"   resolve branch at %d to jump to %d\n", resolveaddress, resolveoffset+resolveaddress);
                             // Command.repeat(at_resolveaddres) = resolveoffset);
 // compile a branch back to BEGIN
                             int resolveoffset = CondStack.pop() - CompilationPointer;
-                            fprintf(stderr,"   would compile an UnconditionalBranch at %d to %d\n", CompilationPointer,CompilationPointer+resolveoffset);
+                            fprintf(stderr,"   compile an UnconditionalBranch at %d to %d\n", CompilationPointer,CompilationPointer+resolveoffset);
                             // PutNumber(cp, CF_COMMAND, UnconditionalBranch);               // compile an UnconditionalBranch
+                            CompilationPointer++;                                              // PutWhatever will propably do that
                         } else {
-                            fprintf(stderr,"** nested improperly: EndIf needs a previous If or Else\n");
+                            fprintf(stderr,"** unstructured: EndIf needs a previous If or Else\n");
                         }
                         break;
 
@@ -1044,10 +1047,11 @@ static int ParseCommands(CurPos &cp, char *Name) {
                         fprintf(stderr,"UNTIL\n");
                         if (CondStackPairedWith(COND_BEGIN)) {
                             resolveoffset = CondStack.pop() - CompilationPointer;
-                            fprintf(stderr,"   would compile a ConditionalBranch at %d to %d\n", CompilationPointer,CompilationPointer+resolveoffset);
+                            fprintf(stderr,"   compile a ConditionalBranch at %d to %d\n", CompilationPointer,CompilationPointer+resolveoffset);
                             // PutNumber(cp, CF_COMMAND, ConditionalBranch);               // compile a ConditionalBranch
+                            CompilationPointer++;                                              // PutWhatever will propably do that
                         } else {
-                            fprintf(stderr,"** nested improperly: Until needs a previous Begin\n");
+                            fprintf(stderr,"** unstructured: Until needs a previous Begin\n");
                         }
                         break;
 
@@ -1055,19 +1059,19 @@ static int ParseCommands(CurPos &cp, char *Name) {
                         fprintf(stderr,"AGAIN\n");
                         if (CondStackPairedWith(COND_BEGIN)) {
                             resolveoffset = CondStack.pop() - CompilationPointer;
-                            fprintf(stderr,"   would compile an UnconditionalBranch at %d to %d\n", CompilationPointer,CompilationPointer+resolveoffset);
+                            fprintf(stderr,"   compile an UnconditionalBranch at %d to %d\n", CompilationPointer,CompilationPointer+resolveoffset);
                             // PutNumber(cp, CF_COMMAND, UnconditionalBranch);               // compile an UnconditionalBranch
+                            CompilationPointer++;                                              // PutWhatever will propably do that
                         } else {
-                            fprintf(stderr,"** nested improperly: Again needs a previous Begin\n");
+                            fprintf(stderr,"** unstructured: Again needs a previous Begin\n");
                         }
-
                         break;
+                    // ----------------------------------------------------------------------------------------------------
                     }
-// ----------------------------------------------------------------------------------------------------
+                    ign = 0;
+                    cnt = 1;
                 }
-            }
-            ign = 0;
-            cnt = 1;
+        }
         } else if (p == P_STRING) {
             char *s = GetString(cp);
             PutString(cp, CF_STRING, s);
@@ -1091,6 +1095,10 @@ static int ParseCommands(CurPos &cp, char *Name) {
     GetOp(cp, P_CLOSEBRACE);
     return 0;
 }
+
+
+
+
 
 static int ParseConfigFile(CurPos &cp) {
     Word w = "";
