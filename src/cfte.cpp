@@ -548,7 +548,13 @@ static int Lookup(const OrdLookup *where, char *what) {
 
 enum {
     COND_IF = 1,
-    COND_ENDIF
+    COND_ELSE,
+    COND_ENDIF,
+    COND_BEGIN,
+    COND_WHILE,
+    COND_REPEAT,
+    COND_UNTIL,
+    COND_AGAIN
 };
 
 typedef char Word[64];
@@ -600,7 +606,13 @@ static const OrdLookup CfgVar[] = {
 
 static const OrdLookup ConditionalKW[] = {
     { "If", COND_IF },
+    { "Else", COND_ELSE },
     { "EndIf", COND_ENDIF },
+    { "Begin",COND_BEGIN },
+    { "While",COND_WHILE },
+    { "Repeat",COND_REPEAT },
+    { "Until",COND_UNTIL },
+    { "Again",COND_AGAIN },
     { 0, 0 },
 };
 
@@ -898,6 +910,12 @@ int NewCommand(const char *Name) {
     return CMacros - 1;
 }
 
+
+int CondStackPairedWith(int flowstatement) {
+    return (CondStack.pop() == flowstatement) ;
+}
+
+
 static int ParseCommands(CurPos &cp, char *Name) {
     //if (!Name)
     //    return 0;
@@ -907,6 +925,9 @@ static int ParseCommands(CurPos &cp, char *Name) {
 
     long cnt;
     long ign = 0;
+    int resolveaddress;
+    int resolveoffset;
+    int CompilationPointer = 1000;   // would in reality be te actual compilation position which i don't have yet
 
     PutNumber(cp, CF_INT, Cmd);
     GetOp(cp, P_OPENBRACE);
@@ -941,13 +962,108 @@ static int ParseCommands(CurPos &cp, char *Name) {
                 if (Command == 0)
                     Fail(cp, "Unrecognised command: %s", cmd);
                 else {
+
+// ---------------------------------- flow control compiling statements -------------------------------
                     switch(Command) {
+
                     case COND_IF:
+                        fprintf(stderr,"IF\n");
+                        CondStack.push(CompilationPointer);
+                        fprintf(stderr,"   would compile a ConditionalBranch at %d\n", CompilationPointer);
+                        // PutNumber(cp, CF_COMMAND, ConditionalBranch);                   // compile a ConditionalBranch
+                        CompilationPointer++;                                              // PutWhatever will propably do that
+                        CondStack.push(COND_IF);                                           // allow test for proper nesting
+                        break;
+
+                    case COND_ELSE:
+                        fprintf(stderr,"ELSE\n");
+                        if (CondStackPairedWith(COND_IF)) {
+                            resolveaddress = CondStack.pop();                          // there is the corresponding If
+                            resolveoffset = CompilationPointer - resolveaddress + 1;
+                            fprintf(stderr,"   would resolve branch at %d to jump to %d\n", resolveaddress, resolveoffset+resolveaddress);
+                            // Command.repeat(at_resolveaddres) = resolveoffset);
+                        } else {
+                            fprintf(stderr,"** nested improperly: Else needs a previous If\n");
+                        }
+                        CondStack.push(CompilationPointer);
+                        CondStack.push(COND_ELSE);                                         //  allow test for proper nesting
+                        fprintf(stderr,"   would compile UnconditionalBranch at %d\n", CompilationPointer);
+                        // PutNumber(cp, CF_COMMAND, UnconditionalBranch);                 // compile an UnonditionalBranch
+                        CompilationPointer++;                                              // PutWhatever will propably do that
                         break;
 
                     case COND_ENDIF:
+                        fprintf(stderr,"ENDIF\n");
+                        CondStack.dup();
+                        if (CondStackPairedWith(COND_IF) | CondStackPairedWith(COND_ELSE)) {  // bitwise or because second test must be performed too (it also does a need stack pop)
+                            resolveaddress = CondStack.pop();
+                            resolveoffset = CompilationPointer - resolveaddress;
+                            fprintf(stderr,"   would resolve branch at %d to jump to %d\n", resolveaddress, resolveoffset+resolveaddress);
+                            // Command.repeat(at_resolveaddres) = resolveoffset);
+                        } else {
+                            fprintf(stderr,"** nested improperly: EndIf needs a previous If or Else\n");
+                        }
+                        break;
+
+                    case COND_BEGIN:
+                        fprintf(stderr,"BEGIN\n");
+                        CondStack.push(CompilationPointer);
+                        CondStack.push(COND_BEGIN);                                        // allow test for proper nesting
+                        break;
+
+                    case COND_WHILE:                                                       // while is almost identical to an IF
+                        fprintf(stderr,"WHILE\n");
+                        if (!CondStackPairedWith(COND_BEGIN)) {
+                            fprintf(stderr,"** nested improperly: While needs a previous Begin\n");
+                        }
+                        CondStack.push(CompilationPointer);
+                        fprintf(stderr,"   would compile a ConditionalBranch at %d\n", CompilationPointer);
+                        // PutNumber(cp, CF_COMMAND, ConditionalBranch);                   // compile a ConditionalBranch
+                        CompilationPointer++;                                              // PutWhatever will propably do that
+                        CondStack.push(COND_WHILE);                                        // allow test for proper nesting
+                        break;
+
+                    case COND_REPEAT:
+                        fprintf(stderr,"REPEAT\n");
+                        if (CondStackPairedWith(COND_WHILE)) {
+// resolve the branch, compiled by WHILE:
+                            resolveaddress = CondStack.pop();
+                            resolveoffset = CompilationPointer - resolveaddress;
+                            fprintf(stderr,"   would resolve branch at %d to jump to %d\n", resolveaddress, resolveoffset+resolveaddress);
+                            // Command.repeat(at_resolveaddres) = resolveoffset);
+// compile a branch back to BEGIN
+                            int resolveoffset = CondStack.pop() - CompilationPointer;
+                            fprintf(stderr,"   would compile an UnconditionalBranch at %d to %d\n", CompilationPointer,CompilationPointer+resolveoffset);
+                            // PutNumber(cp, CF_COMMAND, UnconditionalBranch);               // compile an UnconditionalBranch
+                        } else {
+                            fprintf(stderr,"** nested improperly: EndIf needs a previous If or Else\n");
+                        }
+                        break;
+
+                    case COND_UNTIL:
+                        fprintf(stderr,"UNTIL\n");
+                        if (CondStackPairedWith(COND_BEGIN)) {
+                            resolveoffset = CondStack.pop() - CompilationPointer;
+                            fprintf(stderr,"   would compile a ConditionalBranch at %d to %d\n", CompilationPointer,CompilationPointer+resolveoffset);
+                            // PutNumber(cp, CF_COMMAND, ConditionalBranch);               // compile a ConditionalBranch
+                        } else {
+                            fprintf(stderr,"** nested improperly: Until needs a previous Begin\n");
+                        }
+                        break;
+
+                    case COND_AGAIN:
+                        fprintf(stderr,"AGAIN\n");
+                        if (CondStackPairedWith(COND_BEGIN)) {
+                            resolveoffset = CondStack.pop() - CompilationPointer;
+                            fprintf(stderr,"   would compile an UnconditionalBranch at %d to %d\n", CompilationPointer,CompilationPointer+resolveoffset);
+                            // PutNumber(cp, CF_COMMAND, UnconditionalBranch);               // compile an UnconditionalBranch
+                        } else {
+                            fprintf(stderr,"** nested improperly: Again needs a previous Begin\n");
+                        }
+
                         break;
                     }
+// ----------------------------------------------------------------------------------------------------
                 }
             }
             ign = 0;
