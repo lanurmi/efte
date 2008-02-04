@@ -26,13 +26,35 @@ const struct {
     // additions to script interpreter extensions
     TAB(UnconditionalBranch),
     TAB(ConditionalBranch),
-    TAB(Skip),
+    TAB(Exit),
     TAB(Push),
+
     TAB(Plus),
     TAB(Minus),
     TAB(Mul),
     TAB(Div),
-// ----------------------------------------------------
+
+    TAB(And),
+    TAB(Or),
+    TAB(Xor),
+//    TAB(Invert),
+
+    TAB(Equals),
+    TAB(Less),
+    TAB(Flag),
+
+    TAB(Dup),
+    TAB(Drop),
+    TAB(Swap),
+    TAB(Over),
+    TAB(Rot),
+
+    TAB(Diag),
+    TAB(LineLength),
+    TAB(TopOfStack),
+
+    // ----------------------------------------------------
+
     TAB(MoveLeft),
     TAB(MoveRight),
     TAB(MoveUp),

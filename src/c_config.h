@@ -16,7 +16,7 @@
 
 // commands may flag branch conditions in here
 // by shifting left, and setting (or not) bit 0
-extern int BranchCondition;
+extern unsigned int BranchCondition;
 extern CircularStack ParamStack;
 
 extern int ScreenSizeX;

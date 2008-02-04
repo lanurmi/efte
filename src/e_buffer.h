@@ -454,13 +454,30 @@ public:
 // Editing Routines
 /////////////////////////////////////////////////////////////////////////////
 
-
     // ----------------------------------------------------
     // additions to script interpreter extensions
     int     Plus();
     int     Minus();
     int     Mul();
     int     Div();
+
+    int     And();
+    int     Or();
+    int     Xor();
+//    int     Invert();
+
+    int     Equals();
+    int     Less();
+    int     Flag();
+
+    int     Dup();
+    int     Drop();
+    int     Swap();
+    int     Over();
+    int     Rot();
+
+    int     Diag();
+    int     LineLength();
     // ----------------------------------------------------
 
     int     MoveLeft();

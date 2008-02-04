@@ -747,6 +747,31 @@ int EBuffer::ExecCommand(int Command, ExState &State) {
         return Mul();
     case ExDiv:
         return Div();
+//    case ExInvert:
+//        return Invert();
+
+    case ExEquals:
+        return Equals();
+    case ExLess:
+        return Less();
+    case ExFlag:
+        return Flag();
+
+    case ExDup:
+        return Dup();
+    case ExDrop:
+        return Drop();
+    case ExSwap:
+        return Swap();
+    case ExOver:
+        return Over();
+    case ExRot:
+        return Rot();
+
+    case ExDiag:
+        return Diag();
+    case ExLineLength:
+        return LineLength();
         // ----------------------------------------------------
 
 
@@ -1747,6 +1772,10 @@ int EBuffer::GetStrVar(int var, char *str, int buflen) {
         return 0;
     //puts("variable EBuffer\x7");
     switch (var) {
+    case mvTopOfStack:
+        snprintf(str, buflen, "%d", ParamStack.pop());
+        str[buflen - 1] = 0;
+        return 1;
     case mvFilePath:
         //puts("variable FilePath\x7");
         strncpy(str, FileName, buflen);

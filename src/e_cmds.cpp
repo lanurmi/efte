@@ -9,10 +9,11 @@
  */
 
 #include "fte.h"
-int BranchCondition = 0;
+unsigned int BranchCondition = 0;
 
 
 
+// ------------------------------------------------------------------
 
 void SetBranchCondition(int cond)  {
     BranchCondition = (BranchCondition << 1);
@@ -20,21 +21,34 @@ void SetBranchCondition(int cond)  {
 }
 
 
+int EBuffer::Diag() {
+    fprintf(stderr, "tos=%d nos=%d 3rd=%d cond=%08x\n", ParamStack.peek(0),ParamStack.peek(1),ParamStack.peek(2),BranchCondition);
+    return 1;
+}
+
+
+// --- arithmetic ---
+
 int EBuffer::Plus() {
     ParamStack.push(ParamStack.pop()+ParamStack.pop());
     return 1;
 }
 
+
+// don't really need - could provide "Invert" and do
+//2's complement add in macro
 int EBuffer::Minus() {
     int tos=ParamStack.pop();
     ParamStack.push(+ParamStack.pop()-tos);
     return 1;
 }
 
+
 int EBuffer::Mul() {
     ParamStack.push(ParamStack.pop()*ParamStack.pop());
     return 1;
 }
+
 
 int EBuffer::Div() {
     int tos=ParamStack.pop();
@@ -43,6 +57,110 @@ int EBuffer::Div() {
     return 1;
 }
 
+
+
+
+// --- bit logic ---
+
+int EBuffer::And() {
+    ParamStack.push(ParamStack.pop() & ParamStack.pop());
+    return 1;
+}
+
+int EBuffer::Or() {
+    ParamStack.push(ParamStack.pop() | ParamStack.pop());
+    return 1;
+}
+
+int EBuffer::Xor() {
+    ParamStack.push(ParamStack.pop() ^ ParamStack.pop());
+    return 1;
+}
+
+//int EBuffer::Invert() {
+//    int tos = -(ParamStack.pop()+1);
+//    ParamStack.push(tos);
+//    return 1;
+//}
+
+
+
+
+// --- comparison ---
+
+// don't need - could subtract twp operands, and conditonally
+// convert result to real flag.
+int EBuffer::Equals() {
+    ParamStack.push(-(ParamStack.pop() == ParamStack.pop()));
+    return 1;
+}
+
+int EBuffer::Less() {
+    ParamStack.push(-(ParamStack.pop() > ParamStack.pop()));
+    return 1;
+}
+
+
+// interface condition, provided by old commands, to
+// condition reading of new commands (passed on stack)
+// old commands buffer their conditions, until read
+// and transported to stack by "Flag"
+// That way, the number of test results and conditions
+// provided by old commands is irrelevant. we can choose
+// to use or ignore as we see fit.
+// as soon we need one of the last n result flags, each
+// execution of Flag delivers the next, back into history.
+int EBuffer::Flag() {
+    ParamStack.push(-(BranchCondition & 1));
+    BranchCondition = (BranchCondition >> 1);
+    return 1;
+}
+
+
+
+// --- stack ---
+
+int EBuffer::Dup() {
+    ParamStack.dup();
+    return 1;
+}
+
+int EBuffer::Drop() {
+    ParamStack.pop();
+    return 1;
+}
+
+int EBuffer::Swap() {
+    ParamStack.swap();
+    return 1;
+}
+
+int EBuffer::Over() {
+    ParamStack.push(ParamStack.peek(1));
+    return 1;
+}
+
+int EBuffer::Rot() {
+    int tos = ParamStack.pop();
+    ParamStack.swap();
+    ParamStack.push(tos);
+    ParamStack.swap();
+    return 1;
+}
+
+
+// --- input/output ---
+
+int EBuffer::LineLength() {
+    ParamStack.push(LineLen(VToR(CP.Row)));
+    return 1;
+}
+
+
+
+
+
+// ------------------------------------------------------------------
 
 int EBuffer::MoveLeft() {
     if (CP.Col) {                // cursor can be moved to left
