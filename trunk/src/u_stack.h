@@ -17,13 +17,16 @@ class CircularStack {
 private:
     int stack[STACKSIZE];
     int pos;
+    int stackdepth;
 
 public:
     CircularStack();
-
     void push(int integer);
     int pop();
     int peek(int offset=0);
+    void dup();
+    void swap();
+    int depth();
 };
 
 #endif /* U_STACK_H */

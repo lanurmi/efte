@@ -26,14 +26,35 @@ typedef enum {
 
     // ----------------------------------------------------
     // additions to script interpreter extensions
-    ExUnconditionalBranch,
-    ExConditionalBranch,
-    ExSkip,
-    ExPush,         // Push a number or string onto the stack
-    ExPlus,         // add top two stack items
-    ExMinus,        // sibtract tos from nos
-    ExMul,          // multiply top stack items
-    ExDiv,          // divide tos by nos
+    ExUnconditionalBranch,  // unconditional branch, offset from command repeat count
+    ExConditionalBranch,    // conditional branch, offset from command repeat count
+    ExExit,                 // exit macro
+    ExPush,                 // Push a number (coming from command repeat count) to stack
+
+    ExPlus,                 // add top two stack items
+    ExMinus,                // sibtract tos from nos
+    ExMul,                  // multiply top stack items
+    ExDiv,                  // divide tos by nos
+
+    ExAnd,
+    ExOr,
+    ExXor,
+//    ExInvert,
+
+    ExEquals,               // compare top two stack item
+    ExLess,                 // compare top two stack item
+    ExFlag,                 // reflect condition register in tos
+
+    ExDup,                  // duplicate top stack item
+    ExDrop,                 // remove top stack item
+    ExSwap,                 // swap top two stack items
+    ExOver,                 // push second from top item to stack
+    ExRot,                  // rotate third stack item to top
+
+    ExDiag,                 // diagnostic: stack top and conditions to stderr
+    ExLineLength,
+    ExTopOfStack,
+
     // ----------------------------------------------------
 
     ExMoveDown,
