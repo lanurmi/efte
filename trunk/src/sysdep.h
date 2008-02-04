@@ -79,6 +79,7 @@ extern "C" int memicmp(const void *s1, const void *s2, size_t n);
 #    include <process.h>
 #    if defined(MSVC)
 #        include <direct.h>
+#        define snprintf _snprintf
 #    endif
 #    if defined(WATCOM)
 #        include <direct.h>
