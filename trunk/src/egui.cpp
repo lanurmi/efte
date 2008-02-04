@@ -232,6 +232,7 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
             break;
         default:
             for (j=(m->cmds[i].repeat); j; --j) {
+                State.Pos = i + 1;
                 ResultOfCommandExecution=ExecCommand(view, m->cmds[i].u.num, State);
 
                 fprintf(stderr, "State.Macro=%5d, ", State.Macro);
