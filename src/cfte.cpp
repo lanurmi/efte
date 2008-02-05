@@ -30,13 +30,25 @@
 #include "u_stack.h"
 
 #define slen(s) ((s) ? (strlen(s) + 1) : 0)
-
+#define CACHE_SIZE 100000
 
 CircularStack CondStack;
 
 typedef struct {
     char *Name;
 } ExMacro;
+
+typedef struct {
+    unsigned char tag;
+    unsigned short len;
+    void *obj;
+} CachedObject;
+
+// Cached objects
+CachedObject cache[CACHE_SIZE];
+
+// Cached index (also acts as count)
+unsigned int cpos = 0;
 
 static unsigned int CMacros = 0;
 static ExMacro *Macros = 0;
@@ -81,23 +93,48 @@ static void Fail(CurPos &cp, const char *s, ...) {
     cleanup(1);
 }
 
+// Write all cached objects to disk
+void WriteCache() {
+    unsigned char l[2];
+
+    for (unsigned int idx=0; idx < cpos; idx++) {
+        l[0] = cache[idx].len & 0xFF;
+        l[1] = (cache[idx].len >> 8) & 0xFF;
+
+        if (fwrite(&cache[idx].tag, 1, 1, output) != 1 ||
+                fwrite(l, 2, 1, output) != 1 ||
+                fwrite(cache[idx].obj, 1, cache[idx].len, output) != cache[idx].len) {
+            fprintf(stderr, "\nDisk Full!\n");
+            cleanup(1);
+        }
+
+        // Free the memory (if any) taken by the cached object
+        if (cache[idx].obj != 0)
+            free(cache[idx].obj);
+    }
+
+    cpos = 0;
+}
+
 static int LoadFile(const char *WhereName, const char *CfgName, int Level = 1, int optional = 0);
 static void DefineWord(const char *w);
 
 static void PutObject(CurPos &cp, int xtag, int xlen, void *obj) {
     unsigned char tag = (unsigned char)xtag;
     unsigned short len = (unsigned short)xlen;
-    unsigned char l[2];
 
     if (preprocess_only == false) {
+        cache[cpos].tag = tag;
+        cache[cpos].len = len;
+        cache[cpos].obj = 0;
+        if (obj != 0) {
+            cache[cpos].obj = malloc(len);
+            memcpy(cache[cpos].obj, obj, len);
+        }
+        cpos++;
 
-        l[0] = len & 0xFF;
-        l[1] = (len >> 8) & 0xFF;
-
-        if (fwrite(&tag, 1, 1, output) != 1 ||
-                fwrite(l, 2, 1, output) != 1 ||
-                fwrite(obj, 1, len, output) != len) {
-            Fail(cp, "Disk full!");
+        if (cpos >= CACHE_SIZE) {
+            Fail(cp, "Cache exceeded");
         }
     }
     pos += 1 + 2 + len;
@@ -273,6 +310,9 @@ int main(int argc, char **argv) {
     if (preprocess_only == true) {
         return 0;
     }
+
+    // Write any cached data that may exist
+    WriteCache();
 
     l = CONFIG_ID;
     b[0] = (unsigned char)(l & 0xFF);
@@ -915,7 +955,6 @@ int CondStackPairedWith(int flowstatement) {
     return (CondStack.pop() == flowstatement) ;
 }
 
-
 static int ParseCommands(CurPos &cp, char *Name) {
     //if (!Name)
     //    return 0;
@@ -1097,10 +1136,6 @@ static int ParseCommands(CurPos &cp, char *Name) {
     GetOp(cp, P_CLOSEBRACE);
     return 0;
 }
-
-
-
-
 
 static int ParseConfigFile(CurPos &cp) {
     Word w = "";
@@ -2146,6 +2181,7 @@ static int LoadFile(const char *WhereName, const char *CfgName, int Level, int o
     cp.line = 1;
 
     rc = ParseConfigFile(cp);
+
     // puts("End Loading file");
     if (Level == 0)
         PutNull(cp, CF_EOF);
