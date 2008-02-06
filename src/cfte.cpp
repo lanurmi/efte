@@ -1007,7 +1007,7 @@ long int BranchOffset(int pos1, int pos2) {
         branchoffset++;
     }
     fprintf(stderr,"%d\n",branchoffset*sign);
-    return branchoffset*sign;
+    return branchoffset*sign-1;
 }
  
 
@@ -1077,7 +1077,6 @@ static int ParseCommands(CurPos &cp, char *Name) {
 // ---------------------------------- flow control compiling statements -------------------------------
                     switch(Command) {
 
-
                     case COND_IF:
                         fprintf(stderr,"IF\n");
                         fprintf(stderr,"   compile a ConditionalBranch at %d\n", cpos);
@@ -1089,7 +1088,7 @@ static int ParseCommands(CurPos &cp, char *Name) {
                         fprintf(stderr,"ELSE\n");
                         if (CondStackPairedWith(COND_IF)) {
                             branchaddress=CondStack.pop();
-                            UpdateNumber(branchaddress+1,BranchOffset(branchaddress,cpos));
+                            UpdateNumber(branchaddress+1,BranchOffset(branchaddress,cpos)+2);
                             fprintf(stderr,"   resolve branch at %d with offset %d\n", branchaddress, BranchOffset(branchaddress,cpos));
                         } else {
                             fprintf(stderr,"** unstructured: Else needs a previous If\n");
