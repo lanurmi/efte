@@ -37,7 +37,6 @@ const struct {
     TAB(And),
     TAB(Or),
     TAB(Xor),
-//    TAB(Invert),
 
     TAB(Equals),
     TAB(Less),

@@ -43,7 +43,7 @@ int CircularStack::peek(int offset) {
 //    if (offset < this->stackdepth) {
         return this->stack[p];
 //    } else {
-//        fprintf(stderr, "stack access attempted below first deepest item\n");
+//        fprintf(stderr, "stack access attempted outside of stack boundaries\n");
 //        return 0;
 //    }
 }
