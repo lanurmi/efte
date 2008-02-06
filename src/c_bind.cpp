@@ -600,7 +600,6 @@ EAbbrev::~EAbbrev() {
 }
 
 int AddCommand(int no, int Command, int count, int ign) {
-    if (count == 0) return 0;
     if (Command == 0) return 0;
     Macros[no].cmds = (CommandType *)realloc(Macros[no].cmds, sizeof(CommandType) * (Macros[no].Count + 1));
     Macros[no].cmds[Macros[no].Count].type = CT_COMMAND;
