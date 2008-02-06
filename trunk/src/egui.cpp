@@ -9,6 +9,7 @@
  */
 
 #include "fte.h"
+#include "log.h"
 
 int LastEventChar = -1;
 
@@ -178,11 +179,19 @@ int TestBranchCondition()  {
 
 
 int EGUI::ExecMacro(GxView *view, int Macro) {
+    STARTFUNC("EGUI::ExecMacro");
+
     int i, j, ResultOfCommandExecution;
     ExMacro *m;
     ExState State;
-    if (Macro == -1)  {  return ErFAIL; }
-    if (BeginMacro(view) == -1)    { return ErFAIL; }
+    if (Macro == -1)  {
+        ENDFUNCRC(0);
+        return ErFAIL;
+    }
+    if (BeginMacro(view) == -1) {
+        ENDFUNCRC(0);
+        return ErFAIL;
+    }
     State.Pos = 0;
     State.Macro = Macro;
     m = &Macros[State.Macro];
@@ -203,11 +212,11 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
 //        fprintf(stderr, "\n");
 
         if (m->cmds[i].type != CT_COMMAND) {
-            fprintf(stderr, "not CT_COMAND\n");
+            LOG << "not CT_COMMAND" << ENDLINE;
             continue;
         }
         if (m->cmds[i].u.num == ExNop)  {
-            fprintf(stderr, "Nop\n");
+            LOG << "Nop" << ENDLINE;
             continue;
         }
         switch (m->cmds[i].u.num) {
@@ -216,18 +225,18 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
             break;
         case ExExit:             // works now as exit: early terminate a macro
             i = m->Count;
-            fprintf(stderr, "macro exit\n");
+            LOG << "macro exit" << ENDLINE;
             break;
         case ExUnconditionalBranch:
             i += m->cmds[i].repeat;
-            fprintf(stderr, "branch to %d\n", i);
+            LOG << "branch to " << i << ENDLINE;
             break;
         case ExConditionalBranch:
             if (TestBranchCondition()) {
-                fprintf(stderr, "cond branch not taken. proceding @ %d\n", i+1);
+                LOG << "cond branch not taken. proceding @ " << i+1 << ENDLINE;
             } else {
                 i += m->cmds[i].repeat;
-                fprintf(stderr, "cond branch to %d\n", i+1);
+                LOG << "cond branch to " << i+1 << ENDLINE;
             }
             break;
         default:
@@ -235,37 +244,33 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
                 State.Pos = i + 1;
                 ResultOfCommandExecution=ExecCommand(view, m->cmds[i].u.num, State);
 
-//                fprintf(stderr, "Name=%s, ", Macros[State.Macro].Name);
-                fprintf(stderr, "Name=%s, ", Macros[State.Macro].Name);
-                fprintf(stderr, "State.Macro=%5d, ", State.Macro);
-                fprintf(stderr, "State.Pos=%d, ",State.Pos);
-                fprintf(stderr, "i=%2d, ",i);
-                fprintf(stderr, "c=%5ld, ", m->cmds[i].u.num);
-                fprintf(stderr, "cmdtype=%d --- ",m->cmds[i].type);
-//              fprintf(stderr, "depth=%d, ", ParamStack.depth());
-                fprintf(stderr, "tos=%d, ",  ParamStack.peek(0));
-                fprintf(stderr, "nos=%d, ",  ParamStack.peek(1));
-                fprintf(stderr, "3rd=%d, ",  ParamStack.peek(2));
-                fprintf(stderr, "cond=%08x",  BranchCondition);
-                fprintf(stderr, "\n");
-
+                //LOG << "Name=" << Macros[State.Macro].Name;
+                LOG << "State.Macro=" << State.Macro << ", ";
+                LOG << "State.Pos=" << State.Pos << ", ";
+                LOG << "i=" << i << ", ";
+                LOG << "c=" << m->cmds[i].u.num << ", ";
+                LOG << "cmdtype" << m->cmds[i].type << " --- ";
+                //LOG << "depth=" << ParamStack.depth() << ", ";
+                LOG << "tos=" << ParamStack.peek(0) << ", ";
+                LOG << "nos=" << ParamStack.peek(1) << ", ";
+                LOG << "3rd=" << ParamStack.peek(2) << ", ";
+                LOG << "cond=" << BranchCondition;
+                LOG << ENDLINE;
                 if (!(ResultOfCommandExecution || m->cmds[i].ign)) {
-                    fprintf(stderr, "ExecCommand fail: result=%d, ign=%d\n", ResultOfCommandExecution, m->cmds[i].ign);
+                    LOG << "ExecCommand fail: result=" << ResultOfCommandExecution << ", ign=" << m->cmds[i].ign << ENDLINE;
                     return ErFAIL;
                 }
                 if (ResultOfCommandExecution>>1) {
-                    fprintf(stderr, "ExecCommand shouldn't but did return %d\n", ResultOfCommandExecution);
+                    LOG << "ExecCommand shouldn't but did return " << ResultOfCommandExecution << ENDLINE;
                 }
             }
 //            i++;
         }
        State.Pos=i;
     }
+    ENDFUNCRC(0);
     return ErOK;
 }
-
-
-
 
 /*
  // same thing as avove but replete with diagnostis
@@ -378,12 +383,6 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
 }
 */
 
-
-
-
-
-
-
 void EGUI::SetMsg(char *Msg) {
     char CharMap[128] = "";
 
@@ -455,7 +454,6 @@ void EGUI::DispatchKey(GxView *view, TEvent &Event) {
                     return ;
                 }
             }
-            //            printf("Going up\n");
             map = map->fParent;
         }
         if (!OverrideMap) {
