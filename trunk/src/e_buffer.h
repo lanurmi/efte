@@ -464,7 +464,6 @@ public:
     int     And();
     int     Or();
     int     Xor();
-//    int     Invert();
 
     int     Equals();
     int     Less();

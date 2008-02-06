@@ -747,8 +747,6 @@ int EBuffer::ExecCommand(int Command, ExState &State) {
         return Mul();
     case ExDiv:
         return Div();
-//    case ExInvert:
-//        return Invert();
 
     case ExEquals:
         return Equals();

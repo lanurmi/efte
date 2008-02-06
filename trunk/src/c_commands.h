@@ -39,7 +39,6 @@ typedef enum {
     ExAnd,
     ExOr,
     ExXor,
-//    ExInvert,
 
     ExEquals,               // compare top two stack item
     ExLess,                 // compare top two stack item

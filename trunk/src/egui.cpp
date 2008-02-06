@@ -235,6 +235,8 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
                 State.Pos = i + 1;
                 ResultOfCommandExecution=ExecCommand(view, m->cmds[i].u.num, State);
 
+//                fprintf(stderr, "Name=%s, ", Macros[State.Macro].Name);
+                fprintf(stderr, "Name=%s, ", Macros[State.Macro].Name);
                 fprintf(stderr, "State.Macro=%5d, ", State.Macro);
                 fprintf(stderr, "State.Pos=%d, ",State.Pos);
                 fprintf(stderr, "i=%2d, ",i);
