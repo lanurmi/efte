@@ -1074,7 +1074,8 @@ static int ParseCommands(CurPos &cp, char *Name) {
 
                     fprintf(stderr,"cpos=%d, cmd=%ld\n", cpos, Command);
 
-// ---------------------------------- flow control compiling statements -------------------------------
+                    // ---------------------------------- flow control compiling statements -------------------------------
+                    int endif_paired;
                     switch(Command) {
 
                     case COND_IF:
@@ -1101,7 +1102,7 @@ static int ParseCommands(CurPos &cp, char *Name) {
                     case COND_ENDIF:
                         fprintf(stderr,"ENDIF\n");
                         CondStack.dup();
-                        int endif_paired = CondStackPairedWith(COND_IF) | CondStackPairedWith(COND_ELSE);
+                        endif_paired = (CondStackPairedWith(COND_IF) | CondStackPairedWith(COND_ELSE));
                         if (endif_paired)  {
                             branchaddress=CondStack.pop();
                             UpdateNumber(branchaddress+1,BranchOffset(branchaddress,cpos));
@@ -1111,11 +1112,11 @@ static int ParseCommands(CurPos &cp, char *Name) {
                         }
                         break;
 
-//                    case COND_BEGIN:
-//                        fprintf(stderr,"BEGIN\n");
-//                        CondStack.push(cpos);
-//                        CondStack.push(COND_BEGIN);                                        // allow test for proper nesting
-//                        break;
+                    case COND_BEGIN:
+                        fprintf(stderr,"BEGIN\n");
+                        CondStack.push(cpos);
+                        CondStack.push(COND_BEGIN);                                        // allow test for proper nesting
+                        break;
 
 //                    case COND_WHILE:                                                       // while is almost identical to an IF
 //                        fprintf(stderr,"WHILE\n");
@@ -1144,25 +1145,27 @@ static int ParseCommands(CurPos &cp, char *Name) {
 //                        }
 //                        break;
 
-//                    case COND_UNTIL:
-//                        fprintf(stderr,"UNTIL\n");
-//                        if (CondStackPairedWith(COND_BEGIN)) {
-//                            fprintf(stderr,"   compile a ConditionalBranch at %d with offset %d\n", cpos,BranchOffset());
-//                            CompileConditionalBranch(cp,BranchOffset());
-//                        } else {
-//                            fprintf(stderr,"** unstructured: Until needs a previous Begin\n");
-//                        }
-//                        break;
+                    case COND_UNTIL:
+                        fprintf(stderr,"UNTIL\n");
+                        if (CondStackPairedWith(COND_BEGIN)) {
+                            branchaddress=CondStack.pop();
+                            CompileConditionalBranch(cp,BranchOffset(cpos,branchaddress)-1);
+                            fprintf(stderr,"   compile a ConditionalBranch at %d with offset %d\n", cpos,branchaddress);
+                        } else {
+                            fprintf(stderr,"** unstructured: Until needs a previous Begin\n");
+                        }
+                        break;
 
-//                    case COND_AGAIN:
-//                        fprintf(stderr,"AGAIN\n");
-//                        if (CondStackPairedWith(COND_BEGIN)) {
-//                            fprintf(stderr,"   compile an UnconditionalBranch at %d with offset %d\n", cpos,BranchOffset());
-//                            CompileUnconditionalBranch(cp,BranchOffset());
-//                        } else {
-//                            fprintf(stderr,"** unstructured: Again needs a previous Begin\n");
-//                        }
-//                        break;
+                    case COND_AGAIN:
+                        fprintf(stderr,"AGAIN\n");
+                        if (CondStackPairedWith(COND_BEGIN)) {
+                            branchaddress=CondStack.pop();
+                            CompileUnconditionalBranch(cp,BranchOffset(cpos,branchaddress));
+                            fprintf(stderr,"   compile an UnconditionalBranch at %d with offset %d\n", cpos,branchaddress);
+                        } else {
+                            fprintf(stderr,"** unstructured: Again needs a previous Begin\n");
+                        }
+                        break;
                     // ----------------------------------------------------------------------------------------------------
                     }
                     ign = 0;
