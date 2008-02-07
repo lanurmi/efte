@@ -168,15 +168,11 @@ int EGUI::BeginMacro(GxView *view) {
     return 1;
 }
 
-
-
 // Lothar was seriously here
 
 int TestBranchCondition()  {
     return (ParamStack.pop());
 }
-
-
 
 int EGUI::ExecMacro(GxView *view, int Macro) {
     STARTFUNC("EGUI::ExecMacro");
@@ -185,12 +181,10 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
     ExMacro *m;
     ExState State;
     if (Macro == -1)  {
-        ENDFUNCRC(0);
-        return ErFAIL;
+        ENDFUNCRC(ErFAIL);
     }
     if (BeginMacro(view) == -1) {
-        ENDFUNCRC(0);
-        return ErFAIL;
+        ENDFUNCRC(ErFAIL);
     }
     State.Pos = 0;
     State.Macro = Macro;
@@ -268,8 +262,7 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
         }
        State.Pos=i;
     }
-    ENDFUNCRC(0);
-    return ErOK;
+    ENDFUNCRC(ErOK);
 }
 
 /*
