@@ -581,8 +581,8 @@ static int FindPrevIndent(EBuffer *B, int &RowP, int &ColP, char &CharP, int Fla
                 LOG << "ColP: " << ColP << " State: " << (int)StateMap[ColP] << ENDLINE;
                 if (StateMap[ColP] == hsC_Normal) {
                     LOG << "CharP: " << BinChar(P[ColP]) << " BolChar: " << BinChar(BolChar) <<
-                    " BolRow: " << BolRow <<
-                    " BolCol: " << BolCol <<
+                        " BolRow: " << BolRow <<
+                        " BolCol: " << BolCol <<
                     ENDLINE;
                     switch (CharP = P[ColP]) {
                     case '{':
@@ -974,7 +974,7 @@ static int IndentNormal(EBuffer *B, int Line, int /*StateLen*/, hsState * /*Stat
         // FirstCharP = CharP;
 
         LOG << "FirstRowP=" << FirstRowP << ", FirstColP=" << FirstColP <<
-        ", CharP=" << BinChar(CharP) << ENDLINE;
+            ", CharP=" << BinChar(CharP) << ENDLINE;
 
         switch (CharP) {
         case 'c':
