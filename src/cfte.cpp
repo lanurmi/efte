@@ -171,11 +171,11 @@ int main(int argc, char **argv) {
 
     fprintf(stderr, PROG_CFTE " " VERSION "\n" COPYRIGHT "\n");
     if (argc < 2 || argc > 5) {
-        fprintf(stderr, "Usage: " PROG_CFTE " [-o<offset>] [-p[reprocess]] -D[word]"
+        fprintf(stderr, "Usage: " PROG_CFTE " [-o<offset>] [-p[reprocess]] "
 #ifndef UNIX
                 "config/"
 #endif
-                "mymain.fte [efte-new.cnf]\n");
+                "main.fte [efte-new.cnf]\n");
         exit(1);
     }
 
@@ -198,24 +198,19 @@ int main(int argc, char **argv) {
     // parse arguments
     for (int i = 1; i < argc; i++) {
         if (argv[i][0] == '-') {
-            if (strncmp(argv[i], "-d", 2) == 0) {
-                char *p;
-
-                p = argv[i];
-                p += 2;
-                DefineWord(p);
-            } else if ((strcmp(argv[i], "-p") == 0) || (strcmp(argv[i], "-preprocess") == 0)) {
+            if ((strcmp(argv[i], "-p") == 0) || (strcmp(argv[i], "-preprocess") == 0)) {
                 preprocess_only = true;
-            } else if (strncmp(argv[i], "-o", 2) == 0) {
-                char *p;
+            } else
+                if (strncmp(argv[i], "-o", 2) == 0) {
+                    char *p;
 
-                p = argv[i];
-                p += 2;
-                offset = atol(p);
-            } else {
-                fprintf(stderr, "Invalid option '%s'\n", argv[i]);
-                exit(1);
-            }
+                    p = argv[i];
+                    p += 2;
+                    offset = atol(p);
+                } else {
+                    fprintf(stderr, "Invalid option '%s'\n", argv[i]);
+                    exit(1);
+                }
         } else {
             switch (n) {
             case 0:
@@ -969,14 +964,12 @@ void CompileCommand(CurPos cp, int Command, long cnt, int ign)  {
 
 int CompileConditionalBranch(CurPos &cp, int to) {
     int where=cpos;
-    fprintf(stderr,"CompileConditionalBranch: put %d to %d, offs=%d\n", ExConditionalBranch, where, to);
     CompileCommand(cp,ExConditionalBranch,to,1);
     return where;
 }
 
 int CompileUnconditionalBranch(CurPos &cp, int to) {
     int where=cpos;
-    fprintf(stderr,"CompileUnconditionalBranch: put %d to %d, offs=%d\n", ExUnconditionalBranch, where, to);
     CompileCommand(cp,ExUnconditionalBranch,to,1);
     return where;
 }
@@ -1001,9 +994,8 @@ static void UpdateNumber(int index, long num) {
 // returns branch offset, which can be negative. this is determined by the order of compilation position.
 long int BranchOffset(int pos1, int pos2) {
 #define SWAP(a, b) (((a) ^= (b)), ((b) ^= (a)), ((a) ^= (b)))
-    int branchoffset=0;
+    int branchoffset=-1;
     int sign=1;
-    fprintf(stderr,"   calculated offset from %d to %d:",pos1, pos2);
     if (pos1 > pos2) {
         SWAP(pos1,pos2);
         sign=-1;
@@ -1011,8 +1003,7 @@ long int BranchOffset(int pos1, int pos2) {
     for ( ; pos1 < pos2; pos1 += cache[pos1].len) {
         branchoffset++;
     }
-    fprintf(stderr,"%d\n",branchoffset*sign);
-    return branchoffset*sign-1;
+    return branchoffset*sign;
 }
  
 
@@ -1077,96 +1068,78 @@ static int ParseCommands(CurPos &cp, char *Name) {
                     Fail(cp, "Unrecognised command: %s", cmd);
                 else {
 
-                    fprintf(stderr,"cpos=%d, cmd=%ld\n", cpos, Command);
-
                     // ---------------------------------- flow control compiling statements -------------------------------
                     int endif_paired;
                     switch(Command) {
 
                     case COND_IF:
-                        fprintf(stderr,"IF\n");
-                        fprintf(stderr,"   compile a ConditionalBranch at %d\n", cpos);
                         CondStack.push(CompileConditionalBranch(cp,0));
                         CondStack.push(COND_IF);                                           // allow test for proper nesting
                         break;
 
                     case COND_ELSE:
-                        fprintf(stderr,"ELSE\n");
                         if (CondStackPairedWith(COND_IF)) {
                             branchaddress=CondStack.pop();
                             UpdateNumber(branchaddress+1,BranchOffset(branchaddress,cpos)+2);
-                            fprintf(stderr,"   resolve branch at %d with offset %d\n", branchaddress, BranchOffset(branchaddress,cpos));
                         } else {
                             fprintf(stderr,"** unstructured: Else needs a previous If\n");
                         }
-                        fprintf(stderr,"   compile UnconditionalBranch at %d\n", cpos);
                         CondStack.push(CompileUnconditionalBranch(cp,0));
                         CondStack.push(COND_ELSE);                                         //  allow test for proper nesting
                         break;
 
                     case COND_ENDIF:
-                        fprintf(stderr,"ENDIF\n");
                         CondStack.dup();
                         endif_paired = (CondStackPairedWith(COND_IF) | CondStackPairedWith(COND_ELSE));
                         if (endif_paired)  {
                             branchaddress=CondStack.pop();
                             UpdateNumber(branchaddress+1,BranchOffset(branchaddress,cpos));
-                            fprintf(stderr,"   resolve branch at %d with offset %d\n", branchaddress, BranchOffset(branchaddress,cpos));
                         } else {
                             fprintf(stderr,"** unstructured: EndIf needs a previous If or Else\n");
                         }
                         break;
 
                     case COND_BEGIN:
-                        fprintf(stderr,"BEGIN\n");
                         CondStack.push(cpos);
                         CondStack.push(COND_BEGIN);                                        // allow test for proper nesting
                         break;
 
-//                    case COND_WHILE:                                                       // while is almost identical to an IF
-//                        fprintf(stderr,"WHILE\n");
-//                        if (!CondStackPairedWith(COND_BEGIN)) {
-//                            fprintf(stderr,"** unstructured: While needs a previous Begin\n");
-//                        }
-//                        fprintf(stderr,"   compile a ConditionalBranch at %d, cp=%d\n", cpos, cp);
-//                        CondStack.push(CompileConditionalBranch(cp,0));
-//                        CondStack.push(COND_WHILE);                                        // allow test for proper nesting
-//                        break;
+                    case COND_WHILE:                                                       // while is almost identical to an IF
+                        if (!CondStackPairedWith(COND_BEGIN)) {
+                            fprintf(stderr,"** unstructured: While needs a previous Begin\n");
+                        }
+                        CondStack.push(CompileConditionalBranch(cp,0));
+                        CondStack.push(COND_WHILE);                                        // allow test for proper nesting
+                        break;
 
-//                    case COND_REPEAT:
-//                        fprintf(stderr,"REPEAT\n");
-//                        if (CondStackPairedWith(COND_WHILE)) {
+
+                    case COND_REPEAT:
+                        if (CondStackPairedWith(COND_WHILE)) {
 // resolve the branch, compiled by WHILE:
-//                            branchaddress=CondStack.pop();
-//                            cache[branchaddress+1].obj = BranchOffset(cpos,branchaddress));
-//                            fprintf(stderr,"   resolve branch at %d to jump to %d\n", resolveaddress, BranchOffset(cpos,branchaddress));
+                            branchaddress=CondStack.pop();
+                            UpdateNumber(branchaddress+1,BranchOffset(branchaddress,cpos)+1);
 
 // compile a branch back to BEGIN
-//                            branchaddres=CondStack.pop();
-//                            CompileUnconditionalBranch(cp,BranchOffset(cpos,branchaddress));
-//                            fprintf(stderr,"   compile an UnconditionalBranch at %d with offset %d, cp=%d\n", cpos,BranchAddress(branchaddress,cpos), cp);
-//                        } else {
-//                            fprintf(stderr,"** unstructured: EndIf needs a previous If or Else\n");
-//                        }
-//                        break;
+                            branchaddress=CondStack.pop();
+                            CompileUnconditionalBranch(cp,BranchOffset(cpos,branchaddress)-1);
+                        } else {
+                            fprintf(stderr,"** unstructured: EndIf needs a previous If or Else\n");
+                        }
+                        break;
 
                     case COND_UNTIL:
-                        fprintf(stderr,"UNTIL\n");
                         if (CondStackPairedWith(COND_BEGIN)) {
                             branchaddress=CondStack.pop();
                             CompileConditionalBranch(cp,BranchOffset(cpos,branchaddress)-1);
-                            fprintf(stderr,"   compile a ConditionalBranch at %d with offset %d\n", cpos,branchaddress);
                         } else {
                             fprintf(stderr,"** unstructured: Until needs a previous Begin\n");
                         }
                         break;
 
                     case COND_AGAIN:
-                        fprintf(stderr,"AGAIN\n");
                         if (CondStackPairedWith(COND_BEGIN)) {
                             branchaddress=CondStack.pop();
                             CompileUnconditionalBranch(cp,BranchOffset(cpos,branchaddress));
-                            fprintf(stderr,"   compile an UnconditionalBranch at %d with offset %d\n", cpos,branchaddress);
                         } else {
                             fprintf(stderr,"** unstructured: Again needs a previous Begin\n");
                         }
