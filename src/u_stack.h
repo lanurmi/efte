@@ -8,14 +8,14 @@
  *
  */
 
-#ifndef U_STACK_H
-#define U_STACK_H
+#ifndef U_CIRCSTACK_H
+#define U_CIRCSTACK_H
 
-#define STACKSIZE 16
+#define CIRCSTACKSIZE 16
 
 class CircularStack {
 private:
-    int stack[STACKSIZE];
+    int stack[CIRCSTACKSIZE];
     int pos;
     int stackdepth;
 
@@ -26,6 +26,27 @@ public:
     int peek(int offset=0);
     void dup();
     void swap();
+    int depth();
+};
+
+#endif /* U_CIRCSTACK_H */
+
+
+#ifndef U_STACK_H
+#define U_STACK_H
+
+#define STACKSIZE 32
+
+class Stack {
+private:
+    int stack[STACKSIZE];
+    int pos;
+
+public:
+    Stack();
+    void push(int integer);
+    int pop();
+    int peek(int offset=0);
     int depth();
 };
 
