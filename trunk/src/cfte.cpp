@@ -1176,6 +1176,7 @@ static int ParseCommands(CurPos &cp, char *Name) {
             Fail(cp, "Syntax error");
     }
     GetOp(cp, P_CLOSEBRACE);
+    WriteCache();
     return 0;
 }
 
