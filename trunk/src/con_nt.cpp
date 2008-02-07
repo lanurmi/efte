@@ -78,11 +78,11 @@ int codepage;
 
 
 #if 0
-void dbg(const char* s, ...) { /*FOLD00*/
+void dbg(const char* s, ...) {
 }
 #else
 
-void dbg(const char* s, ...) { /*FOLD00*/
+void dbg(const char* s, ...) {
     char    buf[256];
     va_list args;
 
@@ -94,7 +94,7 @@ void dbg(const char* s, ...) { /*FOLD00*/
 #endif
 
 
-static void DrawCursor(int Show) { /*FOLD00*/
+static void DrawCursor(int Show) {
     CONSOLE_CURSOR_INFO cci;
 
     GetConsoleCursorInfo(OurConOut, &cci);
@@ -230,7 +230,7 @@ struct {
 char shftwrng[]  = "~!@#$%^&*()_+{}|:\"<>?";
 char shftright[] = "`1234567890-=[]\\;',./";
 
-int ReadConsoleEvent(TEvent *E) { /*FOLD00*/
+int ReadConsoleEvent(TEvent *E) {
     /*
      *      Reads and interprets the console event. It is called when console input
      *      handle is signalled. To prevent flashing cursors this routine returns
@@ -437,7 +437,7 @@ int ReadConsoleEvent(TEvent *E) { /*FOLD00*/
 }
 
 
-int ConInit(int /*XSize*/, int /*YSize*/) { /*FOLD00*/
+int ConInit(int /*XSize*/, int /*YSize*/) {
     if (Initialized) return 0;
 
     EventBuf.What = evNone;
@@ -466,20 +466,20 @@ int ConInit(int /*XSize*/, int /*YSize*/) { /*FOLD00*/
     return 0;
 }
 
-int ConDone(void) { /*FOLD00*/
+int ConDone(void) {
     ConSuspend();
     CloseHandle(OurConOut);
     return 0;
 }
 
-int ConSuspend(void) { /*FOLD00*/
+int ConSuspend(void) {
     SetConsoleActiveScreenBuffer(ConOut);
     SetConsoleMode(ConIn, OldConsoleMode);
 
     return 0;
 }
 
-int ConContinue(void) { /*FOLD00*/
+int ConContinue(void) {
     SetConsoleActiveScreenBuffer(OurConOut);
     GetConsoleMode(ConIn, &OldConsoleMode);
     SetConsoleMode(ConIn, ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT);
@@ -490,7 +490,7 @@ int ConContinue(void) { /*FOLD00*/
     return 0;
 }
 
-int ConClear(void) { /*FOLD00*/
+int ConClear(void) {
     int W, H;
     TDrawBuffer B;
 
@@ -532,7 +532,7 @@ public:
 };
 #endif
 
-int ConPutBox(int X, int Y, int W, int H, PCell Cell) { /*FOLD00*/
+int ConPutBox(int X, int Y, int W, int H, PCell Cell) {
     int             I;
     PCell           p = Cell;
     COORD           corg, csize;
@@ -557,7 +557,7 @@ int ConPutBox(int X, int Y, int W, int H, PCell Cell) { /*FOLD00*/
     return 0;
 }
 
-int ConGetBox(int X, int Y, int W, int H, PCell Cell) { /*FOLD00*/
+int ConGetBox(int X, int Y, int W, int H, PCell Cell) {
     int             I;
     USHORT          WW = W << 1;
     PCell           p = Cell;
@@ -579,7 +579,7 @@ int ConGetBox(int X, int Y, int W, int H, PCell Cell) { /*FOLD00*/
     return 0;
 }
 
-int ConPutLine(int X, int Y, int W, int H, PCell Cell) { /*FOLD00*/
+int ConPutLine(int X, int Y, int W, int H, PCell Cell) {
     int             I;
     COORD           corg, csize;
     SMALL_RECT      rcl;
@@ -602,7 +602,7 @@ int ConPutLine(int X, int Y, int W, int H, PCell Cell) { /*FOLD00*/
     return 0;
 }
 
-int ConSetBox(int X, int Y, int W, int H, TCell Cell) { /*FOLD00*/
+int ConSetBox(int X, int Y, int W, int H, TCell Cell) {
     int             I;
     COORD           corg, csize;
     SMALL_RECT      rcl;
@@ -625,7 +625,7 @@ int ConSetBox(int X, int Y, int W, int H, TCell Cell) { /*FOLD00*/
     return 0;
 }
 
-int ConScroll(int Way, int X, int Y, int W, int H, TAttr Fill, int Count) { /*FOLD00*/
+int ConScroll(int Way, int X, int Y, int W, int H, TAttr Fill, int Count) {
     TCell           FillCell;
     SMALL_RECT      rect, clip;
     COORD           dest;
@@ -662,11 +662,11 @@ int ConScroll(int Way, int X, int Y, int W, int H, TAttr Fill, int Count) { /*FO
     return 0;
 }
 
-int ConSetSize(int X, int Y) { /*FOLD00*/
+int ConSetSize(int X, int Y) {
     return -1;
 }
 
-int ConQuerySize(int *X, int *Y) { /*FOLD00*/
+int ConQuerySize(int *X, int *Y) {
     CONSOLE_SCREEN_BUFFER_INFO csbi;
 
     GetConsoleScreenBufferInfo(OurConOut, &csbi);
@@ -677,7 +677,7 @@ int ConQuerySize(int *X, int *Y) { /*FOLD00*/
     return 0;
 }
 
-int ConSetCursorPos(int X, int Y) { /*FOLD00*/
+int ConSetCursorPos(int X, int Y) {
     COORD xy;
 
     xy.X = X;
@@ -686,7 +686,7 @@ int ConSetCursorPos(int X, int Y) { /*FOLD00*/
     return 0;
 }
 
-int ConQueryCursorPos(int *X, int *Y) { /*FOLD00*/
+int ConQueryCursorPos(int *X, int *Y) {
     CONSOLE_SCREEN_BUFFER_INFO csbi;
 
     GetConsoleScreenBufferInfo(OurConOut, &csbi);
@@ -695,30 +695,30 @@ int ConQueryCursorPos(int *X, int *Y) { /*FOLD00*/
     return 0;
 }
 
-int ConShowCursor(void) { /*FOLD00*/
+int ConShowCursor(void) {
     CursorVisible = 1;
     DrawCursor(1);
     return 0;
 }
 
-int ConHideCursor(void) { /*FOLD00*/
+int ConHideCursor(void) {
     CursorVisible = 0;
     DrawCursor(0);
     return 0;
 }
 
-int ConCursorVisible() { /*FOLD00*/
+int ConCursorVisible() {
     return (CursorVisible == 1);
 }
 
-void ConSetInsertState(bool insert) { /*FOLD00*/
+void ConSetInsertState(bool insert) {
 }
 
-int ConSetMousePos(int X, int Y) { /*FOLD00*/
+int ConSetMousePos(int X, int Y) {
     return -1;
 }
 
-int ConQueryMousePos(int *X, int *Y) { /*FOLD00*/
+int ConQueryMousePos(int *X, int *Y) {
     *X = LastMouseX;
     *Y = LastMouseY;
 
@@ -726,36 +726,36 @@ int ConQueryMousePos(int *X, int *Y) { /*FOLD00*/
     return 0;
 }
 
-int ConShowMouse(void) { /*FOLD00*/
+int ConShowMouse(void) {
     MouseVisible = 1;
     if (!MousePresent) return -1;
     return 0;
 }
 
-int ConHideMouse(void) { /*FOLD00*/
+int ConHideMouse(void) {
     MouseVisible = 0;
     if (!MousePresent) return -1;
     return 0;
 }
 
-int ConMouseVisible() { /*FOLD00*/
+int ConMouseVisible() {
     return (MouseVisible == 1);
 }
 
-int ConQueryMouseButtons(int *ButtonCount) { /*FOLD00*/
+int ConQueryMouseButtons(int *ButtonCount) {
     return 0;
 }
 
-int ConPutEvent(TEvent Event) { /*FOLD00*/
+int ConPutEvent(TEvent Event) {
     EventBuf = Event;
     return 0;
 }
 
-int ConFlush(void) { /*FOLD00*/
+int ConFlush(void) {
     return 0;
 }
 
-int ConGrabEvents(TEventMask EventMask) { /*FOLD00*/
+int ConGrabEvents(TEventMask EventMask) {
     return 0;
 }
 
@@ -763,7 +763,7 @@ int ConGrabEvents(TEventMask EventMask) { /*FOLD00*/
 static PCell SavedScreen = 0;
 static int SavedX, SavedY, SaveCursorPosX, SaveCursorPosY;
 
-int SaveScreen() { /*FOLD00*/
+int SaveScreen() {
     if (SavedScreen)
         free(SavedScreen);
 
@@ -777,7 +777,7 @@ int SaveScreen() { /*FOLD00*/
     return 0;
 }
 
-int RestoreScreen() { /*FOLD00*/
+int RestoreScreen() {
     if (SavedScreen) {
         ConPutBox(0, 0, SavedX, SavedY, SavedScreen);
         ConSetCursorPos(SaveCursorPosX, SaveCursorPosY);
@@ -786,7 +786,7 @@ int RestoreScreen() { /*FOLD00*/
 }
 
 
-GUI::GUI(int &argc, char **argv, int XSize, int YSize) { /*FOLD00*/
+GUI::GUI(int &argc, char **argv, int XSize, int YSize) {
     fArgc = argc;
     fArgv = argv;
     ::ConInit(-1, -1);
@@ -795,7 +795,7 @@ GUI::GUI(int &argc, char **argv, int XSize, int YSize) { /*FOLD00*/
     gui = this;
 }
 
-GUI::~GUI() { /*FOLD00*/
+GUI::~GUI() {
     RestoreScreen();
 
     if (SavedScreen)
@@ -805,17 +805,17 @@ GUI::~GUI() { /*FOLD00*/
     gui = 0;
 }
 
-int GUI::ConSuspend(void) { /*FOLD00*/
+int GUI::ConSuspend(void) {
     RestoreScreen();
     return ::ConSuspend();
 }
 
-int GUI::ConContinue(void) { /*FOLD00*/
+int GUI::ConContinue(void) {
     SaveScreen();
     return ::ConContinue();
 }
 
-int GUI::ShowEntryScreen() { /*FOLD00*/
+int GUI::ShowEntryScreen() {
     TEvent E;
 
     ConHideMouse();
@@ -831,7 +831,7 @@ int GUI::ShowEntryScreen() { /*FOLD00*/
     return 1;
 }
 
-char ConGetDrawChar(int index) { /*FOLD00*/
+char ConGetDrawChar(int index) {
     static const char *tab = NULL;
 
     if (!tab) {
@@ -843,7 +843,7 @@ char ConGetDrawChar(int index) { /*FOLD00*/
 }
 
 
-int GUI::RunProgram(int mode, char *Command) { /*FOLD00*/
+int GUI::RunProgram(int mode, char *Command) {
     int rc, W, H, W1, H1;
 
     ConQuerySize(&W, &H);
@@ -876,7 +876,7 @@ int GUI::RunProgram(int mode, char *Command) { /*FOLD00*/
     return rc;
 }
 
-int ConSetTitle(char *Title, char *STitle) { /*FOLD00*/
+int ConSetTitle(char *Title, char *STitle) {
     char buf[sizeof(winTitle)] = {0};
     JustFileName(Title, buf, sizeof(buf));
     if (buf[0] == '\0') // if there is no filename, try the directory name.
@@ -896,7 +896,7 @@ int ConSetTitle(char *Title, char *STitle) { /*FOLD00*/
     return 0;
 }
 
-int ConGetTitle(char *Title, int MaxLen, char *STitle, int SMaxLen) { /*FOLD00*/
+int ConGetTitle(char *Title, int MaxLen, char *STitle, int SMaxLen) {
     strncpy(Title, winTitle, MaxLen);
     Title[MaxLen - 1] = 0;
     strncpy(STitle, winSTitle, SMaxLen);
@@ -1012,7 +1012,7 @@ GPipe GPipe::pipe_ar[MAX_PIPES];
 /*
  *      getFreePipe() locates an unused GPipe structure. It also assigns it's ID.
  */
-GPipe* GPipe::getFreePipe() { /*FOLD00*/
+GPipe* GPipe::getFreePipe() {
     int     i;
 
     for (i = 0; i < MAX_PIPES; i++) {
@@ -1025,14 +1025,14 @@ GPipe* GPipe::getFreePipe() { /*FOLD00*/
 }
 
 
-GPipe* GPipe::getPipe(int id) { /*FOLD00*/
+GPipe* GPipe::getPipe(int id) {
     if (id < 0 || id > MAX_PIPES) return NULL;
     if (! pipe_ar[id].p_used) return NULL;
     return pipe_ar + id;
 }
 
 
-int GPipe::createPipe() { /*FOLD00*/
+int GPipe::createPipe() {
     /*
      *      Called from open() to create and open the server and the client pipes.
      */
@@ -1107,7 +1107,7 @@ int GPipe::createPipe() { /*FOLD00*/
 }
 
 
-void GPipe::releasePipe() { /*FOLD00*/
+void GPipe::releasePipe() {
     /*
      *      releasePipe() releases all that createPipe() allocates. It's usually
      *      called when an error causes the process to abort.
@@ -1125,7 +1125,7 @@ void GPipe::releasePipe() { /*FOLD00*/
 }
 
 
-int GPipe::runCommand() { /*FOLD00*/
+int GPipe::runCommand() {
     /*
      *      runCommand() takes the child pipe, dups it onto stdout and stderr while
      *      saving their old assignments, then it spawns
@@ -1210,7 +1210,7 @@ int GPipe::runCommand() { /*FOLD00*/
 }
 
 
-void GPipe::closeProc() { /*FOLD00*/
+void GPipe::closeProc() {
     /*
      *      closeProc() gets called when a read fails. It assumes the process has
      *      ended, retrieves the process return code, then it closes all handles.
@@ -1237,7 +1237,7 @@ void GPipe::closeProc() { /*FOLD00*/
 }
 
 
-int GPipe::startRead() { /*FOLD00*/
+int GPipe::startRead() {
     /*
      *      postRead() checks if an overlapped READ needs to be posted by checking
      *      the io_posted flag. If that's clear and no termination or closed flag
@@ -1265,7 +1265,7 @@ int GPipe::startRead() { /*FOLD00*/
 }
 
 
-int GPipe::open(char* command, EModel* notify) { /*FOLD00*/
+int GPipe::open(char* command, EModel* notify) {
     memset(&p_ovl, 0, sizeof(p_ovl));               // Clear overlapped,
     p_bufused       = 0;
     p_bufpos        = 0;
@@ -1319,7 +1319,7 @@ int GPipe::open(char* command, EModel* notify) { /*FOLD00*/
 }
 
 
-int GPipe::close() { /*FOLD00*/
+int GPipe::close() {
     /*
      *      close() disconnects from the spawned task, closes the pipe and releases
      *      all stuff.
@@ -1353,7 +1353,7 @@ int GPipe::close() { /*FOLD00*/
 }
 
 
-int GPipe::read(void *buffer, int len) { /*FOLD00*/
+int GPipe::read(void *buffer, int len) {
     /*
      *      read() is called to get the current data from the pipe. It takes the
      *      #bytes read and returns them. It returns data till the buffer is
@@ -1396,7 +1396,7 @@ int GPipe::read(void *buffer, int len) { /*FOLD00*/
 }
 
 
-int GPipe::getEvent(TEvent* event) { /*FOLD00*/
+int GPipe::getEvent(TEvent* event) {
     dbg("[getpipeevent: ");
     event->What = evNone;
 
@@ -1438,7 +1438,7 @@ int GPipe::getEvent(TEvent* event) { /*FOLD00*/
  *
  *
  */
-int GUI::OpenPipe(char *Command, EModel *notify) { /*FOLD00*/
+int GUI::OpenPipe(char *Command, EModel *notify) {
     GPipe*  gp;
 
     if ((gp = GPipe::getFreePipe()) == 0)
@@ -1447,7 +1447,7 @@ int GUI::OpenPipe(char *Command, EModel *notify) { /*FOLD00*/
 }
 
 
-int GUI::SetPipeView(int id, EModel *notify) { /*FOLD00*/
+int GUI::SetPipeView(int id, EModel *notify) {
     GPipe*  p;
 
     if ((p = GPipe::getPipe(id)) == 0) return -1;
@@ -1458,7 +1458,7 @@ int GUI::SetPipeView(int id, EModel *notify) { /*FOLD00*/
 }
 
 
-int GUI::ReadPipe(int id, void *buffer, int len) { /*FOLD00*/
+int GUI::ReadPipe(int id, void *buffer, int len) {
     //int     l;
     GPipe*  p;
 
@@ -1467,7 +1467,7 @@ int GUI::ReadPipe(int id, void *buffer, int len) { /*FOLD00*/
 }
 
 
-int GUI::ClosePipe(int id) { /*FOLD00*/
+int GUI::ClosePipe(int id) {
     GPipe*  p;
 
     if ((p = GPipe::getPipe(id)) == 0) return -1;
@@ -1475,7 +1475,7 @@ int GUI::ClosePipe(int id) { /*FOLD00*/
 }
 
 
-static int GetPipeEvent(int id, TEvent *Event) { /*FOLD00*/
+static int GetPipeEvent(int id, TEvent *Event) {
     //int     i;
     GPipe*  p;
 
@@ -1821,7 +1821,7 @@ int GetPipeEvent(int i, TEvent *Event) {
 
 #endif
 
-int ConGetEvent(TEventMask EventMask, TEvent *Event, int WaitTime, int Delete) { /*FOLD00*/
+int ConGetEvent(TEventMask EventMask, TEvent *Event, int WaitTime, int Delete) {
     //** Any saved events left?
     if (EventBuf.What != evNone) {
         *Event = EventBuf;
