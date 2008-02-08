@@ -754,6 +754,8 @@ int EBuffer::ExecCommand(int Command, ExState &State) {
         return Less();
     case ExFlag:
         return Flag();
+    case ExAbort:
+        return Abort();
 
     case ExDup:
         return Dup();

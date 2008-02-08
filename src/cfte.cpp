@@ -1069,7 +1069,7 @@ static int ParseCommands(CurPos &cp, char *Name) {
                     case COND_ELSE:
                         if (CondStackPairedWith(COND_IF)) {
                             branchaddress=CondStack.pop();
-                            UpdateNumber(branchaddress+1,BranchOffset(branchaddress,cpos)+2);
+                            UpdateNumber(branchaddress+1,BranchOffset(branchaddress,cpos)+1);
                         } else {
                             fprintf(stderr,"** unstructured: Else needs a previous If\n");
                         }

@@ -468,6 +468,7 @@ public:
     int     Equals();
     int     Less();
     int     Flag();
+    int     Abort();
 
     int     Dup();
     int     Drop();

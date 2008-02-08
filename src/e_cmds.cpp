@@ -27,6 +27,7 @@ int EBuffer::Diag() {
 }
 
 
+
 // --- arithmetic ---
 
 int EBuffer::Plus() {
@@ -117,6 +118,26 @@ int EBuffer::Flag() {
 }
 
 
+// old commands return false on fail, causing termination of macro execution.
+// this prevents the macro to deal with the condition, therefore those commands
+// should return "true".
+// Because we want to be able to mimick the former behaviour, the condition, as
+// left by those commands, will be read by "Abort" and returned to macro interpreter
+// as return code. i.e. a command, followed by Abort, will terminate macro execution
+// if its condition was "false".
+// this replaces the previous idea of not terminating macro execution if a command is
+// followed by a branch - which doesn't work. simply negating the test condition, instead
+// of branching directly, would render this unfunctional already. So we have instead:
+// macro  { FailingCommand MacroContinues ... }   or
+// macro  { FailingCommand Abort MacroHasTerminated } or
+// macro  { SuccessfulCommand Abort MacroContinues ... }
+int EBuffer::Abort() {
+    int failcondition=BranchCondition & 1;
+    BranchCondition = (BranchCondition >> 1);
+    return failcondition;
+}
+
+
 
 // --- stack ---
 
@@ -164,14 +185,15 @@ int EBuffer::LineLength() {
 
 int EBuffer::MoveLeft() {
     if (CP.Col) {                // cursor can be moved to left
-        SetBranchCondition(1);
         SetPos(CP.Col - 1, CP.Row, tmLeft);
+        SetBranchCondition(1);
         return 1;
     }
-    SetBranchCondition(0);       // cursor at begin of line
-    if (CursorWithinEOL == 1 && MoveUp())
+    if (CursorWithinEOL == 1 && MoveUp()) {
+        SetBranchCondition(0);
         return MoveLineEnd();
-    else {
+    } else {
+        SetBranchCondition(0);       // cursor at begin of line
         //            return 0;
         return 1;
     }
@@ -179,50 +201,59 @@ int EBuffer::MoveLeft() {
 
 
 int EBuffer::MoveRight() {
-
     if (CursorWithinEOL == 1 && CP.Col == LineLen()) {
-        if (MoveDown())
+        if (MoveDown()) {
+            SetBranchCondition(0);
             return MoveLineStart();
-        else
-            return 0;
+        } else {
+//            return 0;
+            SetBranchCondition(0);       // cursor at begin of line
+            return 1;
+        }
     }
     SetPos(CP.Col + 1, CP.Row, tmRight);
+    SetBranchCondition(1);
     return 1;
 }
+
 
 int EBuffer::MoveUp() {
     if (LastUpDownColumn == -1)
         LastUpDownColumn = CP.Col;
-
-    if (CP.Row == 0) return 0;
-
+    if (CP.Row == 0) {
+        SetBranchCondition(0);
+        return 1;
+    }
     SetPos(CP.Col, CP.Row - 1, tmLeft);
-
     if (CursorWithinEOL == 1) {
         MoveLineEnd();
         if (CP.Col > LastUpDownColumn)
             SetPos(LastUpDownColumn, CP.Row);
     }
-
+    SetBranchCondition(1);
     return 1;
 }
+
 
 int EBuffer::MoveDown() {
     if (LastUpDownColumn == -1)
         LastUpDownColumn = CP.Col;
-
-    if (CP.Row == VCount - 1) return 0;
-
+    if (CP.Row == VCount - 1) {
+        SetBranchCondition(0);
+        return 0;
+    }
     SetPos(CP.Col, CP.Row + 1, tmLeft);
-
     if (CursorWithinEOL == 1) {
         MoveLineEnd();
         if (CP.Col > LastUpDownColumn)
             SetPos(LastUpDownColumn, CP.Row);
     }
-
+    SetBranchCondition(1);
     return 1;
 }
+
+
+
 
 int EBuffer::MovePrev() {
     if (MoveLeft()) return 1;

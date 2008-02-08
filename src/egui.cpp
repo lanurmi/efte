@@ -192,19 +192,6 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
 
     for (i=State.Pos; i < m->Count; i++) {
 
-//        fprintf(stderr, "\n");
-//        fprintf(stderr, "State.Macro=%5d, ", State.Macro);
-//        fprintf(stderr, "State.Pos=%d, ",State.Pos);
-//        fprintf(stderr, "i=%2d, ",0);
-//        fprintf(stderr, "c=%5ld, ", m->cmds[i].u.num);
-//        fprintf(stderr, "cmdtype=%d --- ",m->cmds[i].type);
-//        fprintf(stderr, "depth=%d, ", ParamStack.depth());
-//        fprintf(stderr, "tos=%d, ",  ParamStack.peek(0));
-//        fprintf(stderr, "nos=%d, ",  ParamStack.peek(1));
-//        fprintf(stderr, "3rd=%d, ",  ParamStack.peek(2));
-//        fprintf(stderr, "cond=%08x",  BranchCondition);
-//        fprintf(stderr, "\n");
-
         if (m->cmds[i].type != CT_COMMAND) {
             LOG << "not CT_COMMAND" << ENDLINE;
             continue;
@@ -227,7 +214,7 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
             break;
         case ExConditionalBranch:
             if (TestBranchCondition()) {
-                LOG << "cond branch not taken. proceding @ " << i+1 << ENDLINE;
+                LOG << "cond branch not taken. proceeding @ " << i+1 << ENDLINE;
             } else {
                 i += m->cmds[i].repeat;
                 LOG << "cond branch to " << i+1 << ENDLINE;
@@ -250,6 +237,7 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
                 LOG << "3rd=" << ParamStack.peek(2) << ", ";
                 LOG << "cond=" << BranchCondition;
                 LOG << ENDLINE;
+
                 if (!(ResultOfCommandExecution || m->cmds[i].ign)) {
                     LOG << "ExecCommand fail: result=" << ResultOfCommandExecution << ", ign=" << m->cmds[i].ign << ENDLINE;
                     return ErFAIL;
@@ -265,116 +253,8 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
     ENDFUNCRC(ErOK);
 }
 
-/*
- // same thing as avove but replete with diagnostis
-int EGUI::ExecMacro(GxView *view, int Macro) {
-    int i, j, ResultOfCommandExecution;
-    ExMacro *m;
-    ExState State;
-
-    if (Macro == -1)
-        return ErFAIL;
-
-    if (BeginMacro(view) == -1)
-        return ErFAIL;
-
-    State.Pos = 0;
-    State.Macro = Macro;
-
-    fprintf(stderr, "---- ExecMacro %d ----\n",Macro);
-
-    m = &Macros[State.Macro];
-
-    for (; State.Pos < m->Count; State.Pos++) {
-        i = State.Pos;
-        fprintf(stderr, "Execution Pointer: %d\n",i);
-
-        if (m->cmds[i].type != CT_COMMAND ||
-            m->cmds[i].u.num == ExNop)
-            continue;
 
 
-        int literal, tos;
-        switch (m->cmds[i].u.num)
-        {
-        case ExPush:
-            literal = m->cmds[i].repeat;
-            ParamStack.push(literal);
-            fprintf(stderr, "Pushed %d\n",literal);
-            break;
-
-        case ExSkip:
-            tos=ParamStack.pop();
-            fprintf(stderr, "Skip popped %d\n",tos);
-            fprintf(stderr, "Skip execution pointer before: %d\n",i);
-            fprintf(stderr, "Skip         State.Pos before: %d\n",State.Pos);
-            i += tos;
-            State.Pos+=tos;
-            fprintf(stderr, "Skip execution pointer after : %d\n",i);
-            fprintf(stderr, "Skip         State.Pos after : %d\n",State.Pos);
-            break;
-
-        case ExUnconditionalBranch:
-            tos = m->cmds[i].repeat;
-            fprintf(stderr, "Branch offset %d\n",tos);
-            fprintf(stderr, "Branch execution pointer before: %d\n",i);
-            fprintf(stderr, "Branch         State.Pos before: %d\n",State.Pos);
-            i += tos;
-            State.Pos+=tos;
-            fprintf(stderr, "Branch execution pointer after: %d\n",i);
-            fprintf(stderr, "Branch         State.Pos after: %d\n",State.Pos);
-            break;
-
-        case ExConditionalBranch:
-            if (TestBranchCondition()) {
-                tos = m->cmds[i].repeat;
-                fprintf(stderr, "0Branch offset %d\n",tos);
-                fprintf(stderr, "0Branch execution pointer before: %d\n",i);
-                fprintf(stderr, "0Branch         State.Pos before: %d\n",State.Pos);
-                i += tos;
-                State.Pos+=tos;
-                fprintf(stderr, "0Branch execution pointer after : %d\n",i);
-                fprintf(stderr, "0Branch         State.Pos after : %d\n",State.Pos);
-            }
-            break;
-
-
-        default:
-            fprintf(stderr, "ExecCommand, 1st invocation, execution pointer: %d\n",i);
-            fprintf(stderr, "ExecCommand, 1st invocation,         State.Pos: %d\n",State.Pos);
-            ResultOfCommandExecution=ExecCommand(view, m->cmds[i].u.num, State);
-            // if (command_at[i] != any branch) {         // only fail if not branching
-
-            if ( ResultOfCommandExecution == 0 && !m->cmds[i].ign) {
-                fprintf(stderr, "ExecCommand fail@State.Pos %d\n", State.Pos);
-                return ErFAIL;
-            }
-
-
-            for (j=(m->cmds[i].repeat)-1; j; --j) {
-                State.Pos = i + 1;
-                fprintf(stderr, "Repeat command, execution pointer: %d\n",i);
-                fprintf(stderr, "Repeat command,         State.Pos: %d\n",State.Pos);
-                fprintf(stderr, "Repeat command,         count=%d\n",j);
-                ResultOfCommandExecution=ExecCommand(view, m->cmds[i].u.num, State);
-                // if (command_at[i] != any branch) {         // only fail if not branching
-                if ( ResultOfCommandExecution == 0 && !m->cmds[i].ign) {
-                    fprintf(stderr, "ExecCommand fail@State.Pos %d\n", State.Pos);
-                    return ErFAIL;
-                }
-                // }
-
-                if (ResultOfCommandExecution != 1) {
-                    fprintf(stderr, "ExecCommand shouldn't but did return %d\n", ResultOfCommandExecution);
-                }
-            }
-
-        }
-        State.Pos = i;
-    }
-    return ErOK;
-}
-*/
 
 void EGUI::SetMsg(char *Msg) {
     char CharMap[128] = "";
