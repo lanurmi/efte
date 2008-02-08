@@ -57,7 +57,11 @@ typedef enum {
     ExTopOfStack,
 
     // ----------------------------------------------------
-
+    ExCursorLeft,           // simple move left
+    ExCursorRight,          // simple move right
+    ExCursorUp,             // simple move up
+    ExCursorDown,           // simple move down
+    // ----------------------------------------------------
     ExMoveDown,
     /// Move cursor to next line.
     ExMoveUp,
@@ -66,6 +70,8 @@ typedef enum {
     /// Move cursor to previous column.
     ExMoveRight,
     /// Move cursor to next column.
+
+
     ExMovePrev,
     /// Move cursor to previous character. Moves to end of the previous
     /// line if cursor is at the beginning of line.
