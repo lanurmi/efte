@@ -84,15 +84,20 @@ int CircularStack::depth() {
 // type of stack for tracking flow control branch offsets.
 
 Stack::Stack() {
-    this->pos = -1;
+    this->pos = 0;
     for (int i=0; i < STACKSIZE; i++)
         this->stack[i] = 0;
 }
 
-void Stack::push(int integer) {
-    if (this->pos+1 < STACKSIZE) {
+void Stack::init() {
+    this->pos = 0;
+}
+
+
+    void Stack::push(int stackitem) {
+    if (this->pos < STACKSIZE) {
+        this->stack[this->pos] = stackitem;
         this->pos = (this->pos + 1);
-        this->stack[this->pos] = integer;
 //  } else {
 //  fatal: stack overflow
     }
@@ -100,9 +105,9 @@ void Stack::push(int integer) {
 }
 
 int Stack::pop() {
-    if (pos) {
-        int r = this->stack[this->pos];
+    if (this->pos) {
         this->pos = (this->pos - 1);
+        int r = this->stack[this->pos];
         return r;
     } else {
         //        "error: stack underflow attempt"
@@ -112,13 +117,23 @@ int Stack::pop() {
 }
 
 int Stack::peek(int offset) {
-    if (offset <= this->pos) {
-        int p = (this->pos - offset);
+    if (offset < this->pos) {
+        int p = (this->pos - offset - 1);
         return this->stack[p];
     } else {
         // error: attempt to access stack below bottom
         return 0;
     }
+}
+
+
+void Stack::dup() {
+    if (this->pos) {
+        this->stack[this->pos] = this->stack[(this->pos - 1)];
+    } else {
+        this->stack[this->pos] = 0;
+    }
+    this->pos = (this->pos + 1);
 }
 
 

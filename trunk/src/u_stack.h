@@ -10,7 +10,7 @@
 
 #ifndef U_CIRCSTACK_H
 #define U_CIRCSTACK_H
-
+// CircularStack size must be 2**n - required by the fast wrap used here.
 #define CIRCSTACKSIZE 16
 
 class CircularStack {
@@ -44,9 +44,11 @@ private:
 
 public:
     Stack();
+    void init();
     void push(int integer);
     int pop();
     int peek(int offset=0);
+    void dup();
     int depth();
 };
 
