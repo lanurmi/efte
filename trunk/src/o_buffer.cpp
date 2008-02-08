@@ -372,6 +372,16 @@ int EBuffer::ExecCommand(int Command, ExState &State) {
     }
 
     switch (Command) {
+        // ---------- basic cursor movements ----------
+    case ExCursorLeft:
+        return CursorLeft();
+    case ExCursorRight:
+        return CursorRight();
+    case ExCursorUp:
+        return CursorUp();
+    case ExCursorDown:
+        return CursorDown();
+        // --------------------------------------------
     case ExMoveUp:
         return MoveUp();
     case ExMoveDown:

@@ -54,7 +54,11 @@ const struct {
     TAB(TopOfStack),
 
     // ----------------------------------------------------
-
+    TAB(CursorLeft),
+    TAB(CursorRight),
+    TAB(CursorUp),
+    TAB(CursorDown),
+    // ----------------------------------------------------
     TAB(MoveLeft),
     TAB(MoveRight),
     TAB(MoveUp),

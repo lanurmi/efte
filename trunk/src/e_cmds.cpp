@@ -177,6 +177,53 @@ int EBuffer::LineLength() {
 
 // ------------------------------------------------------------------
 
+int EBuffer::CursorLeft() {
+    int result = 0;                              // assume failure
+    if (CP.Col) {                                // cursor can be moved to left
+        SetPos(CP.Col - 1, CP.Row, tmLeft);
+        result = 1;
+    }
+    SetBranchCondition(result);
+    return result;
+}
+
+
+int EBuffer::CursorRight() {
+    int result = 0;                              // assume failure
+    if (CP.Col < LineLen()) {
+        SetPos(CP.Col + 1, CP.Row, tmRight);
+        result = 1;
+    }
+    SetBranchCondition(result);
+    return result;
+}
+
+
+int EBuffer::CursorUp() {
+    int result = 0;                              // assume failure
+    if (CP.Row) {
+        SetPos(CP.Col, CP.Row - 1, tmLeft);
+        result = 1;
+    }
+    SetBranchCondition(result);
+    return result;
+}
+
+
+int EBuffer::CursorDown() {
+    int result = 0;                              // assume failure
+    if (CP.Row < VCount - 1) {
+        SetPos(CP.Col, CP.Row + 1, tmLeft);
+        result = 1;
+    }
+    SetBranchCondition(result);
+    return result;
+}
+
+
+
+// ------------------------------------------------------------------
+
 int EBuffer::MoveLeft() {
     if (CP.Col) {                // cursor can be moved to left
         SetPos(CP.Col - 1, CP.Row, tmLeft);
