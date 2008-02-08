@@ -43,6 +43,8 @@ typedef enum {
     ExEquals,               // compare top two stack item
     ExLess,                 // compare top two stack item
     ExFlag,                 // reflect condition register in tos
+    ExAbort,                // return last condition from condition register, causing macro interpreter
+                            // to terminate macro execution (if condition=0) or continue (condition=1)
 
     ExDup,                  // duplicate top stack item
     ExDrop,                 // remove top stack item

@@ -41,6 +41,7 @@ const struct {
     TAB(Equals),
     TAB(Less),
     TAB(Flag),
+    TAB(Abort),
 
     TAB(Dup),
     TAB(Drop),
