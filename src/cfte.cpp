@@ -32,7 +32,7 @@
 #define slen(s) ((s) ? (strlen(s) + 1) : 0)
 #define CACHE_SIZE 100000
 
-CircularStack CondStack;
+Stack CondStack;
 
 typedef struct {
     char *Name;
@@ -1024,23 +1024,7 @@ static int ParseCommands(CurPos &cp, char *Name) {
     long ign = 0;
     unsigned int branchaddress;
 
-    // access cpos item in cache:
-    // cache[poppedIndex].tag     .len    .obj
-    // The branch offset (your using repeat right?)
-    // would be the command index + 1
-    // then you would write to cache[index+1].obj = repeatCountHere;
-
-    // So, for each item put into the cache, you have:
-    // 1. The type of item in the cache (cache[index].tag)
-    // 2. The length of the item (cache[index].len)
-    // 3. The actual item (cache[index].obj)
-
-    // grep -n CF_ c_fconfig.h to  you'll see diff object types that are written to the config file.
-    // Now, in your macros, you'll have a limited type of those items
-
-    // WriteCache() That will write everything in the cache to disk, free the memory taken by it
-
-
+    CondStack.init();
     PutNumber(cp, CF_INT, Cmd);
     GetOp(cp, P_OPENBRACE);
     cnt = 1;
@@ -1174,6 +1158,9 @@ static int ParseCommands(CurPos &cp, char *Name) {
             cnt = 1;
         } else
             Fail(cp, "Syntax error");
+    }
+    if (CondStack.depth()) {
+        fprintf(stderr,"unterminated conditions left over");
     }
     GetOp(cp, P_CLOSEBRACE);
     WriteCache();
