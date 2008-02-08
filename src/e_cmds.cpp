@@ -137,8 +137,6 @@ int EBuffer::Abort() {
     return failcondition;
 }
 
-
-
 // --- stack ---
 
 int EBuffer::Dup() {
@@ -177,10 +175,6 @@ int EBuffer::LineLength() {
     return 1;
 }
 
-
-
-
-
 // ------------------------------------------------------------------
 
 int EBuffer::MoveLeft() {
@@ -190,25 +184,20 @@ int EBuffer::MoveLeft() {
         return 1;
     }
     if (CursorWithinEOL == 1 && MoveUp()) {
-        SetBranchCondition(0);
         return MoveLineEnd();
     } else {
         SetBranchCondition(0);       // cursor at begin of line
-        //            return 0;
-        return 1;
+        return 0;
     }
 }
-
 
 int EBuffer::MoveRight() {
     if (CursorWithinEOL == 1 && CP.Col == LineLen()) {
         if (MoveDown()) {
-            SetBranchCondition(0);
             return MoveLineStart();
         } else {
-//            return 0;
-            SetBranchCondition(0);       // cursor at begin of line
-            return 1;
+            SetBranchCondition(0);
+            return 0;
         }
     }
     SetPos(CP.Col + 1, CP.Row, tmRight);
@@ -216,13 +205,12 @@ int EBuffer::MoveRight() {
     return 1;
 }
 
-
 int EBuffer::MoveUp() {
     if (LastUpDownColumn == -1)
         LastUpDownColumn = CP.Col;
     if (CP.Row == 0) {
         SetBranchCondition(0);
-        return 1;
+        return 0;
     }
     SetPos(CP.Col, CP.Row - 1, tmLeft);
     if (CursorWithinEOL == 1) {
@@ -233,7 +221,6 @@ int EBuffer::MoveUp() {
     SetBranchCondition(1);
     return 1;
 }
-
 
 int EBuffer::MoveDown() {
     if (LastUpDownColumn == -1)
@@ -251,9 +238,6 @@ int EBuffer::MoveDown() {
     SetBranchCondition(1);
     return 1;
 }
-
-
-
 
 int EBuffer::MovePrev() {
     if (MoveLeft()) return 1;
@@ -441,11 +425,13 @@ int EBuffer::MoveWordOrCapEndNext() {
 
 int EBuffer::MoveLineStart() {
     SetPos(0, CP.Row);
+    SetBranchCondition(1);
     return 1;
 }
 
 int EBuffer::MoveLineEnd() {
     SetPos(LineLen(VToR(CP.Row)), CP.Row);
+    SetBranchCondition(1);
     return 1;
 }
 
