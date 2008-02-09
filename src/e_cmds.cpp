@@ -225,79 +225,71 @@ int EBuffer::CursorDown() {
 // ------------------------------------------------------------------
 
 int EBuffer::MoveLeft() {
-    if (CP.Col) {                // cursor can be moved to left
-        SetPos(CP.Col - 1, CP.Row, tmLeft);
-        SetBranchCondition(1);
-        return 1;
-    }
-    if (CursorWithinEOL == 1 && MoveUp()) {
-        return MoveLineEnd();
-    } else {
-        SetBranchCondition(0);       // cursor at begin of line
-        return 0;
-    }
+    if (CursorLeft()) return 1;
+    if (CursorWithinEOL == 1 && CursorUp())
+        return MoveLineEnd();        // success/failure of moveleft determined by success of MoveLineEnd?
+    SetBranchCondition(0);
+    return 0;
 }
 
+
 int EBuffer::MoveRight() {
-    if (CursorWithinEOL == 1 && CP.Col == LineLen()) {
-        if (MoveDown()) {
-            return MoveLineStart();
-        } else {
-            SetBranchCondition(0);
-            return 0;
-        }
-    }
-    SetPos(CP.Col + 1, CP.Row, tmRight);
-    SetBranchCondition(1);
-    return 1;
+    if (CursorRight()) return 1;
+    if (CursorWithinEOL == 1 && CursorDown())
+        return MoveLineStart();
+    SetBranchCondition(0);
+    return 0;
 }
+
 
 int EBuffer::MoveUp() {
     if (LastUpDownColumn == -1)
         LastUpDownColumn = CP.Col;
-    if (CP.Row == 0) {
-        SetBranchCondition(0);
-        return 0;
+    int cond=CursorUp();
+    if (cond) {
+        if (CursorWithinEOL == 1 && MoveLineEnd())
+            if (CP.Col > LastUpDownColumn)
+                SetPos(LastUpDownColumn, CP.Row);
     }
-    SetPos(CP.Col, CP.Row - 1, tmLeft);
-    if (CursorWithinEOL == 1) {
-        MoveLineEnd();
-        if (CP.Col > LastUpDownColumn)
-            SetPos(LastUpDownColumn, CP.Row);
-    }
-    SetBranchCondition(1);
-    return 1;
+    SetBranchCondition(cond);
+    return cond;
 }
 
+
+// almost identical to MoveUp but i find it difficult to factorize. scoping error as soon a i try to access stuff from a new fun()
+// this would ideally be not more than    MoveUpOrDown(direction);
 int EBuffer::MoveDown() {
     if (LastUpDownColumn == -1)
         LastUpDownColumn = CP.Col;
-    if (CP.Row == VCount - 1) {
-        SetBranchCondition(0);
-        return 0;
+    int cond=CursorDown();
+    if (cond) {
+        if (CursorWithinEOL == 1 && MoveLineEnd())
+            if (CP.Col > LastUpDownColumn)
+                SetPos(LastUpDownColumn, CP.Row);
     }
-    SetPos(CP.Col, CP.Row + 1, tmLeft);
-    if (CursorWithinEOL == 1) {
-        MoveLineEnd();
-        if (CP.Col > LastUpDownColumn)
-            SetPos(LastUpDownColumn, CP.Row);
-    }
-    SetBranchCondition(1);
-    return 1;
+    SetBranchCondition(cond);
+    return cond;
 }
 
+
+
+// -------- stopped recoding here -------
+
+
+
 int EBuffer::MovePrev() {
-    if (MoveLeft()) return 1;
-    if (MoveUp() && MoveLineEnd()) return 1;
+    if (CursorLeft()) return 1;
+    if (CursorUp() && MoveLineEnd()) return 1;
     return 0;
 }
 
 int EBuffer::MoveNext() {
     if (CP.Col < LineLen())
-        if (MoveRight()) return 1;
-    if (MoveDown() && MoveLineStart()) return 1;
+        if (CursorRight()) return 1;
+    if (CursorDown() && MoveLineStart()) return 1;
     return 0;
 }
+
 
 
 int EBuffer::MoveWordLeftX(int start) {
