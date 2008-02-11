@@ -20,48 +20,67 @@ typedef enum {
     ExNop,
     ExFail,
 
-    //<cmd_cursor> Cursor Movement
-
-    //& <A HREF="modes.html#ms.CursorTroughTabs">CursorTroughTabs</A>
-
-    // ----------------------------------------------------
-    // additions to script interpreter extensions
-    ExUnconditionalBranch,  // unconditional branch, offset from command repeat count
-    ExConditionalBranch,    // conditional branch, offset from command repeat count
-    ExExit,                 // exit macro
-    ExPush,                 // Push a number (coming from command repeat count) to stack
-
-    ExPlus,                 // add top two stack items
-    ExMinus,                // sibtract tos from nos
-    ExMul,                  // multiply top stack items
-    ExDiv,                  // divide tos by nos
-
+    //<cmd_branch> Branch and Stack Commands
+    ExUnconditionalBranch,
+    /// unconditional branch, offset from command repeat count
+    ExConditionalBranch,
+    /// conditional branch, offset from command repeat count
+    ExExit,
+    /// exit macro
+    ExPush,
+    /// Push a number (coming from command repeat count) to stack
+    ExPlus,
+    /// add top two stack items
+    ExMinus,
+    /// sibtract tos from nos
+    ExMul,
+    /// multiply top stack items
+    ExDiv,
+    /// divide tos by nos
     ExAnd,
+    /// And
     ExOr,
+    /// Or
     ExXor,
-
-    ExEquals,               // compare top two stack item
-    ExLess,                 // compare top two stack item
-    ExFlag,                 // reflect condition register in tos
-    ExAbort,                // return last condition from condition register, causing macro interpreter
-                            // to terminate macro execution (if condition=0) or continue (condition=1)
-
-    ExDup,                  // duplicate top stack item
-    ExDrop,                 // remove top stack item
-    ExSwap,                 // swap top two stack items
-    ExOver,                 // push second from top item to stack
-    ExRot,                  // rotate third stack item to top
-
-    ExDiag,                 // diagnostic: stack top and conditions to stderr
+    /// Xor
+    ExEquals,
+    /// compare top two stack item
+    ExLess,
+    /// compare top two stack item
+    ExFlag,
+    /// reflect condition register in tos
+    ExAbort,
+    /// return last condition from condition register, causing macro interpreter
+    /// to terminate macro execution (if condition=0) or continue (condition=1)
+    ExDup,
+    /// duplicate top stack item
+    ExDrop,
+    /// remove top stack item
+    ExSwap,
+    /// swap top two stack items
+    ExOver,
+    /// push second from top item to stack
+    ExRot,
+    /// rotate third stack item to top
+    ExDiag,
+    /// diagnostic: stack top and conditions to stderr
     ExLineLength,
+    /// Line length
     ExTopOfStack,
+    /// Top of stack
 
-    // ----------------------------------------------------
-    ExCursorLeft,           // simple move left
-    ExCursorRight,          // simple move right
-    ExCursorUp,             // simple move up
-    ExCursorDown,           // simple move down
-    // ----------------------------------------------------
+    //<cmd_cursor> Cursor Commands
+    //& <A HREF="modes.html#ms.CursorTroughTabs">CursorTroughTabs</A>
+    ExCursorLeft,
+    /// Simple move left command. It moves the cursor left. If it cannot it sets
+    /// the fail condition to true
+    ExCursorRight,
+    /// Simple move right command. It moves the cursor right. If it cannot it sets
+    /// the fail contition to true
+    ExCursorUp,
+    /// simple move up
+    ExCursorDown,
+    /// simple move down
     ExMoveDown,
     /// Move cursor to next line.
     ExMoveUp,
@@ -199,7 +218,7 @@ typedef enum {
     // ExCursorPop,
 
 
-    //<cmd_delete> Deleting Text
+    //<cmd_delete> Deleting Commands
     ExKillLine,
     /// Delete current line. If the line is the last line in the file,
     /// only the text is deleted.
@@ -340,13 +359,13 @@ typedef enum {
     ExBlockTrim,
     /// Trim end-of-line whitespace
 
-    //<cmd_edit> Text Editing and Insertion
+    //<cmd_edit> Text Editing Commands
     ExUndo,
     /// Undo last operation
     ExRedo,
     /// Redo last undone operation.
 
-    //<cmd_fold> Folding Text
+    //<cmd_fold> Folding Commands
     ExFoldCreate,
     /// Create fold
     ExFoldCreateByRegexp,
@@ -374,7 +393,7 @@ typedef enum {
     ExFoldToggleOpenClose,
     /// Toggle open/close current fold.
 
-    //<cmd_bookmark>Bookmarks
+    //<cmd_bookmark>Bookmark Commands
     ExPlaceBookmark,
     /// Place a file-local bookmark.
     ExRemoveBookmark,
@@ -392,7 +411,7 @@ typedef enum {
     ExPopGlobalBookmark,
     /// Pop global bookmark from stack.
 
-    //<cmd_trans> Character Translation
+    //<cmd_trans> Character Translation Commands
     ExCharCaseUp,
     /// Convert current character to uppercase
     ExCharCaseDown,
@@ -417,7 +436,6 @@ typedef enum {
     /// Toggle case of characters in selected block
     ExBlockTrans,
     /// Translate characters in selected block.
-
     ExInsertString,
     /// Insert argument string at cursor position
     ExInsertSpace,
@@ -493,7 +511,7 @@ typedef enum {
     ExDirSearchPrev,
     /// Find previous matching file
 
-    //<cmd_search> Search and Replace
+    //<cmd_search> Search and Replace Commands
     ExIncrementalSearch,
     /// Incremental search
     ExFind,
@@ -517,13 +535,21 @@ typedef enum {
     ExHilitMatchBracket,
     /// Highlight matching bracket
     ExSearch,
+    ///
     ExSearchB,
+    ///
     ExSearchRx,
+    ///
     ExSearchAgain,
+    ///
     ExSearchAgainB,
+    ///
     ExSearchReplace,
+    ///
     ExSearchReplaceB,
+    ///
     ExSearchReplaceRx,
+    ///
 
     //<cmd_window> Window Commands
     ExWinHSplit,
@@ -547,7 +573,7 @@ typedef enum {
     ExShowEntryScreen,
     /// View external program output if available
 
-    //<cmd_compile> Compiler Support
+    //<cmd_compile> Compiler Commands
     ExCompile,
     /// Ask for compile command and run compiler
     ExRunCompiler,
@@ -561,7 +587,7 @@ typedef enum {
     ExRunProgram,
     /// Run external program
 
-    //<cmd_cvs> CVS Support
+    //<cmd_cvs> CVS Commands
     ExCvs,
     /// Ask for CVS options and run CVS
     ExRunCvs,
@@ -583,7 +609,7 @@ typedef enum {
     ExViewCvsLog,
     /// View CVS log
 
-    //<cmd_svn> SVN Support
+    //<cmd_svn> SVN Commands
     ExSvn,
     /// Ask for SVN options and run SVN
     ExRunSvn,
@@ -605,7 +631,7 @@ typedef enum {
     ExViewSvnLog,
     /// View SVN log
 
-    //<cmd_tags> TAGS Commands
+    //<cmd_tags> Tag Commands
     /// fte supports TAGS files generated by programs like ctags.
     ExTagFind,
     /// Find word argumen in tag files.
@@ -624,7 +650,7 @@ typedef enum {
     ExTagGoto,
     ///
 
-    //<cmd_option> Option commands
+    //<cmd_option> Option Commands
     ExToggleAutoIndent,
     ///
     ExToggleInsert,
@@ -679,7 +705,7 @@ typedef enum {
     ///
 
 
-    //<cmd_other> Other commands
+    //<cmd_other> Other Commands
     ExShowPosition,
     /// Show internal position information on status line
     ExShowVersion,
@@ -688,21 +714,18 @@ typedef enum {
     /// Wait for keypress and display modifiers+key pressed
     ExWinRefresh,
     /// Refresh display
-
     ExMainMenu,
     /// Activate main menu
     ExShowMenu,
     /// Popup menu specified as argument
     ExLocalMenu,
     /// Popup context menu
-
     ExChangeMode,
     /// Change active mode for current buffer
     ExChangeKeys,
     /// Change keybindings for current buffer
     ExChangeFlags,
     /// Change option flags for current buffer
-
     ExCancel,
     ///
     ExActivate,
@@ -715,7 +738,6 @@ typedef enum {
     ///
     ExDeleteFile,
     ///
-
     ExASCIITable,
     /// Display ASCII selector in status line.
     ExDesktopSave,
@@ -728,7 +750,6 @@ typedef enum {
     /// Load desktop from a file
     ExChildClose,
     ///
-
     ExBufListFileSave,
     /// Save currently selected file in buffer list
     ExBufListFileClose,
@@ -739,13 +760,10 @@ typedef enum {
     /// Next match in search
     ExBufListSearchPrev,
     /// Previous match in search
-
     ExViewModeMap,
     /// View current mode keybindings
     ExClearMessages,
     /// Clear compiler messages
-
-
     ExIndentFunction,
     /// Indent current function
     ExMoveFunctionPrev,
@@ -756,7 +774,6 @@ typedef enum {
     /// Insert date at cursor
     ExInsertUid,
     /// Insert user name at cursor
-
     ExFrameNew,
     ///
     ExFrameClose,
@@ -765,19 +782,16 @@ typedef enum {
     ///
     ExFramePrev,
     ///
-
     ExBufferViewNext,
     ///
     ExBufferViewPrev,
     ///
-
     ExShowHelpWord,
     /// Show context help on keyword.
     ExShowHelp,
     /// Show help for FTE.
     ExConfigRecompile,
     /// Recompile editor configuration
-
     ExSetCIndentStyle,
     /// Set C indentation style parameters
     /// Has the following parameters:
@@ -798,7 +812,7 @@ typedef enum {
     ExSetIndentWithTabs,
     /// Set value of indent-with-tabs to argument
     ExRunProgramAsync,
-
+    ///
     ExListMark,
     /// Mark single line in list
     ExListUnmark,
@@ -811,7 +825,6 @@ typedef enum {
     /// Unmark all lines in list
     ExListToggleMarkAll,
     /// Toggle marking of all lines in list
-
     ExBlockPasteOver
     /// Delete content's of selection and paste clipboard to current position
 } ExCommands;
