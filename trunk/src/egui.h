@@ -14,6 +14,8 @@
 #include "gui.h"
 #include "c_bind.h"  // KeySel
 
+void SetBranchCondition(int cond);
+
 class EEventMap;
 class EKeyMap;
 class GxView;

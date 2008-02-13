@@ -1300,7 +1300,10 @@ int EBuffer::Find(ExState &State) {
         strcpy(LSearch.strSearch, find);
         LSearch.strReplace[0] = 0;
         LSearch.Options = 0;
-        if (ParseSearchOptions(0, options, LSearch.Options) == 0) return 0;
+        if (ParseSearchOptions(0, options, LSearch.Options) == 0) {
+            SetBranchCondition(0);
+            return 0;
+        }
         LSearch.ok = 1;
     } else if ((HaveGUIDialogs & GUIDLG_FIND) && GUIDialogs) {
         LSearch.ok = 0;
@@ -1312,24 +1315,44 @@ int EBuffer::Find(ExState &State) {
         if (ParseSearchOptions(0, options, LSearch.Options) == 0)
             LSearch.Options = 0;
 
-        if (DLGGetFind(View->MView->Win, LSearch) == 0)
+        if (DLGGetFind(View->MView->Win, LSearch) == 0) {
+            SetBranchCondition(0);
             return 0;
+        }
     } else {
         if (BFS(this, BFS_DefFindOpt))
             strcpy(options, BFS(this, BFS_DefFindOpt));
-        if (View->MView->Win->GetStr("Find", sizeof(find), find, HIST_SEARCH) == 0) return 0;
-        if (View->MView->Win->GetStr("Options (All/Block/Cur/Delln/Glob/Igncase/Joinln/Rev/Word/regX)", sizeof(options), options, HIST_SEARCHOPT) == 0) return 0;
+        if (View->MView->Win->GetStr("Find", sizeof(find), find, HIST_SEARCH) == 0) {
+            SetBranchCondition(0);
+            return 0;
+        }
+        if (View->MView->Win->GetStr("Options (All/Block/Cur/Delln/Glob/Igncase/Joinln/Rev/Word/regX)",
+                                     sizeof(options), options, HIST_SEARCHOPT) == 0)
+        {
+            SetBranchCondition(0);
+            return 0;
+        }
 
         LSearch.ok = 0;
         strcpy(LSearch.strSearch, find);
         LSearch.strReplace[0] = 0;
         LSearch.Options = 0;
-        if (ParseSearchOptions(0, options, LSearch.Options) == 0) return 0;
+        if (ParseSearchOptions(0, options, LSearch.Options) == 0) {
+            SetBranchCondition(0);
+            return 0;
+        }
         LSearch.ok = 1;
     }
-    if (LSearch.ok == 0) return 0;
+    if (LSearch.ok == 0) {
+        SetBranchCondition(0);
+        return 0;
+    }
     LSearch.Options |= SEARCH_CENTER;
-    if (Find(LSearch) == 0) return 0;
+    if (Find(LSearch) == 0) {
+        SetBranchCondition(0);
+        return 0;
+    }
+    SetBranchCondition(1);
     return 1;
 }
 
