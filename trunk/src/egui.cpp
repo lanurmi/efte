@@ -226,17 +226,16 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
                 ResultOfCommandExecution=ExecCommand(view, m->cmds[i].u.num, State);
 
                 //LOG << "Name=" << Macros[State.Macro].Name;
-                LOG << "State.Macro=" << State.Macro << ", ";
-                LOG << "State.Pos=" << State.Pos << ", ";
-                LOG << "i=" << i << ", ";
-                LOG << "c=" << m->cmds[i].u.num << ", ";
-                LOG << "cmdtype" << m->cmds[i].type << " --- ";
-                //LOG << "depth=" << ParamStack.depth() << ", ";
-                LOG << "tos=" << ParamStack.peek(0) << ", ";
-                LOG << "nos=" << ParamStack.peek(1) << ", ";
-                LOG << "3rd=" << ParamStack.peek(2) << ", ";
-                LOG << "cond=" << BranchCondition;
-                LOG << ENDLINE;
+                LOG << "State.Macro=" << State.Macro << ENDLINE;
+                LOG << "State.Pos=" << State.Pos << ENDLINE;
+                LOG << "i=" << i << ENDLINE;
+                LOG << "c=" << m->cmds[i].u.num << ENDLINE;
+                LOG << "cmdtype" << m->cmds[i].type << ENDLINE;
+                //LOG << "depth=" << ParamStack.depth() << ENDLINE;
+                LOG << "tos=" << ParamStack.peek(0) << ENDLINE;
+                LOG << "nos=" << ParamStack.peek(1) << ENDLINE;
+                LOG << "3rd=" << ParamStack.peek(2) << ENDLINE;
+                LOG << "cond=" << BranchCondition << ENDLINE;
 
                 if (!(ResultOfCommandExecution || m->cmds[i].ign)) {
                     LOG << "ExecCommand fail: result=" << ResultOfCommandExecution << ", ign=" << m->cmds[i].ign << ENDLINE;
