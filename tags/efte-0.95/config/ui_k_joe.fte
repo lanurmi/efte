@@ -1,0 +1,54 @@
+#
+# My basic joe like keybindings
+#
+# Copyright (C) 2002 Elrond <Elrond@Wunder-Nett.org>
+#
+# The GNU General Public License applies.
+# 
+
+
+eventmap MODEL {
+  key [C+C] { FileClose }
+}
+
+eventmap PLAIN: MODEL {
+  key [C+S-_] { Undo }
+  key [C+^] { Redo }
+  key [C+A] { MoveLineStart }
+  key [C+C] { FileClose }
+  key [C+D] { Delete }
+  key [C+E] { MoveLineEnd }
+  key [C+G] { MatchBracket }
+# key [C+K_/] { Filter_Block_Through_Command }
+  key [C+K_Space] { ShowPosition } # joe shows more useful information
+  key [C+K_.] { BlockIndent }
+  key [C+K_,] { BlockUnindent }
+  key [C+K_a] { LineCenter; MoveDown }
+  key [C+K_b] { BlockBegin }
+  key [C+K_c] { BlockCopy; BlockPaste }
+  key [C+K_e] { FileOpen }
+  key [C+K_f] { Find }
+# key [C+K_g] { make_win_greater }
+  key [C+K_h] { BlockUnmark } # joe: help
+# key [C+K_i] { show_all_windows / show_one_window }
+# key [C+K_j] { fmtblk }
+  key [C+K_k] { BlockEnd }
+  key [C+K_C+K] { BlockEnd }
+  key [C+K_l] { MoveToLine }
+  key [C+K_m] { BlockCut;  BlockPaste }
+  key [C+K_C+M] { BlockCut;  BlockPaste }
+  key [C+K_n] { WinNext }
+# key [C+K_o] { Splitwindow }
+  key [C+K_p] { WinPrev }
+  key [C+K_r] { BlockRead }
+  key [C+K_s] { FileSave }
+# key [C+K_t] { make_win_tinyer }
+  key [C+K_u] { MoveFileStart }
+  key [C+K_v] { MoveFileEnd }
+  key [C+K_w] { BlockWrite }
+  key [C+K_x] { FileCloseAll; } # Should not ask to save...
+  key [C+K_y] { BlockKill } # or KillBlock ?
+  key [C+L]   { FindRepeat }
+  key [C+Q_a] { FindReplace }
+  key [C+Q_f] { Find }
+}

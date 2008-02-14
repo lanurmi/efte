@@ -1,0 +1,7 @@
+?package(fte-docs):needs="dwww" section="Apps/Editors"\
+	title="Fte Manual" longtitle="Fte Users Manual"\
+	command="/usr/share/doc/fte/contents.html"
+?package(fte-docs):needs="dwww" section="Apps/Editors"\
+	title="Fte detailed reference"\
+	longtitle="Detailed reference card for default Fte user interface"\
+	command="/usr/share/doc/fte/command.html"

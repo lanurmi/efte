@@ -1,0 +1,72 @@
+colorize Ada {
+    SyntaxParser        = 'SIMPLE';
+    
+    color {
+        { 'Normal',      'Editor_Default' },
+        { 'Number',      'Lang_Number' },
+        { 'Punctuation', 'Lang_Punctuation' },
+        { 'String',      'Lang_String' },
+        { 'Comment',     'Lang_Comment' },
+        { 'Function',    'Lang_Function' },
+    };
+    
+    keyword 'Editor_Keywords' {
+        'abort', 'else', 'new', 'return',  'abs', 'elsif', 'not', 'reverse',
+        'abstract', 'end', 'null', 'accept',  'entry', 'select', 'access',
+        'exception', 'separate', 'aliased',  'exit', 'of', 'subtype', 'all',
+        'or', 'and', 'for', 'others',  'tagged', 'array', 'function', 'out',
+        'task', 'at', 'terminate',  'generic', 'package', 'then', 'begin',
+        'goto', 'pragma', 'type', 'body',  'private', 'if', 'procedure',
+        'case', 'in',  'protected', 'until', 'constant', 'is',  'use', 'raise',
+        'declare', 'range',  'when', 'delay', 'limited', 'record',  'while',
+        'delta', 'loop', 'rem',  'with', 'digits', 'renames', 'do',  'mod',
+        'requeue', 'xor',
+    }; 
+    h_state 0 { 'Normal' }
+    h_trans { 4, '-s', 'a-zA-Z_', 'Normal' }
+    h_trans { 1, '', '--', 'Comment' }
+    h_trans { 2, '', '"', 'String' }
+    h_trans { 3, '', '\'', 'String' }
+    h_trans { 5, 's', '0-9', 'Number' }
+    h_trans { 0, 'S', '_a-zA-Z0-9', 'Punctuation' }
+
+    h_state 1 { 'Comment' }
+    h_trans { 0, '$', '', 'Normal' }
+
+    h_state 2 { 'String' }
+    h_trans { 0, '', '"', 'String' }
+    h_trans { 0, '$', '', 'String' }
+    h_trans { 4, 'Qq', '\\', 'String' }
+
+    h_state 3 { 'String' }
+    h_trans { 0, '', '\'', 'String' }
+    h_trans { 0, '$', '', 'String' }
+
+    h_state 4 { 'Normal' }
+    h_trans { 0, '$', '', 'Normal' }
+    h_wtype { 0, 0, 0, '', 'a-zA-Z0-9_' }
+
+    h_state 5 { 'Number' }
+    h_trans { 0, '-S', '0-9', 'Normal' }
+    h_trans { 0, '$', '', 'Normal' }
+}
+
+mode Ada: SOURCE {               # Ada mode
+    FileNameRx          = '\\.\\c{ADS}|{ADB}$';
+    Colorizer           = 'Ada';
+    HilitOn             = 1;
+    AutoIndent          = 1;
+    IndentMode          = 'PLAIN';
+    MatchCase           = 1;
+    Trim                = 1;
+    MultiLineHilit      = 0;
+    AutoHilitParen      = 1;
+    
+    RoutineRegexp       = /^\s*{function}|{procedure}\s/;
+    
+    SaveFolds           = 2;      # save fold info at end of line
+    CommentStart        = ' --';
+    CommentEnd          = '';
+}
+
+oinclude 'mym_ada.fte';
