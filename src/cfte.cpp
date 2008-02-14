@@ -1056,95 +1056,91 @@ static int ParseCommands(CurPos &cp, char *Name) {
 
             if (GetWord(cp, cmd) == -1) Fail(cp, "Syntax error");
             Command = CmdNum(cmd);
-            if (Command == 0)
-                Fail(cp, "Unrecognized command: %s", cmd);
-            if (Command) {
+            if (Command != 0) {
                 CompileCommand(cp,Command,cnt,ign);
             } else {
                 Command = Lookup(ConditionalKW, cmd);
-                if (Command == 0)
-                    Fail(cp, "Unrecognised command: %s", cmd);
-                else {
+                if (Command == -1)
+                    Fail(cp, "Unrecognised command...: %s", cmd);
 
-                    // ---------------------------------- flow control compiling statements -------------------------------
-                    int endif_paired;
-                    switch(Command) {
+                // ---------------------------------- flow control compiling statements -------------------------------
+                int endif_paired;
+                switch(Command) {
 
-                    case COND_IF:
-                        CondStack.push(CompileConditionalBranch(cp,0));
-                        CondStack.push(COND_IF);                                                // allow test for proper nesting
-                        break;
+                case COND_IF:
+                    CondStack.push(CompileConditionalBranch(cp,0));
+                    CondStack.push(COND_IF);                                                // allow test for proper nesting
+                    break;
 
-                    case COND_ELSE:
-                        if (CondStackPairedWith(COND_IF)) {
-                            branchaddress=CondStack.pop();
-                            UpdateNumber(branchaddress+1,BranchOffset(branchaddress,cpos));     // resolve the branch, compiled by IF
-                        } else {
-                            fprintf(stderr,"** unstructured: Else needs a previous If\n");
-                        }
-                        CondStack.push(CompileUnconditionalBranch(cp,0));                       // compile a branch to ENDIF (to be resolved by ENDIF)
-                        CondStack.push(COND_ELSE);                                              // allow test for proper nesting
-                        break;
-
-                    case COND_ENDIF:
-                        CondStack.dup();
-                        endif_paired = (CondStackPairedWith(COND_IF) | CondStackPairedWith(COND_ELSE));
-                        if (endif_paired)  {
-                            branchaddress=CondStack.pop();
-                            UpdateNumber(branchaddress+1,BranchOffset(branchaddress,cpos)-1);   // resolve the branch, compiled by IF or ELSE
-                        } else {
-                            fprintf(stderr,"** unstructured: EndIf needs a previous If or Else\n");
-                        }
-                        break;
-
-
-                    case COND_BEGIN:
-                        CondStack.push(cpos);
-                        CondStack.push(COND_BEGIN);                                             // allow test for proper nesting
-                        break;
-
-                    case COND_UNTIL:
-                        if (CondStackPairedWith(COND_BEGIN)) {
-                            branchaddress=CondStack.pop();
-                            CompileConditionalBranch(cp,BranchOffset(cpos,branchaddress));    // compile a branch to BEGIN
-                        } else {
-                            fprintf(stderr,"** unstructured: Until needs a previous Begin\n");
-                        }
-                        break;
-
-                    case COND_AGAIN:
-                        if (CondStackPairedWith(COND_BEGIN)) {
-                            branchaddress=CondStack.pop();
-                            CompileUnconditionalBranch(cp,BranchOffset(cpos,branchaddress));    // compile a branch to BEGIN
-                        } else {
-                            fprintf(stderr,"** unstructured: Again needs a previous Begin\n");
-                        }
-                        break;
-
-                    case COND_WHILE:                                                            // while is almost identical to an IF
-                        if (!CondStackPairedWith(COND_BEGIN)) {
-                            fprintf(stderr,"** unstructured: While needs a previous Begin\n");
-                        }
-                        CondStack.push(CompileConditionalBranch(cp,0));                         // compile a branch to REPEAT (to be resolved by REPEAT)
-                        CondStack.push(COND_WHILE);                                             // allow test for proper nesting
-                        break;
-
-                    case COND_REPEAT:
-                        if (CondStackPairedWith(COND_WHILE)) {
-                            branchaddress=CondStack.pop();
-                            UpdateNumber(branchaddress+1,BranchOffset(branchaddress,cpos)+1);   // resolve the branch, compiled by WHILE:
-                            branchaddress=CondStack.pop();
-                            CompileUnconditionalBranch(cp,BranchOffset(cpos,branchaddress)-1);  // compile a branch back to BEGIN
-                        } else {
-                            fprintf(stderr,"** unstructured: EndIf needs a previous If or Else\n");
-                        }
-                        break;
-                    // ----------------------------------------------------------------------------------------------------
+                case COND_ELSE:
+                    if (CondStackPairedWith(COND_IF)) {
+                        branchaddress=CondStack.pop();
+                        UpdateNumber(branchaddress+1,BranchOffset(branchaddress,cpos));     // resolve the branch, compiled by IF
+                    } else {
+                        fprintf(stderr,"** unstructured: Else needs a previous If\n");
                     }
-                    ign = 0;
-                    cnt = 1;
+                    CondStack.push(CompileUnconditionalBranch(cp,0));                       // compile a branch to ENDIF (to be resolved by ENDIF)
+                    CondStack.push(COND_ELSE);                                              // allow test for proper nesting
+                    break;
+
+                case COND_ENDIF:
+                    CondStack.dup();
+                    endif_paired = (CondStackPairedWith(COND_IF) | CondStackPairedWith(COND_ELSE));
+                    if (endif_paired)  {
+                        branchaddress=CondStack.pop();
+                        UpdateNumber(branchaddress+1,BranchOffset(branchaddress,cpos)-1);   // resolve the branch, compiled by IF or ELSE
+                    } else {
+                        fprintf(stderr,"** unstructured: EndIf needs a previous If or Else\n");
+                    }
+                    break;
+
+
+                case COND_BEGIN:
+                    CondStack.push(cpos);
+                    CondStack.push(COND_BEGIN);                                             // allow test for proper nesting
+                    break;
+
+                case COND_UNTIL:
+                    if (CondStackPairedWith(COND_BEGIN)) {
+                        branchaddress=CondStack.pop();
+                        CompileConditionalBranch(cp,BranchOffset(cpos,branchaddress));    // compile a branch to BEGIN
+                    } else {
+                        fprintf(stderr,"** unstructured: Until needs a previous Begin\n");
+                    }
+                    break;
+
+                case COND_AGAIN:
+                    if (CondStackPairedWith(COND_BEGIN)) {
+                        branchaddress=CondStack.pop();
+                        CompileUnconditionalBranch(cp,BranchOffset(cpos,branchaddress));    // compile a branch to BEGIN
+                    } else {
+                        fprintf(stderr,"** unstructured: Again needs a previous Begin\n");
+                    }
+                    break;
+
+                case COND_WHILE:                                                            // while is almost identical to an IF
+                    if (!CondStackPairedWith(COND_BEGIN)) {
+                        fprintf(stderr,"** unstructured: While needs a previous Begin\n");
+                    }
+                    CondStack.push(CompileConditionalBranch(cp,0));                         // compile a branch to REPEAT (to be resolved by REPEAT)
+                    CondStack.push(COND_WHILE);                                             // allow test for proper nesting
+                    break;
+
+                case COND_REPEAT:
+                    if (CondStackPairedWith(COND_WHILE)) {
+                        branchaddress=CondStack.pop();
+                        UpdateNumber(branchaddress+1,BranchOffset(branchaddress,cpos)+1);   // resolve the branch, compiled by WHILE:
+                        branchaddress=CondStack.pop();
+                        CompileUnconditionalBranch(cp,BranchOffset(cpos,branchaddress)-1);  // compile a branch back to BEGIN
+                    } else {
+                        fprintf(stderr,"** unstructured: EndIf needs a previous If or Else\n");
+                    }
+                    break;
+                    // ----------------------------------------------------------------------------------------------------
                 }
-        }
+                ign = 0;
+                cnt = 1;
+            }
         } else if (p == P_STRING) {
             char *s = GetString(cp);
             PutString(cp, CF_STRING, s);
