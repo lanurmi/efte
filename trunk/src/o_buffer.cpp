@@ -1111,6 +1111,7 @@ extern int LastEventChar;
 int EBuffer::SelfInsert(ExState &/*State*/) {
     if (LastEventChar != -1)
         return TypeChar(char(LastEventChar));
+    SetBranchCondition(0);
     return 0;
 }
 
@@ -1120,12 +1121,14 @@ int EBuffer::FileReload(ExState &/*State*/) {
                                          2,
                                          "&Reload",
                                          "&Cancel",
-                                         "%s", FileName)) {
+                                         "%s", FileName))
+        {
         case 0:
             break;
         case 1:
         case -1:
         default:
+            SetBranchCondition(0);
             return 0;
         }
     }
@@ -1138,6 +1141,7 @@ int EBuffer::FileSaveAs(char *FName) {
 
     if (ExpandPath(FName, Name, sizeof(Name)) == -1) {
         View->MView->Win->Choice(GPC_ERROR, "Error", 1, "O&K", "Invalid path: %s.", FName);
+        SetBranchCondition(0);
         return 0;
     }
     if (FindFile(Name) == 0) {
@@ -1146,12 +1150,14 @@ int EBuffer::FileSaveAs(char *FName) {
                                              2,
                                              "&Overwrite",
                                              "&Cancel",
-                                             "%s", Name)) {
+                                             "%s", Name))
+            {
             case 0:
                 break;
             case 1:
             case -1:
             default:
+                SetBranchCondition(0);
                 return 0;
 
             }
@@ -1162,6 +1168,7 @@ int EBuffer::FileSaveAs(char *FName) {
         return Save();
     } else {
         View->MView->Win->Choice(GPC_ERROR, "Error", 1, "O&K", "Already editing '%s.'", Name);
+        SetBranchCondition(0);
         return 0;
     }
 }
@@ -1170,9 +1177,12 @@ int EBuffer::FileSaveAs(ExState &State) {
     char FName[MAXPATH];
 
     strcpy(FName, FileName);
-    if (State.GetStrParam(View, FName, sizeof(FName)) == 0)
-        if (View->MView->Win->GetFile("Save As", sizeof(FName), FName, HIST_PATH, GF_SAVEAS) == 0)
+    if (State.GetStrParam(View, FName, sizeof(FName)) == 0) {
+        if (View->MView->Win->GetFile("Save As", sizeof(FName), FName, HIST_PATH, GF_SAVEAS) == 0) {
+            SetBranchCondition(0);
             return 0;
+        }
+    }
     return FileSaveAs(FName);
 }
 
@@ -1181,6 +1191,7 @@ int EBuffer::FileWriteTo(char *FName) {
 
     if (ExpandPath(FName, Name, sizeof(Name)) == -1) {
         View->MView->Win->Choice(GPC_ERROR, "Error", 1, "O&K", "Invalid path: %s.", FName);
+        SetBranchCondition(0);
         return 0;
     }
     if (FindFile(Name) == 0) {
@@ -1189,18 +1200,21 @@ int EBuffer::FileWriteTo(char *FName) {
                                              2,
                                              "&Overwrite",
                                              "&Cancel",
-                                             "%s", Name)) {
+                                             "%s", Name))
+            {
             case 0:
                 break;
             case 1:
             case -1:
             default:
+                SetBranchCondition(0);
                 return 0;
             }
         }
         return SaveTo(Name);
     } else {
         View->MView->Win->Choice(GPC_ERROR, "Error", 1, "O&K", "Already editing '%s.'", Name);
+        SetBranchCondition(0);
         return 0;
     }
 }
