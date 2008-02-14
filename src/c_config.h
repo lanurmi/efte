@@ -18,6 +18,7 @@
 // by shifting left, and setting (or not) bit 0
 extern unsigned int BranchCondition;
 extern CircularStack ParamStack;
+extern CircularStack ControlStack;
 
 extern int ScreenSizeX;
 extern int ScreenSizeY;

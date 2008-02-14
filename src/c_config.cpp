@@ -103,6 +103,7 @@ char BackupDirectory[MAXPATH] = "";
 
 /* Scripting Support */
 CircularStack ParamStack;
+CircularStack ControlStack;
 
 // Which characters to get. defaultCharacters if not set, rest filled
 // with defaultCharacters if too short

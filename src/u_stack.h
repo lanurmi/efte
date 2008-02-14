@@ -11,7 +11,7 @@
 #ifndef U_CIRCSTACK_H
 #define U_CIRCSTACK_H
 // CircularStack size must be 2**n - required by the fast wrap used here.
-#define CIRCSTACKSIZE 16
+#define CIRCSTACKSIZE 32
 
 class CircularStack {
 private:

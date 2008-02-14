@@ -65,6 +65,14 @@ typedef enum {
     /// Push second from top item to stack.
     ExRot,
     /// Rotate third stack item to top.
+    // -------------------
+    ExToR,
+    /// Move one item from param stack to control stack
+    ExRFrom,
+    /// Move one item from control stack to param stack
+    ExRFetch,
+    /// Duplicate top control stack item to param stack
+    // -------------------
     ExDiag,
     /// Print stack top and conditions to stderr for debugging.
     ExLineLength,

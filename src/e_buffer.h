@@ -476,6 +476,10 @@ public:
     int     Over();
     int     Rot();
 
+    int     ToR();
+    int     RFrom();
+    int     RFetch();
+
     int     Diag();
     int     LineLength();
     // ----------------------------------------------------
