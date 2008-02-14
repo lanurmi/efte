@@ -163,6 +163,24 @@ int EBuffer::Rot() {
 }
 
 
+// --- stack2 ---
+int EBuffer::ToR() {
+    ControlStack.push(ParamStack.pop());
+    return 1;
+}
+
+int EBuffer::RFrom() {
+    ParamStack.push(ControlStack.pop());
+    return 1;
+}
+
+int EBuffer::RFetch() {
+    ParamStack.push(ControlStack.peek(0));
+    return 1;
+}
+
+
+
 // --- input/output ---
 // untested. probably not needed if if general variable-to-stack solution can be used
 int EBuffer::LineLength() {

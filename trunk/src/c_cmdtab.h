@@ -49,6 +49,10 @@ const struct {
     TAB(Over),
     TAB(Rot),
 
+    TAB(ToR),
+    TAB(RFrom),
+    TAB(RFetch),
+
     TAB(Diag),
     TAB(LineLength),
     TAB(TopOfStack),

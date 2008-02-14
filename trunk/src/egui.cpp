@@ -208,48 +208,35 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
 
         case ExExit:             // works now as exit: early terminate a macro
             i = m->Count;
-            fprintf(stderr,"macro exit at i=%d\n",i-1);
+//            fprintf(stderr,"macro exit at i=%d\n",i-1);
             LOG << "macro exit" << ENDLINE;
             break;
 
         case ExUnconditionalBranch:
-            fprintf(stderr,"tos=%d, nos=%d, 3rd=%d -- ",ParamStack.peek(0),ParamStack.peek(1),ParamStack.peek(2));
-            fprintf(stderr,"branch at %d",i);
+//            fprintf(stderr,"tos=%d, nos=%d, 3rd=%d -- ",ParamStack.peek(0),ParamStack.peek(1),ParamStack.peek(2));
+//            fprintf(stderr,"branch at %d",i);
             i += m->cmds[i].repeat;
-            fprintf(stderr," to %d\n",i+1);
+//            fprintf(stderr," to %d\n",i+1);
             LOG << "branch to " << i+1 << ENDLINE;
             break;
 
         case ExConditionalBranch:
-            fprintf(stderr,"tos=%d, nos=%d, 3rd=%d -- ",ParamStack.peek(0),ParamStack.peek(1),ParamStack.peek(2));
-            fprintf(stderr,"conditional branch at %d ",i);
+//            fprintf(stderr,"tos=%d, nos=%d, 3rd=%d -- ",ParamStack.peek(0),ParamStack.peek(1),ParamStack.peek(2));
+//            fprintf(stderr,"conditional branch at %d ",i);
             if (TestBranchCondition()) {
-                fprintf(stderr,"not ");
+//                fprintf(stderr,"not ");
                 LOG << "cond branch not taken. proceeding @ " << i+1 << ENDLINE;
             } else {
                 i += m->cmds[i].repeat;
                 LOG << "cond branch to " << i+1 << ENDLINE;
             }
-            fprintf(stderr," taken, proceeding @ %d\n",i+1);
+//            fprintf(stderr," taken, proceeding @ %d\n",i+1);
             break;
 
         default:
             for (j=(m->cmds[i].repeat); j; --j) {
                 State.Pos = i + 1;
                 ResultOfCommandExecution=ExecCommand(view, m->cmds[i].u.num, State);
-
-                //LOG << "Name=" << Macros[State.Macro].Name;
-                LOG << "State.Macro=" << State.Macro << ", ";
-                LOG << "State.Pos=" << State.Pos << ", ";
-                LOG << "i=" << i << ", ";
-                LOG << "c=" << m->cmds[i].u.num << ", ";
-                LOG << "cmdtype" << m->cmds[i].type << " --- ";
-                //LOG << "depth=" << ParamStack.depth() << ", ";
-                LOG << "tos=" << ParamStack.peek(0) << ", ";
-                LOG << "nos=" << ParamStack.peek(1) << ", ";
-                LOG << "3rd=" << ParamStack.peek(2) << ", ";
-                LOG << "cond=" << BranchCondition;
-                LOG << ENDLINE;
 
                 if (!(ResultOfCommandExecution || m->cmds[i].ign)) {
                     LOG << "ExecCommand fail: result=" << ResultOfCommandExecution << ", ign=" << m->cmds[i].ign << ENDLINE;

@@ -998,7 +998,7 @@ static void UpdateNumber(int index, long num) {
 // run through the currently compiled macro in cache, determine the branch offset by counting the (variable sized) macro element
 // returns branch offset, which can be negative. this is determined by the order of compilation position.
 long int BranchOffset(int pos1, int pos2) {
-    fprintf(stderr,"cefte/Branchoffset: calculated offset between %d and %d: ",pos1, pos2);
+ //   fprintf(stderr,"cefte/Branchoffset: calculated offset between %d and %d: ",pos1, pos2);
     int branchoffset=0;
     int sign=1;
     if (pos1 > pos2) {
@@ -1014,7 +1014,7 @@ long int BranchOffset(int pos1, int pos2) {
        pos1++;
        branchoffset++;
     }
-    fprintf(stderr,"%d\n",branchoffset*sign);
+ //   fprintf(stderr,"%d\n",branchoffset*sign);
     return branchoffset*sign;
 }
 
@@ -1137,7 +1137,7 @@ static int ParseCommands(CurPos &cp, char *Name) {
                         branchaddress=CondStack.pop();
                         CompileUnconditionalBranch(cp,BranchOffset(cpos,branchaddress)-1);  // compile a branch back to BEGIN
                     } else {
-                        Fail(cp, "Unstructured: EndIf needs a previous If or Else");
+                        Fail(cp, "Unstructured: Repeat needs a previous While");
                     }
                     break;
                     // ----------------------------------------------------------------------------------------------------
