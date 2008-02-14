@@ -455,6 +455,8 @@ typedef enum {
     /// Insert appropriate number of spaces to simulate a tab.
     ExSelfInsert,
     /// Insert typed character.
+    ExGetChar,
+    /// Get a character from the user and push it onto the stack.
     ExWrapPara,
     /// Wrap current paragraph.
     ExInsPrevLineChar,

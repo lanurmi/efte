@@ -856,6 +856,8 @@ int EBuffer::ExecCommand(int Command, ExState &State) {
         return InsertChar(State);
     case ExTypeChar:
         return TypeChar(State);
+    case ExGetChar:
+        return GetChar(State);
     case ExChangeMode:
         return ChangeMode(State);
         //case ExChangeKeys:          return ChangeKeys(State);
@@ -1064,6 +1066,32 @@ int EBuffer::PushGlobalBookmark() {
     return m ? 1 : 0;
 }
 
+int EBuffer::GetChar(ExState &State) {
+    char Ch;
+    int No;
+
+    if (State.GetIntParam(View, &No) == 0) {
+        TEvent E;
+        E.What = evKeyDown;
+        E.Key.Code = View->MView->Win->GetChar("Character:");
+        if (!GetCharFromEvent(E, &Ch)) {
+            SetBranchCondition(0);
+            return 0;
+        }
+        No = Ch;
+    }
+    if (No < 0 || No > 255) {
+        SetBranchCondition(0);
+        return 0;
+    }
+
+    Ch = char(No);
+    ParamStack.push((unsigned int) Ch);
+
+    SetBranchCondition(1);
+    return 1;
+}
+
 int EBuffer::InsertChar(ExState &State) {
     char Ch;
     int No;
@@ -1072,10 +1100,16 @@ int EBuffer::InsertChar(ExState &State) {
         TEvent E;
         E.What = evKeyDown;
         E.Key.Code = View->MView->Win->GetChar("Quote Char:");
-        if (!GetCharFromEvent(E, &Ch)) return 0;
+        if (!GetCharFromEvent(E, &Ch)) {
+            SetBranchCondition(0);
+            return 0;
+        }
         No = Ch;
     }
-    if (No < 0 || No > 255) return 0;
+    if (No < 0 || No > 255) {
+        SetBranchCondition(0);
+        return 0;
+    }
     Ch = char(No);
     return InsertChar(Ch);
 }
@@ -1100,8 +1134,10 @@ int EBuffer::InsertString(ExState &State) {
     char strbuf[1024] = "";
 
     if (State.GetStrParam(View, strbuf, sizeof(strbuf)) == 0) {
-        if (View->MView->Win->GetStr("Insert String", sizeof(strbuf), strbuf, HIST_DEFAULT) == 0)
+        if (View->MView->Win->GetStr("Insert String", sizeof(strbuf), strbuf, HIST_DEFAULT) == 0) {
+            SetBranchCondition(0);
             return 0;
+        }
     }
     return InsertString(strbuf, strlen(strbuf));
 }
@@ -1223,8 +1259,12 @@ int EBuffer::FileWriteTo(ExState &State) {
     char FName[MAXPATH];
 
     strcpy(FName, FileName);
-    if (State.GetStrParam(View, FName, sizeof(FName)) == 0)
-        if (View->MView->Win->GetFile("Write To", sizeof(FName), FName, HIST_PATH, GF_SAVEAS) == 0) return 0;
+    if (State.GetStrParam(View, FName, sizeof(FName)) == 0) {
+        if (View->MView->Win->GetFile("Write To", sizeof(FName), FName, HIST_PATH, GF_SAVEAS) == 0) {
+            SetBranchCondition(0);
+            return 0;
+        }
+    }
     return FileWriteTo(FName);
 }
 
@@ -1282,7 +1322,8 @@ int EBuffer::BlockWrite(ExState &State) {
                                              "&Overwrite",
                                              "&Append",
                                              "&Cancel",
-                                             "%s", Name)) {
+                                             "%s", Name))
+            {
             case 0:
                 break;
             case 1:
@@ -1817,14 +1858,14 @@ int EBuffer::GetStrVar(int var, char *str, int buflen) {
     assert(buflen >= 0);
     if (buflen == 0)
         return 0;
-    //puts("variable EBuffer\x7");
+
     switch (var) {
     case mvTopOfStack:
         snprintf(str, buflen, "%d", ParamStack.pop());
         str[buflen - 1] = 0;
         return 1;
+
     case mvFilePath:
-        //puts("variable FilePath\x7");
         strncpy(str, FileName, buflen);
         str[buflen - 1] = 0;
         return 1;
@@ -1836,6 +1877,7 @@ int EBuffer::GetStrVar(int var, char *str, int buflen) {
     case mvFileDirectory:
         JustDirectory(FileName, str, buflen);
         return 1;
+
     case mvFileBaseName: {
         char buf[MAXPATH];
         char *dot, *dot2;

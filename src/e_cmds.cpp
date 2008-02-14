@@ -1141,29 +1141,51 @@ int EBuffer::InsertString(const char *aStr, int aCount) {
     int C, L;
     int Y = VToR(CP.Row);
 
-    if (BFI(this, BFI_InsertKillBlock) == 1)
-        if (CheckBlock() == 1)
-            if (BlockKill() == 0)
+    if (BFI(this, BFI_InsertKillBlock) == 1) {
+        if (CheckBlock() == 1) {
+            if (BlockKill() == 0) {
+                SetBranchCondition(0);
                 return 0;
+            }
+        }
+    }
 
-    if (BFI(this, BFI_Insert) == 0)
-        if (CP.Col < LineLen())
-            if (KillChar() == 0)
+    if (BFI(this, BFI_Insert) == 0) {
+        if (CP.Col < LineLen()) {
+            if (KillChar() == 0) {
+                SetBranchCondition(0);
                 return 0;
-    if (InsText(Y, CP.Col, aCount, aStr) == 0)
+            }
+        }
+    }
+
+    if (InsText(Y, CP.Col, aCount, aStr) == 0) {
+        SetBranchCondition(0);
         return 0;
+    }
+
     C = CP.Col;
     L = VToR(CP.Row);
     P = CharOffset(RLine(L), C);
     P += aCount;
     C = ScreenPos(RLine(L), P);
-    if (SetPos(C, CP.Row) == 0)
+    if (SetPos(C, CP.Row) == 0) {
+        SetBranchCondition(0);
         return 0;
-    if (BFI(this, BFI_Trim) && *aStr != '\t')
-        if (TrimLine(L) == 0)
+    }
+
+    if (BFI(this, BFI_Trim) && *aStr != '\t') {
+        if (TrimLine(L) == 0) {
+            SetBranchCondition(0);
             return 0;
+        }
+    }
+
     if (BFI(this, BFI_WordWrap) == 2) {
-        if (DoWrap(0) == 0) return 0;
+        if (DoWrap(0) == 0) {
+            SetBranchCondition(0);
+            return 0;
+        }
     } else if (BFI(this, BFI_WordWrap) == 1) {
         int P, C = CP.Col;
         PELine LP;
@@ -1183,11 +1205,18 @@ int EBuffer::InsertString(const char *aStr, int aCount) {
                 C = BFI(this, BFI_RightMargin);
             } else
                 C = ScreenPos(LP, P);
-            if (SplitLine(L, C) == 0) return 0;
+            if (SplitLine(L, C) == 0) {
+                SetBranchCondition(0);
+                return 0;
+            }
             IndentLine(L + 1, BFI(this, BFI_LeftMargin));
-            if (SetPos(CP.Col - C - 1 + BFI(this, BFI_LeftMargin), CP.Row + 1) == 0) return 0;
+            if (SetPos(CP.Col - C - 1 + BFI(this, BFI_LeftMargin), CP.Row + 1) == 0) {
+                SetBranchCondition(0);
+                return 0;
+            }
         }
     }
+    SetBranchCondition(1);
     return 1;
 }
 
