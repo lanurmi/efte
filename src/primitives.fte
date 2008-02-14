@@ -1,0 +1,28 @@
+#
+# some tools and enhancements for macros.
+# this are currently used for testing and toying
+# with macros, as result many of the current macros
+# assume these to be present, as factored out functionality.
+#
+sub Zero      { 0:Push }
+sub False     { Zero }
+sub One       { 1:Push }
+sub True      { -1:Push }
+sub Dup2      { Over; Over }
+sub Not       { Zero; Equals }
+sub LeftShift { Dup; Plus }
+sub Inc       { One; Plus }
+sub Dec       { One; Minus }
+sub Invert    { -1:Push; Xor }
+sub Negate    { Invert; Inc }
+sub Remainder { Dup2; Div; Mul; Minus }
+sub Nip       { Swap; Drop }
+sub Tuck      { Swap; Over }
+sub Qdup      { Dup; If; Dup; EndIf }
+sub Space     { InsertString " " }
+sub Cr        { LineNew }
+sub Ok        { InsertString " ok "; Cr }
+sub Dot       { InsertString $Tos; Space }
+sub Gcd       { Begin; Diag Tuck; Remainder; Qdup; Zero; Equals;  Until; }    # greatest common denominator
+sub Key       { GetChar; }
+
