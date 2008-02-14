@@ -1,3 +1,0 @@
-NAME ClipUtil WINDOWCOMPAT
-DESCRIPTION 'Clipboard Utility - get/put clipboard text from command line'
-STACKSIZE 49152
