@@ -422,9 +422,21 @@ int EBuffer::SetPos(int Col, int Row, int tabMode) {
     assert(Col >= 0 && Row >= 0 && Row < VCount);
 
     if (BFI(this, BFI_Undo) == 1 && BFI(this, BFI_UndoMoves) == 1) {
-        if (PushULong(CP.Col) == 0) return 0;
-        if (PushULong(CP.Row) == 0) return 0;
-        if (PushUChar(ucPosition) == 0) return 0;
+        if (PushULong(CP.Col) == 0)
+        {
+            SetBranchCondition(0);
+            return 0;
+        }
+        if (PushULong(CP.Row) == 0)
+        {
+            SetBranchCondition(0);
+            return 0;
+        }
+        if (PushUChar(ucPosition) == 0)
+        {
+            SetBranchCondition(1);
+            return 0;
+        }
     }
     if (AutoExtend) {
         BlockExtendBegin();
@@ -447,18 +459,22 @@ int EBuffer::SetPos(int Col, int Row, int tabMode) {
     //        }
     if (BFI(this, BFI_CursorThroughTabs) == 0) {
         if (tabMode == tmLeft) {
-            if (MoveTabStart() == 0) return 0;
+            if (MoveTabStart() == 0) return 0;         // parasitize on MoveTabStart
         } else if (tabMode == tmRight) {
-            if (MoveTabEnd() == 0) return 0;
+            if (MoveTabEnd() == 0) return 0;           // parasitize on MoveTabEnd
         }
     }
     if (ExtendGrab == 0 && AutoExtend == 0 && BFI(this, BFI_PersistentBlocks) == 0) {
         if (CheckBlock() == 1)
-            if (BlockUnmark() == 0)
-                return 0;
+            if (BlockUnmark() == 0) {
+                return 0;                              // oarasitize on CheckBlock
+            }
     }
+    SetBranchCondition(1);
     return 1;
 }
+
+
 
 int EBuffer::SetPosR(int Col, int Row, int tabMode) {
     assert(Row >= 0 && Row < RCount && Col >= 0);

@@ -270,7 +270,7 @@ int EBuffer::MoveUp() {
 
 
 // almost identical to MoveUp but i find it difficult to factorize. scoping error as soon a i try to access stuff from a new fun()
-// this would ideally be not more than    MoveUpOrDown(direction);
+// this would ideally be not more than    MoveUpOrDown(direction);, or MoveCursorVertical(0,-1) / (0,1). PageUp/Down could probably reuse.
 int EBuffer::MoveDown() {
     if (LastUpDownColumn == -1)
         LastUpDownColumn = CP.Col;
@@ -305,7 +305,6 @@ int EBuffer::MoveNext() {
 }
 
 
-// -------- stopped recoding here -------
 
 int EBuffer::MoveWordLeftX(int start) {
     if (CP.Col > 0) {
@@ -322,8 +321,10 @@ int EBuffer::MoveWordLeftX(int start) {
             while ((P > 0) && (WGETBIT(Flags.WordChars, L->Chars[P - 1]) == wS)) P--;
             C = ScreenPos(L, P);
             return SetPos(C, CP.Row);
-        } else return 0;
-    } else return 0;
+        }
+    }
+    SetBranchCondition(0);
+    return 0;
 }
 
 
@@ -335,13 +336,18 @@ int EBuffer::MoveWordRightX(int start) {
     C = CP.Col;
     P = CharOffset(L, C);
 
-    if (P >= L->Count) return 0;
+    if (P >= L->Count) {
+        SetBranchCondition(0);
+        return 0;
+    }
 
     while ((P < L->Count) && (WGETBIT(Flags.WordChars, L->Chars[P]) == wS)) P++;
     while ((P < L->Count) && (WGETBIT(Flags.WordChars, L->Chars[P]) == wE)) P++;
     C = ScreenPos(L, P);
     return SetPos(C, CP.Row);
 }
+
+
 
 int EBuffer::MoveWordLeft() {
     return MoveWordLeftX(1);
@@ -353,13 +359,13 @@ int EBuffer::MoveWordRight() {
 
 int EBuffer::MoveWordPrev() {
     if (MoveWordLeft()) return 1;
-    if (MoveUp() && MoveLineEnd()) return 1;
+    if (CursorUp() && MoveLineEnd()) return 1;
     return 0;
 }
 
 int EBuffer::MoveWordNext() {
     if (MoveWordRight()) return 1;
-    if (MoveDown() && MoveLineStart()) return 1;
+    if (CursorDown() && MoveLineStart()) return 1;
     return 0;
 }
 
@@ -373,15 +379,20 @@ int EBuffer::MoveWordEndRight() {
 
 int EBuffer::MoveWordEndPrev() {
     if (MoveWordEndLeft()) return 1;
-    if (MoveUp() && MoveLineEnd()) return 1;
+    if (CursorUp() && MoveLineEnd()) return 1;
     return 0;
 }
 
 int EBuffer::MoveWordEndNext() {
     if (MoveWordEndRight()) return 1;
-    if (MoveDown() && MoveLineStart()) return 1;
+    if (CursorDown() && MoveLineStart()) return 1;
     return 0;
 }
+
+
+
+// -------- stopped reviewing here -------
+
 
 int EBuffer::MoveWordOrCapLeft() {
     if (CP.Col > 0) {
