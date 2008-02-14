@@ -1056,6 +1056,8 @@ static int ParseCommands(CurPos &cp, char *Name) {
 
             if (GetWord(cp, cmd) == -1) Fail(cp, "Syntax error");
             Command = CmdNum(cmd);
+            if (Command == 0)
+                Fail(cp, "Unrecognized command: %s", cmd);
             if (Command) {
                 CompileCommand(cp,Command,cnt,ign);
             } else {
