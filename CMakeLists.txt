@@ -18,8 +18,7 @@ INSTALL( DIRECTORY config
                                WORLD_READ WORLD_EXECUTE
          PATTERN ".svn" EXCLUDE
          PATTERN "*~" EXCLUDE
-         PATTERN "config/*"
-         )
+         PATTERN "config/*" )
 
 INSTALL( FILES AUTHORS Artistic COPYING HISTORY README
          DESTINATION share/doc/efte
