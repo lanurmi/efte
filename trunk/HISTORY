@@ -37,6 +37,8 @@ Revision history
     in a common directory
   + Added based modes SOURCE and MARKUP and changed all existing modes
     to inherit from SOURCE, MARKUP or PLAIN
+  + ebuild added, contributed by Daniel Hiepler
+  + efte.spec added for rpm distributions
 
 0.50.1 -- January 17, 2008
   - Forked from FTE (http://fte.sourceforge.net)
