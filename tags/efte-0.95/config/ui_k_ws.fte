@@ -1,0 +1,387 @@
+eventmap MODEL {
+    key       [F1]      { ViewModeMap }
+    key     [C+F2]      { FileSaveAll }
+    key       [F3]      { FileOpen }
+    key       [F4]      { WinNext }
+    key     [C+F4]      { WinHSplit }
+    key     [S+F4]      { WinPrev }
+    key   [A+S-F4]      { WinClose }
+    key       [F5]      { WinZoom }
+    key       [F6]      { FileNext }
+    key     [S+F6]      { FilePrev }
+    key   [A+S-F6]      { FileLast }
+    key       [F10]     { MainMenu }
+    key     [C+F10]     { FileClose }
+    key     [C+F9]      { RunProgram }
+    key     [A+F9]      { RunProgram "" }
+    key     [S+F10]     { LocalMenu }
+
+    key     [C+Q_C-S-Q] { FileClose }
+    
+    key   [C+G-Up]      { WinPrev }
+    key   [C+G-Down]    { WinNext }
+    
+    key   [A+G-PgUp]    { WinPrev; MovePageUp; WinNext }
+    key   [A+G-PgDn]    { WinNext; MovePageDown; WinPrev }
+    key [A+C+G-PgUp]    { WinNext; MovePageUp; WinPrev }
+    key [A+C+G-PgDn]    { WinPrev; MovePageDown; WinNext }
+    
+    key     [A+X]       { ExitEditor }
+    
+    key   [C+S+G-Up]    { WinResize -1 }
+    key   [C+S+G-Down]  { WinResize +1 }
+    
+    # this is also useful for 'grep -n' etc. if configured
+    key       [F9]      { Compile; ViewMessages }
+    key       [F11]     { CompilePrevError }
+    key       [F12]     { CompileNextError }
+    key       [S+F9]    { ViewMessages }
+    
+    key     [A+0]       { ViewBuffers }
+    key     [A+1]       { SwitchTo 1 }
+    key     [A+2]       { SwitchTo 2 }
+    key     [A+3]       { SwitchTo 3 }
+    key     [A+4]       { SwitchTo 4 }
+    key     [A+5]       { SwitchTo 5 }
+    key     [A+6]       { SwitchTo 6 }
+    key     [A+7]       { SwitchTo 7 }
+    key     [A+8]       { SwitchTo 8 }
+    key     [A+9]       { SwitchTo 9 }
+}
+# List Viewers
+eventmap MLIST: MODEL {
+    key     [G-Left]    { MoveLeft }
+    key     [G-Right]   { MoveRight }
+    key     [G-Up]      { MoveUp }
+    key     [G-Down]    { MoveDown }
+    key     [G-Home]    { MoveLineStart }
+    key   [C+G-Home]    { MovePageStart }
+    key     [G-End]     { MoveLineEnd }
+    key   [C+G-End]     { MovePageEnd }
+    key     [G-PgUp]    { MovePageUp }
+    key   [C+G-PgUp]    { MoveFileStart }
+    key     [G-PgDn]    { MovePageDown }
+    key   [C+G-PgDn]    { MoveFileEnd }
+    key   [C+Left]      { ScrollRight }
+    key   [C+Right]     { ScrollLeft }
+
+    key     [C+S]       { MoveLeft }
+    key     [C+D]       { MoveRight }
+    key     [C+E]       { MoveUp }
+    key     [C+X]       { MoveDown }
+    key     [C+R]       { MovePageUp }
+    key     [C+C]       { MovePageDown }
+    key     [C+Q_C-S-R] { MoveFileStart }
+    key     [C+Q_C-S-C] { MoveFileEnd }
+
+    key     [G-Enter]   { Activate }
+    key     [Space]     { ActivateInOtherWindow }
+    key     [S+Enter]   { CloseActivate }
+
+    key     [C+N]       { Rescan }
+}
+
+eventmap CVSDIFF: MLIST {
+    key     [C+G-Ins]   { BlockCopy }
+    key         [Esc]   { FileClose }
+}
+
+eventmap CVS: MLIST {
+    LocalMenu = "MCvs";
+}
+
+eventmap SVNDIFF: MLIST {
+    key     [C+G-Ins]   { BlockCopy }
+    key         [Esc]   { FileClose }
+}
+
+eventmap SVN: MLIST {
+    LocalMenu = "MSvn";
+}
+
+eventmap DIRECTORY: MLIST {
+    MainMenu = 'DirectoryMain';
+    LocalMenu = 'DirectoryLocal';
+    
+    key [C+G-PgUp]      { DirGoUp }
+    key [C+G-PgDn]      { DirGoDown }
+    key [C+\\]          { DirGoRoot }
+    key [/]             { DirGoto }
+    key [\\]            { DirGoto }
+    key [Esc]           { FileClose 0 }
+    
+    key     [A+D]       { MainMenu 'D' }
+    key     [A+N]       { MainMenu 'N' }
+    key     [A+W]       { MainMenu 'W' }
+}
+# Buffer List
+eventmap BUFFERS: MLIST {
+    MainMenu = "BufferListMain";
+    LocalMenu = "BufferListLocal";
+    key  [Esc]   { FileClose 0 } # 0 = do not open directory when last closed, overrides OpenAfterClose default.
+
+    key  [C+L]   { BufListFileClose }
+    key  [F2]    { BufListFileSave }
+}
+
+# Routine List
+eventmap ROUTINES: MLIST {
+    MainMenu = "RoutinesMain";
+    LocalMenu = "RoutinesLocal";
+    key  [Esc]   { FileClose }
+}
+
+eventmap MESSAGES: MLIST {
+    MainMenu = "MessagesMain";
+    LocalMenu = "MessagesLocal";
+    
+    key     [A+M]       { MainMenu 'M' }
+    key     [A+T]       { MainMenu 'T' }
+    key     [A+W]       { MainMenu 'W' }
+
+    key     [C+L]       { ChildClose } # does NOT kill, just closes pipe
+}
+
+eventmap EVENTMAPVIEW: MLIST {
+    MainMenu = "EventMapViewMain";
+    LocalMenu = "EventMapViewLocal";
+    
+    key [Esc] { FileClose 0 }
+}
+
+eventmap PLAIN: MODEL {
+# keymap for plaintext mode
+    MainMenu   = 'Main';    # menu for menubar
+    LocalMenu  = 'Local';   # local menu
+
+    key       [Esc]     { BlockMarkStream; BlockUnmark }
+    key       [F2]      { FileSave }
+    key     [S+F2]      { FileSaveAs }
+    key   [A+S-F2]      { FileSave; FileClose }
+    key     [S+F3]      { FileReload; WinRefresh }
+    key     [C+F3]      { FileOpenInMode }
+    key       [F7]      { BlockBegin }
+    key     [S+F7]      { MoveBlockStart }
+    key       [F8]      { BlockEnd }
+    key     [S+F8]      { MoveBlockEnd }
+    key     [G-Left]    { MoveLeft }
+    key   [C+G-Left]    { MoveWordPrev }
+    key     [G-Right]   { MoveRight }
+    key   [C+G-Right]   { MoveWordNext }
+    key     [G-Up]      { MoveUp }
+    key     [G-Down]    { MoveDown }
+    key     [G-Home]    { MoveLineStart }
+    key   [C+G-Home]    { MovePageStart }
+    key     [G-End]     { MoveLineEnd }
+    key   [C+G-End]     { MovePageEnd }
+    key     [G-PgUp]    { MovePageUp }
+    key   [C+G-PgUp]    { MoveFileStart }
+    key     [G-PgDn]    { MovePageDown }
+    key   [C+G-PgDn]    { MoveFileEnd }
+    key   [A+G-Up]      { ScrollUp }
+    key   [A+G-Down]    { ScrollDown }
+    key   [A+G-Left]    { ScrollLeft }
+    key   [A+G-Right]   { ScrollRight }
+    
+    key   [S+G-Left]    { BlockExtendBegin; MoveLeft;     BlockExtendEnd }
+    key   [S+G-Right]   { BlockExtendBegin; MoveRight;    BlockExtendEnd }
+    
+    key [C+G-S+Left]    { BlockExtendBegin; MoveWordPrev;  BlockExtendEnd }
+    key [C+G-S+Right]   { BlockExtendBegin; MoveWordNext;  BlockExtendEnd }
+    key   [G-S+Up]      { BlockExtendBegin; MoveUp;        BlockExtendEnd }
+    key   [G-S+Down]    { BlockExtendBegin; MoveDown;      BlockExtendEnd }
+    key   [G-S+Home]    { BlockExtendBegin; MoveLineStart; BlockExtendEnd }
+    key   [G-S+End]     { BlockExtendBegin; MoveLineEnd;   BlockExtendEnd }
+    key [C+G-S+Home]    { BlockExtendBegin; MovePageStart; BlockExtendEnd }
+    key [C+G-S+End]     { BlockExtendBegin; MovePageEnd;   BlockExtendEnd }
+    key   [G-S+PgUp]    { BlockExtendBegin; MovePageUp;    BlockExtendEnd }
+    key   [G-S+PgDn]    { BlockExtendBegin; MovePageDown;  BlockExtendEnd }
+    key [C+G-S+PgUp]    { BlockExtendBegin; MoveFileStart; BlockExtendEnd }
+    key [C+G-S+PgDn]    { BlockExtendBegin; MoveFileEnd;   BlockExtendEnd }
+    key [A+G-S+Up]      { BlockExtendBegin; ScrollUp;      BlockExtendEnd }
+    key [A+G-S+Down]    { BlockExtendBegin; ScrollDown;    BlockExtendEnd }
+    key [A+G-S+Left]    { BlockExtendBegin; ScrollLeft;    BlockExtendEnd }
+    key [A+G-S+Right]   { BlockExtendBegin; ScrollRight;   BlockExtendEnd }
+    key [A+G-C+Up]      { MovePrevEqualIndent }
+    key [A+G-C+Down]    { MoveNextEqualIndent }
+    key [A+G-C+Left]    { MovePrevTab }
+    key [A+G-C+Right]   { MoveNextTab }
+    key   [C+G-Ins]     { BlockCopy }
+    key   [C+G-Del]     { BlockKill }
+    key   [S+G-Ins]     { BlockPasteStream }
+    key   [S+G-Del]     { BlockCut }
+    key   [A+G-Ins]     { BlockPasteColumn }
+    key [A+G-S+Ins]     { BlockPasteLine }
+    key     [G-Enter]   { LineNew }
+    key       [BackSp]  { BackSpace }
+    key     [G-Ins]     { ToggleInsert }
+    key     [G-Del]     { Delete }
+    key       [Tab]     { InsertTab }
+    key     [S+Tab]     { InsertSpacesToTab 10 }
+    key     [C+Tab]     { CompleteWord }
+#    key     [C+Tab]     { InsertTab }
+    key     [C+BackSp]  { KillWordPrev }
+    key   [C+S+BackSp]  { KillToLineStart }
+    key   [C+G-Enter]   { LineSplit }
+    key   [G-S+Enter]   { LineInsert }
+    key   [A+G-Enter]   { LineAdd }
+    key   [A+G-Del]     { KillWord }
+    key   [A+G-End]     { KillToLineEnd }
+    key     [A+BackSp]  { Undo }
+    key   [A+S+BackSp]  { Redo }
+        
+    key     [C+K_1]     { PlaceBookmark "1" }
+    key     [C+K_2]     { PlaceBookmark "2" }
+    key     [C+K_3]     { PlaceBookmark "3" }
+    key     [C+K_4]     { PlaceBookmark "4" }
+    key     [C+K_5]     { PlaceBookmark "5" }
+    key     [C+K_6]     { PlaceBookmark "6" }
+    key     [C+K_7]     { PlaceBookmark "7" }
+    key     [C+K_8]     { PlaceBookmark "8" }
+    key     [C+K_9]     { PlaceBookmark "9" }
+    key     [C+K_0]     { PlaceBookmark "0" }
+
+    key     [C+Q_1]     { GotoBookmark "1" }
+    key     [C+Q_2]     { GotoBookmark "2" }
+    key     [C+Q_3]     { GotoBookmark "3" }
+    key     [C+Q_4]     { GotoBookmark "4" }
+    key     [C+Q_5]     { GotoBookmark "5" }
+    key     [C+Q_6]     { GotoBookmark "6" }
+    key     [C+Q_7]     { GotoBookmark "7" }
+    key     [C+Q_8]     { GotoBookmark "8" }
+    key     [C+Q_9]     { GotoBookmark "9" }
+    key     [C+Q_0]     { GotoBookmark "0" }
+
+    key     [C+A]       { MoveWordPrev }
+    key     [C+B]       { ViewBuffers }
+    key     [C+C]       { MovePageDown }
+    key     [C+D]       { MoveRight }
+    key     [C+E]       { MoveUp }
+    key     [C+F]       { MoveWordNext }
+    key     [C+G]       { KillChar }
+    key     [C+H]       { KillCharPrev }
+    key     [C+I]       { InsertTab }
+    key     [C+J]       { LineJoin }
+    key     [C+K_C-S-A]   { BlockMarkStream }
+    key     [C+K_C-S-B]   { BlockBegin }
+    key     [C+K_C-S-C]   { BlockCopy; BlockPaste }
+    key     [C+K_C-S-D]   { FileSave; FileClose }
+    key     [C+K_C-S-E]   { FileOpen }
+    key     [C+K_C-S-H]   { BlockUnmark }
+    key     [C+K_C-S-I]   { BlockIndent }
+    key     [C+K_C-S-K]   { BlockEnd }
+    key     [C+K_C-S-L]   { BlockMarkLine }
+    key     [C+K_C-S-M]   { BlockMarkColumn }
+    key     [C+K_C-S-Q]   { FileClose }
+    key     [C+K_C-S-R]   { BlockRead }
+    key     [C+K_C-S-S]   { FileSave }
+    key     [C+K_C-S-U]   { BlockUnindent }
+    key     [C+K_C-S-V]   { BlockCut; BlockPaste }
+    key     [C+K_C-S-W]   { BlockWrite }
+    key     [C+K_C-S-X]   { FileSave; FileClose }
+    key     [C+K_C-S-Y]   { BlockKill }
+    key     [C+L]       { FindRepeat }
+    key     [C+M]       { LineNew }
+    key     [C+N]       { LineSplit }
+    key     [C+P]       { InsertChar }
+    key     [C+Q_C-S-A]   { FindReplace }
+    key     [C+Q_C-S-C]   { MoveFileEnd }
+    key     [C+Q_C-S-D]   { MoveLineEnd }
+    key     [C+Q_C-S-E]   { MovePageStart }
+    key     [C+Q_C-S-F]   { Find }
+    key     [C+Q_C-S-I]   { IncrementalSearch }
+    key     [C+Q_C-S-J]   { MoveToLine }
+    key     [C+Q_C-S-L]   { Undo }
+    key     [C+Q_C-S-R]   { MoveFileStart }
+    key     [C+Q_C-S-S]   { MoveLineStart }
+    key     [C+Q_C-S-X]   { MovePageEnd }
+    key     [C+Q_C-S-Y]   { KillToLineEnd }
+    key     [C+Q_C-\[]  { MatchBracket }
+    key     [C+Q_C-\]]  { MatchBracket }
+    key     [C+R]       { MovePageUp }
+    key     [C+S]       { MoveLeft }
+    key     [C+T]       { KillWord }
+    key     [C+U]       { Undo }
+    key     [C+V]       { ToggleInsert }
+    key     [C+W]       { ScrollDown }
+    key     [C+X]       { MoveDown }
+    key     [C+Y]       { KillLine }
+    key     [C+Z]       { ScrollUp }
+    
+    key     [A+A]       { BlockMarkStream }
+    key     [A+B]       { MainMenu 'B' }
+    key     [A+C]       { BlockCopy }
+    key     [A+D]       { MainMenu 'D' }
+    key     [A+E]       { MainMenu 'E' }
+    key     [A+F]       { MainMenu 'F' }
+    key     [A+G]       { BlockCut }
+    key     [A+H]       { MainMenu 'H' }
+    key     [A+I]       { BlockIndent }
+    key     [A+J]       { MoveToLine }
+    key     [A+K]       { BlockMarkColumn }
+    key     [A+L]       { BlockMarkLine }
+    key     [A+O]       { MainMenu 'O' }
+    key     [A+R]       { WrapPara }
+    key     [A+S]       { MainMenu 'S' }
+    key     [A+T]       { MainMenu 'T' }
+    key     [A+U]       { BlockUnindent }
+    key     [A+W]       { MainMenu 'W' }
+    key     [A+X]       { ExitEditor }
+
+    key     [C+O_C+A]   { ToggleAutoIndent }
+    key     [C+O_C+C]   { ToggleMatchCase }
+    key     [C+O_C+E]   { ToggleTrim }
+    key     [C+O_C+I]   { ToggleInsert }
+    key     [C+O_S-M]   { ChangeMode }
+    key     [C+O_C+M]   { ShowMenu 'MChangeMode' }
+    key     [C+O_C+R]   { ToggleReadOnly }
+    key     [C+O_C+S]   { ToggleSysClipboard }
+    key     [C+O_C+T]   { ChangeTabSize }
+    key     [C+O_C+U]   { ToggleUndo }
+    key     [C+O_C+W]   { ToggleWordWrap }
+    key     [C+O_.]     { ToggleShowMarkers }
+    key     [C+O_[]     { SetLeftMargin }
+    key     [C+O_\]]    { SetRightMargin }
+    key     [C+O_A+[]   { ChangeLeftMargin }
+    key     [C+O_A+\]]  { ChangeRightMargin }
+    key     [C+O_Tab]   { ToggleShowTabs }
+    key     [C+O_C+Tab] { ToggleExpandTabs }
+    key     [C+O_Del]   { ToggleDeleteKillTab }
+    key     [C+O_G-Ins]   { ToggleInsert }
+    key    [C+O_BackSp] { ToggleBackSpKillTab }
+    key     [C+O_Space] { ToggleIndentWithTabs }
+    key  [C+O_C+BackSp] { ToggleBackSpUnindents }
+    key     [A+-]       { MatchBracket }
+    key     [A+=]       { HilitMatchBracket }
+#    key     [A+,]       { GetPMClip }
+#    key     [A+.]       { PutPMClip }
+    key     [C+Space]   { InsPrevLineChar }
+    key     [A+Space]   { InsPrevLineToEol }
+    key     [A+F5]      { ShowEntryScreen }
+    key     [C+_]       { ShowPosition }
+    key       [Center]  { MoveLineCenter }
+    key     [C+X]       { MovePrevPos }
+    key   [C+S+A]       { ASCIITable }
+    key     [G+*]       { LineInsert ; MoveUp; ScrollUp }
+    
+#    key     [G++]       { DumpFold } 
+    key     [A+G++]     { FoldCreate }
+    key     [A+G+-]     { FoldDestroy }
+    key     [G+S++]     { FoldPromote }
+    key     [G+S+-]     { FoldDemote }
+    key     [C+G++]     { FoldOpen }
+    key     [C+G+-]     { FoldClose }
+    key     [C+G+*]     { FoldOpenNested }
+    key     [C+G+/]     { FoldToggleOpenClose }
+    key     [A+G+*]     { FoldOpenAll }
+    key     [A+G+/]     { FoldCloseAll }
+    
+#    key     [C+G-Up]    { MoveFoldPrev }
+#    key     [C+G-Down]  { MoveFoldNext }
+        
+    key [C+Q_Tab] { IncrementalSearch }
+        
+    key     [A+,]     { SearchWordPrev }
+    key     [A+.]     { SearchWordNext }
+    key     [A+/]     { HilitWord }
+}
