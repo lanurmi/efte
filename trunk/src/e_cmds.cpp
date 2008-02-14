@@ -78,28 +78,23 @@ int EBuffer::Xor() {
     return 1;
 }
 
-//int EBuffer::Invert() {
-//    int tos = -(ParamStack.pop()+1);
-//    ParamStack.push(tos);
-//    return 1;
-//}
-
-
 
 
 // --- comparison ---
 
-// don't need - could subtract twp operands, and conditonally
-// convert result to real flag.
+// replace top two stack items against identity flag
 int EBuffer::Equals() {
     ParamStack.push(-(ParamStack.pop() == ParamStack.pop()));
     return 1;
 }
 
+// true if 2nd item less than top item:
+//  3 4 Less   ( true )
 int EBuffer::Less() {
     ParamStack.push(-(ParamStack.pop() > ParamStack.pop()));
     return 1;
 }
+
 
 
 // interface condition, provided by old commands, to
@@ -169,7 +164,7 @@ int EBuffer::Rot() {
 
 
 // --- input/output ---
-
+// untested. probably not needed if if general variable-to-stack solution can be used
 int EBuffer::LineLength() {
     ParamStack.push(LineLen(VToR(CP.Row)));
     return 1;
@@ -273,15 +268,16 @@ int EBuffer::MoveDown() {
 
 
 
-// -------- stopped recoding here -------
 
-
-
+// any of the CursorLeft/Right/Up/Down set branch condition. no need
+// to set twice what would merely be a reflection of the Cursor... condition.
 int EBuffer::MovePrev() {
     if (CursorLeft()) return 1;
-    if (CursorUp() && MoveLineEnd()) return 1;
+    if (CursorUp() && MoveLineEnd())
+        return 1;
     return 0;
 }
+
 
 int EBuffer::MoveNext() {
     if (CP.Col < LineLen())
@@ -291,6 +287,7 @@ int EBuffer::MoveNext() {
 }
 
 
+// -------- stopped recoding here -------
 
 int EBuffer::MoveWordLeftX(int start) {
     if (CP.Col > 0) {
