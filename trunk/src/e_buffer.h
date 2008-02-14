@@ -756,6 +756,7 @@ public:
     int FindRepeat(ExState &State);
     int FindRepeatOnce(ExState &State);
     int FindRepeatReverse(ExState &State);
+    int GetChar(ExState &State);
     int InsertChar(ExState &State);
     int TypeChar(ExState &State);
     int ChangeMode(ExState &State);

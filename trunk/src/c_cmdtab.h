@@ -240,6 +240,7 @@ const struct {
     TAB(FindRepeatOnce),
     TAB(FindRepeatReverse),
 
+    TAB(GetChar),
     TAB(InsertChar),
 
     TAB(FileClose),

@@ -47,7 +47,7 @@ colorize FTE {
         'FoldCreate', 'FoldCreateAtRoutines', 'FoldCreateByRegexp', 'FoldDemote',
         'FoldDestroy', 'FoldDestroyAll', 'FoldOpen', 'FoldOpenAll',
         'FoldOpenNested', 'FoldPromote', 'FoldToggleOpenClose', 'FrameClose',
-        'FrameNew', 'FrameNext', 'FramePrev', 'GotoBookmark', 'GotoGlobalBookmark',
+        'FrameNew', 'FrameNext', 'FramePrev', 'GetChar', 'GotoBookmark', 'GotoGlobalBookmark',
         'HilitMatchBracket', 'HilitWord', 'IncrementalSearch', 'IndentFunction',
         'InsertChar', 'InsertDate',
         'InsertSpace', 'InsertSpacesToTab', 'InsertString', 'InsertTab',
