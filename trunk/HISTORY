@@ -8,7 +8,7 @@ Revision legend
 Revision history
 -----------------------------------------------------------------------
 
-1.0 -- January 2008
+1.0 -- (trunk)
   - First release of eFTE
   - Branded FTE to be eFTE
   - Removed DJGPP support
@@ -20,14 +20,23 @@ Revision history
   ! BlockRead command was not expanding any file
   ! WM_COMMAND now set in X11 binary
   - Removed partially implemented block cursor sizing
+  + Added FalconMode for the falcon programming language
   + Added DesktopLoad command
-  + Added oinclude command
+  + Added oinclude command which optionally includes a configuration file
   + Modes are now user configurable w/o need to edit actual mode file
   - Cleaned up code a bit with manual and automatic formatting (astyle)
   - Converted from Makefiles to CMake on Win32, Unixes and OS/X
+  ! assert bug fixed when compiling with newer Microsoft compilers
   + Configuration compiler and loading is now much smarter
   - Moved all documentation to the wiki where it is now user editable
     as well as developer editable.
+  + Added flow control to the macro system
+  ! Many minor bug fixes
+  - Began native Mac OS X GUI interface
+  + Added configuration variable BackupDirectory to allow storing backups
+    in a common directory
+  + Added based modes SOURCE and MARKUP and changed all existing modes
+    to inherit from SOURCE, MARKUP or PLAIN
 
 0.50.1 -- January 17, 2008
   - Forked from FTE (http://fte.sourceforge.net)
