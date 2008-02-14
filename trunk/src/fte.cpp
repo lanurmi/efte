@@ -108,14 +108,16 @@ static int GetConfigFileName(int /*argc*/, char **argv, char *ConfigFileName) {
 
     char CfgName[MAXPATH] = "";
 
-
     if (ConfigFileName[0] == 0) {
+        /* This was deemed as a security threat. The only reason it is left in code
+         * but commented out is that we want to make a secure version of it.
         // Try for a efte.cnf in the current directory
         strlcpy(CfgName, "efte.cnf", sizeof(CfgName));
         if (access(CfgName, 0) == 0) {
             strlcpy(ConfigFileName, CfgName, MAXPATH);
             return 1;
         }
+        */
 
 #if defined(UNIX)
         // ? use ./.efterc if by current user ?
