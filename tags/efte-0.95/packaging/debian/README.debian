@@ -1,0 +1,43 @@
+fte for DEBIAN
+----------------------
+  * if you are using some non-iso encondings like KOI8-R please
+    check your Compose file if you are worried about warning message.
+    This problem is known - if you know how to fix this, please
+    let me know.
+
+  * usage of vfte on linux console together with iso8859-X fonts might
+    be better if ISOCONSOLE shell variable is set.
+    (e.g. for bash  export ISOCONSOLE=y ; fte)
+
+  * before reporting bugs about problems with i18n support for xfte
+    try to make sure, your locales are correct and you use them
+    properly (e.g.  LANG=en_US xfte)
+
+  * try to use sfte instead of vfte
+
+  * vfte requires access to dev/vcsa*
+    as the of the security problem with write access to this device
+    this program has to be suid - however only for the opening 
+    this device - than it gives up its root privileges and goes
+    back to the normal user uid,gid
+
+  * And since vfte uses dev/vcsa directly, you can't use it
+    on anything else but a virtual console.
+
+  * vfte is not compiled with GPM support, because it's buggy and
+    I didn't want vfte to be the reason to buy a mouse.
+
+  * fte has still bugs, so use with caution (especially vfte, cuz
+    it locks the keyboard if it crashes...), and report any
+    reproducable bugs found.
+
+  * To make your own configurations, make sure you have the package
+    fte-docs installed on your system and unpack the file
+    config-example.tar.gz to $HOME/.fte/.
+    Run the program: cfte $HOME/.fte/main.fte
+    Report any useful improvements and new Color modes.
+
+  * read the BUGS file.
+  
+Zdenek Kabelac <kabi@debian.org>
+Riku Voipio <riku.voipio@iki.fi>

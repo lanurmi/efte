@@ -1,0 +1,99 @@
+colorize MAKE {
+    SyntaxParser        = 'SIMPLE';
+
+    color {
+        { 'Normal',        'Editor_Default' },
+        { 'Comment',       'Lang_Comment' },
+        { 'Directive',     'Lang_Control' },
+        { 'Command',       'Lang_Command' },
+        { 'CPreprocessor', 'Lang_Preprocessor' },
+        { 'Punctuation',   'Lang_Punctuation' },
+        { 'Label',         'Lang_Label' }, # Should be Macro
+    };
+
+    # Macros
+    keyword 'Lang_Label' {
+        '__MSDOS__', '__NT__', '__OS2__',
+        '__MAKEOPTS__', '__MAKEFILES__',
+    };
+
+    # Directives
+    keyword 'Lang_Control' {
+        '.autodepend', '.symbolic', '.precious', '.ignore', '.erase',
+        '.hold', '.silent', '.block', '.nocheck', '.continue',
+        '.optimize', '.extensions:',
+        '.before', '.after',
+    };
+
+    # Commands
+    keyword 'Lang_Command' {
+        'break', 'call', 'chdir', 'cd', 'cls', 'cmd', 'command',
+        'copy', 'ctty', 'date', 'del', 'dir', 'echo', 'echo.',
+        'erase', 'for', 'if', 'md', 'mkdir', 'path', 'pause',
+        'prompt', 'ren', 'rename', 'rmdir', 'rd', 'set', 'time',
+        'type', 'ver', 'verify', 'vol',
+
+        # Internal command (other color might be good idea)
+        '%null', '%stop', '%quit', '%abort', '%make',
+        '%create', '%write', '%append',
+    };
+
+    h_state 0 { 'Normal' }
+    h_trans { 1, '', '#' , 'Comment' }
+    h_trans { 2, '-^', '!', 'Normal' }
+    h_trans { 4, '<', '$', 'Label' }
+    h_trans { 3, 's', '=+;:@!*', 'Punctuation' }
+    h_wtype { -1, -1, -1, 'i', 'a-zA-Z0-9_.:%' }
+
+    h_state 1 { 'Comment' }
+    h_trans { 0, '$', '', 'Comment' }
+
+    h_state 2 { 'Normal' }
+    h_trans { 0, '$', '', 'Normal' }
+    h_wtype { -1, 0, -1, 'i', 'a-zA-Z0-9!' }
+    h_words 'Lang_Preprocessor' {
+        '!',
+        'include', 'error', 'define', 'undef',
+        'ifeq', 'ifneq', 'ifdef', 'ifndef', 'else', 'endif',
+        '!include', '!error', '!define', '!undef',
+        '!ifeq', '!ifneq', '!ifdef', '!ifndef', '!else', '!endif',
+    }
+
+    h_state 3 { 'Normal' }
+    h_trans { 0, '', '', 'Normal' }
+
+    h_state 4 { 'Label' }
+    h_trans { 0, '$', '', 'Normal' }
+    h_trans { 3, 's', '$#@*<?+-', 'Label' }
+    h_trans { 6, 's', '^[]', 'Label' }
+    h_trans { 5, '<', '(', 'Label' }
+    h_trans { 7, 's', 'a-zA-Z0-9_', 'Label' }
+    h_trans { 0, '', '', 'Normal' }
+
+    h_state 5 { 'Label' }
+    h_trans { 3, '>', ')', 'Label' }
+    h_trans { 0, '-S', 'a-zA-Z0-9_', 'Normal' }
+
+    h_state 6 { 'Label' }
+    h_trans { 3, 's', '@*&.:', 'Label' }
+    h_trans { 0, '', '', 'Normal' }
+
+    h_state 7 { 'Label' }
+    h_trans { 0, '-S', 'a-zA-Z0-9_', 'Normal' }
+}
+
+mode MAKE: PLAIN {
+    FileNameRx          = /\c{makefile}|{\.{MAK}|{MAKE}|{MK}|{MIF}$}/;
+    FirstLineRx         = /^\#\!.*make\s+-f/;
+    HilitOn             = 1;
+    Colorizer           = 'MAKE';
+    IndentWithTabs      = 1;         # use tabs for auto-indent
+
+    RoutineRegexp       = '^[^:\#]+:';
+
+    SaveFolds           = 2;      # save fold info at end of line
+    CommentStart        = ' #';
+    CommentEnd          = '';
+}
+
+oinclude 'mym_make.fte';

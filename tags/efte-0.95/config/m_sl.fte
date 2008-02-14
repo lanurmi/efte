@@ -1,0 +1,84 @@
+# SLang mode
+
+colorize sl {
+    SyntaxParser = 'SIMPLE';
+
+    color {
+        { 'Normal',        'Editor_Default' },
+        { 'Number',        'Lang_DecimalNumber' },
+        { 'HexNumber',     'Lang_HexNumber' },
+        { 'Punctuation',   'Lang_Punctuation' },
+        { 'String',        'Lang_String' },
+        { 'Comment',       'Lang_Comment' },
+        { 'Function',      'Lang_Function' },
+    };
+
+    h_state 0 { 'Normal' }
+    h_trans { 1, '', '%' , 'Comment' }
+    h_trans { 2, '-s', 'a-zA-Z_', 'Normal' }
+    h_trans { 3, '<', '"', 'String' }
+    h_trans { 4, '<', '\'', 'String' }
+    h_trans { 5, '<', '0x', 'HexNumber' }
+    h_trans { 6, '<s', '0-9', 'Number' }
+    h_trans { 0, 'S', '_a-zA-Z0-9', 'Punctuation' }
+
+    h_state 1 { 'Comment' }
+    h_trans { 0, '$', '', 'Normal' }
+
+    h_state 2 { 'Normal' }
+    h_trans { 0, '$', '', 'Normal' }
+    h_wtype { 0, 0, 0, '', 'a-zA-Z0-9_' }
+
+    h_state 3 { 'String' }
+    h_trans { 0, '>', '"', 'String' }
+    h_trans { 0, '$', '', 'String' }
+
+    h_state 4 { 'String' }
+    h_trans { 0, '>', '\'', 'String' }
+    h_trans { 0, '$', '', 'String' }
+
+    h_state 5 { 'HexNumber' }
+    h_trans { 0, '-S', '0-9A-Fa-f', 'Normal' }
+    h_trans { 0, '$', '', 'Normal' }
+
+    h_state 6 { 'Number' }
+    h_trans { 0, '-S', '0-9', 'Normal' }
+    h_trans { 0, '$', '', 'Normal' }
+
+    keyword 'Editor_Keywords' { # any missing ?
+        'and', 'or', 'not', 'xor', 'shl', 'shr',
+        'andelse', 'orelse',
+        'variable',
+        'if', 'else', '!if', 'switch', 'case',
+        'while', 'do', 'for', 'loop', 'forever', 'break', 'return', 'continue',
+        'define', 'return', 'EXIT_BLOCK',
+        'struct', 'typedef',
+        'ERROR_BLOCK'
+    };
+}
+
+mode sl: SOURCE {      # SLang Mode
+    FileNameRx          = /\.\cSL$/;
+    HilitOn             = 1;
+    Colorizer           = 'sl';
+    AutoIndent          = 1;
+    IndentMode          = 'sl';
+    TabSize             = 3; # think twice before changing this, historically
+                             # it's been known to cause a mess in sources ;-)
+    MatchCase           = 1;
+    Trim                = 1;
+    MultiLineHilit      = 1;
+    AutoHilitParen      = 1;
+
+    RoutineRegexp       = '^define';
+#    RoutineRegexp       = /^\w[\w_:*&~]+[\w\\s_:*&~]@\(.*\){\s*\{}?\s*$/;
+#    RoutineRegexp       = /^define \w[\w_:*&~]+[\w\s_:*&~]@\([^;]*$/;
+#        RoutineRx      ^\w[\w_:*&]+[\w\s_:*&]@\(
+#        RoutineRx      ^{[a-zA-Z0-9_:*&]#\s*}+\(
+
+    SaveFolds           = 2;      # save fold info at end of line
+    CommentStart        = ' %';
+    CommentEnd          = '';
+}
+
+oinclude 'mym_sl.fte';

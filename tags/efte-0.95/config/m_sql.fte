@@ -1,0 +1,143 @@
+#
+# SQL mode
+#
+
+colorize SQL {
+    SyntaxParser       = 'SIMPLE';
+
+    color {
+        { 'Normal',      'Editor_Default' },
+        { 'Number',      'Lang_DecimalNumber' },
+        { 'HexNumber',   'Lang_HexNumber' },
+        { 'Punctuation', 'Lang_Punctuation' },
+        { 'String',      'Lang_String' },
+        { 'Comment',     'Lang_Comment' },
+    };
+
+    keyword 'Editor_Keywords' {
+# Kosina
+#        'select', 'where', 'insert', 'into', 
+#        'update', 'from', 'in', 'order', 'by',
+#        'and', 'or', 'not', 'union', 'distinct', 'join', 'all',
+#        'group',
+        'ADD','EXIT','PREPARE',
+        'ALL','FETCH','PRIMARY',
+        'ALTER','FILE','PRINT',
+        'AND','FILLFACTOR','PRIVILEGES',
+        'ANY','FLOPPY','PROC',
+        'AS','FOR','PROCEDURE',
+        'ASC','FOREIGN','PROCESSEXIT',
+        'AUTHORIZATION','FREETEXT','PUBLIC',
+        'AVG','FREETEXTTABLE','RAISERROR',
+        'BACKUP','FROM','READ',
+        'BEGIN','FULL','READTEXT',
+        'BETWEEN','GOTO','RECONFIGURE',
+        'BREAK','GRANT','REFERENCES',
+        'BROWSE','GROUP','REPEATABLE',
+        'BULK','HAVING','REPLICATION',
+        'BY','HOLDLOCK','RESTORE',
+        'CASCADE','IDENTITY','RESTRICT',
+        'CASE','IDENTITY_INSERT','RETURN',
+        'CHECK','IDENTITYCOL','REVOKE',
+        'CHECKPOINT','IF','RIGHT',
+        'CLOSE','IN','ROLLBACK',
+        'CLUSTERED','INDEX','ROWCOUNT',
+        'COALESCE','INNER','ROWGUIDCOL',
+        'COLUMN','INSERT','RULE',
+        'COMMIT','INTERSECT','SAVE',
+        'COMMITTED','INTO','SCHEMA',
+        'COMPUTE','IS','SELECT',
+        'CONFIRM','ISOLATION','SERIALIZABLE',
+        'CONSTRAINT','JOIN','SESSION_USER',
+        'CONTAINS','KEY','SET',
+        'CONTAINSTABLE','KILL','SETUSER',
+        'CONTINUE','LEFT','SHUTDOWN',
+        'CONTROLROW','LEVEL','SOME',
+        'CONVERT','LIKE','STATISTICS',
+        'COUNT','LINENO','SUM',
+        'CREATE','LOAD','SYSTEM_USER',
+        'CROSS','MAX','TABLE',
+        'CURRENT','MIN','TAPE',
+        'CURRENT_DATE','MIRROREXIT','TEMP',
+        'CURRENT_TIME','NATIONAL','TEMPORARY',
+        'CURRENT_TIMESTAMP','NOCHECK','TEXTSIZE',
+        'CURRENT_USER','NONCLUSTERED','THEN',
+        'CURSOR','NOT','TO',
+        'DATABASE','NULL','TOP',
+        'DBCC','NULLIF','TRAN',
+        'DEALLOCATE','OF','TRANSACTION',
+        'DECLARE','OFF','TRIGGER',
+        'DEFAULT','OFFSETS','TRUNCATE',
+        'DELETE','ON','TSEQUAL',
+        'DENY','ONCE','UNCOMMITTED',
+        'DESC','ONLY','UNION',
+        'DISK','OPEN','UNIQUE',
+        'DISTINCT','OPENDATASOURCE','UPDATE',
+        'DISTRIBUTED','OPENQUERY','UPDATETEXT',
+        'DOUBLE','OPENROWSET','USE',
+        'DROP','OPTION','USER',
+        'DUMMY','OR','VALUES',
+        'DUMP','ORDER','VARYING',
+        'ELSE','OUTER','VIEW',
+        'END','OVER','WAITFOR',
+        'ERRLVL','PERCENT','WHEN',
+        'ERROREXIT','PERM','WHERE',
+        'ESCAPE','PERMANENT','WHILE',
+        'EXCEPT','PIPE','WITH',
+        'EXEC','PLAN','WORK',
+        'EXECUTE','PRECISION','WRITETEXT',
+        'EXISTS',
+        'GO'
+    };
+
+    h_state 0 { 'Normal' }
+    h_trans { 4, '-s', 'a-zA-Z_', 'Normal' }
+    h_trans { 1, '<', '/*', 'Comment' }
+    h_trans { 2, '<', '\'', 'String' }
+    h_trans { 3, '<s', '0-9', 'Number' }
+# Kosina
+    h_trans { 5, '<', '--', 'Comment' }
+    h_trans { 6, '<', '\"', 'String' }
+
+    h_state 1 { 'Comment' }
+    h_trans { 0, '>', '*/', 'Comment' }
+
+    h_state 2 { 'String' }
+    h_trans { 0, '>', '\'', 'String' }
+    h_trans { 0, '$', '', 'String' }
+
+    h_state 3 { 'Number' }
+    h_trans { 0, '-S', '0-9', 'Normal' }
+    h_trans { 0, '$', '', 'Normal' }
+
+    h_state 4 { 'Normal' }
+    h_trans { 0, '$', '', 'Normal' }
+    h_wtype { 0, 0, 0, 'i', 'a-zA-Z0-9_' }
+
+# Kosina
+    h_state 5 { 'Comment' }
+    h_trans { 0, '$', '', 'Normal' }
+
+# Kosina
+    h_state 6 { 'String' }
+    h_trans { 0, '>', '\"', 'String' }
+    h_trans { 0, '$', '', 'String' }
+}
+
+mode SQL: SOURCE {      # SQL Mode
+    FileNameRx          = /\.\cSQL$/;
+    HilitOn             = 1;
+    Colorizer           = 'SQL';
+    AutoIndent          = 1;
+    IndentMode          = 'PLAIN';
+    MatchCase           = 1;
+    Trim                = 1;
+    MultiLineHilit      = 1;
+    AutoHilitParen      = 1;
+
+    SaveFolds           = 2;      # save fold info at end of line
+    CommentStart        = ' /*';
+    CommentEnd          = '*/';
+}
+
+oinclude 'mym_sql.fte';

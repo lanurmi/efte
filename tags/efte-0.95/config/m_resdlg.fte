@@ -1,0 +1,33 @@
+# OS/2 and Win* resource file (.RC)
+
+colorize RESOURCE {
+    SyntaxParser = 'C';
+    
+    color {
+        { 'Normal',        'Editor_Default' },
+        { 'Number',        'Lang_DecimalNumber' },
+        { 'HexNumber',     'Lang_HexNumber' },
+        { 'Punctuation',   'Lang_Punctuation' },
+        { 'String',        'Lang_String' },
+        { 'Comment',       'Lang_Comment' },
+        { 'CPreprocessor', 'Lang_Preprocessor' },
+        { 'Function',      'Lang_Function' },
+        { 'Label',         'Lang_Label' },
+    };
+
+    # keywords need to be defined... for os2 and win*
+}
+
+mode RESOURCE: PLAIN {           # Resource file
+    FileNameRx          = /\.\c{RC}|{DLG}$/;
+    HilitOn             = 1;
+    Colorizer           = 'RESOURCE';
+    MultiLineHilit      = 1;
+    AutoHilitParen      = 1;
+    
+    SaveFolds           = 2;      # save fold info at end of line
+    CommentStart        = ' /*';
+    CommentEnd          = '*/';
+}
+
+oinclude 'mym_resdlg.fte';

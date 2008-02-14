@@ -1,0 +1,6 @@
+#!/bin/sh -e
+
+echo "   \`vfte' - editor for linux console /dev/vcsaXX - has SUID bit set!"
+echo "   however this is used only for opening console device...           "
+
+#DEBHELPER#

@@ -1,0 +1,24 @@
+# this file defines additional keybindings for SGML mode.
+# SGML_* macros are defined in ../m_sgml.fte
+# menus are defined in ../menu/m_sgml.fte
+# this file is included from ../ui.fte
+
+eventmap SGML {
+    key [C+E_0]         { SGML_Base }
+
+    key [C+E_C+B]       { SGML_BO }
+    key [C+E_C+I]       { SGML_IT }
+    key [C+E_C+P]       { SGML_PA }
+    key [C+E_C+S]       { SGML_SE }
+    key [C+E_C+C]       { SGML_CH }
+    key [C+E_C+R]       { SGML_REF }
+    key [C+E_C+X]       { SGML_EX }
+    key [C+E_x]         { SGML_EX }
+
+# character escapes
+
+    key [C+E_&]         { InsertString "&amp;"; }
+    key [C+E_<]         { InsertString "&lt;"; }
+    key [C+E_>]         { InsertString "&gt;"; }
+    key [C+E_@]         { InsertString "&copy;"; }
+}

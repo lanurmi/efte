@@ -1,0 +1,69 @@
+
+sub JAVA_Base {
+    MoveFileStart;
+    InsertString "package /* package name */;";
+    2:LineNew;
+    InsertString "import java.util.*;"; LineNew;
+    InsertString "import javax.swing.*;"; 2:LineNew;
+    InsertString "public class ";
+    InsertString $FileBaseName;
+    LineNew;
+    InsertString "{"; LineIndent;
+    2:LineNew;
+    InsertString "public ";
+    InsertString $FileBaseName;
+    InsertString "()"; LineIndent; LineNew;
+    InsertString "{"; LineIndent; 2:LineNew;
+    InsertString "}"; LineIndent; 2:LineNew;
+    InsertString "}"; LineIndent; LineNew;
+    MoveFileStart; 8:MoveRight;
+}
+
+colorize JAVA {
+    SyntaxParser        = 'C';
+    
+    color {
+        { 'Normal',        'Editor_Default' },
+        { 'Number',        'Lang_DecimalNumber' },
+        { 'HexNumber',     'Lang_HexNumber' },
+        { 'Punctuation',   'Lang_Punctuation' },
+        { 'String',        'Lang_String' },
+        { 'Comment',       'Lang_Comment' },
+        { 'CPreprocessor', 'Lang_Preprocessor' },
+        { 'Function',      'Lang_Function' },
+        { 'Label',         'Lang_Label' },
+    };
+    
+    keyword 'Editor_Keywords' {
+        'abstract',  'default',  'goto',       'null',      'synchronized',
+        'boolean',   'do',       'if',         'package',   'this',
+        'break',     'double',   'implements', 'private',   'threadsafe', 
+        'byte',      'else',     'import',     'protected', 'throw', 
+        'byvalue',   'extends',  'instanceof', 'public',    'transient',
+        'case',      'false',    'int',        'return',    'true',
+        'catch',     'final',    'interface',  'short',     'try',
+        'char',      'finally',  'long',       'static',    'void',
+        'class',     'float',    'native',     'super',     'while',
+        'const',     'for',      'new',        'switch',    'continue', 
+        'throws'
+    };
+}
+
+mode JAVA: SOURCE {      # JAVA Mode
+    FileNameRx          = /\.\c{JAVA}$/;
+    HilitOn             = 1;
+    Colorizer           = 'JAVA';
+    AutoIndent          = 1;
+    IndentMode          = 'C';
+    MatchCase           = 1;
+    Trim                = 1;
+    MultiLineHilit      = 1;
+    AutoHilitParen      = 1;
+    RoutineRegexp	= /^\s*\w[\w._]+{\s+[\w._]+}+[\w_]+\s*\([^;]*$/;
+
+    SaveFolds           = 2;      # save fold info at end of line
+    CommentStart        = ' /*';
+    CommentEnd          = '*/';
+}
+
+oinclude 'mym_java.fte';

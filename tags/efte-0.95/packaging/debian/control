@@ -1,0 +1,59 @@
+Source: fte
+Section: editors
+Priority: optional
+Maintainer: Zdenek Kabelac <kabi@debian.org>
+Standards-Version: 3.1.1.1
+Build-Depends: debhelper, perl5, xlibs-dev, libgpmg1-dev, libncurses5-dev, slang1-dev, patch,
+
+Package: fte
+Architecture: any
+Depends: ${shlibs:Depends}, fte-xwindow | fte-terminal | fte-console
+Conflicts: fte-console (<< 0.49.13-3), fte-cfgdocs (<< 0.49.13-3)
+Suggests: fte-docs, exuberant-ctags
+Description: Text editor for programmers - base package
+ Package contains files necessary to build configuration file
+ and some elementary documentation.
+ There is no editor in this package.
+ Please select some from the list of suggested binary packages.
+
+Package: fte-docs
+Architecture: any
+Depends: fte (= ${Source-Version})
+Replaces: fte-cfgdocs (<< 0.49.13-3)
+Description: HTML documentation and example of configuration.
+ Package constains documentation files for editor.
+
+Package: fte-xwindow
+Architecture: any
+Depends: ${shlibs:Depends}, fte (= ${Source-Version})
+Replaces: fte (<< 0.49.2-1)
+Description: Text editor for X Window System with I18N support. (for programmers)
+ Color syntax highlighting for many more languages.
+ Smart indentation for C, C++, Java, Perl.
+ Multiple file/window editing, Column blocks, configurable menus and
+ keyboard bindings, mouse support, undo/redo, regular expression search
+ and replace, folding, background compiler execution.
+ X Window System edition.
+
+Package: fte-console
+Architecture: any
+Depends: ${shlibs:Depends}, fte (= ${Source-Version})
+Conflicts: suidmanager (<< 0.50)
+Description: Text editor for console (no I18N support). (for programmers)
+ Color syntax highlighting for many more languages.
+ Smart indentation for C, C++, Java, Perl.
+ Multiple file/window editing, Column blocks, configurable menus and
+ keyboard bindings, mouse support, undo/redo, regular expression search
+ and replace, folding, background compiler execution.
+ Linux console edition.
+
+Package: fte-terminal
+Architecture: any
+Depends: ${shlibs:Depends}, fte (= ${Source-Version})
+Description: Text editor for terminals. (for programmers)
+ Color syntax highlighting for many more languages.
+ Smart indentation for C, C++, Java, Perl.
+ Multiple file/window editing, Column blocks, configurable menus and
+ keyboard bindings, mouse support, undo/redo, regular expression search
+ and replace, folding, background compiler execution.
+ Terminal (e.g.: xterm, vt100) edition.
