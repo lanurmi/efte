@@ -17,15 +17,19 @@ int EBuffer::Load() {
 int EBuffer::Reload() {
     int R = VToR(CP.Row), C = CP.Col;
 
-    if (LoadFrom(FileName) == 0)
+    if (LoadFrom(FileName) == 0) {
+        SetBranchCondition(0);
         return 0;
+    }
     SetNearPosR(C, R);
+    SetBranchCondition(1);
     return 1;
 }
 
 int EBuffer::Save() {
     if (BFI(this, BFI_ReadOnly)) {
         Msg(S_ERROR, "File is read-only.");
+        SetBranchCondition(0);
         return 0;
     }
     if (BFI(this, BFI_TrimOnSave))
@@ -58,6 +62,7 @@ int EBuffer::LoadFrom(const char *AFileName) {
             Msg(S_INFO, "New file %s.", AFileName);
         }
         Loaded = 1;
+        SetBranchCondition(0);
         return 0;
     }
     Loading = 1;
@@ -261,7 +266,7 @@ int EBuffer::LoadFrom(const char *AFileName) {
                         // Locate position of comment start - skip bookmarks and fold
                         if (BFI(this, BFI_SaveBookmarks) == 2 && pos - 10 >= 0 && LL[l]->Chars[pos-1] == 'b') {
                             char numbuf[5];
-                            int i;
+                            unsigned int i;
 
                             memcpy(numbuf, LL[l]->Chars + pos - 5, 4);
                             numbuf[4] = 0;
@@ -314,7 +319,8 @@ int EBuffer::LoadFrom(const char *AFileName) {
                     // Now get bookmarks
                     if (BFI(this, BFI_SaveBookmarks) == where && (pos + len_end + 10 <= LL[l]->Count) && memcmp(LL[l]->Chars + pos, "BOOK", 4) == 0) {
                         int error = 0;
-                        int i, col, startBook;
+                        unsigned int i, col;
+                        int startBook;
                         char numbuf[5], buf[256];
 
                         startBook = pos;
@@ -336,7 +342,7 @@ int EBuffer::LoadFrom(const char *AFileName) {
                                 error = 1;
                                 break;
                             }
-                            if (pos + i + 6 + len_end > LL[l]->Count || i == 0) {
+                            if (pos + i + 6 + len_end > (unsigned int)LL[l]->Count || i == 0) {
                                 error = 1;
                                 break;
                             }
@@ -354,7 +360,8 @@ int EBuffer::LoadFrom(const char *AFileName) {
                                     error = 1;
                                     break;
                                 }
-                                if (i != pos - startBook || LL[l]->Chars[pos + 5] != 'b') error = 1;
+                                if (i != (unsigned int) pos - startBook || LL[l]->Chars[pos + 5] != 'b')
+                                    error = 1;
                                 else pos += 6;
                                 break;
                             }
@@ -390,7 +397,10 @@ int EBuffer::LoadFrom(const char *AFileName) {
             }
         }
     }
-    if (SetPosR(0, 0) == 0) return 0;
+    if (SetPosR(0, 0) == 0) {
+        SetBranchCondition(0);
+        return 0;
+    }
     BFI(this, BFI_Undo) = SaveUndo;
     BFI(this, BFI_ReadOnly) = SaveReadOnly;
     if (stat(FileName, &FileStatus) == -1) {
@@ -411,6 +421,7 @@ int EBuffer::LoadFrom(const char *AFileName) {
     Loaded = 1;
     Draw(0, -1);
     Msg(S_INFO, "Loaded %s.", AFileName);
+    SetBranchCondition(1);
     return 1;
 fail:
     BFI(this, BFI_Undo) = SaveUndo;
@@ -419,6 +430,7 @@ fail:
     Loading = 0;
     Draw(0, -1);
     View->MView->Win->Choice(GPC_ERROR, "Error", 1, "O&K", "Error loading %s.", AFileName);
+    SetBranchCondition(0);
     return 0;
 }
 
@@ -449,24 +461,30 @@ int EBuffer::SaveTo(char *AFileName) {
                                              2,
                                              "&Save",
                                              "&Cancel",
-                                             "%s", FileName)) {
+                                             "%s", FileName))
+            {
             case 0:
                 break;
             case 1:
             case -1:
             default:
+                SetBranchCondition(0);
                 return 0;
             }
         }
     }
 
-    if (RCount <= 0) return 0;
+    if (RCount <= 0) {
+        SetBranchCondition(0);
+        return 0;
+    }
 
     // make only backups when user have requested a one
     if (BFI(this, BFI_MakeBackups) != 0) {
         Msg(S_INFO, "Backing up %s...", AFileName);
         if (MakeBackup(AFileName, (char *)ABackupName) == 0) {
             View->MView->Win->Choice(GPC_ERROR, "Error", 1, "O&K", "Could not create backup file.");
+            SetBranchCondition(0);
             return 0;
         }
     }
@@ -587,6 +605,7 @@ int EBuffer::SaveTo(char *AFileName) {
             unlink(ABackupName);
         }
     }
+    SetBranchCondition(1);
     return 1;
 fail:
     fclose(fp);
@@ -596,8 +615,10 @@ fail:
     } else {
         View->MView->Win->Choice(GPC_ERROR, "Error", 1, "O&K", "Error writing file, backup restored.");
     }
+    SetBranchCondition(0);
     return 0;
 erroropen:
     View->MView->Win->Choice(GPC_ERROR, "Error", 1, "O&K", "Error writing %s (errno=%d).", AFileName, errno);
+    SetBranchCondition(0);
     return 0;
 }
