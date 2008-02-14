@@ -2,10 +2,10 @@ Summary: eFTE Text Editor
 Name: efte
 Version: 0.95
 Release: 1
-License: GPL, Artistic
+License: GPLv2+, Artistic
 Group: Applications/Editors
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
-Source: %{name}-%{version}.tar.gz
+Source: http://downloads.sourceforge.net/efte/%{name}-%{version}.tar.gz
 Requires: gpm
 Requires: ncurses
 Requires: libX11
