@@ -15,10 +15,10 @@ if [[ -d ${BASEPACKNAME} ]] ; then
   echo "ctrl-C aborts, enter continues..."
   read
   mv "$BASEPACKNAME"  "${BASEPACKNAME}.$(date +%s)"
-  rm -f "$BASEPACKNAME".tar.gz "$BASEPACKNAME".tar.bz2 "$BASEPACKNAME".zip
+  rm -f "$BASEPACKNAME.tar.gz" "$BASEPACKNAME.tar.bz2" "$BASEPACKNAME.zip"
 fi
 
-svn co http://efte.svn.sourceforge.net/svnroot/efte/tags/${VERSION} ${BASEPACKNAME} &&
+svn co http://$NAME.svn.sourceforge.net/svnroot/$NAME/tags/${BASEPACKNAME} ${BASEPACKNAME} &&
 find "$BASEPACKNAME" -type d -name .svn | while read DIR ; do rm -r "$DIR" ; done
 
 tar czf ${BASEPACKNAME}.tar.gz ${BASEPACKNAME}
