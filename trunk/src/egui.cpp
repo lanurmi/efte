@@ -208,7 +208,7 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
 
         case ExExit:             // works now as exit: early terminate a macro
             i = m->Count;
-            fprintf(stderr,"macro exit at i=%d\n",i);
+            fprintf(stderr,"macro exit at i=%d\n",i-1);
             LOG << "macro exit" << ENDLINE;
             break;
 
@@ -216,7 +216,7 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
             fprintf(stderr,"tos=%d, nos=%d, 3rd=%d -- ",ParamStack.peek(0),ParamStack.peek(1),ParamStack.peek(2));
             fprintf(stderr,"branch at %d",i);
             i += m->cmds[i].repeat;
-            fprintf(stderr," to %d\n",i);
+            fprintf(stderr," to %d\n",i+1);
             LOG << "branch to " << i+1 << ENDLINE;
             break;
 
