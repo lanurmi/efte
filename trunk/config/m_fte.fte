@@ -91,6 +91,7 @@ colorize FTE {
         'ViewMessages', 'ViewModeMap', 'WinClose', 'WinHSplit', 'WinNext',
         'WinPrev', 'WinRefresh', 'WinResize', 'WinZoom', 'WrapPara'
     };
+
     keyword 'Editor_Keywords3' {
         'Abbreviations', 'AddCR', 'AddLF', 'AutoHilitParen', 'AutoIndent',
         'BackSpKillBlock', 'BackSpKillTab', 'BackSpUnindents', 'BackupDirectory',
@@ -120,6 +121,13 @@ colorize FTE {
         'TabSize', 'Trim', 'TrimOnSave',
         'UndoLimit', 'UndoMoves', 'WeirdScroll', 'WordChars', 'WordWrap',
         'XShellCommand'
+    }
+    ;
+    keyword 'Editor_Keywords4' {
+        'If', 'Else', 'EndIf',
+        'Begin', 'Until', 'Again', 'While', 'Repeat',
+        'Exit', 'Leave',
+        'For', 'Next', 'Do', 'Loop'
     };
 }
 
