@@ -2,30 +2,37 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
-DESCRIPTION="eFTE is a fast text editor supporting folding, syntax highlighting and much more..."
+DESCRIPTION="A fast text editor supporting folding, syntax highlighting, etc."
 HOMEPAGE="http://efte.sourceforge.net"
-SRC_URI="http://downloads.sourceforge.net/efte/${PF}.tar.gz"
-SLOT="0"
+SRC_URI="http://downloads.sourceforge.net/${PN}/${P}.tar.gz"
+
 LICENSE="GPL-2"
+SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE="gpm X"
 
 RDEPEND="sys-libs/ncurses
-	gpm? ( sys-libs/gpm )
-	X? ( x11-base/xorg-x11 )
-	X? ( x11-libs/libXpm )"
+    gpm? ( sys-libs/gpm )
+    X? ( x11-base/xorg-x11
+        x11-libs/libXpm )"
 DEPEND="${RDEPEND}
-	dev-util/cmake"
+    dev-util/cmake"
 
 src_compile() {
-	FLAGS="-DCMAKE_INSTALL_PREFIX=/usr"
-	if ! use gpm ; then FLAGS="-DBUILD_GPM=OFF $FLAGS" ; fi
-	if ! use X ; then FLAGS="-DBUILD_X=OFF $FLAGS" ; fi
-	cmake -DCMAKE_BUILD_TYPE=Release $FLAGS .
-	emake || die "Error while make process"
+    cmake \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_INSTALL_PREFIX=/usr \
+        -DBUILD_GPM=$(use gpm && echo ON || echo OFF) \
+        -DBUILD_X=$(use X && echo ON || echo OFF) \
+        ./
+    emake || die "emake failed"
+
+    # Compile a default configuration file.
+    src/cefte config/mymain.fte system.fterc
 }
 
 src_install() {
-	DESTDIR=${WORKDIR}
-	emake install DESTDIR="${D}" || die "Error while installation"
+    emake DESTDIR="${D}" install || die "emake install failed"
+    insinto /usr/share/efte
+    doins system.fterc
 }
