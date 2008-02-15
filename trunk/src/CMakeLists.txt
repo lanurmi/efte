@@ -196,7 +196,7 @@ IF( UNIX )
 
     INCLUDE(FindCurses)
     IF( CURSES_LIBRARY )
-      MESSAGE( STATUS "Curses found on system, nefte and vefte will be built" )
+      MESSAGE( STATUS "Curses found on system, nefte will be built" )
 
       ADD_EXECUTABLE( nefte ${BASE_FTE_SOURCES} ${UNIX_SOURCES} ${NFTE_SOURCES} )
       TARGET_LINK_LIBRARIES( nefte ${CURSES_LIBRARY} ${GPM_LIBRARY} ${SYSTEM_LIBS} )
