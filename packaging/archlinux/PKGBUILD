@@ -3,7 +3,7 @@ pkgname=efte
 pkgver=0.95
 pkgrel=1
 pkgdesc="Configurable programmers editor"
-license=('GPL', 'Artistic')
+license=('GPL', 'custom')
 url="http://efte.sourceforge.net"
 source=(http://downloads.sourceforge.net/sourceforge/$pkgname/$pkgname-$pkgver.tar.gz)
 md5sums=('20c5ca30ed1990f473581e6cafda6a4b')
@@ -15,6 +15,10 @@ build() {
     -DCMAKE_INSTALL_PREFIX=/usr . || return 1
   make || return 1
   make DESTDIR=$startdir/pkg install || return 1
+
+  mkdir -p $startdir/pkg/usr/share/licenses/efte || return 1
+  cp Artistic $startdir/pkg/usr/share/licenses/efte || return 1
+
   cd $startdir/pkg/usr/share/efte
   ../../bin/cefte config/mymain.fte system.fterc || return 1
 }
