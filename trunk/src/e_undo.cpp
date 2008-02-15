@@ -146,14 +146,14 @@ int EBuffer::GetUData(int No, int pos, void **data, int len) {
 }
 
 #define UGETC(rc,no,pos,what) \
-    do { void *d; \
+    do { void *d=0; \
     rc = GetUData(no, pos, &d, sizeof(unsigned char)); \
     *(unsigned char *)&what = *(unsigned char *)d; \
     pos -= sizeof(unsigned char); \
     } while (0)
 
 #define UGET(rc,no,pos,what) \
-    do { void *d; \
+    do { void *d=0; \
     rc = GetUData(no, pos, &d, sizeof(what)); \
     memcpy((void *)&what, d, sizeof(what)); \
     pos -= sizeof(what); \

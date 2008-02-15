@@ -95,7 +95,7 @@ int LoadDesktop(char *FileName) {
                     FLCount++;
                 suspendLoads  = 0;
             } else if (line[0] == 'D') { // directory
-                EModel *m = new EDirectory(0, &ActiveModel, p);
+                new EDirectory(0, &ActiveModel, p);
                 assert(ActiveModel != 0 && m != 0);
             }
 

@@ -444,7 +444,7 @@ int EGUI::FileCloseX(EView *View, int CreateNew, int XClose) {
 
         if (ActiveModel == 0 && CreateNew) {
             EView *V = ActiveView;
-            EModel *m = new EDirectory(0, &ActiveModel, Path);
+            new EDirectory(0, &ActiveModel, Path);
             assert(m != 0);
 
             do {
@@ -925,7 +925,7 @@ int EGUI::CmdLoadFiles(int &argc, char **argv) {
 
             QuoteNext = 0;
             if (ExpandPath(argv[Arg], Path, sizeof(Path)) == 0 && IsDirectory(Path)) {
-                EModel *m = new EDirectory(cfAppend, &ActiveModel, Path);
+                new EDirectory(cfAppend, &ActiveModel, Path);
                 assert(ActiveModel != 0 && m != 0);
             } else {
                 if (LCount != 0)
@@ -995,7 +995,7 @@ int EGUI::Start(int &argc, char **argv) {
         char Path[MAXPATH];
 
         GetDefaultDirectory(0, Path, sizeof(Path));
-        EModel *m = new EDirectory(0, &ActiveModel, Path);
+        new EDirectory(0, &ActiveModel, Path);
         assert(ActiveModel != 0 && m != 0);
         ActiveView->SwitchToModel(ActiveModel);
     }
