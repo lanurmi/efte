@@ -23,8 +23,8 @@ int Hilit_SIMPLE(EBuffer *BF, int LN, PCell B, int Pos, int Width, ELine *Line, 
     int nextState;
     char *match;
     int lastPos = -1;
-    hlState entryState;
-    int iterCount;
+    hlState entryState = 0;
+    int iterCount = 0;
     bool reportError = true;
 
     if (hm == 0 || hm->stateCount == 0)
