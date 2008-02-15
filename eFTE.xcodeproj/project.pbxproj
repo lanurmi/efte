@@ -57,7 +57,6 @@
 		532F6B310D30192E00C0ED59 /* h_ada.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 532F6A160D30192C00C0ED59 /* h_ada.cpp */; };
 		532F6B330D30192E00C0ED59 /* h_c.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 532F6A180D30192C00C0ED59 /* h_c.cpp */; };
 		532F6B350D30192E00C0ED59 /* h_catbs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 532F6A1A0D30192C00C0ED59 /* h_catbs.cpp */; };
-		532F6B370D30192E00C0ED59 /* h_fte.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 532F6A1C0D30192C00C0ED59 /* h_fte.cpp */; };
 		532F6B390D30192E00C0ED59 /* h_ipf.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 532F6A1E0D30192C00C0ED59 /* h_ipf.cpp */; };
 		532F6B3B0D30192E00C0ED59 /* h_make.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 532F6A200D30192C00C0ED59 /* h_make.cpp */; };
 		532F6B3D0D30192E00C0ED59 /* h_msg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 532F6A220D30192C00C0ED59 /* h_msg.cpp */; };
@@ -186,7 +185,6 @@
 		532F69EA0D30192C00C0ED59 /* e_unix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = e_unix.cpp; sourceTree = "<group>"; };
 		532F69ED0D30192C00C0ED59 /* egui.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = egui.cpp; sourceTree = "<group>"; };
 		532F69EE0D30192C00C0ED59 /* egui.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = egui.h; sourceTree = "<group>"; };
-		532F69F00D30192C00C0ED59 /* feature.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = feature.h; sourceTree = "<group>"; };
 		532F69F10D30192C00C0ED59 /* fnmatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fnmatch.h; sourceTree = "<group>"; };
 		532F69FD0D30192C00C0ED59 /* fte.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fte.cpp; sourceTree = "<group>"; };
 		532F69FF0D30192C00C0ED59 /* fte.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fte.h; sourceTree = "<group>"; };
@@ -200,7 +198,6 @@
 		532F6A160D30192C00C0ED59 /* h_ada.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = h_ada.cpp; sourceTree = "<group>"; };
 		532F6A180D30192C00C0ED59 /* h_c.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = h_c.cpp; sourceTree = "<group>"; };
 		532F6A1A0D30192C00C0ED59 /* h_catbs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = h_catbs.cpp; sourceTree = "<group>"; };
-		532F6A1C0D30192C00C0ED59 /* h_fte.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = h_fte.cpp; sourceTree = "<group>"; };
 		532F6A1E0D30192C00C0ED59 /* h_ipf.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = h_ipf.cpp; sourceTree = "<group>"; };
 		532F6A200D30192C00C0ED59 /* h_make.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = h_make.cpp; sourceTree = "<group>"; };
 		532F6A220D30192C00C0ED59 /* h_msg.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = h_msg.cpp; sourceTree = "<group>"; };
@@ -440,7 +437,6 @@
 				532F69EA0D30192C00C0ED59 /* e_unix.cpp */,
 				532F69ED0D30192C00C0ED59 /* egui.cpp */,
 				532F69EE0D30192C00C0ED59 /* egui.h */,
-				532F69F00D30192C00C0ED59 /* feature.h */,
 				532F69F10D30192C00C0ED59 /* fnmatch.h */,
 				532F69FD0D30192C00C0ED59 /* fte.cpp */,
 				532F69FF0D30192C00C0ED59 /* fte.h */,
@@ -455,7 +451,6 @@
 				532F6A180D30192C00C0ED59 /* h_c.cpp */,
 				532F6A1A0D30192C00C0ED59 /* h_catbs.cpp */,
 				53E0CFE50D452D00006F8FBB /* h_falcon.cpp */,
-				532F6A1C0D30192C00C0ED59 /* h_fte.cpp */,
 				532F6A1E0D30192C00C0ED59 /* h_ipf.cpp */,
 				532F6A200D30192C00C0ED59 /* h_make.cpp */,
 				532F6A220D30192C00C0ED59 /* h_msg.cpp */,
@@ -692,7 +687,6 @@
 				532F6B310D30192E00C0ED59 /* h_ada.cpp in Sources */,
 				532F6B330D30192E00C0ED59 /* h_c.cpp in Sources */,
 				532F6B350D30192E00C0ED59 /* h_catbs.cpp in Sources */,
-				532F6B370D30192E00C0ED59 /* h_fte.cpp in Sources */,
 				532F6B390D30192E00C0ED59 /* h_ipf.cpp in Sources */,
 				532F6B3B0D30192E00C0ED59 /* h_make.cpp in Sources */,
 				532F6B3D0D30192E00C0ED59 /* h_msg.cpp in Sources */,
