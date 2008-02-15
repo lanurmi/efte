@@ -1,0 +1,122 @@
+# eXPErimental C syntax parser
+# does everything that internal does except function( and label:
+# 
+
+colorize XPE {
+    SyntaxParser = 'SIMPLE';
+    
+    color {
+        { 'Normal',        'Editor_Default' },
+        { 'Keyword',       'Editor_Keywords' },
+        { 'Number',        'Lang_Number' },
+        { 'HexNumber',     'Lang_HexNumber' },
+        { 'OctalNumber',   'Lang_OctalNumber' },
+        { 'Punctuation',   'Lang_Punctuation' },
+        { 'String',        'Lang_String' },
+        { 'Comment',       'Lang_Comment' },
+        { 'CPreprocessor', 'Lang_Preprocessor' },
+        { 'Function',      'Lang_Function' },
+        { 'Label',         'Lang_Label' },
+    };
+
+    h_state 0 { 'Normal' }
+    h_trans { 13, '-s', 'a-zA-Z_', 'Normal' }
+    h_trans { 1, '', '/*', 'Comment' }
+    h_trans { 2, '', '//', 'Comment' }
+    h_trans { 3, '^', '#', 'CPreprocessor' }
+    h_trans { 4, '', '"', 'String' }
+    h_trans { 5, '', '\'', 'String' }
+    h_trans { 10, '', '0x', 'HexNumber' }
+    h_trans { 11, '', '0', 'OctalNumber' }
+    h_trans { 12, 's', '0-9', 'Number' }
+    h_trans { 0, 'S', '_a-zA-Z0-9', 'Punctuation' }
+
+    h_state 1 { 'Comment' }
+    h_trans { 0, '', '*/', 'Comment' }
+
+    h_state 2 { 'Comment' }
+    h_trans { 0, '$', '', 'Comment' }
+
+    h_state 3 { 'CPreprocessor' }
+    h_trans { 17, '-s', 'a-zA-Z_', 'Normal' }
+    h_trans { 0, '$', '', 'CPreprocessor' }
+    h_trans { 3, 'qQ', '\\', 'CPreprocessor' }
+    h_trans { 8, '', '/*', 'Comment' }
+    h_trans { 9, '', '//', 'Comment' }
+    h_trans { 6, '', '"', 'String' }
+    h_trans { 7, '', '\'', 'String' }
+    h_trans { 14, '', '0x', 'HexNumber' }
+    h_trans { 15, '', '0', 'OctalNumber' }
+    h_trans { 16, 's', '0-9', 'Number' }
+
+    h_state 4 { 'String' }
+    h_trans { 0, '', '"', 'String' }
+    h_trans { 0, '$', '', 'String' }
+    h_trans { 4, 'Qq', '\\', 'String' }
+
+    h_state 5 { 'String' }
+    h_trans { 0, '', '\'', 'String' }
+    h_trans { 0, '$', '', 'String' }
+    h_trans { 5, 'Qq', '\\', 'String' }
+
+    h_state 6 { 'String' }
+    h_trans { 3, '', '"', 'String' }
+    h_trans { 3, '$', '', 'String' }
+    h_trans { 6, 'Qq', '\\', 'String' }
+
+    h_state 7 { 'String' }
+    h_trans { 3, '', '\'', 'String' }
+    h_trans { 3, '$', '', 'String' }
+    h_trans { 7, 'qQ', '\\', 'String' }
+
+    h_state 8 { 'Comment' }
+    h_trans { 3, '', '*/', 'Comment' }
+
+    h_state 9 { 'Comment' }
+    h_trans { 0, '$', '', 'Comment' }
+
+    h_state 10 { 'HexNumber' }
+    h_trans { 0, '-S', '0-9A-Fa-f', 'Normal' }
+    h_trans { 0, '$', '', 'Normal' }
+
+    h_state 11 { 'OctalNumber' }
+    h_trans { 0, '-S', '0-7', 'Normal' }
+    h_trans { 0, '$', '', 'Normal' }
+
+    h_state 12 { 'Number' }
+    h_trans { 0, '-S', '0-9', 'Normal' }
+    h_trans { 0, '$', '', 'Normal' }
+
+    h_state 13 { 'Normal' }
+    h_trans { 0, '-S', 'a-zA-Z0-9_', 'Punctuation' }
+    h_trans { 0, '$', '', 'Normal' }
+
+    h_state 14 { 'HexNumber' }
+    h_trans { 3, '-S', '0-9A-Fa-f', 'Normal' }
+    h_trans { 3, '$', '', 'Normal' }
+
+    h_state 15 { 'OctalNumber' }
+    h_trans { 3, '-S', '0-7', 'Normal' }
+    h_trans { 3, '$', '', 'Normal' }
+
+    h_state 16 { 'Number' }
+    h_trans { 3, '-S', '0-9', 'Normal' }
+    h_trans { 3, '$', '', 'Normal' }
+
+    h_state 17 { 'CPreprocessor' }
+    h_trans { 3, '-S', 'a-zA-Z0-9_', 'Punctuation' }
+    h_trans { 3, '$', '', 'Normal' }
+}
+
+mode XPE: SOURCE {
+    FileNameRx          = /\.\cXPE$/;
+    HilitOn             = 1;
+    Colorizer           = 'XPE';
+    AutoHilitParen      = 1;
+    
+    SaveFolds           = 2;      # save fold info at end of line
+    CommentStart        = ' /*';
+    CommentEnd          = '*/';
+}
+
+oinclude 'mym_xp.fte';

@@ -1,0 +1,20 @@
+# for viewing nroff output (do NOT use for editing).
+
+colorize CATBS {
+    SyntaxParser        = 'CATBS';
+    
+    color {
+        { 'Normal',      'Editor_Default' },
+        { 'Keyword',     'Editor_Keywords' },
+        { 'Symbol',      'Editor_Bold' },
+    };
+}
+
+mode CATBS: PLAIN {
+    FileNameRx          = /\.\c{MAN}|{CAT}$/;   # == never
+    HilitOn             = 1;
+    Colorizer           = 'CATBS';
+    ReadOnly            = 1; # this mode cannot edit properly
+}
+
+oinclude 'mym_catbs.fte';

@@ -1,0 +1,18 @@
+object GLOBAL {
+  RGBColor = '0:00,00,00';
+  RGBColor = '1:00,24,54';
+  RGBColor = '2:04,7c,34';
+  RGBColor = '3:00,7c,9c';
+  RGBColor = '4:98,00,00';
+  RGBColor = '5:00,a8,fc';
+  RGBColor = '6:88,88,00';
+  RGBColor = '7:a8,a8,a8';
+  RGBColor = '8:40,40,40';
+  RGBColor = '9:54,7c,ac';
+  RGBColor = 'a:54,f4,90';
+  RGBColor = 'b:54,e0,fc';
+  RGBColor = 'c:fc,68,54';
+  RGBColor = 'd:fc,84,b0';
+  RGBColor = 'e:fc,fc,54';
+  RGBColor = 'f:fc,fc,e4';
+}
