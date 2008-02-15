@@ -12,7 +12,7 @@ BASEPACKNAME=${NAME}-${VERSION}
 if [[ -d ${BASEPACKNAME} ]] ; then
   echo "Destination already exists. Previous packages with the same version number"
   echo "will be removed and existing destination will be renamed."
-  echo "ctrl-C aborts, enter continues..."
+  echo "CTRL-C to abort, ENTER to continue..."
   read
   mv "$BASEPACKNAME"  "${BASEPACKNAME}.$(date +%s)"
   rm -f "$BASEPACKNAME.tar.gz" "$BASEPACKNAME.tar.bz2" "$BASEPACKNAME.zip"
@@ -24,3 +24,9 @@ find "$BASEPACKNAME" -type d -name .svn | while read DIR ; do rm -r "$DIR" ; don
 tar czf ${BASEPACKNAME}.tar.gz ${BASEPACKNAME}
 tar cjf ${BASEPACKNAME}.tar.bz2 ${BASEPACKNAME}
 zip -r ${BASEPACKNAME}.zip ${BASEPACKNAME}
+
+echo ""
+echo "Upload to SourceForge? CTRL-C to abort, ENTER to continue..."
+read
+ncftpput upload.sourceforge.net /incoming \
+  ${BASEPACKNAME}.tar.bz2 ${BASEPACKNAME}.tar.gz ${BASEPACKNAME}.zip
