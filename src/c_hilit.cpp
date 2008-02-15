@@ -27,7 +27,6 @@ static const struct {
     { "SH", HILIT_SH, Hilit_SH },
     { "PASCAL", HILIT_PASCAL, Hilit_PASCAL },
     { "TEX", HILIT_TEX, Hilit_TEX },
-    { "FTE", HILIT_FTE, Hilit_FTE },
     { "CATBS", HILIT_CATBS, Hilit_CATBS },
     { "SIMPLE", HILIT_SIMPLE, Hilit_SIMPLE },
 };

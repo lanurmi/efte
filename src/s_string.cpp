@@ -69,3 +69,28 @@ size_t strlcat(char *dst, const char *src, size_t size) {
     return dst_len + src_len;
 }
 #endif // !HAVE_STRLCAT
+
+#if !defined(HAVE_STRICMP)
+int stricmp(const char *a, const char *b) {
+    if (a != NULL && b == NULL) return  1;
+    if (a == NULL && b != NULL) return -1;
+    if (a == NULL && b == NULL) return  0;
+
+    int aLen = strlen(a);
+    int bLen = strlen(b);
+
+    int minLen = aLen < bLen ? aLen : bLen;
+
+    for (int idx=0; idx < minLen; idx++) {
+        char aC = toupper(a[idx]);
+        char bC = toupper(b[idx]);
+
+        if (aC > bC)      return  1;
+        else if (aC < bC) return -1;
+    }
+
+    if (aLen < bLen)      return -1;
+    else if (aLen > bLen) return  1;
+    else                  return  0;
+}
+#endif // !HAVE_STRICMP

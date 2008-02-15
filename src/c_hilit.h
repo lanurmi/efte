@@ -46,7 +46,6 @@ HILIT_P(Hilit_MSG);
 HILIT_P(Hilit_SH);
 HILIT_P(Hilit_PASCAL);
 HILIT_P(Hilit_TEX);
-HILIT_P(Hilit_FTE);
 HILIT_P(Hilit_CATBS);
 HILIT_P(Hilit_SIMPLE);
 
