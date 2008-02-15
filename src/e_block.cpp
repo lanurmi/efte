@@ -653,8 +653,14 @@ int EBuffer::BlockWriteTo(const char *AFileName, int Append) {
     int bc = 0, lc = 0, oldc = 0;
 
     AutoExtend = 0;
-    if (CheckBlock() == 0) return 0;
-    if (RCount == 0) return 0;
+    if (CheckBlock() == 0) {
+        SetBranchCondition(0);
+        return 0;
+    }
+    if (RCount == 0) {
+        SetBranchCondition(0);
+        return 0;
+    }
     B = BB;
     E = BE;
     Msg(S_INFO, "Writing %s...", AFileName);
@@ -724,6 +730,7 @@ int EBuffer::BlockWriteTo(const char *AFileName, int Append) {
     }
     fclose(fp);
     Msg(S_INFO, "Wrote %s, %d lines, %d bytes.", AFileName, lc, bc);
+    SetBranchCondition(1);
     return 1;
 error:
     if (fp != NULL) {
@@ -731,6 +738,7 @@ error:
         unlink(AFileName);
     }
     View->MView->Win->Choice(GPC_ERROR, "Error", 1, "O&K", "Failed to write block to %s", AFileName);
+    SetBranchCondition(0);
     return 0;
 }
 

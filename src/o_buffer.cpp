@@ -1312,14 +1312,19 @@ int EBuffer::BlockWrite(ExState &State) {
     char FName[MAXPATH];
     int Append = 0;
 
-    if (JustDirectory(FileName, FName, sizeof(FName)) == -1) return 0;
+    if (JustDirectory(FileName, FName, sizeof(FName)) == -1) {
+        SetBranchCondition(0);
+        return 0;
+    }
     SlashDir(FName);
     if (State.GetStrParam(View, FName, sizeof(FName)) == 0)
-        if (View->MView->Win->GetFile("Write block", sizeof(FName), FName, HIST_PATH, GF_SAVEAS) == 0)
+        if (View->MView->Win->GetFile("Write block", sizeof(FName), FName, HIST_PATH, GF_SAVEAS) == 0) {
+            SetBranchCondition(0);
             return 0;
-
+        }
     if (ExpandPath(FName, Name, sizeof(Name)) == -1) {
         View->MView->Win->Choice(GPC_ERROR, "Error", 1, "O&K", "Invalid path: %s.", FName);
+        SetBranchCondition(0);
         return 0;
     }
     if (FindFile(Name) == 0) {
@@ -1339,12 +1344,14 @@ int EBuffer::BlockWrite(ExState &State) {
             case 2:
             case -1:
             default:
+                SetBranchCondition(0);
                 return 0;
 
             }
         }
     } else {
         View->MView->Win->Choice(GPC_ERROR, "Error", 1, "O&K", "Already editing '%s.'", Name);
+        SetBranchCondition(0);
         return 0;
     }
     return BlockWriteTo(Name, Append);
