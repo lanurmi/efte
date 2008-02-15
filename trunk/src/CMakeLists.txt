@@ -237,7 +237,7 @@ IF( USE_DEFAULT_CONFIG )
   # Builds our default config
   ADD_CUSTOM_COMMAND(
     OUTPUT defcfg.cnf
-    COMMAND ${CEFTE_EXE} ${CMAKE_CURRENT_SOURCE_DIR}/defcfg.fte ${CMAKE_CURRENT_SOURCE_DIR}/defcfg.cnf
+    COMMAND ${CEFTE_EXE} -q ${CMAKE_CURRENT_SOURCE_DIR}/defcfg.fte ${CMAKE_CURRENT_SOURCE_DIR}/defcfg.cnf
     DEPENDS cefte )
 
   # Convert our default config to ain includable .h
