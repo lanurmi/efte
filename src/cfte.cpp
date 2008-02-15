@@ -31,6 +31,7 @@
 
 #define slen(s) ((s) ? (strlen(s) + 1) : 0)
 #define CACHE_SIZE 100000
+#define ACTION "[%-11s] "
 
 Stack CondStack;
 
@@ -60,6 +61,7 @@ static long pos = 0;
 static char XTarget[MAXPATH] = "";
 static char StartDir[MAXPATH] = "";
 static bool preprocess_only = false;
+static int verbosity = 0;
 
 #include "c_commands.h"
 #include "c_cmdtab.h"
@@ -133,13 +135,13 @@ static void PutObject(CurPos &cp, int xtag, int xlen, void *obj) {
         }
         cpos++;
 
-        if (cpos >= CACHE_SIZE) {
+        if (cpos >= CACHE_SIZE)
             Fail(cp, "Cache exceeded");
-        }
     }
     pos += 1 + 2 + len;
     if (offset != -1 && pos >= offset) {
-        Fail(cp, "Error location found at %ld", pos);
+        Fail(cp, "specified offset location found:\n"
+             "    line: %i, file position: %ld", cp.line, pos);
     }
 }
 
@@ -162,6 +164,42 @@ static void PutNumber(CurPos &cp, int xtag, long num) {
     PutObject(cp, xtag, 4, b);
 }
 
+static void AppBanner() {
+    if (verbosity >= 0)
+        fprintf(stderr, PROG_CFTE " " VERSION "\n" COPYRIGHT "\n");
+}
+
+static void Usage() {
+    fprintf(stderr, "\nUsage: " PROG_CFTE " [FLAGS] INPUT-FILE [OUTPUT-FILE]\n"
+            "\n"
+            "Flags:\n"
+            "\n"
+            "  -h,-?,-help     this help screen\n"
+            "  -v              verbose (can be used multiple times to\n"
+            "                    increase verbosity)\n"
+            "  -q              quiet (display no output except on error)\n"
+            "  -dWORD          defined a preprocessor word\n"
+            "  -oOFFSET        display config file location for offset\n"
+            "  -p,-preprocess  run the preprocessor only\n"
+            "\n"
+            "Further help:\n"
+            "\n"
+            " INPUT-FILE is usually mymain.fte, however, you are free to\n"
+            " create whatever main file you wish. Other examples may be\n"
+            " system.fte, system-main.fte, etc...\n"
+            "\n"
+            " OUTPUT-FILE defaults to efte-new.cnf, if not specified\n"
+            "\n"
+            " -oOFFSET is used for debugging. When eFTE encounters an\n"
+            " error while loading the configuration file it will report\n"
+            " an error offset. Supplying that offset to cefte will then\n"
+            " report where that compiled offset actually occurs in the\n"
+            " text based configuration files.\n"
+            "\n"
+           );
+    exit(1);
+}
+
 int main(int argc, char **argv) {
     char Source[MAXPATH];
     char Target[MAXPATH];
@@ -169,14 +207,9 @@ int main(int argc, char **argv) {
     unsigned long l;
     int n = 0;
 
-    fprintf(stderr, PROG_CFTE " " VERSION "\n" COPYRIGHT "\n");
     if (argc < 2 || argc > 5) {
-        fprintf(stderr, "Usage: " PROG_CFTE " [-o<offset>] [-p[reprocess]] [-dWORD] "
-#ifndef UNIX
-                "config/"
-#endif
-                "mymain.fte [efte-new.cnf]\n");
-        exit(1);
+        AppBanner();
+        Usage();
     }
 
     DefineWord("OS_"
@@ -198,7 +231,17 @@ int main(int argc, char **argv) {
     // parse arguments
     for (int i = 1; i < argc; i++) {
         if (argv[i][0] == '-') {
-            if (strncmp(argv[i], "-d", 2) == 0) {
+            if (strcmp(argv[i], "-v") == 0) {
+                verbosity++;
+            } else if (strcmp(argv[i], "-q") == 0) {
+                verbosity--;
+            } else if (strcmp(argv[i], "-h") == 0 ||
+                       strcmp(argv[i], "-?") == 0 ||
+                       strcmp(argv[i], "-help") == 0)
+            {
+                AppBanner();
+                Usage();
+            } else if (strncmp(argv[i], "-d", 2) == 0) {
                 char *p;
 
                 p = argv[i];
@@ -213,8 +256,9 @@ int main(int argc, char **argv) {
                 p += 2;
                 offset = atol(p);
             } else {
+                AppBanner();
                 fprintf(stderr, "Invalid option '%s'\n", argv[i]);
-                exit(1);
+                Usage();
             }
         } else {
             switch (n) {
@@ -227,16 +271,20 @@ int main(int argc, char **argv) {
                 break;
 
             default:
+                AppBanner();
                 fprintf(stderr, "Invalid option '%s'\n", argv[i]);
-                exit(1);
+                Usage();
             }
             n++;
         }
     }
 
+    AppBanner();
+
     if (n == 0) {
+        AppBanner();
         fprintf(stderr, "No configuration file specified\n");
-        exit(1);
+        Usage();
     }
 
     JustDirectory(Target, XTarget, sizeof(XTarget));
@@ -270,7 +318,8 @@ int main(int argc, char **argv) {
         }
         pos = 2 * 4;
 
-        fprintf(stderr, "Compiling to '%s'\n", Target);
+        if (verbosity >= 0)
+            fprintf(stderr, "Compiling to '%s'\n", Target);
     } else {
         pos = 2 * 4;
     }
@@ -340,7 +389,8 @@ int main(int argc, char **argv) {
         exit(1);
     }
 
-    fprintf(stderr, "\nDone.\n");
+    if (verbosity >= 0)
+        fprintf(stderr, "\nDone.\n");
     return 0;
 }
 
@@ -677,6 +727,9 @@ static void DefineWord(const char *w) {
     if (!w || !w[0])
         return ;
     if (!DefinedWord(w)) {
+        if (verbosity > 0) {
+            fprintf(stderr, ACTION "%s\n", "define", w);
+        }
         words = (char **)realloc(words, sizeof(char *) * (wordCount + 1));
         assert(words != 0);
         words[wordCount] = strdup(w);
@@ -1933,6 +1986,8 @@ static int ParseConfigFile(CurPos &cp) {
                 if (Parse(cp) != P_STRING) Fail(cp, "String expected");
                 fn = GetString(cp);
 
+                if (verbosity > 0)
+                    fprintf(stderr, ACTION "%s... ", "include", fn);
                 if (LoadFile(cp.name, fn) != 0) Fail(cp, "Include of file '%s' failed", fn);
                 if (Parse(cp) != P_EOS) Fail(cp, "';' expected");
                 GetOp(cp, P_EOS);
@@ -1944,7 +1999,11 @@ static int ParseConfigFile(CurPos &cp) {
                 if (Parse(cp) != P_STRING) Fail(cp, "String expected");
                 fn = GetString(cp);
 
+                if (verbosity > 0)
+                    fprintf(stderr, ACTION "%s... ", "opt include", fn);
                 if (LoadFile(cp.name, fn, 1, 1) != 0) {
+                    if (verbosity > 0)
+                        fprintf(stderr, "not found\n");
                     GetOp(cp, P_EOS);
                     continue; // This is an optional include
                 }
@@ -2114,8 +2173,6 @@ static int LoadFile(const char *WhereName, const char *CfgName, int Level, int o
     char last[MAXPATH];
     char Cfg[MAXPATH];
 
-    //fprintf(stderr, "Loading file %s %s\n", WhereName, CfgName);
-
     JustDirectory(WhereName, last, sizeof(last));
 
     if (IsFullPath(CfgName)) {
@@ -2167,6 +2224,8 @@ static int LoadFile(const char *WhereName, const char *CfgName, int Level, int o
 #endif // UNIX
     }
     // puts(Cfg);
+    if (verbosity > 0)
+        fprintf(stderr, "found: %s\n", Cfg);
 
     //fprintf(stderr, "Loading file %s\n", Cfg);
     if ((fd = open(Cfg, O_RDONLY | O_BINARY)) == -1) {

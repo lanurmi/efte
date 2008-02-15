@@ -39,6 +39,8 @@ Revision history
     to inherit from SOURCE, MARKUP or PLAIN
   + ebuild added, contributed by Daniel Hiepler
   + efte.spec added for rpm distributions
+  + Added better help screen to cefte
+  + Added -v (verbose) and -q (quiet) flags to cefte
 
 0.50.1 -- January 17, 2008
   - Forked from FTE (http://fte.sourceforge.net)
