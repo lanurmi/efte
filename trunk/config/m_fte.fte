@@ -1,14 +1,14 @@
 colorize FTE {
-    SyntaxParser        = 'FTE';
+    SyntaxParser = 'SIMPLE';
 
     color {
-        { 'Normal',      'Editor_Default' },
-        { 'Number',      'Lang_DecimalNumber' },
-        { 'String',      'Lang_String' },
-        { 'Comment',     'Lang_Comment' },
-        { 'Regexp',      'Lang_Regexp' },
-        { 'Punctuation', 'Lang_Punctuation' },
-        { 'Command',     'Lang_Command' },
+        { 'Normal',        'Editor_Default' },
+        { 'Number',        'Lang_DecimalNumber' },
+        { 'String',        'Lang_String' },
+        { 'Comment',       'Lang_Comment' },
+        { 'Regexp',        'Lang_Regexp' },
+        { 'Punctuation',   'Lang_Punctuation' },
+        { 'Command',       'Lang_Command' },
         { 'CPreprocessor', 'Lang_Preprocessor' },
     };
 
@@ -119,16 +119,52 @@ colorize FTE {
         'ShowTabs', 'ShowToolBar', 'ShowVScroll', 'SpaceTabs', 'StripChar',
         'SvnCommand', 'SvnIgnoreRx','SyntaxParser', 'SysClipboard', 
         'TabSize', 'Trim', 'TrimOnSave',
-        'UndoLimit', 'UndoMoves', 'WeirdScroll', 'WordChars', 'WordWrap',
+        'UndoLimit', 'UndoMoves', 'WeirdScroll', 'WindowFont', 'WordChars', 'WordWrap',
         'XShellCommand'
-    }
-    ;
+    };
+
     keyword 'Editor_Keywords4' {
         'If', 'Else', 'EndIf',
         'Begin', 'Until', 'Again', 'While', 'Repeat',
         'Exit', 'Leave',
         'For', 'Next', 'Do', 'Loop'
     };
+
+    keyword 'Editor_Keywords5' {
+        '%define', '%if', '%endif'
+    };
+
+    h_state 0 { 'Normal' }
+    h_trans { 1, '', '#',    'Comment' }
+    h_trans { 2, '', '"',    'String' }
+    h_trans { 3, '', '\'',   'String' }
+    h_trans { 4, '', '/',    'String' }
+    h_trans { 5, 's', '0-9', 'Number' }
+    h_trans { 6, '', '[',    'Command' }
+    h_trans { 0, 'S', 'a-zA-Z0-9_%', 'Punctuation' }
+    h_wtype { 0, 0, 0, 'i', 'a-zA-Z0-9_%' }
+
+    h_state 1 { 'Comment' }
+    h_trans { 0, '$', '', 'Normal' }
+
+    h_state 2 { 'String' }
+    h_trans { 0, '', '"', 'String' }
+    h_trans { 2, 'Qq', '\\', 'String' }
+
+    h_state 3 { 'String' }
+    h_trans { 0, '', '\'', 'String' }
+    h_trans { 3, 'Qq', '\\', 'String' }
+
+    h_state 4 { 'String' }
+    h_trans { 0, '', '/', 'String' }
+    h_trans { 4, 'Qq', '\\', 'String' }
+
+    h_state 5 { 'Number' }
+    h_trans { 0, '-S', '0-9', 'Normal' }
+    h_trans { 0, '$', '', 'Normal' }
+
+    h_state 6 { 'Command' }
+    h_trans { 0, '', ']', 'Command' }
 }
 
 mode FTE: SOURCE {
@@ -136,6 +172,7 @@ mode FTE: SOURCE {
     HilitOn             = 1;
     Colorizer           = 'FTE';
     IndentMode          = 'C';
+    MatchCase           = 0;
     MultiLineHilit      = 1;
     AutoHilitParen      = 1;
 

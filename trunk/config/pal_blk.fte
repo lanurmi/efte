@@ -71,8 +71,8 @@ color_palette {
     { 'Editor_Keywords',              'white:bg' },
     { 'Editor_Keywords2',             'cyan:bg' },
     { 'Editor_Keywords3',             'green:bg' },
-    { 'Editor_Keywords4',             'yellow:bg' },
-    { 'Editor_Keywords5',             'blue:bg' },
+    { 'Editor_Keywords4',             'magenta:bg' },
+    { 'Editor_Keywords5',             'darkCyan:bg' },
 
     { 'Msg_Header',                   'darkCyan:bg' },
     { 'Msg_Quotes',                   'green:bg' },
