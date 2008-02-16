@@ -192,6 +192,7 @@ int EBuffer::J() {
 }
 
 
+
 // --- input/output ---
 // untested. probably not needed if if general variable-to-stack solution can be used
 int EBuffer::LineLength() {

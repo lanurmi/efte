@@ -5,53 +5,56 @@
 # assume these to be present, as factored out functionality.
 #
 # -- constants --
-sub Zero      { 0:Push }
-sub False     { 0:Push }
-sub One       { 1:Push }
-sub True      { -1:Push }                 # "true" represented as all bits sets
+sub zero      { 0:Push }
+sub false     { 0:Push }
+sub one       { 1:Push }
+sub true      { -1:Push }                       # "true" represented as all bits sets
 
 # -- stack --
-sub Qdup      { Dup If Dup EndIf }        # duplicate top of stack if <> 0
-sub Nip       { Swap Drop }               # drop second of stack
-sub Tuck      { Swap Over }               # copy top of stack below second of stack
-sub MinRot    { Rot Rot }                 # rotate top item below second item
-sub Dup2      { Over Over }               # duplicate top two items
-sub Drop2     { Drop Drop }               # drop top two items
-sub Swap2     { Rot ToR Rot RFrom }       # swap top two pairs of items
+sub qdup      { dup if dup endif }              # duplicate top of stack if <> 0
+sub nip       { swap drop }                     # drop second of stack
+sub tuck      { swap over }                     # copy top of stack below second of stack
+sub minRot    { rot rot }                       # rotate top item below second item
+sub dup2      { over over }                     # duplicate top two items
+sub drop2     { drop drop }                     # drop top two items
+sub swap2     { rot tor rot rfrom }             # swap top two pairs of items
 
 # -- bool, bits, comparison  --
-sub Invert    { -1:Push; Xor }            # complement all bits
-sub Not       { Zero Equals }             # logical inversion: 0->true,  x->0
-sub LeftShift { Dup Plus }                # bit shift left once
-sub Success   { Flag }                    # push command return code
-sub Failure   { Flag Not }                # push inverted command return code
-sub More      { Swap Less }               # true if nos > tos
-sub Between   { Rot Tuck Less MinRot More Or Not }
-sub Capital   { 65:Push; 90:Push; Between }
+sub invert    { true xor }                      # complement all bits
+sub not       { zero equals }                   # logical inversion: 0->true,  x->0
+sub leftShift { dup plus }                      # bit shift left once
+sub Success   { flag }                          # push command return code
+sub failure   { flag not }                      # push inverted command return code
+sub more      { swap less }                     # true if nos > tos
+sub between   { rot tuck less minrot more or not }
+sub capital   { 65:push; 90:push; between }
+sub negative  { zero less }                     # < zero?
 
 # -- arithmetic --
-sub Inc       { One Plus }                 # increment top of stack by one
-sub Dec       { One Minus }                # decrement top of stack by one
-sub Negate    { Invert; Inc }              # change sign
-sub Abs       { Dup  Zero Less If Negate EndIf} # remove sign
-sub Min       { Dup2 More If Swap EndIf Drop }
-sub Max       { Dup2 Less If Swap EndIf Drop }
-sub Mod       { Dup2 Div Mul Minus }       # modulo (remainder) function
-sub Gcd       { Begin Tuck Mod Qdup Not Until }  # greatest common denominator
+sub inc       { one plus }                      # increment top of stack by one
+sub dec       { one minus }                     # decrement top of stack by one
+sub negate    { invert inc }                    # change sign
+sub abs       { dup negative if negate endif }  # remove sign
+sub min       { dup2 more if swap endif drop }
+sub max       { dup2 less if swap endif drop }
+sub mod       { dup2 div mul minus }            # modulo (remainder) function
+sub gcd       { begin tuck mod qdup not until } # greatest common denominator
 
 # -- i/o --
-sub Space     { InsertString " " }         # print a space character
-#sub Spaces   { For; Space; Next }         # don't have loops yet
-sub Spaces    { Begin; Qdup; While; Space; Dec; Repeat } # print number of spaces as specified by top stack item
-sub Cr        { LineNew }                  # carriage return
-sub Ok        { InsertString " ok "; Cr }  # meant to be used as prompt
-sub Dot       { InsertString $Tos; Space } # output top stack item as number
-sub Key       { GetChar; }                 # wait for key, place its ascii on stack
-# sub Type    { Zero; Do; Count; Emit; Loop; Drop } # string output
+sub bl        { 32:push }
+sub emit      { insertstring $toschar }
+sub Space     { bl emit }                       # print a space character
+sub Spaces    { times space }                   # don't have loops yet
+sub cr        { linenew }                       # carriage return
+sub ok        { insertstring " ok "; cr }       # meant to be used as prompt
+sub dot       { insertstring $tos; space }      # output top stack item as number
+sub key       { getchar; }                      # wait for key, place its ascii on stack
+#sub count    { inc dup dec fetch }
+#sub Type     { Zero; Do; Count; Emit; Loop; Drop } # string output
 
 # -- cursor --
-sub CursorHome { MoveLineStart }
-sub CursorEnd  { MoveLineEnd }
+sub cursorhome { movelinestart }
+sub cursorend  { movelineend }
 
 
 # need:

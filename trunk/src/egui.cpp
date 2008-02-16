@@ -273,6 +273,12 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
 //            fprintf(stderr,"LOOP at %d\n",i);
             break;
 
+
+        case ExTimes:
+            m->cmds[i+1].repeat = ParamStack.pop();
+            break;
+
+
         default:
             for (j=(m->cmds[i].repeat); j; --j) {
                 State.Pos = i + 1;
