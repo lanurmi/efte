@@ -60,6 +60,7 @@ static long offset = -1;
 static long pos = 0;
 static char XTarget[MAXPATH] = "";
 static char StartDir[MAXPATH] = "";
+static char BinaryDir[MAXPATH] = "";
 static bool preprocess_only = false;
 static int verbosity = 0;
 
@@ -287,6 +288,7 @@ int main(int argc, char **argv) {
         Usage();
     }
 
+    JustDirectory(argv[0], BinaryDir, sizeof(BinaryDir));
     JustDirectory(Target, XTarget, sizeof(XTarget));
     Slash(XTarget, 1);
 
@@ -2071,14 +2073,6 @@ static int PreprocessConfigFile(CurPos &cp) {
                         cp.c++;
                 }
                 cp.c++;
-                /*            } else if (cp.c + 6 && strcmp(cp.c, "undef(", 6) == 0) {
-                                Word w;
-                                cp.c += 6;
-
-                                while (cp.c < cp.z && *cp.c != ')') {
-                                    GetWord(cp, w);
-                                    UndefWord(w);
-                                }*/
             } else if (cp.c + 4 < cp.z && strncmp(cp.c, "%if(", 4) == 0) {
                 Word w;
                 int wasWord = 0;
@@ -2095,10 +2089,6 @@ static int PreprocessConfigFile(CurPos &cp) {
                         wasWord = 1;
                     if (neg)
                         wasWord = wasWord ? 0 : 1;
-                    /*if (wasWord)
-                        printf("yes '%s'\n", w);
-                    else
-                        printf("not '%s'\n", w);*/
 
                     if (cp.c < cp.z && *cp.c != ',' && *cp.c != ')')
                         Fail(cp, "unexpected: %c", cp.c[0]);
@@ -2179,24 +2169,37 @@ static int LoadFile(const char *WhereName, const char *CfgName, int Level, int o
     if (IsFullPath(CfgName)) {
         strlcpy(Cfg, CfgName, sizeof(Cfg));
     } else {
-#ifdef UNIX
-#define SEARCH_PATH_LEN 13
-        char tmp[MAXPATH];
+#if PATHTYPE == PT_UNIXISH
+#       define SEARCH_PATH_LEN 14
+        char dirs[SEARCH_PATH_LEN][MAXPATH];
+
+        snprintf(dirs[0],  MAXPATH, "%s", CfgName);
+        snprintf(dirs[1],  MAXPATH, "./local/%s", CfgName);
+        snprintf(dirs[2],  MAXPATH, "./config/%s", CfgName);
+        snprintf(dirs[3],  MAXPATH, "~/.efte/%s", CfgName);
+        snprintf(dirs[4],  MAXPATH, "/etc/efte/local/%s", CfgName);
+        snprintf(dirs[5],  MAXPATH, "/usr/share/efte/local/%s", CfgName);
+        snprintf(dirs[6],  MAXPATH, "/opt/share/efte/local/%s", CfgName);
+        snprintf(dirs[7],  MAXPATH, "/usr/local/share/efte/local/%s", CfgName);
+        snprintf(dirs[8],  MAXPATH, "/opt/local/share/efte/local/%s", CfgName);
+        snprintf(dirs[9],  MAXPATH, "/etc/efte/config/%s", CfgName);
+        snprintf(dirs[10], MAXPATH, "/usr/share/efte/config/%s", CfgName);
+        snprintf(dirs[11], MAXPATH, "/opt/share/efte/config/%s", CfgName);
+        snprintf(dirs[12], MAXPATH, "/usr/local/share/efte/config/%s", CfgName);
+        snprintf(dirs[13], MAXPATH, "/opt/local/share/efte/config/%s", CfgName);
+#else // if PT_UNIXISH
+#       define SEARCH_PATH_LEN 7
         char dirs[SEARCH_PATH_LEN][MAXPATH];
         snprintf(dirs[0],  MAXPATH, "%s", CfgName);
-        snprintf(dirs[1],  MAXPATH, "./config/%s", CfgName);
-        snprintf(dirs[2],  MAXPATH, "~/.efte/%s", CfgName);
-        snprintf(dirs[3],  MAXPATH, "/etc/efte/local/%s", CfgName);
-        snprintf(dirs[4],  MAXPATH, "/usr/share/efte/local/%s", CfgName);
-        snprintf(dirs[5],  MAXPATH, "/opt/share/efte/local/%s", CfgName);
-        snprintf(dirs[6],  MAXPATH, "/usr/local/share/efte/local/%s", CfgName);
-        snprintf(dirs[7],  MAXPATH, "/opt/local/share/efte/local/%s", CfgName);
-        snprintf(dirs[8],  MAXPATH, "/etc/efte/config/%s", CfgName);
-        snprintf(dirs[9],  MAXPATH, "/usr/share/efte/config/%s", CfgName);
-        snprintf(dirs[10], MAXPATH, "/opt/share/efte/config/%s", CfgName);
-        snprintf(dirs[11], MAXPATH, "/usr/local/share/efte/config/%s", CfgName);
-        snprintf(dirs[12], MAXPATH, "/opt/local/share/efte/config/%s", CfgName);
+        snprintf(dirs[1],  MAXPATH, "./local/%s", CfgName);
+        snprintf(dirs[2],  MAXPATH, "./config/%s", CfgName);
+        snprintf(dirs[3],  MAXPATH, "~/.efte/%s", CfgName);
+        snprintf(dirs[4],  MAXPATH, "~/efte/%s", CfgName);
+        snprintf(dirs[5],  MAXPATH, "%s/local/%s", BinaryDir, CfgName);
+        snprintf(dirs[6],  MAXPATH, "%s/config/%s", BinaryDir, CfgName);
+#endif // if PT_UNIXISH
 
+        char tmp[MAXPATH];
         bool found = false;
 
         for (int idx=0; idx<SEARCH_PATH_LEN; idx++) {
@@ -2218,17 +2221,10 @@ static int LoadFile(const char *WhereName, const char *CfgName, int Level, int o
             }
             return -1;
         }
-#else // UNIX
-        SlashDir(last);
-        strlcat(last, CfgName, sizeof(last));
-        ExpandPath(last, Cfg, sizeof(Cfg));
-#endif // UNIX
     }
-    // puts(Cfg);
     if (verbosity > 0)
         fprintf(stderr, "found: %s\n", Cfg);
 
-    //fprintf(stderr, "Loading file %s\n", Cfg);
     if ((fd = open(Cfg, O_RDONLY | O_BINARY)) == -1) {
         if (!optional)
             fprintf(stderr, "Cannot open '%s', errno=%d\n", Cfg, errno);
