@@ -652,7 +652,9 @@ enum {
     COND_WHILE,
     COND_REPEAT,
     COND_UNTIL,
-    COND_AGAIN
+    COND_AGAIN,
+    COND_DO,
+    COND_LOOP
 };
 
 typedef char Word[64];
@@ -711,6 +713,8 @@ static const OrdLookup ConditionalKW[] = {
     { "Repeat",COND_REPEAT },
     { "Until",COND_UNTIL },
     { "Again",COND_AGAIN },
+    { "Do",COND_DO },
+    { "Loop",COND_LOOP },
     { 0, 0 },
 };
 
@@ -1169,15 +1173,14 @@ static int ParseCommands(CurPos &cp, char *Name) {
                         break;
 
 
-
-                    case COND_AGAIN:
-                        if (CondStackPairedWith(COND_BEGIN)) {
-                            branchaddress=CondStack.pop();
-                            CompileUnconditionalBranch(cp,BranchOffset(cpos,branchaddress)-1);    // compile a branch to BEGIN
-                        } else {
-                            Fail(cp, "Unstructured: Again needs a previous Begin");
-                        }
-                        break;
+                case COND_AGAIN:
+                    if (CondStackPairedWith(COND_BEGIN)) {
+                        branchaddress=CondStack.pop();
+                        CompileUnconditionalBranch(cp,BranchOffset(cpos,branchaddress)-1);    // compile a branch to BEGIN
+                    } else {
+                        Fail(cp, "Unstructured: Again needs a previous Begin");
+                    }
+                    break;
 
 
                 case COND_WHILE:                                                            // while is almost identical to an IF
@@ -1188,6 +1191,7 @@ static int ParseCommands(CurPos &cp, char *Name) {
                     CondStack.push(COND_WHILE);                                             // allow test for proper nesting
                     break;
 
+
                 case COND_REPEAT:
                     if (CondStackPairedWith(COND_WHILE)) {
                         branchaddress=CondStack.pop();
@@ -1196,6 +1200,24 @@ static int ParseCommands(CurPos &cp, char *Name) {
                         CompileUnconditionalBranch(cp,BranchOffset(cpos,branchaddress)-1);  // compile a branch back to BEGIN
                     } else {
                         Fail(cp, "Unstructured: Repeat needs a previous While");
+                    }
+                    break;
+
+
+                case COND_DO:
+                    CondStack.push(cpos);
+                    CondStack.push(COND_DO);                                              // allow test for proper nesting
+                    CompileCommand(cp,ExDoRuntime,0,1);
+                    break;
+
+
+                case COND_LOOP:
+                    if (CondStackPairedWith(COND_DO)) {
+                        branchaddress=CondStack.pop();
+                        CompileCommand(cp,ExLoopRuntime,BranchOffset(cpos,branchaddress),1);  // LOOP back to (behind) DO
+                        UpdateNumber(branchaddress+1,BranchOffset(branchaddress,cpos)-1);   // resolve DO forward ref
+                    } else {
+                        Fail(cp, "Unstructured: Loop needs a previous Do");
                     }
                     break;
                     // ----------------------------------------------------------------------------------------------------

@@ -177,7 +177,7 @@ int TestBranchCondition()  {
 int EGUI::ExecMacro(GxView *view, int Macro) {
     STARTFUNC("EGUI::ExecMacro");
 
-    int i, j, ResultOfCommandExecution;
+    int i, j, tos, ResultOfCommandExecution;
     ExMacro *m;
     ExState State;
     if (Macro == -1)  {
@@ -231,6 +231,36 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
                 LOG << "cond branch to " << i+1 << ENDLINE;
             }
 //            fprintf(stderr," taken, proceeding @ %d\n",i+1);
+            break;
+
+        case ExDoRuntime:                                           // do loop setup code: initialize loop
+//            fprintf(stderr,"tos=%d, nos=%d, 3rd=%d\n",ParamStack.peek(0),ParamStack.peek(1),ParamStack.peek(2));
+//            fprintf(stderr,"DO at %d\n",i);
+            if (ParamStack.peek(0) == ParamStack.peek(1)) {         // limit and start identical? skip loop then:
+                ParamStack.pop();                                   //    drop start
+                ParamStack.pop();                                   //    drop limit
+                i += m->cmds[i].repeat;                             //    proceed at behind LOOP
+//                fprintf(stderr,"skipping loop, proceeding at %d\n",i);
+            } else {                                                // will have to loop:
+                tos = ParamStack.pop();                             //    pop start to temp
+                ControlStack.push(ParamStack.pop());                //    stack limit
+                ControlStack.push(tos);                             //    stack start
+//                fprintf(stderr,"entering loop\n");
+            }                                                       //    proceed with loop body
+            break;
+
+        case ExLoopRuntime:                                         // executed once per loop iteration:
+//            fprintf(stderr,"tos=%d, nos=%d, 3rd=%d\n",ParamStack.peek(0),ParamStack.peek(1),ParamStack.peek(2));
+            tos = ControlStack.pop()+1;                             //    increment loop index
+//            fprintf(stderr,"LOOP at %d, index=%d\n",i,tos);
+            if (ControlStack.peek(0) == tos)  {                     //    reached limit?
+//                fprintf(stderr,"LOOP limit reached\n");
+                ControlStack.pop();                                 //    yes: clean up
+            } else {                                                //    no:
+                ControlStack.push(tos);                             //       keep loop index for next round
+                i += m->cmds[i].repeat;                             //       branch back to behind DO
+//                fprintf(stderr,"LOOPing back to %d\n",i);
+            }
             break;
 
         default:
