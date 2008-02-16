@@ -124,10 +124,7 @@ colorize FTE {
     };
 
     keyword 'Editor_Keywords4' {
-        'If', 'Else', 'EndIf',
-        'Begin', 'Until', 'Again', 'While', 'Repeat',
-        'Exit', 'Leave',
-        'For', 'Next', 'Do', 'Loop'
+        'If', 'Else', 'EndIf', 'Begin', 'While', 'Repeat', 'Until', 'Again', 'Do', 'Loop'
     };
 
     keyword 'Editor_Keywords5' {

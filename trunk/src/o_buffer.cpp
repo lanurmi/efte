@@ -1882,6 +1882,11 @@ int EBuffer::GetStrVar(int var, char *str, int buflen) {
         str[buflen - 1] = 0;
         return 1;
 
+    case mvTopOfStackAsChar:
+        snprintf(str, buflen, "%c", ParamStack.pop());
+        str[buflen - 1] = 0;
+        return 1;
+
     case mvFilePath:
         strncpy(str, FileName, buflen);
         str[buflen - 1] = 0;
