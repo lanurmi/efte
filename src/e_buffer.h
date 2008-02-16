@@ -479,6 +479,8 @@ public:
     int     ToR();
     int     RFrom();
     int     RFetch();
+    int     I();
+    int     J();
 
     int     Diag();
     int     LineLength();

@@ -784,7 +784,10 @@ int EBuffer::ExecCommand(int Command, ExState &State) {
         return RFrom();
     case ExRFetch:
         return RFetch();
-
+    case ExI:
+        return I();
+    case ExJ:
+        return J();
     case ExDiag:
         return Diag();
     case ExLineLength:   // untested and probably unncessesary

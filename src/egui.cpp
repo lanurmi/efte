@@ -263,6 +263,16 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
             }
             break;
 
+        case ExLeaveRuntime:                                        // executed once per loop iteration:
+            ControlStack.pop();
+            ControlStack.pop();
+//            fprintf(stderr,"LEAVE at %d, ",i);
+            i += m->cmds[i].repeat;
+//            fprintf(stderr,"DO at %d, ",i);
+            i += m->cmds[i].repeat;
+//            fprintf(stderr,"LOOP at %d\n",i);
+            break;
+
         default:
             for (j=(m->cmds[i].repeat); j; --j) {
                 State.Pos = i + 1;

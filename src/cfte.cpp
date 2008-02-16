@@ -654,7 +654,8 @@ enum {
     COND_UNTIL,
     COND_AGAIN,
     COND_DO,
-    COND_LOOP
+    COND_LOOP,
+    COND_LEAVE
 };
 
 typedef char Word[64];
@@ -715,6 +716,7 @@ static const OrdLookup ConditionalKW[] = {
     { "Again",COND_AGAIN },
     { "Do",COND_DO },
     { "Loop",COND_LOOP },
+    { "Leave", COND_LEAVE },
     { 0, 0 },
 };
 
@@ -1220,8 +1222,30 @@ static int ParseCommands(CurPos &cp, char *Name) {
                         Fail(cp, "Unstructured: Loop needs a previous Do");
                     }
                     break;
+
+                case COND_LEAVE:
+                    int i = 0;
+//                    fprintf(stderr,"i=%d, depth=%d\n",i,CondStack.depth());
+                    while (i < CondStack.depth()) {
+//                        fprintf(stderr,"still searching for DO: i=%d, depth=%d\n",i,CondStack.depth());
+                        if (CondStack.peek(i) == COND_DO) {
+//                            fprintf(stderr,"found DO at stack pos %d, ",i);
+                            branchaddress=CondStack.peek(i+1);
+                            CompileCommand(cp,ExLeaveRuntime,BranchOffset(cpos,branchaddress),1);
+//                            fprintf(stderr,"offset %d\n", BranchOffset(cpos,branchaddress));
+                            i=-1;
+                            break;
+                        }
+                        i+=2;
+                    }
+                    if (i >= 0)
+                        Fail(cp, "Unstructured: Leave must be used between Do and Loop");
+                    break;
+
+
                     // ----------------------------------------------------------------------------------------------------
                 }
+
                 ign = 0;
                 cnt = 1;
             }
