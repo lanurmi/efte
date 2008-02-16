@@ -54,6 +54,8 @@ const struct {
     TAB(ToR),
     TAB(RFrom),
     TAB(RFetch),
+    TAB(I),
+    TAB(J),
 
     TAB(Diag),
     TAB(LineLength),

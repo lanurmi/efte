@@ -28,7 +28,8 @@ typedef enum {
     /// macro run time code associate with DO
     ExLoopRuntime,
     /// macro run time code associate with LOOP
-
+    ExLeaveRuntime,
+    /// macro run time code for breaking out of a loop
     //*** START
 
     //!Branch and Stack Commands
@@ -76,6 +77,10 @@ typedef enum {
     /// Move one item from control stack to param stack
     ExRFetch,
     /// Duplicate top control stack item to param stack
+    ExI,
+    /// place loop index of innermost loop on stack
+    ExJ,
+    /// place loop index of 2nd loop on stack
     // -------------------
     ExDiag,
     /// Print stack top and conditions to stderr for debugging.

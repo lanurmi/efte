@@ -180,6 +180,18 @@ int EBuffer::RFetch() {
     return 1;
 }
 
+
+int EBuffer::I() {
+    ParamStack.push(ControlStack.peek(0));
+    return 1;
+}
+
+int EBuffer::J() {
+    ParamStack.push(ControlStack.peek(2));
+    return 1;
+}
+
+
 // --- input/output ---
 // untested. probably not needed if if general variable-to-stack solution can be used
 int EBuffer::LineLength() {
