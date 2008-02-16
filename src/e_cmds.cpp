@@ -107,6 +107,7 @@ int EBuffer::Less() {
 // as soon we need one of the last n result flags, each
 // execution of Flag delivers the next, back into history.
 int EBuffer::Flag() {
+    // TODO: warning C4146: unary minus operator applied to unsigned type, result still unsigned
     ParamStack.push(-(BranchCondition & 1));
     BranchCondition = (BranchCondition >> 1);
     return 1;
@@ -179,8 +180,6 @@ int EBuffer::RFetch() {
     return 1;
 }
 
-
-
 // --- input/output ---
 // untested. probably not needed if if general variable-to-stack solution can be used
 int EBuffer::LineLength() {
@@ -200,17 +199,11 @@ int EBuffer::CursorLeft() {
     return result;
 }
 
-
 int EBuffer::CursorRight() {
-    int result = 0;                              // assume failure
-    if (CP.Col < LineLen()) {
-        SetPos(CP.Col + 1, CP.Row, tmRight);
-        result = 1;
-    }
-    SetBranchCondition(result);
-    return result;
+    SetPos(CP.Col + 1, CP.Row, tmRight);
+    SetBranchCondition(1);
+    return 1;
 }
-
 
 int EBuffer::CursorUp() {
     int result = 0;                              // assume failure
@@ -222,7 +215,6 @@ int EBuffer::CursorUp() {
     return result;
 }
 
-
 int EBuffer::CursorDown() {
     int result = 0;                              // assume failure
     if (CP.Row < VCount - 1) {
@@ -233,27 +225,22 @@ int EBuffer::CursorDown() {
     return result;
 }
 
-
-
 // ------------------------------------------------------------------
 
 int EBuffer::MoveLeft() {
-    if (CursorLeft()) return 1;
-    if (CursorWithinEOL == 1 && CursorUp())
-        return MoveLineEnd();        // success/failure of moveleft determined by success of MoveLineEnd?
+    if (CursorLeft() == 0 && CursorWithinEOL == 1 && CursorUp())
+        return MoveLineEnd();
     SetBranchCondition(0);
     return 0;
 }
-
 
 int EBuffer::MoveRight() {
-    if (CursorRight()) return 1;
-    if (CursorWithinEOL == 1 && CursorDown())
+    if (CursorRight() == 0) return 0;
+    if (CursorWithinEOL == 1 && CP.Col == LineLen() + 1 && CursorDown())
         return MoveLineStart();
-    SetBranchCondition(0);
-    return 0;
+    SetBranchCondition(1);
+    return 1;
 }
-
 
 int EBuffer::MoveUp() {
     if (LastUpDownColumn == -1)
@@ -267,7 +254,6 @@ int EBuffer::MoveUp() {
     SetBranchCondition(cond);
     return cond;
 }
-
 
 // almost identical to MoveUp but i find it difficult to factorize. scoping error as soon a i try to access stuff from a new fun()
 // this would ideally be not more than    MoveUpOrDown(direction);, or MoveCursorVertical(0,-1) / (0,1). PageUp/Down could probably reuse.
@@ -284,9 +270,6 @@ int EBuffer::MoveDown() {
     return cond;
 }
 
-
-
-
 // any of the CursorLeft/Right/Up/Down set branch condition. no need
 // to set twice what would merely be a reflection of the Cursor... condition.
 int EBuffer::MovePrev() {
@@ -296,15 +279,12 @@ int EBuffer::MovePrev() {
     return 0;
 }
 
-
 int EBuffer::MoveNext() {
     if (CP.Col < LineLen())
         if (CursorRight()) return 1;
     if (CursorDown() && MoveLineStart()) return 1;
     return 0;
 }
-
-
 
 int EBuffer::MoveWordLeftX(int start) {
     if (CP.Col > 0) {
@@ -327,7 +307,6 @@ int EBuffer::MoveWordLeftX(int start) {
     return 0;
 }
 
-
 int EBuffer::MoveWordRightX(int start) {
     PELine L = VLine(CP.Row);
     int C, P;
@@ -346,8 +325,6 @@ int EBuffer::MoveWordRightX(int start) {
     C = ScreenPos(L, P);
     return SetPos(C, CP.Row);
 }
-
-
 
 int EBuffer::MoveWordLeft() {
     return MoveWordLeftX(1);
