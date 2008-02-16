@@ -1,4 +1,5 @@
 # Main FTE Configuration File
+include 'primitives.fte';
 
 # operating system is now defined by CFTE
 
