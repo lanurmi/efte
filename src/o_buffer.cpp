@@ -1077,6 +1077,13 @@ int EBuffer::PushGlobalBookmark() {
 }
 
 int EBuffer::GetChar(ExState &State) {
+// proably want to update buffer display herem when waiting for a key
+// some things aren't done now, like, updating visual cursor position,
+// when outputting to buffer in a loop, like:
+// { begin GetChar InsertString $TosChar again }
+// i *think* when waiting for a key, display should reflect the
+// current=actual state.
+
     char Ch;
     int No;
 

@@ -30,6 +30,8 @@ typedef enum {
     /// macro run time code associate with LOOP
     ExLeaveRuntime,
     /// macro run time code for breaking out of a loop
+    ExTimes,
+    /// set repeat counter of next command to top of stack
     //*** START
 
     //!Branch and Stack Commands

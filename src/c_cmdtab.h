@@ -24,10 +24,10 @@ const struct {
     TAB(Fail),
 // ----------------------------------------------------
     // additions to script interpreter extensions
-    TAB(UnconditionalBranch),
-    TAB(ConditionalBranch),
-    TAB(DoRuntime),
-    TAB(LoopRuntime),
+//    TAB(UnconditionalBranch),
+//    TAB(ConditionalBranch),
+//    TAB(DoRuntime),
+//    TAB(LoopRuntime),
     TAB(Exit),
     TAB(Push),
 
@@ -56,6 +56,7 @@ const struct {
     TAB(RFetch),
     TAB(I),
     TAB(J),
+    TAB(Times),
 
     TAB(Diag),
     TAB(LineLength),
