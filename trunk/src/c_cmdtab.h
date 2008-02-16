@@ -26,6 +26,8 @@ const struct {
     // additions to script interpreter extensions
     TAB(UnconditionalBranch),
     TAB(ConditionalBranch),
+    TAB(DoRuntime),
+    TAB(LoopRuntime),
     TAB(Exit),
     TAB(Push),
 

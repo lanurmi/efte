@@ -24,6 +24,10 @@ typedef enum {
     /// unconditional branch, offset from command repeat count
     ExConditionalBranch,
     /// conditional branch, offset from command repeat count
+    ExDoRuntime,
+    /// macro run time code associate with DO
+    ExLoopRuntime,
+    /// macro run time code associate with LOOP
 
     //*** START
 
