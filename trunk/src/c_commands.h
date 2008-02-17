@@ -86,6 +86,8 @@ typedef enum {
     // -------------------
     ExDiag,
     /// Print stack top and conditions to stderr for debugging.
+    ExToggleConditionDisplay,
+    /// Toggle displaying the condition code in the status bar.
 
     //!Cursor Commands
     ExCursorLeft,

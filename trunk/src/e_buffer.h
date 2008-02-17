@@ -220,6 +220,7 @@ public:
     int StartHilit, EndHilit;
 
     int LastUpDownColumn; // For CursorWithinEOL movement
+    int DisplayCondition; // Display condition in status bar?
 
     // constructors
     EBuffer(int createFlags, EModel **ARoot, const char *AName);
@@ -483,6 +484,7 @@ public:
     int     J();
 
     int     Diag(ExState &State);
+    int     ToggleConditionDisplay();
 
     int     CursorLeft();
     int     CursorRight();

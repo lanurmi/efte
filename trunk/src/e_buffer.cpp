@@ -22,6 +22,7 @@ EBuffer::EBuffer(int createFlags, EModel **ARoot, const char * /*AName*/)
     Loaded = 0;
     Loading = 0;
     LastUpDownColumn = -1;
+    DisplayCondition = 0;
 
     FileName = 0;
     LL = 0;

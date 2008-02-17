@@ -114,11 +114,12 @@ colorize FTE {
 
         'TagClear', 'TagFind', 'TagFindWord', 'TagGoto', 'TagLoad', 'TagNext',
         'TagPop', 'TagPrev', 'Times', 'ToggleAutoIndent', 'ToggleBackSpKillTab',
-        'ToggleBackSpUnindents', 'ToggleDeleteKillTab', 'ToggleExpandTabs', 'ToggleHilitTags',
-        'ToggleIndentWithTabs', 'ToggleInsert', 'ToggleKeepBackups', 'ToggleMakeBackups',
-        'ToggleMatchCase', 'ToggleReadOnly', 'ToggleShowBookmarks', 'ToggleShowMarkers',
-        'ToggleShowTabs', 'ToggleSpaceTabs', 'ToggleSysClipboard', 'ToggleTrim',
-        'ToggleUndo', 'ToggleWordWrap', 'TopOfStack', 'ToR', 'TypeChar',
+        'ToggleBackSpUnindents', 'ToggleConditionDisplay', 'ToggleDeleteKillTab',
+        'ToggleExpandTabs', 'ToggleHilitTags', 'ToggleIndentWithTabs', 'ToggleInsert',
+        'ToggleKeepBackups', 'ToggleMakeBackups', 'ToggleMatchCase', 'ToggleReadOnly',
+        'ToggleShowBookmarks', 'ToggleShowMarkers', 'ToggleShowTabs', 'ToggleSpaceTabs',
+        'ToggleSysClipboard', 'ToggleTrim', 'ToggleUndo', 'ToggleWordWrap', 'TopOfStack',
+        'ToR', 'TypeChar',
 
         'Undo',
 

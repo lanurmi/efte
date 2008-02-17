@@ -58,6 +58,7 @@ const struct {
     TAB(Times),
 
     TAB(Diag),
+    TAB(ToggleConditionDisplay),
 
     TAB(CursorLeft),
     TAB(CursorRight),

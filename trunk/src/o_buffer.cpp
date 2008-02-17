@@ -790,6 +790,8 @@ int EBuffer::ExecCommand(int Command, ExState &State) {
         return J();
     case ExDiag:
         return Diag(State);
+    case ExToggleConditionDisplay:
+        return ToggleConditionDisplay();
 
 
         // stuff with UI
