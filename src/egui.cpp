@@ -79,6 +79,27 @@ EGUI::EGUI(int &argc, char **argv, int XSize, int YSize)
 EGUI::~EGUI() {
 }
 
+/**
+ * Push a number/char from a macro onto the stack
+ */
+int Push(GxView *view, ExState &State, int repeat) {
+    ExModelView *V = (ExModelView *)view->Top;
+    EView *View = V->View;
+    int x = 0;
+    char s[64] = "";
+
+    if (State.GetIntParam(View, &x)) {
+        ParamStack.push(x);
+    } else if (State.GetStrParam(View, s, sizeof(s))) {
+        ParamStack.push((int) s[0]);
+    } else {
+        ParamStack.push(repeat);
+    }
+
+    SetBranchCondition(1);
+    return 1;
+}
+
 int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
     if (Command & CMD_EXT)
         return ExecMacro(view, Command & ~CMD_EXT);
@@ -102,6 +123,8 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
         }
     }
     switch (Command) {
+    case ExPush:
+        return Push(view, State, Macros[State.Macro].cmds[State.Pos-1].repeat);
     case ExWinRefresh:
         view->Repaint();
         return 1;
@@ -159,7 +182,7 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
     }
     }
 
-//    fprintf(stderr, "ExecCommand: %d\n",State);
+    //fprintf(stderr, "ExecCommand: %d\n",State);
     return view->ExecCommand(Command, State);
 }
 
@@ -167,8 +190,6 @@ int EGUI::BeginMacro(GxView *view) {
     view->BeginMacro();
     return 1;
 }
-
-// Lothar was seriously here
 
 int TestBranchCondition()  {
     return (ParamStack.pop());
@@ -201,76 +222,71 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
             continue;
         }
         switch (m->cmds[i].u.num) {
-
-        case ExPush:
-            ParamStack.push(m->cmds[i].repeat);
-            break;
-
         case ExExit:             // works now as exit: early terminate a macro
             i = m->Count;
-//            fprintf(stderr,"macro exit at i=%d\n",i-1);
+            //fprintf(stderr,"macro exit at i=%d\n",i-1);
             LOG << "macro exit" << ENDLINE;
             break;
 
         case ExUnconditionalBranch:
-//            fprintf(stderr,"tos=%d, nos=%d, 3rd=%d -- ",ParamStack.peek(0),ParamStack.peek(1),ParamStack.peek(2));
-//            fprintf(stderr,"branch at %d",i);
+            //fprintf(stderr,"tos=%d, nos=%d, 3rd=%d -- ",ParamStack.peek(0),ParamStack.peek(1),ParamStack.peek(2));
+            //fprintf(stderr,"branch at %d",i);
             i += m->cmds[i].repeat;
-//            fprintf(stderr," to %d\n",i+1);
+            //fprintf(stderr," to %d\n",i+1);
             LOG << "branch to " << i+1 << ENDLINE;
             break;
 
         case ExConditionalBranch:
-//            fprintf(stderr,"tos=%d, nos=%d, 3rd=%d -- ",ParamStack.peek(0),ParamStack.peek(1),ParamStack.peek(2));
-//            fprintf(stderr,"conditional branch at %d ",i);
+            //fprintf(stderr,"tos=%d, nos=%d, 3rd=%d -- ",ParamStack.peek(0),ParamStack.peek(1),ParamStack.peek(2));
+            //fprintf(stderr,"conditional branch at %d ",i);
             if (TestBranchCondition()) {
-//                fprintf(stderr,"not ");
+                //fprintf(stderr,"not ");
                 LOG << "cond branch not taken. proceeding @ " << i+1 << ENDLINE;
             } else {
                 i += m->cmds[i].repeat;
                 LOG << "cond branch to " << i+1 << ENDLINE;
             }
-//            fprintf(stderr," taken, proceeding @ %d\n",i+1);
+            //fprintf(stderr," taken, proceeding @ %d\n",i+1);
             break;
 
         case ExDoRuntime:                                           // do loop setup code: initialize loop
-//            fprintf(stderr,"tos=%d, nos=%d, 3rd=%d\n",ParamStack.peek(0),ParamStack.peek(1),ParamStack.peek(2));
-//            fprintf(stderr,"DO at %d\n",i);
+            //fprintf(stderr,"tos=%d, nos=%d, 3rd=%d\n",ParamStack.peek(0),ParamStack.peek(1),ParamStack.peek(2));
+            //fprintf(stderr,"DO at %d\n",i);
             if (ParamStack.peek(0) == ParamStack.peek(1)) {         // limit and start identical? skip loop then:
                 ParamStack.pop();                                   //    drop start
                 ParamStack.pop();                                   //    drop limit
                 i += m->cmds[i].repeat;                             //    proceed at behind LOOP
-//                fprintf(stderr,"skipping loop, proceeding at %d\n",i);
+                //fprintf(stderr,"skipping loop, proceeding at %d\n",i);
             } else {                                                // will have to loop:
                 tos = ParamStack.pop();                             //    pop start to temp
                 ControlStack.push(ParamStack.pop());                //    stack limit
                 ControlStack.push(tos);                             //    stack start
-//                fprintf(stderr,"entering loop\n");
+                //fprintf(stderr,"entering loop\n");
             }                                                       //    proceed with loop body
             break;
 
         case ExLoopRuntime:                                         // executed once per loop iteration:
-//            fprintf(stderr,"tos=%d, nos=%d, 3rd=%d\n",ParamStack.peek(0),ParamStack.peek(1),ParamStack.peek(2));
+            //fprintf(stderr,"tos=%d, nos=%d, 3rd=%d\n",ParamStack.peek(0),ParamStack.peek(1),ParamStack.peek(2));
             tos = ControlStack.pop()+1;                             //    increment loop index
-//            fprintf(stderr,"LOOP at %d, index=%d\n",i,tos);
+            //fprintf(stderr,"LOOP at %d, index=%d\n",i,tos);
             if (ControlStack.peek(0) == tos)  {                     //    reached limit?
-//                fprintf(stderr,"LOOP limit reached\n");
+                //fprintf(stderr,"LOOP limit reached\n");
                 ControlStack.pop();                                 //    yes: clean up
             } else {                                                //    no:
                 ControlStack.push(tos);                             //       keep loop index for next round
                 i += m->cmds[i].repeat;                             //       branch back to behind DO
-//                fprintf(stderr,"LOOPing back to %d\n",i);
+                //fprintf(stderr,"LOOPing back to %d\n",i);
             }
             break;
 
         case ExLeaveRuntime:                                        // executed once per loop iteration:
             ControlStack.pop();
             ControlStack.pop();
-//            fprintf(stderr,"LEAVE at %d, ",i);
+            //fprintf(stderr,"LEAVE at %d, ",i);
             i += m->cmds[i].repeat;
-//            fprintf(stderr,"DO at %d, ",i);
+            //fprintf(stderr,"DO at %d, ",i);
             i += m->cmds[i].repeat;
-//            fprintf(stderr,"LOOP at %d\n",i);
+            //fprintf(stderr,"LOOP at %d\n",i);
             break;
 
 
@@ -398,8 +414,8 @@ void EGUI::DispatchKey(GxView *view, TEvent &Event) {
         if (EventMap == 0) break;
         map = EventMap->KeyMap;
     }
-//    if (GetCharFromEvent(Event, &Ch))
-//        CharEvent(view, Event, Ch);
+    //if (GetCharFromEvent(Event, &Ch))
+    //    CharEvent(view, Event, Ch);
     SetMap(0, 0);
 }
 
