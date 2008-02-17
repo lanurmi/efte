@@ -1,0 +1,12 @@
+#!/bin/sh
+
+# remove FTECFG entry
+FTECFG=/etc/fte
+if [ -d $FTECFG ] ; then 
+	if [ `find $FTECFG | wc -l` -eq 1 ]; then
+		rm -rf $FTECFG
+		echo "Directory \`/etc/fte' removed"
+	fi
+fi
+
+#DEBHELPER#

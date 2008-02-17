@@ -1,0 +1,22 @@
+# menu definitions for C mode
+
+menu Local_C {
+    item "&Unmark\tEsc"            { BlockMarkStream; BlockUnmark }
+    item "Cu&t\tShift+Del"         { BlockCut }
+    item "&Copy\tCtrl+Ins"         { BlockCopy }
+    item "&Paste\tShift+Ins"       { BlockPasteStream }
+    item "P&aste Column\tAlt+Ins"  { BlockPasteColumn }
+    item;
+    item "Delete &line\tCtrl+Y"    { KillLine }
+    item "Delete to &EOL\tAlt+End" { KillToLineEnd }
+    item;
+    item "&Save\tF2"               { FileSave }
+    item "Cl&ose\tAlt+Q"           { FileClose }
+    item;
+    item "&Indent line\tTab"       { LineIndent }
+    item "I&ndent block\tAlt+\\"   { BlockReIndent }
+}
+
+eventmap C {
+    LocalMenu           = 'Local_C';  # local menu for C mode
+}
