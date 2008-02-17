@@ -1002,6 +1002,9 @@ static int GetNumber(CurPos &cp) {
 static int CmdNum(const char *Cmd) {
     unsigned int i;
 
+    if (Cmd == NULL)
+        return 0;
+
     for (i = 0; i < sizeof(Command_Table) / sizeof(Command_Table[0]); i++) {
         if (stricmp(Cmd, Command_Table[i].Name) == 0)
             return Command_Table[i].CmdId;
@@ -1097,6 +1100,7 @@ static int ParseCommands(CurPos &cp, char *Name) {
     int p;
     long cnt;
     long ign = 0;
+
     long Cmd = CmdNum(Name);
 
     if (Cmd != 0) {
