@@ -5,10 +5,10 @@
 # assume these to be present, as factored out functionality.
 #
 # -- constants --
-sub zero      { 0:Push }
-sub false     { 0:Push }
-sub one       { 1:Push }
-sub true      { -1:Push }                       # "true" represented as all bits sets
+sub zero      { push 0 }
+sub false     { push 0 }
+sub one       { push 1 }
+sub true      { push -1 }                       # "true" represented as all bits sets
 
 # -- stack --
 sub qdup      { dup if dup endif }              # duplicate top of stack if <> 0
@@ -27,7 +27,7 @@ sub Success   { flag }                          # push command return code
 sub failure   { flag not }                      # push inverted command return code
 sub more      { swap less }                     # true if nos > tos
 sub between   { rot tuck less minrot more or not }
-sub capital   { 65:push; 90:push; between }
+sub capital   { push 65; push 90; between }
 sub negative  { zero less }                     # < zero?
 
 # -- arithmetic --
@@ -41,7 +41,7 @@ sub mod       { dup2 div mul minus }            # modulo (remainder) function
 sub gcd       { begin tuck mod qdup not until } # greatest common denominator
 
 # -- i/o --
-sub bl        { 32:push }
+sub bl        { push 32 }
 sub emit      { insertstring $toschar }
 sub Space     { bl emit }                       # print a space character
 sub Spaces    { times space }                   # don't have loops yet
