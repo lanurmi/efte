@@ -482,15 +482,14 @@ public:
     int     I();
     int     J();
 
-    int     Diag();
+    int     Diag(ExState &State);
     int     LineLength();
-    // ----------------------------------------------------
-    // basic cursor movements
+
     int     CursorLeft();
     int     CursorRight();
     int     CursorUp();
     int     CursorDown();
-    // ----------------------------------------------------
+
     int     MoveLeft();
     int     MoveRight();
     int     MoveUp();

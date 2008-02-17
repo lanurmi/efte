@@ -20,13 +20,22 @@ void SetBranchCondition(int cond)  {
     if (cond) BranchCondition++;
 }
 
+/**
+ * MACRO: Print a stack diagnostic message to stderr
+ */
+int EBuffer::Diag(ExState &State) {
+    char msg[256];
 
-int EBuffer::Diag() {
-    fprintf(stderr, "tos=%d nos=%d 3rd=%d cond=%08x\n", ParamStack.peek(0),ParamStack.peek(1),ParamStack.peek(2),BranchCondition);
+    if (State.GetStrParam(View, msg, sizeof(msg)))
+        fprintf(stderr, "Diag: %s\n", msg);
+
+    fprintf(stderr, "cond=%08x, tos=%d, nos=%d, 3rd=%d", BranchCondition, ParamStack.peek(0), ParamStack.peek(1), ParamStack.peek(2));
+    for (int i=3; i < CIRCSTACKSIZE; i++)
+        fprintf(stderr, ", %ith=%d", i, ParamStack.peek(i));
+    fprintf(stderr, "\n");
+
     return 1;
 }
-
-
 
 // --- arithmetic ---
 
@@ -34,7 +43,6 @@ int EBuffer::Plus() {
     ParamStack.push(ParamStack.pop()+ParamStack.pop());
     return 1;
 }
-
 
 // don't really need - could provide "Invert" and do
 //2's complement add in macro
