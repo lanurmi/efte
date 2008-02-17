@@ -702,6 +702,7 @@ static const OrdLookup CfgVar[] = {
     { "Char", mvChar },
     { "Word", mvWord },
     { "Line", mvLine },
+    { "LineLength", mvLineLength },
     { "FTEVer", mvFTEVer },
     { "Tos", mvTopOfStack },
     { "TosChar", mvTopOfStackAsChar },

@@ -483,7 +483,6 @@ public:
     int     J();
 
     int     Diag(ExState &State);
-    int     LineLength();
 
     int     CursorLeft();
     int     CursorRight();

@@ -287,6 +287,7 @@ typedef enum {
     mvChar,
     mvWord,
     mvLine,
+    mvLineLength,
     mvFTEVer,
     mvTopOfStack,
     mvTopOfStackAsChar

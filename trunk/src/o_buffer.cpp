@@ -790,9 +790,6 @@ int EBuffer::ExecCommand(int Command, ExState &State) {
         return J();
     case ExDiag:
         return Diag(State);
-    case ExLineLength:   // untested and probably unncessesary
-        return LineLength();
-        // ----------------------------------------------------
 
 
         // stuff with UI
@@ -2126,6 +2123,9 @@ int EBuffer::GetIntVar(int var, int *value) {
         return 1;
     case mvCurCol:
         *value = CP.Col;
+        return 1;
+    case mvLineLength:
+        *value = LineLen();
         return 1;
     }
     return EModel::GetIntVar(var, value);
