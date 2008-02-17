@@ -251,7 +251,7 @@ int EBuffer::CursorDown() {
 int EBuffer::MoveLeft() {
     if (CP.Col) {
         SetPos(CP.Col - 1, CP.Row, tmLeft);
-        SetBranchCondition(1);
+//        SetBranchCondition(1);
         return 1;
     }
     if (CursorWithinEOL == 1 && MoveUp())
@@ -271,7 +271,7 @@ int EBuffer::MoveRight() {
     }
 
     SetPos(CP.Col + 1, CP.Row, tmRight);
-    SetBranchCondition(1);
+//    SetBranchCondition(1);
     return 1;
 }
 
@@ -291,7 +291,7 @@ int EBuffer::MoveUp() {
             SetPos(LastUpDownColumn, CP.Row);
     }
 
-    SetBranchCondition(1);
+//    SetBranchCondition(1);
     return 1;
 }
 
@@ -311,7 +311,7 @@ int EBuffer::MoveDown() {
             SetPos(LastUpDownColumn, CP.Row);
     }
 
-    SetBranchCondition(1);
+//    SetBranchCondition(1);
     return 1;
 }
 
@@ -319,24 +319,24 @@ int EBuffer::MoveDown() {
 // to set twice what would merely be a reflection of the Cursor... condition.
 int EBuffer::MovePrev() {
     if (MoveLeft() || (MoveUp() && MoveLineEnd())) {
-        SetBranchCondition(1);
+//        SetBranchCondition(1);
         return 1;
     }
 
-    SetBranchCondition(0);
+//    SetBranchCondition(0);
     return 0;
 }
 
 int EBuffer::MoveNext() {
     if (CP.Col < LineLen()) {
         if (MoveRight()) {
-            SetBranchCondition(1);
+//            SetBranchCondition(1);
             return 1;
         }
     }
 
     if (MoveDown() && MoveLineStart()) {
-        SetBranchCondition(1);
+//        SetBranchCondition(1);
         return 1;
     }
 
