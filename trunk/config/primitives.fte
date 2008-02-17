@@ -47,7 +47,7 @@ sub Space     { bl emit }                       # print a space character
 sub Spaces    { times space }                   # don't have loops yet
 sub cr        { linenew }                       # carriage return
 sub ok        { insertstring " ok "; cr }       # meant to be used as prompt
-sub dot       { insertstring $tos; space }      # output top stack item as number
+sub dot       { insertstring $tosstr; space }   # output top stack item as number
 sub key       { getchar; }                      # wait for key, place its ascii on stack
 #sub count    { inc dup dec fetch }
 #sub Type     { Zero; Do; Count; Emit; Loop; Drop } # string output
