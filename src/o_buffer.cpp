@@ -789,7 +789,7 @@ int EBuffer::ExecCommand(int Command, ExState &State) {
     case ExJ:
         return J();
     case ExDiag:
-        return Diag();
+        return Diag(State);
     case ExLineLength:   // untested and probably unncessesary
         return LineLength();
         // ----------------------------------------------------
