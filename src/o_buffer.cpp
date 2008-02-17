@@ -2037,7 +2037,7 @@ int EBuffer::GetStrVar(int var, char *str, int buflen) {
 
         strlcpy(str, "", buflen);
 
-        if (ChClass(L->Chars[P])) {
+        if (CP.Col < LineLen()) {
             char tmp[2];
 
             // make copy of character
