@@ -85,16 +85,20 @@ EGUI::~EGUI() {
 int Push(GxView *view, ExState &State, int repeat) {
     ExModelView *V = (ExModelView *)view->Top;
     EView *View = V->View;
+    int found;
     int x = 0;
     char s[64] = "";
 
-    if (State.GetIntParam(View, &x)) {
-        ParamStack.push(x);
-    } else if (State.GetStrParam(View, s, sizeof(s))) {
-        ParamStack.push((int) s[0]);
-    } else {
-        ParamStack.push(repeat);
-    }
+    do {
+        found = 0;
+        if (State.GetIntParam(View, &x)) {
+            ParamStack.push(x);
+            found = 1;
+        } else if (State.GetStrParam(View, s, sizeof(s))) {
+            ParamStack.push((int) s[0]);
+            found = 1;
+        }
+    } while(found == 1);
 
     SetBranchCondition(1);
     return 1;
