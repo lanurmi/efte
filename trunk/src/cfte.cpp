@@ -704,8 +704,9 @@ static const OrdLookup CfgVar[] = {
     { "Line", mvLine },
     { "LineLength", mvLineLength },
     { "FTEVer", mvFTEVer },
-    { "Tos", mvTopOfStack },
+    { "TosStr", mvTopOfStackAsString },
     { "TosChar", mvTopOfStackAsChar },
+    { "TosInt", mvTopOfStackAsInt },
     { 0, 0 },
 };
 
@@ -1139,7 +1140,7 @@ static int ParseCommands(CurPos &cp, char *Name) {
             } else {
                 Command = Lookup(ConditionalKW, cmd);
                 if (Command == -1)
-                    Fail(cp, "Unrecognised command...: %s", cmd);
+                    Fail(cp, "Unrecognized command...: %s", cmd);
 
                 // ---------------------------------- flow control compiling statements -------------------------------
                 int endif_paired;
@@ -1275,7 +1276,7 @@ static int ParseCommands(CurPos &cp, char *Name) {
             Word w;
             if (GetWord(cp, w) != 0) Fail(cp, "Syntax error (bad variable name)");
             long var = Lookup(CfgVar, w);
-            if (var == -1) Fail(cp, "Unrecognised variable");
+            if (var == -1) Fail(cp, "Unrecognized variable: %s", w);
             PutNumber(cp, CF_VARIABLE, var);
         } else if (p == P_EOS) {
             GetOp(cp, P_EOS);
