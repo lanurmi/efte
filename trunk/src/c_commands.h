@@ -602,6 +602,8 @@ typedef enum {
     /// Exit FTE.
     ExShowEntryScreen,
     /// View external program output if available.
+    ExMessage,
+    /// Display a message in the status bar area
 
     //!Compiler Commands
     ExCompile,

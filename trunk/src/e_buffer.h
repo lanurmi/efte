@@ -788,6 +788,7 @@ public:
     int InsertUid();
 
     int ShowHelpWord(ExState &State);
+    int Message(ExState &State);
 
     int PlaceGlobalBookmark(ExState &State);
     int PushGlobalBookmark();

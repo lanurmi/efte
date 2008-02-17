@@ -796,6 +796,8 @@ int EBuffer::ExecCommand(int Command, ExState &State) {
 
 
         // stuff with UI
+    case ExMessage:
+        return Message(State);
     case ExMoveToLine:
         return MoveToLine(State);
     case ExMoveToColumn:
@@ -1076,6 +1078,9 @@ int EBuffer::PushGlobalBookmark() {
     return m ? 1 : 0;
 }
 
+/**
+ * MACRO: Get a character from the user and push it onto the stack parameter
+ */
 int EBuffer::GetChar(ExState &State) {
 // proably want to update buffer display herem when waiting for a key
 // some things aren't done now, like, updating visual cursor position,
@@ -1107,6 +1112,20 @@ int EBuffer::GetChar(ExState &State) {
 
     SetBranchCondition(1);
     return 1;
+}
+
+/**
+ * MACRO: Display a message on the status bar
+ */
+int EBuffer::Message(ExState &State) {
+    char msg[256];
+
+    if (State.GetStrParam(View, msg, sizeof(msg))) {
+        Msg(S_INFO, msg);
+        return 1;
+    }
+
+    return 0;
 }
 
 int EBuffer::InsertChar(ExState &State) {
