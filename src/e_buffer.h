@@ -789,6 +789,7 @@ public:
 
     int ShowHelpWord(ExState &State);
     int Message(ExState &State);
+    int GetChoice(ExState &State);
 
     int PlaceGlobalBookmark(ExState &State);
     int PushGlobalBookmark();

@@ -604,6 +604,8 @@ typedef enum {
     /// View external program output if available.
     ExMessage,
     /// Display a message in the status bar area
+    ExGetChoice,
+    /// Display a choice dialog and push selection index onto the parameter stack
 
     //!Compiler Commands
     ExCompile,
