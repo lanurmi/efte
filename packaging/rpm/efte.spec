@@ -1,6 +1,6 @@
 Summary: eFTE Text Editor
 Name: efte
-Version: 0.95
+Version: 0.96
 Release: 1
 License: GPLv2+, Artistic
 Group: Applications/Editors
