@@ -24,13 +24,16 @@ void SetBranchCondition(int cond)  {
  * MACRO: Print a stack diagnostic message to stderr
  */
 int EBuffer::Diag(ExState &State) {
+    int count;
     char msg[256];
 
+    if (State.GetIntParam(View, &count) == 0)
+        count = 0;
     if (State.GetStrParam(View, msg, sizeof(msg)))
-        fprintf(stderr, "Diag: %s\n", msg);
+        fprintf(stderr, "Diagnostic message: %s\n", msg);
 
     fprintf(stderr, "cond=%08x, tos=%d, nos=%d, 3rd=%d", BranchCondition, ParamStack.peek(0), ParamStack.peek(1), ParamStack.peek(2));
-    for (int i=3; i < CIRCSTACKSIZE; i++)
+    for (int i=3; i <= count; i++)
         fprintf(stderr, ", %ith=%d", i, ParamStack.peek(i));
     fprintf(stderr, "\n");
 
