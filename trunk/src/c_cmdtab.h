@@ -22,12 +22,11 @@ const struct {
 } Command_Table[] = {
     TAB(Nop),
     TAB(Fail),
-// ----------------------------------------------------
-    // additions to script interpreter extensions
-//    TAB(UnconditionalBranch),
-//    TAB(ConditionalBranch),
-//    TAB(DoRuntime),
-//    TAB(LoopRuntime),
+
+    //TAB(UnconditionalBranch),
+    //TAB(ConditionalBranch),
+    //TAB(DoRuntime),
+    //TAB(LoopRuntime),
     TAB(Exit),
     TAB(Push),
 
@@ -62,12 +61,11 @@ const struct {
     TAB(LineLength),
     TAB(TopOfStack),
 
-    // ----------------------------------------------------
     TAB(CursorLeft),
     TAB(CursorRight),
     TAB(CursorUp),
     TAB(CursorDown),
-    // ----------------------------------------------------
+
     TAB(MoveLeft),
     TAB(MoveRight),
     TAB(MoveUp),
