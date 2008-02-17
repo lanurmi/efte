@@ -241,16 +241,28 @@ int EBuffer::CursorDown() {
 // ------------------------------------------------------------------
 
 int EBuffer::MoveLeft() {
-    if (CursorLeft() == 0 && CursorWithinEOL == 1 && CursorUp())
+    if (CP.Col) {
+        SetPos(CP.Col - 1, CP.Row, tmLeft);
+        SetBranchCondition(1);
+        return 1;
+    }
+    if (CursorWithinEOL == 1 && MoveUp())
         return MoveLineEnd();
     SetBranchCondition(0);
     return 0;
 }
 
 int EBuffer::MoveRight() {
-    if (CursorRight() == 0) return 0;
-    if (CursorWithinEOL == 1 && CP.Col == LineLen() + 1 && CursorDown())
-        return MoveLineStart();
+    if (CursorWithinEOL == 1 && CP.Col == LineLen()) {
+        if (MoveDown()) {
+            return MoveLineStart();
+        } else {
+            SetBranchCondition(0);
+            return 0;
+        }
+    }
+
+    SetPos(CP.Col + 1, CP.Row, tmRight);
     SetBranchCondition(1);
     return 1;
 }
@@ -258,44 +270,69 @@ int EBuffer::MoveRight() {
 int EBuffer::MoveUp() {
     if (LastUpDownColumn == -1)
         LastUpDownColumn = CP.Col;
-    int cond=CursorUp();
-    if (cond) {
-        if (CursorWithinEOL == 1 && MoveLineEnd())
-            if (CP.Col > LastUpDownColumn)
-                SetPos(LastUpDownColumn, CP.Row);
+    if (CP.Row == 0) {
+        SetBranchCondition(0);
+        return 0;
     }
-    SetBranchCondition(cond);
-    return cond;
+
+    SetPos(CP.Col, CP.Row - 1, tmLeft);
+
+    if (CursorWithinEOL == 1) {
+        MoveLineEnd();
+        if (CP.Col > LastUpDownColumn)
+            SetPos(LastUpDownColumn, CP.Row);
+    }
+
+    SetBranchCondition(1);
+    return 1;
 }
 
-// almost identical to MoveUp but i find it difficult to factorize. scoping error as soon a i try to access stuff from a new fun()
-// this would ideally be not more than    MoveUpOrDown(direction);, or MoveCursorVertical(0,-1) / (0,1). PageUp/Down could probably reuse.
 int EBuffer::MoveDown() {
     if (LastUpDownColumn == -1)
         LastUpDownColumn = CP.Col;
-    int cond=CursorDown();
-    if (cond) {
-        if (CursorWithinEOL == 1 && MoveLineEnd())
-            if (CP.Col > LastUpDownColumn)
-                SetPos(LastUpDownColumn, CP.Row);
+    if (CP.Row == VCount - 1) {
+        SetBranchCondition(0);
+        return 0;
     }
-    SetBranchCondition(cond);
-    return cond;
+
+    SetPos(CP.Col, CP.Row + 1, tmLeft);
+
+    if (CursorWithinEOL == 1) {
+        MoveLineEnd();
+        if (CP.Col > LastUpDownColumn)
+            SetPos(LastUpDownColumn, CP.Row);
+    }
+
+    SetBranchCondition(1);
+    return 1;
 }
 
 // any of the CursorLeft/Right/Up/Down set branch condition. no need
 // to set twice what would merely be a reflection of the Cursor... condition.
 int EBuffer::MovePrev() {
-    if (CursorLeft()) return 1;
-    if (CursorUp() && MoveLineEnd())
+    if (MoveLeft() || (MoveUp() && MoveLineEnd())) {
+        SetBranchCondition(1);
         return 1;
+    }
+
+    SetBranchCondition(0);
     return 0;
 }
 
 int EBuffer::MoveNext() {
-    if (CP.Col < LineLen())
-        if (CursorRight()) return 1;
-    if (CursorDown() && MoveLineStart()) return 1;
+    if (CP.Col < LineLen()) {
+        if (MoveRight()) {
+            SetBranchCondition(1);
+            return 1;
+        }
+    }
+
+    if (MoveDown() && MoveLineStart()) {
+        SetBranchCondition(1);
+        return 1;
+    }
+
+    SetBranchCondition(0);
     return 0;
 }
 
