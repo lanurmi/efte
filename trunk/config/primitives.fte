@@ -14,6 +14,7 @@ sub true      { push -1 }                       # "true" represented as all bits
 sub qdup      { dup if dup endif }              # duplicate top of stack if <> 0
 sub nip       { swap drop }                     # drop second of stack
 sub tuck      { swap over }                     # copy top of stack below second of stack
+sub pluck     { tor over rfrom swap }
 sub minRot    { rot rot }                       # rotate top item below second item
 sub dup2      { over over }                     # duplicate top two items
 sub drop2     { drop drop }                     # drop top two items
@@ -22,13 +23,14 @@ sub swap2     { rot tor rot rfrom }             # swap top two pairs of items
 # -- bool, bits, comparison  --
 sub invert    { true xor }                      # complement all bits
 sub not       { zero equals }                   # logical inversion: 0->true,  x->0
-sub leftShift { dup plus }                      # bit shift left once
+sub leftshift { dup plus }                      # bit shift left once
 sub Success   { flag }                          # push command return code
 sub failure   { flag not }                      # push inverted command return code
 sub more      { swap less }                     # true if nos > tos
 sub between   { rot tuck less minrot more or not }
 sub capital   { push 65; push 90; between }
 sub negative  { zero less }                     # < zero?
+sub blockmarked { ?blockwrite "/dev/null" ; success }
 
 # -- arithmetic --
 sub inc       { one plus }                      # increment top of stack by one
@@ -39,16 +41,35 @@ sub min       { dup2 more if swap endif drop }
 sub max       { dup2 less if swap endif drop }
 sub mod       { dup2 div mul minus }            # modulo (remainder) function
 sub gcd       { begin tuck mod qdup not until } # greatest common denominator
+sub range     { over plus swap }
 
+
+#sub sqrt      { zero tuck do inc dup leftshift inc plusloop }
+#sub sqrt      { one begin dup2 div over minus one inc  div dup while plus repeat drop nip }
+#sub factor    { dup if dup one and
+#                if dup sqrt  3:push;
+#                   begin dup2 less
+#                      if drop2 exit endif
+#                      pluck over mod
+#                   while inc inc 
+#                   repeat nip
+#                endif
+#             else 2:Push;
+#             endif  }
+#sub prime     { dup factor equals }
+    
+    
 # -- i/o --
 sub bl        { push 32 }
 sub emit      { insertstring $toschar }
-sub Space     { bl emit }                       # print a space character
+sub space     { bl emit }                       # print a space character
 sub Spaces    { times space }                   # don't have loops yet
 sub cr        { linenew }                       # carriage return
 sub ok        { insertstring " ok "; cr }       # meant to be used as prompt
 sub dot       { insertstring $tosstr; space }   # output top stack item as number
 sub key       { getchar; }                      # wait for key, place its ascii on stack
+sub read      { push $Char }                    # read char under cursor
+
 #sub count    { inc dup dec fetch }
 #sub Type     { Zero; Do; Count; Emit; Loop; Drop } # string output
 
@@ -61,7 +82,12 @@ sub cursorend  { movelineend }
 #  Allocate
 #  Fetch
 #  Store
-#  Emit
 #  some way to print to status bar, or hook up a macro for executing when status bar is updated.
-
-
+    
+#  stack cursor line and column  
+#  test block marked?
+#  read ascii of char under cursor   ( push $Char? ) 
+#  stack # chars on line  (or macro: mark pos, CursorEnd, CursorColumn, return to marked pos)
+    
+    
+    

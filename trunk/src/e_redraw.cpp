@@ -456,13 +456,14 @@ void EBuffer::Redraw() {
                 int l = strlen(s);
                 int fw = W->Cols - l;
                 int fl = strlen(FileName);
-                char num[10];
+                char num[60];
 
                 MoveStr(B, 0, W->Cols, s, SColor, W->Cols);
-                if (DisplayCondition)
-                    sprintf(num, "%08x %s %d", BranchCondition, CCharStr, ModelNo);
-                else
+                if (DisplayCondition) {
+                    sprintf(num, "tos=%d nos=%d 3rd=%d cond=%08x %s %d", ParamStack.peek(0), ParamStack.peek(1), ParamStack.peek(2), BranchCondition, CCharStr, ModelNo);
+                } else {
                     sprintf(num, " %s %d", CCharStr, ModelNo);
+                }
                 MoveStr(B, W->Cols - strlen(num), W->Cols, num, SColor, W->Cols);
 
                 fw -= strlen(num);
