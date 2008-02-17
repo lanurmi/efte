@@ -37,6 +37,8 @@ Stack CondStack;
 
 typedef struct {
     char *Name;
+    char *FileName;
+    int LineNo;
 } ExMacro;
 
 typedef struct {
@@ -1011,11 +1013,13 @@ static int CmdNum(const char *Cmd) {
     return 0; // Nop
 }
 
-int NewCommand(const char *Name) {
+int NewCommand(CurPos &cp, const char *Name) {
     if (Name == 0)
         Name = "";
     Macros = (ExMacro *) realloc(Macros, sizeof(ExMacro) * (1 + CMacros));
     Macros[CMacros].Name = strdup(Name);
+    Macros[CMacros].FileName = strdup(cp.name);
+    Macros[CMacros].LineNo = cp.line;
     CMacros++;
     return CMacros - 1;
 }
@@ -1086,15 +1090,23 @@ long int BranchOffset(int pos1, int pos2) {
 
 
 static int ParseCommands(CurPos &cp, char *Name) {
-    //if (!Name)
-    //    return 0;
     Word cmd;
+    unsigned int branchaddress;
     int p;
-    long Cmd = NewCommand(Name) | CMD_EXT;
-
     long cnt;
     long ign = 0;
-    unsigned int branchaddress;
+    long Cmd = CmdNum(Name);
+
+    if (Cmd != 0) {
+        if ((Cmd & CMD_EXT) == 0) {
+            Fail(cp, "%s is an internal command and cannot be redefined\n", Name);
+        } else {
+            Fail(cp, "%s has already been defined in: %s:%i", Name, Macros[Cmd^CMD_EXT].FileName,
+                 Macros[Cmd^CMD_EXT].LineNo);
+        }
+    }
+
+    Cmd = NewCommand(cp, Name) | CMD_EXT;
 
     CondStack.init();
     PutNumber(cp, CF_INT, Cmd);
