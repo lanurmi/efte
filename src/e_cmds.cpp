@@ -199,15 +199,6 @@ int EBuffer::J() {
     return 1;
 }
 
-
-
-// --- input/output ---
-// untested. probably not needed if if general variable-to-stack solution can be used
-int EBuffer::LineLength() {
-    ParamStack.push(LineLen(VToR(CP.Row)));
-    return 1;
-}
-
 // ------------------------------------------------------------------
 
 int EBuffer::CursorLeft() {

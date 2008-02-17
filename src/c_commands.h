@@ -86,10 +86,6 @@ typedef enum {
     // -------------------
     ExDiag,
     /// Print stack top and conditions to stderr for debugging.
-    ExLineLength,
-    /// Line length.
-    ExTopOfStack,
-    /// Top of stack.
 
     //!Cursor Commands
     ExCursorLeft,

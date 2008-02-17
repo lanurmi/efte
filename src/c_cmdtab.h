@@ -58,8 +58,6 @@ const struct {
     TAB(Times),
 
     TAB(Diag),
-    TAB(LineLength),
-    TAB(TopOfStack),
 
     TAB(CursorLeft),
     TAB(CursorRight),

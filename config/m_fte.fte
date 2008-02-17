@@ -73,11 +73,10 @@ colorize FTE {
         'KillLine', 'KillToLineEnd', 'KillToLineStart', 'KillWord', 'KillWordOrCap',
         'KillWordOrCapPrev', 'KillWordPrev',
 
-        'Less', 'LineAdd', 'LineCaseDown', 'LineCaseToggle',
-        'LineCaseUp', 'LineCenter', 'LineDuplicate', 'LineIndent',
-        'LineInsert', 'LineJoin', 'LineLength', 'LineNew', 'LineSplit', 'LineTrans',
-        'LineTrim', 'ListMark', 'ListMarkAll', 'ListRoutines', 'ListToggleMark',
-        'ListToggleMarkAll', 'ListUnmark', 'ListUnmarkAll', 'LocalMenu',
+        'Less', 'LineAdd', 'LineCaseDown', 'LineCaseToggle', 'LineCaseUp', 'LineCenter',
+        'LineDuplicate', 'LineIndent', 'LineInsert', 'LineJoin', 'LineNew', 'LineSplit',
+        'LineTrans', 'LineTrim', 'ListMark', 'ListMarkAll', 'ListRoutines',
+        'ListToggleMark', 'ListToggleMarkAll', 'ListUnmark', 'ListUnmarkAll', 'LocalMenu',
 
         'MainMenu', 'MatchBracket', 'Message', 'Minus', 'MoveBeginLinePageFile',
         'MoveBeginOrNonWhite', 'MoveBlockEnd', 'MoveBlockStart', 'MoveDown',
