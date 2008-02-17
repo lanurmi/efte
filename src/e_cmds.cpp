@@ -11,8 +11,6 @@
 #include "fte.h"
 unsigned int BranchCondition = 0;
 
-
-
 // ------------------------------------------------------------------
 
 void SetBranchCondition(int cond)  {
@@ -37,6 +35,14 @@ int EBuffer::Diag(ExState &State) {
         fprintf(stderr, ", %ith=%d", i, ParamStack.peek(i));
     fprintf(stderr, "\n");
 
+    return 1;
+}
+
+/**
+ * MACRO: Display condition code in status bar?
+ */
+int EBuffer::ToggleConditionDisplay() {
+    DisplayCondition = !DisplayCondition;
     return 1;
 }
 

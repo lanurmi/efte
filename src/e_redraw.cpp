@@ -459,7 +459,10 @@ void EBuffer::Redraw() {
                 char num[10];
 
                 MoveStr(B, 0, W->Cols, s, SColor, W->Cols);
-                sprintf(num, " %s %d", CCharStr, ModelNo);
+                if (DisplayCondition)
+                    sprintf(num, "%08x %s %d", BranchCondition, CCharStr, ModelNo);
+                else
+                    sprintf(num, " %s %d", CCharStr, ModelNo);
                 MoveStr(B, W->Cols - strlen(num), W->Cols, num, SColor, W->Cols);
 
                 fw -= strlen(num);
