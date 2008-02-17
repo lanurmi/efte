@@ -1,0 +1,172 @@
+colorize PHP {
+    SyntaxParser       = 'SIMPLE';
+
+    color {
+        { 'Normal',        'Editor_Default' },
+        { 'Number',        'Lang_DecimalNumber' },
+        { 'HexNumber',     'Lang_HexNumber' },
+        { 'Punctuation',   'Lang_Punctuation' },
+        { 'String',        'Lang_String' },
+        { 'Comment',       'Lang_Comment' },
+        { 'Special',	   'Lang_Preprocessor' },
+        { 'Variable',      'Lang_Variable' },
+    };
+
+    keyword 'Editor_Keywords' {
+        'if', 'else', 'elseif', 'endif', 'while', 'for', 'class',
+        'extends', 'case', 'switch',
+        'global', 'function', 'var', 'new', 'break', 'continue', 'require',
+        'include', 'abs', 'acos', 'array',
+        'array_keys', 'array_merge', 'array_pop', 'array_push', 'array_shift',
+        'array_slice', 'array_splice', 'array_unshift', 'array_values',
+        'array_walk', 'array', 'arsort', 'asin', 'asort', 'aspell_check_raw',
+        'aspell_check', 'aspell_new', 'aspell_suggest', 'atan', 'atan2',
+        'base_convert', 'base64_decode', 'base64_encode', 'basename', 'bcadd',
+        'bccomp', 'bcdiv', 'bcmod', 'bcmul', 'bcpow', 'bcscale', 'bcsqrt',
+        'bcsub', 'bin2hex', 'bindec', 'ceil', 'chdir', 'checkdate',
+        'checkdnsrr', 'chgrp', 'chmod', 'chop', 'chown', 'chr', 'chunk_split',
+        'clearstatcache', 'closedir', 'closelog', 'compact',
+        'connection_aborted', 'connection_status', 'connection_timeout',
+        'convert_cyr_string', 'copy', 'cos', 'count', 'crypt', 'current', 'date',
+        'debugger_off', 'debugger_on', 'decbin', 'dechex', 'decoct', 'delete',
+        'die', 'dirname', 'diskfreespace', 'dl', 'doubleval', 'each',
+        'easter_date', 'easter_days', 'echo', 'empty', 'end', 'ereg_replace',
+        'ereg', 'eregi_replace', 'eregi', 'error_log', 'error_reporting',
+        'escapeshellcmd', 'eval', 'exec', 'exit', 'exp', 'explode',
+        'extension_loaded', 'extract', 'fclose', 'feof', 'fgetc',
+        'fgetcsv', 'fgets', 'fgetss', 'file_exists', 'file', 'fileatime',
+        'filectime', 'filegroup', 'fileinode', 'filemtime', 'fileowner',
+        'fileperms', 'filesize', 'filetype', 'flock',
+        'floor', 'flush', 'fopen', 'fpassthru', 'fputs', 'fread', 'frenchtojd',
+        'fseek', 'fsockopen', 'ftell', 'function_exists', 'fwrite',
+        'get_cfg_var', 'get_current_user', 'get_magic_quotes_gpc',
+        'get_magic_quotes_runtime', 'get_meta_tags', 'getallheaders',
+        'getdate', 'getenv', 'gethostbyaddr', 'gethostbyname',
+        'gethostbynamel', 'getimagesize', 'getlastmod', 'getmxrr',
+        'getmyinode', 'getmypid', 'getmyuid', 'getrandmax', 'getrusage',
+        'gettimeofday', 'gettype', 'gmdate', 'gmmktime', 'gmstrftime',
+        'gregoriantojd', 'header', 'hexdec', 'htmlentities',
+        'htmlspecialchars', 'hw_children', 'hw_childrenobj', 'hw_close',
+        'hw_connect', 'hw_cp', 'hw_deleteobject', 'hw_docbyanchor',
+        'hw_docbyanchorobj', 'hw_documentattributes', 'hw_documentbodytag',
+        'hw_documentcontent', 'hw_documentsetcontent', 'hw_documentsize',
+        'hw_edittext', 'hw_error', 'hw_errormsg', 'hw_free_document',
+        'hw_getanchors', 'hw_getanchorsobj', 'hw_getandlock',
+        'hw_getchildcoll', 'hw_getchildcollobj', 'hw_getchilddoccoll',
+        'hw_getchilddoccollobj', 'hw_getobject', 'hw_getobjectbyquery',
+        'hw_getobjectbyquerycoll', 'hw_getobjectbyquerycollobj',
+        'hw_getobjectbyqueryobj', 'hw_getparents', 'hw_getparentsobj',
+        'hw_getremote', 'hw_getremotechildren', 'hw_getsrcbydestobj',
+        'hw_gettext', 'hw_getusername', 'hw_identify', 'hw_incollections',
+        'hw_info', 'hw_inscoll', 'hw_insdoc', 'hw_insertdocument',
+        'hw_insertobject', 'hw_modifyobject', 'hw_mv', 'hw_new_document',
+        'hw_objrec2array', 'hw_outputdocument', 'hw_pconnect',
+        'hw_pipedocument', 'hw_root', 'hw_unlock', 'hw_who',
+        'ignore_user_abort', 'implode', 'in_array',
+        'include', 'intval', 'iptcparse', 'is_array', 'is_dir', 'is_double',
+        'is_executable', 'is_file', 'is_float', 'is_int', 'is_integer',
+        'is_link', 'is_long', 'is_object', 'is_readable', 'is_real',
+        'is_string', 'is_writeable', 'isset', 'jddayofweek', 'jdmonthname',
+        'jdtofrench', 'jdtogregorian', 'jdtojewish', 'jdtojulian',
+        'jewishtojd', 'join', 'juliantojd', 'key', 'ksort', 'leak',
+        'link', 'linkinfo', 'list', 'log', 'log10', 'lstat', 'ltrim', 'mail',
+        'max', 'md5', 'microtime', 'min', 'mkdir', 'mktime', 'next', 'nl2br',
+        'number_format', 'octdec', 'opendir', 'openlog', 'ord', 'pack', 'parse_str',
+        'parse_url', 'passthru', 'pclose', 'pfsockopen', 'phpinfo', 'phpversion', 'pi', 'popen', 'pos', 'pow',
+        'preg_grep', 'preg_match_all', 'preg_match', 'preg_quote',
+        'preg_replace', 'preg_split', 'prev', 'print', 'printf', 'putenv',
+        'quoted_printable_decode', 'quotemeta', 'rand', 'range',
+        'rawurldecode', 'rawurlencode', 'readdir', 'readfile', 'readgzfile',
+        'readlink', 'register_shutdown_function', 'rename', 'require', 'reset',
+        'rewind', 'rewinddir', 'rmdir', 'round', 'rsort', 'sem_acquire',
+        'sem_get', 'sem_release', 'serialize', 'set_file_buffer',
+        'set_magic_quotes_runtime', 'set_socket_blocking', 'set_time_limit',
+        'setcookie', 'setlocale', 'settype', 'shm_attach', 'shm_detach',
+        'shm_get_var', 'shm_put_var', 'shm_remove_var', 'shm_remove',
+        'shuffle', 'similar_text', 'sin', 'sizeof', 'sleep',
+        'sort', 'soundex', 'split', 'sprintf', 'sql_regcase', 'sqrt', 'srand',
+        'stat', 'str_replace', 'strchr', 'strcmp', 'strcspn', 'strftime',
+        'strip_tags', 'stripslashes', 'strlen', 'strpos', 'strrchr', 'strrev',
+        'strrpos', 'strspn', 'strstr', 'strtok', 'strtolower', 'strtoupper',
+        'strtr', 'strval', 'substr', 'sybase_affected_rows', 'symlink', 'syslog', 'system', 'tan', 'tempnam',
+        'time', 'touch', 'trim', 'uasort', 'ucfirst', 'ucwords', 'uksort',
+        'umask', 'uniqid', 'unlink', 'unpack', 'unserialize', 'unset',
+        'urldecode', 'urlencode', 'usleep', 'usort', 'utf8_decode',
+        'utf8_encode', 'virtual', 'vm_addalias', 'vm_adduser', 'vm_delalias',
+        'vm_deluser', 'vm_passwd'
+    };
+
+    h_state 0 { 'Special' }
+    h_trans { 9, '>', '<?php', 'Special' }
+    h_trans { 9, '>', '<?', 'Special' }
+
+    h_state 1 { 'Comment' }
+    h_trans { 9, '>', '*/', 'Comment' }
+
+    h_state 2 { 'Comment' }
+    h_trans { 9, '$', '', 'Comment' }
+
+    h_state 3 { 'String' }
+    h_trans { 9, '>', '"', 'String' }
+    #h_trans { 9, '$', '', 'String' }
+    h_trans { 3, 'qQ', '\\', 'String' }
+
+    h_state 4 { 'String' }
+    h_trans { 9, '>', '\'', 'String' }
+    #h_trans { 9, '$', '', 'String' }
+    h_trans { 4, 'qQ', '\\', 'String' }
+
+    h_state 5 { 'Normal' }
+    h_trans { 9, '$', '', 'Normal' }
+    h_wtype { 9, 9, 9, 'i', 'a-zA-Z0-9_' }
+
+    h_state 6 { 'HexNumber' }
+    h_trans { 9, '-S', '0-9A-Fa-f', 'Normal' }
+    h_trans { 9, '$', '', 'Normal' }
+
+    h_state 7 { 'Number' }
+    h_trans { 9, '-S', '0-9', 'Normal' }
+    h_trans { 9, '$', '', 'Normal' }
+
+    h_state 8 { 'Variable' }
+    h_trans { 9, '-S', 'a-zA-Z0-9_\$', 'Variable' }
+
+    h_state 9 { 'Normal' }
+    h_trans { 8, '<', '$', 'Variable' }
+    h_trans { 5, '-s', 'a-zA-Z_', 'Normal' }
+    h_trans { 1, '<', '/*', 'Comment' }
+    h_trans { 2, '<', '//', 'Comment' }
+    h_trans { 2, '<', '#', 'Comment' }
+    h_trans { 3, '<', '"', 'String' }
+    h_trans { 4, '<', '\'', 'String' }
+    h_trans { 10, '<', '`', 'String' }
+    h_trans { 0, '<', '?>', 'Special' }
+    h_trans { 6, '<', '0x', 'HexNumber' }
+    h_trans { 7, '<s', '0-9', 'Number' }
+    h_trans { 9, 'S', '_a-zA-Z0-9$', 'Punctuation' }
+
+    h_state 10 { 'String' }
+    h_trans { 9, '>', '`', 'String' }
+    h_trans { 10, 'qQ', '\\', 'String' }
+
+}
+
+mode PHP: SOURCE {      # PHP Mode
+    FileNameRx          = /\.\c{PHP3}|{PHP4}|{PHP}|{PHTML}$/;
+    HilitOn             = 1;
+    Colorizer           = 'PHP';
+    AutoIndent          = 1;
+    IndentMode          = 'PLAIN';
+    MatchCase           = 1;
+    Trim                = 1;
+    MultiLineHilit      = 1;
+    AutoHilitParen      = 1;
+
+    SaveFolds           = 2;      # save fold info at end of line
+    CommentStart        = ' /*';
+    CommentEnd          = '*/';
+
+    RoutineRegexp       = '^{class}|{function}';
+}
+
+oinclude 'mym_php.fte';

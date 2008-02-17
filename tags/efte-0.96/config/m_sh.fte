@@ -1,0 +1,60 @@
+colorize SH {
+    SyntaxParser = 'SH';
+    
+    color {
+        { 'Normal',     'Editor_Default' },
+        { 'Keyword',    'Editor_Keywords' },
+        { 'Number',     'Lang_DecimalNumber' },
+        { 'Comment',    'Lang_Comment' },
+        { 'String',     'Lang_String' },
+        { 'Control',    'Lang_Command' },
+        { 'Command',    'Lang_Function' },
+        { 'Punctuation','Lang_Punctuation' },
+        { 'Variable',   'Lang_Label' },
+    };
+
+#    keyword 'Lang_Label' {
+#        'PPID', 'PWD', 'OLDPWD', 'REPLY', 'UID',
+#        'EUID', 'GROUPS', 'BASH', 'BASH_VERSION',
+#        'BASH_VERSINFO', 'SHLVL', 'RANDOM',
+#        'SECONDS', 'LINEND', 'HISTCMD', 'DIRSTACK',
+#        'PIPESTATUS', 'OPTARG', 'OPTIND', 'HOSTNAME',
+#        'HOSTTYPE', 'OSTYPE', 'MACHTYPE', 'SHELLOPTS',
+#        'IFS', 'PATH', 'HOME', 'CDPATH', 'BASH_ENV',
+#        'MAIL', 'MAILCHECK', 'MAILPATH', 'PS1',
+#        'PS2', 'PS3', 'PS4', 'TIMEFORMAT', 'HISTSIZE',
+#        'HISTFILE', 'HISTFILESIZE', 'OPTERR', 'LANG',
+#        'LC_ALL', 'LC_COLLATE', 'LC_MESSAGES',
+#        'PROMPT_COMMAND', 'IGNOREEOF', 'TMOUT',
+#        'FCEDIT', 'FIGNORE', 'GLOBIGNORE', 'INPUTRC',
+#        'HISTCONTROL', 'HISTIGNORE', 'HOSTFILE',
+#        
+#        'TERM', 'LD_LIBRARY_PATH', 'XAUTHORITY',
+#        'WINTERM', 
+#    };
+
+    keyword 'Editor_Keywords' {
+        'case', 'do', 'done', 'elif', 'else',
+        'esac', 'fi', 'for', 'function', 'if',
+        'in', 'then', 'until', 'while', 'exec',
+        'export', 'set', 'echo', 'exit', 'select',
+        'source', 'unset', 'alias', 'unalias',
+        'shift', 'break', 'read', 'return',
+    };
+}
+
+mode SH: SOURCE { # *sh
+    FileNameRx          = /{\.\cSH$}|{configure.{in}|{ac}}/;
+    FirstLineRx         = /^\#\![ ]*[^ ]*sh>/;
+    RoutineRegexp       = /^\s*{function\s\s*\S\S*\s*}|{\S\S*\s*\(\)}\s*$/;
+    HilitOn             = 1;
+    Colorizer           = 'SH';
+    MultiLineHilit      = 1;
+    AutoHilitParen      = 1;
+    
+    SaveFolds           = 2;      # save fold info at end of line
+    CommentStart        = ' #';
+    CommentEnd          = '';
+}
+
+oinclude 'mym_sh.fte';

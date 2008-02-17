@@ -1,0 +1,745 @@
+# Basic Commands (Global) #FOLD00
+menu Tools { #fold01
+    item "&Compile\tF9" { Compile "make -k " }
+    item "&Grep" { Compile "grep -n " }
+#    item "&Diff" { Compile "cvs diff" }
+    item;
+    item "Go to prev &error\tF11" { CompilePrevError }
+    item "Go to &next error\tF12" { CompileNextError }
+    item;
+    item "&Messages\tS+F9" { ViewMessages }
+}
+
+menu Window { #FOLD01
+#    item "&New " { WinNewFrame }
+#    item;
+    item "Split &Horizontal\tShift+F2" { WinHSplit }
+    item "&Close view\tCtrl+Alt+F4" { WinClose }
+    item "Close &other views\tF5" { WinZoom }
+    item;
+    item "Sa&ve Desktop" { DesktopSave }
+    item "Save Desktop &As" { DesktopSaveAs }
+    item;
+    item "&Routines\tCtrl+I" { ListRoutines }
+    item "&Buffers\tAlt+0" { ViewBuffers }
+    item "&Directory\tC+M" { DirOpen }
+#    item "&Shell" { }
+}
+
+menu Help { #fold01
+    item "&About..."  { ShowVersion }
+}
+
+eventmap MODEL { #fold01
+    key     [C+F2]      { FileSaveAll }
+    key       [F3]      { FileOpen }
+    key       [F4]      { WinNext }
+    key     [C+F4]      { WinHSplit }
+    key     [S+F4]      { WinPrev }
+    key   [A+S-F4]      { WinClose }
+    key       [F5]      { WinZoom }
+    key       [F6]      { FileNext }
+    key     [S+F6]      { FilePrev }
+    key   [A+S-F6]      { FileLast }
+    key       [F10]     { MainMenu }
+    key     [C+F10]     { FileClose }
+    key     [C+F9]      { RunProgram }
+    key     [S+F10]     { LocalMenu }
+    
+    key   [C+G-Up]      { WinPrev }
+    key   [C+G-Down]    { WinNext }
+    
+    key   [A+G-PgUp]    { WinPrev; MovePageUp; WinNext }
+    key   [A+G-PgDn]    { WinNext; MovePageDown; WinPrev }
+    key [A+C+G-PgUp]    { WinNext; MovePageUp; WinPrev }
+    key [A+C+G-PgDn]    { WinPrev; MovePageDown; WinNext }
+    
+    key     [A+X]       { ExitEditor }
+    
+    key   [C+S+G-Up]    { WinResize -1 }
+    key   [C+S+G-Down]  { WinResize +1 }
+    
+    # this is also useful for 'grep -n' etc. if configured
+    key       [F9]      { Compile; ViewMessages }
+    key       [F11]     { CompilePrevError }
+    key       [F12]     { CompileNextError }
+    key       [S+F9]    { ViewMessages }
+    
+    key     [A+0]       { ViewBuffers }
+    key     [A+1]       { SwitchTo 1 }
+    key     [A+2]       { SwitchTo 2 }
+    key     [A+3]       { SwitchTo 3 }
+    key     [A+4]       { SwitchTo 4 }
+    key     [A+5]       { SwitchTo 5 }
+    key     [A+6]       { SwitchTo 6 }
+    key     [A+7]       { SwitchTo 7 }
+    key     [A+8]       { SwitchTo 8 }
+    key     [A+9]       { SwitchTo 9 }
+}
+# List Viewers #FOLD00
+eventmap MLIST: MODEL {
+    key     [G-Left]    { MoveLeft }
+    key     [G-Right]   { MoveRight }
+    key     [G-Up]      { MoveUp }
+    key     [G-Down]    { MoveDown }
+    key     [G-Home]    { MoveLineStart }
+    key   [C+G-Home]    { MovePageStart }
+    key     [G-End]     { MoveLineEnd }
+    key   [C+G-End]     { MovePageEnd }
+    key     [G-PgUp]    { MovePageUp }
+    key   [C+G-PgUp]    { MoveFileStart }
+    key     [G-PgDn]    { MovePageDown }
+    key   [C+G-PgDn]    { MoveFileEnd }
+#    key   [A+G-Up]     { ScrollUp }
+#    key   [A+G-Down]   { ScrollDown }
+    key   [C+Left]      { ScrollRight }
+    key   [C+Right]     { ScrollLeft }
+    
+    key     [G-Enter]   { Activate }
+    key     [Space]     { ActivateInOtherWindow }
+    key     [S+Enter]   { CloseActivate }
+
+    key     [C+R]       { Rescan }
+}
+# Directory Browser  #FOLD00
+menu Directory { #fold01
+    item    "&Reloadrl+R"         { Rescan }
+    item    "&Close\tCtrl+F10"        { FileClose }
+    item;
+    item    "&Open file...\tF3"       { FileOpen }
+    item;
+    item    "&Next\tF6"               { FileNext }
+    item    "&Previous\tShift+F6"     { FilePrev }
+    item;
+    item    "Sh&ell"                  { RunProgram "" }
+    item    "E&xit\tAlt+X"            { ExitEditor }
+}                              
+
+menu Navigate { #FOLD01
+    item "Go &< level\tCtrl+PgUp"     { DirGoUp }
+    item "Go &> level\tCtrl+PgDn"   { DirGoDown }
+    item "Go to &\\\tCtrl+\\"          { DirGoRoot }
+#    item "&/ Goto Dir\t/"    { DirGoto }
+    item "&\\ Goto Dir\t\\"    { DirGoto }
+    item "&Delete File\tCtrl+D"       { DeleteFile }
+    item;
+    item '&A:\\' { DirGoto 'A:\\' }
+    item '&B:\\' { DirGoto 'B:\\' }
+    item '&C:\\' { DirGoto 'C:\\' }
+    item '&D:\\' { DirGoto 'D:\\' }
+    item '&E:\\' { DirGoto 'E:\\' }
+    item '&F:\\' { DirGoto 'F:\\' }
+    item '&G:\\' { DirGoto 'G:\\' }
+    item '&H:\\' { DirGoto 'H:\\' }
+    item '&I:\\' { DirGoto 'I:\\' }
+}
+
+menu DirMain { #fold01
+    submenu "&Directory", Directory;
+    submenu "&Navigate", Navigate;
+    submenu "&Tools", Tools;
+    submenu "&Window",  Window;
+}
+
+eventmap DIRECTORY: MLIST { #FOLD01
+    MainMenu = 'DirMain';
+    
+    key [C+G-PgUp]      { DirGoUp }
+    key [C+G-PgDn]      { DirGoDown }
+    key [C+\\]          { DirGoRoot }
+    key [/]             { DirGoto }
+    key [\\]            { DirGoto }
+    key [Esc]           { FileClose 0 }
+    key [C+D]           { DeleteFile }
+    
+    key     [A+D]       { MainMenu 'D' }
+    key     [A+N]       { MainMenu 'N' }
+    key     [A+W]       { MainMenu 'W' }
+    key     [A+T]       { MainMenu 'T' }
+}
+# Buffer List #fold00
+eventmap BUFFERS: MLIST {
+    key  [Esc]   { FileClose 0 } # 0 = do not open directory when last closed, overrides OpenAfterClose default.
+
+    key  [C+C]   { BufListFileClose }
+    key  [F2]    { BufListFileSave }
+}
+
+# Routine List #fold00
+eventmap ROUTINES: MLIST {
+    key  [Esc]   { FileClose }
+}
+
+# Message List #fold00
+menu Messages {
+    item "&Close\tCtrl+F10"        { FileClose }
+    item;
+    item "&Next\tF6"               { FileNext }
+    item "&Previous\tShift+F6"     { FilePrev }
+    item;
+    item "Sh&ell"                  { RunProgram "" }
+    item "E&xit\tAlt+X"            { ExitEditor }
+}
+
+menu MsgMain {
+    submenu "&Messages", Messages;
+    submenu "&Tools", Tools;
+    submenu "&Window", Window;
+}
+
+eventmap MESSAGES: MLIST {
+    MainMenu = "MsgMain";
+    
+    key     [A+M]       { MainMenu 'M' }
+    key     [A+T]       { MainMenu 'T' }
+    key     [A+W]       { MainMenu 'W' }
+
+    key     [C+C]       { ChildClose } # does NOT kill, just closes pipe
+}
+# Editor - Editing Modes #FOLD00
+# PLAIN #FOLD01
+# menus  #FOLD02
+menu MChangeMode { #FOLD03
+    item "&Plain"      { ChangeMode 'PLAIN' }
+    item "&Text"       { ChangeMode 'TEXT' }
+    item "&C"          { ChangeMode 'C' }
+    item "&EMail"      { ChangeMode 'MSG' }
+    item "&HTML"       { ChangeMode 'HTML' }
+    item "&IPF"        { ChangeMode 'IPF' }
+    item "&Ada"        { ChangeMode 'Ada' }
+    item "&REXX"       { ChangeMode 'REXX' }
+    item "MAKE"        { ChangeMode 'MAKE' }
+    item "&FTE"        { ChangeMode 'FTE' }
+    item "Resource"    { ChangeMode 'RESOURCE' }
+    item "&DIFF"       { ChangeMode 'DIFF' }
+    item "&MERGE"      { ChangeMode 'MERGE' }
+    item "&SH"         { ChangeMode 'SH' }
+    item "PER&L"       { ChangeMode 'PERL' }
+    item "PASCAL"      { ChangeMode 'PASCAL' }
+    item "&JAVA"       { ChangeMode 'JAVA' }
+    item "TE&X"        { ChangeMode 'TEX' }
+    item "&BIN"        { ChangeMode 'BIN' }
+}
+
+menu MOpenInMode { #FOLD03
+    item "&Plain"      { FileOpenInMode 'PLAIN' }
+    item "&Text"       { FileOpenInMode 'TEXT' }
+    item "&C"          { FileOpenInMode 'C' }
+    item "&EMail"      { FileOpenInMode 'MSG' }
+    item "&HTML"       { FileOpenInMode 'HTML' }
+    item "&IPF"        { FileOpenInMode 'IPF' }
+    item "&Ada"        { FileOpenInMode 'Ada' }
+    item "&REXX"       { FileOpenInMode 'REXX' }
+    item "MAKE"        { FileOpenInMode 'MAKE' }
+    item "&FTE"        { FileOpenInMode 'FTE' }
+    item "Resource"    { FileOpenInMode 'RESOURCE' }
+    item "&DIFF"       { FileOpenInMode 'DIFF' }
+    item "&MERGE"      { FileOpenInMode 'MERGE' }
+    item "&SH"         { FileOpenInMode 'SH' }
+    item "PER&L"       { FileOpenInMode 'PERL' }
+    item "PASCAL"      { FileOpenInMode 'PASCAL' }
+    item "&JAVA"       { FileOpenInMode 'JAVA' }
+    item "TE&X"        { FileOpenInMode 'TEX' }
+    item "&BIN"        { FileOpenInMode 'BIN' }
+}
+
+menu File { #fold03
+    item    "&Open...\tF3"            { FileOpen }
+    submenu "Open in &Mode...\tCtrl+F3", MOpenInMode;
+#    item    "Open &Binary"            { FileOpenInMode 'BIN' }
+    item    "&Reload\tShift+F3"           { FileReload }
+    item    "&Save\tF2"               { FileSave }
+
+    # OpenDoc UI Guide recomments using Write To only, not Save As, hmm.
+    item    "Save &As...\tShift+F2"       { FileSaveAs }
+    item    "Save Al&l\tCtrl+F2"         { FileSaveAll }
+    item    "Write &To..."            { FileWriteTo }
+#    item    "Sa&ve and Close\tAlt+F2"   { FileSave; FileClose }
+    item    "Prin&t"                  { FilePrint } 
+    item    "&Close\tCtrl+F10"           { FileClose }
+    item;
+    item    "&Next\tF6"               { FileNext }
+    item    "&Previous\tShift+F6"         { FilePrev }
+    item;
+    item    "Sh&ell"                  { RunProgram "" }
+    item    "E&xit\tAlt+X"              { ExitEditor }
+}                              
+                               
+menu Edit { #FOLD03
+    item "&Undo\tAlt+BackSp" { Undo }
+    item "&Redo\tAlt+Shift+BackSp" { Redo }
+    item;                                
+    item "Cu&t\tShift+Del" { BlockCut }
+    item "&Copy\tCtrl+Ins" { BlockCopy }
+    item "&Paste\tShift+Ins" { BlockPasteStream }
+    item "P&aste Column\tAlt+Ins" { BlockPasteColumn }
+    item;                        
+#    item "&Insert line\tShift+Enter" { LineInsert }
+    item "&Delete line\tCtrl+Y" { KillLine }
+    item "&Split line\tCtrl+Enter" { LineSplit }
+    item "&Join line\tCtrl+J" { LineJoin }
+#    item "Dup&licate line\tCtrl+D" { LineDuplicate }
+#    item "Delete to line &end\tAlt+End" { KillToLineEnd }
+#    item "Delete to li&ne start\tCtrl+Shift+BackSp" { KillToLineStart }
+    item;                        
+    item "&Quote Literal...\tCtrl+Q" { InsertChar }
+    item "&ASCII Table...\tCtrl+Shift+A" { ASCIITable }
+}
+
+menu Translate { #fold03
+    item "&Uppercase"         { BlockCaseUp }
+    item "&Lowercase"         { BlockCaseDown }
+    item "&Togglecase"        { BlockCaseToggle }
+    item "&Rot13"             { BlockTrans 'A-Za-z' 'N-ZA-Mn-za-m' }
+    item;
+    item "User &specified..." { BlockTrans }
+}
+
+menu Block { #fold03
+    item "&Unmark\tEsc"   { BlockUnmark }
+    item "Mark &Line\tAlt+L"   { BlockMarkLine }
+    item "Mark &Stream\tAlt+A"   { BlockMarkStream }
+    item "Mark &Column\tAlt+K"   { BlockMarkColumn }
+    item;
+#    item "Select Wor&d"   { BlockSelectWord }
+#    item "Selec&t Line"   { BlockSelectLine }
+#    item;
+    item "&Indent\tAlt+I"   { BlockIndent }
+    item "U&nindent\tAlt+U"   { BlockUnindent }
+    item;
+    item "&Write..."   { BlockWrite }
+    item "&Read..."   { BlockRead }
+    item "&Print"   { BlockPrint }
+    item;
+    submenu "Translat&e", Translate;
+}
+
+menu Search { #FOLD03
+    item "&Find...\tCtrl+Q C+W" { Find }
+    item "Find and &replace...\tCtrl+R" { FindReplace }
+    item "Repeat &Last find\tCtrl+L" { FindRepeat }
+    item "Repeat last find re&verse\tCtrl+B" { FindRepeatReverse }
+    item "Repeat last find &once\tCtrl+N" { FindRepeatOnce }
+    item "Incremental &search\tCtrl+S" { IncrementalSearch }
+    item;
+    item "&Place Bookmark..." { PlaceBookmark }
+    item "Goto &Bookmark..." { GotoBookmark }
+    item;
+    item "&Match paren\tAlt+-" { MatchBracket }
+    item "&Goto line...\tAlt+J" { MoveToLine }
+}               
+
+menu Fold { #fold03
+    item "&Create fold\tAlt+Gray++" { FoldCreate }
+    item "Create folds by &regexp..." { FoldCreateByRegexp }
+    item "&Destroy fold\tAlt+Gray+-" { FoldDestroy }
+    item;
+    item "&Open fold\tCtrl+Gray++" { FoldOpen }
+    item "Open &nested folds\tCtrl+Gray+*" { FoldOpenNested }
+    item "C&lose fold\tCtrl+Gray+-" { FoldClose }
+    item "&Toggle fold open/close\tCtrl+Gray+/" { FoldToggleOpenClose }
+    item;
+    item "&Promote fold\tShift+Gray+-" { FoldPromote }
+    item "De&mote fold\tShift+Gray++" { FoldDemote }
+    item;
+    item "Open &all folds\tAlt+Gray+*" { FoldOpenAll }
+    item "Close all &folds\tAlt+Gray+/" { FoldCloseAll }
+    item "Destro&y all folds" { FoldDestroyAll }
+}
+
+menu Options { #fold03
+    submenu "Change &mode\tC+O C+M", MChangeMode;
+    item;
+    item "&Insert mode\tC+O C+I" { ToggleInsert }
+    item "&Auto indent\tC+O C+A" { ToggleAutoIndent }
+    item "&Case sensitive\tC+O C+C" { ToggleMatchCase }
+    item "Trim &EOL spaces\tC+O C+E" { ToggleTrim }
+    item "&Read only\tC+O C+R" { ToggleReadOnly }
+    item "&Undo/Redo\tC+O C+U" { ToggleUndo }
+    item "&Show markers\tC+O C+." { ToggleShowMarkers; WinRefresh }
+    item;
+    item "&Word wrap\tC+O C+W" { ToggleWordWrap }
+    item "&Left margin...\tC+O A+[" { ChangeLeftMargin }
+    item "Ri&ght margin...\tC+O A+]" { ChangeRightMargin }
+    item;
+    item "&Tab size...\tC+O C+T" { ChangeTabSize; WinRefresh }
+    item "S&how tabs\tC+O   Tab" { ToggleShowTabs; WinRefresh }
+    item "E&xpand tabs\tC+O C+Tab" { ToggleExpandTabs; WinRefresh }
+    item "&Print to...               " { SetPrintDevice }
+}                    
+
+menu Main {  #fold03
+    submenu "&File",    File;
+    submenu "&Edit",    Edit;
+    submenu "&Block",   Block;
+    submenu "&Search",  Search;
+    submenu "Fol&d",    Fold;
+    submenu "&Tools",   Tools;
+    submenu "&Window",  Window;
+    submenu "&Options", Options;
+    submenu "&Help",    Help;
+}
+
+menu Local { #fold03
+    item "&Unmark\tEsc"   { BlockUnmark }
+    item "Cu&t\tShift+Del" { BlockCut }
+    item "&Copy\tCtrl+Ins" { BlockCopy }
+    item "&Paste\tShift+Ins" { BlockPasteStream }
+    item "P&aste Column\tAlt+Ins" { BlockPasteColumn }
+    item;
+    item "Delete &line\tCtrl+Y"   { KillLine }
+    item "Delete to &EOL\tAlt+End" { KillToLineEnd }
+    item;
+    item "&Save\tF2"    { FileSave }
+    item "Cl&ose\tC+F10" { FileClose }
+}
+
+eventmap PLAIN: MODEL { #FOLD02
+# keymap for plaintext mode
+    MainMenu   = 'Main';    # menu for menubar
+    LocalMenu  = 'Local';   # local menu
+
+    key [i] { ChangeKeys 'VI_INS' }
+    key [I] { MoveLineStart; ChangeKeys 'VI_INS' }
+    key [o] { LineAdd; MoveDown; MoveLineStart; ChangeKeys 'VI_INS' }
+    key [O] { LineInsert; MoveLineStart; ChangeKeys 'VI_INS' }
+    key [a] { MoveRight; ChangeKeys 'VI_INS' }
+    key [A] { MoveLineEnd; ChangeKeys 'VI_INS' }
+    key [r] { ToggleInsert; InsertChar; ToggleInsert }
+    key [R] { ChangeKeys 'VI_OVER'; ToggleInsert }
+    key [d] { ChangeKeys 'VI_DELETE' }
+    key [D] { KillToLineEnd }
+    key [y] { ChangeKeys 'VI_YANK' }
+    key [x] { KillChar }
+    key [X] { KillCharPrev }
+    key [h] { MoveLeft }
+    key [j] { MoveDown }
+    key [k] { MoveUp }
+    key [l] { MoveRight }
+    key [$] { MoveLineEnd }
+    key [0] { MoveLineStart }
+    key [^] { MoveFirstNonWhite }
+    key [:_q] { FileClose }
+    key [:_w] { FileSave }
+    key [:_e] { FileOpen }
+    key [:_n] { FileNext }
+    key [:_N] { FilePrev }
+    #key [/] { SearchRx }
+    #key [n] { SearchAgain }
+    key [P] { BlockPaste }
+    key [p] { BlockPaste }
+    key [B] { MoveWordPrev }
+    key [b] { MoveWordPrev }
+    key [w] { MoveWordNext }
+    key [W] { MoveWordNext }
+    key [e] { MoveWordEndNext }
+    key [E] { MoveWordEndNext }
+    key [c] { ChangeKeys 'VI_CHANGE' }
+    key [C+N] { MoveDown }
+    key [C+P] { MoveUp }
+    key [C+B] { MovePageUp }
+    key [C+F] { MovePageDown }
+    key [%]   { MatchBracket }
+    key [u]     { Undo }
+    key [C+R]   { Redo }
+
+    key [BackSp] { MoveLeft }
+    key [Space] { MoveRight }
+
+    key [G-Enter] { MoveDown; MoveLineStart }
+    key [-] { MoveUp; MoveLineStart }
+    key [+] { MoveDown; MoveLineStart }
+    key [J] { LineJoin }
+    key [C] { KillToLineEnd; ChangeKeys 'VI_INS' }
+
+    key       [G-Left]    { MoveLeft }
+    key     [C+G-Left]    { MoveWordPrev }
+    key       [G-Right]   { MoveRight }
+    key     [C+G-Right]   { MoveWordNext }
+    key       [G-Up]      { MoveUp }
+    key       [G-Down]    { MoveDown }
+    key       [G-Home]    { MoveLineStart }
+    key     [C+G-Home]    { MovePageStart }
+    key       [G-End]     { MoveLineEnd }
+    key     [C+G-End]     { MovePageEnd }
+    key       [G-PgUp]    { MovePageUp }
+    key     [C+G-PgUp]    { MoveFileStart }
+    key       [G-PgDn]    { MovePageDown }
+    key     [G-C+PgDn]    { MoveFileEnd }
+}
+
+eventmap VI_INS: MODEOPTS {
+    key [Esc] { ChangeKeys; MoveLeft }
+    key [G-Enter] { LineNew }
+    key [Space] { InsertSpace }
+    key [BackSp] { KillCharPrev }
+    key [Tab] { InsertTab }
+}
+
+eventmap VI_OVER: VI_INS {
+    #Insert      = 0;
+    key [Esc] { ChangeKeys; MoveLeft; ToggleInsert }
+}
+
+eventmap VI_DELETE: MODEOPTS {
+    key [Esc] { ChangeKeys }
+    key [d]   { BlockSelectLine; BlockCut; ChangeKeys }
+    key [$]   { BlockUnmark; BlockMarkStream; MoveLineEnd; BlockMarkStream; BlockCut; ChangeKeys 'VIMODE' }
+    key [0]   { BlockUnmark; BlockMarkStream; MoveLineStart; BlockMarkStream; BlockCut; ChangeKeys 'VIMODE' }
+    key [w]   { KillWord; ChangeKeys }
+}
+
+eventmap VI_CHANGE: MODEOPTS {
+    key [Esc] { ChangeKeys }
+    key [w] { KillWord; ChangeKeys 'VI_INS' }
+    key [$] { KillToLineEnd; ChangeKeys "VI_INS" }
+    key [c] { MoveLineStart; KillToLineEnd; ChangeKeys "VI_INS" }
+}
+
+eventmap VI_YANK: MODEOPTS {
+    key [Esc] { ChangeKeys }
+    key [y]   { BlockSelectLine; BlockCopy; ChangeKeys }
+    key [$]   { BlockUnmark; BlockMarkStream; MoveLineEnd; BlockMarkStream; BlockCopy; MovePrevPos; ChangeKeys 'VIMODE' }
+    key [0]   { BlockUnmark; BlockMarkStream; MoveLineStart; BlockMarkStream; BlockCopy; MovePrevPos; ChangeKeys 'VIMODE' }
+    key [w]   { KillWord; ChangeKeys }
+}
+
+mode PLAIN { EventMap = 'PLAIN'; }
+
+# C #fold01
+menu Local_C { #fold02
+    item "&Unmark\tEsc" { BlockMarkStream; BlockUnmark }
+    item "Cu&t\tShift+Del" { BlockCut }
+    item "&Copy\tCtrl+Ins" { BlockCopy }
+    item "&Paste\tShift+Ins" { BlockPasteStream }
+    item "P&aste Column\tAlt+Ins" { BlockPasteColumn }
+    item;
+    item "Delete &line\tCtrl+Y"   { KillLine }
+    item "Delete to &EOL\tAlt+End" { KillToLineEnd }
+    item;
+    item "&Save\tF2"    { FileSave }
+    item "Cl&ose\tCtrl+F10" { FileClose }
+    item;
+    item "&Indent line\tTab" { LineIndent }
+    item "I&ndent block\tAlt+\\"  { BlockReIndent }
+}
+
+eventmap C: PLAIN { #fold02
+    LocalMenu           = 'Local_C';  # local menu
+
+    key       [=]     { LineIndent; LineTrim }
+    key       [O]     { LineIndent; LineNew }
+    key       [{]       { SelfInsert; ?LineIndent }
+    key       [}]       { SelfInsert; ?LineIndent; MoveLeft; ?HilitMatchBracket; MoveRight }
+    key       [)]       { SelfInsert; MoveLeft; ?HilitMatchBracket; MoveRight }
+    key       [\]]       { SelfInsert; MoveLeft; ?HilitMatchBracket; MoveRight }
+    key       [:]       { SelfInsert; ?LineIndent }
+    key       [#]       { SelfInsert; ?LineIndent }
+#    key     [A+\\]      { BlockReIndent }
+    
+    # do some smart indents
+    key   [A+G-Enter]   { LineAdd; LineIndent }
+    key   [S+G-Enter]   { LineInsert; LineIndent }
+}
+
+mode C { #fold02
+    EventMap = 'C';
+}
+
+# REXX  #fold01
+eventmap REXX: PLAIN { #fold02
+    key      [Tab]      { LineIndent LineTrim }
+    key      [G-Enter]  { LineIndent LineNew }
+    key      [:]        { SelfInsert LineIndent }
+    key      [A+\\]     { BlockReIndent }
+}
+
+mode REXX { EventMap = 'REXX'; } #fold02
+
+# PERL #fold01
+eventmap PERL: PLAIN { #fold02
+    key      [Tab]      { LineIndent LineTrim }
+    key      [G-Enter]  { LineIndent LineNew }
+
+    key      [#]        { SelfInsert LineIndent }
+    key      [{]        { SelfInsert LineIndent }
+    key      [}]        { SelfInsert LineIndent }
+    key      [A+\\]     { BlockReIndent }
+}
+
+mode PERL { EventMap = 'PERL'; } #fold02
+
+# JAVA #fold01
+
+eventmap JAVA: PLAIN { #fold02
+    key       [Tab]     { LineIndent; LineTrim }
+    key       [G-Enter] { LineIndent; LineNew }
+    key       [{]       { SelfInsert; LineIndent }
+    key       [}]       { SelfInsert; LineIndent }
+    key       [:]       { SelfInsert; LineIndent }
+    key       [#]       { SelfInsert; LineIndent }
+    key     [A+\\]      { BlockReIndent }
+}
+
+mode JAVA { EventMap = 'JAVA'; } #fold02
+
+# HTML #fold01
+
+menu HTML_Physical { #fold02
+    item    "&Bold        <B>   C-E C-B" { HTML_B }
+    item    "&Italic      <I>   C-E C-I" { HTML_I }
+    item    "&Typewriter  <TT>  C-E C-T" { HTML_TT }
+}
+
+menu HTML_Logical { #fold02
+    item    "&Definition  <DFN>     C-E C-D" { HTML_DFN }
+    item    "&Emphasize   <EM>      C-E C-E" { HTML_EM }
+    item    "Citati&on    <CITE>    C-E C-O" { HTML_CITE }
+    item    "&Code        <CODE>    C-E C-C" { HTML_CODE }
+    item    "&Kbd entry   <KBD>     C-E C-K" { HTML_KBD }
+    item    "Sam&ple msg  <SAMP>    C-E C-M" { HTML_SAMP }
+    item    "&Strong EM   <STRONG>  C-E C-S" { HTML_STRONG }
+    item    "&Variable    <VAR>     C-E C-V" { HTML_VAR }
+}
+
+menu HTML_Header { #fold02
+    item    "&1  <H1>  C-E 1" { HTML_H1 }
+    item    "&2  <H2>  C-E 2" { HTML_H2 }
+    item    "&3  <H3>  C-E 3" { HTML_H3 }
+    item    "&4  <H4>  C-E 4" { HTML_H4 }
+    item    "&5  <H5>  C-E 5" { HTML_H5 }
+    item    "&6  <H6>  C-E 6" { HTML_H6 }
+}
+
+menu HTML_List { #fold02
+    item    "List &item        <LI>  C-E i"  { HTML_LI }
+    item    "&Unordered list   <UI>  C-E u"  { HTML_UL }
+    item    "&Ordered list     <OL>  C-E o"  { HTML_OL }
+    item    "Definition &list  <DL>  C-E l"  { HTML_DL }
+    item    "Definition &tag   <DT>  C-E t"  { HTML_DT }
+    item    "&Definition       <DD>  C-E d"  { HTML_DD }
+}
+
+menu HTML_Table { #fold02
+    item    "&Table    <TABLE>    C-E A-T" { HTML_TABLE }
+    item    "&Caption  <CAPTION>  C-E A-C" { HTML_CAPTION }
+    item    "&Header   <TH>       C-E A-H" { HTML_TH }
+    item    "&Row      <TR>       C-E A-R" { HTML_TR }
+    item    "&Data     <TD>       C-E A-D" { HTML_TD }
+}
+
+menu HTMLTags { #fold02
+    item    "&Paragraph     <P>       C-E C-P  " { HTML_P }
+    item    "Line brea&k    <BR>      C-E Enter" { HTML_BR }
+    item    "Horiz.line    <HR>      C-E &-    " { HTML_HR }
+    item;
+    submenu "P&hysical styles                  ", HTML_Physical;
+    submenu "Logical &styles                   ", HTML_Logical;
+    submenu "&Header                           ", HTML_Header;
+    submenu "&Lists                            ", HTML_List;
+    submenu "&Tables                           ", HTML_Table;
+    item;
+    item    "Pre&formatted  <PRE>     C-E C-F  " { HTML_PRE }
+    item    "&Centered      <CENTER>  C-E .    " { HTML_CENTER }
+    item;
+    item    "Anchor &Name   <A NAME>  C-E C-N  " { HTML_ANAME }
+    item    "Anchor H&Ref   <A HREF>  C-E C-H  " { HTML_AHREF }
+    item;
+    item    "Basic document           C-E &0   " { HTML_Base }
+}
+
+menu Main_HTML { #fold02
+    submenu "&File",    File;
+    submenu "&Edit",    Edit;
+    submenu "&Block",   Block;
+    submenu "&Search",  Search;
+    submenu "Fol&d",    Fold;
+    submenu "&Tools",   Tools;
+    submenu "HT&ML",    HTMLTags;
+    submenu "&Window",  Window;
+    submenu "&Options", Options;
+    submenu "&Help",    Help;
+}
+
+eventmap HTML: PLAIN { #fold02
+    
+    MainMenu            = "Main_HTML";   # menu for menubar
+
+    key [C+E_0]     { HTML_Base }
+    
+# headers
+    
+    key [C+E_1]     { HTML_H1 }
+    key [C+E_2]     { HTML_H2 }
+    key [C+E_3]     { HTML_H3 }
+    key [C+E_4]     { HTML_H4 }
+    key [C+E_5]     { HTML_H5 }
+    key [C+E_6]     { HTML_H6 }
+    
+# physical
+    
+    key [C+E_C+B]   { HTML_B }
+    key [C+E_C+I]   { HTML_I }
+    key [C+E_C+T]   { HTML_TT }
+    
+# logical
+    
+    key [C+E_C+D]   { HTML_DFN }
+    key [C+E_C+E]   { HTML_EM }
+    key [C+E_C+O]   { HTML_CITE }
+    key [C+E_C+C]   { HTML_CODE }
+    key [C+E_C+K]   { HTML_KBD }
+    key [C+E_C+M]   { HTML_SAMP }
+    key [C+E_C+S]   { HTML_STRONG }
+    key [C+E_C+V]   { HTML_VAR }
+    
+# lists
+    
+    key [C+E_i]     { HTML_LI }
+    key [C+E_u]     { HTML_UL }
+    key [C+E_o]     { HTML_OL }
+    key [C+E_l]     { HTML_DL }
+    key [C+E_t]     { HTML_DT }
+    key [C+E_d]     { HTML_DD }
+    
+# tables
+    
+    key [C+E_A+T] { HTML_TABLE }
+    key [C+E_A+C] { HTML_CAPTION }
+    key [C+E_A+H] { HTML_TH }
+    key [C+E_A+R] { HTML_TR }
+    key [C+E_A+D] { HTML_TD }
+    
+# anchors    
+    
+    key [C+E_C+N]   { HTML_ANAME }
+    key [C+E_C+H]   { HTML_AHREF }
+    
+    key [C+E_C+G]   { HTML_IMG }
+    key [C+E_C+F]   { HTML_PRE }
+    key [C+E_G-Enter] { HTML_BR }
+    key [C+E_-]     { HTML_HR }
+    key [C+E_.]     { HTML_CENTER }
+    key [C+E_C+P]   { HTML_P }
+    
+# character escapes
+    
+    key [C+E_&]     { InsertString "&amp;"; }
+    key [C+E_<]     { InsertString "&lt;"; }
+    key [C+E_>]     { InsertString "&gt;"; }
+    key [C+E_"]     { InsertString "&quot;"; }   # hilit bug
+}
+
+# make sure proper eventmap is used
+mode HTML { EventMap = 'HTML'; } #fold02
+
+# FTE  #fold01
+eventmap FTE: PLAIN { #fold02
+    key       [Tab]     { LineIndent; LineTrim }
+    key       [G-Enter] { LineIndent; LineNew }
+    key       [{]       { SelfInsert; LineIndent }
+    key       [}]       { SelfInsert; LineIndent }
+}
+
+# make sure proper eventmap is used
+mode FTE { EventMap = 'FTE'; } #fold02
