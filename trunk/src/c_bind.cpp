@@ -672,7 +672,6 @@ int ExState::GetStrParam(EView *view, char *str, int maxlen) {
         }
         Pos++;
     } else if (view && Macros[Macro].cmds[Pos].type == CT_VARIABLE) {
-        //puts("variable\x7");
         if (view->GetStrVar(Macros[Macro].cmds[Pos].u.num, str, maxlen) == 0)
             return 0;
         Pos++;
