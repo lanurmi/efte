@@ -6,7 +6,7 @@ pkgdesc="Fast configurable programmers editor"
 license=('GPL', 'custom')
 url="http://efte.sourceforge.net"
 source=(http://downloads.sourceforge.net/sourceforge/$pkgname/$pkgname-$pkgver.tar.gz)
-md5sums=('14579219366cd05a0a95a29e550d2b87')
+md5sums=('ae60a3056e73d4655569f455e4c6283e')
 arch=('i686' 'x86_64')
 
 build() {
@@ -20,5 +20,5 @@ build() {
   cp Artistic $startdir/pkg/usr/share/licenses/efte || return 1
 
   cd $startdir/pkg/usr/share/efte
-  ../../bin/cefte config/mymain.fte system.fterc || return 1
+  ../../bin/cefte -q config/mymain.fte system.fterc || return 1
 }
