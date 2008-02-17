@@ -1140,7 +1140,7 @@ static int ParseCommands(CurPos &cp, char *Name) {
             } else {
                 Command = Lookup(ConditionalKW, cmd);
                 if (Command == -1)
-                    Fail(cp, "Unrecognized command...: %s", cmd);
+                    Fail(cp, "Unrecognized command: %s", cmd);
 
                 // ---------------------------------- flow control compiling statements -------------------------------
                 int endif_paired;
