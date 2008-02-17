@@ -1972,7 +1972,7 @@ int EBuffer::GetStrVar(int var, char *str, int buflen) {
         return 0;
 
     switch (var) {
-    case mvTopOfStack:
+    case mvTopOfStackAsString:
         snprintf(str, buflen, "%d", ParamStack.pop());
         str[buflen - 1] = 0;
         return 1;
@@ -2125,7 +2125,10 @@ int EBuffer::GetIntVar(int var, int *value) {
         *value = CP.Col;
         return 1;
     case mvLineLength:
-        *value = LineLen();
+         *value = LineLen();
+         return 1;
+    case mvTopOfStackAsInt:
+        *value = ParamStack.pop();
         return 1;
     }
     return EModel::GetIntVar(var, value);
