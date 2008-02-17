@@ -798,6 +798,8 @@ int EBuffer::ExecCommand(int Command, ExState &State) {
         // stuff with UI
     case ExMessage:
         return Message(State);
+    case ExGetChoice:
+        return GetChoice(State);
     case ExMoveToLine:
         return MoveToLine(State);
     case ExMoveToColumn:
@@ -1126,6 +1128,76 @@ int EBuffer::Message(ExState &State) {
     }
 
     return 0;
+}
+
+/**
+ * MACRO: Display a choice to the user and push the result onto the stack
+ */
+int EBuffer::GetChoice(ExState &State) {
+    char title[80];
+    char msg[80];
+    char c1[80];
+    char c2[80];
+    char c3[80];
+    char c4[80];
+    char c5[80];
+    char c6[80];
+    int count = 1;
+
+    if (State.GetStrParam(View, title, sizeof(title)) == 0 ||
+        State.GetStrParam(View, msg, sizeof(msg)) == 0 ||
+        State.GetStrParam(View, c1, sizeof(c1)) == 0) {
+        SetBranchCondition(0);
+        return 0;
+    }
+
+    if (State.GetStrParam(View, c2, sizeof(c2)) != 0) {
+        count++;
+        if (State.GetStrParam(View, c3, sizeof(c3)) != 0) {
+            count++;
+            if (State.GetStrParam(View, c4, sizeof(c4)) != 0) {
+                count++;
+                if (State.GetStrParam(View, c5, sizeof(c5)) != 0) {
+                    count++;
+                    if (State.GetStrParam(View, c6, sizeof(c6)) != 0) {
+                        count++;
+                    }
+                }
+            }
+        }
+    }
+
+    int result = -1;
+    switch (count) {
+    case 1:
+        result = View->MView->Win->Choice(GPC_ERROR, title, count, c1, msg );
+        break;
+    case 2:
+        result = View->MView->Win->Choice(GPC_ERROR, title, count, c1, c2, msg );
+        break;
+    case 3:
+        result = View->MView->Win->Choice(GPC_ERROR, title, count, c1, c2, c3, msg );
+        break;
+    case 4:
+        result = View->MView->Win->Choice(GPC_ERROR, title, count, c1, c2, c3, c4, msg );
+        break;
+    case 5:
+        result = View->MView->Win->Choice(GPC_ERROR, title, count, c1, c2, c3, c4, c5, msg );
+        break;
+    case 6:
+        result = View->MView->Win->Choice(GPC_ERROR, title, count, c1, c2, c3, c4, c5, c6, msg );
+        break;
+    }
+
+    if (result == -1) {
+        SetBranchCondition(0);
+        return 0;
+    }
+
+    ParamStack.push(result);
+
+    SetBranchCondition(1);
+    return 1;
 }
 
 int EBuffer::InsertChar(ExState &State) {

@@ -248,6 +248,7 @@ const struct {
     TAB(FindRepeatReverse),
 
     TAB(Message),
+    TAB(GetChoice),
     TAB(GetChar),
     TAB(InsertChar),
 

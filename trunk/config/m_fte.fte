@@ -37,10 +37,11 @@ colorize FTE {
 
         'Cancel', 'ChangeFlags', 'ChangeKeys', 'ChangeLeftMargin', 'ChangeMode',
         'ChangeRightMargin', 'ChangeTabSize', 'CharCaseDown', 'CharCaseToggle',
-        'CharCaseUp', 'CharTrans', 'ChildClose', 'ClearCvsMessages', 'ClearMessages',
-        'ClearSvnMessages', 'ClipClear', 'CloseActivate', 'Compile', 'CompileNextError',
-        'CompilePrevError', 'CompleteWord', 'ConfigRecompile', 'CursorDown', 'CursorLeft',
-        'CursorRight', 'CursorUp', 'Cvs', 'CvsCommit', 'CvsDiff',
+        'CharCaseUp', 'CharTrans', 'ChildClose', 'ClearCvsMessages',
+        'ClearMessages', 'ClearSvnMessages', 'ClipClear', 'CloseActivate', 'Compile',
+        'CompileNextError', 'CompilePrevError', 'CompleteWord', 'ConfigRecompile',
+        'CursorDown', 'CursorLeft', 'CursorRight', 'CursorUp', 'Cvs', 'CvsCommit',
+        'CvsDiff',
 
         'Delete', 'DeleteFile', 'DesktopLoad', 'DesktopSave', 'DesktopSaveAs',
         'Diag', 'DirOpen', 'DirGoUp', 'DirGoDown', 'DirGoRoot', 'DirGoto',
@@ -58,7 +59,7 @@ colorize FTE {
         'FoldOpenNested', 'FoldPromote', 'FoldToggleOpenClose', 'FrameClose',
         'FrameNew', 'FrameNext', 'FramePrev',
 
-        'GetChar', 'GotoBookmark', 'GotoGlobalBookmark',
+        'GetChar', 'GetChoice', 'GotoBookmark', 'GotoGlobalBookmark',
 
         'HilitMatchBracket', 'HilitWord',
 
