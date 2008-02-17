@@ -9,6 +9,7 @@ Source: http://downloads.sourceforge.net/efte/%{name}-%{version}.tar.gz
 Requires: gpm
 Requires: ncurses
 Requires: libX11
+Requires: libXpm
 BuildRequires: gcc-c++
 BuildRequires: cmake
 BuildRequires: gpm-devel
