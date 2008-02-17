@@ -57,7 +57,7 @@ colorize FTE {
         'KillWordPrev', 'LineAdd', 'LineCaseDown', 'LineCaseToggle',
         'LineCaseUp', 'LineCenter', 'LineDuplicate', 'LineIndent',
         'LineInsert', 'LineJoin', 'LineNew', 'LineSplit', 'LineTrans',
-        'LineTrim', 'ListRoutines', 'LocalMenu', 'MainMenu', 'MatchBracket',
+        'LineTrim', 'ListRoutines', 'LocalMenu', 'MainMenu', 'MatchBracket', 'Message',
         'MoveBeginLinePageFile', 'MoveBeginOrNonWhite', 'MoveBlockEnd',
         'MoveBlockStart', 'MoveDown', 'MoveEndLinePageFile', 'MoveFileEnd',
         'MoveFileStart', 'MoveFirstNonWhite', 'MoveFoldNext', 'MoveFoldPrev',
