@@ -206,6 +206,7 @@ include 'm_php.fte';
 include 'm_py.fte';
 include 'm_resdlg.fte';
 include 'm_rexx.fte';
+include 'm_rpm.fte';
 include 'm_ruby.fte';
 include 'm_sgml.fte';
 include 'm_sh.fte';

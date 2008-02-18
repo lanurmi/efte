@@ -31,7 +31,7 @@ File/line size limited by virtual memory.
 rm -rf $RPM_BUILD_ROOT
 
 %setup -q
-cmake . -DCMAKE_INSTALL_PREFIX=/usr
+cmake . -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release
 
 %build
 make
@@ -141,6 +141,7 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/efte/config/m_mvsasm.fte
 /usr/share/efte/config/ab_java.fte
 /usr/share/efte/config/m_markup.fte
+/usr/share/efte/config/m_rpm.fte
 /usr/share/efte/config/m_rst.fte
 /usr/share/efte/config/m_text.fte
 /usr/share/efte/config/m_4gl.fte

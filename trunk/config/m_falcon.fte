@@ -1,4 +1,13 @@
-# FTE mode for editing Falcon files
+# m_falcon.fte
+#
+# Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
+#
+# You may distribute under the terms of either the GNU General Public
+# License or the Artistic License, as specified in the README file.
+#
+#
+# eFTE mode for editing Falcon files
+#
 
 colorize FALCON {
    SyntaxParser = 'FALCON';
