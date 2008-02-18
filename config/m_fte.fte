@@ -239,9 +239,13 @@ colorize FTE {
 
 mode FTE: SOURCE {
     FileNameRx          = /\.\cfte$/;
-    HilitOn             = 1;
     Colorizer           = 'FTE';
-    IndentMode          = 'C';
+    HilitOn             = 1;
+    AutoIndent          = 1;
+    IndentMode          = 'PLAIN';
+    TabSize             = 4;
+    SpaceTabs           = 1;
+    Trim                = 1;
     MatchCase           = 0;
     MultiLineHilit      = 1;
     AutoHilitParen      = 1;
