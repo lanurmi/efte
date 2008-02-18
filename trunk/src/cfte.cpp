@@ -2069,14 +2069,16 @@ static int ParseConfigFile(CurPos &cp) {
                 if (Parse(cp) != P_STRING) Fail(cp, "String expected");
                 fn = GetString(cp);
 
-                if (verbosity > 0)
+                if (verbosity > 1)
                     fprintf(stderr, ACTION "%s... ", "opt include", fn);
                 if (LoadFile(cp.name, fn, 1, 1) != 0) {
-                    if (verbosity > 0)
+                    if (verbosity > 1)
                         fprintf(stderr, "not found\n");
                     GetOp(cp, P_EOS);
                     continue; // This is an optional include
                 }
+                if (verbosity == 1)
+                    fprintf(stderr, ACTION "%s... found: %s\n", "opt include", fn, cp.name);
                 if (Parse(cp) != P_EOS)
                     Fail(cp, "';' expected");
                 GetOp(cp, P_EOS);
@@ -2295,7 +2297,7 @@ static int LoadFile(const char *WhereName, const char *CfgName, int Level, int o
             return -1;
         }
     }
-    if (verbosity > 0)
+    if (verbosity > optional) // optional = 0/1
         fprintf(stderr, "found: %s\n", Cfg);
 
     if ((fd = open(Cfg, O_RDONLY | O_BINARY)) == -1) {
