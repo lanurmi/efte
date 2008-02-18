@@ -24,6 +24,8 @@ public:
     virtual ~EDirectory();
 
     virtual int GetContext();
+    virtual int GetMatchForward(int start=0);
+    virtual int GetMatchBackward(int start=0);
     virtual EEventMap *GetEventMap();
     virtual int ExecCommand(int Command, ExState &State);
     virtual void HandleEvent(TEvent &Event);
