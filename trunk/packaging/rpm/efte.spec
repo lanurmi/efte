@@ -37,7 +37,7 @@ cmake . -DCMAKE_INSTALL_PREFIX=/usr
 make
 
 pushd config
-../src/cefte main.fte system.fterc
+../src/cefte mymain.fte system.fterc
 popd
 
 %install
