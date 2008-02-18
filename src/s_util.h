@@ -22,6 +22,7 @@ class EView;
 class EBuffer;
 class EModel;
 
+int MacroNum(const char *Name);
 char* MakeBackup(char *FileName, char *NewName);
 
 int GetPMClip(int clipboard);

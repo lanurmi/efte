@@ -45,6 +45,7 @@ public:
 
     virtual int ExecCommand(GxView *view, int Command, ExState &State);
     virtual int ExecMacro(GxView *view, int Macro);
+    virtual int ExecMacro(GxView *view, const char *name);
     virtual int BeginMacro(GxView *view);
 
     void SetMsg(char *Msg);
