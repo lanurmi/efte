@@ -1562,7 +1562,7 @@ int EBuffer::FindReplace(ExState &State) {
         if (State.GetStrParam(View, replace, sizeof(replace)) == 0)
             if (View->MView->Win->GetStr("Replace", sizeof(replace), replace, HIST_SEARCH) == 0) return 0;
         if (State.GetStrParam(View, options, sizeof(options)) == 0)
-            if (View->MView->Win->GetStr("Options (All/Block/Cur/Delln/Glob/Igncase/Joinln/Rev/Noask/Word/regX)", sizeof(options), options, HIST_SEARCHOPT) == 0) return 0;
+            if (View->MView->Win->GetStr("Options (All/Block/Cur/Delln/Glob/Igncase/Joinln/Rev/Splitln/Noask/Word/regX)", sizeof(options), options, HIST_SEARCHOPT) == 0) return 0;
 
         LSearch.ok = 0;
         strcpy(LSearch.strSearch, find);
