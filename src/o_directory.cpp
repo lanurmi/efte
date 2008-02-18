@@ -238,11 +238,10 @@ int EDirectory::ExecCommand(int Command, ExState &State) {
     case ExDirSearchNext:
         // Find next matching file, search is case in-sensitive while sorting is sensitive
         if (SearchLen) {
-            for (int i = Row + 1; i < FCount; i++) {
-                if (strnicmp(SearchName, Files[i]->Name(), SearchLen) == 0) {
-                    Row = i;
-                    break;
-                }
+            int found = GetMatchForward(Row + 1);
+            if (found != -1) {
+                Row = found;
+                break;
             }
         }
         return ErOK;
@@ -250,11 +249,10 @@ int EDirectory::ExecCommand(int Command, ExState &State) {
     case ExDirSearchPrev:
         // Find prev matching file, search is case in-sensitive while sorting is sensitive
         if (SearchLen) {
-            for (int i = Row - 1; i >= 0; i--) {
-                if (strnicmp(SearchName, Files[i]->Name(), SearchLen) == 0) {
-                    Row = i;
-                    break;
-                }
+            int found = GetMatchBackward(Row - 1);
+            if (found != -1) {
+                Row = found;
+                break;
             }
         }
         return ErOK;
@@ -279,6 +277,28 @@ int EDirectory::Activate(int No) {
         }
     }
     return 1;
+}
+
+int EDirectory::GetMatchForward(int start) {
+    for (int i = start; i < FCount; i++) {
+        const char *fname = Files[i]->Name();
+        for (int j=0; fname[j]; j++) {
+            if (fname[j] == SearchName[0] && strnicmp(SearchName, fname + j, SearchLen) == 0)
+                return i;
+        }
+    }
+    return -1;
+}
+
+int EDirectory::GetMatchBackward(int start) {
+    for (int i = start; i > 0; i--) {
+        const char *fname = Files[i]->Name();
+        for (int j=0; fname[j]; j++) {
+            if (fname[j] == SearchName[0] && strnicmp(SearchName, fname + j, SearchLen) == 0)
+                return i;
+        }
+    }
+    return -1;
 }
 
 void EDirectory::HandleEvent(TEvent &Event) {
@@ -309,7 +329,8 @@ void EDirectory::HandleEvent(TEvent &Event) {
         default:
             resetSearch = 0; // moved here - its better for user
             // otherwice there is no way to find files like i_ascii
-            if (isAscii(Event.Key.Code) && (SearchLen < MAXISEARCH)) {
+            if (isAscii(Event.Key.Code)  && (SearchLen < MAXISEARCH))
+            {
                 char Ch = (char) Event.Key.Code;
                 int Found;
 
@@ -318,17 +339,11 @@ void EDirectory::HandleEvent(TEvent &Event) {
                 SearchPos[SearchLen] = Row;
                 SearchName[SearchLen] = Ch;
                 SearchName[++SearchLen] = 0;
-                Found = 0;
                 LOG << "Comparing " << SearchName << ENDLINE;
-                for (int i = Row; i < FCount; i++) {
-                    LOG << "  to -> " << Files[i]->Name() << ENDLINE;
-                    if (strnicmp(SearchName, Files[i]->Name(), SearchLen) == 0) {
-                        Row = i;
-                        Found = 1;
-                        break;
-                    }
-                }
-                if (Found == 0)
+                Found = GetMatchForward();
+                if (Found != -1)
+                    Row = Found;
+                else
                     SearchName[--SearchLen] = 0;
                 Msg(S_INFO, "Search: [%s]", SearchName);
             }
