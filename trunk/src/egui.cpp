@@ -199,6 +199,15 @@ int TestBranchCondition()  {
     return (ParamStack.pop());
 }
 
+int EGUI::ExecMacro(GxView *view, const char *name) {
+    int num = MacroNum(name);
+    if (num == 0) return 0;
+
+    ExecMacro(view, num);
+
+    return 1;
+}
+
 int EGUI::ExecMacro(GxView *view, int Macro) {
     STARTFUNC("EGUI::ExecMacro");
 

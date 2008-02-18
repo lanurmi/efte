@@ -366,6 +366,10 @@ int EBuffer::BeginMacro() {
     return NextCommand();
 }
 
+int EBuffer::ExecMacro(const char *name) {
+    return ((EGUI *)gui)->ExecMacro(View->MView->Win, MacroNum(name));
+}
+
 int EBuffer::ExecCommand(int Command, ExState &State) {
     if (CursorWithinEOL == 1 && (Command != ExMoveUp && Command != ExMoveDown)) {
         LastUpDownColumn = -1; // Reset when not moving up or down
@@ -684,7 +688,7 @@ int EBuffer::ExecCommand(int Command, ExState &State) {
     case ExMoveFoldNext:
         return MoveFoldNext();
     case ExFileSave:
-        return Save();
+        return Save() && ExecMacro("OnFileSave");
     case ExFilePrint:
         return FilePrint();
     case ExBlockPrint:
@@ -692,7 +696,7 @@ int EBuffer::ExecCommand(int Command, ExState &State) {
     case ExBlockTrim:
         return BlockTrim();
     case ExFileTrim:
-        return FileTrim();
+        return FileTrim() && ExecMacro("OnFileTrim");
     case ExHilitWord:
         return HilitWord();
     case ExSearchWordPrev:
@@ -820,11 +824,11 @@ int EBuffer::ExecCommand(int Command, ExState &State) {
     case ExSelfInsert:
         return SelfInsert(State);
     case ExFileReload:
-        return FileReload(State);
+        return FileReload(State) && ExecMacro("OnFileReload");
     case ExFileSaveAs:
-        return FileSaveAs(State);
+        return FileSaveAs(State) && ExecMacro("OnFileSave");
     case ExFileWriteTo:
-        return FileWriteTo(State);
+        return FileWriteTo(State) && ExecMacro("OnFileWriteTo");
     case ExBlockRead:
         return BlockRead(State);
     case ExBlockReadStream:

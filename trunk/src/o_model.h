@@ -114,6 +114,7 @@ public:
     virtual int GetContext();
     virtual EEventMap *GetEventMap();
     virtual int BeginMacro();
+    int ExecMacro(const char *name);
     virtual int ExecCommand(int Command, ExState &State);
 
     virtual void HandleEvent(TEvent &Event);

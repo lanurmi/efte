@@ -141,32 +141,36 @@ int EView::BeginMacro() {
     return Model ? Model->BeginMacro() : 0;
 }
 
+int EView::ExecMacro(const char *name) {
+    return ((EGUI *)gui)->ExecMacro(this->MView->Win, MacroNum(name));
+}
+
 int EView::ExecCommand(int Command, ExState &State) {
     switch (Command) {
     case ExSwitchTo:
-        return SwitchTo(State);
+        return SwitchTo(State) && ExecMacro("OnSwitchTo");
     case ExFilePrev:
-        return FilePrev();
+        return FilePrev() && ExecMacro("OnFilePrev");
     case ExFileNext:
-        return FileNext();
+        return FileNext() && ExecMacro("OnFileNext");
     case ExFileLast:
-        return FileLast();
+        return FileLast() && ExecMacro("OnFileLast");
     case ExFileOpen:
-        return FileOpen(State);
+        return FileOpen(State) && ExecMacro("OnFileOpen");
     case ExFileOpenInMode:
-        return FileOpenInMode(State);
+        return FileOpenInMode(State) && ExecMacro("OnFileOpen");
     case ExFileSaveAll:
-        return FileSaveAll();
+        return FileSaveAll() && ExecMacro("OnFileSaveAll");
     case ExListRoutines:
         return ViewRoutines(State);
     case ExDirOpen:
-        return DirOpen(State);
+        return DirOpen(State) && ExecMacro("DirOpen");
     case ExViewMessages:
         return ViewMessages(State);
     case ExCompile:
-        return Compile(State);
+        return Compile(State) && ExecMacro("OnCompile");
     case ExRunCompiler:
-        return RunCompiler(State);
+        return RunCompiler(State) && ExecMacro("OnRunCompiler");
     case ExCompilePrevError:
         return CompilePrevError(State);
     case ExCompileNextError:
@@ -226,20 +230,21 @@ int EView::ExecCommand(int Command, ExState &State) {
     case ExClearMessages:
         return ClearMessages();
     case ExTagNext:
-        return TagNext(this);
+        return TagNext(this) && ExecMacro("OnTagNext");
     case ExTagPrev:
-        return TagPrev(this);
+        return TagPrev(this) && ExecMacro("OnTagPrev");
     case ExTagPop:
-        return TagPop(this);
+        return TagPop(this) && ExecMacro("OnTagPop");
     case ExTagClear:
         TagClear();
+        ExecMacro("OnTagClear");
         return 1;
     case ExTagLoad:
-        return TagLoad(State);
+        return TagLoad(State) && ExecMacro("OnTagLoad");
     case ExShowHelp:
         return SysShowHelp(State, 0);
     case ExConfigRecompile:
-        return ConfigRecompile(State);
+        return ConfigRecompile(State) && ExecMacro("OnConfigRecompile");
     case ExRemoveGlobalBookmark:
         return RemoveGlobalBookmark(State);
     case ExGotoGlobalBookmark:

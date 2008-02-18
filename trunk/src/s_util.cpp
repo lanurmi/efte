@@ -14,6 +14,13 @@
 
 extern RxNode *CompletionFilter;
 
+int MacroNum(const char *Name) {
+    for (int i = 0; i < CMacros; i++)
+        if (Macros[i].Name && (strcmp(Name, Macros[i].Name)) == 0)
+            return i;
+    return 0; // Nop
+}
+
 // should use DosCopy under OS/2...
 static int copyfile(char *f1, char *f2) { // from F1 to F2
     void *buffer;
