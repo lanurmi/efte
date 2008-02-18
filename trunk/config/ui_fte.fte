@@ -13,7 +13,6 @@ include 'kbd/k_c.fte';
 include 'kbd/k_java.fte';
 include 'kbd/k_perl.fte';
 include 'kbd/k_rexx.fte';
-include 'kbd/k_fte.fte';
 include 'kbd/k_html.fte';
 include 'kbd/k_sgml.fte';
 include 'kbd/k_rst.fte';
