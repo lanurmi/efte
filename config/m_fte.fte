@@ -78,7 +78,7 @@ colorize FTE {
         'LineTrans', 'LineTrim', 'ListMark', 'ListMarkAll', 'ListRoutines',
         'ListToggleMark', 'ListToggleMarkAll', 'ListUnmark', 'ListUnmarkAll', 'LocalMenu',
 
-        'MainMenu', 'MatchBracket', 'Message', 'Minus', 'MoveBeginLinePageFile',
+        'MakeDirectory', 'MainMenu', 'MatchBracket', 'Message', 'Minus', 'MoveBeginLinePageFile',
         'MoveBeginOrNonWhite', 'MoveBlockEnd', 'MoveBlockStart', 'MoveDown',
         'MoveEndLinePageFile', 'MoveFileEnd', 'MoveFileStart', 'MoveFirstNonWhite',
         'MoveFoldNext', 'MoveFoldPrev', 'MoveFoldTop', 'MoveFunctionNext',
@@ -100,7 +100,7 @@ colorize FTE {
         'PlaceBookmark', 'PlaceGlobalBookmark', 'Plus',
         'PopGlobalBookmark', 'Print', 'Push', 'PushGlobalBookmark',
 
-        'Redo', 'RemoveBookmark', 'RemoveGlobalBookmark', 'Rescan', 'RFetch', 'RFrom',
+        'Redo', 'RemoveBookmark', 'RemoveGlobalBookmark', 'RenameFile', 'Rescan', 'RFetch', 'RFrom',
         'Rot', 'RunCompiler', 'RunCvs', 'RunCvsCommit', 'RunCvsDiff', 'RunProgram',
         'RunProgramAsync', 'RunSvn', 'RunSvnCommit', 'RunSvnDiff',
 
