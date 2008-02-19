@@ -60,6 +60,7 @@ static void Fail(CurPos &cp, const char *s, ...) {
     va_end(ap);
 
     fprintf(stderr, "%s:%d: Error: %s\n", cp.name, cp.line, msgbuf);
+    fprintf(stderr, "Use: efte -! -l%i %s to repair error\n", cp.line, cp.name);
     cleanup(1);
 }
 
@@ -1954,8 +1955,42 @@ static int PreprocessConfigFile(CurPos &cp) {
     return 0;
 }
 
+int ProcessConfigFile(CurPos &cp, char *filename, char *buffer, int Level) {
+    cp.sz = strlen(buffer);
+    cp.a = cp.c = buffer;
+    cp.z = cp.a + cp.sz;
+    cp.line = 1;
+    cp.name = filename;
+
+    // preprocess configuration file
+    int rc = PreprocessConfigFile(cp);
+    if (rc == -1) {
+        Fail(cp, "Preprocess failed");
+    }
+
+    // reset pointers
+    cp.a = cp.c = buffer;
+    cp.z = cp.a + cp.sz;
+    cp.line = 1;
+
+    rc = ParseConfigFile(cp);
+
+    // puts("End Loading file");
+    if (Level == 0)
+        PutNull(cp, CF_EOF);
+
+    if (rc == -1) {
+        Fail(cp, "Parse failed");
+    }
+
+    if (strcmp(filename, "built-in") != 0)
+        free(buffer);
+
+    return rc;
+}
+
 static int LoadFile(const char *WhereName, const char *CfgName, int Level, int optional) {
-    int fd, rc;
+    int fd;
     char *buffer = 0;
     struct stat statbuf;
     CurPos cp;
@@ -2049,32 +2084,5 @@ static int LoadFile(const char *WhereName, const char *CfgName, int Level, int o
     }
     close(fd);
 
-    cp.sz = statbuf.st_size;
-    cp.a = cp.c = buffer;
-    cp.z = cp.a + cp.sz;
-    cp.line = 1;
-    cp.name = Cfg;
-
-    // preprocess configuration file
-    rc = PreprocessConfigFile(cp);
-    if (rc == -1) {
-        Fail(cp, "Preprocess failed");
-    }
-
-    // reset pointers
-    cp.a = cp.c = buffer;
-    cp.z = cp.a + cp.sz;
-    cp.line = 1;
-
-    rc = ParseConfigFile(cp);
-
-    // puts("End Loading file");
-    if (Level == 0)
-        PutNull(cp, CF_EOF);
-
-    if (rc == -1) {
-        Fail(cp, "Parse failed");
-    }
-    free(buffer);
-    return rc;
+    return ProcessConfigFile(cp, Cfg, buffer, Level);
 }

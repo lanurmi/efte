@@ -1343,24 +1343,3 @@ int LoadConfig(int argc, char **argv, char *CfgFileName) {
     }
     ENDFUNCRC(rc);
 }
-
-static //const
-#include "defcfg.h"
-
-int UseDefaultConfig() {
-    CurPos cp;
-    int rc;
-
-    cp.name = "Internal Configuration";
-    cp.sz = sizeof(DefaultConfig);
-    cp.a = (char *)DefaultConfig;
-    cp.c = (char *)DefaultConfig + 2 * 4;
-    cp.z = cp.a + cp.sz;
-    cp.line = 1;
-
-    rc = ReadConfigFile(cp);
-
-    if (rc == -1)
-        DieError(1, "Error %s offset %d\n", cp.name, cp.c - cp.a);
-    return rc;
-}
