@@ -18,8 +18,6 @@ OPTION( BUILD_X        "Build X version of eFTE" ON )
 OPTION( BUILD_CONSOLE  "Build console version of eFTE" ON )
 
 # Optional use flags
-OPTION( USE_DEFAULT_CONFIG
-  "Use a simple default configuration when system config cannot be found" ON)
 OPTION( USE_GPM        "Compile console versions with gpm support" ON )
 OPTION( USE_LOCALE     "Use normal locale support" ON )
 OPTION( USE_XMB        "Use libxmb to draw fonts with locale support" ON)
@@ -58,9 +56,8 @@ ENDIF( USE_GPM )
 #
 # =============================================================================
 
-SET( CFTE_SOURCES cfte.cpp s_files.cpp s_string.cpp u_stack.cpp )
 SET( BASE_FTE_SOURCES
-  c_bind.cpp c_color.cpp c_config.cpp c_desktop.cpp c_hilit.cpp c_history.cpp
+  cfte.cpp c_bind.cpp c_color.cpp c_config.cpp c_desktop.cpp c_hilit.cpp c_history.cpp
   c_mode.cpp commands.cpp e_block.cpp e_buffer.cpp e_cmds.cpp e_cvslog.cpp
   e_file.cpp e_fold.cpp e_line.cpp e_loadsave.cpp e_mark.cpp e_print.cpp
   e_redraw.cpp e_regex.cpp e_search.cpp e_svnlog.cpp e_tags.cpp e_trans.cpp
@@ -223,26 +220,3 @@ ENDIF( UNIX )
 # PLATFORM INDEPENDENT BUILDS
 #
 # =============================================================================
-
-# Configuration compiler
-ADD_EXECUTABLE( cefte ${CFTE_SOURCES} )
-GET_TARGET_PROPERTY( CEFTE_EXE cefte LOCATION )
-INSTALL( TARGETS cefte RUNTIME DESTINATION bin )
-
-IF( USE_DEFAULT_CONFIG )
-  # Program to convert our default config into an includable .h
-  ADD_EXECUTABLE( bin2c bin2c.cpp )
-  GET_TARGET_PROPERTY( BIN2C_EXE bin2c LOCATION )
-
-  # Builds our default config
-  ADD_CUSTOM_COMMAND(
-    OUTPUT defcfg.cnf
-    COMMAND ${CEFTE_EXE} -q ${CMAKE_CURRENT_SOURCE_DIR}/defcfg.fte ${CMAKE_CURRENT_SOURCE_DIR}/defcfg.cnf
-    DEPENDS cefte )
-
-  # Convert our default config to ain includable .h
-  ADD_CUSTOM_COMMAND(
-    OUTPUT defcfg.h
-    COMMAND ${BIN2C_EXE} ${CMAKE_CURRENT_SOURCE_DIR}/defcfg.cnf > ${CMAKE_CURRENT_SOURCE_DIR}/defcfg.h
-    DEPENDS bin2c defcfg.cnf )
-ENDIF( USE_DEFAULT_CONFIG )
