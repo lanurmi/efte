@@ -67,6 +67,7 @@ public:
     int And();
     int Or();
     int Xor();
+    int Shift();
 
     int Equals();
     int Less();

@@ -11,7 +11,7 @@
 #include "u_stack.h"
 #define STACKMASK (STACKSIZE-1)
 
- //CircularStack is used for macro data stack, which is used by macros - including user written macros -
+// CircularStack is used for macro data stack, which is used by macros - including user written macros -
 // as data working and storage space. because there is no way of statically knowing how many times macros
 // will be executed, and how many stack items they leave on stack, and how much care the writer of the
 // macro takes to keep the stack balanced, it is expressed as a circular stack which can never overflow.
@@ -21,101 +21,107 @@
 // accomplished, but needs extra provision implemented here.
 
 CircularStack::CircularStack() {
-    pos = -1;
-    stackdepth = 0;
+    this->pos = -1;
+    this->stackdepth = 0;
     for (int i=0; i < STACKSIZE; i++)
-        stack[i] = 0;
+        this->stack[i] = 0;
 }
 
 void CircularStack::push(int integer) {
-    pos = (pos + 1) & STACKMASK;
-    stack[pos] = integer;
-    //if (stackdepth < STACKMASK)
-        //stackdepth++;
+    this->pos = (this->pos + 1) & STACKMASK;
+    this->stack[this->pos] = integer;
+    if (this->stackdepth < STACKMASK)
+        this->stackdepth = (this->stackdepth + 1);
+//      this->stackdepth++;}  // no good?
 }
 
 int CircularStack::pop() {
-    //if (stackdepth) {
-        int r = stack[pos];
-        stack[pos] = 0;
-        pos = (pos - 1) & STACKMASK;
-        //stackdepth--;
-        return r;
-    //} else {
-        //fprintf(stderr, "attempt to underflow stack\n");
-        //return 0;
-    //}
+    int r = 0;
+//    if (this->stackdepth) {                      // something wrong here
+        r = this->stack[this->pos];
+        this->stack[this->pos] = 0;
+        this->pos = (this->pos - 1) & STACKMASK;
+        this->stackdepth = (this->stackdepth - 1);
+//        this->stackdepth--;  // not good?
+//    } else {
+//        fprintf(stderr, "attempt to underflow stack\n");
+//    }
+    return r;
 }
 
 int CircularStack::peek(int offset) {
-    int p = (pos - offset) & STACKMASK;
-    //if (offset < stackdepth) {
-        return stack[p];
-    //} else {
-        //fprintf(stderr, "stack access attempted outside of stack boundaries\n");
-        //return 0;
-    //}
+    int p = (this->pos - offset) & STACKMASK;
+//    if (offset < this->stackdepth) {
+        return this->stack[p];
+//    } else {
+//        fprintf(stderr, "stack access attempted outside of stack boundaries\n");
+//        return 0;
+//    }
 }
 
 void CircularStack::dup() {
-    int p = pos;
-    pos = (pos + 1) & STACKMASK;
-    stack[pos] = stack[p];
+    int p = this->pos;
+    this->pos = (this->pos + 1) & STACKMASK;
+    this->stack[this->pos] = this->stack[p];
 }
 
 void CircularStack::swap() {
-    int p1 = (pos);
-    int p2 = (pos - 1) & STACKMASK;
-    stack[p1] ^= stack[p2];
-    stack[p2] ^= stack[p1];
-    stack[p1] ^= stack[p2];
+    int p1 = (this->pos);
+    int p2 = (this->pos - 1) & STACKMASK;
+    this->stack[p1] ^= this->stack[p2];
+    this->stack[p2] ^= this->stack[p1];
+    this->stack[p1] ^= this->stack[p2];
 }
 
 int CircularStack::depth() {
-    return stackdepth;
+    return this->stackdepth;
 }
+
+
+
+
 
 // Where the danger of continuously adding to stack by faulty macros is not given, and we want a test
 // for stack emptyness, a non-wrapping stack is used. cefte/cfte macro compiler uses (should use) this
 // type of stack for tracking flow control branch offsets.
 
 Stack::Stack() {
-    pos = 0;
+    this->pos = 0;
     for (int i=0; i < STACKSIZE; i++)
-        stack[i] = 0;
+        this->stack[i] = 0;
 }
 
 void Stack::init() {
-    pos = 0;
+    this->pos = 0;
 }
 
 
     void Stack::push(int stackitem) {
-    if (pos < STACKSIZE) {
-        stack[pos] = stackitem;
-        pos = (pos + 1);
-    //} else {
-    //fatal: stack overflow
+    if (this->pos < STACKSIZE) {
+        this->stack[this->pos] = stackitem;
+        this->pos = (this->pos + 1);
+//  } else {
+//  fatal: stack overflow
     }
 
 }
 
 int Stack::pop() {
-    if (pos) {
-        pos = (pos - 1);
-        int r = stack[pos];
+    if (this->pos) {
+        this->pos = (this->pos - 1);
+        int r = this->stack[this->pos];
         return r;
     } else {
-        //"error: stack underflow attempt"
+        //        "error: stack underflow attempt"
         return 0;    // may not be what one expects but i have no idea how to deal with exceptions here
-        //throw(stack_underflow);  // like this, maybe?
+// throw(stack_underflow);  // like this, maybe?
     }
 }
 
 int Stack::peek(int offset) {
-    if (offset < pos) {
-        int p = (pos - offset - 1);
-        return stack[p];
+    if (offset < this->pos) {
+        int p = (this->pos - offset - 1);
+        return this->stack[p];
     } else {
         // error: attempt to access stack below bottom
         return 0;
@@ -124,15 +130,15 @@ int Stack::peek(int offset) {
 
 
 void Stack::dup() {
-    if (pos) {
-        stack[pos] = stack[(pos - 1)];
+    if (this->pos) {
+        this->stack[this->pos] = this->stack[(this->pos - 1)];
     } else {
-        stack[pos] = 0;
+        this->stack[this->pos] = 0;
     }
-    pos = (pos + 1);
+    this->pos = (this->pos + 1);
 }
 
 
 int Stack::depth() {
-    return pos;
+    return this->pos;
 }

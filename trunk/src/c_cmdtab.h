@@ -23,10 +23,6 @@ const struct {
     TAB(Nop),
     TAB(Fail),
 
-    //TAB(UnconditionalBranch),
-    //TAB(ConditionalBranch),
-    //TAB(DoRuntime),
-    //TAB(LoopRuntime),
     TAB(Exit),
     TAB(Push),
 
@@ -38,6 +34,7 @@ const struct {
     TAB(And),
     TAB(Or),
     TAB(Xor),
+    TAB(Shift),
 
     TAB(Equals),
     TAB(Less),

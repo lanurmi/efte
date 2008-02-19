@@ -34,7 +34,7 @@ typedef enum {
     /// set repeat counter of next command to top of stack
     //*** START
 
-    //!Branch and Stack Commands
+    //!Stack Operations
     ExExit,
     /// Exit the macro.
     ExPush,
@@ -53,6 +53,8 @@ typedef enum {
     /// Or
     ExXor,
     /// Xor
+    ExShift,
+    /// logical shift either direction.
     ExEquals,
     /// Compare top two stack items for equality.
     ExLess,

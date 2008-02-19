@@ -176,11 +176,11 @@ int EGUI::Mul() {
 int EGUI::Div() {
     int tos=ParamStack.pop();
     if (!tos) return 0;           // div by 0
-    ParamStack.push(+ParamStack.pop()/tos);
+    ParamStack.push(ParamStack.pop()/tos);
     return 1;
 }
 
-// --- bit logic ---
+// --- bits ---
 
 int EGUI::And() {
     ParamStack.push(ParamStack.pop() & ParamStack.pop());
@@ -196,6 +196,20 @@ int EGUI::Xor() {
     ParamStack.push(ParamStack.pop() ^ ParamStack.pop());
     return 1;
 }
+
+int EGUI::Shift() {
+    int tos = ParamStack.pop();                         // shift count and direction
+    if (tos) {
+        unsigned int nos = ParamStack.pop();            // shift value
+        if (tos < 0)  {
+            ParamStack.push(nos>>(-tos));
+        } else {
+            ParamStack.push(nos << tos);
+        }
+    }
+    return 1;
+}
+
 
 // --- comparison ---
 
@@ -328,6 +342,15 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
         return Mul();
     case ExDiv:
         return Div();
+
+    case ExAnd:
+        return And();
+    case ExOr:
+        return Or();
+    case ExXor:
+        return Xor();
+    case ExShift:
+        return Shift();
 
     case ExEquals:
         return Equals();
