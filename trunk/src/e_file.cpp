@@ -51,6 +51,7 @@ int FileLoad(int createFlags, const char *FileName, const char *Mode, EView *Vie
 
     if (ExpandPath(FileName, Name, sizeof(Name)) == -1) {
         View->MView->Win->Choice(GPC_ERROR, "Error", 1, "O&K", "Invalid path: %s.", FileName);
+        SetBranchCondition(0);
         return 0;
     }
     B = FindFile(Name);
@@ -58,12 +59,19 @@ int FileLoad(int createFlags, const char *FileName, const char *Mode, EView *Vie
         if (Mode != 0)
             B->SetFileName(Name, Mode);
         View->SwitchToModel(B);
+        SetBranchCondition(1);
         return 1;
     }
     B = new EBuffer(createFlags, &ActiveModel, Name);
     B->SetFileName(Name, Mode);
-
     View->SwitchToModel(B);
+
+    if (View->ExecMacro("OnFileLoad") == 0) {
+        SetBranchCondition(0);
+        return 0;
+    }
+
+    SetBranchCondition(1);
     return 1;
 }
 

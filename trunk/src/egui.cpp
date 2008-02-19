@@ -82,34 +82,256 @@ EGUI::~EGUI() {
 /**
  * Push a number/char from a macro onto the stack
  */
-int Push(GxView *view, ExState &State, int repeat) {
-    ExModelView *V = (ExModelView *)view->Top;
-    EView *View = V->View;
+int Push(ExState &State) {
     int found;
     int x = 0;
     char s[64] = "";
 
     do {
         found = 0;
-        if (State.GetIntParam(View, &x)) {
+        if (State.GetIntParam(0, &x)) {
             ParamStack.push(x);
             found = 1;
-        } else if (State.GetStrParam(View, s, sizeof(s))) {
+        } else if (State.GetStrParam(0, s, sizeof(s))) {
             ParamStack.push((int) s[0]);
             found = 1;
         }
     } while(found == 1);
-
     SetBranchCondition(1);
     return 1;
 }
 
-int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
-    if (Command & CMD_EXT)
-        return ExecMacro(view, Command & ~CMD_EXT);
+/**
+ * MACRO: Print a stack diagnostic message to stderr
+ */
+int EGUI::Diag(ExState &State) {
+    int count;
+    char msg[256];
 
-    if (Command == ExFail)
+    fprintf(stderr, "In Diag\n");
+
+    if (State.GetIntParam(0, &count) == 0)
+        count = 0;
+    if (State.GetStrParam(0, msg, sizeof(msg)))
+        fprintf(stderr, "Diagnostic message: %s\n", msg);
+
+    fprintf(stderr, "cond=%08x, tos=%d, nos=%d, 3rd=%d", BranchCondition, ParamStack.peek(0), ParamStack.peek(1), ParamStack.peek(2));
+    for (int i=3; i <= count; i++)
+        fprintf(stderr, ", %ith=%d", i, ParamStack.peek(i));
+    fprintf(stderr, "\n");
+
+    return 1;
+}
+
+// --- arithmetic ---
+
+int EGUI::Plus() {
+    ParamStack.push(ParamStack.pop()+ParamStack.pop());
+    return 1;
+}
+
+// don't really need - could provide "Invert" and do
+//2's complement add in macro
+int EGUI::Minus() {
+    int tos=ParamStack.pop();
+    ParamStack.push(+ParamStack.pop()-tos);
+    return 1;
+}
+
+
+int EGUI::Mul() {
+    ParamStack.push(ParamStack.pop()*ParamStack.pop());
+    return 1;
+}
+
+
+int EGUI::Div() {
+    int tos=ParamStack.pop();
+    if (!tos) return 0;           // div by 0
+    ParamStack.push(+ParamStack.pop()/tos);
+    return 1;
+}
+
+// --- bit logic ---
+
+int EGUI::And() {
+    ParamStack.push(ParamStack.pop() & ParamStack.pop());
+    return 1;
+}
+
+int EGUI::Or() {
+    ParamStack.push(ParamStack.pop() | ParamStack.pop());
+    return 1;
+}
+
+int EGUI::Xor() {
+    ParamStack.push(ParamStack.pop() ^ ParamStack.pop());
+    return 1;
+}
+
+// --- comparison ---
+
+// replace top two stack items against identity flag
+int EGUI::Equals() {
+    ParamStack.push(-(ParamStack.pop() == ParamStack.pop()));
+    return 1;
+}
+
+// true if 2nd item less than top item:
+//  3 4 Less   ( true )
+int EGUI::Less() {
+    ParamStack.push(-(ParamStack.pop() > ParamStack.pop()));
+    return 1;
+}
+
+// interface condition, provided by old commands, to
+// condition reading of new commands (passed on stack)
+// old commands buffer their conditions, until read
+// and transported to stack by "Flag"
+// That way, the number of test results and conditions
+// provided by old commands is irrelevant. we can choose
+// to use or ignore as we see fit.
+// as soon we need one of the last n result flags, each
+// execution of Flag delivers the next, back into history.
+int EGUI::Flag() {
+    // TODO: warning C4146: unary minus operator applied to unsigned type, result still unsigned
+    ParamStack.push(-(BranchCondition & 1));
+    BranchCondition = (BranchCondition >> 1);
+    return 1;
+}
+
+// old commands return false on fail, causing termination of macro execution.
+// this prevents the macro to deal with the condition, therefore those commands
+// should return "true".
+// Because we want to be able to mimick the former behaviour, the condition, as
+// left by those commands, will be read by "Abort" and returned to macro interpreter
+// as return code. i.e. a command, followed by Abort, will terminate macro execution
+// if its condition was "false".
+// this replaces the previous idea of not terminating macro execution if a command is
+// followed by a branch - which doesn't work. simply negating the test condition, instead
+// of branching directly, would render this unfunctional already. So we have instead:
+// macro  { FailingCommand MacroContinues ... }   or
+// macro  { FailingCommand Abort MacroHasTerminated } or
+// macro  { SuccessfulCommand Abort MacroContinues ... }
+int EGUI::Abort() {
+    int failcondition=BranchCondition & 1;
+    BranchCondition = (BranchCondition >> 1);
+    return failcondition;
+}
+
+// --- stack ---
+
+int EGUI::Dup() {
+    ParamStack.dup();
+    return 1;
+}
+
+int EGUI::Drop() {
+    ParamStack.pop();
+    return 1;
+}
+
+int EGUI::Swap() {
+    ParamStack.swap();
+    return 1;
+}
+
+int EGUI::Over() {
+    ParamStack.push(ParamStack.peek(1));
+    return 1;
+}
+
+int EGUI::Rot() {
+    int tos = ParamStack.pop();
+    ParamStack.swap();
+    ParamStack.push(tos);
+    ParamStack.swap();
+    return 1;
+}
+
+
+// --- stack2 ---
+int EGUI::ToR() {
+    ControlStack.push(ParamStack.pop());
+    return 1;
+}
+
+int EGUI::RFrom() {
+    ParamStack.push(ControlStack.pop());
+    return 1;
+}
+
+int EGUI::RFetch() {
+    ParamStack.push(ControlStack.peek(0));
+    return 1;
+}
+
+
+int EGUI::I() {
+    ParamStack.push(ControlStack.peek(0));
+    return 1;
+}
+
+int EGUI::J() {
+    ParamStack.push(ControlStack.peek(2));
+    return 1;
+}
+
+int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
+    if (Command & CMD_EXT) {
+        return ExecMacro(view, Command & ~CMD_EXT);
+    }
+
+    if (Command == ExFail) {
         return ErFAIL;
+    }
+
+    // Commands that will run regardless of a View or Buffer
+    switch (Command) {
+    case ExPush:
+        return Push(State);
+    case ExPlus:
+        return Plus();
+    case ExMinus:
+        return Minus();
+    case ExMul:
+        return Mul();
+    case ExDiv:
+        return Div();
+
+    case ExEquals:
+        return Equals();
+    case ExLess:
+        return Less();
+    case ExFlag:
+        return Flag();
+    case ExAbort:
+        return Abort();
+
+    case ExDup:
+        return Dup();
+    case ExDrop:
+        return Drop();
+    case ExSwap:
+        return Swap();
+    case ExOver:
+        return Over();
+    case ExRot:
+        return Rot();
+
+    case ExToR:
+        return ToR();
+    case ExRFrom:
+        return RFrom();
+    case ExRFetch:
+        return RFetch();
+    case ExI:
+        return I();
+    case ExJ:
+        return J();
+    case ExDiag:
+        return Diag(State);
+    }
 
     if (view->IsModelView()) {
         ExModelView *V = (ExModelView *)view->Top;
@@ -127,8 +349,6 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
         }
     }
     switch (Command) {
-    case ExPush:
-        return Push(view, State, Macros[State.Macro].cmds[State.Pos-1].repeat);
     case ExWinRefresh:
         view->Repaint();
         return 1;
@@ -170,23 +390,22 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
         return 0;
     case ExDesktopLoad:
         return DesktopLoad(State, view);
-    case ExChangeKeys: {
-        char kmaps[64] = "";
-        EEventMap *m;
+    case ExChangeKeys:
+        {
+            char kmaps[64] = "";
+            EEventMap *m;
 
-        if (State.GetStrParam(0, kmaps, sizeof(kmaps)) == 0) {
-            SetOverrideMap(0, 0);
-            return 0;
+            if (State.GetStrParam(0, kmaps, sizeof(kmaps)) == 0) {
+                SetOverrideMap(0, 0);
+                return 0;
+            }
+            m = FindEventMap(kmaps);
+            if (m == 0)
+                return 0;
+            SetOverrideMap(m->KeyMap, m->Name);
+            return 1;
         }
-        m = FindEventMap(kmaps);
-        if (m == 0)
-            return 0;
-        SetOverrideMap(m->KeyMap, m->Name);
-        return 1;
     }
-    }
-
-    //fprintf(stderr, "ExecCommand: %d\n",State);
     return view->ExecCommand(Command, State);
 }
 
@@ -201,11 +420,9 @@ int TestBranchCondition()  {
 
 int EGUI::ExecMacro(GxView *view, const char *name) {
     int num = MacroNum(name);
-    if (num == 0) return 0;
-
-    ExecMacro(view, num);
-
-    return 1;
+    if (num == 0) return 1;
+    int result = ExecMacro(view, num);
+    return result;
 }
 
 int EGUI::ExecMacro(GxView *view, int Macro) {
@@ -225,7 +442,6 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
     m = &Macros[State.Macro];
 
     for (i=State.Pos; i < m->Count; i++) {
-
         if (m->cmds[i].type != CT_COMMAND) {
             LOG << "not CT_COMMAND" << ENDLINE;
             continue;
