@@ -664,7 +664,18 @@ int EView::CompileNextError(ExState &/*State*/) {
 }
 
 int EView::ShowVersion() {
-    MView->Win->Choice(0, "About", 1, "O&K", PROGRAM " " VERSION " " COPYRIGHT);
+    if (access("/usr/local/share/doc/efte/README", 0) == 0)
+        FileLoad(0, "/usr/local/share/doc/efte/README", 0, this);
+    else if (access("/usr/share/doc/efte/README", 0) == 0)
+        FileLoad(0, "/usr/share/doc/efte/README", 0, this);
+    else if (access("/efte/doc/README", 0) == 0)
+        FileLoad(0, "/efte/doc/README", 0, this);
+    else if (access("/Program Files/efte/doc/README", 0) == 0)
+        FileLoad(0, "/Program Files/efte/doc/README", 0, this);
+    else if (access("/Program Files (x86)/doc/README", 0) == 0)
+        FileLoad(0, "/Program Files (x86)/doc/README", 0, this);
+    else
+        MView->Win->Choice(0, "About", 1, "O&K", PROGRAM " " VERSION " " COPYRIGHT);
     return 1;
 }
 
