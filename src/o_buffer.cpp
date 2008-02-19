@@ -362,6 +362,14 @@ EEventMap *EBuffer::GetEventMap() {
     return FindActiveMap(Mode);
 }
 
+/**
+ * MACRO: Display condition code in status bar?
+ */
+int EBuffer::ToggleConditionDisplay() {
+    DisplayCondition = !DisplayCondition;
+    return 1;
+}
+
 int EBuffer::BeginMacro() {
     return NextCommand();
 }
@@ -688,7 +696,7 @@ int EBuffer::ExecCommand(int Command, ExState &State) {
     case ExMoveFoldNext:
         return MoveFoldNext();
     case ExFileSave:
-        return Save() && ExecMacro("OnFileSave");
+        return Save();
     case ExFilePrint:
         return FilePrint();
     case ExBlockPrint:
@@ -696,7 +704,7 @@ int EBuffer::ExecCommand(int Command, ExState &State) {
     case ExBlockTrim:
         return BlockTrim();
     case ExFileTrim:
-        return FileTrim() && ExecMacro("OnFileTrim");
+        return FileTrim();
     case ExHilitWord:
         return HilitWord();
     case ExSearchWordPrev:
@@ -749,60 +757,6 @@ int EBuffer::ExecCommand(int Command, ExState &State) {
         return SetRightMargin();
     case ExSetIndentWithTabs:
         return SetIndentWithTabs(State);
-
-
-        // additions to script interpreter extensions
-        // ----------------------------------------------------
-    case ExPlus:
-        return Plus();
-    case ExMinus:
-        return Minus();
-    case ExMul:
-        return Mul();
-    case ExDiv:
-        return Div();
-
-    case ExEquals:
-        return Equals();
-    case ExLess:
-        return Less();
-    case ExFlag:
-        return Flag();
-    case ExAbort:
-        return Abort();
-
-    case ExDup:
-        return Dup();
-    case ExDrop:
-        return Drop();
-    case ExSwap:
-        return Swap();
-    case ExOver:
-        return Over();
-    case ExRot:
-        return Rot();
-
-    case ExToR:
-        return ToR();
-    case ExRFrom:
-        return RFrom();
-    case ExRFetch:
-        return RFetch();
-    case ExI:
-        return I();
-    case ExJ:
-        return J();
-    case ExDiag:
-        return Diag(State);
-    case ExToggleConditionDisplay:
-        return ToggleConditionDisplay();
-
-
-        // stuff with UI
-    case ExMessage:
-        return Message(State);
-    case ExGetChoice:
-        return GetChoice(State);
     case ExMoveToLine:
         return MoveToLine(State);
     case ExMoveToColumn:
@@ -824,11 +778,11 @@ int EBuffer::ExecCommand(int Command, ExState &State) {
     case ExSelfInsert:
         return SelfInsert(State);
     case ExFileReload:
-        return FileReload(State) && ExecMacro("OnFileReload");
+        return FileReload(State);
     case ExFileSaveAs:
-        return FileSaveAs(State) && ExecMacro("OnFileSave");
+        return FileSaveAs(State);
     case ExFileWriteTo:
-        return FileWriteTo(State) && ExecMacro("OnFileWriteTo");
+        return FileWriteTo(State);
     case ExBlockRead:
         return BlockRead(State);
     case ExBlockReadStream:
@@ -914,6 +868,12 @@ int EBuffer::ExecCommand(int Command, ExState &State) {
         return InsertUid();
     case ExShowHelpWord:
         return ShowHelpWord(State);
+    case ExMessage:
+        return Message(State);
+    case ExGetChoice:
+        return GetChoice(State);
+    case ExToggleConditionDisplay:
+        return ToggleConditionDisplay();
     }
     return EModel::ExecCommand(Command, State);
 }

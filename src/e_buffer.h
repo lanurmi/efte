@@ -220,7 +220,7 @@ public:
     int StartHilit, EndHilit;
 
     int LastUpDownColumn; // For CursorWithinEOL movement
-    int DisplayCondition; // Display condition in status bar?
+    int DisplayCondition;
 
     // constructors
     EBuffer(int createFlags, EModel **ARoot, const char *AName);
@@ -370,6 +370,8 @@ public:
     int LineLen(int Row);
     int LineChars(int Row);
 
+    int ToggleConditionDisplay();
+
 /////////////////////////////////////////////////////////////////////////////
 // Undo/Redo Routines
 /////////////////////////////////////////////////////////////////////////////
@@ -455,37 +457,6 @@ public:
 /////////////////////////////////////////////////////////////////////////////
 // Editing Routines
 /////////////////////////////////////////////////////////////////////////////
-
-    // ----------------------------------------------------
-    // additions to script interpreter extensions
-    int     Plus();
-    int     Minus();
-    int     Mul();
-    int     Div();
-
-    int     And();
-    int     Or();
-    int     Xor();
-
-    int     Equals();
-    int     Less();
-    int     Flag();
-    int     Abort();
-
-    int     Dup();
-    int     Drop();
-    int     Swap();
-    int     Over();
-    int     Rot();
-
-    int     ToR();
-    int     RFrom();
-    int     RFetch();
-    int     I();
-    int     J();
-
-    int     Diag(ExState &State);
-    int     ToggleConditionDisplay();
 
     int     CursorLeft();
     int     CursorRight();

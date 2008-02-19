@@ -22,8 +22,10 @@ int EBuffer::Reload() {
         return 0;
     }
     SetNearPosR(C, R);
-    SetBranchCondition(1);
-    return 1;
+
+    int result = ExecMacro("OnFileReload");
+    SetBranchCondition(result);
+    return result;
 }
 
 int EBuffer::Save() {
@@ -415,6 +417,9 @@ int EBuffer::LoadFrom(const char *AFileName) {
     }
     close(fd);
 
+    if (ExecMacro("OnFileLoad") == 0)
+        goto fail;
+
     FileOk = 1;
     Modified = 0;
     Loading = 0;
@@ -605,6 +610,10 @@ int EBuffer::SaveTo(char *AFileName) {
             unlink(ABackupName);
         }
     }
+
+    if (ExecMacro("OnFileSave") == 0)
+        goto fail;
+
     SetBranchCondition(1);
     return 1;
 fail:

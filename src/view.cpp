@@ -142,7 +142,8 @@ int EView::BeginMacro() {
 }
 
 int EView::ExecMacro(const char *name) {
-    return ((EGUI *)gui)->ExecMacro(this->MView->Win, MacroNum(name));
+    int result = ((EGUI *)gui)->ExecMacro(this->MView->Win, name);
+    return result;
 }
 
 int EView::ExecCommand(int Command, ExState &State) {
@@ -156,11 +157,11 @@ int EView::ExecCommand(int Command, ExState &State) {
     case ExFileLast:
         return FileLast() && ExecMacro("OnFileLast");
     case ExFileOpen:
-        return FileOpen(State) && ExecMacro("OnFileOpen");
+        return FileOpen(State);
     case ExFileOpenInMode:
-        return FileOpenInMode(State) && ExecMacro("OnFileOpen");
+        return FileOpenInMode(State);
     case ExFileSaveAll:
-        return FileSaveAll() && ExecMacro("OnFileSaveAll");
+        return FileSaveAll();
     case ExListRoutines:
         return ViewRoutines(State);
     case ExDirOpen:
@@ -244,7 +245,7 @@ int EView::ExecCommand(int Command, ExState &State) {
     case ExShowHelp:
         return SysShowHelp(State, 0);
     case ExConfigRecompile:
-        return ConfigRecompile(State) && ExecMacro("OnConfigRecompile");
+        return ConfigRecompile(State);
     case ExRemoveGlobalBookmark:
         return RemoveGlobalBookmark(State);
     case ExGotoGlobalBookmark:
@@ -734,7 +735,7 @@ int EView::ConfigRecompile(ExState &/*State*/) {
     strlcat(command, ConfigFileName, sizeof(command));
     strlcat(command, "\"", sizeof(command));
 #endif
-    return Compile(command);
+    return Compile(command) && ExecMacro("OnConfigRecompile");
 }
 
 int EView::RemoveGlobalBookmark(ExState &State) {
