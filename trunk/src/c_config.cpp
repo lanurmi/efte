@@ -1326,56 +1326,14 @@ int LoadConfig(int argc, char **argv, char *CfgFileName) {
     int rc;
     CurPos cp;
 
-    CFteMain(argc, argv);
+    CFteMain();
 
-    /*
-    for (int i=0; i<30; i++) {
-        const char *t = "Unknown";
-        switch (cache[i].tag) {
-        case CF_STRING:      t = "CF_STRING"; break;
-        case CF_INT:         t = "CF_INT"; break;
-        case CF_REGEXP:      t = "CF_REGEXP"; break;
-        case CF_END:         t = "CF_END"; break;
-        case CF_SUB:         t = "CF_SUB"; break;
-        case CF_MENU:        t = "CF_MENU"; break;
-        case CF_OBJECT:      t = "CF_OBJECT"; break;
-        case CF_COMMAND:     t = "CF_COMMAND"; break;
-        case CF_ITEM:        t = "CF_ITEM"; break;
-        case CF_SUBMENU:     t = "CF_SUBMENU"; break;
-        case CF_MENUSUB:     t = "CF_MENUSUB"; break;
-        case CF_MODE:        t = "CF_MODE"; break;
-        case CF_PARENT:      t = "CF_PARENT"; break;
-        case CF_KEYSUB:      t = "CF_KEYSUB"; break;
-        case CF_KEY:         t = "CF_KEY"; break;
-        case CF_COLOR:       t = "CF_COLOR"; break;
-        case CF_KEYWORD:     t = "CF_KEYWORD"; break;
-        case CF_SETVAR:      t = "CF_SETVAR"; break;
-        case CF_COMPRX:      t = "CF_COMPRX"; break;
-        case CF_EVENTMAP:    t = "CF_EVENTMAP"; break;
-        case CF_COLORIZE:    t = "CF_COLORIZE"; break;
-        case CF_ABBREV:      t = "CF_ABBREV"; break;
-        case CF_HSTATE:      t = "CF_HSTATE"; break;
-        case CF_HTRANS:      t = "CF_HTRANS"; break;
-        case CF_HWORDS:      t = "CF_HWORDS"; break;
-        case CF_SUBMENUCOND: t = "CF_SUBMENUCOND"; break;
-        case CF_HWTYPE:      t = "CF_HWTYPE"; break;
-        case CF_VARIABLE:    t = "CF_VARIABLE"; break;
-        case CF_CONCAT:      t = "CF_CONCAT"; break;
-        case CF_SVNIGNRX:    t = "CF_SVNIGNRX"; break;
-        case CF_CVSIGNRX:    t = "CF_CVSIGNRX"; break;
-        case CF_EOF:         t = "CF_EOF"; break;
-        }
-        //fprintf(stderr, "%5i: Type: %3i %s\n", i, cache[i].tag, t);
-    }
-    */
     cp.name = CfgFileName;
     cp.sz = cpos;
     cp.a = 0;//buffer;
     cp.c = 0;//cp.a + 2 * 4;
     cp.z = 0;//cp.a + cp.sz;
     cp.line = 1;
-
-    //fprintf(stderr, "Config size: %i\n", cp.sz);
 
     cpos = 0;
 
