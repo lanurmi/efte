@@ -54,6 +54,12 @@ EBuffer::EBuffer(int createFlags, EModel **ARoot, const char * /*AName*/)
     Allocate(0);
     AllocVis(0);
     Mode = GetModeForName("");
+
+    if (Mode == NULL) {
+        fprintf(stderr, "Configuration error: default mode does not exist.\n");
+        exit(1);
+    }
+
     Flags = (Mode->Flags);
     BFI(this, BFI_Undo) = 0;
     BFI(this, BFI_ReadOnly) = 0;
