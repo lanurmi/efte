@@ -20,7 +20,7 @@ typedef struct _CurPos {
     const char *name; // filename
 } CurPos;
 
-extern int CFteMain(int argc, char **argv);
+extern int CFteMain();
 
 typedef struct {
     unsigned char tag;

@@ -42,7 +42,6 @@ static DefinedMacro *CFteMacros = 0;
 
 static int lntotal = 0;
 static long pos = 0;
-static bool preprocess_only = false;
 int verbosity = 0;
 
 #include "c_commands.h"
@@ -71,19 +70,17 @@ static void PutObject(CurPos &cp, int xtag, int xlen, void *obj) {
     unsigned char tag = (unsigned char)xtag;
     unsigned short len = (unsigned short)xlen;
 
-    if (preprocess_only == false) {
-        cache[cpos].tag = tag;
-        cache[cpos].len = len;
-        cache[cpos].obj = 0;
-        if (obj != 0) {
-            cache[cpos].obj = malloc(len);
-            memcpy(cache[cpos].obj, obj, len);
-        }
-        cpos++;
-
-        if (cpos >= CACHE_SIZE)
-            Fail(cp, "Cache exceeded");
+    cache[cpos].tag = tag;
+    cache[cpos].len = len;
+    cache[cpos].obj = 0;
+    if (obj != 0) {
+        cache[cpos].obj = malloc(len);
+        memcpy(cache[cpos].obj, obj, len);
     }
+    cpos++;
+
+    if (cpos >= CACHE_SIZE)
+        Fail(cp, "Cache exceeded");
     pos += 1 + 2 + len;
 }
 
@@ -106,7 +103,7 @@ static void PutNumber(CurPos &cp, int xtag, long num) {
     PutObject(cp, xtag, 4, b);
 }
 
-int CFteMain(int argc, char **argv) {
+int CFteMain() {
     DefineWord("OS_"
 #if defined(OS2)
                "OS2"
@@ -125,9 +122,7 @@ int CFteMain(int argc, char **argv) {
     cp.line = 0;
     cp.name = "<cfte-start>";
 
-    //PutString(cp, CF_STRING, strdup("~/.efte/mymain.fte"));
-
-    if (LoadFile("", "mymain.fte", 0) != 0) {
+    if (LoadFile("", ConfigFileName, 0) != 0) {
         fprintf(stderr, "\nCompile failed\n");
         cleanup(1);
     }
@@ -1973,39 +1968,33 @@ static int LoadFile(const char *WhereName, const char *CfgName, int Level, int o
         strlcpy(Cfg, CfgName, sizeof(Cfg));
     } else {
 #if PATHTYPE == PT_UNIXISH
-#       define SEARCH_PATH_LEN 14
+#       define SEARCH_PATH_LEN 11
         char dirs[SEARCH_PATH_LEN][MAXPATH];
 
-        snprintf(dirs[0],  MAXPATH, "%s", CfgName);
-        snprintf(dirs[1],  MAXPATH, "./local/%s", CfgName);
-        snprintf(dirs[2],  MAXPATH, "./config/%s", CfgName);
-        snprintf(dirs[3],  MAXPATH, "~/.efte/%s", CfgName);
-        snprintf(dirs[4],  MAXPATH, "/etc/efte/local/%s", CfgName);
-        snprintf(dirs[5],  MAXPATH, "/usr/share/efte/local/%s", CfgName);
-        snprintf(dirs[6],  MAXPATH, "/opt/share/efte/local/%s", CfgName);
-        snprintf(dirs[7],  MAXPATH, "/usr/local/share/efte/local/%s", CfgName);
-        snprintf(dirs[8],  MAXPATH, "/opt/local/share/efte/local/%s", CfgName);
-        snprintf(dirs[9],  MAXPATH, "/etc/efte/config/%s", CfgName);
-        snprintf(dirs[10], MAXPATH, "/usr/share/efte/config/%s", CfgName);
-        snprintf(dirs[11], MAXPATH, "/opt/share/efte/config/%s", CfgName);
-        snprintf(dirs[12], MAXPATH, "/usr/local/share/efte/config/%s", CfgName);
-        snprintf(dirs[13], MAXPATH, "/opt/local/share/efte/config/%s", CfgName);
+        snprintf(dirs[0],  MAXPATH, "~/.efte/%s", CfgName);
+        snprintf(dirs[1],  MAXPATH, "/etc/efte/local/%s", CfgName);
+        snprintf(dirs[2],  MAXPATH, "/usr/share/efte/local/%s", CfgName);
+        snprintf(dirs[3],  MAXPATH, "/opt/share/efte/local/%s", CfgName);
+        snprintf(dirs[4],  MAXPATH, "/usr/local/share/efte/local/%s", CfgName);
+        snprintf(dirs[5],  MAXPATH, "/opt/local/share/efte/local/%s", CfgName);
+        snprintf(dirs[6],  MAXPATH, "/etc/efte/config/%s", CfgName);
+        snprintf(dirs[7],  MAXPATH, "/usr/share/efte/config/%s", CfgName);
+        snprintf(dirs[8],  MAXPATH, "/opt/share/efte/config/%s", CfgName);
+        snprintf(dirs[9],  MAXPATH, "/usr/local/share/efte/config/%s", CfgName);
+        snprintf(dirs[10], MAXPATH, "/opt/local/share/efte/config/%s", CfgName);
 #else // if PT_UNIXISH
-#       define SEARCH_PATH_LEN 13
+#       define SEARCH_PATH_LEN 10
         char dirs[SEARCH_PATH_LEN][MAXPATH];
-        snprintf(dirs[0],  MAXPATH, "%s", CfgName);
-        snprintf(dirs[1],  MAXPATH, "./local/%s", CfgName);
-        snprintf(dirs[2],  MAXPATH, "./config/%s", CfgName);
-        snprintf(dirs[3],  MAXPATH, "~/.efte/%s", CfgName);
-        snprintf(dirs[4],  MAXPATH, "~/efte/%s", CfgName);
-        snprintf(dirs[5],  MAXPATH, "%slocal/%s", BinaryDir, CfgName);
-        snprintf(dirs[6],  MAXPATH, "%sconfig/%s", BinaryDir, CfgName);
-        snprintf(dirs[7],  MAXPATH, "/efte/local/%s", CfgName);
-        snprintf(dirs[8],  MAXPATH, "/efte/config/%s", CfgName);
-        snprintf(dirs[9],  MAXPATH, "/Program Files/efte/local/%s", CfgName);
-        snprintf(dirs[10], MAXPATH, "/Program Files/efte/config/%s", CfgName);
-        snprintf(dirs[11], MAXPATH, "/Program Files (x86)/efte/local/%s", CfgName);
-        snprintf(dirs[12], MAXPATH, "/Program Files (x86)/efte/config/%s", CfgName);
+        snprintf(dirs[0],  MAXPATH, "~/.efte/%s", CfgName);
+        snprintf(dirs[1],  MAXPATH, "~/efte/%s", CfgName);
+        snprintf(dirs[2],  MAXPATH, "%slocal/%s", BinaryDir, CfgName);
+        snprintf(dirs[3],  MAXPATH, "%sconfig/%s", BinaryDir, CfgName);
+        snprintf(dirs[4],  MAXPATH, "/efte/local/%s", CfgName);
+        snprintf(dirs[5],  MAXPATH, "/efte/config/%s", CfgName);
+        snprintf(dirs[6],  MAXPATH, "/Program Files/efte/local/%s", CfgName);
+        snprintf(dirs[7],  MAXPATH, "/Program Files/efte/config/%s", CfgName);
+        snprintf(dirs[8],  MAXPATH, "/Program Files (x86)/efte/local/%s", CfgName);
+        snprintf(dirs[9],  MAXPATH, "/Program Files (x86)/efte/config/%s", CfgName);
 #endif // if PT_UNIXISH
 
         char tmp[MAXPATH];
@@ -2070,10 +2059,6 @@ static int LoadFile(const char *WhereName, const char *CfgName, int Level, int o
     rc = PreprocessConfigFile(cp);
     if (rc == -1) {
         Fail(cp, "Preprocess failed");
-    }
-
-    if (preprocess_only == true) {
-        printf("%s", cp.a);
     }
 
     // reset pointers

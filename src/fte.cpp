@@ -15,16 +15,6 @@
 #endif
 
 #if defined(UNIX)
-/* default locations for the configuration files */
-const char *Unix_RCPaths[] = {
-    "/etc/efte/system.fterc",
-    "/usr/share/efte/system.fterc",
-    "/opt/share/efte/system.fterc",
-    "/usr/local/share/efte/system.fterc",
-    "/opt/local/share/efte/system.fterc",
-};
-
-// variables used by vfte
 uid_t effuid;
 gid_t effgid;
 #endif /* UNIX */
@@ -85,12 +75,9 @@ char *getProgramName(char *name) {
 #endif
 
 #if defined(OS2) && defined(__EMX__)
-
 // argv[0] on emx does not contain full path
-
 #define INCL_DOS
 #include <os2.h>
-
 char *getProgramName(char *name) {
     char ProgramName[MAXPATH];
     PTIB tib;
@@ -101,74 +88,7 @@ char *getProgramName(char *name) {
         return name;
     return strdup(ProgramName);
 }
-
 #endif
-
-static int GetConfigFileName(int /*argc*/, char **argv, char *ConfigFileName) {
-    // NOTE: function assumes that ConfigFileName's size is MAXPATH
-
-    char CfgName[MAXPATH] = "";
-
-    if (ConfigFileName[0] == 0) {
-        /* This was deemed as a security threat. The only reason it is left in code
-         * but commented out is that we want to make a secure version of it.
-        // Try for a efte.cnf in the current directory
-        strlcpy(CfgName, "efte.cnf", sizeof(CfgName));
-        if (access(CfgName, 0) == 0) {
-            strlcpy(ConfigFileName, CfgName, MAXPATH);
-            return 1;
-        }
-        */
-
-#if defined(UNIX)
-        // ? use ./.efterc if by current user ?
-        ExpandPath("~/.efterc", CfgName, sizeof(CfgName));
-#elif defined(OS2) || defined(NT)
-        char home[MAXPATH] = "";
-        char *ph;
-#if defined(OS2)
-        ph = getenv("HOME");
-        if (ph) strlcpy(home, ph, sizeof(home));
-#endif
-#if defined(NT)
-        ph = getenv("HOMEDRIVE");
-        if (ph) strlcpy(home, ph, sizeof(home));
-        ph = getenv("HOMEPATH");
-        if (ph) strlcat(home, ph, sizeof(home));
-#endif
-        if (home[0]) {
-            strlcpy(CfgName, home, sizeof(CfgName));
-            Slash(CfgName, 1);
-            strlcat(CfgName, "efte.cnf", sizeof(CfgName));
-        }
-
-        if (!home[0] || access(CfgName, 0) != 0) {
-            strlcpy(CfgName, argv[0], sizeof(CfgName));
-
-            char *extPtr;
-
-            if ((extPtr = findPathExt(CfgName)) != NULL) {
-                *extPtr = 0;
-                strlcat(CfgName, ".cnf", sizeof(CfgName));
-            }
-        }
-#endif
-
-        strlcpy(ConfigFileName, CfgName, MAXPATH);
-    }
-    if (access(ConfigFileName, 0) == 0)
-        return 1;
-
-#if defined(UNIX)
-    for (unsigned int i = 0; i < sizeof(Unix_RCPaths) / sizeof(Unix_RCPaths[0]); i++) {
-        if (access(Unix_RCPaths[i], 0) == 0) {
-            strlcpy(ConfigFileName, Unix_RCPaths[i], MAXPATH);
-            return 1;
-        }
-    }
-#endif
-    return 0;
-}
 
 static int CmdLoadConfiguration(int &argc, char **argv) {
     int ign = 0;
@@ -221,22 +141,18 @@ static int CmdLoadConfiguration(int &argc, char **argv) {
             }
         }
     }
-    if (!haveConfig && GetConfigFileName(argc, argv, ConfigFileName) == 0) {
-        // should we default to internal
-#ifdef DEFAULT_INTERNAL_CONFIG
-        ign = 1;
-#endif
-    }
 
-    if (ign) {
-        if (UseDefaultConfig() == -1)
-            DieError(1, "Error in internal configuration??? FATAL!");
-    } else {
-        if (LoadConfig(argc, argv, ConfigFileName) == -1)
-            DieError(1,
-                     "Failed to load configuration file '%s'.\n"
-                     "Use '-C' option.", ConfigFileName);
-    }
+    if (haveConfig == 1) {
+        if (access(ConfigFileName, 0) != 0) {
+            DieError(1, "Could not access configuration file '%s'.\n"
+                     "Does it exist?", ConfigFileName);
+        }
+    } else
+        strcpy(ConfigFileName, "mymain.fte");
+
+    if (LoadConfig(argc, argv, ConfigFileName) == -1)
+        DieError(1, "Failed to load configuration file '%s'.\n"
+                 "Use '-C' option.", ConfigFileName);
     for (Arg = 1; Arg < argc; Arg++) {
         if (!QuoteAll && !QuoteNext && (argv[Arg][0] == '-')) {
             if (argv[Arg][1] == '-' && argv[Arg][2] == '\0') {
