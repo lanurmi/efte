@@ -417,7 +417,29 @@ int EDirectory::FmChDir(const char *Name) {
 }
 
 int EDirectory::FmMvFile(const char *Name) {
-    Msg(S_INFO, "Rename file not yet implemented");
+    char Dir[MAXPATH];
+    char Dir2[MAXPATH];
+
+    strcpy(Dir, Path);
+    if (View->MView->Win->GetStr("New file name", sizeof(Dir), Dir, HIST_PATH) == 0) {
+        SetBranchCondition(0);
+        return 0;
+    }
+
+    if (ExpandPath(Dir, Dir2, sizeof(Dir2)) == -1) {
+        Msg(S_INFO, "Failed to rename %s", Name);
+        SetBranchCondition(0);
+        return 0;
+    }
+
+    int status = rename(Name, Dir2);
+    if (status == 0) {
+        RescanDir();
+        SetBranchCondition(1);
+        return 1;
+    }
+
+    SetBranchCondition(0);
     return 0;
 }
 
@@ -438,6 +460,8 @@ int EDirectory::FmRmFile(char const* Name) {
             // put the cursor to the previous row
             --Row;
 
+            SetBranchCondition(1);
+
             // There has to be a more efficient way of doing this ...
             return RescanDir();
         } else if (rmdir(FilePath) == 0) {
@@ -445,10 +469,12 @@ int EDirectory::FmRmFile(char const* Name) {
             return RescanDir();
         } else {
             Msg(S_INFO, "Failed to remove %s", Name);
+            SetBranchCondition(0);
             return 0;
         }
     } else {
         Msg(S_INFO, "Cancelled");
+        SetBranchCondition(0);
         return 0;
     }
 }
@@ -458,18 +484,25 @@ int EDirectory::FmMkDir() {
     char Dir2[MAXPATH];
 
     strcpy(Dir, Path);
-    if (View->MView->Win->GetStr("New directory name", sizeof(Dir), Dir, HIST_PATH) == 0)
+    if (View->MView->Win->GetStr("New directory name", sizeof(Dir), Dir, HIST_PATH) == 0) {
+        SetBranchCondition(0);
         return 0;
-    if (ExpandPath(Dir, Dir2, sizeof(Dir2)) == -1)
+    }
+
+    if (ExpandPath(Dir, Dir2, sizeof(Dir2)) == -1) {
+        Msg(S_INFO, "Failed to create directory, path did not expand");
+        SetBranchCondition(0);
         return 0;
+    }
 
     int status = mkdir(Dir2, 509);
     if (status == 0) {
-        RescanDir();
-        return 1;
+        SetBranchCondition(0);
+        return RescanDir();
     }
 
     Msg(S_INFO, "Failed to create directory %s", Dir2);
+    SetBranchCondition(0);
     return 0;
 }
 
