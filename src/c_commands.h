@@ -875,9 +875,11 @@ typedef enum {
     /// Unmark all the lines in the list.
     ExListToggleMarkAll,
     /// Toggle the marking of all lines in the list.
-    ExBlockPasteOver
+    ExBlockPasteOver,
     /// Delete the content's of selection and paste the clipboard contents to the
     /// current position
+    ExPrint
+    /// Print a string to the console
 
     //*** END
 } ExCommands;

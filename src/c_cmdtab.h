@@ -417,8 +417,9 @@ const struct {
     TAB(ViewSvnDiff),
     TAB(SvnCommit),
     TAB(RunSvnCommit),
-    TAB(ViewSvnLog)
+    TAB(ViewSvnLog),
 
+    TAB(Print)
 
 #if 0
 //TAB(ShowMsg),
