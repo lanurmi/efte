@@ -257,10 +257,20 @@ int EDirectory::ExecCommand(int Command, ExState &State) {
         }
         return ErOK;
 
+    case ExRenameFile:
+        SearchLen = 0;
+        Msg(S_INFO, "");
+        return FmMvFile(Files[Row]->Name());
+
     case ExDeleteFile:
         SearchLen = 0;
         Msg(S_INFO, "");
-        return FmRmDir(Files[Row]->Name());
+        return FmRmFile(Files[Row]->Name());
+
+    case ExMakeDirectory:
+        SearchLen = 0;
+        Msg(S_INFO, "");
+        return FmMkDir();
     }
     return EList::ExecCommand(Command, State);
 }
@@ -406,7 +416,12 @@ int EDirectory::FmChDir(const char *Name) {
     return 1;
 }
 
-int EDirectory::FmRmDir(char const* Name) {
+int EDirectory::FmMvFile(const char *Name) {
+    Msg(S_INFO, "Rename file not yet implemented");
+    return 0;
+}
+
+int EDirectory::FmRmFile(char const* Name) {
     char FilePath[256];
     strcpy(FilePath, Path);
     Slash(FilePath, 1);
@@ -425,6 +440,9 @@ int EDirectory::FmRmDir(char const* Name) {
 
             // There has to be a more efficient way of doing this ...
             return RescanDir();
+        } else if (rmdir(FilePath) == 0) {
+            --Row;
+            return RescanDir();
         } else {
             Msg(S_INFO, "Failed to remove %s", Name);
             return 0;
@@ -433,6 +451,26 @@ int EDirectory::FmRmDir(char const* Name) {
         Msg(S_INFO, "Cancelled");
         return 0;
     }
+}
+
+int EDirectory::FmMkDir() {
+    char Dir[MAXPATH];
+    char Dir2[MAXPATH];
+
+    strcpy(Dir, Path);
+    if (View->MView->Win->GetStr("New directory name", sizeof(Dir), Dir, HIST_PATH) == 0)
+        return 0;
+    if (ExpandPath(Dir, Dir2, sizeof(Dir2)) == -1)
+        return 0;
+
+    int status = mkdir(Dir2, 509);
+    if (status == 0) {
+        RescanDir();
+        return 1;
+    }
+
+    Msg(S_INFO, "Failed to create directory %s", Dir2);
+    return 0;
 }
 
 int EDirectory::FmLoad(const char *Name, EView *XView) {

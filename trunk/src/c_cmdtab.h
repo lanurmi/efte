@@ -327,6 +327,8 @@ const struct {
     TAB(DirSearchNext),
     TAB(DirSearchPrev),
     TAB(DeleteFile),
+    TAB(RenameFile),
+    TAB(MakeDirectory),
     TAB(ShowVersion),
     TAB(ASCIITable),
     TAB(TypeChar),

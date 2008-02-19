@@ -187,8 +187,12 @@ menu Navigate {
     item "Go &< level\tCtrl+PgUp"     { DirGoUp }
     item "Go &> level\tCtrl+PgDn"     { DirGoDown }
     item "Go to &\\\tCtrl+\\"	      { DirGoRoot }
-    item "&/ Goto Dir\t/"	      { DirGoto }
-    item "&Delete File\tCtrl+D"       { DeleteFile }
+    item "&/ Goto Dir\t/"             { DirGoto }
+    item;
+    item "R&ename File"               { RenameFile }
+    item "&Make Directory"            { MakeDirectory }
+    item;
+    item "Delete &File\tCtrl+D"       { DeleteFile }
 #    item;
 #    item '&C:\\' { DirGoto 'H:\\' }
 }
@@ -479,13 +483,17 @@ menu EventMapViewMain {
 menu DirectoryLocal {
     item "&Open" { Activate }
     item;
-    item "&Reload\tCtrl+R"	   { Rescan }
+    item    "&Reload\tCtrl+R"	      { Rescan }
     item;
     item "Go &< level\tCtrl+PgUp"     { DirGoUp }
     item "Go &> level\tCtrl+PgDn"     { DirGoDown }
     item "Go to &\\\tCtrl+\\"	      { DirGoRoot }
-    item "&/ Goto Dir\t/"	      { DirGoto }
-    item "&Delete File\tCtrl+D"       { DeleteFile }
+    item "&/ Goto Dir\t/"             { DirGoto }
+    item;
+    item "R&ename File"               { RenameFile }
+    item "&Make Directory"            { MakeDirectory }
+    item;
+    item "Delete &File\tCtrl+D"       { DeleteFile }
 }
 
 menu BufferListLocal {

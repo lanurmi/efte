@@ -786,7 +786,11 @@ typedef enum {
     ExActivateInOtherWindow,
     ///
     ExDeleteFile,
-    ///
+    /// Remove a file while in the directory browser
+    ExRenameFile,
+    /// Rename a file while in the directory browser
+    ExMakeDirectory,
+    /// Make a directory while in the directory browser
     ExASCIITable,
     /// Display ASCII selector in status line.
     ExDesktopSave,
