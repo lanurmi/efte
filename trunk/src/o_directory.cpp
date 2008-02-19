@@ -439,6 +439,8 @@ int EDirectory::FmMvFile(const char *Name) {
         return 1;
     }
 
+    Msg(S_INFO, "Failed to rename %s code %i", Name, errno);
+
     SetBranchCondition(0);
     return 0;
 }
