@@ -14,6 +14,29 @@
 #include "sysdep.h"
 #include "u_stack.h"
 
+typedef struct _CurPos {
+    unsigned int sz;
+    char *a;
+    char *c;
+    char *z;
+    int line;
+    const char *name; // filename
+} CurPos;
+
+extern int CFteMain();
+
+typedef struct {
+    unsigned char tag;
+    unsigned short len;
+    void *obj;
+} CachedObject;
+
+// Cached objects
+#define CACHE_SIZE 512000
+extern CachedObject cache[CACHE_SIZE];
+extern unsigned int cpos;
+extern int verbosity;
+
 // commands may flag branch conditions in here
 // by shifting left, and setting (or not) bit 0
 extern unsigned int BranchCondition;
@@ -64,8 +87,8 @@ const char *GetGUICharacters(const char *which, const char *defChars);
 int LoadConfig(int argc, char **argv, char *CfgFileName);
 int GetIndentMode(const char *Str);
 int GetHilitMode(const char *Str);
-int UseDefaultConfig();
 int AddCRegexp(int file, int line, int msg, const char *regexp);
 int LoadFile(char *WhereName, char *CfgName);
+int ProcessConfigFile(CurPos &cp, char *filename, char *buffer, int Level);
 
 #endif

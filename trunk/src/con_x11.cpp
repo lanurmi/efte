@@ -44,8 +44,8 @@
 #ifdef HPUX
 #include </usr/include/X11R5/X11/HPkeysym.h>
 #endif
+
 #include "sysdep.h"
-#include "c_config.h"
 #include "console.h"
 #include "gui.h"
 
@@ -53,6 +53,7 @@
 #include "s_files.h"
 #include "s_util.h"
 #include "s_string.h"
+#include "c_config.h"
 
 i18n_context_t* i18n_ctx = NULL;
 

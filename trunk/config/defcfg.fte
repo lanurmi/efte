@@ -9,18 +9,18 @@
 #
 
 menu File {
-    item    "&Open...\tF3"            { FileOpen }
-    item    "&Reload\tShift+F3"       { FileReload }
-    item    "&Save\tF2"               { FileSave }
-    item    "Save &As...\tShift+F2"   { FileSaveAs }
-    item    "Save Al&l\tCtrl+F2"      { FileSaveAll }
-    item    "&Close\tAlt+Q"           { FileClose }
+    item "&Open...\tF3"            { FileOpen }
+    item "&Reload\tShift+F3"       { FileReload }
+    item "&Save\tF2"               { FileSave }
+    item "Save &As...\tShift+F2"   { FileSaveAs }
+    item "Save Al&l\tCtrl+F2"      { FileSaveAll }
+    item "&Close\tAlt+Q"           { FileClose }
     item;
-    item    "&Next\tAlt+Left"         { FileNext }
-    item    "&Previous\tAlt+Right"    { FilePrev }
+    item "&Next\tAlt+Left"         { FileNext }
+    item "&Previous\tAlt+Right"    { FilePrev }
     item;
-    item    "E&xit\tAlt+X"            { ExitEditor }
-}                              
+    item "E&xit\tAlt+X"            { ExitEditor }
+}
                                
 menu Edit {
     item "&Undo\tAlt+BackSp" { Undo }
@@ -472,8 +472,7 @@ menu Navigate {
 #    item "&/ Goto Dir\t/"    { DirGoto }
     item "&\\ Goto Dir\t\\"    { DirGoto }
     item;
-    item '&A:\\' { DirGoto 'A:\\' }
-    item '&B:\\' { DirGoto 'B:\\' }
+%if(OS_NT)
     item '&C:\\' { DirGoto 'C:\\' }
     item '&D:\\' { DirGoto 'D:\\' }
     item '&E:\\' { DirGoto 'E:\\' }
@@ -481,6 +480,7 @@ menu Navigate {
     item '&G:\\' { DirGoto 'G:\\' }
     item '&H:\\' { DirGoto 'H:\\' }
     item '&I:\\' { DirGoto 'I:\\' }
+%endif
 }
 
 menu DirMain {

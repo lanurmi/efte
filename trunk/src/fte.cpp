@@ -147,12 +147,15 @@ static int CmdLoadConfiguration(int &argc, char **argv) {
             DieError(1, "Could not access configuration file '%s'.\n"
                      "Does it exist?", ConfigFileName);
         }
+    } else if (ign == 1) {
+        strcpy(ConfigFileName, "defcfg.fte");
     } else
         strcpy(ConfigFileName, "mymain.fte");
 
     if (LoadConfig(argc, argv, ConfigFileName) == -1)
         DieError(1, "Failed to load configuration file '%s'.\n"
                  "Use '-C' option.", ConfigFileName);
+
     for (Arg = 1; Arg < argc; Arg++) {
         if (!QuoteAll && !QuoteNext && (argv[Arg][0] == '-')) {
             if (argv[Arg][1] == '-' && argv[Arg][2] == '\0') {
