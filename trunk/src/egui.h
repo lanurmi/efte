@@ -59,33 +59,33 @@ public:
     virtual void DispatchEvent(GFrame *frame, GView *view, TEvent &Event);
 
     // Stack related
-    int     Plus();
-    int     Minus();
-    int     Mul();
-    int     Div();
+    int Plus();
+    int Minus();
+    int Mul();
+    int Div();
 
-    int     And();
-    int     Or();
-    int     Xor();
+    int And();
+    int Or();
+    int Xor();
 
-    int     Equals();
-    int     Less();
-    int     Flag();
-    int     Abort();
+    int Equals();
+    int Less();
+    int Flag();
+    int Abort();
 
-    int     Dup();
-    int     Drop();
-    int     Swap();
-    int     Over();
-    int     Rot();
+    int Dup();
+    int Drop();
+    int Swap();
+    int Over();
+    int Rot();
 
-    int     ToR();
-    int     RFrom();
-    int     RFetch();
-    int     I();
-    int     J();
+    int ToR();
+    int RFrom();
+    int RFetch();
+    int I();
+    int J();
 
-    int     Diag(ExState &State);
+    int Diag(ExState &State);
 
     int FileCloseX(EView *View, int CreateNew, int XClose = 0);
     int FileClose(EView *View, ExState &State);

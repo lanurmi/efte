@@ -80,7 +80,35 @@ EGUI::~EGUI() {
 }
 
 /**
- * Push a number/char from a macro onto the stack
+ * MACRO: Print a string to the console
+ */
+
+int Print(ExState &State) {
+    FILE *f;
+    int whereTo, found, vI;
+    char vS[256];
+
+    if (State.GetIntParam(0, &whereTo) == 0)
+        whereTo = 1;
+
+    f = whereTo == 2 ? stderr : stdout;
+
+    do {
+        found = 1;
+        if (State.GetIntParam(0, &vI) != 0)
+            fprintf(f, "%i", vI);
+        else if (State.GetStrParam(0, vS, sizeof(vS)) != 0)
+            fprintf(f, vS);
+        else
+            found = 0;
+    } while (found == 1);
+
+    SetBranchCondition(1);
+    return 1;
+}
+
+/**
+ * MACRO: Push a number/char from a macro onto the stack
  */
 int Push(ExState &State) {
     int found;
@@ -288,6 +316,8 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
 
     // Commands that will run regardless of a View or Buffer
     switch (Command) {
+    case ExPrint:
+        return Print(State);
     case ExPush:
         return Push(State);
     case ExPlus:
