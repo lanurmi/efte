@@ -23,8 +23,9 @@ sub swap2     { rot tor rot rfrom }             # swap top two pairs of items
 # -- bool, bits, comparison  --
 sub invert    { true xor }                      # complement all bits
 sub not       { zero equals }                   # logical inversion: 0->true,  x->0
-sub leftshift { dup plus }                      # bit shift left once
-sub Success   { flag }                          # push command return code
+sub lshift    { push 1 shift }                  # bit shift left once
+sub rshift    { push -1 shift }                 # bit shift right once
+sub success   { flag }                          # push command return code
 sub failure   { flag not }                      # push inverted command return code
 sub more      { swap less }                     # true if nos > tos
 sub between   { rot tuck less minrot more or not }
@@ -43,6 +44,25 @@ sub mod       { dup2 div mul minus }            # modulo (remainder) function
 sub gcd       { begin tuck mod qdup not until } # greatest common denominator
 sub range     { over plus swap }
 
+    
+# -- i/o --
+sub bl        { push 32 }
+sub emit      { insertstring $toschar }
+sub space     { bl emit }                       # print a space character
+sub Spaces    { times space }                   # don't have loops yet
+sub cr        { linenew }                       # carriage return
+sub ok        { insertstring " ok "; cr }       # meant to be used as prompt
+sub dot       { insertstring $tosstr; space }   # output top stack item as number
+sub key       { getchar; }                      # wait for key, place its ascii on stack
+sub read      { push $Char }                    # read char under cursor
+
+#sub count    { inc dup dec fetch }
+#sub type     { Zero; Do; Count; Emit; Loop; Drop } # string output
+
+# -- cursor --
+sub cursorhome { movelinestart }
+sub cursorend  { movelineend }
+
 
 #sub sqrt      { zero tuck do inc dup leftshift inc plusloop }
 #sub sqrt      { one begin dup2 div over minus one inc  div dup while plus repeat drop nip }
@@ -57,37 +77,13 @@ sub range     { over plus swap }
 #             else 2:Push;
 #             endif  }
 #sub prime     { dup factor equals }
-    
-    
-# -- i/o --
-sub bl        { push 32 }
-sub emit      { insertstring $toschar }
-sub space     { bl emit }                       # print a space character
-sub Spaces    { times space }                   # don't have loops yet
-sub cr        { linenew }                       # carriage return
-sub ok        { insertstring " ok "; cr }       # meant to be used as prompt
-sub dot       { insertstring $tosstr; space }   # output top stack item as number
-sub key       { getchar; }                      # wait for key, place its ascii on stack
-sub read      { push $Char }                    # read char under cursor
-
-#sub count    { inc dup dec fetch }
-#sub Type     { Zero; Do; Count; Emit; Loop; Drop } # string output
-
-# -- cursor --
-sub cursorhome { movelinestart }
-sub cursorend  { movelineend }
 
 
 # need:
 #  Allocate
 #  Fetch
 #  Store
-#  some way to print to status bar, or hook up a macro for executing when status bar is updated.
     
-#  stack cursor line and column  
 #  test block marked?
-#  read ascii of char under cursor   ( push $Char? ) 
 #  stack # chars on line  (or macro: mark pos, CursorEnd, CursorColumn, return to marked pos)
-    
-    
     
