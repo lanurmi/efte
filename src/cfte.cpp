@@ -18,19 +18,9 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#include "ftever.h"
-#include "sysdep.h"
-#include "c_fconfig.h"
-#include "s_files.h"
-#include "s_string.h"
-#include "c_mode.h"
-#include "console.h"
-#include "c_hilit.h"
-
-#include "u_stack.h"
+#include "fte.h"
 
 #define slen(s) ((s) ? (strlen(s) + 1) : 0)
-#define CACHE_SIZE 100000
 #define ACTION "[%-11s] "
 
 Stack CondStack;
@@ -39,13 +29,7 @@ typedef struct {
     char *Name;
     char *FileName;
     int LineNo;
-} ExMacro;
-
-typedef struct {
-    unsigned char tag;
-    unsigned short len;
-    void *obj;
-} CachedObject;
+} DefinedMacro;
 
 // Cached objects
 CachedObject cache[CACHE_SIZE];
@@ -53,36 +37,18 @@ CachedObject cache[CACHE_SIZE];
 // Cached index (also acts as count)
 unsigned int cpos = 0;
 
-static unsigned int CMacros = 0;
-static ExMacro *Macros = 0;
+static unsigned int CCFteMacros = 0;
+static DefinedMacro *CFteMacros = 0;
 
-static FILE *output = 0;
 static int lntotal = 0;
-static long offset = -1;
 static long pos = 0;
-static char XTarget[MAXPATH] = "";
-static char StartDir[MAXPATH] = "";
-static char BinaryDir[MAXPATH] = "";
 static bool preprocess_only = false;
-static int verbosity = 0;
+int verbosity = 0;
 
 #include "c_commands.h"
 #include "c_cmdtab.h"
 
-typedef struct _CurPos {
-    int sz;
-    char *a;
-    char *c;
-    char *z;
-    int line;
-    const char *name; // filename
-} CurPos;
-
 static void cleanup(int xerrno) {
-    if (output)
-        fclose(output);
-    if (XTarget[0] != 0)
-        unlink(XTarget);
     exit(xerrno);
 }
 
@@ -96,29 +62,6 @@ static void Fail(CurPos &cp, const char *s, ...) {
 
     fprintf(stderr, "%s:%d: Error: %s\n", cp.name, cp.line, msgbuf);
     cleanup(1);
-}
-
-// Write all cached objects to disk
-void WriteCache() {
-    unsigned char l[2];
-
-    for (unsigned int idx=0; idx < cpos; idx++) {
-        l[0] = cache[idx].len & 0xFF;
-        l[1] = (cache[idx].len >> 8) & 0xFF;
-
-        if (fwrite(&cache[idx].tag, 1, 1, output) != 1 ||
-                fwrite(l, 2, 1, output) != 1 ||
-                fwrite(cache[idx].obj, 1, cache[idx].len, output) != cache[idx].len) {
-            fprintf(stderr, "\nDisk Full!\n");
-            cleanup(1);
-        }
-
-        // Free the memory (if any) taken by the cached object
-        if (cache[idx].obj != 0)
-            free(cache[idx].obj);
-    }
-
-    cpos = 0;
 }
 
 static int LoadFile(const char *WhereName, const char *CfgName, int Level = 1, int optional = 0);
@@ -142,10 +85,6 @@ static void PutObject(CurPos &cp, int xtag, int xlen, void *obj) {
             Fail(cp, "Cache exceeded");
     }
     pos += 1 + 2 + len;
-    if (offset != -1 && pos >= offset) {
-        Fail(cp, "specified offset location found:\n"
-             "    line: %i, file position: %ld", cp.line, pos);
-    }
 }
 
 static void PutNull(CurPos &cp, int xtag) {
@@ -167,56 +106,7 @@ static void PutNumber(CurPos &cp, int xtag, long num) {
     PutObject(cp, xtag, 4, b);
 }
 
-static void AppBanner() {
-    if (verbosity >= 0)
-        fprintf(stderr, PROG_CFTE " " VERSION "\n" COPYRIGHT "\n");
-}
-
-static void Usage() {
-    fprintf(stderr, "\nUsage: " PROG_CFTE " [FLAGS] INPUT-FILE [OUTPUT-FILE]\n"
-            "\n"
-            "Flags:\n"
-            "\n"
-            "  -h,-?,-help     this help screen\n"
-            "  -v              verbose (can be used multiple times to\n"
-            "                    increase verbosity)\n"
-            "  -q              quiet (display no output except on error)\n"
-            "  -dWORD          defined a preprocessor word\n"
-            "  -oOFFSET        display config file location for offset\n"
-            "  -p,-preprocess  run the preprocessor only\n"
-            "\n"
-            "Further help:\n"
-            "\n"
-            " INPUT-FILE is usually mymain.fte, however, you are free to\n"
-            " create whatever main file you wish. Other examples may be\n"
-            " system.fte, system-main.fte, etc...\n"
-            "\n"
-            " OUTPUT-FILE defaults to efte-new.cnf, if not specified\n"
-            "\n"
-            " -oOFFSET is used for debugging. When eFTE encounters an\n"
-            " error while loading the configuration file it will report\n"
-            " an error offset. Supplying that offset to cefte will then\n"
-            " report where that compiled offset actually occurs in the\n"
-            " text based configuration files.\n"
-            "\n"
-           );
-    exit(1);
-}
-
-int main(int argc, char **argv) {
-    char Source[MAXPATH];
-    char Target[MAXPATH];
-    unsigned char b[4];
-    unsigned long l;
-    int n = 0;
-
-    fprintf(stderr, "%s\n", argv[0]);
-
-    if (argc < 2 || argc > 5) {
-        AppBanner();
-        Usage();
-    }
-
+int CFteMain(int argc, char **argv) {
     DefineWord("OS_"
 #if defined(OS2)
                "OS2"
@@ -227,176 +117,21 @@ int main(int argc, char **argv) {
 #endif
               );
 
-    // setup defaults
-    strcpy(Source, "");
-    strcpy(Target, "efte-new.cnf");
-    preprocess_only = false;
-    offset = -1;
+    CurPos cp;
+    cp.sz = 0;
+    cp.c = 0;
+    cp.a = cp.c = 0;
+    cp.z = cp.a + cp.sz;
+    cp.line = 0;
+    cp.name = "<cfte-start>";
 
-    // parse arguments
-    for (int i = 1; i < argc; i++) {
-        if (argv[i][0] == '-') {
-            if (strcmp(argv[i], "-v") == 0) {
-                verbosity++;
-            } else if (strcmp(argv[i], "-q") == 0) {
-                verbosity--;
-            } else if (strcmp(argv[i], "-h") == 0 ||
-                       strcmp(argv[i], "-?") == 0 ||
-                       strcmp(argv[i], "-help") == 0)
-            {
-                AppBanner();
-                Usage();
-            } else if (strncmp(argv[i], "-d", 2) == 0) {
-                char *p;
+    //PutString(cp, CF_STRING, strdup("~/.efte/mymain.fte"));
 
-                p = argv[i];
-                p += 2;
-                DefineWord(p);
-            } else if ((strcmp(argv[i], "-p") == 0) || (strcmp(argv[i], "-preprocess") == 0)) {
-                preprocess_only = true;
-            } else if (strncmp(argv[i], "-o", 2) == 0) {
-                char *p;
-
-                p = argv[i];
-                p += 2;
-                offset = atol(p);
-            } else {
-                AppBanner();
-                fprintf(stderr, "Invalid option '%s'\n", argv[i]);
-                Usage();
-            }
-        } else {
-            switch (n) {
-            case 0:
-                strlcpy(Source, argv[i], sizeof(Source));
-                break;
-
-            case 1:
-                strlcpy(Target, argv[i], sizeof(Target));
-                break;
-
-            default:
-                AppBanner();
-                fprintf(stderr, "Invalid option '%s'\n", argv[i]);
-                Usage();
-            }
-            n++;
-        }
-    }
-
-    AppBanner();
-
-    if (n == 0) {
-        AppBanner();
-        fprintf(stderr, "No configuration file specified\n");
-        Usage();
-    }
-
-    JustDirectory(argv[0], BinaryDir, sizeof(BinaryDir));
-    JustDirectory(Target, XTarget, sizeof(XTarget));
-    Slash(XTarget, 1);
-
-    if (preprocess_only == false) {
-        sprintf(XTarget + strlen(XTarget), "cefte%ld.tmp", (long)getpid());
-        output = fopen(XTarget, "wb");
-        if (output == 0) {
-            fprintf(stderr, "Cannot create '%s', errno=%d!\n", XTarget, errno);
-            cleanup(1);
-        }
-
-        b[0] = b[1] = b[2] = b[3] = 0;
-
-        if (fwrite(b, sizeof(b), 1, output) != 1) {
-            fprintf(stderr, "Disk full!");
-            cleanup(1);
-        }
-
-        l = VERNUM;
-
-        b[0] = (unsigned char)(l & 0xFF);
-        b[1] = (unsigned char)((l >> 8) & 0xFF);
-        b[2] = (unsigned char)((l >> 16) & 0xFF);
-        b[3] = (unsigned char)((l >> 24) & 0xFF);
-
-        if (fwrite(b, 4, 1, output) != 1) {
-            fprintf(stderr, "Disk full!");
-            cleanup(1);
-        }
-        pos = 2 * 4;
-
-        if (verbosity >= 0)
-            fprintf(stderr, "Compiling to '%s'\n", Target);
-    } else {
-        pos = 2 * 4;
-    }
-    /*{
-        char PrevDir[MAXPATH];
-        sprintf(PrevDir, "%s/..", Target);
-        ExpandPath(PrevDir, StartDir);
-        Slash(StartDir, 1);
-    }*/
-
-    ExpandPath("."
-#ifdef UNIX
-               "."
-#endif
-               , StartDir, sizeof(StartDir));
-    Slash(StartDir, 1);
-
-    if (preprocess_only == false) {
-        CurPos cp;
-        char FSource[MAXPATH];
-
-        if (ExpandPath(Source, FSource, sizeof(FSource)) != 0) {
-            fprintf(stderr, "Could not expand path %s\n", Source);
-            exit(1);
-        }
-
-        cp.sz = 0;
-        cp.c = 0;
-        cp.a = cp.c = 0;
-        cp.z = cp.a + cp.sz;
-        cp.line = 0;
-        cp.name = "<cfte-start>";
-
-        PutString(cp, CF_STRING, FSource);
-    }
-
-    if (LoadFile(StartDir, Source, 0) != 0) {
+    if (LoadFile("", "mymain.fte", 0) != 0) {
         fprintf(stderr, "\nCompile failed\n");
         cleanup(1);
     }
 
-    if (preprocess_only == true) {
-        return 0;
-    }
-
-    // Write any cached data that may exist
-    WriteCache();
-
-    l = CONFIG_ID;
-    b[0] = (unsigned char)(l & 0xFF);
-    b[1] = (unsigned char)((l >> 8) & 0xFF);
-    b[2] = (unsigned char)((l >> 16) & 0xFF);
-    b[3] = (unsigned char)((l >> 24) & 0xFF);
-    fseek(output, 0, SEEK_SET);
-    fwrite(b, 4, 1, output);
-    fclose(output);
-
-    if (unlink(Target) != 0 && errno != ENOENT) {
-        fprintf(stderr, "Remove of '%s' failed, result left in %s, errno=%d\n",
-                Target, XTarget, errno);
-        exit(1);
-    }
-
-    if (rename(XTarget, Target) != 0) {
-        fprintf(stderr, "Rename of '%s' to '%s' failed, errno=%d\n",
-                XTarget, Target, errno);
-        exit(1);
-    }
-
-    if (verbosity >= 0)
-        fprintf(stderr, "\nDone.\n");
     return 0;
 }
 
@@ -999,7 +734,7 @@ static int GetNumber(CurPos &cp) {
     return neg ? -value : value;
 }
 
-static int CmdNum(const char *Cmd) {
+static int CFteCmdNum(const char *Cmd) {
     unsigned int i;
 
     if (Cmd == NULL)
@@ -1010,8 +745,8 @@ static int CmdNum(const char *Cmd) {
             return Command_Table[i].CmdId;
     }
 
-    for (i = 0; i < CMacros; i++) {
-        if (Macros[i].Name && (stricmp(Cmd, Macros[i].Name)) == 0)
+    for (i = 0; i < CCFteMacros; i++) {
+        if (CFteMacros[i].Name && (stricmp(Cmd, CFteMacros[i].Name)) == 0)
             return i | CMD_EXT;
     }
 
@@ -1021,12 +756,12 @@ static int CmdNum(const char *Cmd) {
 int NewCommand(CurPos &cp, const char *Name) {
     if (Name == 0)
         Name = "";
-    Macros = (ExMacro *) realloc(Macros, sizeof(ExMacro) * (1 + CMacros));
-    Macros[CMacros].Name = strdup(Name);
-    Macros[CMacros].FileName = strdup(cp.name);
-    Macros[CMacros].LineNo = cp.line;
-    CMacros++;
-    return CMacros - 1;
+    CFteMacros = (DefinedMacro *) realloc(CFteMacros, sizeof(DefinedMacro) * (1 + CCFteMacros));
+    CFteMacros[CCFteMacros].Name = strdup(Name);
+    CFteMacros[CCFteMacros].FileName = strdup(cp.name);
+    CFteMacros[CCFteMacros].LineNo = cp.line;
+    CCFteMacros++;
+    return CCFteMacros - 1;
 }
 
 
@@ -1034,7 +769,7 @@ int CondStackPairedWith(int flowstatement) {
     return (CondStack.pop() == flowstatement) ;
 }
 
-void CompileCommand(CurPos cp, int Command, long cnt, int ign)  {
+void CFteCompileCommand(CurPos cp, int Command, long cnt, int ign)  {
     PutNumber(cp, CF_COMMAND, Command);
     PutNumber(cp, CF_INT, cnt);
     PutNumber(cp, CF_INT, ign);
@@ -1043,13 +778,13 @@ void CompileCommand(CurPos cp, int Command, long cnt, int ign)  {
 
 int CompileConditionalBranch(CurPos &cp, int to) {
     int where=cpos;
-    CompileCommand(cp,ExConditionalBranch,to,1);
+    CFteCompileCommand(cp,ExConditionalBranch,to,1);
     return where;
 }
 
 int CompileUnconditionalBranch(CurPos &cp, int to) {
     int where=cpos;
-    CompileCommand(cp,ExUnconditionalBranch,to,1);
+    CFteCompileCommand(cp,ExUnconditionalBranch,to,1);
     return where;
 }
 
@@ -1101,14 +836,14 @@ static int ParseCommands(CurPos &cp, char *Name) {
     long cnt;
     long ign = 0;
 
-    long Cmd = CmdNum(Name);
+    long Cmd = CFteCmdNum(Name);
 
     if (Cmd != 0) {
         if ((Cmd & CMD_EXT) == 0) {
             Fail(cp, "%s is an internal command and cannot be redefined\n", Name);
         } else {
-            Fail(cp, "%s has already been defined in: %s:%i", Name, Macros[Cmd^CMD_EXT].FileName,
-                 Macros[Cmd^CMD_EXT].LineNo);
+            Fail(cp, "%s has already been defined in: %s:%i", Name, CFteMacros[Cmd^CMD_EXT].FileName,
+                 CFteMacros[Cmd^CMD_EXT].LineNo);
         }
     }
 
@@ -1138,9 +873,9 @@ static int ParseCommands(CurPos &cp, char *Name) {
             long Command;
 
             if (GetWord(cp, cmd) == -1) Fail(cp, "Syntax error");
-            Command = CmdNum(cmd);
+            Command = CFteCmdNum(cmd);
             if (Command != 0) {
-                CompileCommand(cp,Command,cnt,ign);
+                CFteCompileCommand(cp,Command,cnt,ign);
             } else {
                 Command = Lookup(ConditionalKW, cmd);
                 if (Command == -1)
@@ -1228,14 +963,14 @@ static int ParseCommands(CurPos &cp, char *Name) {
                 case COND_DO:
                     CondStack.push(cpos);
                     CondStack.push(COND_DO);                                              // allow test for proper nesting
-                    CompileCommand(cp,ExDoRuntime,0,1);
+                    CFteCompileCommand(cp,ExDoRuntime,0,1);
                     break;
 
 
                 case COND_LOOP:
                     if (CondStackPairedWith(COND_DO)) {
                         branchaddress=CondStack.pop();
-                        CompileCommand(cp,ExLoopRuntime,BranchOffset(cpos,branchaddress),1);  // LOOP back to (behind) DO
+                        CFteCompileCommand(cp,ExLoopRuntime,BranchOffset(cpos,branchaddress),1);  // LOOP back to (behind) DO
                         UpdateNumber(branchaddress+1,BranchOffset(branchaddress,cpos)-1);   // resolve DO forward ref
                     } else {
                         Fail(cp, "Unstructured: Loop needs a previous Do");
@@ -1250,7 +985,7 @@ static int ParseCommands(CurPos &cp, char *Name) {
                         if (CondStack.peek(i) == COND_DO) {
 //                            fprintf(stderr,"found DO at stack pos %d, ",i);
                             branchaddress=CondStack.peek(i+1);
-                            CompileCommand(cp,ExLeaveRuntime,BranchOffset(cpos,branchaddress),1);
+                            CFteCompileCommand(cp,ExLeaveRuntime,BranchOffset(cpos,branchaddress),1);
 //                            fprintf(stderr,"offset %d\n", BranchOffset(cpos,branchaddress));
                             i=-1;
                             break;
@@ -1292,7 +1027,6 @@ static int ParseCommands(CurPos &cp, char *Name) {
         Fail(cp, "unterminated conditions left over");
     }
     GetOp(cp, P_CLOSEBRACE);
-    WriteCache();
     return 0;
 }
 

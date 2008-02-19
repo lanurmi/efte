@@ -36,13 +36,8 @@ cmake . -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release
 %build
 make
 
-pushd config
-../src/cefte mymain.fte system.fterc
-popd
-
 %install
 install -d $RPM_BUILD_ROOT/etc/efte
-install -m644 config/system.fterc $RPM_BUILD_ROOT/etc/efte
 make install DESTDIR=$RPM_BUILD_ROOT
 
 %clean
@@ -52,11 +47,9 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(-,root,sys)
 
-/usr/bin/cefte
 /usr/bin/efte
 /usr/bin/nefte
 /usr/bin/vefte
-/etc/efte/system.fterc
 /usr/share
 /usr/share/doc
 /usr/share/doc/efte
