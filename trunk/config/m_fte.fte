@@ -98,7 +98,7 @@ colorize FTE {
         'Or', 'Over',
 
         'PlaceBookmark', 'PlaceGlobalBookmark', 'Plus',
-        'PopGlobalBookmark', 'Push', 'PushGlobalBookmark',
+        'PopGlobalBookmark', 'Print', 'Push', 'PushGlobalBookmark',
 
         'Redo', 'RemoveBookmark', 'RemoveGlobalBookmark', 'Rescan', 'RFetch', 'RFrom',
         'Rot', 'RunCompiler', 'RunCvs', 'RunCvsCommit', 'RunCvsDiff', 'RunProgram',
