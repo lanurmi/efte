@@ -12,7 +12,7 @@ long_description \
     geared toward the programmer. eFTE is a fork of FTE with goals of \
     taking FTE to the next step, hence, Enhanced FTE.
 
-homepage        http://efte.sourceforge.net
+homepage        http://efte.cowgar.com
 master_sites    http://downloads.sourceforge.net/sourceforge/efte/
 checksums       efte-${version}.tar.gz md5 20c5ca30ed1990f473581e6cafda6a4b
 
