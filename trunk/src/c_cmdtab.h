@@ -418,7 +418,8 @@ const struct {
     TAB(RunSvnCommit),
     TAB(ViewSvnLog),
 
-    TAB(Print)
+    TAB(Print),
+    TAB(ExecuteCommand)
 
 #if 0
 //TAB(ShowMsg),

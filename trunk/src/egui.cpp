@@ -319,6 +319,28 @@ int EGUI::J() {
     return 1;
 }
 
+int EGUI::ExecuteCommand(ExState &State, GxView *view)
+{
+    ExModelView *V = (ExModelView *)view->Top;
+    EView *View = V->View;
+    char name[64] = "";
+
+    if (State.GetStrParam(View, name, sizeof(name)) == 0) {
+        if (View->MView->Win->GetStr("Command name", sizeof(name), name,
+                                     HIST_DEFAULT) == 0)
+            return 0;
+    }
+
+    int command = CmdNum(name);
+    if (command == 0) {
+        View->Msg(S_INFO, "%s is an unknown command", name);
+        SetBranchCondition(0);
+        return 0;
+    }
+
+    return ExecCommand(view, command, State);
+}
+
 int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
     if (Command & CMD_EXT) {
         return ExecMacro(view, Command & ~CMD_EXT);
@@ -402,6 +424,8 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
         }
     }
     switch (Command) {
+    case ExExecuteCommand:
+        return ExecuteCommand(State, view);
     case ExWinRefresh:
         view->Repaint();
         return 1;

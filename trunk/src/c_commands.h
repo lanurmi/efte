@@ -24,6 +24,9 @@ typedef enum {
     /// unconditional branch, offset from command repeat count
     ExConditionalBranch,
     /// conditional branch, offset from command repeat count
+
+    //*** START
+
     ExDoRuntime,
     /// macro run time code associate with DO
     ExLoopRuntime,
@@ -32,7 +35,6 @@ typedef enum {
     /// macro run time code for breaking out of a loop
     ExTimes,
     /// set repeat counter of next command to top of stack
-    //*** START
 
     //!Stack Operations
     ExExit,
@@ -884,8 +886,9 @@ typedef enum {
     ExBlockPasteOver,
     /// Delete the content's of selection and paste the clipboard contents to the
     /// current position
-    ExPrint
+    ExPrint,
     /// Print a string to the console
+    ExExecuteCommand
 
     //*** END
 } ExCommands;
