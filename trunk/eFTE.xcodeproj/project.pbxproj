@@ -99,6 +99,7 @@
 		532F6B950D30192F00C0ED59 /* s_string.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 532F6A980D30192C00C0ED59 /* s_string.cpp */; };
 		532F6B970D30192F00C0ED59 /* s_util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 532F6A9B0D30192C00C0ED59 /* s_util.cpp */; };
 		532F6B9A0D30192F00C0ED59 /* view.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 532F6AA00D30192C00C0ED59 /* view.cpp */; };
+		534756A00D6CF0B100E3E9C2 /* cfte.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 538B51870D414C740092CDDF /* cfte.cpp */; };
 		53477E5F0D54164300339791 /* u_stack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53477E5D0D54164300339791 /* u_stack.cpp */; };
 		536371520D417E4F0021126C /* cocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 536371500D417E4F0021126C /* cocoa.mm */; };
 		536371530D417E4F0021126C /* con_cocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 536371510D417E4F0021126C /* con_cocoa.cpp */; };
@@ -734,6 +735,7 @@
 				5363715B0D417EEB0021126C /* FTETextAreaView.m in Sources */,
 				53E0CFE60D452D00006F8FBB /* h_falcon.cpp in Sources */,
 				53477E5F0D54164300339791 /* u_stack.cpp in Sources */,
+				534756A00D6CF0B100E3E9C2 /* cfte.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
