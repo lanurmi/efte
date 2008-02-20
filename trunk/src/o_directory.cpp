@@ -417,8 +417,13 @@ int EDirectory::FmChDir(const char *Name) {
 }
 
 int EDirectory::FmMvFile(const char *Name) {
+    char FullName[MAXPATH];
     char Dir[MAXPATH];
     char Dir2[MAXPATH];
+
+    strcpy(FullName, Path);
+    Slash(FullName, 1);
+    strcat(FullName, Name);
 
     strcpy(Dir, Path);
     if (View->MView->Win->GetStr("New file name", sizeof(Dir), Dir, HIST_PATH) == 0) {
@@ -427,19 +432,43 @@ int EDirectory::FmMvFile(const char *Name) {
     }
 
     if (ExpandPath(Dir, Dir2, sizeof(Dir2)) == -1) {
-        Msg(S_INFO, "Failed to rename %s", Name);
+        Msg(S_INFO, "Failed to expand destination %s", Name);
         SetBranchCondition(0);
         return 0;
     }
 
-    int status = rename(Name, Dir2);
+    int status = rename(FullName, Dir2);
     if (status == 0) {
         RescanDir();
         SetBranchCondition(1);
         return 1;
     }
+    const char *msg = 0;
 
-    Msg(S_INFO, "Failed to rename %s code %i", Name, errno);
+    switch(errno) {
+    case EACCES:       msg = "Write permission error"; break;
+    case EBUSY:        msg = "Source/Dest is busy"; break;
+    case EFAULT:       msg = "Fault error, Source/Dest outside accessible address"; break;
+    case EINVAL:       msg = "Dest contained a path prefix of the old"; break;
+    case EISDIR:       msg = "Dest is an existing directory"; break;
+    case ELOOP:        msg = "Too many symbolic links encountered"; break;
+    case EMLINK:       msg = "Source already has the max # of links"; break;
+    case ENAMETOOLONG: msg = "Source/Dest was too long"; break;
+    case ENOENT:       msg = "Source/Dest does not exist or is a dangling link"; break;
+    case ENOMEM:       msg = "Insufficient kernel memory"; break;
+    case ENOSPC:       msg = "No room on Dest"; break;
+    case ENOTDIR:      msg = "Source/Dest is not a dir"; break;
+    case ENOTEMPTY:    msg = "Dest is not empty"; break;
+    case EPERM:        msg = "Permission error"; break;
+    case EROFS:        msg = "File exists on a read only device"; break;
+    case EXDEV:        msg = "Source/Dest not on same filesystem"; break;
+    default:
+        Msg(S_INFO, "Failed to rename %s code %i", FullName, errno);
+        break;
+    }
+
+    if (msg != 0)
+        Msg(S_INFO, "Failed to rename %s: %s", FullName, msg);
 
     SetBranchCondition(0);
     return 0;
