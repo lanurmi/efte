@@ -41,7 +41,7 @@ const char *GetCommandName(int Command) {
     return "?invalid?";
 }
 
-int CmdNum(char *Cmd) {
+int CmdNum(const char *Cmd) {
     int i;
 
     for (i = 0;

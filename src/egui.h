@@ -87,6 +87,7 @@ public:
     int J();
 
     int Diag(ExState &State);
+    int ExecuteCommand(ExState &State, GxView *view);
 
     int FileCloseX(EView *View, int CreateNew, int XClose = 0);
     int FileClose(EView *View, ExState &State);
