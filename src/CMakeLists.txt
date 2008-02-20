@@ -92,7 +92,7 @@ IF( UNIX AND ${CMAKE_SYSTEM_NAME} MATCHES "Darwin" )
 ENDIF( UNIX AND ${CMAKE_SYSTEM_NAME} MATCHES "Darwin" )
 
 IF( CMAKE_COMPILER_IS_GNUCC )
-  SET( CMAKE_CXX_FLAGS "-pedantic -Wall -Wpointer-arith -Wconversion -Wwrite-strings -Winline -fno-rtti -fno-exceptions" )
+  SET( CMAKE_CXX_FLAGS "-pedantic -Wall -Wno-long-long -Wpointer-arith -Wconversion -Wwrite-strings -Winline -fno-rtti -fno-exceptions" )
 ENDIF( CMAKE_COMPILER_IS_GNUCC )
 
 IF( CMAKE_SYSTEM_NAME MATCHES "HP/UX" )
