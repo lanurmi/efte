@@ -47,7 +47,7 @@ colorize FTE {
         'Diag', 'DirOpen', 'DirGoUp', 'DirGoDown', 'DirGoRoot', 'DirGoto',
         'DirSearchCancel', 'DirSearchNext', 'DirSearchPrev', 'Div', 'Drop', 'Dup',
 
-        'Equals', 'Exit', 'ExitEditor',
+        'Equals', 'ExecuteCommand', 'Exit', 'ExitEditor',
 
         'Fail', 'FileClose', 'FileCloseAll', 'FileLast',
         'FileNext', 'FileOpen', 'FileOpenInMode', 'FilePrev', 'FilePrint',
