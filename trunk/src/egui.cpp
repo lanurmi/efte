@@ -83,21 +83,27 @@ EGUI::~EGUI() {
  * MACRO: Print a string to the console
  */
 
-int Print(ExState &State) {
+int Print(GxView *view, ExState &State) {
     FILE *f;
     int whereTo, found, vI;
     char vS[256];
+    EView *View = 0;
 
-    if (State.GetIntParam(0, &whereTo) == 0)
+    if (view != NULL) {
+        ExModelView *V = (ExModelView *)view->Top;
+        View = V->View;
+    }
+
+    if (State.GetIntParam(View, &whereTo) == 0)
         whereTo = 1;
 
     f = whereTo == 2 ? stderr : stdout;
 
     do {
         found = 1;
-        if (State.GetIntParam(0, &vI) != 0)
+        if (State.GetIntParam(View, &vI) != 0)
             fprintf(f, "%i", vI);
-        else if (State.GetStrParam(0, vS, sizeof(vS)) != 0)
+        else if (State.GetStrParam(View, vS, sizeof(vS)) != 0)
             fprintf(f, vS);
         else
             found = 0;
@@ -110,21 +116,28 @@ int Print(ExState &State) {
 /**
  * MACRO: Push a number/char from a macro onto the stack
  */
-int Push(ExState &State) {
+int Push(GxView *view, ExState &State) {
     int found;
     int x = 0;
     char s[64] = "";
+    EView *View = 0;
+
+    if (view != NULL) {
+        ExModelView *V = (ExModelView *)view->Top;
+        View = V->View;
+    }
 
     do {
         found = 0;
-        if (State.GetIntParam(0, &x)) {
+        if (State.GetIntParam(View, &x)) {
             ParamStack.push(x);
             found = 1;
-        } else if (State.GetStrParam(0, s, sizeof(s))) {
+        } else if (State.GetStrParam(View, s, sizeof(s))) {
             ParamStack.push((int) s[0]);
             found = 1;
         }
     } while(found == 1);
+
     SetBranchCondition(1);
     return 1;
 }
@@ -353,9 +366,9 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
     // Commands that will run regardless of a View or Buffer
     switch (Command) {
     case ExPrint:
-        return Print(State);
+        return Print(view, State);
     case ExPush:
-        return Push(State);
+        return Push(view, State);
     case ExPlus:
         return Plus();
     case ExMinus:
@@ -423,6 +436,7 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
             return View->MView->Win->IncrementalSearch(View);
         }
     }
+
     switch (Command) {
     case ExExecuteCommand:
         return ExecuteCommand(State, view);
