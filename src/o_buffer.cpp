@@ -375,7 +375,9 @@ int EBuffer::BeginMacro() {
 }
 
 int EBuffer::ExecMacro(const char *name) {
-    return ((EGUI *)gui)->ExecMacro(View->MView->Win, MacroNum(name));
+    int mNum = MacroNum(name);
+    if (mNum == 0) return 1;
+    return ((EGUI *)gui)->ExecMacro(View->MView->Win, mNum);
 }
 
 int EBuffer::ExecCommand(int Command, ExState &State) {
