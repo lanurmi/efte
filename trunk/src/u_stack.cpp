@@ -11,6 +11,8 @@
 #include "u_stack.h"
 #define STACKMASK (STACKSIZE-1)
 
+std::vector<std::string> sstack;
+
 // CircularStack is used for macro data stack, which is used by macros - including user written macros -
 // as data working and storage space. because there is no way of statically knowing how many times macros
 // will be executed, and how many stack items they leave on stack, and how much care the writer of the

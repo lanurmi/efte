@@ -13,6 +13,11 @@
 // CircularStack size must be 2**n - required by the fast wrap used here.
 #define CIRCSTACKSIZE 32
 
+#include <vector>
+#include <string>
+
+extern std::vector<std::string> sstack;
+
 class CircularStack {
 private:
     int stack[CIRCSTACKSIZE];

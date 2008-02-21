@@ -1938,6 +1938,14 @@ int EBuffer::GetStrVar(int var, char *str, int buflen) {
         return 0;
 
     switch (var) {
+    case mvStrTopOfStack:
+        if (sstack.empty())
+            return 0;
+
+        strncpy(str, ((std::string)sstack[sstack.size()-1]).c_str(), buflen);
+        str[buflen - 1] = 0;
+        return 1;
+
     case mvTopOfStackAsString:
         snprintf(str, buflen, "%d", ParamStack.pop());
         str[buflen - 1] = 0;
