@@ -1,0 +1,9 @@
+# ( x1 x2 u -- )
+sub pass   { 
+   minrot equals 
+   not if 
+      dup insertstring "failing test " . $tosstr cr 
+   endif 
+   drop }
+
+sub accumulate { push 10 mul plus }

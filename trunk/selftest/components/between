@@ -1,0 +1,12 @@
+{ push 10 8 12 between true PASS }
+{ push 8  8 12 between true PASS }
+{ push 12 8 12 between true PASS }
+
+{ push  5 8 12 between false PASS }
+{ push 15 8 12 between false PASS }
+
+{ push  -5 -10   0 between true  PASS }
+{ push -15 -10   0 between false PASS }
+{ push  10 -20 -10 between false PASS }
+
+{ TEST1 TEST2 TEST3 TEST4 TEST5 TEST6 TEST7 TEST8 }

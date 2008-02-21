@@ -1,0 +1,6 @@
+{ push 20 5 mod zero PASS }
+{ push 15 4 mod push 3 PASS }
+{ push -18 4 mod push -2 PASS }
+{ push -24 -7 mod push -3 PASS }
+{ TEST1 TEST2 TEST3 TEST4 }
+

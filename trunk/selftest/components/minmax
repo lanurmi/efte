@@ -1,0 +1,11 @@
+{ push 2 5 min push 2 PASS }
+{ push 2 5 max push 5 PASS }
+{ push -3 -7 min push -7 PASS }
+{ push -3 -7 max push -3 PASS }
+
+{ push -2 5 min push -2 PASS }
+{ push -2 5 max push 5 PASS }
+{ push 3 -7 min push -7 PASS }
+{ push 3 -7 max push 3 PASS }
+
+{ TEST1 TEST2 TEST3 TEST4 TEST5 TEST6 TEST7 TEST8 }
