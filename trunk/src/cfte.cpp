@@ -865,6 +865,7 @@ static int ParseCommands(CurPos &cp, char *Name) {
                 cnt = num;
                 GetOp(cp, P_COLON);
             }
+
         } else if (p == P_WORD) {
             long Command;
 
@@ -975,14 +976,10 @@ static int ParseCommands(CurPos &cp, char *Name) {
 
                 case COND_LEAVE:
                     int i = 0;
-//                    fprintf(stderr,"i=%d, depth=%d\n",i,CondStack.depth());
                     while (i < CondStack.depth()) {
-//                        fprintf(stderr,"still searching for DO: i=%d, depth=%d\n",i,CondStack.depth());
                         if (CondStack.peek(i) == COND_DO) {
-//                            fprintf(stderr,"found DO at stack pos %d, ",i);
                             branchaddress=CondStack.peek(i+1);
                             CFteCompileCommand(cp,ExLeaveRuntime,BranchOffset(cpos,branchaddress),1);
-//                            fprintf(stderr,"offset %d\n", BranchOffset(cpos,branchaddress));
                             i=-1;
                             break;
                         }
@@ -997,8 +994,8 @@ static int ParseCommands(CurPos &cp, char *Name) {
                 }
 
                 ign = 0;
-                cnt = 1;
             }
+            cnt = 1;
         } else if (p == P_STRING) {
             char *s = GetString(cp);
             PutString(cp, CF_STRING, s);
