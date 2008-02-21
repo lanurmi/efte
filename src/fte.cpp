@@ -32,6 +32,7 @@ static void Usage() {
            "  -+                Next option is file.\n"
            "  -? -h --help      Display usage.\n"
            "  -!                Ignore config file, use builtin defaults (also -c).\n"
+           "  -dWORD            Define a preprocessor word for config file parsing\n"
            "  -C[<.cnf>]        Use specified configuration file (no arg=builtin).\n"
            "  -D[<.dsk>]        Load/Save desktop from <.dsk> file (no arg=disable desktop).\n"
            "  -H[<.his>]        Load/Save history from <.his> file (no arg=disable history).\n"
@@ -132,6 +133,8 @@ static int CmdLoadConfiguration(int &argc, char **argv) {
             } else if (argv[Arg][1] == '?' || argv[Arg][1] == 'h') {
                 Usage();
                 return 0;
+            } else if (argv[Arg][1] == 'd') {
+                DefineWord(argv[Arg] + 2);
             } else if (argv[Arg][1] == 'c' || argv[Arg][1] == 'C') {
                 if (argv[Arg][2]) {
                     ExpandPath(argv[Arg] + 2, ConfigFileName, sizeof(ConfigFileName));

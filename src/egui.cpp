@@ -149,12 +149,10 @@ int EGUI::Diag(ExState &State) {
     int count;
     char msg[256];
 
-    fprintf(stderr, "In Diag\n");
-
     if (State.GetIntParam(0, &count) == 0)
         count = 0;
     if (State.GetStrParam(0, msg, sizeof(msg)))
-        fprintf(stderr, "Diagnostic message: %s\n", msg);
+        fprintf(stderr, "%s: ", msg);
 
     fprintf(stderr, "cond=%08x, tos=%d, nos=%d, 3rd=%d", BranchCondition, ParamStack.peek(0), ParamStack.peek(1), ParamStack.peek(2));
     for (int i=3; i <= count; i++)
