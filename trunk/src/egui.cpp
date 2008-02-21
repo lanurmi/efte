@@ -422,6 +422,23 @@ int CompareS() {
     return 1;
 }
 
+int OverS() {
+    if (sstack.size() < 2) {
+        SetBranchCondition(0);
+        return 0;
+    }
+
+    sstack.push_back(sstack[sstack.size()-2]);
+    SetBranchCondition(1);
+    return 1;
+}
+
+int DepthS() {
+    ParamStack.push(sstack.size());
+    SetBranchCondition(1);
+    return 1;
+}
+
 int EGUI::ExecuteCommand(ExState &State, GxView *view)
 {
     ExModelView *V = (ExModelView *)view->Top;
@@ -522,6 +539,10 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
         return SwapS();
     case ExCompareS:
         return CompareS();
+    case ExOverS:
+        return OverS();
+    case ExDepthS:
+        return DepthS();
     }
 
     if (view->IsModelView()) {
