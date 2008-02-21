@@ -8,17 +8,23 @@
 # Additional macros provided by eFTE
 #
 
-# ( -- endingRow startingRow )
-#
-# Push the block range onto the stack for iterating via a Do ... Loop
-#
-sub BlockRange { MoveBlockEnd Push $CurRow MoveBlockStart Push $CurRow }
-
 # ( -- len )
 #
 # Push the Line Length onto the stack
 #
 sub LineLen  { Push $LineLength }
+
+# ( -- LineLen CurCol )
+#
+# Push the line range onto the stack for iterating via a Do ... Loop
+#
+sub LineRange { LineLen Push $CurCol }
+
+# ( -- endingRow startingRow )
+#
+# Push the block range onto the stack for iterating via a Do ... Loop
+#
+sub BlockRange { MoveBlockEnd Push $CurRow MoveBlockStart Push $CurRow }
 
 # ( ch -- num )
 #
