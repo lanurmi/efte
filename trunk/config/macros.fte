@@ -1,0 +1,83 @@
+# macros.fte
+#
+# Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
+#
+# You may distribute under the terms of either the GNU General Public
+# License or the Artistic License, as specified in the README file.
+#
+# Additional macros provided by eFTE
+#
+
+# ( -- endingRow startingRow )
+#
+# Push the block range onto the stack for iterating via a Do ... Loop
+#
+sub BlockRange { MoveBlockEnd Push $CurRow MoveBlockStart Push $CurRow }
+
+# ( -- len )
+#
+# Push the Line Length onto the stack
+#
+sub LineLen  { Push $LineLength }
+
+# ( ch -- num )
+#
+# Return True/False if the current character is equal to Tos
+#
+sub IsScreenChar { Push $Char Equals }
+
+# ( -- )
+#
+# Eat all but one whitespace (backwards)
+#
+sub EatWhiteSpaceBack {
+  ?2:CursorLeft  # Leave at least 1 white space
+  Begin Bl IsScreenChar While KillChar CursorLeft Repeat
+  ?2:CursorRight # Go back to original location (minus whitespace)
+}
+
+# ( ch -- pos )
+#
+# Goto character in the current line
+#
+# pos = -1 if not found
+#
+sub GotoCharInLine {
+  Push -1
+  MoveLineStart LineLen Zero Do
+    Over IsScreenChar If Drop Push $CurCol Leave EndIf
+    CursorRight
+  Loop
+  Nip
+  Dup Negative If Drop MoveLineStart EndIf
+}
+
+# ( -- )
+#
+# Align the specified character in each line of the selected block
+#
+# Example:
+#    int a = 10;
+#    int abc = 20;
+#    int ad            = 30;
+#
+# Result:
+#    int a   = 10;
+#    int abc = 20;
+#    int ad  = 30;
+#
+sub AlignChar {
+  GetChar
+  Zero
+  BlockRange Do
+    Over GotoCharInLine Drop EatWhiteSpaceBack Push $CurCol Max
+    CursorDown
+  Loop
+
+  MoveBlockStart BlockRange BlockUnmark Do
+    Over GotoCharInLine
+    Dup Negative Not If Dup2 Minus Spaces EndIf Drop
+    CursorDown
+  Loop
+  Drop2
+}
