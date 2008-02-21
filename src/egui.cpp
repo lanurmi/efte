@@ -330,6 +330,98 @@ int EGUI::J() {
     return 1;
 }
 
+int PushS(GxView *view, ExState &State) {
+    int found;
+    int x = 0;
+    char s[1024] = "";
+    EView *View = 0;
+
+    if (view != NULL) {
+        ExModelView *V = (ExModelView *)view->Top;
+        View = V->View;
+    }
+
+    do {
+        found = 0;
+        if (State.GetIntParam(View, &x)) {
+            snprintf(s, 1024, "%i", x);
+            sstack.push_back(s);
+            found = 1;
+        } else if (State.GetStrParam(View, s, sizeof(s))) {
+            sstack.push_back(s);
+            found = 1;
+        }
+    } while(found == 1);
+
+    SetBranchCondition(1);
+    return 1;
+}
+
+int DupS() {
+    if (sstack.size() == 0) {
+        SetBranchCondition(0);
+        return 0;
+    }
+
+    sstack.push_back(sstack[sstack.size()-1]);
+
+    SetBranchCondition(1);
+    return 1;
+}
+
+int DropS() {
+    if (sstack.size() == 0) {
+        SetBranchCondition(0);
+        return 0;
+    }
+
+    sstack.pop_back();
+
+    SetBranchCondition(1);
+    return 1;
+}
+
+int SwapS() {
+    if (sstack.size() < 2)
+        return 0;
+
+    string tos = sstack[sstack.size()-1];
+    string nos = sstack[sstack.size()-2];
+    sstack.pop_back();
+    sstack.pop_back();
+    sstack.push_back(tos);
+    sstack.push_back(nos);
+
+    SetBranchCondition(1);
+    return 1;
+}
+
+int DiagS(ExState &State) {
+    char msg[128];
+
+    if (State.GetStrParam(0, msg, sizeof(msg)))
+        fprintf(stderr, "%s: ", msg);
+    for (int i = sstack.size() - 1; i >= 0; i--) {
+        fprintf(stderr, "%i='%s'", i, sstack[i].c_str());
+        if (i != 0) fprintf(stderr, ", ");
+    }
+    fprintf(stderr, "\n");
+    return 1;
+}
+
+int CompareS() {
+    if (sstack.size() < 2) {
+        SetBranchCondition(0);
+        return 0;
+    }
+
+    int tos = sstack.size() - 1;
+    ParamStack.push(sstack[tos].compare(sstack[tos-1]));
+
+    SetBranchCondition(1);
+    return 1;
+}
+
 int EGUI::ExecuteCommand(ExState &State, GxView *view)
 {
     ExModelView *V = (ExModelView *)view->Top;
@@ -417,6 +509,19 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
         return J();
     case ExDiag:
         return Diag(State);
+
+    case ExDiagS:
+        return DiagS(State);
+    case ExPushS:
+        return PushS(view, State);
+    case ExDupS:
+        return DupS();
+    case ExDropS:
+        return DropS();
+    case ExSwapS:
+        return SwapS();
+    case ExCompareS:
+        return CompareS();
     }
 
     if (view->IsModelView()) {

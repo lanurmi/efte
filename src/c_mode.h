@@ -291,7 +291,8 @@ typedef enum {
     mvFTEVer,
     mvTopOfStackAsInt,
     mvTopOfStackAsString,
-    mvTopOfStackAsChar
+    mvTopOfStackAsChar,
+    mvStrTopOfStack
 } MacroVariable;
 
 #endif

@@ -55,6 +55,14 @@ const struct {
     TAB(Times),
 
     TAB(Diag),
+
+    TAB(DiagS),
+    TAB(PushS),
+    TAB(DupS),
+    TAB(DropS),
+    TAB(SwapS),
+    TAB(CompareS),
+
     TAB(ToggleConditionDisplay),
 
     TAB(CursorLeft),

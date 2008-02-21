@@ -93,6 +93,20 @@ typedef enum {
     ExToggleConditionDisplay,
     /// Toggle displaying the condition code in the status bar.
 
+    //!String Stack Commands
+    ExDiagS,
+    /// Print string stack info
+    ExPushS,
+    /// Push a string to the string stack
+    ExDupS,
+    /// Duplicate StrTos
+    ExDropS,
+    /// Drop top from string stack
+    ExSwapS,
+    /// Swap StrTos and StrNos
+    ExCompareS,
+    /// Compare StrTos and StrNos
+
     //!Cursor Commands
     ExCursorLeft,
     /// Move the cursor left.
