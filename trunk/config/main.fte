@@ -1,6 +1,6 @@
 # Main FTE Configuration File
 include 'primitives.fte';
-include '../selftest/selftest.fte';
+#include '../selftest/selftest.fte';
 
 # operating system is now defined by CFTE
 
