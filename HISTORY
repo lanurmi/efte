@@ -49,6 +49,7 @@ Revision history
   + Removed binary configuration dependency. eFTE now reads the
     plain text configuration files
   + Added a nicer help screen
+  + Added a string stack and related commands
 
 0.50.1 -- January 17, 2008
   - Forked from FTE (http://fte.sourceforge.net)

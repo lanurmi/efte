@@ -439,6 +439,68 @@ int DepthS() {
     return 1;
 }
 
+int SubSearchS() {
+    int tos = sstack.size() - 1;
+    int searchInI  = tos - ParamStack.pop();
+    int searchForI = tos - ParamStack.pop();
+
+    if (searchInI < 0 || searchForI < 0) {
+        SetBranchCondition(0);
+        return 0;
+    }
+
+    std::string searchIn  = sstack[searchInI];
+    std::string searchFor = sstack[searchForI];
+
+    fprintf(stderr, "Search In: %i (%s), Search For: %i (%s)\n",
+            searchInI, searchIn.c_str(),
+            searchForI, searchFor.c_str());
+
+    std::string::size_type foundAt = searchIn.find(searchFor, 0);
+    ParamStack.push(foundAt == std::string::npos ? -1 : (int) foundAt);
+
+    SetBranchCondition(1);
+    return 1;
+}
+
+int MergeS() {
+    int tos = sstack.size();
+    if (tos < 2) {
+        SetBranchCondition(0);
+        return 0;
+    }
+
+    tos--; // 0 based index
+
+    std::string tosS = sstack[tos];
+    std::string nosS = sstack[tos-1];
+    sstack.pop_back();
+    sstack.pop_back();
+
+    sstack.push_back(nosS + tosS);
+
+    SetBranchCondition(1);
+    return 1;
+}
+
+int SplitS() {
+    int tos = sstack.size() - 1;
+    if (tos < 0) {
+        SetBranchCondition(0);
+        return 0;
+    }
+
+    int pos = ParamStack.pop();
+    std::string tosS = sstack[tos];
+
+    sstack.pop_back();
+    sstack.push_back(tosS.substr(pos));
+    sstack.push_back(tosS.substr(0, pos));
+
+    SetBranchCondition(1);
+    return 1;
+}
+
 int EGUI::ExecuteCommand(ExState &State, GxView *view)
 {
     ExModelView *V = (ExModelView *)view->Top;
@@ -543,6 +605,12 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
         return OverS();
     case ExDepthS:
         return DepthS();
+    case ExSubSearchS:
+        return SubSearchS();
+    case ExSplitS:
+        return SplitS();
+    case ExMergeS:
+        return MergeS();
     }
 
     if (view->IsModelView()) {

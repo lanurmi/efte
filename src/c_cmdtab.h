@@ -64,6 +64,9 @@ const struct {
     TAB(CompareS),
     TAB(OverS),
     TAB(DepthS),
+    TAB(SubSearchS),
+    TAB(SplitS),
+    TAB(MergeS),
 
     TAB(ToggleConditionDisplay),
 

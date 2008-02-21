@@ -79,9 +79,9 @@ colorize FTE {
         'LineTrans', 'LineTrim', 'ListMark', 'ListMarkAll', 'ListRoutines',
         'ListToggleMark', 'ListToggleMarkAll', 'ListUnmark', 'ListUnmarkAll', 'LocalMenu',
 
-        'MakeDirectory', 'MainMenu', 'MatchBracket', 'Message', 'Minus', 'MoveBeginLinePageFile',
-        'MoveBeginOrNonWhite', 'MoveBlockEnd', 'MoveBlockStart', 'MoveDown',
-        'MoveEndLinePageFile', 'MoveFileEnd', 'MoveFileStart', 'MoveFirstNonWhite',
+        'MakeDirectory', 'MainMenu', 'MatchBracket', 'MergeS', 'Message', 'Minus',
+        'MoveBeginLinePageFile', 'MoveBeginOrNonWhite', 'MoveBlockEnd', 'MoveBlockStart',
+        'MoveDown', 'MoveEndLinePageFile', 'MoveFileEnd', 'MoveFileStart', 'MoveFirstNonWhite',
         'MoveFoldNext', 'MoveFoldPrev', 'MoveFoldTop', 'MoveFunctionNext',
         'MoveFunctionPrev', 'MoveLastNonWhite', 'MoveLeft', 'MoveLineBottom',
         'MoveLineCenter', 'MoveLineEnd', 'MoveLineStart', 'MoveLineTop', 'MoveNext',
@@ -110,8 +110,8 @@ colorize FTE {
         'SearchReplaceB', 'SearchReplaceRx', 'SearchRx', 'SearchWordPrev', 'SearchWordNext',
         'SelfInsert', 'SetCIndentStyle', 'SetIndentWithTabs', 'SetLeftMargin',
         'SetPrintDevice', 'SetRightMargin', 'ShowEntryScreen', 'ShowHelp', 'ShowHelpWord',
-        'ShowKey', 'ShowMenu', 'ShowPosition', 'ShowVersion', 'Svn', 'SvnCommit',
-        'SvnDiff', 'Swap', 'SwapS', 'SwitchTo',
+        'ShowKey', 'ShowMenu', 'ShowPosition', 'ShowVersion', 'SplitS', 'SubSearchS',
+        'Svn', 'SvnCommit', 'SvnDiff', 'Swap', 'SwapS', 'SwitchTo',
 
         'TagClear', 'TagFind', 'TagFindWord', 'TagGoto', 'TagLoad', 'TagNext',
         'TagPop', 'TagPrev', 'Times', 'ToggleAutoIndent', 'ToggleBackSpKillTab',
