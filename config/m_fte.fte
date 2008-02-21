@@ -38,14 +38,15 @@ colorize FTE {
         'Cancel', 'ChangeFlags', 'ChangeKeys', 'ChangeLeftMargin', 'ChangeMode',
         'ChangeRightMargin', 'ChangeTabSize', 'CharCaseDown', 'CharCaseToggle',
         'CharCaseUp', 'CharTrans', 'ChildClose', 'ClearCvsMessages',
-        'ClearMessages', 'ClearSvnMessages', 'ClipClear', 'CloseActivate', 'Compile',
-        'CompileNextError', 'CompilePrevError', 'CompleteWord', 'ConfigRecompile',
+        'ClearMessages', 'ClearSvnMessages', 'ClipClear', 'CloseActivate', 'CompareS',
+        'Compile', 'CompileNextError', 'CompilePrevError', 'CompleteWord', 'ConfigRecompile',
         'CursorDown', 'CursorLeft', 'CursorRight', 'CursorUp', 'Cvs', 'CvsCommit',
         'CvsDiff',
 
-        'Delete', 'DeleteFile', 'DesktopLoad', 'DesktopSave', 'DesktopSaveAs',
-        'Diag', 'DirOpen', 'DirGoUp', 'DirGoDown', 'DirGoRoot', 'DirGoto',
-        'DirSearchCancel', 'DirSearchNext', 'DirSearchPrev', 'Div', 'Drop', 'Dup',
+        'Delete', 'DeleteFile', 'DepthS', 'DesktopLoad', 'DesktopSave', 'DesktopSaveAs',
+        'Diag', 'DiagS', 'DirOpen', 'DirGoUp', 'DirGoDown', 'DirGoRoot', 'DirGoto',
+        'DirSearchCancel', 'DirSearchNext', 'DirSearchPrev', 'Div', 'Drop', 'DropS',
+        'Dup', 'DupS',
 
         'Equals', 'ExecuteCommand', 'Exit', 'ExitEditor',
 
@@ -95,10 +96,10 @@ colorize FTE {
         'MoveWordOrCapEndLeft', 'MoveWordOrCapRight', 'MoveWordOrCapEndPrev',
         'MoveWordOrCapEndNext', 'MoveWordPrev', 'MoveWordRight', 'Mul',
 
-        'Or', 'Over',
+        'Or', 'Over', 'OverS',
 
         'PlaceBookmark', 'PlaceGlobalBookmark', 'Plus',
-        'PopGlobalBookmark', 'Print', 'Push', 'PushGlobalBookmark',
+        'PopGlobalBookmark', 'Print', 'Push', 'PushGlobalBookmark', 'PushS',
 
         'Redo', 'RemoveBookmark', 'RemoveGlobalBookmark', 'RenameFile', 'Rescan', 'RFetch', 'RFrom',
         'Rot', 'RunCompiler', 'RunCvs', 'RunCvsCommit', 'RunCvsDiff', 'RunProgram',
@@ -110,7 +111,7 @@ colorize FTE {
         'SelfInsert', 'SetCIndentStyle', 'SetIndentWithTabs', 'SetLeftMargin',
         'SetPrintDevice', 'SetRightMargin', 'ShowEntryScreen', 'ShowHelp', 'ShowHelpWord',
         'ShowKey', 'ShowMenu', 'ShowPosition', 'ShowVersion', 'Svn', 'SvnCommit',
-        'SvnDiff', 'Swap', 'SwitchTo',
+        'SvnDiff', 'Swap', 'SwapS', 'SwitchTo',
 
         'TagClear', 'TagFind', 'TagFindWord', 'TagGoto', 'TagLoad', 'TagNext',
         'TagPop', 'TagPrev', 'Times', 'ToggleAutoIndent', 'ToggleBackSpKillTab',

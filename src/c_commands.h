@@ -106,6 +106,10 @@ typedef enum {
     /// Swap StrTos and StrNos
     ExCompareS,
     /// Compare StrTos and StrNos
+    ExOverS,
+    /// Push a copy of StrNos
+    ExDepthS,
+    /// Push the number of strings on the stack
 
     //!Cursor Commands
     ExCursorLeft,

@@ -62,6 +62,8 @@ const struct {
     TAB(DropS),
     TAB(SwapS),
     TAB(CompareS),
+    TAB(OverS),
+    TAB(DepthS),
 
     TAB(ToggleConditionDisplay),
 
