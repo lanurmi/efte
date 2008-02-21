@@ -39,7 +39,7 @@ INCLUDE = $(%watcom)\h;$(%watcom)\h\os2;.\
 MISC    = -wcd555 -wcd013 -wcd726
 
 DEFS    = -dOS2 -dOS2OW -dINCL_32 -dWATCOM -dUSE_LOCALE
-CFLAGS  = -i=$(INCLUDE) $(MISC) $(DEFS) -d0 -w4 -e25 -zq $(OPT) $(MACHINE) -bm -bt=OS2 -mf
+CFLAGS  = -i=$(INCLUDE) $(MISC) $(DEFS) -d0 -w4 -e25 -zq $(OPT) $(MACHINE) -bm -bt=OS2 -mf -xs
 LDFLAGS = op m op maxe=25 op q op symf op el
 OEXT    = obj
 
