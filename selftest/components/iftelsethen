@@ -1,0 +1,3 @@
+{ push 5 inc  true if  lshift  inc else  drop zero endif lshift  push 26 PASS }
+{ push 3 inc  false if drop zero   else  inc lshift endif inc    push 11 PASS }
+{ TEST1 TEST2 }

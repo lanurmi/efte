@@ -1,0 +1,3 @@
+#!/bin/sh
+tar cjf selftest.tar.bz2 *
+cp -uR * /net/verhau/var/www/scarydevil/efte/tests

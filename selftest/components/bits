@@ -1,0 +1,10 @@
+{ push 2 invert  push -3 PASS }  # test invert
+{ push -5 invert push 4 PASS }
+
+{ push 0 not true PASS }      # test not
+{ push 1234 not false PASS }
+{ push -321 not false PASS }
+{ push true not false PASS }
+{ push false not true PASS }
+
+{ TEST1 TEST2 TEST3 TEST4 TEST5 TEST6 TEST7 }

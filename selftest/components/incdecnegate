@@ -1,0 +1,10 @@
+{ push 30 inc inc inc  push 33 PASS }
+{ push -2 inc inc inc inc inc  push 3 PASS }
+{ push 20 dec dec push 18 PASS }
+{ push 1 dec dec dec dec  push -3 PASS }
+{ push 12 negate push -12 PASS }
+{ push -15 negate push 15 PASS }
+{ push -8 abs  push 8 PASS }
+{ push 5 abs push 5 PASS }
+{ TEST1 TEST2 TEST3 TEST4 TEST5 TEST6 TEST7 TEST8 }
+

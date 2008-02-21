@@ -1,0 +1,3 @@
+{ push 0 101 0 do i plus loop push 5050 PASS }
+{ push 0 200 100 do i plus i push 150 equals if leave endif inc loop lshift push 12850 PASS }
+{ TEST1 TEST2 }

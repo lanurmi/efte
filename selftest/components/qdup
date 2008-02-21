@@ -1,0 +1,1 @@
+{ push 2 0 qdup swap qdup push 10 mul plus push 10 mul plus push 220 PASS } # tests qdup
