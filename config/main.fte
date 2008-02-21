@@ -1,12 +1,20 @@
-# Main FTE Configuration File
+# main.fte
+#
+# Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
+#
+# You may distribute under the terms of either the GNU General Public
+# License or the Artistic License, as specified in the README file.
+#
+# Main eFTE configuration file
+#
+
 include 'primitives.fte';
-#include '../selftest/selftest.fte';
+include 'macros.fte';
 
-# operating system is now defined by CFTE
-
-# OS_UNIX, OS_OS2, OS_DOS32, OS_NT
-
-# uncomment for appropriate keybindings and menus
+# to include use the -dSELFTEST parameter to efte
+%if(SELFTEST)
+include '../selftest/selftest.fte';
+%endif
 
 #%define(UI_KB)
 %define(UI_FTE)
@@ -176,7 +184,6 @@ eventmap TEX: PLAIN {
     }
 }
 
-
 include 'm_4gl.fte';
 include 'm_a51.fte';
 include 'm_ada.fte';
@@ -343,8 +350,6 @@ eventmap PLAIN {
     #}
 }
 
-
-
 #and here is my function noumlaut:
 
 sub noumlaut {
@@ -367,5 +372,5 @@ eventmap PLAIN {
 #   key [G-Left] { MovePrev }
 #right arrow at the end of line moves to next line
 #   key [G-Right] { MoveNext }
-    key [A+C+Enter] { noumlaut; RunProgram "latex " . $FileName; }
+#   key [A+C+Enter] { noumlaut; RunProgram "latex " . $FileName; }
 }
