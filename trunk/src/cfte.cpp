@@ -65,7 +65,6 @@ static void Fail(CurPos &cp, const char *s, ...) {
 }
 
 static int LoadFile(const char *WhereName, const char *CfgName, int Level = 1, int optional = 0);
-static void DefineWord(const char *w);
 
 static void PutObject(CurPos &cp, int xtag, int xlen, void *obj) {
     unsigned char tag = (unsigned char)xtag;
@@ -468,7 +467,7 @@ static int DefinedWord(const char *w) {
     return 0;
 }
 
-static void DefineWord(const char *w) {
+void DefineWord(const char *w) {
     if (!w || !w[0])
         return ;
     if (!DefinedWord(w)) {
