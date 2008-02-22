@@ -110,6 +110,8 @@ typedef enum {
     /// Compare StrTos and StrNos
     ExOverStr,
     /// Push a copy of StrNos
+    ExPickStr,
+    /// Pick a copy of the string and push
     ExDepthStr,
     /// Push the number of strings on the stack
     ExSubSearchStr,

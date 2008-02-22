@@ -106,3 +106,10 @@ sub drop2$    { 2:drop$ }
 sub equals$   { compare$ not }
 sub right$    { dup negate swap mid$ }
 sub left$     { zero swap mid$ }
+sub search$   {
+  push -1
+  depth$ inc one do
+    dup$ I pick$ over$ equals$ if drop I leave endif
+  loop
+  drop$
+}
