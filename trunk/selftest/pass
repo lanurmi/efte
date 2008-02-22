@@ -5,8 +5,8 @@ sub pass   {
    else
       insertstring "FAIL "
    endif 
-   insertstring "test #" rfrom dot
-   insertstring ": returned " over dot
+   rfrom insertstring "test #" dot
+   swap  insertstring ": returned " dot
    insertstring ", expected " dot
    cr
 }
