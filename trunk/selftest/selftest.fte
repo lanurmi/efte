@@ -6,12 +6,17 @@
 # Copyright (c) 2008 eFTE Group
 # -----------------------------------------------------------------------
 # ( x1 x2 u -- )
-sub pass   { 
-   minrot equals 
-   not if 
-      dup insertstring "failing test " . $tosstr cr 
+sub pass   {
+   insertstring "test #" dot
+   insertstring ": returned " over dot
+   insertstring ", expected " dup dot
+   equals if
+      insertstring "PASS"
+   else
+      insertstring "FAIL"
    endif 
-   drop }
+   cr }
+
 
 sub accumulate { push 10 mul plus }
 
@@ -183,6 +188,7 @@ sub test_19_5 { test_19_2 test_19_3 test_19_4 }
 
 
 sub selftest {
+   message "selftest finished"
    push 12345678      # stack 'marker'
     test_1_3 test_2_9 test_3_8 test_4_5 test_5_3 test_6_2 test_7_3 test_8_9
     test_9_3 test_10_9 test_11_5 test_12_8 test_13_5 test_14_1 test_15_3 test_16_3
