@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=eFTE
+Version=0.97
+GenericName=Text Editor
+Comment=Fast, extendable programmers text editor
+MimeType=text/english;text/plain;text/x-makefile;text/x-c++hdr;text/x-c++src;text/x-chdr;text/x-csrc;text/x-java;text/x-pascal;text/x-tcl;text/x-tex;application/x-shellscript;text/x-c;text/x-c++;
+Exec=efte %f
+Icon=efte
+Type=Application
+Terminal=false
+Categories=Development;TextEditor;
+StartupWMClass=Efte
