@@ -15,6 +15,8 @@
 
 #define TAB(x) \
     { Ex##x, #x }
+#define TABS(x) \
+    { Ex##x##Str, #x "$" }
 
 const struct {
     unsigned short CmdId;
@@ -56,18 +58,21 @@ const struct {
 
     TAB(Diag),
 
-    TAB(DiagS),
-    TAB(PushS),
-    TAB(DupS),
-    TAB(DropS),
-    TAB(SwapS),
-    TAB(CompareS),
-    TAB(OverS),
-    TAB(DepthS),
-    TAB(SubSearchS),
-    TAB(SplitS),
-    TAB(MergeS),
-    TAB(RotS),
+    TABS(Diag),
+    TABS(Push),
+    TABS(Dup),
+    TABS(Drop),
+    TABS(Swap),
+    TABS(Compare),
+    TABS(Over),
+    TABS(Depth),
+    TABS(SubSearch),
+    TABS(Split),
+    TABS(Merge),
+    TABS(Rot),
+    TABS(Len),
+    TABS(Mid),
+    TAB(GetString),
 
     TAB(ToggleConditionDisplay),
 

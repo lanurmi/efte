@@ -1,9 +1,16 @@
+# primitives.fte
+#
+# Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
+#
+# You may distribute under the terms of either the GNU General Public
+# License or the Artistic License, as specified in the README file.
 #
 # some tools and enhancements for macros.
 # this are currently used for testing and toying
 # with macros, as result many of the current macros
 # assume these to be present, as factored out functionality.
 #
+
 # -- constants --
 sub zero      { push 0 }
 sub false     { push 0 }
@@ -86,14 +93,16 @@ sub cursorend  { movelineend }
     
 #  test block marked?
 #  stack # chars on line  (or macro: mark pos, CursorEnd, CursorColumn, return to marked pos)
-    
 
 # =============================================================================
 # String Stack Helpers
 # =============================================================================
 
-sub NipS      { SwapS DropS }
-sub TuckS     { SwapS OverS }
-sub MinRotS   { RotS RotS }
-sub Dup2S     { OverS OverS }
-sub Drop2S    { 2:DropS }
+sub nip$      { swap$ drop$ }
+sub tuck$     { swap$ over$ }
+sub minrot$   { rot$ rot$ }
+sub dup2$     { over$ over$ }
+sub drop2$    { 2:drop$ }
+sub equals$   { compare$ not }
+sub right$    { dup negate swap mid$ }
+sub left$     { zero swap mid$ }
