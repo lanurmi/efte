@@ -93,10 +93,6 @@ ENDFUNCAS_SAFE(HANDLE, unsigned long, GetNextHandle());
 #include <cstdlib>
 #endif
 
-#if !defined(NO_NEW_CPP_FEATURES)
-using namespace std;
-#endif
-
 #ifndef FTE_NO_LOGGING
 
 /**
@@ -106,13 +102,13 @@ class GlobalLog {
     friend class FunctionLog;
 private:
     char* m_strLogFile;
-    ofstream    m_ofsLog;
+    std::ofstream    m_ofsLog;
 
     bool        m_bOpened;
 
     int         indent;
 
-    ostream&    operator()();
+    std::ostream&    operator()();
 
 public:
     GlobalLog() : m_strLogFile(NULL), m_bOpened(false) {}
@@ -160,26 +156,26 @@ public:
     ~FunctionLog();
 
     // RC?
-    ostream& RC(unsigned long line);
+    std::ostream& RC(unsigned long line);
 
 private:
-    ostream& OutputLine() {
+    std::ostream& OutputLine() {
         return OutputIndent(log()) << '[' << func << "] ";
     }
 
 public:
     // output line.
-    ostream& OutputLine(unsigned long line) {
+    std::ostream& OutputLine(unsigned long line) {
         return OutputLine() << '{' << line << "} ";
     }
 
 private:
-    ostream& OutputIndent(ostream& os);
+    std::ostream& OutputIndent(std::ostream& os);
 };
 
 #define LOGOBJNAME functionLog__obj
 #define LOG LOGOBJNAME.OutputLine(__LINE__)
-#define ENDLINE endl
+#define ENDLINE std::endl
 
 #define STARTFUNC(func) FunctionLog LOGOBJNAME(globalLog, func, __LINE__)
 #define ENDFUNCRC(rc) do { LOGOBJNAME.RC(__LINE__) << (rc) << ENDLINE; return (rc); } while (0)
@@ -244,39 +240,39 @@ DESCRIPTION
 #define DECLARE_OSTREAM_FUNC1(type1) \
     class ostream_func1_##type1 { \
     private: \
-        ostream& (*osfunc)(ostream&, type1 const&); \
+        std::ostream& (*osfunc)(std::ostream&, type1 const&); \
         type1 const& o1; \
     public: \
-        ostream_func1_##type1(ostream& (*osfunc_)(ostream&, type1 const&), type1 const& o1_) : osfunc(osfunc_), o1(o1_) {} \
-        ostream& operator()(ostream& os) const { return osfunc(os, o1); } \
+        ostream_func1_##type1(std::ostream& (*osfunc_)(std::ostream&, type1 const&), type1 const& o1_) : osfunc(osfunc_), o1(o1_) {} \
+        std::ostream& operator()(std::ostream& os) const { return osfunc(os, o1); } \
     }; \
-    inline ostream& operator <<(ostream& os, ostream_func1_##type1 const& ofunc) \
+    inline std::ostream& operator <<(std::ostream& os, ostream_func1_##type1 const& ofunc) \
     { return ofunc(os); }
 
 #define DECLARE_OSTREAM_FUNC2(type1,type2) \
     class ostream_func2_##type1##_##type2 { \
     private: \
-        ostream& (*osfunc)(ostream&, type1 const&, type2 const&); \
+        std::ostream& (*osfunc)(std::ostream&, type1 const&, type2 const&); \
         type1 const& o1; \
         type2 const& o2; \
     public: \
-        ostream_func2_##type1##_##type2(ostream& (*osfunc_)(ostream&, type1 const&, type2 const&), \
+        ostream_func2_##type1##_##type2(std::ostream& (*osfunc_)(std::ostream&, type1 const&, type2 const&), \
                                         type1 const& o1_, type2 const& o2_) : \
                                             osfunc(osfunc_), o1(o1_), o2(o2_) {} \
-        ostream& operator()(ostream& os) const { return osfunc(os, o1, o2); } \
+        std::ostream& operator()(std::ostream& os) const { return osfunc(os, o1, o2); } \
     }; \
-    inline ostream& operator <<(ostream& os, ostream_func2_##type1##_##type2 const& ofunc) \
+    inline std::ostream& operator <<(std::ostream& os, ostream_func2_##type1##_##type2 const& ofunc) \
     { return ofunc(os); }
 
 DECLARE_OSTREAM_FUNC1(char)
 DECLARE_OSTREAM_FUNC2(char, size_t)
 
-ostream& Log__osBinChar(ostream&, char const&);
+std::ostream& Log__osBinChar(std::ostream&, char const&);
 inline ostream_func1_char BinChar(char c) {
     return ostream_func1_char(Log__osBinChar, c);
 }
 
-ostream& Log__osFillChar(ostream&, char const&, size_t const&);
+std::ostream& Log__osFillChar(std::ostream&, char const&, size_t const&);
 inline ostream_func2_char_size_t FillChar(char const& c, size_t const& num) {
     return ostream_func2_char_size_t(Log__osFillChar, c, num);
 }
