@@ -13,7 +13,7 @@ include 'macros.fte';
 
 # to include use the -dSELFTEST parameter to efte
 %if(SELFTEST)
-include '../selftest/selftest.fte';
+include 'selftest.fte';
 %endif
 
 #%define(UI_KB)
