@@ -7,15 +7,16 @@
 # -----------------------------------------------------------------------
 # ( x1 x2 u -- )
 sub pass   {
-   insertstring "test #" dot
-   insertstring ": returned " over dot
-   insertstring ", expected " dup dot
-   equals if
-      insertstring "PASS"
+   tor dup2 equals if
+      insertstring "PASS "
    else
-      insertstring "FAIL"
+      insertstring "FAIL "
    endif 
-   cr }
+   insertstring "test #" rfrom dot
+   insertstring ": returned " over dot
+   insertstring ", expected " dot
+   cr
+}
 
 
 sub accumulate { push 10 mul plus }

@@ -1,0 +1,35 @@
+colorize SelfTest {
+    SyntaxParser = 'SIMPLE';
+
+    color {
+        { 'Normal',        'Editor_Default' },
+        { 'Number',        'Lang_DecimalNumber' },
+        { 'String',        'Lang_String' },
+        { 'Comment',       'Lang_Comment' },
+        { 'Regexp',        'Lang_Regexp' },
+        { 'Punctuation',   'Lang_Punctuation' },
+        { 'Command',       'Lang_Command' },
+        { 'CPreprocessor', 'Lang_Preprocessor' },
+    };
+
+    h_state 0 { 'Normal' }
+    h_trans { 1, '^', 'PASS', 'Normal' }
+    h_trans { 2, '^', 'FAIL', 'Regexp' }
+
+    h_state 1 { 'Normal' }
+    h_trans { 0, '$', '', 'Normal' }
+
+    h_state 2 { 'Regexp' }
+    h_trans { 0, '$', '', 'Regexp' }
+}
+
+mode SelfTest: PLAIN {
+  FileNameRx = /\.\cselftest$/;
+  Colorizer  = 'SelfTest';
+  HilitOn    = 1;
+}
+
+eventmap SelfTest: MODEL {
+  key [C+P] { Find "FAIL" "ar" }
+  key [C+N] { Find "FAIL" "a" }
+}

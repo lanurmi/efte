@@ -217,6 +217,9 @@ include 'm_resdlg.fte';
 include 'm_rexx.fte';
 include 'm_rpm.fte';
 include 'm_ruby.fte';
+%if(SELFTEST)
+include 'm_selftest.fte';
+%endif
 include 'm_sgml.fte';
 include 'm_sh.fte';
 include 'm_siod.fte';
@@ -286,6 +289,12 @@ object GLOBAL {
     # enable common cursor movements (always staying within EOL)
     # CursorWithinEOL = 1;
 }
+
+%if(SELFTEST)
+eventmap MODEL {
+    key [C+S+F12] { FileOpen "~/results.selftest" selftest }
+}
+%endif
 
 # some editors have a SmartPaste feature.  We can do that too.
 #eventmap C { key [S+G-Ins] { BlockPasteStream; BlockReIndent } }
