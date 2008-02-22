@@ -443,32 +443,8 @@ int EDirectory::FmMvFile(const char *Name) {
         SetBranchCondition(1);
         return 1;
     }
-    const char *msg = 0;
-
-    switch(errno) {
-    case EACCES:       msg = "Write permission error"; break;
-    case EBUSY:        msg = "Source/Dest is busy"; break;
-    case EFAULT:       msg = "Fault error, Source/Dest outside accessible address"; break;
-    case EINVAL:       msg = "Dest contained a path prefix of the old"; break;
-    case EISDIR:       msg = "Dest is an existing directory"; break;
-    case ELOOP:        msg = "Too many symbolic links encountered"; break;
-    case EMLINK:       msg = "Source already has the max # of links"; break;
-    case ENAMETOOLONG: msg = "Source/Dest was too long"; break;
-    case ENOENT:       msg = "Source/Dest does not exist or is a dangling link"; break;
-    case ENOMEM:       msg = "Insufficient kernel memory"; break;
-    case ENOSPC:       msg = "No room on Dest"; break;
-    case ENOTDIR:      msg = "Source/Dest is not a dir"; break;
-    case ENOTEMPTY:    msg = "Dest is not empty"; break;
-    case EPERM:        msg = "Permission error"; break;
-    case EROFS:        msg = "File exists on a read only device"; break;
-    case EXDEV:        msg = "Source/Dest not on same filesystem"; break;
-    default:
-        Msg(S_INFO, "Failed to rename %s code %i", FullName, errno);
-        break;
-    }
-
-    if (msg != 0)
-        Msg(S_INFO, "Failed to rename %s: %s", FullName, msg);
+    const char *msg = strerror(errno);
+    Msg(S_INFO, "Failed to rename %s: %s", FullName, msg);
 
     SetBranchCondition(0);
     return 0;
