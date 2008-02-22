@@ -65,6 +65,7 @@ const struct {
     TABS(Swap),
     TABS(Compare),
     TABS(Over),
+    TABS(Pick),
     TABS(Depth),
     TABS(SubSearch),
     TABS(Split),

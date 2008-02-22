@@ -1946,6 +1946,7 @@ int EBuffer::GetStrVar(int var, char *str, int buflen) {
 
         strncpy(str, ((std::string)sstack[sstack.size()-1]).c_str(), buflen);
         str[buflen - 1] = 0;
+        sstack.pop_back();
         return 1;
 
     case mvTopOfStackAsString:

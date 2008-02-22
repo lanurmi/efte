@@ -434,14 +434,26 @@ int RotStr(ExState &State) {
     return 1;
 }
 
-int CompareStr() {
+int CompareStr(ExState &State) {
     if (sstack.size() < 2) {
         SetBranchCondition(0);
         return 0;
     }
 
     int tos = sstack.size() - 1;
-    ParamStack.push(sstack[tos].compare(sstack[tos-1]));
+    int compareTo;
+
+    std::string what = sstack[tos];
+    sstack.pop_back();
+
+    tos--;
+
+    if (State.GetIntParam(0, &compareTo))
+        compareTo = tos - compareTo;
+    else
+        compareTo = tos - 1;
+
+    ParamStack.push(what.compare(sstack[compareTo]));
 
     SetBranchCondition(1);
     return 1;
@@ -454,6 +466,24 @@ int OverStr() {
     }
 
     sstack.push_back(sstack[sstack.size()-2]);
+    SetBranchCondition(1);
+    return 1;
+}
+
+int PickStr(ExState &State) {
+    int idx;
+    if (State.GetIntParam(0, &idx))
+        idx = sstack.size() - 1 - idx;
+    else
+        idx = sstack.size() - 1 - ParamStack.pop();
+
+    if ((unsigned int) idx >= sstack.size()) {
+        SetBranchCondition(0);
+        return 0;
+    }
+
+    sstack.push_back(sstack[idx]);
+
     SetBranchCondition(1);
     return 1;
 }
@@ -721,9 +751,11 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
     case ExRotStr:
         return RotStr(State);
     case ExCompareStr:
-        return CompareStr();
+        return CompareStr(State);
     case ExOverStr:
         return OverStr();
+    case ExPickStr:
+        return PickStr(State);
     case ExDepthStr:
         return DepthStr();
     case ExSubSearchStr:
