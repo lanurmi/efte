@@ -85,10 +85,12 @@ extern char BackupDirectory[MAXPATH];
 
 const char *GetGUICharacters(const char *which, const char *defChars);
 int LoadConfig(int argc, char **argv, char *CfgFileName);
+int LoadDefaultConfig();
 int GetIndentMode(const char *Str);
 int GetHilitMode(const char *Str);
 int AddCRegexp(int file, int line, int msg, const char *regexp);
 int LoadFile(char *WhereName, char *CfgName);
-int ProcessConfigFile(CurPos &cp, char *filename, char *buffer, int Level);
+int ProcessConfigFile(char *filename, char *buffer, int Level);
+int ReadConfigFile(CurPos &cp);
 
 #endif

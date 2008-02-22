@@ -1952,7 +1952,9 @@ static int PreprocessConfigFile(CurPos &cp) {
     return 0;
 }
 
-int ProcessConfigFile(CurPos &cp, char *filename, char *buffer, int Level) {
+int ProcessConfigFile(char *filename, char *buffer, int Level) {
+    CurPos cp;
+
     cp.sz = strlen(buffer);
     cp.a = cp.c = buffer;
     cp.z = cp.a + cp.sz;
@@ -1990,7 +1992,6 @@ static int LoadFile(const char *WhereName, const char *CfgName, int Level, int o
     int fd;
     char *buffer = 0;
     struct stat statbuf;
-    CurPos cp;
     char last[MAXPATH];
     char Cfg[MAXPATH];
 
@@ -2079,5 +2080,5 @@ static int LoadFile(const char *WhereName, const char *CfgName, int Level, int o
     }
     close(fd);
 
-    return ProcessConfigFile(cp, Cfg, buffer, Level);
+    return ProcessConfigFile(Cfg, buffer, Level);
 }

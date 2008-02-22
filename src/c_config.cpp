@@ -12,6 +12,7 @@
 #include "o_cvsbase.h"
 #include "o_svnbase.h"
 #include "log.h"
+#include "defcfg.h"
 
 typedef struct _GUICharactersEntry {
     struct _GUICharactersEntry *next;
@@ -1201,7 +1202,7 @@ static int ReadObject(CurPos &cp, const char *ObjName) {
     return -1;
 }
 
-static int ReadConfigFile(CurPos &cp) {
+int ReadConfigFile(CurPos &cp) {
     unsigned char obj;
     unsigned short len;
 
@@ -1317,6 +1318,29 @@ static int ReadConfigFile(CurPos &cp) {
         }
     }
     return -1;
+}
+
+int LoadDefaultConfig() {
+    //char *buf = (char *)malloc(strlen(DefaultConfig) + 1);
+    //strncpy(buf, DefaultConfig, strlen(DefaultConfig));
+    //buf[strlen(DefaultConfig)+1] = 0;
+    ProcessConfigFile((char *)"built-in", DefaultConfig, 0);
+
+    CurPos cp;
+    cp.name = "built-in";
+    cp.sz = cpos;
+    cp.a = 0;//buffer;
+    cp.c = 0;//cp.a + 2 * 4;
+    cp.z = 0;//cp.a + cp.sz;
+    cp.line = 1;
+
+    cpos = 0;
+
+    int rc = ReadConfigFile(cp);
+    if (rc == -1) {
+        DieError(1, "Final Error %s offset %d\n", "built-in", cpos);
+    }
+    return rc;
 }
 
 int LoadConfig(int argc, char **argv, char *CfgFileName) {

@@ -150,14 +150,20 @@ static int CmdLoadConfiguration(int &argc, char **argv) {
             DieError(1, "Could not access configuration file '%s'.\n"
                      "Does it exist?", ConfigFileName);
         }
-    } else if (ign == 1) {
-        strcpy(ConfigFileName, "defcfg.fte");
     } else
         strcpy(ConfigFileName, "mymain.fte");
 
-    if (LoadConfig(argc, argv, ConfigFileName) == -1)
+    // Ignore system config?
+    if (ign == 1) {
+        if (LoadDefaultConfig() == -1) {
+            DieError(1, "Failed to load internal configuration\n"
+                     "Please specify an external configuration file\n"
+                     "via the command line option -C\n");
+        }
+    } else if (LoadConfig(argc, argv, ConfigFileName) == -1) {
         DieError(1, "Failed to load configuration file '%s'.\n"
                  "Use '-C' option.", ConfigFileName);
+    }
 
     for (Arg = 1; Arg < argc; Arg++) {
         if (!QuoteAll && !QuoteNext && (argv[Arg][0] == '-')) {
