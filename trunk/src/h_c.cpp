@@ -11,7 +11,6 @@
 #include "fte.h"
 #include "log.h"
 
-
 #define PRINTF(x) //printf x
 
 #define ISNAME(x)  (isalnum(x) || (x == '_'))
@@ -545,7 +544,7 @@ static int SearchBackMatch(int Count, EBuffer *B, int Row, hsState State, const 
 
 static int FindPrevIndent(EBuffer *B, int &RowP, int &ColP, char &CharP, int Flags) {
     STARTFUNC("FindPrevIndent{h_c.cpp}");
-    LOG << "Flags: " << hex << Flags << dec << ENDLINE;
+    LOG << "Flags: " << std::hex << Flags << std::dec << ENDLINE;
     int StateLen;
     hsState *StateMap = 0;
     char *P;
