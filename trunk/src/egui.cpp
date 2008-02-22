@@ -385,8 +385,8 @@ int SwapS() {
     if (sstack.size() < 2)
         return 0;
 
-    string tos = sstack[sstack.size()-1];
-    string nos = sstack[sstack.size()-2];
+    std::string tos = sstack[sstack.size()-1];
+    std::string nos = sstack[sstack.size()-2];
     sstack.pop_back();
     sstack.pop_back();
     sstack.push_back(tos);
