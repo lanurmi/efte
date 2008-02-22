@@ -87,3 +87,13 @@ sub cursorend  { movelineend }
 #  test block marked?
 #  stack # chars on line  (or macro: mark pos, CursorEnd, CursorColumn, return to marked pos)
     
+
+# =============================================================================
+# String Stack Helpers
+# =============================================================================
+
+sub NipS      { SwapS DropS }
+sub TuckS     { SwapS OverS }
+sub MinRotS   { RotS RotS }
+sub Dup2S     { OverS OverS }
+sub Drop2S    { 2:DropS }

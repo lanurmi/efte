@@ -67,6 +67,7 @@ const struct {
     TAB(SubSearchS),
     TAB(SplitS),
     TAB(MergeS),
+    TAB(RotS),
 
     TAB(ToggleConditionDisplay),
 
