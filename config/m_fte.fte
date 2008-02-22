@@ -102,7 +102,7 @@ colorize FTE {
         'PopGlobalBookmark', 'Print', 'Push', 'PushGlobalBookmark', 'PushS',
 
         'Redo', 'RemoveBookmark', 'RemoveGlobalBookmark', 'RenameFile', 'Rescan', 'RFetch', 'RFrom',
-        'Rot', 'RunCompiler', 'RunCvs', 'RunCvsCommit', 'RunCvsDiff', 'RunProgram',
+        'Rot', 'RotS', 'RunCompiler', 'RunCvs', 'RunCvsCommit', 'RunCvsDiff', 'RunProgram',
         'RunProgramAsync', 'RunSvn', 'RunSvnCommit', 'RunSvnDiff',
 
         'SavePos', 'ScrollDown', 'ScrollLeft', 'ScrollRight', 'ScrollUp',

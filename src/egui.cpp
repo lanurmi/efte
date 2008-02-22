@@ -382,15 +382,15 @@ int DropS() {
 }
 
 int SwapS() {
-    if (sstack.size() < 2)
+    int tosIdx = sstack.size();
+    if (tosIdx < 2)
         return 0;
 
-    std::string tos = sstack[sstack.size()-1];
-    std::string nos = sstack[sstack.size()-2];
-    sstack.pop_back();
-    sstack.pop_back();
-    sstack.push_back(tos);
-    sstack.push_back(nos);
+    tosIdx--;
+
+    std::string tos = sstack.at(tosIdx);
+    sstack[tosIdx] = sstack[tosIdx - 1];
+    sstack[tosIdx - 1] = tos;
 
     SetBranchCondition(1);
     return 1;
@@ -398,14 +398,39 @@ int SwapS() {
 
 int DiagS(ExState &State) {
     char msg[128];
+    int ssize = sstack.size();
 
     if (State.GetStrParam(0, msg, sizeof(msg)))
         fprintf(stderr, "%s: ", msg);
-    for (int i = sstack.size() - 1; i >= 0; i--) {
-        fprintf(stderr, "%i='%s'", i, sstack[i].c_str());
-        if (i != 0) fprintf(stderr, ", ");
+
+    if (ssize == 0)
+        fprintf(stderr, "empty");
+    else {
+        int tos = sstack.size()-1;
+        for (int i = ssize - 1; i >= 0; i--) {
+            fprintf(stderr, "%i='%s'", i, sstack[tos-i].c_str());
+            if (i != 0) fprintf(stderr, ", ");
+        }
     }
+
     fprintf(stderr, "\n");
+    return 1;
+}
+
+int RotS(ExState &State) {
+    if (sstack.size() < 3) {
+        SetBranchCondition(0);
+        return 0;
+    }
+
+    std::string tos = sstack[sstack.size() - 1];
+    sstack.pop_back();
+
+    SwapS();
+    sstack.push_back(tos);
+    SwapS();
+
+    SetBranchCondition(1);
     return 1;
 }
 
@@ -599,6 +624,8 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
         return DropS();
     case ExSwapS:
         return SwapS();
+    case ExRotS:
+        return RotS(State);
     case ExCompareS:
         return CompareS();
     case ExOverS:

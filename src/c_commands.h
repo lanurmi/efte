@@ -116,6 +116,8 @@ typedef enum {
     /// Split a string into two on the stack at the given location
     ExMergeS,
     /// Merge StrTos and StrNos by appending StrTos onto StrNos
+    ExRotS,
+    /// Rotate third stack item to top
 
     //!Cursor Commands
     ExCursorLeft,
