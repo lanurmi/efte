@@ -94,30 +94,36 @@ typedef enum {
     /// Toggle displaying the condition code in the status bar.
 
     //!String Stack Commands
-    ExDiagS,
+    ExDiagStr,
     /// Print string stack info
-    ExPushS,
+    ExPushStr,
     /// Push a string to the string stack
-    ExDupS,
+    ExDupStr,
     /// Duplicate StrTos
-    ExDropS,
+    ExDropStr,
     /// Drop top from string stack
-    ExSwapS,
+    ExSwapStr,
     /// Swap StrTos and StrNos
-    ExCompareS,
+    ExCompareStr,
     /// Compare StrTos and StrNos
-    ExOverS,
+    ExOverStr,
     /// Push a copy of StrNos
-    ExDepthS,
+    ExDepthStr,
     /// Push the number of strings on the stack
-    ExSubSearchS,
+    ExSubSearchStr,
     /// Substring search through stringstack
-    ExSplitS,
+    ExSplitStr,
     /// Split a string into two on the stack at the given location
-    ExMergeS,
+    ExMergeStr,
     /// Merge StrTos and StrNos by appending StrTos onto StrNos
-    ExRotS,
+    ExRotStr,
     /// Rotate third stack item to top
+    ExLenStr,
+    /// Length of string
+    ExMidStr,
+    /// Get a substring of a string
+    ExGetString,
+    /// Get a string from the user and place onto the string stack
 
     //!Cursor Commands
     ExCursorLeft,

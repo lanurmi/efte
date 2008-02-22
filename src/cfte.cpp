@@ -437,7 +437,7 @@ static const OrdLookup CfgVar[] = {
     { "TosStr", mvTopOfStackAsString },
     { "TosChar", mvTopOfStackAsChar },
     { "TosInt", mvTopOfStackAsInt },
-    { "STos", mvStrTopOfStack },
+    { "tos$", mvStrTopOfStack },
     { 0, 0 },
 };
 
@@ -551,7 +551,7 @@ static int GetWord(CurPos &cp, char *w) {
             ((*cp.c >= 'a' && *cp.c <= 'z') ||
              (*cp.c >= 'A' && *cp.c <= 'Z') ||
              (*cp.c >= '0' && *cp.c <= '9') ||
-             (*cp.c == '_'))) {
+             (*cp.c == '_' || (len > 0 && *cp.c == '$')))) {
         *p++ = *cp.c++;
         len++;
     }

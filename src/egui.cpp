@@ -330,7 +330,7 @@ int EGUI::J() {
     return 1;
 }
 
-int PushS(GxView *view, ExState &State) {
+int PushStr(GxView *view, ExState &State) {
     int found;
     int x = 0;
     char s[1024] = "";
@@ -357,7 +357,7 @@ int PushS(GxView *view, ExState &State) {
     return 1;
 }
 
-int DupS() {
+int DupStr() {
     if (sstack.size() == 0) {
         SetBranchCondition(0);
         return 0;
@@ -369,7 +369,7 @@ int DupS() {
     return 1;
 }
 
-int DropS() {
+int DropStr() {
     if (sstack.size() == 0) {
         SetBranchCondition(0);
         return 0;
@@ -381,7 +381,7 @@ int DropS() {
     return 1;
 }
 
-int SwapS() {
+int SwapStr() {
     int tosIdx = sstack.size();
     if (tosIdx < 2)
         return 0;
@@ -396,7 +396,7 @@ int SwapS() {
     return 1;
 }
 
-int DiagS(ExState &State) {
+int DiagStr(ExState &State) {
     char msg[128];
     int ssize = sstack.size();
 
@@ -417,7 +417,7 @@ int DiagS(ExState &State) {
     return 1;
 }
 
-int RotS(ExState &State) {
+int RotStr(ExState &State) {
     if (sstack.size() < 3) {
         SetBranchCondition(0);
         return 0;
@@ -426,15 +426,15 @@ int RotS(ExState &State) {
     std::string tos = sstack[sstack.size() - 1];
     sstack.pop_back();
 
-    SwapS();
+    SwapStr();
     sstack.push_back(tos);
-    SwapS();
+    SwapStr();
 
     SetBranchCondition(1);
     return 1;
 }
 
-int CompareS() {
+int CompareStr() {
     if (sstack.size() < 2) {
         SetBranchCondition(0);
         return 0;
@@ -447,7 +447,7 @@ int CompareS() {
     return 1;
 }
 
-int OverS() {
+int OverStr() {
     if (sstack.size() < 2) {
         SetBranchCondition(0);
         return 0;
@@ -458,13 +458,13 @@ int OverS() {
     return 1;
 }
 
-int DepthS() {
+int DepthStr() {
     ParamStack.push(sstack.size());
     SetBranchCondition(1);
     return 1;
 }
 
-int SubSearchS() {
+int SubSearchStr() {
     int tos = sstack.size() - 1;
     int searchInI  = tos - ParamStack.pop();
     int searchForI = tos - ParamStack.pop();
@@ -488,8 +488,8 @@ int SubSearchS() {
     return 1;
 }
 
-int MergeS() {
-    int tos = sstack.size();
+int MergeStr() {
+    unsigned int tos = sstack.size();
     if (tos < 2) {
         SetBranchCondition(0);
         return 0;
@@ -508,19 +508,113 @@ int MergeS() {
     return 1;
 }
 
-int SplitS() {
+int SplitStr() {
     int tos = sstack.size() - 1;
     if (tos < 0) {
         SetBranchCondition(0);
         return 0;
     }
 
-    int pos = ParamStack.pop();
+    unsigned int pos = ParamStack.pop();
     std::string tosS = sstack[tos];
 
     sstack.pop_back();
     sstack.push_back(tosS.substr(pos));
     sstack.push_back(tosS.substr(0, pos));
+
+    SetBranchCondition(1);
+    return 1;
+}
+
+int LenStr(ExState &State, GxView *view) {
+    EView *View = 0;
+    if (view != NULL) {
+        ExModelView *V = (ExModelView *)view->Top;
+        View = V->View;
+    }
+
+    int idx;
+    if (State.GetIntParam(View, &idx)) {
+        idx = sstack.size() - 1 - idx;
+    } else {
+        idx = sstack.size() - 1;
+    }
+
+    if ((unsigned int) idx >= sstack.size()) {
+        SetBranchCondition(0);
+        return 0;
+    }
+
+    ParamStack.push(sstack[idx].length());
+
+    SetBranchCondition(1);
+    return 1;
+}
+
+int MidStr(ExState &State, GxView *view) {
+    int idx, start = -1, end = -1;
+    EView *View = 0;
+
+    if (view != NULL) {
+        ExModelView *V = (ExModelView *)view->Top;
+        View = V->View;
+    }
+
+    if (State.GetIntParam(View, &start)) {
+        if (State.GetIntParam(View, &end)) {
+            if (State.GetIntParam(View, &idx) == 0)
+                idx=sstack.size()-1;
+            else
+                idx = sstack.size() - 1 - idx;
+        } else {
+            end = -1;
+        }
+    } else {
+        start = -1;
+    }
+
+    if (end == -1)
+        end = ParamStack.pop();
+    if (start == -1)
+        start = ParamStack.pop();
+
+    if ((unsigned int) idx >= sstack.size()) {
+        SetBranchCondition(0);
+        return 0;
+    }
+
+    std::string tosS = sstack[idx];
+
+    if (start < 0) start = tosS.length() + start;
+    if (end < 0) end = tosS.length() + end;
+
+    sstack[idx] = tosS.substr(start, end);
+
+    SetBranchCondition(1);
+    return 1;
+}
+
+int GetString(ExState &State, GxView *view) {
+    EView *View = 0;
+    if (view != NULL) {
+        ExModelView *V = (ExModelView *)view->Top;
+        View = V->View;
+    } else {
+        SetBranchCondition(0);
+        return 0;
+    }
+
+    char msg[256] = "", str[256] = "";
+    if (State.GetStrParam(View, msg, sizeof(msg)) == 0) {
+        strcpy(msg, "String");
+    }
+
+    if (View->MView->Win->GetStr(msg, sizeof(str), str, HIST_DEFAULT) == 0) {
+        SetBranchCondition(0);
+        return 0;
+    }
+
+    sstack.push_back(str);
 
     SetBranchCondition(1);
     return 1;
@@ -614,30 +708,36 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
     case ExDiag:
         return Diag(State);
 
-    case ExDiagS:
-        return DiagS(State);
-    case ExPushS:
-        return PushS(view, State);
-    case ExDupS:
-        return DupS();
-    case ExDropS:
-        return DropS();
-    case ExSwapS:
-        return SwapS();
-    case ExRotS:
-        return RotS(State);
-    case ExCompareS:
-        return CompareS();
-    case ExOverS:
-        return OverS();
-    case ExDepthS:
-        return DepthS();
-    case ExSubSearchS:
-        return SubSearchS();
-    case ExSplitS:
-        return SplitS();
-    case ExMergeS:
-        return MergeS();
+    case ExDiagStr:
+        return DiagStr(State);
+    case ExPushStr:
+        return PushStr(view, State);
+    case ExDupStr:
+        return DupStr();
+    case ExDropStr:
+        return DropStr();
+    case ExSwapStr:
+        return SwapStr();
+    case ExRotStr:
+        return RotStr(State);
+    case ExCompareStr:
+        return CompareStr();
+    case ExOverStr:
+        return OverStr();
+    case ExDepthStr:
+        return DepthStr();
+    case ExSubSearchStr:
+        return SubSearchStr();
+    case ExSplitStr:
+        return SplitStr();
+    case ExMergeStr:
+        return MergeStr();
+    case ExLenStr:
+        return LenStr(State, view);
+    case ExMidStr:
+        return MidStr(State, view);
+    case ExGetString:
+        return GetString(State, view);
     }
 
     if (view->IsModelView()) {
