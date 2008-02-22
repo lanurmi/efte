@@ -47,7 +47,7 @@ for SELFTEST in ${RUNTEST[*]} ; do
    (( i++ ))
 done
 echo
-echo "   push 12345678 9999 pass # all tests balanced?"
+echo "   push 12345678 99999 pass # all tests balanced?"
 echo "   message \"selftest finished\""
 echo "}"
-) > selftest.fte
+) > ../config/selftest.fte
