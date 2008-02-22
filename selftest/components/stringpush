@@ -1,0 +1,4 @@
+{ depth$ push$ "ABCD 12345"  depth$ accumulate push 10 PASS }
+
+{ TEST1
+  depth$ 0 do drop$ loop }
