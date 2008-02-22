@@ -69,7 +69,7 @@ SET( BASE_FTE_SOURCES
   o_buffer.cpp o_buflist.cpp o_cvs.cpp o_cvsbase.cpp o_cvsdiff.cpp o_directory.cpp
   o_list.cpp o_messages.cpp o_model.cpp o_modemap.cpp o_routine.cpp o_svn.cpp
   o_svnbase.cpp o_svndiff.cpp s_direct.cpp s_files.cpp s_string.cpp
-  s_util.cpp view.cpp u_stack.cpp ${DEFAULT_CONFIG_HEADER} )
+  s_util.cpp view.cpp u_stack.cpp defcfg.h )
 SET( UNIX_SOURCES e_unix.cpp memicmp.cpp )
 SET( XFTE_SOURCES clip_x11.cpp con_i18n.cpp con_x11.cpp g_nodlg.cpp g_text.cpp
   menu_text.cpp )
@@ -222,3 +222,11 @@ ENDIF( UNIX )
 # PLATFORM INDEPENDENT BUILDS
 #
 # =============================================================================
+
+ADD_EXECUTABLE( bin2c bin2c.cpp )
+GET_TARGET_PROPERTY( BIN2C_EXE bin2c LOCATION )
+
+ADD_CUSTOM_COMMAND(
+  OUTPUT defcfg.h
+  COMMAND ${BIN2C_EXE} ${CMAKE_CURRENT_SOURCE_DIR}/simple.fte > ${CMAKE_CURRENT_SOURCE_DIR}/defcfg.h
+  DEPENDS bin2c simple.fte )

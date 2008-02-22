@@ -22,7 +22,7 @@ int main(int argc, char **argv) {
         fprintf(stderr, "Open: %s, error=%d\n", argv[1], errno);
         exit(1);
     }
-    printf("/* do not edit */\nunsigned char DefaultConfig[] = {\n");
+    printf("/* do not edit */\nchar DefaultConfig[] = {\n");
     while ((len = read(fd, buf, BUFLEN)) > 0) {
         for (i = 0; i < len; i++) {
             printf("0x%2.02X", buf[i]);
