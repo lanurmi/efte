@@ -31,6 +31,8 @@ typedef enum {
     /// macro run time code associate with DO
     ExLoopRuntime,
     /// macro run time code associate with LOOP
+    ExPlusLoopRuntime,
+    /// macro run time code associate with PLUSLOOP
     ExLeaveRuntime,
     /// macro run time code for breaking out of a loop
     ExTimes,

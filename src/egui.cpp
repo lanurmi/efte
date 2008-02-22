@@ -835,7 +835,7 @@ int EGUI::ExecMacro(GxView *view, const char *name) {
 int EGUI::ExecMacro(GxView *view, int Macro) {
     STARTFUNC("EGUI::ExecMacro");
 
-    int i, j, tos, ResultOfCommandExecution;
+    int i, j, tos, rtos, rnos, ResultOfCommandExecution;
     ExMacro *m;
     ExState State;
     if (Macro == -1)  {
@@ -898,7 +898,21 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
             break;
 
 
-        case ExLeaveRuntime:                                        // executed once per loop iteration:
+        case ExPlusLoopRuntime:                                     // executed once per loop iteration:
+            rtos = ControlStack.pop();
+            rnos = ControlStack.peek(0);
+            tos = rtos - rnos;
+            rtos += ParamStack.pop();
+            if ( (( rtos - rnos ) ^ tos ) > 0 )  {
+                ControlStack.push(rtos);                            //       keep loop index for next round
+                i += m->cmds[i].repeat;                             //       branch back to behind DO
+            } else {                                                //    no:
+                ControlStack.pop();                                 //    yes: clean up
+            }
+            break;
+
+
+        case ExLeaveRuntime:
             ControlStack.pop();
             ControlStack.pop();
             i += m->cmds[i].repeat;
@@ -907,8 +921,13 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
 
 
         case ExTimes:
-            m->cmds[i+1].repeat = ParamStack.pop();
-            break;
+            tos = ParamStack.pop();
+            if (tos) {
+                m->cmds[i+1].repeat = tos;                         // maybe (test whether needed): rpt=0? skip next.
+            } else {
+                i += 1;
+            }
+            break;                                                 // would reintroduce conditional skip with  0/1 times command
 
 
         default:

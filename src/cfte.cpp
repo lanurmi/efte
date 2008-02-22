@@ -387,6 +387,7 @@ enum {
     COND_AGAIN,
     COND_DO,
     COND_LOOP,
+    COND_PLUSLOOP,
     COND_LEAVE
 };
 
@@ -452,6 +453,7 @@ static const OrdLookup ConditionalKW[] = {
     { "Again",COND_AGAIN },
     { "Do",COND_DO },
     { "Loop",COND_LOOP },
+    { "PlusLoop",COND_PLUSLOOP },
     { "Leave", COND_LEAVE },
     { 0, 0 },
 };
@@ -973,6 +975,18 @@ static int ParseCommands(CurPos &cp, char *Name) {
                         Fail(cp, "Unstructured: Loop needs a previous Do");
                     }
                     break;
+
+
+                case COND_PLUSLOOP:
+                    if (CondStackPairedWith(COND_DO)) {
+                        branchaddress=CondStack.pop();
+                        CFteCompileCommand(cp,ExPlusLoopRuntime,BranchOffset(cpos,branchaddress),1);  // LOOP back to (behind) DO
+                        UpdateNumber(branchaddress+1,BranchOffset(branchaddress,cpos)-1);   // resolve DO forward ref
+                    } else {
+                        Fail(cp, "Unstructured: PlusLoop needs a previous Do");
+                    }
+                    break;
+
 
                 case COND_LEAVE:
                     int i = 0;

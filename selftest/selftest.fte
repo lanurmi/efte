@@ -161,25 +161,32 @@ sub test_16_2 { push -10 dup rshift dup plus push 16002 pass }
 sub test_16_3 { test_16_1 test_16_2 }
 
 
+# components/stringpush
+sub test_17_1 { depth$ push$ "ABCD 12345" depth$ accumulate push 10 push 17001 pass }
+ 
+sub test_17_2 { test_17_1
+ depth$ 0 do drop$ loop }
+
+
 # components/times
-sub test_17_1 { inc }
-sub test_17_2 { zero zero inc lshift lshift lshift times test_17_1 dec dec dec push 5 push 17002 pass }
-sub test_17_3 { test_17_2 }
+sub test_18_1 { inc }
+sub test_18_2 { zero zero inc lshift lshift lshift times test_18_1 dec dec dec push 5 push 18002 pass }
+sub test_18_3 { test_18_2 }
 
 
 # components/whileuntilagain
-sub test_18_1 { push 50 6 inc begin lshift dec dup2 less if exit endif dec again drop zero }
-sub test_18_2 { test_18_1 plus push 133 push 18002 pass }
-sub test_18_3 { push 200 3 lshift begin dec lshift dup2 more while dec lshift repeat plus push 714 push 18003 pass }
-sub test_18_4 { push 100 2 inc begin lshift inc dup2 less until plus push 227 push 18004 pass }
-sub test_18_5 { test_18_2 test_18_3 test_18_4 }
+sub test_19_1 { push 50 6 inc begin lshift dec dup2 less if exit endif dec again drop zero }
+sub test_19_2 { test_19_1 plus push 133 push 19002 pass }
+sub test_19_3 { push 200 3 lshift begin dec lshift dup2 more while dec lshift repeat plus push 714 push 19003 pass }
+sub test_19_4 { push 100 2 inc begin lshift inc dup2 less until plus push 227 push 19004 pass }
+sub test_19_5 { test_19_2 test_19_3 test_19_4 }
 
 
 sub selftest {
    push 12345678      # stack 'marker'
     test_1_3 test_2_9 test_3_8 test_4_5 test_5_3 test_6_2 test_7_3 test_8_9
     test_9_3 test_10_9 test_11_5 test_12_8 test_13_5 test_14_1 test_15_3 test_16_3
-    test_17_3 test_18_5
+    test_17_2 test_18_3 test_19_5
    push 12345678 9999 pass # all tests balanced?
    message "selftest finished"
 }
