@@ -446,8 +446,6 @@ int CompareStr(ExState &State) {
     std::string what = sstack[tos];
     sstack.pop_back();
 
-    tos--;
-
     if (State.GetIntParam(0, &compareTo))
         compareTo = tos - compareTo;
     else
