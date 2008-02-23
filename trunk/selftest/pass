@@ -2,33 +2,65 @@
 sub basefetch { push 10 }
 sub digit     { push '0' plus dup push '9' more if push 39 plus endif } # ( u -- asc )
 sub slashmod  { dup2 div dup tor mul minus abs rfrom }                  # ( n1 n2 -- r q )
-sub hold      { minrot inc }                                            # ( ??? n1 n2 asc -- ??? asc n2 n3 )
-sub sign      { over negative if push '-' minrot inc endif }            # ( ??? n1 n2 -- ??? asc n1 n3 }
-sub hash      { tor basefetch slashmod tor digit rfrom rfrom inc }      # ( ??? n1 n2  -- ??? asc n3 n4 )
-sub hashs     { begin hash over not until nip }                         # ( ??? n1 n2 -- ??? n3 )
-sub emits     { times emit }                                            # ( ??? n -- )
-sub brudotbr  { zero hashs }                                            # ( u -- ??? n )
-sub udot      { brudotbr emits space }                                  # ( u -- )
+sub hold      { minrot inc }                                            # ( n2*chars n1 n2 asc -- n3*chars n1 n3 )
+sub sign      { over negative if push '-' hold endif }                  # ( n2*chars n1 n2 -- n3*chars n1 n3 }
+sub hash      { tor basefetch slashmod tor digit rfrom rfrom inc }      # ( n2*chars n1 n2  -- n4*chars asc n3 n4 )
+sub hashes    { begin hash over not until }                             # ( n2*chars n1 n2 -- n4*chars n3 n4 )
+sub emits     { times emit }                                            # ( n*chars n -- )
+sub brdotbr   { zero hashes nip }                                       # ( n1 -- n2*chars n2 )
 sub dotstar   { push '*' emit }                                         # ( -- )
+sub lesshash  { zero } 	   				      		# ( n1 -- 0 n1 ) start pictured num conversion
+sub hashmore  { nip }                                                   # ( n2*chars n1 n2 -- n2*chars n2 ) end pic num conv
+sub hashmore_type { nip emits }                                         # ( n2*chars n1 n2 -- ) end pic num conv and print
 
-sub dotpadded { dup2 more if                                            # doesn't fit:
+
+
+
+### can be simplified. dotpadded is not needed ...
+### can do:     >r <# r> 0 do over if # else bl hold endif loop #>   to convert any space padded number
+# ( n1*chars n1 n2 -- )
+sub dotpadded { dup2 more if                                            # won't fit:
                    times dotstar                                        #    fill with stars
                    times drop                                           #    remove digits
                 else                                                    # fits:
                    over minus spaces                                    #    pad with spaces
                    emits                                                #    emit digits
-                endif }                                                 # ( ??? n1 n2 -- )
+                endif }                                                 # ( n*chars n1 n2 -- )
 
-sub udotr     { tor brudotbr rfrom dotpadded }                          # ( u n -- )
+
+
+# "app level" words, build with the pictured number conversion words above:
+
+sub udot      { brdotbr emits space }                                   # ( n -- )
+
+sub dotr      { tor brdotbr rfrom dotpadded }                           # space padded number: ( n1 n2 -- )
+
+sub dot0r     { tor                                                     # zero padded number:  ( n1 n2 -- )
+                lesshash
+                rfrom times hash
+                hashmore_type
+                space }                   
+
+sub doth0r    { tor                                                     # zero padded, leading '#':  ( n1 n2 -- )
+                lesshash
+                rfrom times hash
+                push "#" hold
+                hashmore_type space }
+
+sub custom    { lesshash                                                # print as nnn:nnn     ( n -- )
+                3:hash
+                push ':' hold
+                3:hash
+                hashmore_type }
 
 
 sub pass   {
    tor dup2 equals if            insertstring "PASS"
    else                          insertstring "FAIL"
    endif 
-   rfrom insertstring " test"    push 6 udotr
-   insertstring " wants "    push 6 udotr
-   insertstring ", gets "    push 6 udotr
+   rfrom insertstring " test "   custom
+   insertstring " wants "        push 6 dotr
+   insertstring ", gets "        push 6 dotr
    cr
 }
 
