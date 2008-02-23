@@ -20,6 +20,7 @@ gid_t effgid;
 #endif /* UNIX */
 
 char ConfigFileName[MAXPATH] = "";
+char *StartupMacroCommand = NULL;
 
 static void Usage() {
     printf("Usage: " PROGRAM " [-?] [-h] [--help] [-CDHTmlrt] files...\n"
@@ -171,6 +172,8 @@ static int CmdLoadConfiguration(int &argc, char **argv) {
                 QuoteAll = 1;
             } else if (argv[Arg][1] == '+') {
                 QuoteNext = 1;
+            } else if (argv[Arg][1] == 'e') {
+                StartupMacroCommand = argv[Arg] + 2;
             } else if (argv[Arg][1] == 'D') {
                 ExpandPath(argv[Arg] + 2, DesktopFileName, sizeof(DesktopFileName));
                 if (IsDirectory(DesktopFileName)) {
@@ -243,6 +246,8 @@ int main(int argc, char **argv) {
     if (gui == 0 || g == 0)
         DieError(1, "Failed to initialize display\n");
 
+    //if (StartupMacroCommand != NULL)
+    //    gui->ExecMacro(StartupMacroCommand);
     gui->Run();
 
 #if defined(OS2) && !defined(DBMALLOC) && defined(CHECKHEAP)

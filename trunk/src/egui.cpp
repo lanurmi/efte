@@ -582,7 +582,7 @@ int LenStr(ExState &State, GxView *view) {
 }
 
 int MidStr(ExState &State, GxView *view) {
-    int idx, start = -1, end = -1;
+    int idx = 0, start = -1, end = -1;
     EView *View = 0;
 
     if (view != NULL) {
@@ -592,9 +592,7 @@ int MidStr(ExState &State, GxView *view) {
 
     if (State.GetIntParam(View, &start)) {
         if (State.GetIntParam(View, &end)) {
-            if (State.GetIntParam(View, &idx) == 0)
-                idx=sstack.size()-1;
-            else
+            if (State.GetIntParam(View, &idx))
                 idx = sstack.size() - 1 - idx;
         } else {
             end = -1;
@@ -602,6 +600,8 @@ int MidStr(ExState &State, GxView *view) {
     } else {
         start = -1;
     }
+
+    idx = sstack.size() - 1 - idx;
 
     if (end == -1)
         end = ParamStack.pop();
@@ -1608,6 +1608,7 @@ int EGUI::CmdLoadFiles(int &argc, char **argv) {
             case 'c':
             case 'D':
             case 'd':
+            case 'e':
             case 'H':
                 // handled before
                 break;
