@@ -18,7 +18,7 @@ OPTION( BUILD_X        "Build X version of eFTE" ON )
 OPTION( BUILD_CONSOLE  "Build console version of eFTE" ON )
 
 # Optional use flags
-OPTION( USE_GPM        "Compile console versions with gpm support" ON )
+OPTION( USE_GPM        "Compile console versions with gpm support" UNKNOWN )
 OPTION( USE_LOCALE     "Use normal locale support" ON )
 OPTION( USE_XMB        "Use libxmb to draw fonts with locale support" ON)
 OPTION( USE_XLOCALE    "Use X11 compiled in support" OFF )
@@ -29,13 +29,6 @@ OPTION( USE_LOGGING    "Enable trace logging within efte" ON )
 
 # Setup global options right now platform dependent options will appear later
 # more near thier actual use
-
-IF( USE_DEFAULT_CONFIG )
-  ADD_DEFINITIONS( -DDEFAULT_INTERNAL_CONFIG )
-  SET( DEFAULT_CONFIG_HEADER defcfg.h )
-ELSE( USE_DEFAULT_CONFIG )
-  SET( DEFAULT_CONFIG_HEADER "" )
-ENDIF( USE_DEFAULT_CONFIG )
 
 IF( USE_LOCALE )
   ADD_DEFINITIONS( -DUSE_LOCALE )
