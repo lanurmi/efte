@@ -5,16 +5,37 @@
 # adverse effect on eFTE self testing capabilities.
 # Copyright (c) 2008 eFTE Group
 # -----------------------------------------------------------------------
-# ( x1 x2 u -- )
+
+sub basefetch { push 10 }
+sub digit     { push '0' plus dup push '9' more if push 39 plus endif } # ( u -- asc )
+sub slashmod  { dup2 div dup tor mul minus abs rfrom }                  # ( n1 n2 -- r q )
+sub hold      { minrot inc }                                            # ( ??? n1 n2 asc -- ??? asc n2 n3 )
+sub sign      { over negative if push '-' minrot inc endif }            # ( ??? n1 n2 -- ??? asc n1 n3 }
+sub hash      { tor basefetch slashmod tor digit rfrom rfrom inc }      # ( ??? n1 n2  -- ??? asc n3 n4 )
+sub hashs     { begin hash over not until nip }                         # ( ??? n1 n2 -- ??? n3 )
+sub emits     { times emit }                                            # ( ??? n -- )
+sub brudotbr  { zero hashs }                                            # ( u -- ??? n )
+sub udot      { brudotbr emits space }                                  # ( u -- )
+sub dotstar   { push '*' emit }                                         # ( -- )
+
+sub dotpadded { dup2 more if                                            # doesn't fit:
+                   times dotstar                                        #    fill with stars
+                   times drop                                           #    remove digits
+                else                                                    # fits:
+                   over minus spaces                                    #    pad with spaces
+                   emits                                                #    emit digits
+                endif }                                                 # ( ??? n1 n2 -- )
+
+sub udotr     { tor brudotbr rfrom dotpadded }                          # ( u n -- )
+
+
 sub pass   {
-   tor dup2 equals if
-      insertstring "PASS "
-   else
-      insertstring "FAIL "
+   tor dup2 equals if            insertstring "PASS"
+   else                          insertstring "FAIL"
    endif 
-   rfrom insertstring "test #" dot
-   swap  insertstring ": returned " dot
-   insertstring ", expected " dot
+   rfrom insertstring " test"    push 6 udotr
+   insertstring " wants "    push 6 udotr
+   insertstring ", gets "    push 6 udotr
    cr
 }
 
