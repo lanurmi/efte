@@ -472,10 +472,9 @@ int OverStr() {
 
 int PickStr(ExState &State) {
     int idx;
-    if (State.GetIntParam(0, &idx))
-        idx = sstack.size() - 1 - idx;
-    else
-        idx = sstack.size() - 1 - ParamStack.pop();
+    if (State.GetIntParam(0, &idx) == 0)
+        idx = ParamStack.pop();
+    idx = sstack.size() - 1 - idx;
 
     if ((unsigned int) idx >= sstack.size()) {
         SetBranchCondition(0);
