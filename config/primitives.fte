@@ -37,6 +37,8 @@ sub failure   { flag not }                      # push inverted command return c
 sub more      { swap less }                     # true if nos > tos
 sub between   { rot tuck less minrot more or not }
 sub capital   { push 'A' 'Z' between }
+sub lowercase { push 'a' 'z' between }
+sub capitalize { dup lowercase if push 32 minus endif }
 sub negative  { zero less }                     # < zero?
 
 # -- arithmetic --
@@ -106,36 +108,81 @@ sub equals$   { compare$ not }
 sub type$     { insertstring $tos$ drop$ }
 
 
-sub left$     {                                           # ( n -- )
-   dup negative if                                        # negative n: strip first n chars
+sub left$     {                                 # ( n -- )
+   dup negative if                              # negative n: strip first n chars
       negate len$ over minus
-   else                                                   # positive n: keep first n chars
+   else                                         # positive n: keep first n chars
       zero swap
    endif
    mid$ }
 
-sub right$    {                                           # ( n -- )
-  dup negative if                                         # negative n: strip last n chars
+sub right$    {                                 # ( n -- )
+  dup negative if                               # negative n: strip last n chars
      zero len$ rot plus
-  else                                                    # positive n: keep last n chars
+  else                                          # positive n: keep last n chars
      dup negate swap
   endif
   mid$ }
 
 
-sub search$   {                                           # ( n1 -- n2 )
-  push -1 swap                                            # search though n1 string stack items,
-  inc one do                                              # matching against top string. returns
-    I pick$                                               # item number of matching string as n2,
-    over$ equals$                                         # or -1
-    if drop I dec leave endif
+sub search$   {                                 # ( n1 -- n2 )
+  push -1 swap                                  # search though n1 string stack items,
+  zero do                                       # matching against top string. returns
+    I inc pick$                                 # item number of matching string as n2,
+    over$ equals$                               # or -1
+    if drop I leave endif
   loop
   drop$
 }
 
+
+sub asc   { dup$ push 1 mid$ push $tos$ }       # ( n -- c ) get ascii of nth char in top string
+sub char$ { push$ $toschar }                    # ( c -- )   asc on stack becomes char string on stringstack
+
+
+#sub embed$ {                                    # ( asc n -- ) store char at pos n of topmost string, overwriting
+#   dup split$                                   # can't use split$ for this like this because it bombs on 0 split$
+#   push -1 left$
+#   char$ swap$ 2:merge$
+#}
+
+
+sub embed$ {                                    # ( asc n -- ) store char at pos n of topmost string, overwriting
+   dup         dup$ left$                       # cut and keep chars left of write pos
+   inc negate swap$ left$                       # cut and keep chars right of write pos
+              char$ swap$                       # put replacement char between
+                 2:merge$                       # merge all three strings
+}
+
+
+# probably faster: only embeds if char has actually been changed
+sub capitalize$ {                               # ( -- )  capitalize all chars of top string
+   len$ zero do                                 # loop though all chars:
+      i asc dup lowercase if
+         capitalize
+         dup i embed$                           #   replace char in string
+      endif drop
+   loop }
+
+
+
+
+
+
+
 # =============================================================================
-# Memory Handling
+#    memory
 # =============================================================================
 
-sub allot { here plus zero swap diag store }
+sub cell      { push 1 }
+sub plusstore { dup tor fetch plus rfrom store }   # ( x a -- )  adds x to contents of address a
+sub allot { here plus zero swap store }
+#sub comma { here store cell allot }
+sub comma { here cell allot store }                # ( x -- )    allocate 1 location, initialized to x
 sub free { memend here minus }
+
+sub var  { here zero comma }                       # for the new construct:       sub foo { var new }
+                                                   # can then use vars like:      sub bar { var new }
+                                                   #                foo fetch   bar store
+
+

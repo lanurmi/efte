@@ -388,6 +388,7 @@ enum {
     COND_DO,
     COND_LOOP,
     COND_PLUSLOOP,
+    COND_MINLOOP,
     COND_LEAVE
 };
 
@@ -454,6 +455,7 @@ static const OrdLookup ConditionalKW[] = {
     { "Do",COND_DO },
     { "Loop",COND_LOOP },
     { "PlusLoop",COND_PLUSLOOP },
+    { "MinLoop",COND_MINLOOP },
     { "Leave", COND_LEAVE },
     { 0, 0 },
 };
@@ -984,6 +986,16 @@ static int ParseCommands(CurPos &cp, char *Name) {
                         UpdateNumber(branchaddress+1,BranchOffset(branchaddress,cpos)-1);   // resolve DO forward ref
                     } else {
                         Fail(cp, "Unstructured: PlusLoop needs a previous Do");
+                    }
+                    break;
+
+                case COND_MINLOOP:
+                    if (CondStackPairedWith(COND_DO)) {
+                        branchaddress=CondStack.pop();
+                        CFteCompileCommand(cp,ExMinLoopRuntime,BranchOffset(cpos,branchaddress),1);  // LOOP back to (behind) DO
+                        UpdateNumber(branchaddress+1,BranchOffset(branchaddress,cpos)-1);   // resolve DO forward ref
+                    } else {
+                        Fail(cp, "Unstructured: MinLoop needs a previous Do");
                     }
                     break;
 

@@ -757,6 +757,8 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
         return Print(view, State);
     case ExPush:
         return Push(view, State);
+
+
     case ExPlus:
         return Plus();
     case ExMinus:
@@ -1014,6 +1016,20 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
             break;
 
 
+        case ExMinLoopRuntime:                                    // executed once per loop iteration:
+            rtos = ControlStack.pop();
+            rnos = ControlStack.peek(0)+1;
+            tos = rtos - rnos;
+            rtos -= ParamStack.pop();
+            if ( (( rtos - rnos ) ^ tos ) > 0 )  {
+                ControlStack.push(rtos);                            //       keep loop index for next round
+                i += m->cmds[i].repeat;                             //       branch back to behind DO
+            } else {                                                //    no:
+                ControlStack.pop();                                 //    yes: clean up
+            }
+            break;
+
+
         case ExLeaveRuntime:
             ControlStack.pop();
             ControlStack.pop();
@@ -1025,11 +1041,27 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
         case ExTimes:
             tos = ParamStack.pop();
             if (tos) {
-                m->cmds[i+1].repeat = tos;                         // maybe (test whether needed): rpt=0? skip next.
+                m->cmds[i+1].repeat = tos;                          // maybe (test whether needed): rpt=0? skip next.
             } else {
                 i += 1;
             }
-            break;                                                 // would reintroduce conditional skip with  0/1 times command
+            break;                                                  // would reintroduce conditional skip with  0/1 times command
+
+
+            // these two, ExOld and ExNew, implement a very cheeky data structure applicator.
+            // this is quite wild, relying on self-modifying macros, but it's the best extendable
+            // scheme conceived as far. its use, in terms of "syntax", is even quite satisfactory.
+        case ExOld:
+            ParamStack.push(m->cmds[i-1].repeat);
+            i++;
+            break;
+
+        case ExNew:                                                 // messy data structure initializer
+            // m->cmds[i].u.num = m->cmds[i-1].u.num;               // optional - may want it for "methods" emulation
+            m->cmds[i-1].u.num = ExOld;
+            m->cmds[i-1].repeat = ParamStack.peek(0);
+            break;
+
 
 
         default:
