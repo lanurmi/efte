@@ -446,16 +446,21 @@ int CompareStr(ExState &State) {
     std::string what = sstack[tos];
     sstack.pop_back();
 
-    if (State.GetIntParam(0, &compareTo))
+    if (State.GetIntParam(0, &compareTo)) {
         compareTo = tos - compareTo;
-    else
+        ParamStack.push(-(what.compare(sstack[compareTo])));
+    } else {
         compareTo = tos - 1;
-
-    ParamStack.push(-(what.compare(sstack[compareTo])));
+        ParamStack.push(-(what.compare(sstack[compareTo])));
+        sstack.pop_back();
+    }
 
     SetBranchCondition(1);
     return 1;
 }
+
+
+
 
 int OverStr() {
     if (sstack.size() < 2) {

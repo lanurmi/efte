@@ -122,38 +122,14 @@ sub right$    {                                           # ( n -- )
   endif
   mid$ }
 
-#sub search$   {                                           # ( n1 -- n2 )
-#  push -1 swap                                            # search though n1 string stack items,
-#  inc one do                                              # matching against top string. returns
-#    I dup dot  pick$ insertstring $tos$ space             # item number of matching string as n2,
-#    over$ insertstring $tos$ cr  equals$                  # or -1
-#    if drop I dup dot dec leave endif
-#  loop
-#  drop$
-#}
 
-#sub search$   {                                           # ( n1 -- n2 )
-#  inc one do                                              # matching against top string. returns
-#    diag$
-#    I dot
-#    i pick$ dup$ type$ space
-#    over$   dup$ type$ cr
-#    diag$
-#    2:drop$
-#    diag$
-#  loop
-#  drop$
-#}
-
-#sub search$   {                                           # ( n1 -- n2 )
-#  inc one do
-#    i pick$ over$ diag$ diag$ diag$
-#    over$ type$ space  dup$ type$ space
-#    equals$  dup dot  cr
-#    if
-#       insertstring "match at " i dec dot
-#    endif
-#  loop
-#}
-
+sub search$   {                                           # ( n1 -- n2 )
+  push -1 swap                                            # search though n1 string stack items,
+  inc one do                                              # matching against top string. returns
+    I pick$                                               # item number of matching string as n2,
+    over$ equals$                                         # or -1
+    if drop I dec leave endif
+  loop
+  drop$
+}
 
