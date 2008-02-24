@@ -175,14 +175,27 @@ sub capitalize$ {                               # ( -- )  capitalize all chars o
 # =============================================================================
 
 sub cell      { push 1 }
-sub plusstore { dup tor fetch plus rfrom store }   # ( x a -- )  adds x to contents of address a
-sub allot { here plus zero swap store }
-#sub comma { here store cell allot }
-sub comma { here cell allot store }                # ( x -- )    allocate 1 location, initialized to x
-sub free { memend here minus }
+sub plusstore { dup tor fetch plus rfrom store } # ( x a -- )  adds x to contents of address a
+sub allot     { here plus zero swap store }
+#sub comma    { here store cell allot }
+sub comma     { here cell allot store }          # ( x -- )    allocate 1 location, initialized to x
+sub free      { memend here minus }
 
-sub var  { here zero comma }                       # for the new construct:       sub foo { var new }
-                                                   # can then use vars like:      sub bar { var new }
-                                                   #                foo fetch   bar store
+
+sub zerocomma { zero comma }
+sub var       { here zerocomma }                 # for the new construct:       sub foo { var new }
+                                                 # can then use vars like:      sub bar { var new }
+                                                 #                foo fetch   bar store
+
+### -- not working yet - needs a small mod in "new". also, because of not having a "does" part
+###  in the structure description, this may be a better candidate for the envisioned "methods"
+# sub array     { here swap times zerocomma }
+# sub myarray   { push 16 array new }
+
+
+sub base      { var new }                        # number base for pic'd num conversion
+sub decimal   { push 10 base store }
+sub hex       { push 16 base store }
+sub octal     { push  9 base store }
 
 

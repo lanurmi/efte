@@ -1052,7 +1052,7 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
             // this is quite wild, relying on self-modifying macros, but it's the best extendable
             // scheme conceived as far. its use, in terms of "syntax", is even quite satisfactory.
         case ExOld:
-            ParamStack.push(m->cmds[i-1].repeat);
+            ParamStack.push(m->cmds[i].repeat);
             i++;
             break;
 
