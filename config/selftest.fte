@@ -6,72 +6,22 @@
 # Copyright (c) 2008 eFTE Group
 # -----------------------------------------------------------------------
 
-sub basefetch { push 10 }
-sub digit     { push '0' plus dup push '9' more if push 39 plus endif } # ( u -- asc )
-sub slashmod  { dup2 div dup tor mul minus abs rfrom }                  # ( n1 n2 -- r q )
-sub hold      { minrot inc }                                            # ( n2*chars n1 n2 asc -- n3*chars n1 n3 )
-sub sign      { negative if push '-' hold endif }                       # ( n2*chars n1 n2 n3 -- n3*chars n1 n4 }
-sub hash      { tor basefetch slashmod tor digit rfrom rfrom inc }      # ( n2*chars n1 n2  -- n4*chars asc n3 n4 )
-sub hashes    { begin hash over not until }                             # ( n2*chars n1 n2 -- n4*chars n3 n4 )
-sub emits     { times emit }                                            # ( n*chars n -- )
-sub brdotbr   { dup tor zero hashes rfrom sign nip }                    # ( n1 -- n2*chars n2 )
-sub dotstar   { push '*' emit }                                         # ( -- )
-sub lesshash  { zero } 	   				      		# ( n1 -- 0 n1 ) start pictured num conversion
-sub hashmore  { nip }                                                   # ( n2*chars n1 n2 -- n2*chars n2 ) end pic num conv
-
-
-
-
-### can be simplified. dotpadded is not needed ...
-### can do:     >r <# r> 0 do over if # else bl hold endif loop #>   to convert any space padded number
-# ( n1*chars n1 n2 -- )
-sub dotpadded { dup2 more if                                            # won't fit:
-                   times dotstar                                        #    fill with stars
-                   times drop                                           #    remove digits
-                else                                                    # fits:
-                   over minus spaces                                    #    pad with spaces
-                   emits                                                #    emit digits
-                endif }                                                 # ( n*chars n1 n2 -- )
-
-
-
-# "app level" words, build with the pictured number conversion words above:
-
-sub udot      { brdotbr emits space }                                   # ( n -- )
-
-sub dotr      { tor brdotbr rfrom dotpadded }                           # space padded number: ( n1 n2 -- )
-
-sub dot0r     { tor                                                     # zero padded number:  ( n1 n2 -- )
-                lesshash
-                rfrom times hash
-                hashmore
-                emits
-                space }                   
-
-sub doth0r    { tor                                                     # zero padded, leading '#':  ( n1 n2 -- )
-                lesshash
-                rfrom times hash
-                push "#" hold
-                hashmore
-                emits
-                space }
-
 sub custom    { lesshash                                                # print as nnn:nnn     ( n -- )
-                3:hash
-                push ':' hold
-                3:hash
-                hashmore
-                emits
-                space }
+                  bl hold
+                  3:hash
+                  push ':' hold
+                  3:hash
+                hashmoretype }
 
 
 sub pass   {
+   decimal
    tor dup2 equals if           insertstring "PASS"
    else                         insertstring "FAIL"
    endif 
    rfrom insertstring " test "  custom
-   insertstring "wants "        push 6 dotr
-   insertstring ", got "        push 6 dotr
+   insertstring "wants "        push 8 dotr
+   insertstring ", got "        push 8 dotr
    cr
 }
 
