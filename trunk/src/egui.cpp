@@ -451,7 +451,7 @@ int CompareStr(ExState &State) {
     else
         compareTo = tos - 1;
 
-    ParamStack.push(what.compare(sstack[compareTo]));
+    ParamStack.push(-(what.compare(sstack[compareTo])));
 
     SetBranchCondition(1);
     return 1;

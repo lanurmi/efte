@@ -22,9 +22,9 @@ sub qdup      { dup if dup endif }              # duplicate top of stack if <> 0
 sub nip       { swap drop }                     # drop second of stack
 sub tuck      { swap over }                     # copy top of stack below second of stack
 sub pluck     { tor over rfrom swap }
-sub minRot    { rot rot }                       # rotate top item below second item
-sub dup2      { over over }                     # duplicate top two items
-sub drop2     { drop drop }                     # drop top two items
+sub minRot    { 2:rot }                         # rotate top item below second item
+sub dup2      { 2:over }                        # duplicate top two items
+sub drop2     { 2:drop }                        # drop top two items
 sub swap2     { rot tor rot rfrom }             # swap top two pairs of items
 
 # -- bool, bits, comparison  --
@@ -36,9 +36,8 @@ sub success   { flag }                          # push command return code
 sub failure   { flag not }                      # push inverted command return code
 sub more      { swap less }                     # true if nos > tos
 sub between   { rot tuck less minrot more or not }
-sub capital   { push 65; push 90; between }
+sub capital   { push 'A' 'Z' between }
 sub negative  { zero less }                     # < zero?
-sub blockmarked { ?blockwrite "/dev/null" ; success }
 
 # -- arithmetic --
 sub inc       { one plus }                      # increment top of stack by one
@@ -49,9 +48,8 @@ sub min       { dup2 more if swap endif drop }
 sub max       { dup2 less if swap endif drop }
 sub mod       { dup2 div mul minus }            # modulo (remainder) function
 sub gcd       { begin tuck mod qdup not until } # greatest common denominator
-sub range     { over plus swap }
+sub range     { over plus swap }                # start n -> limit start conversion for DO LOOP
 
-    
 # -- i/o --
 sub bl        { push 32 }
 sub emit      { insertstring $toschar }
@@ -64,7 +62,8 @@ sub key       { getchar; }                      # wait for key, place its ascii 
 sub read      { push $Char }                    # read char under cursor
 
 #sub count    { inc dup dec fetch }
-#sub type     { Zero; Do; Count; Emit; Loop; Drop } # string output
+#sub type1    { count emit }
+#sub type     { times type1 drop } # string output
 
 # -- cursor --
 sub cursorhome { movelinestart }
@@ -100,16 +99,61 @@ sub cursorend  { movelineend }
 
 sub nip$      { swap$ drop$ }
 sub tuck$     { swap$ over$ }
-sub minrot$   { rot$ rot$ }
-sub dup2$     { over$ over$ }
+sub minrot$   { 2:rot$  }
+sub dup2$     { 2:over$ }
 sub drop2$    { 2:drop$ }
 sub equals$   { compare$ not }
-sub right$    { dup negate swap mid$ }
-sub left$     { zero swap mid$ }
-sub search$   {
-  push -1
-  depth$ inc one do
-    dup$ I pick$ over$ equals$ if drop I leave endif
-  loop
-  drop$
-}
+sub type$     { insertstring $tos$ drop$ }
+
+
+sub left$     {                                           # ( n -- )
+   dup negative if                                        # negative n: strip first n chars
+      negate len$ over minus
+   else                                                   # positive n: keep first n chars
+      zero swap
+   endif
+   mid$ }
+
+sub right$    {                                           # ( n -- )
+  dup negative if                                         # negative n: strip last n chars
+     zero len$ rot plus
+  else                                                    # positive n: keep last n chars
+     dup negate swap
+  endif
+  mid$ }
+
+#sub search$   {                                           # ( n1 -- n2 )
+#  push -1 swap                                            # search though n1 string stack items,
+#  inc one do                                              # matching against top string. returns
+#    I dup dot  pick$ insertstring $tos$ space             # item number of matching string as n2,
+#    over$ insertstring $tos$ cr  equals$                  # or -1
+#    if drop I dup dot dec leave endif
+#  loop
+#  drop$
+#}
+
+#sub search$   {                                           # ( n1 -- n2 )
+#  inc one do                                              # matching against top string. returns
+#    diag$
+#    I dot
+#    i pick$ dup$ type$ space
+#    over$   dup$ type$ cr
+#    diag$
+#    2:drop$
+#    diag$
+#  loop
+#  drop$
+#}
+
+#sub search$   {                                           # ( n1 -- n2 )
+#  inc one do
+#    i pick$ over$ diag$ diag$ diag$
+#    over$ type$ space  dup$ type$ space
+#    equals$  dup dot  cr
+#    if
+#       insertstring "match at " i dec dot
+#    endif
+#  loop
+#}
+
+
