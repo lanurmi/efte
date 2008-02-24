@@ -134,6 +134,7 @@ efte-setup:
 basesetup:
 	@echo "System name :" $(UNAME)
 	@echo "Targets     :" $(TARGETS)
+	@echo "Compiler    :" $(CXX)
 	@echo "CXX Flag    :" $(CXXFLAGS)
 	@echo "System Libs :" $(SYSTEM_LIBS)
 
@@ -195,22 +196,22 @@ help:
 	@echo
 
 bin2c: bin2c.cpp
-	g++ $(DEFINES) -o $@ $<
+	$(CXX) $(DEFINES) -o $@ $<
 
 defcfg.h: bin2c simple.fte
 	./bin2c simple.fte > defcfg.h
 
 efte: defcfg.h $(OBJS) $(XOBJS)
-	g++ -o efte $(OBJS) $(XOBJS) $(EFTE_LIBS)
+	$(CXX) -o efte $(OBJS) $(XOBJS) $(EFTE_LIBS)
 
 nefte: defcfg.h $(OBJS) $(NOBJS)
-	g++ -o nefte $(OBJS) $(NOBJS) $(NEFTE_LIBS)
+	$(CXX) -o nefte $(OBJS) $(NOBJS) $(NEFTE_LIBS)
 
 vefte: defcfg.h $(OBJS) $(VOBJS)
-	g++ -o vefte $(OBJS) $(VOBJS) $(VEFTE_LIBS)
+	$(CXX) -o vefte $(OBJS) $(VOBJS) $(VEFTE_LIBS)
 
 .cpp.$(OEXT):
-	g++ $(CXXFLAGS) -o $@ -c $<
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
 
 .depend.mak: Makefile
 	which g++ 2>/dev/null >/dev/null || touch "$@"
