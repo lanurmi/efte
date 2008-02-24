@@ -22,11 +22,15 @@ endif
 
 # NOTE: Unix does not have stricmp, however, in sysdeps.h it is mapped to
 # strcasecmp which unix does have., thus stricmp is a valid function name
+ifndef $(X11_PATH)
+	X11_PATH=/usr/X11R6
+endif
+
 DEFINES=-DUNIX -DHAVE_STRICMP
-CXXFLAGS=
+CXXFLAGS=-I$(X11_PATH)/include
 SYSTEM_LIBS=
 BASE_LIBS=-lstdc++
-EFTE_LIBS=-lX11 -lXpm
+EFTE_LIBS=-L$(X11_PATH)/lib -lX11 -lXpm
 NEFTE_LIBS=
 VEFTE_LIBS=
 
@@ -128,7 +132,8 @@ efte-setup:
 basesetup:
 	@echo "System name :" $(UNAME)
 	@echo "Targets     :" $(TARGETS)
-	@echo "Defines     :" $(DEFINES)
+	@echo "CXX Flag    :" $(CXXFLAGS)
+	@echo "System Libs :" $(SYSTEM_LIBS)
 
 setup: basesetup $(TARGETS:=-setup)
 
@@ -156,11 +161,13 @@ help:
 	@echo "  USE_LOGGING=0/1    Enable trace logging within eFTE"
 	@echo "  USE_HARD_REMAP=0/1 Keyboard remapping by eFTE"
 	@echo "  CURSES=libname     Specify an alternate curses library"
+	@echo "  X11_PATH=basepath  Specify location of X11 installation"
 	@echo
 	@echo "Defaults:"
 	@echo "  Enabled   : USE_LOCALE, USE_LOGGING, USE_XMB, USE_XICON"
 	@echo "  Disabled  : USE_XLOCALE, USE_XTINIT, USE_HARD_REMAP"
 	@echo "  Curses    : ncurses"
+	@echo "  X11 Path  : /usr/X11R6"
 	@echo
 	@echo "Smart defaults:"
 	@echo "  Linux     : USE_GPM=1"
