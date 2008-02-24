@@ -120,6 +120,8 @@ CXXFLAGS += $(DEFINES)
 
 all: bin2c defcfg.h $(TARGETS)
 
+include .depend.mak
+
 nefte-setup:
 	@echo "nefte       :" $(NEFTE_LIBS)
 
@@ -209,3 +211,9 @@ vefte: defcfg.h $(OBJS) $(VOBJS)
 
 .cpp.$(OEXT):
 	g++ $(CXXFLAGS) -o $@ -c $<
+
+.depend.mak: Makefile
+	which g++ 2>/dev/null >/dev/null || touch "$@"
+	g++ -MM $(addsuffix .cpp,$(basename $(OBJS))) $(addsuffix .cpp,$(basename $(XOBJS))) \
+		$(addsuffix .cpp,$(basename $(NOBJS))) $(addsuffix .cpp,$(basename $(VOBJS))) > "$@"
+
