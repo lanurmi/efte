@@ -8,10 +8,15 @@
  *
  */
 
+#include <vector>
+
 #include "fte.h"
 #include "log.h"
 
 int LastEventChar = -1;
+
+#define MEMORY_LIMIT 5242880
+std::vector<int> memory;
 
 EFrame::EFrame(int XSize, int YSize): GFrame(XSize, YSize) {
     CMap = 0;
@@ -649,6 +654,62 @@ int GetString(ExState &State, GxView *view) {
     return 1;
 }
 
+int MemoryDump() {
+    for (int i=0; i < memory.size(); i++) {
+        if (i>0) fprintf(stderr, ", ");
+        fprintf(stderr, "%i=%i", i, memory[i]);
+    }
+    fprintf(stderr, "\n");
+
+    return 1;
+}
+
+int MemoryStore(ExState &State) {
+    int loc = ParamStack.pop();
+    int val = ParamStack.pop();
+
+    if (loc > MEMORY_LIMIT) {
+        SetBranchCondition(0);
+        return 0;
+    }
+
+    if (loc >= memory.size()) {
+        for (int i=memory.size(); i < loc; i++)
+            memory.push_back(0);
+    }
+
+    memory[loc] = val;
+
+    SetBranchCondition(1);
+    return 1;
+}
+
+int MemoryFetch(ExState &State) {
+    int loc = ParamStack.pop();
+
+    if (loc >= memory.size()) {
+        SetBranchCondition(0);
+        return 0;
+    }
+
+    ParamStack.push(memory[loc]);
+
+    SetBranchCondition(1);
+    return 1;
+}
+
+int MemoryHere() {
+    ParamStack.push(memory.size());
+    return 1;
+}
+
+int MemoryEnd() {
+    ParamStack.push(MEMORY_LIMIT);
+
+    SetBranchCondition(1);
+    return 1;
+}
+
 int EGUI::ExecuteCommand(ExState &State, GxView *view)
 {
     ExModelView *V = (ExModelView *)view->Top;
@@ -682,6 +743,16 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
 
     // Commands that will run regardless of a View or Buffer
     switch (Command) {
+    case ExStore:
+        return MemoryStore(State);
+    case ExFetch:
+        return MemoryFetch(State);
+    case ExDump:
+        return MemoryDump();
+    case ExMemEnd:
+        return MemoryEnd();
+    case ExHere:
+        return MemoryHere();
     case ExPrint:
         return Print(view, State);
     case ExPush:

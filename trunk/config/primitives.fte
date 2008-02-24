@@ -133,3 +133,9 @@ sub search$   {                                           # ( n1 -- n2 )
   drop$
 }
 
+# =============================================================================
+# Memory Handling
+# =============================================================================
+
+sub allot { here plus zero swap diag store }
+sub free { memend here minus }
