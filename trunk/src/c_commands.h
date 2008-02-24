@@ -33,10 +33,16 @@ typedef enum {
     /// macro run time code associate with LOOP
     ExPlusLoopRuntime,
     /// macro run time code associate with PLUSLOOP
+    ExMinLoopRuntime,
+    /// macro run time code associate with MINLOOP
     ExLeaveRuntime,
     /// macro run time code for breaking out of a loop
     ExTimes,
     /// set repeat counter of next command to top of stack
+    ExOld,
+    /// excuted by "converted" data structure accessor, to publish data location
+    ExNew,
+    /// converts a sub to a data structure accessor
 
     //!Stack Operations
     ExExit,

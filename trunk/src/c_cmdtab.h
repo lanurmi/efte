@@ -60,6 +60,8 @@ const struct {
     TAB(I),
     TAB(J),
     TAB(Times),
+    TAB(Old),
+    TAB(New),
 
     TAB(Diag),
 
