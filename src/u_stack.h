@@ -17,6 +17,7 @@
 #include <string>
 
 extern std::vector<std::string> sstack;
+extern std::vector<int> memory;
 
 class CircularStack {
 private:

@@ -92,6 +92,16 @@ typedef enum {
     // -------------------
     ExDiag,
     /// Print stack top and conditions to stderr for debugging.
+    ExStore,
+    /// Store tos into into memory
+    ExFetch,
+    /// Push specified location in memory onto the stack
+    ExMemEnd,
+    /// Push the memory end to the stack
+    ExHere,
+    /// Push the memory usage to the stack
+    ExDump,
+    /// Dump memory contents
     ExToggleConditionDisplay,
     /// Toggle displaying the condition code in the status bar.
 

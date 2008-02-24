@@ -27,6 +27,11 @@ const struct {
 
     TAB(Exit),
     TAB(Push),
+    TAB(Fetch),
+    TAB(Store),
+    TAB(MemEnd),
+    TAB(Here),
+    TAB(Dump),
 
     TAB(Plus),
     TAB(Minus),
