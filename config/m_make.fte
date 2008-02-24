@@ -94,6 +94,10 @@ mode MAKE: PLAIN {
     SaveFolds           = 2;      # save fold info at end of line
     CommentStart        = ' #';
     CommentEnd          = '';
+
+    ExpandTabs          = 1;
+    SpaceTabs           = 0;
+    IndentWithTabs      = 1;
 }
 
 oinclude 'mym_make.fte';
