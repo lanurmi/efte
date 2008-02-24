@@ -1,4 +1,5 @@
 OBJS = \
+cfte.$(OEXT) \
 indent.$(OEXT) \
 e_mark.$(OEXT) \
 o_modemap.$(OEXT) \

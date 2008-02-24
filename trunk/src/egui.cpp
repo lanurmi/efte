@@ -459,9 +459,6 @@ int CompareStr(ExState &State) {
     return 1;
 }
 
-
-
-
 int OverStr() {
     if (sstack.size() < 2) {
         SetBranchCondition(0);
