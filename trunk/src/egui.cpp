@@ -959,6 +959,8 @@ int EGUI::BeginMacro(GxView *view) {
 }
 
 
+
+
 int EGUI::ExecMacro(GxView *view, const char *name) {
     int num = MacroNum(name);
     if (num == 0) return 1;
@@ -966,8 +968,10 @@ int EGUI::ExecMacro(GxView *view, const char *name) {
     return result;
 }
 
+
+
 int EGUI::ExecMacro(GxView *view, int Macro) {
-    STARTFUNC("EGUI::ExecMacro");
+    STARTFUNC("EGUI::ExecMacro\n");
 
     int i, j, tos, rtos, rnos, ResultOfCommandExecution;
     ExMacro *m;

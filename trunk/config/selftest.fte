@@ -18,7 +18,6 @@ sub dot33 {                    # ( n -- ) print as nnn:nnn
 sub dot9r { push 9 dotr }      # ( n -- ) space padded right aligned 9 chars signed number out
 
 sub pass   {
-   decimal
    tor dup2 equals if          insertstring "PASS"
    else                        insertstring "FAIL"
    endif 
