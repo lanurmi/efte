@@ -664,33 +664,41 @@ int MemoryDump() {
     return 1;
 }
 
+
+
+
 int MemoryStore(ExState &State) {
     int loc = ParamStack.pop();
-    int val = ParamStack.pop();
 
     if (loc > MEMORY_LIMIT) {
         SetBranchCondition(0);
         return 0;
     }
 
-    if (loc >= memory.size()) {
-        for (int i=memory.size(); i < loc; i++)
-            memory.push_back(0);
-    }
+    int initialized = memory.size();
+    while (loc >= initialized++ )
+        memory.push_back(0);
 
-    memory[loc] = val;
+    memory[loc] = ParamStack.pop();
 
     SetBranchCondition(1);
     return 1;
 }
 
+
+
+
 int MemoryFetch(ExState &State) {
     int loc = ParamStack.pop();
 
-    if (loc >= memory.size()) {
+    if (loc > MEMORY_LIMIT) {
         SetBranchCondition(0);
         return 0;
     }
+
+    int initialized = memory.size();
+    while (loc >= initialized++ )
+        memory.push_back(0);
 
     ParamStack.push(memory[loc]);
 
@@ -698,17 +706,37 @@ int MemoryFetch(ExState &State) {
     return 1;
 }
 
-int MemoryHere() {
-    ParamStack.push(memory.size());
+
+
+unsigned int dp=0;            // "dictionary pointer". pointer to free memory. what is below, is allocated memory.
+
+int MemoryHere()  {
+    ParamStack.push(dp);
     return 1;
 }
+
+
+int MemoryAllot()  {
+    int requested = ParamStack.pop();
+    if (dp+requested+1024 >= MEMORY_LIMIT) {
+        SetBranchCondition(0);
+        return 0;
+    }
+    dp += requested;
+    return 1;
+}
+
 
 int MemoryEnd() {
     ParamStack.push(MEMORY_LIMIT);
-
-    SetBranchCondition(1);
     return 1;
 }
+
+
+
+
+
+
 
 int EGUI::ExecuteCommand(ExState &State, GxView *view)
 {
@@ -753,6 +781,8 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
         return MemoryEnd();
     case ExHere:
         return MemoryHere();
+    case ExAllot:
+        return MemoryAllot();
     case ExPrint:
         return Print(view, State);
     case ExPush:
