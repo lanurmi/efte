@@ -50,50 +50,32 @@ sub min       { dup2 more if swap endif drop }
 sub max       { dup2 less if swap endif drop }
 sub mod       { dup2 div mul minus }            # modulo (remainder) function
 sub gcd       { begin tuck mod qdup not until } # greatest common denominator
+sub sqrt      { zero tuck do inc dup lshift inc plusloop }
 sub range     { over plus swap }                # start n -> limit start conversion for DO LOOP
 
 # -- i/o --
 sub bl        { push 32 }
 sub emit      { insertstring $toschar }
 sub space     { bl emit }                       # print a space character
-sub Spaces    { times space }                   # don't have loops yet
+sub spaces    { times space }                   # don't have loops yet
 sub cr        { linenew }                       # carriage return
 sub ok        { insertstring " ok "; cr }       # meant to be used as prompt
-sub dot       { insertstring $tosstr; space }   # output top stack item as number
+#sub dot       { insertstring $tosstr; space }   # output top stack item as number
 sub key       { getchar; }                      # wait for key, place its ascii on stack
 sub read      { push $Char }                    # read char under cursor
 
 sub count     { inc dup dec fetch }
-#sub type1    { count emit }
-#sub type     { times type1 drop } # string output
+sub type1     { count emit }
+sub type      { times type1 drop }              # string output
 
 # -- cursor --
 sub cursorhome { movelinestart }
 sub cursorend  { movelineend }
 
 
-#sub sqrt      { zero tuck do inc dup leftshift inc plusloop }
-#sub sqrt      { one begin dup2 div over minus one inc  div dup while plus repeat drop nip }
-#sub factor    { dup if dup one and
-#                if dup sqrt  3:push;
-#                   begin dup2 less
-#                      if drop2 exit endif
-#                      pluck over mod
-#                   while inc inc 
-#                   repeat nip
-#                endif
-#             else 2:Push;
-#             endif  }
-#sub prime     { dup factor equals }
-
 
 # need:
-#  Allocate
-#  Fetch
-#  Store
-    
 #  test block marked?
-#  stack # chars on line  (or macro: mark pos, CursorEnd, CursorColumn, return to marked pos)
 
 # =============================================================================
 # String Stack Helpers
@@ -238,16 +220,22 @@ sub hashmore  { drop }                                                  # ( n --
                                                                         # this version leaves converted number on top of string stack
 sub sign      { negative if push '-' hold endif }                       # ( n -- }
 sub brdotbr   { dup tor lesshash hashes rfrom sign hashmore }           # ( n -- )
-sub dotstar   { push '*' emit }                                         # ( -- )
 
-sub spacepad1   { bl hold }
-sub spacepad    { len$ minus
-                  dup negative not if
-                     dup times spacepad1
-                  endif drop }
+sub spacepad1 { bl hold }
+sub spacepad  { len$ minus
+                dup negative not if
+                   dup times spacepad1
+                endif drop }
 
 
 # --- "app" level number output words ---
+sub dot       { dup tor
+                bl hold
+                lesshash
+                   hashes
+                   rfrom sign
+                hashmoretype }
+
 sub dotr      { tor dup tor                                             # space padded signed number: ( n1 u -- )
                 lesshash
                    hashes
