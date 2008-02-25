@@ -63,7 +63,7 @@ sub dot       { insertstring $tosstr; space }   # output top stack item as numbe
 sub key       { getchar; }                      # wait for key, place its ascii on stack
 sub read      { push $Char }                    # read char under cursor
 
-#sub count    { inc dup dec fetch }
+sub count     { inc dup dec fetch }
 #sub type1    { count emit }
 #sub type     { times type1 drop } # string output
 
@@ -182,23 +182,47 @@ sub comma     { here cell allot store }          # ( x -- )    allocate 1 locati
 sub free      { memend here minus }
 
 
+
 sub zerocomma { zero comma }
 sub var       { here zerocomma }                 # for the new construct:       sub foo { var new }
                                                  # can then use vars like:      sub bar { var new }
                                                  #                foo fetch   bar store
 
-### -- not working yet - needs a small mod in "new". also, because of not having a "does" part
-###  in the structure description, this may be a better candidate for the envisioned "methods"
-# sub array     { here swap times zerocomma }
-# sub myarray   { push 16 array new }
+
+# --- string variables, rudimentary, but functional
+sub stringvar { here len$ inc times zerocomma }  # may want to keep allicated size for boundary check
+
+sub store$    {                     # ( a -- ) transfers string on string stack to a
+   dup tor                          #  may want to add transfer limit according string var size.
+   inc len$
+   dup rfrom store
+   zero do
+      i asc over store
+      inc
+   loop drop
+   drop$ }
+
+sub fetch$    {                     # ( a -- ) transfers the string at a to string stack.
+   push$ ''
+   count
+   zero do
+      count char$ merge$
+   loop
+   drop }
 
 
+
+
+
+# --- the number conversion words below respect base, and convert accordingly ---
+# we need to init base somewhere - vars are initialized to zero, which is not a good number base.
+# using number output without setting base first will result in division by zero
+# time for checking out the OnStart: event, which should be ideally suited for one-time init.
 sub base      { var new }                        # number base for pic'd num conversion
 sub decimal   { push 10 base store }
 sub hex       { push 16 base store }
 sub octal     { push  8 base store }
 sub binary    { push  2 base store }
-
 
 
 # --- pictured number conversion ---
