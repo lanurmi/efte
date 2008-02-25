@@ -1,3 +1,12 @@
+# ui_k_fte.fte
+#
+# Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
+#
+# You may distribute under the terms of either the GNU General Public
+# License or the Artistic License, as specified in the README file.
+#
+# eFTE default key bindings
+#
 
 eventmap MODEL {
     key       [F1]      { ViewModeMap }
@@ -11,11 +20,11 @@ eventmap MODEL {
     key       [F6]      { FileNext }
     key     [S+F6]      { FilePrev }
     key   [A+S-F6]      { FileLast }
-    key       [F7]      { Find $Word }
+    key       [F7]      { $Word Find }
     key       [F10]     { MainMenu }
     key     [C+F10]     { FileClose }
-    key     [C+F9]      { RunProgram }
-    key     [A+F9]      { RunProgram "" }
+    key     [C+F9]      { "sh" RunProgram }
+    key     [A+F9]      { "" RunProgram }
     key     [S+F10]     { LocalMenu }
     
     key   [A+G-Up]      { WinPrev }
@@ -33,8 +42,8 @@ eventmap MODEL {
     key     [A+X]       { ExitEditor }
     key     [A+Q]       { FileClose }
     
-    key   [C+S+G-Up]    { WinResize -1 }
-    key   [C+S+G-Down]  { WinResize +1 }
+    key   [C+S+G-Up]    { -1 WinResize }
+    key   [C+S+G-Down]  {  1 WinResize }
     
     # this is also useful for 'grep -n' etc. if configured
     key       [F9]      { Compile; ViewMessages }
@@ -45,20 +54,20 @@ eventmap MODEL {
     key     [A+F5]      { ShowEntryScreen }
     
     key     [A+0]       { ViewBuffers }
-    key     [A+1]       { SwitchTo 1 }
-    key     [A+2]       { SwitchTo 2 }
-    key     [A+3]       { SwitchTo 3 }
-    key     [A+4]       { SwitchTo 4 }
-    key     [A+5]       { SwitchTo 5 }
-    key     [A+6]       { SwitchTo 6 }
-    key     [A+7]       { SwitchTo 7 }
-    key     [A+8]       { SwitchTo 8 }
-    key     [A+9]       { SwitchTo 9 }
+    key     [A+1]       { 1 SwitchTo }
+    key     [A+2]       { 2 SwitchTo }
+    key     [A+3]       { 3 SwitchTo }
+    key     [A+4]       { 4 SwitchTo }
+    key     [A+5]       { 5 SwitchTo }
+    key     [A+6]       { 6 SwitchTo }
+    key     [A+7]       { 7 SwitchTo }
+    key     [A+8]       { 8 SwitchTo }
+    key     [A+9]       { 9 SwitchTo }
 
-    key     [A+F]       { MainMenu 'F' }
-    key     [A+T]       { MainMenu 'T' }
-    key     [A+W]       { MainMenu 'W' }
-    key     [A+H]       { MainMenu 'H' }
+    key     [A+F]       { 'F' MainMenu }
+    key     [A+T]       { 'T' MainMenu }
+    key     [A+W]       { 'W' MainMenu }
+    key     [A+H]       { 'H' MainMenu }
 }
 # List Viewers
 eventmap MLIST: MODEL {
@@ -112,13 +121,13 @@ eventmap DIRECTORY: MLIST {
     key [/]             { DirGoto }
     key [\\]            { DirGoto }
     key [C+D]           { DeleteFile }
-    key [Esc]           { FileClose 0 }
+    key [Esc]           { 0 FileClose }
     key [C+G]           { DirSearchNext }
     key [C+H]           { DirSearchPrev }
     
-    key     [A+N]       { MainMenu 'N' }
-    key     [C+O_C+V]   { ShowMenu 'MCvs' }
-    key     [C+O_C+N]   { ShowMenu 'MSvn' }
+    key     [A+N]       { 'MCvs' MainMenu }
+    key     [C+O_C+V]   { 'MSvn' ShowMenu }
+    key     [C+O_C+N]   { ShowMenu }
 }
 
 # Buffer List
@@ -126,14 +135,14 @@ eventmap BUFFERS: MLIST {
     MainMenu = "BufferListMain";
     LocalMenu = "BufferListLocal";
     
-    key  [Esc]   { FileClose 0 } # 0 = do not open directory when last closed, overrides OpenAfterClose default.
+    key  [Esc]   { 0 FileClose } # 0 = do not open directory when last closed, overrides OpenAfterClose default.
 
     key  [C+C]   { BufListFileClose }
     key  [G-Del] { BufListFileClose }
     key  [C+S]   { BufListFileSave }
     key  [F2]    { BufListFileSave }
-    key     [C+O_C+V]   { ShowMenu 'MCvs' }
-    key     [C+O_C+N]   { ShowMenu 'MSvn' }
+    key     [C+O_C+V]   { 'MCvs' ShowMenu }
+    key     [C+O_C+N]   { 'MSvn' ShowMenu }
 }
 
 # Routine List
@@ -158,7 +167,7 @@ eventmap EVENTMAPVIEW: MLIST {
     MainMenu = "EventMapViewMain";
     LocalMenu = "EventMapViewLocal";
     
-    key [Esc] { FileClose 0 }
+    key [Esc] { 0 FileClose }
 }
 
 eventmap PLAIN: MODEL {
@@ -190,10 +199,10 @@ eventmap PLAIN: MODEL {
     key   [C+G-PgUp]    { MoveFileStart }
     key     [G-PgDn]    { MovePageDown }
     key   [C+G-PgDn]    { MoveFileEnd }
-#    key   [A+G-Up]      { ScrollUp }
-#    key   [A+G-Down]    { ScrollDown }
-#    key   [A+G-Left]    { ScrollLeft }
-#    key   [A+G-Right]   { ScrollRight }
+    #key   [A+G-Up]      { ScrollUp }
+    #key   [A+G-Down]    { ScrollDown }
+    #key   [A+G-Left]    { ScrollLeft }
+    #key   [A+G-Right]   { ScrollRight }
     
     key   [S+G-Left]    { BlockExtendBegin; MoveLeft;      BlockExtendEnd }
     key   [S+G-Right]   { BlockExtendBegin; MoveRight;     BlockExtendEnd }
@@ -209,14 +218,14 @@ eventmap PLAIN: MODEL {
     key   [G-S+PgDn]    { BlockExtendBegin; MovePageDown;  BlockExtendEnd }
     key [C+G-S+PgUp]    { BlockExtendBegin; MoveFileStart; BlockExtendEnd }
     key [C+G-S+PgDn]    { BlockExtendBegin; MoveFileEnd;   BlockExtendEnd }
-#    key [A+G-S+Up]      { BlockExtendBegin; ScrollUp;      BlockExtendEnd }
-#    key [A+G-S+Down]    { BlockExtendBegin; ScrollDown;    BlockExtendEnd }
-#    key [A+G-S+Left]    { BlockExtendBegin; ScrollLeft;    BlockExtendEnd }
-#    key [A+G-S+Right]   { BlockExtendBegin; ScrollRight;   BlockExtendEnd }
+    #key [A+G-S+Up]      { BlockExtendBegin; ScrollUp;      BlockExtendEnd }
+    #key [A+G-S+Down]    { BlockExtendBegin; ScrollDown;    BlockExtendEnd }
+    #key [A+G-S+Left]    { BlockExtendBegin; ScrollLeft;    BlockExtendEnd }
+    #key [A+G-S+Right]   { BlockExtendBegin; ScrollRight;   BlockExtendEnd }
     key [A+G-C+Up]      { MovePrevEqualIndent }
     key [A+G-C+Down]    { MoveNextEqualIndent }
-#    key [A+G-C+Left]    { MovePrevTab }
-#    key [A+G-C+Right]   { MoveNextTab }
+    #key [A+G-C+Left]    { MovePrevTab }
+    #key [A+G-C+Right]   { MoveNextTab }
     key   [C+G-Ins]     { BlockCopy }
     key   [C+G-Del]     { BlockKill }
     key   [S+G-Ins]     { BlockPasteStream }
@@ -228,9 +237,9 @@ eventmap PLAIN: MODEL {
     key     [G-Ins]     { ToggleInsert }
     key     [G-Del]     { Delete }
     key       [Tab]     { InsertTab }
-    key     [S+Tab]     { InsertSpacesToTab 10 }
+    key     [S+Tab]     { 10 InsertSpacesToTab }
     key     [C+Tab]     { CompleteWord }
-#    key     [C+Tab]     { InsertTab }
+    #key     [C+Tab]     { InsertTab }
     key     [C+BackSp]  { KillWordPrev }
     key   [C+S+BackSp]  { KillToLineStart }
     key   [C+G-Enter]   { LineSplit }
@@ -247,27 +256,27 @@ eventmap PLAIN: MODEL {
     key     [C+Z]       { Undo }
     key     [C+S+Z]     { Redo }
     
-    key     [C+A_1]     { GotoBookmark "1" }
-    key     [C+A_2]     { GotoBookmark "2" }
-    key     [C+A_3]     { GotoBookmark "3" }
-    key     [C+A_4]     { GotoBookmark "4" }
-    key     [C+A_5]     { GotoBookmark "5" }
-    key     [C+A_6]     { GotoBookmark "6" }
-    key     [C+A_7]     { GotoBookmark "7" }
-    key     [C+A_8]     { GotoBookmark "8" }
-    key     [C+A_9]     { GotoBookmark "9" }
-    key     [C+A_0]     { GotoBookmark "0" }
+    key     [C+A_1]     { "1" GotoBookmark }
+    key     [C+A_2]     { "2" GotoBookmark }
+    key     [C+A_3]     { "3" GotoBookmark }
+    key     [C+A_4]     { "4" GotoBookmark }
+    key     [C+A_5]     { "5" GotoBookmark }
+    key     [C+A_6]     { "6" GotoBookmark }
+    key     [C+A_7]     { "7" GotoBookmark }
+    key     [C+A_8]     { "8" GotoBookmark }
+    key     [C+A_9]     { "9" GotoBookmark }
+    key     [C+A_0]     { "0" GotoBookmark }
     
-    key     [C+P_1]     { PlaceBookmark "1" }
-    key     [C+P_2]     { PlaceBookmark "2" }
-    key     [C+P_3]     { PlaceBookmark "3" }
-    key     [C+P_4]     { PlaceBookmark "4" }
-    key     [C+P_5]     { PlaceBookmark "5" }
-    key     [C+P_6]     { PlaceBookmark "6" }
-    key     [C+P_7]     { PlaceBookmark "7" }
-    key     [C+P_8]     { PlaceBookmark "8" }
-    key     [C+P_9]     { PlaceBookmark "9" }
-    key     [C+P_0]     { PlaceBookmark "0" }
+    key     [C+P_1]     { "1" PlaceBookmark }
+    key     [C+P_2]     { "2" PlaceBookmark }
+    key     [C+P_3]     { "3" PlaceBookmark }
+    key     [C+P_4]     { "4" PlaceBookmark }
+    key     [C+P_5]     { "5" PlaceBookmark }
+    key     [C+P_6]     { "6" PlaceBookmark }
+    key     [C+P_7]     { "7" PlaceBookmark }
+    key     [C+P_8]     { "8" PlaceBookmark }
+    key     [C+P_9]     { "9" PlaceBookmark }
+    key     [C+P_0]     { "0" PlaceBookmark }
     
     #key     [C+C]       { MoveToColumn }
     key     [C+D]       { LineDuplicate }
@@ -281,20 +290,20 @@ eventmap PLAIN: MODEL {
     key     [C+R]       { FindReplace }
     key     [C+T]       { KillWord }
     key     [C+Y]       { KillLine }
-#    key     [C+E]       { LineTrim }
+    #key     [C+E]       { LineTrim }
     key     [A+A]       { BlockMarkStream }
-    key     [A+B]       { MainMenu 'B' }
+    key     [A+B]       { 'B' MainMenu }
     key     [A+C]       { BlockCopy }
-    key     [A+D]       { MainMenu 'D' }
-    key     [A+E]       { MainMenu 'E' }
+    key     [A+D]       { 'D' MainMenu }
+    key     [A+E]       { 'E' MainMenu }
     key     [A+G]       { BlockCut }
     key     [A+I]       { BlockIndent }
     key     [A+J]       { MoveToLine }
     key     [A+K]       { BlockMarkColumn }
     key     [A+L]       { BlockMarkLine }
-    key     [A+O]       { MainMenu 'O' }
+    key     [A+O]       { 'O' MainMenu }
     key     [A+R]       { WrapPara }           # Reformat 
-    key     [A+S]       { MainMenu 'S' }
+    key     [A+S]       { 'S' MainMenu }
     key     [A+U]       { BlockUnindent }
     key     [C+S]       { IncrementalSearch }
     
@@ -302,15 +311,15 @@ eventmap PLAIN: MODEL {
     key     [C+O_C+C]   { ToggleMatchCase }
     key     [C+O_C+E]   { ToggleTrim }
     key     [C+O_C+I]   { ToggleInsert }
-    key     [C+O_C+M]   { ShowMenu 'MChangeMode' }
+    key     [C+O_C+M]   { 'MChangeMode' ShowMenu }
     key     [C+O_S-M]   { ChangeMode }
     key     [C+O_C+R]   { ToggleReadOnly }
     key     [C+O_C+S]   { ToggleSysClipboard }
     key     [C+O_C+T]   { ChangeTabSize }
     key     [C+O_C+U]   { ToggleUndo }
     key     [C+O_C+W]   { ToggleWordWrap }
-    key     [C+O_C+V]   { ShowMenu 'MCvs' }
-    key     [C+O_C+N]   { ShowMenu 'MSvn' }
+    key     [C+O_C+V]   { 'MCvs' ShowMenu }
+    key     [C+O_C+N]   { 'MSvn' ShowMenu }
     key     [C+O_.]     { ToggleShowMarkers }
     key     [C+O_[]     { SetLeftMargin }     # set margin to current cursor pos
     key     [C+O_\]]    { SetRightMargin }
@@ -333,7 +342,7 @@ eventmap PLAIN: MODEL {
     #key     [C+X]       { MovePrevPos }
     key   [C+S+A]       { ASCIITable }
 
-#    key     [G+*]       { LineInsert ; MoveUp; ScrollUp }
+    #key     [G+*]       { LineInsert ; MoveUp; ScrollUp }
     
     key     [A+G++]     { FoldCreate }
     key     [A+G+-]     { FoldDestroy }
@@ -346,8 +355,8 @@ eventmap PLAIN: MODEL {
     key     [A+G+*]     { FoldOpenAll }
     key     [A+G+/]     { FoldCloseAll }
     
-#    key     [C+G-Up]    { MoveFoldPrev }
-#    key     [C+G-Down]  { MoveFoldNext }
+    #key     [C+G-Up]    { MoveFoldPrev }
+    #key     [C+G-Down]  { MoveFoldNext }
     
     key     [A+,]     { SearchWordPrev }
     key     [A+.]     { SearchWordNext }

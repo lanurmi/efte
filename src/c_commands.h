@@ -355,6 +355,8 @@ typedef enum {
     /// Center the current line.
 
     //!Block Commands
+    ExSelectionStr,
+    /// Push the selection onto the string stack
     ExBlockBegin,
     /// Set block beginning to current position.
     ExBlockEnd,

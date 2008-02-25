@@ -729,6 +729,7 @@ public:
     int BlockReadLine(ExState &State);
     int BlockReadColumn(ExState &State);
     int BlockWrite(ExState &State);
+    int BlockGet();
     int Find(ExState &State);
     int FindReplace(ExState &State);
     int FindRepeat(ExState &State);
