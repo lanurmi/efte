@@ -1040,12 +1040,11 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
 
         case ExTimes:
             tos = ParamStack.pop();
-            if (tos) {
-                m->cmds[i+1].repeat = tos;                          // maybe (test whether needed): rpt=0? skip next.
-            } else {
-                i += 1;
-            }
+            i++;
+            if (tos)
+                m->cmds[i--].repeat = tos;
             break;                                                  // would reintroduce conditional skip with  0/1 times command
+
 
 
             // these two, ExOld and ExNew, implement a very cheeky data structure applicator.
