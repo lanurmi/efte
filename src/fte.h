@@ -72,4 +72,6 @@
 
 #endif //_DEBUG && MSVC && MSVCDEBUG
 
+extern char *StartupMacroCommand;
+
 #endif

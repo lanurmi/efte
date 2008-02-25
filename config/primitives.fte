@@ -252,5 +252,5 @@ sub dot0r     { lesshash                                                # zero p
 
 
 # --- initialisation ---
-sub OnBoot { diag decimal }
+sub OnBoot { decimal }
 

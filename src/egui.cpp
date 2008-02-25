@@ -253,7 +253,7 @@ int EGUI::Less() {
 // execution of Flag delivers the next, back into history.
 int EGUI::Flag() {
     // TODO: warning C4146: unary minus operator applied to unsigned type, result still unsigned
-    ParamStack.push(-(BranchCondition & 1));
+    ParamStack.push(-(int)(BranchCondition & 1));
     BranchCondition = (BranchCondition >> 1);
     return 1;
 }
@@ -307,7 +307,6 @@ int EGUI::Rot() {
     return 1;
 }
 
-
 // --- stack2 ---
 int EGUI::ToR() {
     ControlStack.push(ParamStack.pop());
@@ -323,7 +322,6 @@ int EGUI::RFetch() {
     ParamStack.push(ControlStack.peek(0));
     return 1;
 }
-
 
 int EGUI::I() {
     ParamStack.push(ControlStack.peek(0));
@@ -655,7 +653,7 @@ int GetString(ExState &State, GxView *view) {
 }
 
 int MemoryDump() {
-    for (int i=0; i < memory.size(); i++) {
+    for (std::vector<int>::size_type i=0; i < memory.size(); i++) {
         if (i>0) fprintf(stderr, ", ");
         fprintf(stderr, "%i=%i", i, memory[i]);
     }
@@ -663,9 +661,6 @@ int MemoryDump() {
 
     return 1;
 }
-
-
-
 
 int MemoryStore(ExState &State) {
     int loc = ParamStack.pop();
@@ -685,9 +680,6 @@ int MemoryStore(ExState &State) {
     return 1;
 }
 
-
-
-
 int MemoryFetch(ExState &State) {
     int loc = ParamStack.pop();
 
@@ -706,15 +698,12 @@ int MemoryFetch(ExState &State) {
     return 1;
 }
 
-
-
 unsigned int dp=0;            // "dictionary pointer". pointer to free memory. what is below, is allocated memory.
 
 int MemoryHere()  {
     ParamStack.push(dp);
     return 1;
 }
-
 
 int MemoryAllot()  {
     int requested = ParamStack.pop();
@@ -726,17 +715,10 @@ int MemoryAllot()  {
     return 1;
 }
 
-
 int MemoryEnd() {
     ParamStack.push(MEMORY_LIMIT);
     return 1;
 }
-
-
-
-
-
-
 
 int EGUI::ExecuteCommand(ExState &State, GxView *view)
 {
@@ -958,9 +940,6 @@ int EGUI::BeginMacro(GxView *view) {
     return 1;
 }
 
-
-
-
 int EGUI::ExecMacro(GxView *view, const char *name) {
     int num = MacroNum(name);
     if (num == 0) return 1;
@@ -968,10 +947,8 @@ int EGUI::ExecMacro(GxView *view, const char *name) {
     return result;
 }
 
-
-
 int EGUI::ExecMacro(GxView *view, int Macro) {
-    STARTFUNC("EGUI::ExecMacro\n");
+    STARTFUNC("EGUI::ExecMacro");
 
     int i, j, tos, rtos, rnos, ResultOfCommandExecution;
     ExMacro *m;
@@ -1109,9 +1086,6 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
     }
     ENDFUNCRC(ErOK);
 }
-
-
-
 
 void EGUI::SetMsg(char *Msg) {
     char CharMap[128] = "";
@@ -1322,7 +1296,6 @@ int EGUI::FileCloseX(EView *View, int CreateNew, int XClose) {
     }
     return 0;
 }
-
 
 int EGUI::FileClose(EView *View, ExState &State) {
     int x = 0;
@@ -1680,6 +1653,11 @@ void EGUI::EditorInit() {
     assert(SSBuffer != 0);
     BFI(SSBuffer, BFI_Undo) = 0; // disable undo for clipboard
     ActiveModel = 0;
+
+    ActiveView->ExecMacro("OnBoot");
+    ActiveView->ExecMacro("OnUserBoot");
+    if (StartupMacroCommand != NULL)
+        ActiveView->ExecMacro(StartupMacroCommand);
 }
 
 int EGUI::InterfaceInit(int &/*argc*/, char ** /*argv*/) {

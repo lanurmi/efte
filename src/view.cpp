@@ -146,14 +146,7 @@ int EView::ExecMacro(const char *name) {
     return result;
 }
 
-
-int onboot = 1;
 int EView::ExecCommand(int Command, ExState &State) {
-    if (onboot) {
-        onboot = 0;
-        ExecMacro("OnBoot");
-    }
-
     switch (Command) {
     case ExSwitchTo:
         return SwitchTo(State) && ExecMacro("OnSwitchTo");
