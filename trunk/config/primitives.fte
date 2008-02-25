@@ -54,15 +54,14 @@ sub sqrt      { zero tuck do inc dup lshift inc plusloop }
 sub range     { over plus swap }                # start n -> limit start conversion for DO LOOP
 
 # -- i/o --
-sub bl        { push 32 }
+sub key       { getchar; }                      # wait for key, place its ascii on stack
+sub read      { push $Char }                    # read char under cursor
 sub emit      { insertstring $toschar }
+
+sub bl        { push 32 }
 sub space     { bl emit }                       # print a space character
 sub spaces    { times space }                   # don't have loops yet
 sub cr        { linenew }                       # carriage return
-sub ok        { insertstring " ok "; cr }       # meant to be used as prompt
-#sub dot       { insertstring $tosstr; space }   # output top stack item as number
-sub key       { getchar; }                      # wait for key, place its ascii on stack
-sub read      { push $Char }                    # read char under cursor
 
 sub count     { inc dup dec fetch }
 sub type1     { count emit }
@@ -76,6 +75,7 @@ sub cursorend  { movelineend }
 
 # need:
 #  test block marked?
+#  0 split$ no fail
 
 # =============================================================================
 # String Stack Helpers
@@ -108,36 +108,28 @@ sub right$    {                                 # ( n -- )
 
 
 sub search$   {                                 # ( n1 -- n2 )
-  push -1 swap                                  # search though n1 string stack items,
+  true swap                                     # search though n1 string stack items,
   zero do                                       # matching against top string. returns
-    I inc pick$                                 # item number of matching string as n2,
+    i inc pick$                                 # item number of matching string as n2,
     over$ equals$                               # or -1
-    if drop I leave endif
+    if drop i leave endif
   loop
   drop$
 }
 
 
-sub asc   { dup$ push 1 mid$ push $tos$ }       # ( n -- c ) get ascii of nth char in top string
+sub asc   { dup$ one mid$ push $tos$ }          # ( n -- c ) get ascii of nth char in top string
 sub char$ { push$ $toschar }                    # ( c -- )   asc on stack becomes char string on stringstack
 
-
-#sub embed$ {                                    # ( asc n -- ) store char at pos n of topmost string, overwriting
-#   dup split$                                   # can't use split$ for this like this because it bombs on 0 split$
-#   push -1 left$
-#   char$ swap$ 2:merge$
-#}
-
+sub slice  { one split$ push $tos$ }            # ( -- asc ) cut first char off string and return as ascii
+sub splice { char$ swap$ merge$ }               # ( asc -- ) prepend char to string
 
 sub embed$ {                                    # ( asc n -- ) store char at pos n of topmost string, overwriting
-   dup         dup$ left$                       # cut and keep chars left of write pos
-   inc negate swap$ left$                       # cut and keep chars right of write pos
-              char$ swap$                       # put replacement char between
-                 2:merge$                       # merge all three strings
+   dup dup$ left$                               # cut and keep chars left of write pos
+   invert swap$ left$                           # cut and keep chars right of write pos (tricky)
+   splice merge$                                # recombine, with char between
 }
 
-
-# probably faster: only embeds if char has actually been changed
 sub capitalize$ {                               # ( -- )  capitalize all chars of top string
    len$ zero do                                 # loop though all chars:
       i asc dup lowercase if
@@ -147,9 +139,44 @@ sub capitalize$ {                               # ( -- )  capitalize all chars o
    loop }
 
 
+sub minleading$ {                               # ( -- )
+   len$                                         # assume removing whole string
+   dup zero do                                  # loop through string,
+      i asc bl equals not                       # looking for non-space
+      if drop i leave endif                     # found, return index to space
+   loop
+   negate left$                                 # remove leading spaces
+}
 
 
+sub mintrailing$ {                              # ( -- )
+   len$
+   dup zero do
+      dec dup asc
+      bl equals not if
+         inc leave
+      endif
+   loop
+   left$ }
 
+sub trim$ { minleading$ mintrailing$ }          # ( -- )
+
+sub store$    {                                 # ( a -- ) transfers string on string stack to a
+   len$ swap                                    #  may want to add transfer limit according string var size.
+   dup2 store inc
+   swap range do
+      slice i store
+   loop drop$ }
+
+
+sub fetch$    {                                 # ( a -- ) transfers the string at a to string stack.
+   push$ ''
+   count zero do
+      count char$ merge$
+   loop drop }
+
+sub stringvar { here len$ inc allot }           # string var description. rename to var$ ?
+                                                # may want to keep allocated size for boundary check
 
 
 # =============================================================================
@@ -157,35 +184,15 @@ sub capitalize$ {                               # ( -- )  capitalize all chars o
 # =============================================================================
 
 sub free      { memend here minus }
-sub cell      { push 1 }
+sub cell      { one }
 sub plusstore { dup tor fetch plus rfrom store } # ( x a -- )  adds x to contents of address a
 sub comma     { here cell allot store }          # ( x -- )    allocate 1 location, initialized to x
-sub zerocomma { zero comma }
-sub var       { here zerocomma }                 # for the new construct:       sub foo { var new }
+sub var       { here cell allot }                # for the new construct:       sub foo { var new }
                                                  # can then use vars like:      sub bar { var new }
                                                  #                foo fetch   bar store
+sub exchange  { dup fetch tor store rfrom }      # ( x1 a -- x2 )
+sub link      { here swap exchange comma }       # ( a -- )
 
-
-# --- string variables, rudimentary, but functional
-sub stringvar { here len$ inc times zerocomma }  # may want to keep allicated size for boundary check
-
-sub store$    {                     # ( a -- ) transfers string on string stack to a
-   dup tor                          #  may want to add transfer limit according string var size.
-   inc len$
-   dup rfrom store
-   zero do
-      i asc over store
-      inc
-   loop drop
-   drop$ }
-
-sub fetch$    {                     # ( a -- ) transfers the string at a to string stack.
-   push$ ''
-   count
-   zero do
-      count char$ merge$
-   loop
-   drop }
 
 
 
@@ -206,17 +213,17 @@ sub binary    { push  2 base store }
 sub digit     { push '0' plus dup push '9' more if push 7 plus endif }  # ( u -- asc )
 sub slashmod  { dup2 div dup tor mul minus abs rfrom }                  # ( n1 n2 -- r q )
 sub lesshash  { push$ '' } 	   		                      	      		# ( n -- n ) start pictured num conversion
-sub hold      { char$ swap$ merge$ }                                    # ( n asc -- n )
-sub hash      { base fetch slashmod tor digit hold rfrom }              # ( n1 -- n2 )
+sub hold      { splice }                                                # ( n asc -- n )
+sub hash      { base fetch slashmod tor digit splice rfrom }            # ( n1 -- n2 )
 sub hashes    { begin hash dup not until }                              # ( n1 -- n2 )
 sub hashmoretype { drop type$ }                                         # ( n -- )  end pic num conv and print
 sub hashmore  { drop }                                                  # ( n -- )  end pic num conv - should convert
                                                                         # string stack to ( a n ) to comply with standard.
                                                                         # this version leaves converted number on top of string stack
-sub sign      { negative if push '-' hold endif }                       # ( n -- }
+sub sign      { negative if push '-' splice endif }                     # ( n -- }
 sub brdotbr   { dup tor lesshash hashes rfrom sign hashmore }           # ( n -- )
 
-sub spacepad1 { bl hold }
+sub spacepad1 { bl splice }
 sub spacepad  { len$ minus
                 dup negative not if
                    dup times spacepad1
@@ -226,7 +233,7 @@ sub spacepad  { len$ minus
 # --- "app" level number output words ---
 sub dot       { dup tor
                 lesshash
-                   bl hold
+                   bl splice
                    hashes
                    rfrom sign
                 hashmoretype }
@@ -239,7 +246,7 @@ sub dotr      { tor dup tor                                             # space 
                 hashmoretype }
 
 sub dot0r     { lesshash                                                # zero padded signed number:  ( n1 u -- )
-      		    bl hold
+      		    bl splice
                 times hash
                 hashmoretype }
 
