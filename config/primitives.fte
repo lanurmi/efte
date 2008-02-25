@@ -12,10 +12,14 @@
 #
 
 # -- constants --
-sub zero      { push 0 }
-sub false     { push 0 }
-sub one       { push 1 }
-sub true      { push -1 }                       # "true" represented as all bits sets
+sub zero      { 0 }
+sub false     { 0 }
+sub one       { 1 }
+sub true      { -1 }                            # "true" represented as all bits sets
+sub cell      { 1 }                             # memory increment between ints
+sub cellplus  { 1 plus }
+sub cells     { }
+
 
 # -- stack --
 sub qdup      { dup if dup endif }              # duplicate top of stack if <> 0
@@ -28,30 +32,30 @@ sub drop2     { 2:drop }                        # drop top two items
 sub swap2     { rot tor rot rfrom }             # swap top two pairs of items
 
 # -- bool, bits, comparison  --
-sub invert    { true xor }                      # complement all bits
-sub not       { zero equals }                   # logical inversion: 0->true,  x->0
-sub lshift    { push 1 shift }                  # bit shift left once
-sub cell      { one }                           # memory increment between ints
-sub rshift    { push -1 shift }                 # bit shift right once
+sub invert    { -1 xor }                      # complement all bits
+sub not       { 0 equals }                   # logical inversion: 0->true,  x->0
+sub lshift    { 1 shift }                  # bit shift left once
+sub rshift    { -1 shift }                 # bit shift right once
 sub success   { flag }                          # push command return code
 sub failure   { flag not }                      # push inverted command return code
 sub more      { swap less }                     # true if nos > tos
 sub between   { rot tuck less minrot more or not }
-sub capital   { push 'A' 'Z' between }
-sub lowercase { push 'a' 'z' between }
-sub capitalize { dup lowercase if push 32 minus endif }
-sub negative  { zero less }                     # < zero?
+
+sub capital   { 65 90  between }
+sub lowercase { 97 122 between }
+sub capitalize { dup lowercase if 32 minus endif }
+sub negative  { 0 less }                     # < zero?
 
 # -- arithmetic --
-sub inc       { one plus }                      # increment top of stack by one
-sub dec       { one minus }                     # decrement top of stack by one
+sub inc       { 1 plus }                      # increment top of stack by one
+sub dec       { 1 minus }                     # decrement top of stack by one
 sub negate    { invert inc }                    # change sign
 sub abs       { dup negative if negate endif }  # remove sign
 sub min       { dup2 more if swap endif drop }
 sub max       { dup2 less if swap endif drop }
 sub mod       { dup2 div mul minus }            # modulo (remainder) function
 sub gcd       { begin tuck mod qdup not until } # greatest common denominator
-sub sqrt      { zero tuck do inc dup lshift inc plusloop }
+sub sqrt      { 0 tuck do inc dup lshift inc plusloop }
 sub range     { over plus swap }                # start n -> limit start conversion for DO LOOP
 
 # -- i/o --
@@ -60,7 +64,7 @@ sub read      { push $Char }                    # read char under cursor
 sub emit      { insertstring $toschar }
 
 
-sub bl        { push 32 }
+sub bl        { 32 }
 sub space     { bl emit }                       # print a space character
 sub spaces    { times space }                   # don't have loops yet
 sub cr        { linenew }                       # carriage return
@@ -123,13 +127,13 @@ sub left$     {                                 # ( n -- )
    dup negative if                              # negative n: strip first n chars
       negate len$ over minus
    else                                         # positive n: keep first n chars
-      zero swap
+      0 swap
    endif
    mid$ }
 
 sub right$    {                                 # ( n -- )
   dup negative if                               # negative n: strip last n chars
-     zero len$ rot plus
+     0 len$ rot plus
   else                                          # positive n: keep last n chars
      dup negate swap
   endif
@@ -138,7 +142,7 @@ sub right$    {                                 # ( n -- )
 
 sub search$   {                                 # ( n1 -- n2 )
   true swap                                     # search though n1 string stack items,
-  zero do                                       # matching against top string. returns
+  0 do                                       # matching against top string. returns
     i inc pick$                                 # item number of matching string as n2,
     over$ equals$                               # or -1
     if drop i leave endif
@@ -147,10 +151,10 @@ sub search$   {                                 # ( n1 -- n2 )
 }
 
 
-sub asc   { dup$ one mid$ push $tos$ }          # ( n -- c ) get ascii of nth char in top string
+sub asc   { dup$ 1 mid$ push $tos$ }          # ( n -- c ) get ascii of nth char in top string
 sub char$ { push$ $toschar }                    # ( c -- )   asc on stack becomes char string on stringstack
 
-sub slice  { one split$ push $tos$ }            # ( -- asc ) cut first char off string and return as ascii
+sub slice  { 1 split$ push $tos$ }            # ( -- asc ) cut first char off string and return as ascii
 sub splice { char$ swap$ merge$ }               # ( asc -- ) prepend char to string
 
 sub embed$ {                                    # ( asc n -- ) store char at pos n of topmost string, overwriting
@@ -160,7 +164,7 @@ sub embed$ {                                    # ( asc n -- ) store char at pos
 }
 
 sub capitalize$ {                               # ( -- )  capitalize all chars of top string
-   len$ zero do                                 # loop though all chars:
+   len$ 0 do                                 # loop though all chars:
       i asc dup lowercase if
          capitalize
          dup i embed$                           #   replace char in string
@@ -170,7 +174,7 @@ sub capitalize$ {                               # ( -- )  capitalize all chars o
 
 sub minleading$ {                               # ( -- ) remove leading spaces
    len$                                         # assume removing whole string
-   dup zero do                                  # loop through string,
+   dup 0 do                                  # loop through string,
       i asc bl equals not                       # looking for non-space
       if drop i leave endif                     # found, return index to space
    loop
@@ -180,7 +184,7 @@ sub minleading$ {                               # ( -- ) remove leading spaces
 
 sub mintrailing$ {                              # ( -- ) remove trailing spaces
    len$
-   dup zero do                                  # loop through sting chars
+   dup 0 do                                  # loop through sting chars
       dec dup asc                               # select chars, starting with last
       bl equals not if                          # until char not space
          inc leave
@@ -195,27 +199,24 @@ sub trim$ {                                     # ( -- ) remove leading and trai
    mintrailing$ }          
 
 
-
 sub brmovebr$  {                                # ( a n -- )  copy n chars of tos$ to a
    swap dup2 store inc
    swap range do
       slice i store
    loop drop$ }
 
-sub move$    {                                  # ( a -- ) transfers string on string stack to a
-   len$  brmovebr$ }                            #  may want to add transfer limit according string var size.
+sub move$    { len$  brmovebr$ }                # ( a -- ) transfers string on string stack to a
 
-sub store$    {                                 # ( a -- ) transfers string on string stack to a
-   count
-   cell minus
-   cell minus
-   len$ min
+sub store$   {                                  # ( a -- ) transfers string on string stack to a
+   count                                        # structure size
+   2 cells minus                           # subtract space for structure size and leading string count
+   len$ min                                     # move smaller of this max and string size number of chars.
    brmovebr$ }
 
 sub fetch$    {                                 # ( a -- ) transfers the string at a to string stack.
    cell plus
-   push$ ''
-   count zero do
+   ""
+   count 0 do
       count char$ merge$
    loop drop }
 
@@ -234,16 +235,16 @@ sub stringvar { here len$ inc dup inc comma allot } # string var description. re
 # using number output without setting base first will result in division by zero
 # time for checking out the OnStart: event, which should be ideally suited for one-time init.
 sub base      { var new }                        # number base for pic'd num conversion
-sub decimal   { push 10 base store }
-sub hex       { push 16 base store }
-sub octal     { push  8 base store }
-sub binary    { push  2 base store }
+sub decimal   { 10 base store }
+sub hex       { 16 base store }
+sub octal     {  8 base store }
+sub binary    {  2 base store }
 
 
 # --- pictured number conversion ---
-sub digit     { push '0' plus dup push '9' more if push 7 plus endif }  # ( u -- asc )
+sub digit     { 48 plus dup push 57 more if push 7 plus endif }  # ( u -- asc )
 sub slashmod  { dup2 div dup tor mul minus abs rfrom }                  # ( n1 n2 -- r q )
-sub lesshash  { push$ '' } 	   		                      	      		# ( n -- n ) start pictured num conversion
+sub lesshash  { "" } 	    		                      	      		# ( n -- n ) start pictured num conversion
 sub hold      { splice }                                                # ( n asc -- n )
 sub hash      { base fetch slashmod tor digit splice rfrom }            # ( n1 -- n2 )
 sub hashes    { begin hash dup not until }                              # ( n1 -- n2 )
@@ -251,13 +252,13 @@ sub hashmoretype { drop type$ }                                         # ( n --
 sub hashmore  { drop }                                                  # ( n -- )  end pic num conv - should convert
                                                                         # string stack to ( a n ) to comply with standard.
                                                                         # this version leaves converted number on top of string stack
-sub sign      { negative if push '-' splice endif }                     # ( n -- }
+sub sign      { negative if "-" splice endif }                     # ( n -- }
 sub brdotbr   { dup tor lesshash hashes rfrom sign hashmore }           # ( n -- )
 
 sub padded  {
    tor len$ minus                                                       # ( n c -- ) can't call it "pad" because pad is a
    dup negative not if                                                  #  standard word which does something else
-      rfetch swap zero do dup splice loop
+      rfetch swap 0 do dup splice loop
    endif rfrom drop2 }
 
 
