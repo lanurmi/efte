@@ -76,7 +76,7 @@ mode XML: MARKUP {
 
 eventmap XML {
    abbrev '_xml' {
-      KillWordPrev; InsertString '<?xml version="1.0" encoding="ISO-8859-1"?>'; LineNew; MoveLineStart;
+      KillWordPrev; '<?xml version="1.0" encoding="ISO-8859-1"?>' InsertString LineNew; MoveLineStart;
       Fail;
    }
 }

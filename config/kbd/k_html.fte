@@ -9,12 +9,12 @@
 
 eventmap HTML {
 # Entities
-    key [C+E_&]     { InsertString "&amp;"; }
-    key [C+E_<]     { InsertString "&lt;"; }
-    key [C+E_>]     { InsertString "&gt;"; }
-    key [C+E_"]     { InsertString "&quot;"; }
-    key [C+E_Space]   { InsertString "&nbsp;"; }
-    key [C+Space]   { InsertString "&nbsp;"; }
+    key [C+E_&]     { "&amp;" InsertString; }
+    key [C+E_<]     { "&lt;" InsertString; }
+    key [C+E_>]     { "&gt;" InsertString; }
+    key [C+E_"]     { "&quot;" InsertString; }
+    key [C+E_Space]   { "&nbsp;" InsertString; }
+    key [C+Space]   { "&nbsp;" InsertString; }
 # HTML Skeleton
     key [C+E_0]     { HTML_Base }
 # Run the browser

@@ -17,8 +17,8 @@ eventmap SGML {
 
 # character escapes
 
-    key [C+E_&]         { InsertString "&amp;"; }
-    key [C+E_<]         { InsertString "&lt;"; }
-    key [C+E_>]         { InsertString "&gt;"; }
-    key [C+E_@]         { InsertString "&copy;"; }
+    key [C+E_&]         { "&amp;" InsertString; }
+    key [C+E_<]         { "&lt;" InsertString; }
+    key [C+E_>]         { "&gt;" InsertString; }
+    key [C+E_@]         { "&copy;" InsertString; }
 }

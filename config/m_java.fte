@@ -1,21 +1,21 @@
 
 sub JAVA_Base {
     MoveFileStart;
-    InsertString "package /* package name */;";
+    "package /* package name */;" InsertString;
     2:LineNew;
-    InsertString "import java.util.*;"; LineNew;
-    InsertString "import javax.swing.*;"; 2:LineNew;
-    InsertString "public class ";
+    "import java.util.*;" InsertString; LineNew;
+    "import javax.swing.*;" InsertString; 2:LineNew;
+    "public class " InsertString;
     InsertString $FileBaseName;
     LineNew;
-    InsertString "{"; LineIndent;
+    "{" InsertString; LineIndent;
     2:LineNew;
-    InsertString "public ";
+    "public " InsertString;
     InsertString $FileBaseName;
-    InsertString "()"; LineIndent; LineNew;
-    InsertString "{"; LineIndent; 2:LineNew;
-    InsertString "}"; LineIndent; 2:LineNew;
-    InsertString "}"; LineIndent; LineNew;
+    "()" InsertString; LineIndent; LineNew;
+    "{" InsertString; LineIndent; 2:LineNew;
+    "}" InsertString; LineIndent; 2:LineNew;
+    "}" InsertString; LineIndent; LineNew;
     MoveFileStart; 8:MoveRight;
 }
 

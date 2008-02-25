@@ -7,107 +7,107 @@
 # XML+XSLT declaration
 sub XSLT_Base {
     MoveFileStart; MoveLineStart;
-    InsertString "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"; LineNew;
-    InsertString "<xsl:transform version=\"1.0\" xmlns:xsl=\"http:\/\/www.w3.org\/1999\/XSL\/Transform\"";
+    "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" InsertString; LineNew;
+    "<xsl:transform version=\"1.0\" xmlns:xsl=\"http:\/\/www.w3.org\/1999\/XSL\/Transform\"" InsertString;
     LineNew;
-    4:MoveRight; InsertString "xmlns:msxsl=\"urn:schemas-microsoft-com:xslt\"";
+    4:MoveRight; "xmlns:msxsl=\"urn:schemas-microsoft-com:xslt\"" InsertString;
     LineNew;
-    InsertString "exclude-result-prefixes=\"msxsl\">";
+    "exclude-result-prefixes=\"msxsl\">" InsertString;
     LineNew;
-    InsertString "<xsl:output method=\"html\" version=\"4.0\" encoding=\"UTF-8\" indent=\"yes\"";
+    "<xsl:output method=\"html\" version=\"4.0\" encoding=\"UTF-8\" indent=\"yes\"" InsertString;
     LineNew;
-    InsertString "doctype-public=\"-\/\/W3C\/\/DTD HTML 4.0 Transitional\/\/EN\" \/>";
+    "doctype-public=\"-\/\/W3C\/\/DTD HTML 4.0 Transitional\/\/EN\" \/>" InsertString;
     LineNew;
-    InsertString "<xsl:preserve-space elements=\"*\" \/>";
+    "<xsl:preserve-space elements=\"*\" \/>" InsertString;
     2:LineNew;
     4:MoveLeft;
     LineNew;
-    InsertString "</xsl:transform>"; LineNew;
+    "</xsl:transform>" InsertString; LineNew;
     2:MoveUp; MoveLineStart;
 }
 
 sub XSLT_Template {
-    InsertString "<xsl:template match=\"\" mode=\"\" name=\"\">"; LineNew;
-    InsertString "<\/xsl:template>"; LineNew;
+    "<xsl:template match=\"\" mode=\"\" name=\"\">" InsertString; LineNew;
+    "<\/xsl:template>" InsertString; LineNew;
     2:MoveUp; MoveLineEnd; 10:MoveLeft;
 }
 
 sub XSLT_Param {
-    InsertString "<xsl:param name=\"\" />"; LineNew;
+    "<xsl:param name=\"\" />" InsertString; LineNew;
     1:MoveUp; MoveLineEnd; 4:MoveLeft;
 }
 
 sub XSLT_Variable {
-    InsertString "<xsl:variable name=\"\" select=\"\" />"; LineNew;
+    "<xsl:variable name=\"\" select=\"\" />" InsertString; LineNew;
     1:MoveUp; MoveLineEnd; 14:MoveLeft;
 }
 
 sub XSLT_ApplyTemplate {
-    InsertString "<xsl:apply-templates select=\"\" mode=\"\">"; LineNew;
-    4:MoveRight; InsertString "<xsl:sort select=\"\" data-type=\"\" />"; LineNew;
-    InsertString "<xsl:with-param name=\"\" select=\"\" />"; LineNew;
-    4:MoveLeft; InsertString "</xsl:apply-templates>"; LineNew;
+    "<xsl:apply-templates select=\"\" mode=\"\">" InsertString; LineNew;
+    4:MoveRight; "<xsl:sort select=\"\" data-type=\"\" />" InsertString; LineNew;
+    "<xsl:with-param name=\"\" select=\"\" />" InsertString; LineNew;
+    4:MoveLeft; "</xsl:apply-templates>" InsertString; LineNew;
     4:MoveUp; MoveLineEnd; 10:MoveLeft;
 }
 
 sub XSLT_CallTemaplate {
-    InsertString "<xsl:call-template name=\"\">"; LineNew;
-    4:MoveRight; InsertString "<xsl:with-param name=\"\" select=\"\" />"; LineNew;
-    4:MoveLeft; InsertString "</xsl:call-template>"; LineNew;
+    "<xsl:call-template name=\"\">" InsertString; LineNew;
+    4:MoveRight; "<xsl:with-param name=\"\" select=\"\" />" InsertString; LineNew;
+    4:MoveLeft; "</xsl:call-template>" InsertString; LineNew;
     3:MoveUp; MoveLineEnd; 2:MoveLeft;
 }
 
 sub XSLT_If {
-    InsertString "<xsl:if test=\"\">"; LineNew;
-    InsertString "</xsl:if>"; LineNew;
+    "<xsl:if test=\"\">" InsertString; LineNew;
+    "</xsl:if>" InsertString; LineNew;
     2:MoveUp; MoveLineEnd; 2:MoveLeft;
 }
 
 sub XSLT_CopyOf {
-    InsertString "<xsl:copy-of select=\"\" />"; LineNew;
+    "<xsl:copy-of select=\"\" />" InsertString; LineNew;
     1:MoveUp; MoveLineEnd; 4:MoveLeft;
 }
 
 sub XSLT_Copy {
-    InsertString "<xsl:copy use-attribute-sets=\"\">"; LineNew;
-    InsertString "</xsl:copy>"; LineNew;
+    "<xsl:copy use-attribute-sets=\"\">" InsertString; LineNew;
+    "</xsl:copy>" InsertString; LineNew;
     2:MoveUp; MoveLineEnd; 2:MoveLeft;
 }
 
 sub XSLT_ValueOf {
-    InsertString "<xsl:value-of select=\"\" disable-output-escaping=\"no\" />"; LineNew;
+    "<xsl:value-of select=\"\" disable-output-escaping=\"no\" />" InsertString; LineNew;
     1:MoveUp; MoveLineEnd; 33:MoveLeft;
 }
 
 sub XSLT_Text {
-    InsertString "<xsl:text disable-output-escaping=\"no\">";
-    InsertString "</xsl:text>"; LineNew;
+    "<xsl:text disable-output-escaping=\"no\">" InsertString;
+    "</xsl:text>" InsertString; LineNew;
     1:MoveUp; MoveLineEnd; 11:MoveLeft;
 }
 
 sub XSLT_ForEach {
-    InsertString "<xsl:for-each select=\"\">"; LineNew;
-    InsertString "</xsl:for-each />"; LineNew;
+    "<xsl:for-each select=\"\">" InsertString; LineNew;
+    "</xsl:for-each />" InsertString; LineNew;
     2:MoveUp; MoveLineEnd; 2:MoveLeft;
 }
 
 sub XSLT_Choose {
-    InsertString "<xsl:choose>"; LineNew;
-    4:MoveRight; InsertString "<xsl:when test=\"\">"; LineNew;
-    InsertString "</xsl:when>"; LineNew;
-    InsertString "<xsl:otherwise>"; LineNew;
-    InsertString "</xsl:otherwise>"; LineNew;
-    4:MoveLeft; InsertString "</xsl:choose>"; LineNew;
+    "<xsl:choose>" InsertString; LineNew;
+    4:MoveRight; "<xsl:when test=\"\">" InsertString; LineNew;
+    "</xsl:when>" InsertString; LineNew;
+    "<xsl:otherwise>" InsertString; LineNew;
+    "</xsl:otherwise>" InsertString; LineNew;
+    4:MoveLeft; "</xsl:choose>" InsertString; LineNew;
     5:MoveUp; MoveLineEnd; 2:MoveLeft;
 }
 
 sub XSLT_Key {
-    InsertString "<xsl:key name=\"\" match=\"\" use=\"\" />"; LineNew;
+    "<xsl:key name=\"\" match=\"\" use=\"\" />" InsertString; LineNew;
     1:MoveUp; MoveLineStart; 15:MoveRight;
 }
 
 sub XSLT_Sort {
-    InsertString "<xsl:sort select=\"\" lang=\"\" data-type=\"\" order=\"\" case-order=\"\" />";
+    "<xsl:sort select=\"\" lang=\"\" data-type=\"\" order=\"\" case-order=\"\" />" InsertString;
     LineNew;
 1:MoveUp; MoveLineStart; 18:MoveRight;
 }

@@ -24,166 +24,166 @@
 
 sub RST_LISTS_1ENT { LineNew; MoveUp; MoveWordRight; MoveDown; }
 
-sub RST_CODE { InsertString "::"; 2:LineNew; MoveUp; 2:MoveRight; }
+sub RST_CODE { "::" InsertString; 2:LineNew; MoveUp; 2:MoveRight; }
 
-sub RST_INC  { LineNew;  MoveLineStart; InsertString ".. include:: ";    }
+sub RST_INC  { LineNew;  MoveLineStart; ".. include:: " InsertString;    }
 
 # ROLE ========================================================================
-sub RST_ROLE_EMP  { InsertString ":emphasis:``";        MoveLeft; }
-sub RST_ROLE_LIT  { InsertString ":literal:``";         MoveLeft; }
-sub RST_ROLE_STR  { InsertString ":strong:``";          MoveLeft; }
-sub RST_ROLE_SUB  { InsertString ":sub:``";             MoveLeft; }
-sub RST_ROLE_SUP  { InsertString ":sup:``";             MoveLeft; }
-sub RST_ROLE_TIT  { InsertString ":title:``";           MoveLeft; }
-sub RST_ROLE_PEP  { InsertString ":PEP:``";             MoveLeft; }
-sub RST_ROLE_RFC  { InsertString ":RFC:``";             MoveLeft; }
+sub RST_ROLE_EMP  { ":emphasis:``" InsertString;        MoveLeft; }
+sub RST_ROLE_LIT  { ":literal:``" InsertString;         MoveLeft; }
+sub RST_ROLE_STR  { ":strong:``" InsertString;          MoveLeft; }
+sub RST_ROLE_SUB  { ":sub:``" InsertString;             MoveLeft; }
+sub RST_ROLE_SUP  { ":sup:``" InsertString;             MoveLeft; }
+sub RST_ROLE_TIT  { ":title:``" InsertString;           MoveLeft; }
+sub RST_ROLE_PEP  { ":PEP:``" InsertString;             MoveLeft; }
+sub RST_ROLE_RFC  { ":RFC:``" InsertString;             MoveLeft; }
 
-sub RST_ROLE_RAW  { InsertString "raw-:``";           3:MoveLeft; }
+sub RST_ROLE_RAW  { "raw-:``" InsertString;           3:MoveLeft; }
 sub RST_ROLE_DRAW {
     LineNew;
-    InsertString ".. role:: raw-(raw)";
+    ".. role:: raw-(raw)" InsertString;
     LineNew;
-    InsertString "   :format: ";
+    "   :format: " InsertString;
     LineNew; 2:MoveUp; 11:MoveRight;
 }
 
 # Inline ======================================================================
-sub RST_INLINE_EMP      { InsertString "**";        MoveLeft;   }
-sub RST_INLINE_STR      { InsertString "****";      2:MoveLeft; }
-sub RST_INLINE_INT      { InsertString "``";        MoveLeft;   }
-sub RST_INLINE_LIT      { InsertString "````";      2:MoveLeft; }
+sub RST_INLINE_EMP      { "**" InsertString;        MoveLeft;   }
+sub RST_INLINE_STR      { "****" InsertString;      2:MoveLeft; }
+sub RST_INLINE_INT      { "``" InsertString;        MoveLeft;   }
+sub RST_INLINE_LIT      { "````" InsertString;      2:MoveLeft; }
 
-sub RST_INLINE_HLINK    { InsertString "``_";       2:MoveLeft; }
-sub RST_INLINE_ELINK    { InsertString "`<>`_";     4:MoveLeft; }
-sub RST_INLINE_ITAG     { InsertString "_``";       MoveLeft;   } # not set parse
-sub RST_INLINE_REF      { InsertString "[]_";       2:MoveLeft; }
-sub RST_INLINE_REFA     { InsertString "[#]_";      2:MoveLeft; }
-sub RST_INLINE_REFS     { InsertString "||_";       2:MoveLeft; }
+sub RST_INLINE_HLINK    { "``_" InsertString;       2:MoveLeft; }
+sub RST_INLINE_ELINK    { "`<>`_" InsertString;     4:MoveLeft; }
+sub RST_INLINE_ITAG     { "_``" InsertString;       MoveLeft;   } # not set parse
+sub RST_INLINE_REF      { "[]_" InsertString;       2:MoveLeft; }
+sub RST_INLINE_REFA     { "[#]_" InsertString;      2:MoveLeft; }
+sub RST_INLINE_REFS     { "||_" InsertString;       2:MoveLeft; }
 
 # Admonitions =================================================================
-sub RST_ADM_ATTE  { LineNew;  MoveLineStart; InsertString ".. attention:: ";    }
-sub RST_ADM_CAUT  { LineNew;  MoveLineStart; InsertString ".. caution:: ";      }
-sub RST_ADM_DANG  { LineNew;  MoveLineStart; InsertString ".. danger:: ";       }
-sub RST_ADM_ERRO  { LineNew;  MoveLineStart; InsertString ".. error:: ";        }
-sub RST_ADM_HINT  { LineNew;  MoveLineStart; InsertString ".. hint:: ";         }
-sub RST_ADM_IMPO  { LineNew;  MoveLineStart; InsertString ".. important:: ";    }
-sub RST_ADM_NOTE  { LineNew;  MoveLineStart; InsertString ".. note:: ";         }
-sub RST_ADM_TIP   { LineNew;  MoveLineStart; InsertString ".. tip:: ";          }
-sub RST_ADM_WARN  { LineNew;  MoveLineStart; InsertString ".. warning:: ";      }
-sub RST_ADM_ADMO  { LineNew;  MoveLineStart; InsertString ".. admonition:: ";   }
-sub RST_ADM_TITL  { LineNew;  MoveLineStart; InsertString ".. title:: ";        }
+sub RST_ADM_ATTE  { LineNew;  MoveLineStart; ".. attention:: " InsertString;    }
+sub RST_ADM_CAUT  { LineNew;  MoveLineStart; ".. caution:: " InsertString;      }
+sub RST_ADM_DANG  { LineNew;  MoveLineStart; ".. danger:: " InsertString;       }
+sub RST_ADM_ERRO  { LineNew;  MoveLineStart; ".. error:: " InsertString;        }
+sub RST_ADM_HINT  { LineNew;  MoveLineStart; ".. hint:: " InsertString;         }
+sub RST_ADM_IMPO  { LineNew;  MoveLineStart; ".. important:: " InsertString;    }
+sub RST_ADM_NOTE  { LineNew;  MoveLineStart; ".. note:: " InsertString;         }
+sub RST_ADM_TIP   { LineNew;  MoveLineStart; ".. tip:: " InsertString;          }
+sub RST_ADM_WARN  { LineNew;  MoveLineStart; ".. warning:: " InsertString;      }
+sub RST_ADM_ADMO  { LineNew;  MoveLineStart; ".. admonition:: " InsertString;   }
+sub RST_ADM_TITL  { LineNew;  MoveLineStart; ".. title:: " InsertString;        }
 
 # Document Parts ==============================================================
-sub RST_PART_CON  { LineNew;  MoveLineStart; InsertString ".. contents:: ";     }
-sub RST_PART_CON_ { LineNew;  MoveLineStart; InsertString ".. contents:: ";
-    LineNew; InsertString "   :depth:";
-    LineNew; InsertString ":backlinks:";
-    LineNew; InsertString ":local:";
+sub RST_PART_CON  { LineNew;  MoveLineStart; ".. contents:: " InsertString;     }
+sub RST_PART_CON_ { LineNew;  MoveLineStart; ".. contents:: " InsertString;
+    LineNew; "   :depth:" InsertString;
+    LineNew; ":backlinks:" InsertString;
+    LineNew; ":local:" InsertString;
     LineNew;
     4:MoveUp; MoveLineEnd;
 }
 
-sub RST_PART_SEC  { LineNew;  MoveLineStart; InsertString ".. sectnum:: ";      }
-sub RST_PART_SEC_ { LineNew;  MoveLineStart; InsertString ".. sectnum:: ";
-    LineNew; InsertString "   :depth:";
-    LineNew; InsertString ":prefix:";
-    LineNew; InsertString ":suffix:";
-    LineNew; InsertString ":start:";
+sub RST_PART_SEC  { LineNew;  MoveLineStart; ".. sectnum:: " InsertString;      }
+sub RST_PART_SEC_ { LineNew;  MoveLineStart; ".. sectnum:: " InsertString;
+    LineNew; "   :depth:" InsertString;
+    LineNew; ":prefix:" InsertString;
+    LineNew; ":suffix:" InsertString;
+    LineNew; ":start:" InsertString;
     LineNew;
     5:MoveUp; MoveLineEnd;
 }
 
-sub RST_PART_HEAD { LineNew;  MoveLineStart; InsertString ".. header:: ";       }
-sub RST_PART_FOOT { LineNew;  MoveLineStart; InsertString ".. footer:: ";       }
+sub RST_PART_HEAD { LineNew;  MoveLineStart; ".. header:: " InsertString;       }
+sub RST_PART_FOOT { LineNew;  MoveLineStart; ".. footer:: " InsertString;       }
 
 
 # Image =======================================================================
 sub RST_IMAGE_FULL{
-    LineNew; MoveLineStart; InsertString ".. image:: ";
-    LineNew; InsertString "   :alt:";
-    LineNew; InsertString ":height:";
-    LineNew; InsertString ":width:";
-    LineNew; InsertString ":scale:";
-    LineNew; InsertString ":align:";
-    LineNew; InsertString ":target:";
+    LineNew; MoveLineStart; ".. image:: " InsertString;
+    LineNew; "   :alt:" InsertString;
+    LineNew; ":height:" InsertString;
+    LineNew; ":width:" InsertString;
+    LineNew; ":scale:" InsertString;
+    LineNew; ":align:" InsertString;
+    LineNew; ":target:" InsertString;
     LineNew;
     7:MoveUp; MoveLineEnd;
 }
 
-sub RST_IMAGE { InsertString ".. image:: "; }
+sub RST_IMAGE { ".. image:: " InsertString; }
 
 sub RST_FIGURE_FULL{
-    LineNew; MoveLineStart; InsertString ".. figure:: ";
-    LineNew; InsertString "   :figwidth:";
-    LineNew; InsertString ":figclass:";
-    LineNew; InsertString ":align:";
+    LineNew; MoveLineStart; ".. figure:: " InsertString;
+    LineNew; "   :figwidth:" InsertString;
+    LineNew; ":figclass:" InsertString;
+    LineNew; ":align:" InsertString;
     LineNew;
     4:MoveUp; MoveLineEnd;
 }
 
-sub RST_FIGURE { InsertString ".. figure:: "; }
+sub RST_FIGURE { ".. figure:: " InsertString; }
 
 # Body Elements ===============================================================
-sub RST_BOEL_TOPI  { LineNew;  MoveLineStart; InsertString ".. topic:: ";           }
-sub RST_BOEL_SIDE  { LineNew;  MoveLineStart; InsertString ".. sidebar:: ";         }
-sub RST_BOEL_LBLK  { LineNew;  MoveLineStart; InsertString ".. line-block:: ";      }
-sub RST_BOEL_PLIT  { LineNew;  MoveLineStart; InsertString ".. parsed-literal:: ";  }
-sub RST_BOEL_RUBR  { LineNew;  MoveLineStart; InsertString ".. rubric:: ";          }
-sub RST_BOEL_EPIG  { LineNew;  MoveLineStart; InsertString ".. epigraph:: ";        }
-sub RST_BOEL_HIGH  { LineNew;  MoveLineStart; InsertString ".. highlights:: ";      }
-sub RST_BOEL_PQUO  { LineNew;  MoveLineStart; InsertString ".. pull-quote:: ";      }
-sub RST_BOEL_COMP  { LineNew;  MoveLineStart; InsertString ".. compound:: ";        }
-sub RST_BOEL_CONT  { LineNew;  MoveLineStart; InsertString ".. container:: ";       }
+sub RST_BOEL_TOPI  { LineNew;  MoveLineStart; ".. topic:: " InsertString;           }
+sub RST_BOEL_SIDE  { LineNew;  MoveLineStart; ".. sidebar:: " InsertString;         }
+sub RST_BOEL_LBLK  { LineNew;  MoveLineStart; ".. line-block:: " InsertString;      }
+sub RST_BOEL_PLIT  { LineNew;  MoveLineStart; ".. parsed-literal:: " InsertString;  }
+sub RST_BOEL_RUBR  { LineNew;  MoveLineStart; ".. rubric:: " InsertString;          }
+sub RST_BOEL_EPIG  { LineNew;  MoveLineStart; ".. epigraph:: " InsertString;        }
+sub RST_BOEL_HIGH  { LineNew;  MoveLineStart; ".. highlights:: " InsertString;      }
+sub RST_BOEL_PQUO  { LineNew;  MoveLineStart; ".. pull-quote:: " InsertString;      }
+sub RST_BOEL_COMP  { LineNew;  MoveLineStart; ".. compound:: " InsertString;        }
+sub RST_BOEL_CONT  { LineNew;  MoveLineStart; ".. container:: " InsertString;       }
 
 
 # Table =======================================================================
-sub RST_TAB_TIT  { LineNew;  MoveLineStart; InsertString ".. table:: ";    }
+sub RST_TAB_TIT  { LineNew;  MoveLineStart; ".. table:: " InsertString;    }
 sub RST_TABS_2C  {
-    LineNew; InsertString "===== ====="; LineNew;
-    LineNew; InsertString "===== ====="; LineNew; 2:MoveUp; MoveLineEnd;
+    LineNew; "===== =====" InsertString; LineNew;
+    LineNew; "===== =====" InsertString; LineNew; 2:MoveUp; MoveLineEnd;
 }
 
 sub RST_TABS_22H {
-    LineNew; InsertString "===== ====="; LineNew;
-    LineNew; InsertString "===== ====="; LineNew; LineNew;
-    LineNew; InsertString "===== ====="; LineNew; 5:MoveUp; MoveLineEnd;
+    LineNew; "===== =====" InsertString; LineNew;
+    LineNew; "===== =====" InsertString; LineNew; LineNew;
+    LineNew; "===== =====" InsertString; LineNew; 5:MoveUp; MoveLineEnd;
 }
 
 sub RST_TABS_22S {
-    LineNew; InsertString "=====  =====  ======"; LineNew;
-    LineNew; InsertString "------------  ------"; LineNew;
-    LineNew; InsertString "=====  =====  ======"; LineNew; LineNew;
-    LineNew; InsertString "=====  =====  ======"; LineNew; 7:MoveUp; MoveLineEnd;
+    LineNew; "=====  =====  ======" InsertString; LineNew;
+    LineNew; "------------  ------" InsertString; LineNew;
+    LineNew; "=====  =====  ======" InsertString; LineNew; LineNew;
+    LineNew; "=====  =====  ======" InsertString; LineNew; 7:MoveUp; MoveLineEnd;
 }
 
 sub RST_TABG_22  {
-    LineNew; InsertString "+-----------+----------+";
-    LineNew; InsertString "|           |          |"
-    LineNew; InsertString "+-----------+----------+";
-    LineNew; InsertString "|           |          |"
-    LineNew; InsertString "+-----------+----------+"; LineNew; 4:MoveUp; MoveRight;
+    LineNew; "+-----------+----------+" InsertString;
+    LineNew; "|           |          |" InsertString
+    LineNew; "+-----------+----------+" InsertString;
+    LineNew; "|           |          |" InsertString
+    LineNew; "+-----------+----------+" InsertString; LineNew; 4:MoveUp; MoveRight;
 }
 
 sub RST_TABG_22H {
-    LineNew; InsertString "+-----------+----------+";
-    LineNew; InsertString "|           |          |"
-    LineNew; InsertString "+===========+==========+";
-    LineNew; InsertString "|           |          |"
-    LineNew; InsertString "+-----------+----------+";
-    LineNew; InsertString "|           |          |"
-    LineNew; InsertString "+-----------+----------+"; LineNew; 6:MoveUp; MoveRight;
+    LineNew; "+-----------+----------+" InsertString;
+    LineNew; "|           |          |" InsertString
+    LineNew; "+===========+==========+" InsertString;
+    LineNew; "|           |          |" InsertString
+    LineNew; "+-----------+----------+" InsertString;
+    LineNew; "|           |          |" InsertString
+    LineNew; "+-----------+----------+" InsertString; LineNew; 6:MoveUp; MoveRight;
 }
 
 sub RST_TABCSV   { LineNew; }
-sub RST_TABLIST  { LineNew;  MoveLineStart; InsertString ".. list-table:: ";
-    LineNew;         InsertString "   :widths:";
-    LineNew;            InsertString ":header-rows:";
-    LineNew;            InsertString ":stub-columns:";
+sub RST_TABLIST  { LineNew;  MoveLineStart; ".. list-table:: " InsertString;
+    LineNew;         "   :widths:" InsertString;
+    LineNew;            ":header-rows:" InsertString;
+    LineNew;            ":stub-columns:" InsertString;
     LineNew;
-    LineNew;             InsertString "* - ";
-    LineNew;             InsertString "  - ";
-    LineNew; 2:MoveLeft; InsertString "* - ";
-    LineNew;             InsertString "  - ";
+    LineNew;             "* - " InsertString;
+    LineNew;             "  - " InsertString;
+    LineNew; 2:MoveLeft; "* - " InsertString;
+    LineNew;             "  - " InsertString;
     LineNew; 9:MoveUp; MoveLineEnd;
 }
 
@@ -201,32 +201,32 @@ sub RST_TABLIST  { LineNew;  MoveLineStart; InsertString ".. list-table:: ";
 
 
 sub RST_H1 {
-    MoveLineEnd; LineNew; 100:InsertString "=";  # =========
+    MoveLineEnd; LineNew; 100:"=" InsertString;  # =========
     MoveUp; MoveLineEnd; LineTrim;MoveLineEnd; MoveDown; KillToLineEnd;
 }
 
 sub RST_H2 {
-    MoveLineEnd; LineNew; 100:InsertString "-";  # ---------
+    MoveLineEnd; LineNew; 100:"-" InsertString;  # ---------
     MoveUp; MoveLineEnd; LineTrim;MoveLineEnd; MoveDown; KillToLineEnd;
 }
 
 sub RST_H3 {
-    MoveLineEnd; LineNew; 100:InsertString "\""; # """""""""
+    MoveLineEnd; LineNew; 100:"\""; # """"""""" InsertString
     MoveUp; MoveLineEnd; LineTrim;MoveLineEnd; MoveDown; KillToLineEnd;
 }
 
 sub RST_H4 {
-    MoveLineEnd; LineNew; 100:InsertString "'";  # '''''''''
+    MoveLineEnd; LineNew; 100:"'" InsertString;  # '''''''''
     MoveUp; MoveLineEnd; LineTrim;MoveLineEnd; MoveDown; KillToLineEnd;
 }
 
 sub RST_H5 {
-    MoveLineEnd; LineNew; 100:InsertString "`";  # `````````
+    MoveLineEnd; LineNew; 100:"`" InsertString;  # `````````
     MoveUp; MoveLineEnd; LineTrim;MoveLineEnd; MoveDown; KillToLineEnd;
 }
 
 sub RST_T {
-    MoveLineEnd; LineNew; 100:InsertString "=";  # =========
+    MoveLineEnd; LineNew; 100:"=" InsertString;  # =========
     MoveUp; MoveLineEnd; LineTrim;MoveLineEnd; MoveDown; KillToLineEnd;
 }
 

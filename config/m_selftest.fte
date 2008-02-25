@@ -30,6 +30,6 @@ mode SelfTest: PLAIN {
 }
 
 eventmap SelfTest: MODEL {
-  key [C+P] { Find "FAIL" "ar" }
-  key [C+N] { Find "FAIL" "a" }
+  key [C+P] { "FAIL" "ar" Find }
+  key [C+N] { "FAIL" "a" Find }
 }

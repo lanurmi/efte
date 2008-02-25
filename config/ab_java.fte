@@ -11,48 +11,48 @@ eventmap JAVA {
     abbrev 'ifx' {
         KillWordPrev;
 %if(BSD_BRACE)
-        InsertString 'if ()'; MoveLeft; SavePos; MoveRight; LineIndent; LineNew;
-        InsertString '{'; LineIndent; LineNew;
+        'if ()' InsertString; MoveLeft; SavePos; MoveRight; LineIndent; LineNew;
+        '{' InsertString; LineIndent; LineNew;
 %endif
 %if(1TBS_BRACE)
-        InsertString 'if () {'; 3:MoveLeft; SavePos; 3:MoveRight; LineIndent; LineNew; 
+        'if () {' InsertString; 3:MoveLeft; SavePos; 3:MoveRight; LineIndent; LineNew; 
 %endif
-        InsertString '}'; LineIndent; 
+        '}' InsertString; LineIndent; 
         MoveSavedPos; Fail; # do not insert typed character
     }
     abbrev 'whx' { 
         KillWordPrev;
 %if(BSD_BRACE)
-        InsertString 'while ()'; MoveLeft; SavePos; MoveRight; LineIndent; LineNew;
-        InsertString '{'; LineIndent; LineNew;
+        'while ()' InsertString; MoveLeft; SavePos; MoveRight; LineIndent; LineNew;
+        '{' InsertString; LineIndent; LineNew;
 %endif
 %if(1TBS_BRACE)
-        InsertString 'while () {'; 3:MoveLeft; SavePos; 3:MoveRight; LineIndent; LineNew; 
+        'while () {' InsertString; 3:MoveLeft; SavePos; 3:MoveRight; LineIndent; LineNew; 
 %endif
-        InsertString '}'; LineIndent; 
+        '}' InsertString; LineIndent; 
         MoveSavedPos; Fail;
     }
     abbrev 'swx' { 
         KillWordPrev;
 %if(BSD_BRACE)
-        InsertString 'switch ()'; MoveLeft; SavePos; MoveRight; LineIndent; LineNew;
-        InsertString '{'; LineIndent; LineNew;
+        'switch ()' InsertString; MoveLeft; SavePos; MoveRight; LineIndent; LineNew;
+        '{' InsertString; LineIndent; LineNew;
 %endif
 %if(1TBS_BRACE)
-        InsertString 'switch () {'; 3:MoveLeft; SavePos; 3:MoveRight; LineIndent; LineNew; 
+        'switch () {' InsertString; 3:MoveLeft; SavePos; 3:MoveRight; LineIndent; LineNew; 
 %endif
-        InsertString '}'; LineIndent; 
+        '}' InsertString; LineIndent; 
         MoveSavedPos; Fail;
     }
     abbrev 'cax' {
-        KillWordPrev; InsertString 'case :'; LineIndent; LineNew;
-        InsertString 'break;'; LineIndent;
+        KillWordPrev; 'case :' InsertString; LineIndent; LineNew;
+        'break;' InsertString; LineIndent;
         MoveUp; MoveLineEnd; MovePrev;
         Fail;
     }
     abbrev 'dex' {
-        KillWordPrev; InsertString 'default:'; LineIndent; 2:LineNew;
-        InsertString 'break;'; LineIndent;
+        KillWordPrev; 'default:' InsertString; LineIndent; 2:LineNew;
+        'break;' InsertString; LineIndent;
         MoveUp; LineIndent;
         Fail;
     }
