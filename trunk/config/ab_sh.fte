@@ -1,34 +1,34 @@
 eventmap SH {
     abbrev 'ifx' {
-        KillWordPrev; InsertString 'if [  ]'; LineIndent; LineNew; 
-        InsertString 'then'; LineIndent; LineNew; 
-        InsertString 'fi'; LineIndent; 
+        KillWordPrev; 'if [  ]' InsertString; LineIndent; LineNew; 
+        'then' InsertString; LineIndent; LineNew; 
+        'fi' InsertString; LineIndent; 
         2:MoveUp; MoveLineEnd; 2:MoveLeft; 
         Fail; # do not insert typed character
     }
     abbrev 'fox' {
-        KillWordPrev; InsertString 'for  in'; LineIndent; LineNew; 
-        InsertString 'do'; LineIndent; LineNew; 
-        InsertString 'done'; LineIndent; 
+        KillWordPrev; 'for  in' InsertString; LineIndent; LineNew; 
+        'do' InsertString; LineIndent; LineNew; 
+        'done' InsertString; LineIndent; 
         2:MoveUp; MoveLineEnd; 3:MoveLeft; 
         Fail; # do not insert typed character
     }
     abbrev 'whx' { 
-        KillWordPrev; InsertString 'while [  ]'; LineIndent; LineNew;
-        InsertString 'do'; LineIndent; LineNew; 
-        InsertString 'done'; LineIndent; 
+        KillWordPrev; 'while [  ]' InsertString; LineIndent; LineNew;
+        'do' InsertString; LineIndent; LineNew; 
+        'done' InsertString; LineIndent; 
         2:MoveUp; MoveLineEnd; 2:MoveLeft; 
         Fail;
     }
     abbrev 'cax' { 
-        KillWordPrev; InsertString 'case  of'; LineIndent; LineNew;
-        InsertString 'esac'; LineIndent; 
+        KillWordPrev; 'case  of' InsertString; LineIndent; LineNew;
+        'esac' InsertString; LineIndent; 
         MoveUp; MoveLineEnd; 3:MoveLeft; 
         Fail;
     }
     abbrev 'dox' {
-        KillWordPrev; InsertString 'do'; LineIndent; 2:LineNew;
-        InsertString 'done'; LineIndent; 
+        KillWordPrev; 'do' InsertString; LineIndent; 2:LineNew;
+        'done' InsertString; LineIndent; 
         MoveUp; LineIndent; MoveLineEnd;
         Fail;
     }

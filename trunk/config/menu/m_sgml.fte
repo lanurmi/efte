@@ -1,10 +1,10 @@
 # SGML
 
 menu SGML_Meta {
-    item    "Ampersand" { InsertString "&amp;"; }
-    item    "Less Than\tC-E <" { InsertString "&lt;"; }
-    item    "Greater Than\tC-E >" { InsertString "&gt;"; }
-    item    "CopyRight\tC-E @" { InsertString "&copy;"; }
+    item    "Ampersand" { "&amp;" InsertString; }
+    item    "Less Than\tC-E <" { "&lt;" InsertString; }
+    item    "Greater Than\tC-E >" { "&gt;" InsertString; }
+    item    "CopyRight\tC-E @" { "&copy;" InsertString; }
 }
 
 menu SGML_Ref {
@@ -24,8 +24,8 @@ menu SGML_List {
     item    "Ordinary List"   { SGML_ORD }
     item    "Numbered List"   { SGML_NUM }
     item    "Tagged List" { SGML_TAG }
-    item    "Compact Style" { InsertString " compact"; }
-    item    "List Item" { InsertString "<item> "; }
+    item    "Compact Style" { " compact" InsertString; }
+    item    "List Item" { "<item> " InsertString; }
 }
 
 menu SGML_Style {
