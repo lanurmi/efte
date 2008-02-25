@@ -58,6 +58,7 @@ sub key       { getchar; }                      # wait for key, place its ascii 
 sub read      { push $Char }                    # read char under cursor
 sub emit      { insertstring $toschar }
 
+
 sub bl        { push 32 }
 sub space     { bl emit }                       # print a space character
 sub spaces    { times space }                   # don't have loops yet
@@ -78,8 +79,19 @@ sub cursorend  { movelineend }
 #  0 split$ no fail
 
 # =============================================================================
-# String Stack Helpers
+#    strings
 # =============================================================================
+
+# thinking of
+#  or$:  copy chars from string two into spaces of string 1
+#  and$: replace chars in string one against space, if string2 has space on that pos
+# example:
+# string1:  "xxx    xxx"
+# string2:  "1 345678 0"
+# or$:      "xxx4567xxx"
+# and$:     "x x    x x"
+# xor$"     " x 4567 x "
+
 
 sub nip$      { swap$ drop$ }
 sub tuck$     { swap$ over$ }
@@ -139,7 +151,7 @@ sub capitalize$ {                               # ( -- )  capitalize all chars o
    loop }
 
 
-sub minleading$ {                               # ( -- )
+sub minleading$ {                               # ( -- ) remove leading spaces
    len$                                         # assume removing whole string
    dup zero do                                  # loop through string,
       i asc bl equals not                       # looking for non-space
@@ -149,17 +161,22 @@ sub minleading$ {                               # ( -- )
 }
 
 
-sub mintrailing$ {                              # ( -- )
+sub mintrailing$ {                              # ( -- ) remove trailing spaces
    len$
-   dup zero do
-      dec dup asc
-      bl equals not if
+   dup zero do                                  # loop through sting chars
+      dec dup asc                               # select chars, starting with last
+      bl equals not if                          # until char not space
          inc leave
       endif
    loop
-   left$ }
+   left$ }                                      # keep the non-space chars
 
-sub trim$ { minleading$ mintrailing$ }          # ( -- )
+
+# test with empty string, and spaces only string
+sub trim$ {                                     # ( -- ) remove leading and trailing spaces
+   minleading$
+   mintrailing$ }          
+
 
 sub store$    {                                 # ( a -- ) transfers string on string stack to a
    len$ swap                                    #  may want to add transfer limit according string var size.
@@ -196,8 +213,6 @@ sub link      { here swap exchange comma }       # ( a -- )
 
 
 
-
-
 # --- the number conversion words below respect base, and convert accordingly ---
 # we need to init base somewhere - vars are initialized to zero, which is not a good number base.
 # using number output without setting base first will result in division by zero
@@ -223,11 +238,11 @@ sub hashmore  { drop }                                                  # ( n --
 sub sign      { negative if push '-' splice endif }                     # ( n -- }
 sub brdotbr   { dup tor lesshash hashes rfrom sign hashmore }           # ( n -- )
 
-sub spacepad1 { bl splice }
-sub spacepad  { len$ minus
-                dup negative not if
-                   dup times spacepad1
-                endif drop }
+sub padded  {
+   tor len$ minus                                                       # ( n c -- ) can't call it "pad" because pad is a
+   dup negative not if                                                  #  standard word which does something else
+      rfetch swap zero do dup splice loop
+   endif rfrom drop2 }
 
 
 # --- "app" level number output words ---
@@ -242,7 +257,7 @@ sub dotr      { tor dup tor                                             # space 
                 lesshash
                    hashes
                    rfrom sign
-                   rfrom spacepad
+                   rfrom bl padded
                 hashmoretype }
 
 sub dot0r     { lesshash                                                # zero padded signed number:  ( n1 u -- )
