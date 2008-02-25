@@ -251,3 +251,6 @@ sub dot0r     { lesshash                                                # zero p
                 hashmoretype }
 
 
+# --- initialisation ---
+sub OnBoot { diag decimal }
+
