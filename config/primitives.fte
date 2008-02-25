@@ -31,6 +31,7 @@ sub swap2     { rot tor rot rfrom }             # swap top two pairs of items
 sub invert    { true xor }                      # complement all bits
 sub not       { zero equals }                   # logical inversion: 0->true,  x->0
 sub lshift    { push 1 shift }                  # bit shift left once
+sub cell      { one }                           # memory increment between ints
 sub rshift    { push -1 shift }                 # bit shift right once
 sub success   { flag }                          # push command return code
 sub failure   { flag not }                      # push inverted command return code
@@ -77,6 +78,22 @@ sub cursorend  { movelineend }
 # need:
 #  test block marked?
 #  0 split$ no fail
+
+
+# =============================================================================
+#    memory
+# =============================================================================
+
+sub free      { memend here minus }
+sub plusstore { dup tor fetch plus rfrom store } # ( x a -- )  adds x to contents of address a
+sub comma     { here cell allot store }          # ( x -- )    allocate 1 location, initialized to x
+sub var       { here cell allot }                # for the new construct:       sub foo { var new }
+                                                 # can then use vars like:      sub bar { var new }
+                                                 #                foo fetch   bar store
+sub exchange  { dup fetch tor store rfrom }      # ( x1 a -- x2 )
+sub link      { here swap exchange comma }       # ( a -- )
+
+
 
 # =============================================================================
 #    strings
@@ -178,37 +195,36 @@ sub trim$ {                                     # ( -- ) remove leading and trai
    mintrailing$ }          
 
 
-sub store$    {                                 # ( a -- ) transfers string on string stack to a
-   len$ swap                                    #  may want to add transfer limit according string var size.
-   dup2 store inc
+
+sub brmovebr$  {                                # ( a n -- )  copy n chars of tos$ to a
+   swap dup2 store inc
    swap range do
       slice i store
    loop drop$ }
 
+sub move$    {                                  # ( a -- ) transfers string on string stack to a
+   len$  brmovebr$ }                            #  may want to add transfer limit according string var size.
+
+sub store$    {                                 # ( a -- ) transfers string on string stack to a
+   count
+   cell minus
+   cell minus
+   len$ min
+   brmovebr$ }
 
 sub fetch$    {                                 # ( a -- ) transfers the string at a to string stack.
+   cell plus
    push$ ''
    count zero do
       count char$ merge$
    loop drop }
 
-sub stringvar { here len$ inc allot }           # string var description. rename to var$ ?
+sub stringvar { here len$ inc dup inc comma allot } # string var description. rename to var$ ?
                                                 # may want to keep allocated size for boundary check
 
+# varsize strlen  char char char ...
 
-# =============================================================================
-#    memory
-# =============================================================================
 
-sub free      { memend here minus }
-sub cell      { one }
-sub plusstore { dup tor fetch plus rfrom store } # ( x a -- )  adds x to contents of address a
-sub comma     { here cell allot store }          # ( x -- )    allocate 1 location, initialized to x
-sub var       { here cell allot }                # for the new construct:       sub foo { var new }
-                                                 # can then use vars like:      sub bar { var new }
-                                                 #                foo fetch   bar store
-sub exchange  { dup fetch tor store rfrom }      # ( x1 a -- x2 )
-sub link      { here swap exchange comma }       # ( a -- )
 
 
 
