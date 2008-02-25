@@ -435,6 +435,7 @@ static const OrdLookup CfgVar[] = {
     { "Word", mvWord },
     { "Line", mvLine },
     { "LineLength", mvLineLength },
+    { "Selection", mvSelection },
     { "FTEVer", mvFTEVer },
     { "TosStr", mvTopOfStackAsString },
     { "TosChar", mvTopOfStackAsChar },
@@ -864,6 +865,7 @@ static int ParseCommands(CurPos &cp, char *Name) {
         } else if (p == P_NUMBER) {
             long num = GetNumber(cp);
             if (Parse(cp) != P_COLON) {
+                CFteCompileCommand(cp, CFteCmdNum("push"), 1, 0);
                 PutNumber(cp, CF_INT, num);
             } else {
                 cnt = num;
@@ -876,7 +878,7 @@ static int ParseCommands(CurPos &cp, char *Name) {
             if (GetWord(cp, cmd) == -1) Fail(cp, "Syntax error");
             Command = CFteCmdNum(cmd);
             if (Command != 0) {
-                CFteCompileCommand(cp,Command,cnt,ign);
+                CFteCompileCommand(cp, Command, cnt, ign);
             } else {
                 Command = Lookup(ConditionalKW, cmd);
                 if (Command == -1)
@@ -1024,6 +1026,7 @@ static int ParseCommands(CurPos &cp, char *Name) {
             cnt = 1;
         } else if (p == P_STRING) {
             char *s = GetString(cp);
+            CFteCompileCommand(cp, CFteCmdNum("push$"), 1, 0);
             PutString(cp, CF_STRING, s);
         } else if (p == P_QUEST) {
             ign = 1;

@@ -14,7 +14,7 @@
 // Block Commands                                                            //
 ///////////////////////////////////////////////////////////////////////////////
 
-int EBuffer::SetBB(EPoint M) {
+int EBuffer::SetBB(EPoint M) { /*FOLD00*/
     EPoint OldBB = BB;
     int MinL, MaxL;
 
@@ -30,7 +30,7 @@ int EBuffer::SetBB(EPoint M) {
     return 1;
 }
 
-int EBuffer::SetBE(EPoint M) {
+int EBuffer::SetBE(EPoint M) { /*FOLD00*/
     EPoint OldBE = BE;
     int MinL, MaxL;
 
@@ -47,7 +47,7 @@ int EBuffer::SetBE(EPoint M) {
 }
 
 // check if there is active or valid selection
-int EBuffer::CheckBlock() {
+int EBuffer::CheckBlock() { /*FOLD00*/
     if (BB.Row == -1 && BE.Row == 1) {
         BB.Col = -1;
         BE.Col = -1;
@@ -74,14 +74,14 @@ int EBuffer::CheckBlock() {
     return 1;
 }
 
-int EBuffer::BlockRedraw() {
+int EBuffer::BlockRedraw() { /*FOLD00*/
     if (BB.Row == -1 || BE.Row == -1) return 0;
     Draw(BB.Row, BE.Row);
     return 1;
 }
 
 
-int EBuffer::BlockBegin() {
+int EBuffer::BlockBegin() { /*FOLD00*/
     EPoint X;
 
     X.Row = VToR(CP.Row);
@@ -91,7 +91,7 @@ int EBuffer::BlockBegin() {
     return 1;
 }
 
-int EBuffer::BlockEnd() {
+int EBuffer::BlockEnd() { /*FOLD00*/
     EPoint X;
 
     X.Row = VToR(CP.Row);
@@ -101,7 +101,7 @@ int EBuffer::BlockEnd() {
     return 1;
 }
 
-int EBuffer::BlockUnmark() {
+int EBuffer::BlockUnmark() { /*FOLD00*/
     EPoint Null(-1, -1);
 
     SetBB(BE);
@@ -111,12 +111,12 @@ int EBuffer::BlockUnmark() {
     return 1;
 }
 
-int EBuffer::BlockCut(int Append) {
+int EBuffer::BlockCut(int Append) { /*FOLD00*/
     if (BlockCopy(Append) && BlockKill()) return 1;
     return 0;
 }
 
-int EBuffer::BlockCopy(int Append, int clipboard) {
+int EBuffer::BlockCopy(int Append, int clipboard) { /*FOLD00*/
     EPoint B, E;
     int L;
     int SL, OldCount;
@@ -181,22 +181,22 @@ int EBuffer::BlockCopy(int Append, int clipboard) {
     return 1;
 }
 
-int EBuffer::BlockPasteStream(int clipboard) {
+int EBuffer::BlockPasteStream(int clipboard) { /*FOLD00*/
     BlockMode = bmStream;
     return BlockPaste(clipboard);
 }
 
-int EBuffer::BlockPasteLine(int clipboard) {
+int EBuffer::BlockPasteLine(int clipboard) { /*FOLD00*/
     BlockMode = bmLine;
     return BlockPaste(clipboard);
 }
 
-int EBuffer::BlockPasteColumn(int clipboard) {
+int EBuffer::BlockPasteColumn(int clipboard) { /*FOLD00*/
     BlockMode = bmColumn;
     return BlockPaste(clipboard);
 }
 
-int EBuffer::BlockPaste(int clipboard) {
+int EBuffer::BlockPaste(int clipboard) { /*FOLD00*/
     EPoint B, E;
     int L, BL;
 
@@ -266,7 +266,7 @@ int EBuffer::BlockPaste(int clipboard) {
     return 1;
 }
 
-int EBuffer::BlockKill() {
+int EBuffer::BlockKill() { /*FOLD00*/
     EPoint B, E;
     int L;
     int Y = -1;
@@ -354,7 +354,7 @@ int EBuffer::BlockKill() {
 }
 
 // remove selected text and paste information from clipboard to replace it
-int EBuffer::BlockPasteOver(int clipboard) {
+int EBuffer::BlockPasteOver(int clipboard) { /*FOLD00*/
     // if there is existing selection, remove it's contents
     if (CheckBlock()) {
         BlockKill();
@@ -373,7 +373,7 @@ int EBuffer::BlockPasteOver(int clipboard) {
 }
 
 // XXX clipboard ???
-int EBuffer::ClipClear(int clipboard) {
+int EBuffer::ClipClear(int clipboard) { /*FOLD00*/
     if (SSBuffer == 0)
         return 0;
     SSBuffer->Clear();
@@ -382,7 +382,7 @@ int EBuffer::ClipClear(int clipboard) {
     return 1;
 }
 
-int EBuffer::BlockIndent() {
+int EBuffer::BlockIndent() { /*FOLD00*/
     EPoint B, E;
     int L;
 
@@ -414,7 +414,7 @@ int EBuffer::BlockIndent() {
     return 1;
 }
 
-int EBuffer::BlockUnindent() {
+int EBuffer::BlockUnindent() { /*FOLD00*/
     EPoint B, E;
     int L;
 
@@ -447,11 +447,11 @@ int EBuffer::BlockUnindent() {
     return 1;
 }
 
-int EBuffer::BlockClear() {
+int EBuffer::BlockClear() { /*FOLD00*/
     return 0;
 }
 
-int EBuffer::BlockMarkStream() {
+int EBuffer::BlockMarkStream() { /*FOLD00*/
     if (BlockMode != bmStream) BlockUnmark();
     BlockMode = bmStream;
     if (AutoExtend) AutoExtend = 0;
@@ -462,7 +462,7 @@ int EBuffer::BlockMarkStream() {
     return 1;
 }
 
-int EBuffer::BlockMarkLine() {
+int EBuffer::BlockMarkLine() { /*FOLD00*/
     if (BlockMode != bmLine) BlockUnmark();
     BlockMode = bmLine;
     if (AutoExtend) AutoExtend = 0;
@@ -473,7 +473,7 @@ int EBuffer::BlockMarkLine() {
     return 1;
 }
 
-int EBuffer::BlockMarkColumn() {
+int EBuffer::BlockMarkColumn() { /*FOLD00*/
     if (BlockMode != bmColumn) BlockUnmark();
     BlockMode = bmColumn;
     if (AutoExtend) AutoExtend = 0;
@@ -484,7 +484,7 @@ int EBuffer::BlockMarkColumn() {
     return 1;
 }
 
-int EBuffer::BlockExtendBegin() {
+int EBuffer::BlockExtendBegin() { /*FOLD00*/
     CheckBlock();
     ExtendGrab = 0;
     AutoExtend = 0;
@@ -518,7 +518,7 @@ int EBuffer::BlockExtendBegin() {
     return 1;
 }
 
-int EBuffer::BlockExtendEnd() {
+int EBuffer::BlockExtendEnd() { /*FOLD00*/
     EPoint T, B, E;
 
     CheckBlock();
@@ -582,12 +582,12 @@ int EBuffer::BlockExtendEnd() {
     return 1;
 }
 
-int EBuffer::BlockIsMarked() {
+int EBuffer::BlockIsMarked() { /*FOLD00*/
     if ((BB.Row != -1) && (BE.Row != -1) && (BB.Col != -1) && (BE.Col != -1)) return 1;
     return 0;
 }
 
-int EBuffer::BlockReIndent() {
+int EBuffer::BlockReIndent() { /*FOLD00*/
     EPoint P = CP;
     EPoint B, E;
 
@@ -604,7 +604,7 @@ int EBuffer::BlockReIndent() {
     return SetPos(P.Col, P.Row);
 }
 
-int EBuffer::BlockSelectWord() {
+int EBuffer::BlockSelectWord() { /*FOLD00*/
     int Y = VToR(CP.Row);
     PELine L = RLine(Y);
     int P;
@@ -625,7 +625,7 @@ int EBuffer::BlockSelectWord() {
     return 1;
 }
 
-int EBuffer::BlockSelectLine() {
+int EBuffer::BlockSelectLine() { /*FOLD00*/
     int Y = VToR(CP.Row);
     if (BlockUnmark() == 0) return 0;
     BlockMode = bmStream;
@@ -639,11 +639,11 @@ int EBuffer::BlockSelectLine() {
     return 1;
 }
 
-int EBuffer::BlockSelectPara() {
+int EBuffer::BlockSelectPara() { /*FOLD00*/
     return 1;
 }
 
-int EBuffer::BlockWriteTo(const char *AFileName, int Append) {
+int EBuffer::BlockWriteTo(const char *AFileName, int Append) { /*FOLD00*/
     //int error = 0;
     EPoint B, E;
     int L;
@@ -742,7 +742,91 @@ error:
     return 0;
 }
 
-int EBuffer::BlockReadFrom(const char *AFileName, int blockMode) {
+int EBuffer::BlockGet() { /*FOLD00*/
+    //int error = 0;
+    EPoint B, E;
+    int L;
+    PELine LL;
+    int A, Z;
+    int bc = 0, lc = 0, oldc = 0;
+
+
+    AutoExtend = 0;
+    if (CheckBlock() == 0) {
+        SetBranchCondition(0);
+        return 0;
+    }
+
+    if (RCount == 0) {
+        SetBranchCondition(0);
+        return 0;
+    }
+
+    std::string buf;
+    B = BB;
+    E = BE;
+    for (L = B.Row; L <= E.Row; L++) {
+        A = -1;
+        Z = -1;
+        LL = RLine(L);
+        switch (BlockMode) {
+        case bmLine:
+            if (L < E.Row) {
+                A = 0;
+                Z = LL->Count;
+            }
+            break;
+        case bmColumn:
+            if (L < E.Row) {
+                A = CharOffset(LL, B.Col);
+                Z = CharOffset(LL, E.Col);
+            }
+            break;
+        case bmStream:
+            if (B.Row == E.Row) {
+                A = CharOffset(LL, B.Col);
+                Z = CharOffset(LL, E.Col);
+            } else if (L == B.Row) {
+                A = CharOffset(LL, B.Col);
+                Z = LL->Count;
+            } else if (L < E.Row) {
+                A = 0;
+                Z  = LL->Count;
+            } else if (L == E.Row) {
+                A = 0;
+                Z = CharOffset(LL, E.Col);
+            }
+            break;
+        }
+        if (A != -1 && Z != -1) {
+            if (A < LL->Count) {
+                if (Z > LL->Count)
+                    Z = LL->Count;
+                if (Z > A) {
+                    buf = buf.append(LL->Chars + A, Z-A);
+                    bc += Z - A;
+                }
+            }
+            if (BFI(this, BFI_AddCR) == 1) {
+                buf = buf.append("\n");
+                bc++;
+            }
+
+            if (BFI(this, BFI_AddLF) == 1) {
+                buf = buf.append("\r");
+                bc++;
+                lc++;
+            }
+        }
+    }
+
+    sstack.push_back(buf);
+
+    SetBranchCondition(1);
+    return 1;
+}
+
+int EBuffer::BlockReadFrom(const char *AFileName, int blockMode) { /*FOLD00*/
     EBuffer *B;
     int savesys;
     int rc;
@@ -792,7 +876,7 @@ static int SortMaxRow;
 static int SortMinCol;
 static int SortMaxCol;
 
-static int _LNK_CONV SortProc(const void *A, const void *B) {
+static int _LNK_CONV SortProc(const void *A, const void *B) { /*FOLD00*/
     int *AA = (int *)A;
     int *BB = (int *)B;
     ELine *LA = SortBuffer->RLine(*AA);
@@ -852,7 +936,7 @@ static int _LNK_CONV SortProc(const void *A, const void *B) {
     return rc;
 }
 
-int EBuffer::BlockSort(int Reverse) {
+int EBuffer::BlockSort(int Reverse) { /*FOLD00*/
     int rq;
     ELine *oldL;
 
@@ -910,7 +994,7 @@ int EBuffer::BlockSort(int Reverse) {
     return 1;
 }
 
-int EBuffer::BlockUnTab() {
+int EBuffer::BlockUnTab() { /*FOLD00*/
     EPoint B, E;
     ELine *L;
     int O, C;
@@ -943,7 +1027,7 @@ int EBuffer::BlockUnTab() {
     return 1;
 }
 
-int EBuffer::BlockEnTab() {
+int EBuffer::BlockEnTab() { /*FOLD00*/
     EPoint B, E;
     ELine *L;
     int O, C, O1, C1;
@@ -1008,10 +1092,10 @@ int EBuffer::BlockEnTab() {
     }
     return 1;
 }
-
+ /*FOLD00*/
 // FindFunction -- search for line matching 'RoutineRegexp'
 // starting from current line + 'delta'. 'way' should be +1 or -1.
-int EBuffer::FindFunction(int delta, int way) {
+int EBuffer::FindFunction(int delta, int way) { /*FOLD00*/
     RxNode     *regx;
     int         line;
     PELine      L;
@@ -1048,7 +1132,7 @@ int EBuffer::FindFunction(int delta, int way) {
 }
 
 // Selects the current function.
-int EBuffer::BlockMarkFunction() {
+int EBuffer::BlockMarkFunction() { /*FOLD00*/
     int by, ey;
 
     if (BlockUnmark() == 0)
@@ -1069,7 +1153,7 @@ int EBuffer::BlockMarkFunction() {
     return 1;
 }
 
-int EBuffer::IndentFunction() {
+int EBuffer::IndentFunction() { /*FOLD00*/
     EPoint P = CP;
     int by, ey;
 
@@ -1088,7 +1172,7 @@ int EBuffer::IndentFunction() {
     return SetPos(P.Col, P.Row);
 }
 
-int EBuffer::MoveFunctionPrev() {
+int EBuffer::MoveFunctionPrev() { /*FOLD00*/
     int line = FindFunction(-1, -1);
 
     if (line == -1)
@@ -1097,7 +1181,7 @@ int EBuffer::MoveFunctionPrev() {
     return CenterPosR(0, line);
 }
 
-int EBuffer::MoveFunctionNext() {
+int EBuffer::MoveFunctionNext() { /*FOLD00*/
     int line = FindFunction( + 1, + 1);
 
     if (line == -1)

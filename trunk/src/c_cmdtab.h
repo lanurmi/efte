@@ -177,6 +177,7 @@ const struct {
     TAB(InsPrevLineChar),
     TAB(InsPrevLineToEol),
     TAB(LineDuplicate),
+    TABS(Selection),
     TAB(BlockBegin),
     TAB(BlockEnd),
     TAB(BlockUnmark),

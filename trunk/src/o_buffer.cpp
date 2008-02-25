@@ -571,6 +571,8 @@ int EBuffer::ExecCommand(int Command, ExState &State) {
         return InsPrevLineToEol();
     case ExLineDuplicate:
         return LineDuplicate();
+    case ExSelectionStr:
+        return BlockGet();
     case ExBlockBegin:
         return BlockBegin();
     case ExBlockEnd:
