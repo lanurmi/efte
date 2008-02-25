@@ -31,6 +31,7 @@ const struct {
     TAB(Store),
     TAB(MemEnd),
     TAB(Here),
+    TAB(Allot),
     TAB(Dump),
 
     TAB(Plus),

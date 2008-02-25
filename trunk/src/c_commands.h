@@ -105,7 +105,9 @@ typedef enum {
     ExMemEnd,
     /// Push the memory end to the stack
     ExHere,
-    /// Push the memory usage to the stack
+    /// Push the dictonary pointer to stack (though we don't have a dictionary where the pointer points to...)
+    ExAllot,
+    /// Reserve an amount of memory, by bumping dictionary pointer
     ExDump,
     /// Dump memory contents
     ExToggleConditionDisplay,
