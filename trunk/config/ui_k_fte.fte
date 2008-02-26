@@ -64,10 +64,10 @@ eventmap MODEL {
     key     [A+8]       { 8 SwitchTo }
     key     [A+9]       { 9 SwitchTo }
 
-    key     [A+F]       { 'F' MainMenu }
-    key     [A+T]       { 'T' MainMenu }
-    key     [A+W]       { 'W' MainMenu }
-    key     [A+H]       { 'H' MainMenu }
+    key     [A+F]       { "F" MainMenu }
+    key     [A+T]       { "T" MainMenu }
+    key     [A+W]       { "W" MainMenu }
+    key     [A+H]       { "H" MainMenu }
 }
 # List Viewers
 eventmap MLIST: MODEL {
@@ -112,8 +112,8 @@ eventmap SVN: MLIST {
 }
 
 eventmap DIRECTORY: MLIST {
-    MainMenu = 'DirectoryMain';
-    LocalMenu = 'DirectoryLocal';
+    MainMenu = "DirectoryMain";
+    LocalMenu = "DirectoryLocal";
     
     key [C+G-PgUp]      { DirGoUp }
     key [C+G-PgDn]      { DirGoDown }
@@ -125,8 +125,8 @@ eventmap DIRECTORY: MLIST {
     key [C+G]           { DirSearchNext }
     key [C+H]           { DirSearchPrev }
     
-    key     [A+N]       { 'MCvs' MainMenu }
-    key     [C+O_C+V]   { 'MSvn' ShowMenu }
+    key     [A+N]       { "MCvs" MainMenu }
+    key     [C+O_C+V]   { "MSvn" ShowMenu }
     key     [C+O_C+N]   { ShowMenu }
 }
 
@@ -141,8 +141,8 @@ eventmap BUFFERS: MLIST {
     key  [G-Del] { BufListFileClose }
     key  [C+S]   { BufListFileSave }
     key  [F2]    { BufListFileSave }
-    key     [C+O_C+V]   { 'MCvs' ShowMenu }
-    key     [C+O_C+N]   { 'MSvn' ShowMenu }
+    key     [C+O_C+V]   { "MCvs" ShowMenu }
+    key     [C+O_C+N]   { "MSvn" ShowMenu }
 }
 
 # Routine List
@@ -172,8 +172,8 @@ eventmap EVENTMAPVIEW: MLIST {
 
 eventmap PLAIN: MODEL {
 # keymap for plaintext mode
-    MainMenu   = 'Main';    # menu for menubar
-    LocalMenu  = 'Local';   # local menu
+    MainMenu   = "Main";    # menu for menubar
+    LocalMenu  = "Local";   # local menu
 
     key       [Esc]     { BlockMarkStream; BlockUnmark }
     key       [F2]      { FileSave }
@@ -292,18 +292,18 @@ eventmap PLAIN: MODEL {
     key     [C+Y]       { KillLine }
     #key     [C+E]       { LineTrim }
     key     [A+A]       { BlockMarkStream }
-    key     [A+B]       { 'B' MainMenu }
+    key     [A+B]       { "B" MainMenu }
     key     [A+C]       { BlockCopy }
-    key     [A+D]       { 'D' MainMenu }
-    key     [A+E]       { 'E' MainMenu }
+    key     [A+D]       { "D" MainMenu }
+    key     [A+E]       { "E" MainMenu }
     key     [A+G]       { BlockCut }
     key     [A+I]       { BlockIndent }
     key     [A+J]       { -1 MoveToLine }
     key     [A+K]       { BlockMarkColumn }
     key     [A+L]       { BlockMarkLine }
-    key     [A+O]       { 'O' MainMenu }
+    key     [A+O]       { "O" MainMenu }
     key     [A+R]       { WrapPara }           # Reformat 
-    key     [A+S]       { 'S' MainMenu }
+    key     [A+S]       { "S" MainMenu }
     key     [A+U]       { BlockUnindent }
     key     [C+S]       { IncrementalSearch }
     
@@ -311,15 +311,15 @@ eventmap PLAIN: MODEL {
     key     [C+O_C+C]   { ToggleMatchCase }
     key     [C+O_C+E]   { ToggleTrim }
     key     [C+O_C+I]   { ToggleInsert }
-    key     [C+O_C+M]   { 'MChangeMode' ShowMenu }
-    key     [C+O_S-M]   { '' ChangeMode }
+    key     [C+O_C+M]   { "MChangeMode" ShowMenu }
+    key     [C+O_S-M]   { "" ChangeMode }
     key     [C+O_C+R]   { ToggleReadOnly }
     key     [C+O_C+S]   { ToggleSysClipboard }
     key     [C+O_C+T]   { -1 ChangeTabSize }
     key     [C+O_C+U]   { ToggleUndo }
     key     [C+O_C+W]   { ToggleWordWrap }
-    key     [C+O_C+V]   { 'MCvs' ShowMenu }
-    key     [C+O_C+N]   { 'MSvn' ShowMenu }
+    key     [C+O_C+V]   { "MCvs" ShowMenu }
+    key     [C+O_C+N]   { "MSvn" ShowMenu }
     key     [C+O_.]     { ToggleShowMarkers }
     key     [C+O_[]     { SetLeftMargin }     # set margin to current cursor pos
     key     [C+O_\]]    { SetRightMargin }

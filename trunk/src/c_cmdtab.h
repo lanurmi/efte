@@ -34,10 +34,10 @@ const struct {
     TAB(Allot),
     TAB(Dump),
 
-    TAB(Plus),
-    TAB(Minus),
-    TAB(Mul),
-    TAB(Div),
+    { ExPlus, "+" },
+    { ExMinus, "-" },
+    { ExMul, "*" },
+    { ExDiv, "/" },
 
     TAB(And),
     TAB(Or),

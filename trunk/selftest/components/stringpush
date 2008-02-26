@@ -1,1 +1,1 @@
-{ depth$ push$ "ABCD 12345"  depth$ accumulate 10 PASS }
+{ depth$ "ABCD 12345" depth$ accumulate 10 PASS }

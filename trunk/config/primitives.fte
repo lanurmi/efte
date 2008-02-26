@@ -15,8 +15,8 @@
 sub false     { 0 }
 sub true      { -1 }                            # "true" represented as all bits sets
 sub cell      { 1 }                             # memory increments per integer
-sub cellplus  { 1 plus }
-sub cellminus { 1 minus }
+sub cellplus  { 1 + }
+sub cellminus { 1 - }
 sub cells     { }
 
 
@@ -42,20 +42,20 @@ sub between   { rot tuck less minrot more or not }
 
 sub capital   { 65 90  between }
 sub lowercase { 97 122 between }
-sub capitalize { dup lowercase if 32 minus endif }
+sub capitalize { dup lowercase if 32 - endif }
 sub negative  { 0 less }                        # < zero?
 
 # -- arithmetic --
-sub inc       { 1 plus }                        # increment top of stack by one
-sub dec       { 1 minus }                       # decrement top of stack by one
+sub inc       { 1 + }                        # increment top of stack by one
+sub dec       { 1 - }                       # decrement top of stack by one
 sub negate    { invert inc }                    # change sign
 sub abs       { dup negative if negate endif }  # remove sign
 sub min       { dup2 more if swap endif drop }
 sub max       { dup2 less if swap endif drop }
-sub mod       { dup2 div mul minus }            # modulo (remainder) function
+sub mod       { dup2 / * - }            # modulo (remainder) function
 sub gcd       { begin tuck mod qdup not until } # greatest common denominator
 sub sqrt      { 0 tuck do inc dup lshift inc plusloop }
-sub range     { over plus swap }                # start n -> limit start conversion for DO LOOP
+sub range     { over + swap }                # start n -> limit start conversion for DO LOOP
 
 # -- cursor --
 sub cursorhome { movelinestart }
@@ -87,8 +87,8 @@ sub type      { times type1 drop }              # string output
 #    memory
 # =============================================================================
 
-sub free      { memend here minus }
-sub plusstore { dup tor fetch plus rfrom store } # ( x a -- )  adds x to contents of address a
+sub free      { memend here - }
+sub plusstore { dup tor fetch + rfrom store } # ( x a -- )  adds x to contents of address a
 sub comma     { here cell allot store }          # ( x -- )    allocate 1 location, initialized to x
 sub var       { here cell allot }                # for the new construct:       sub foo { var new }
                                                  # can then use vars like:      sub bar { var new }
@@ -124,7 +124,7 @@ sub type$     { insertstring $tos$ }
 
 sub left$     {                                 # ( n -- )
    dup negative if                              # negative n: strip first n chars
-      negate len$ over minus
+      negate len$ over -
    else                                         # positive n: keep first n chars
       0 swap
    endif
@@ -132,7 +132,7 @@ sub left$     {                                 # ( n -- )
 
 sub right$    {                                 # ( n -- )
   dup negative if                               # negative n: strip last n chars
-     0 len$ rot plus
+     0 len$ rot +
   else                                          # positive n: keep last n chars
      dup negate swap
   endif
@@ -178,7 +178,7 @@ sub repeat$ {                                   # ( c u -- ) create a string of 
       dup 1 do
          merge$ dup$
       i plusloop
-      swap$ len$ minus left$ merge$
+      swap$ len$ - left$ merge$
    endif
    drop
 }
@@ -224,12 +224,12 @@ sub move$    { len$  brmovebr$ }                # ( a -- ) transfers string on s
 
 sub store$   {                                  # ( a -- ) transfers string on string stack to a
    count                                        # structure size
-   2 cells minus                           # subtract space for structure size and leading string count
+   2 cells -                           # subtract space for structure size and leading string count
    len$ min                                     # move smaller of this max and string size number of chars.
    brmovebr$ }
 
 sub fetch$    {                                 # ( a -- ) transfers the string at a to string stack.
-   cell plus
+   cell +
    ""
    count 0 do
       count char$ merge$
@@ -255,8 +255,8 @@ sub binary    {  2 base store }
 
 
 # --- pictured number conversion ---
-sub digit     { 48 plus dup push 57 more if push 7 plus endif }  # ( u -- asc )
-sub slashmod  { dup2 div dup tor mul minus abs rfrom }                  # ( n1 n2 -- r q )
+sub digit     { 48 + dup 57 more if 7 + endif }  # ( u -- asc )
+sub slashmod  { dup2 / dup tor * - abs rfrom }                  # ( n1 n2 -- r q )
 sub lesshash  { "" } 	    		                      	      		# ( n -- n ) start pictured num conversion
 sub hold      { splice }                                                # ( n asc -- n )
 sub hash      { base fetch slashmod tor digit splice rfrom }            # ( n1 -- n2 )
@@ -269,7 +269,7 @@ sub sign      { negative if 45 splice endif }                           # ( n --
 sub brdotbr   { dup tor lesshash hashes rfrom sign hashmore }           # ( n -- )
 
 sub padded  {
-   tor len$ minus                                                       # ( n c -- ) can't call it "pad" because pad is a
+   tor len$ -                                                       # ( n c -- ) can't call it "pad" because pad is a
    dup negative not if                                                  #  standard word which does something else
       rfetch swap 0 do dup splice loop
    endif rfrom drop2 }

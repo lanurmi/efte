@@ -218,5 +218,5 @@ menu Main_HTML {
 eventmap HTML {
     MainMenu            = "Main_HTML";   # menu for menubar
     
-    key [A+M] { MainMenu 'M' }
+    key [A+M] { MainMenu "M" }
 }

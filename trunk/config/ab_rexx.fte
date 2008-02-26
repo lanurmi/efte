@@ -10,63 +10,63 @@ eventmap REXX {
     # word "Author:" and leave the cursor after
     # "Purpose:". If it is not set, the macro will
     # fail after "Author:".
-    abbrev 'headx' {
+    abbrev "headx" {
         KillWordPrev;
         REXX_Heading;
         Fail; # do not insert typed character
     }
 
-    abbrev 'utilx' {
+    abbrev "utilx" {
         KillWordPrev;
         REXX_RexxUtil;
         Fail; # do not insert typed character
     }
 
 %if(OS_OS2)
-    abbrev 'sockx' {
+    abbrev "sockx" {
         KillWordPrev;
         REXX_RxSock;
         Fail; # do not insert typed character
     }
 
-    abbrev 'ftpx' {
+    abbrev "ftpx" {
         KillWordPrev;
         REXX_RxFTP;
         Fail; # do not insert typed character
     }
 %endif
 
-    abbrev 'dox' {
+    abbrev "dox" {
         KillWordPrev;
         REXX_Do;
         Fail; # do not insert typed character
     }
 
-    abbrev 'dux' {
+    abbrev "dux" {
         KillWordPrev;
         REXX_DoUntil;
         Fail; # do not insert typed character
     }
 
-    abbrev 'dwx' {
+    abbrev "dwx" {
         KillWordPrev;
         REXX_DoWhile;
         Fail; # do not insert typed character
     }
 
-    abbrev 'dfx' {
+    abbrev "dfx" {
         KillWordPrev;
         REXX_DoForever;
         Fail; # do not insert typed character
     }
 
-    abbrev 'ifx' {
+    abbrev "ifx" {
         KillWordPrev;
         REXX_If;
         Fail; # do not insert typed character
     }
     
-    abbrev 'selx' {
+    abbrev "selx" {
         KillWordPrev;
         REXX_Select;
         Fail; # do not insert typed character

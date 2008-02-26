@@ -7,4 +7,4 @@
 mode SOURCE: PLAIN {
 }
 
-oinclude 'mym_source.fte';
+oinclude "mym_source.fte";

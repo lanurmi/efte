@@ -3,7 +3,7 @@ sub dot33 {                    # ( n -- ) print as nnn:nnn
    lesshash                    
    bl hold
    3:hash
-   push 58 hold
+   58 hold
    3:hash
    hashmoretype
 }
@@ -21,4 +21,4 @@ sub pass   {
    cr
 }
 
-sub accumulate { 10 mul plus }
+sub accumulate { 10 * + }

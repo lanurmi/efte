@@ -15,6 +15,6 @@
 # overwrite customizations this way.
 
 # include the main config - usually in /usr/local/efte/config.
-include 'main.fte';
+include "main.fte";
 
 # Local settings go here.
