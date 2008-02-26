@@ -1,2 +1,2 @@
-{ push 333 exit lshift }                      # tests exit
-{ TEST1 inc push 334 PASS }
+{ 333 exit lshift }                      # tests exit
+{ TEST1 inc 334 PASS }

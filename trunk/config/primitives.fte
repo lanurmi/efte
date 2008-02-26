@@ -12,12 +12,11 @@
 #
 
 # -- constants --
-sub zero      { 0 }
 sub false     { 0 }
-sub one       { 1 }
 sub true      { -1 }                            # "true" represented as all bits sets
-sub cell      { 1 }                             # memory increment between ints
+sub cell      { 1 }                             # memory increments per integer
 sub cellplus  { 1 plus }
+sub cellminus { 1 minus }
 sub cells     { }
 
 
@@ -25,17 +24,17 @@ sub cells     { }
 sub qdup      { dup if dup endif }              # duplicate top of stack if <> 0
 sub nip       { swap drop }                     # drop second of stack
 sub tuck      { swap over }                     # copy top of stack below second of stack
-sub pluck     { tor over rfrom swap }
-sub minRot    { 2:rot }                         # rotate top item below second item
+sub pluck     { tor over rfrom swap }           # copy 3rd item to top
+sub minrot    { 2:rot }                         # rotate top item below second item
 sub dup2      { 2:over }                        # duplicate top two items
 sub drop2     { 2:drop }                        # drop top two items
 sub swap2     { rot tor rot rfrom }             # swap top two pairs of items
 
 # -- bool, bits, comparison  --
-sub invert    { -1 xor }                      # complement all bits
-sub not       { 0 equals }                   # logical inversion: 0->true,  x->0
-sub lshift    { 1 shift }                  # bit shift left once
-sub rshift    { -1 shift }                 # bit shift right once
+sub invert    { -1 xor }                        # complement all bits
+sub not       { 0 equals }                      # logical inversion: 0->true,  x->0
+sub lshift    { 1 shift }                       # bit shift left once
+sub rshift    { -1 shift }                      # bit shift right once
 sub success   { flag }                          # push command return code
 sub failure   { flag not }                      # push inverted command return code
 sub more      { swap less }                     # true if nos > tos
@@ -44,11 +43,11 @@ sub between   { rot tuck less minrot more or not }
 sub capital   { 65 90  between }
 sub lowercase { 97 122 between }
 sub capitalize { dup lowercase if 32 minus endif }
-sub negative  { 0 less }                     # < zero?
+sub negative  { 0 less }                        # < zero?
 
 # -- arithmetic --
-sub inc       { 1 plus }                      # increment top of stack by one
-sub dec       { 1 minus }                     # decrement top of stack by one
+sub inc       { 1 plus }                        # increment top of stack by one
+sub dec       { 1 minus }                       # decrement top of stack by one
 sub negate    { invert inc }                    # change sign
 sub abs       { dup negative if negate endif }  # remove sign
 sub min       { dup2 more if swap endif drop }
@@ -58,24 +57,24 @@ sub gcd       { begin tuck mod qdup not until } # greatest common denominator
 sub sqrt      { 0 tuck do inc dup lshift inc plusloop }
 sub range     { over plus swap }                # start n -> limit start conversion for DO LOOP
 
+# -- cursor --
+sub cursorhome { movelinestart }
+sub cursorend  { movelineend }
+
 # -- i/o --
-sub key       { getchar; }                      # wait for key, place its ascii on stack
+sub key       { getchar }                       # wait for key, place its ascii on stack
 sub read      { push $Char }                    # read char under cursor
 sub emit      { insertstring $toschar }
 
 
 sub bl        { 32 }
-sub space     { bl emit }                       # print a space character
-sub spaces    { times space }                   # don't have loops yet
-sub cr        { linenew }                       # carriage return
+sub space     { 32 emit }                       # print a space character
+sub spaces    { times space }
+sub cr        { linenew cursorhome }            # carriage return
 
 sub count     { inc dup dec fetch }
 sub type1     { count emit }
 sub type      { times type1 drop }              # string output
-
-# -- cursor --
-sub cursorhome { movelinestart }
-sub cursorend  { movelineend }
 
 
 
@@ -154,7 +153,7 @@ sub search$   {                                 # ( n1 -- n2 )
 sub asc   { dup$ 1 mid$ push $tos$ }          # ( n -- c ) get ascii of nth char in top string
 sub char$ { push$ $toschar }                    # ( c -- )   asc on stack becomes char string on stringstack
 
-sub slice  { 1 split$ push $tos$ }            # ( -- asc ) cut first char off string and return as ascii
+sub slice  { 1 split$ push $tos$ }              # ( -- asc ) cut first char off string and return as ascii
 sub splice { char$ swap$ merge$ }               # ( asc -- ) prepend char to string
 
 sub embed$ {                                    # ( asc n -- ) store char at pos n of topmost string, overwriting
@@ -164,12 +163,28 @@ sub embed$ {                                    # ( asc n -- ) store char at pos
 }
 
 sub capitalize$ {                               # ( -- )  capitalize all chars of top string
-   len$ 0 do                                 # loop though all chars:
+   len$ 0 do                                    # loop though all chars:
       i asc dup lowercase if
          capitalize
          dup i embed$                           #   replace char in string
       endif drop
    loop }
+
+
+sub repeat$ {                                   # ( c u -- ) create a string of u times char
+   ""
+   qdup if
+      over char$
+      dup 1 do
+         merge$ dup$
+      i plusloop
+      swap$ len$ minus left$ merge$
+   endif
+   drop
+}
+
+
+sub spaces$ { bl swap repeat$ }                # ( u -- ) create a string of u spaces
 
 
 sub minleading$ {                               # ( -- ) remove leading spaces
@@ -220,10 +235,8 @@ sub fetch$    {                                 # ( a -- ) transfers the string 
       count char$ merge$
    loop drop }
 
-sub stringvar { here len$ inc dup inc comma allot } # string var description. rename to var$ ?
-                                                # may want to keep allocated size for boundary check
-
-# varsize strlen  char char char ...
+sub var$ { here len$ inc dup inc comma allot } # string var description.
+# (varsize) (strlen) (char) (char) (char) ...
 
 
 
@@ -252,7 +265,7 @@ sub hashmoretype { drop type$ }                                         # ( n --
 sub hashmore  { drop }                                                  # ( n -- )  end pic num conv - should convert
                                                                         # string stack to ( a n ) to comply with standard.
                                                                         # this version leaves converted number on top of string stack
-sub sign      { negative if "-" splice endif }                     # ( n -- }
+sub sign      { negative if 45 splice endif }                           # ( n -- }
 sub brdotbr   { dup tor lesshash hashes rfrom sign hashmore }           # ( n -- )
 
 sub padded  {

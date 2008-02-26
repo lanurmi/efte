@@ -3,21 +3,22 @@ sub dot33 {                    # ( n -- ) print as nnn:nnn
    lesshash                    
    bl hold
    3:hash
-   push ':' hold
+   push 58 hold
    3:hash
    hashmoretype
 }
 
-sub dot9r { push 9 dotr }      # ( n -- ) space padded right aligned 9 chars signed number out
+sub dot9r { 9 dotr }      # ( n -- ) space padded right aligned 9 chars signed number out
 
 sub pass   {
-   tor dup2 equals if          insertstring "PASS"
-   else                        insertstring "FAIL"
+   tor dup2 equals if          "PASS" type$
+   else                        "FAIL" type$
    endif 
-   rfrom insertstring " test " dot33
-   insertstring "wants"        dot9r
-   insertstring ", got"        dot9r
+   rfrom 
+   " test " type$ dot33
+   "wants"  type$  dot9r
+   ", got"  type$  dot9r
    cr
 }
 
-sub accumulate { push 10 mul plus }
+sub accumulate { 10 mul plus }
