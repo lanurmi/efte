@@ -1,11 +1,11 @@
-{ push   3  5 plus  push   8 PASS }
-{ push  -2  9 plus  push   7 PASS }
-{ push   6 -8 plus  push  -2 PASS }
-{ push -11 -7 plus  push -18 PASS }
+{   3  5 plus    8 PASS }
+{  -2  9 plus    7 PASS }
+{   6 -8 plus   -2 PASS }
+{ -11 -7 plus  -18 PASS }
 
-{ push 777           # stack "marker"
+{ 777           # stack "marker"
    TEST1             #   run tests
    TEST2 
    TEST3 
    TEST4 
-  push 777 PASS }    #is stack balanced?
+  777 PASS }    #is stack balanced?

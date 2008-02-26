@@ -36,8 +36,8 @@ for FILE in components/* ; do
 done
 echo
 echo "sub selftest {"
-echo "   message \"selftest finished\""
-echo -n "   push 12345678      # stack 'marker'"
+echo "\"selftest started\" message"
+echo -n "   12345678      # stack 'marker'"
 i=0
 for SELFTEST in ${RUNTEST[*]} ; do
    if (( (i % 8) == 0 )) ; then
@@ -47,7 +47,7 @@ for SELFTEST in ${RUNTEST[*]} ; do
    (( i++ ))
 done
 echo
-echo "   push 12345678 99999 pass # all tests balanced?"
-echo "   message \"selftest finished\""
+echo "   12345678 99999 pass # all tests balanced?"
+echo "   \"selftest finished\" message"
 echo "}"
 ) > ../config/selftest.fte
