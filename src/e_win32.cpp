@@ -18,20 +18,41 @@
 #include <windows.h>
 
 int EView::SysShowHelp(ExState &State, const char *word) {
-    char file[MAXPATH] = "";
-
-    if (State.GetStrParam(this, file, sizeof(file) - 1) == 0)
-        if (MView->Win->GetStr("Help file",
-                               sizeof(file) - 1, file, HIST_DEFAULT) == 0)
-            return 0;
-
     char wordAsk[64] = "";
     if (word == 0) {
-        if (State.GetStrParam(this, wordAsk, sizeof(wordAsk) - 1) == 0)
-            if (MView->Win->GetStr("Keyword",
-                                   sizeof(wordAsk) - 1, wordAsk, HIST_DEFAULT) == 0)
+        if (sstack.size() == 0) {
+            Msg(S_ERROR, "String stack underflow error in SysShowHelp");
+            SetBranchCondition(0);
+            return 0;
+        }
+
+        strcpy(wordAsk, sstack.back().c_str()); sstack.pop_back();
+
+        if (strlen(wordAsk) == 0) {
+            if (MView->Win->GetStr("Keyword", sizeof(wordAsk) - 1, wordAsk, HIST_DEFAULT) == 0) {
+                SetBranchCondition(0);
                 return 0;
+            }
+        }
+
         word = wordAsk;
+    }
+
+
+    if (sstack.size() == 0) {
+        Msg(S_ERROR, "String stack underflow error in SysShowHelp");
+        SetBranchCondition(0);
+        return 0;
+    }
+
+    char file[MAXPATH] = "";
+    strcpy(file, sstack.back().c_str()); sstack.pop_back();
+
+    if (strlen(file) == 0) {
+        if (MView->Win->GetStr("Help file", sizeof(file) - 1, file, HIST_DEFAULT) == 0) {
+            SetBranchCondition(0);
+            return 0;
+        }
     }
 
     //** Start WinHelp,

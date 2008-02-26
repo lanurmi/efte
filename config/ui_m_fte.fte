@@ -9,102 +9,102 @@
 #
 
 menu MOpenInMode {
-    item "&Plain"        { 'PLAIN' FileOpenInMode }
-    item "&Text"         { 'TEXT' FileOpenInMode }
-    item "&C"	         { 'C' FileOpenInMode }
-    item "&EMail"        { 'MSG' FileOpenInMode }
-    item "&HTML"         { 'HTML' FileOpenInMode }
-    item "&IPF"          { 'IPF' FileOpenInMode }
-    item "&Ada"          { 'Ada' FileOpenInMode }
-    item "&REXX"         { 'REXX' FileOpenInMode }
-    item "MA&KE"         { 'MAKE' FileOpenInMode }
-    item "&FTE"          { 'FTE' FileOpenInMode }
-    item "&Win Resource" { 'RESOURCE' FileOpenInMode }
-    item "&DIFF"         { 'DIFF' FileOpenInMode }
-    item "&MERGE"        { 'MERGE' FileOpenInMode }
-    item "&SH"	         { 'SH' FileOpenInMode }
-    item "PER&L"         { 'PERL' FileOpenInMode }
-    item "PASCAL"        { 'PASCAL' FileOpenInMode }
-    item "&JAVA"         { 'JAVA' FileOpenInMode }
-    item "TE&X"          { 'TEX' FileOpenInMode }
-    item "&BIN"          { 'BIN' FileOpenInMode }
-    item "4&GL"          { 'GL' FileOpenInMode }
-    item "PHP"	         { 'PHP' FileOpenInMode }
-    item "P&ython"       { 'PYTHON' FileOpenInMode }
-    item "reST"          { 'reST' FileOpenInMode }
+    item "&Plain"        { "" "PLAIN" FileOpenInMode }
+    item "&Text"         { "" "TEXT" FileOpenInMode }
+    item "&C"	         { "" "C" FileOpenInMode }
+    item "&EMail"        { "" "MSG" FileOpenInMode }
+    item "&HTML"         { "" "HTML" FileOpenInMode }
+    item "&IPF"          { "" "IPF" FileOpenInMode }
+    item "&Ada"          { "" "Ada" FileOpenInMode }
+    item "&REXX"         { "" "REXX" FileOpenInMode }
+    item "MA&KE"         { "" "MAKE" FileOpenInMode }
+    item "&FTE"          { "" "FTE" FileOpenInMode }
+    item "&Win Resource" { "" "RESOURCE" FileOpenInMode }
+    item "&DIFF"         { "" "DIFF" FileOpenInMode }
+    item "&MERGE"        { "" "MERGE" FileOpenInMode }
+    item "&SH"	         { "" "SH" FileOpenInMode }
+    item "PER&L"         { "" "PERL" FileOpenInMode }
+    item "PASCAL"        { "" "PASCAL" FileOpenInMode }
+    item "&JAVA"         { "" "JAVA" FileOpenInMode }
+    item "TE&X"          { "" "TEX" FileOpenInMode }
+    item "&BIN"          { "" "BIN" FileOpenInMode }
+    item "4&GL"          { "" "GL" FileOpenInMode }
+    item "PHP"	         { "" "PHP" FileOpenInMode }
+    item "P&ython"       { "" "PYTHON" FileOpenInMode }
+    item "reST"          { "" "reST" FileOpenInMode }
 }
 
 menu MChangeMode {
-    item "&Plain"        { 'PLAIN' ChangeMode }
-    item "&Text"         { 'TEXT' ChangeMode }
-    item "&C"	         { 'C' ChangeMode }
-    item "&EMail"        { 'MSG' ChangeMode }
-    item "&HTML"         { 'HTML' ChangeMode }
-    item "&IPF"          { 'IPF' ChangeMode }
-    item "&Ada"          { 'Ada' ChangeMode }
-    item "&REXX"         { 'REXX' ChangeMode }
-    item "MA&KE"         { 'MAKE' ChangeMode }
-    item "&FTE"          { 'FTE' ChangeMode }
-    item "&Win Resource" { 'RESOURCE' ChangeMode }
-    item "&DIFF"         { 'DIFF' ChangeMode }
-    item "&MERGE"        { 'MERGE' ChangeMode }
-    item "&SH"	         { 'SH' ChangeMode }
-    item "PER&L"         { 'PERL' ChangeMode }
-    item "PASCAL"        { 'PASCAL' ChangeMode }
-    item "&JAVA"         { 'JAVA' ChangeMode }
-    item "TE&X"          { 'TEX' ChangeMode }
-    item "&BIN"          { 'BIN' ChangeMode }
-    item "4&GL"          { 'GL' ChangeMode }
-    item "PHP"	         { 'PHP' ChangeMode }
-    item "P&ython"       { 'PYTHON' ChangeMode }
-    item "reST"          { 'reST' ChangeMode }
+    item "&Plain"        { "PLAIN" ChangeMode }
+    item "&Text"         { "TEXT" ChangeMode }
+    item "&C"	         { "C" ChangeMode }
+    item "&EMail"        { "MSG" ChangeMode }
+    item "&HTML"         { "HTML" ChangeMode }
+    item "&IPF"          { "IPF" ChangeMode }
+    item "&Ada"          { "Ada" ChangeMode }
+    item "&REXX"         { "REXX" ChangeMode }
+    item "MA&KE"         { "MAKE" ChangeMode }
+    item "&FTE"          { "FTE" ChangeMode }
+    item "&Win Resource" { "RESOURCE" ChangeMode }
+    item "&DIFF"         { "DIFF" ChangeMode }
+    item "&MERGE"        { "MERGE" ChangeMode }
+    item "&SH"	         { "SH" ChangeMode }
+    item "PER&L"         { "PERL" ChangeMode }
+    item "PASCAL"        { "PASCAL" ChangeMode }
+    item "&JAVA"         { "JAVA" ChangeMode }
+    item "TE&X"          { "TEX" ChangeMode }
+    item "&BIN"          { "BIN" ChangeMode }
+    item "4&GL"          { "GL" ChangeMode }
+    item "PHP"	         { "PHP" ChangeMode }
+    item "P&ython"       { "PYTHON" ChangeMode }
+    item "reST"          { "reST" ChangeMode }
 }
 
 menu MOpenInModeMore {
-    item "ASM"			        { 'ASM' FileOpenInMode }
-    item "ASM 370 (.CPY,.MLC)"	{ 'ASM370' FileOpenInMode }
-    item "TCL"			        { 'TCL' FileOpenInMode }
-    item "Fortran 90"		    { 'FORTRAN' FileOpenInMode }
-    item "IPF"			        { 'IPF' FileOpenInMode }
-    item "A51"			        { 'A51' FileOpenInMode }
-    item "CLARION (.CLW)"	    { 'CLARION' FileOpenInMode }
-    item "EBFN"			        { 'EBFN' FileOpenInMode }
-    item "SGML"			        { 'SGML' FileOpenInMode }
-    item "SIOD (.cscm)"		    { 'SIOD' FileOpenInMode }
-    item "S&Lang"		        { 'sl' FileOpenInMode }
-    item "Module 3"		        { 'MODULA3' FileOpenInMode }
-    item "Tex Info"		        { 'TEXINFO' FileOpenInMode }
-    item "Diff"			        { 'DIFF' FileOpenInMode }
-    item "Merge"		        { 'MERGE' FileOpenInMode }
-    item "Man pages"		    { 'CATBS' FileOpenInMode }
+    item "ASM"			        { "ASM" FileOpenInMode }
+    item "ASM 370 (.CPY,.MLC)"	{ "ASM370" FileOpenInMode }
+    item "TCL"			        { "TCL" FileOpenInMode }
+    item "Fortran 90"		    { "FORTRAN" FileOpenInMode }
+    item "IPF"			        { "IPF" FileOpenInMode }
+    item "A51"			        { "A51" FileOpenInMode }
+    item "CLARION (.CLW)"	    { "CLARION" FileOpenInMode }
+    item "EBFN"			        { "EBFN" FileOpenInMode }
+    item "SGML"			        { "SGML" FileOpenInMode }
+    item "SIOD (.cscm)"		    { "SIOD" FileOpenInMode }
+    item "S&Lang"		        { "sl" FileOpenInMode }
+    item "Module 3"		        { "MODULA3" FileOpenInMode }
+    item "Tex Info"		        { "TEXINFO" FileOpenInMode }
+    item "Diff"			        { "DIFF" FileOpenInMode }
+    item "Merge"		        { "MERGE" FileOpenInMode }
+    item "Man pages"		    { "CATBS" FileOpenInMode }
 }
 
 menu MChangeModeMore {
-    item "ASM"			        { 'ASM' ChangeMode }
-    item "ASM 370 (.CPY,.MLC)"	{ 'ASM370' ChangeMode }
-    item "TCL"			        { 'TCL' ChangeMode }
-    item "Fortran 90"		    { 'FORTRAN' ChangeMode }
-    item "IPF"			        { 'IPF' ChangeMode }
-    item "A51"			        { 'A51' ChangeMode }
-    item "CLARION (.CLW)"	    { 'CLARION' ChangeMode }
-    item "EBFN"			        { 'EBFN' ChangeMode }
-    item "SGML"        		    { 'SGML' ChangeMode }
-    item "SIOD (.cscm)"		    { 'SIOD' ChangeMode }
-    item "S&Lang"		        { 'sl' ChangeMode }
-    item "Module 3"		        { 'MODULA3' ChangeMode }
-    item "Tex Info"		        { 'TEXINFO' ChangeMode }
-    item "Diff"			        { 'DIFF' ChangeMode }
-    item "Merge"		        { 'MERGE' ChangeMode }
-    item "Man pages"		    { 'CATBS' ChangeMode }
+    item "ASM"			        { "ASM" ChangeMode }
+    item "ASM 370 (.CPY,.MLC)"	{ "ASM370" ChangeMode }
+    item "TCL"			        { "TCL" ChangeMode }
+    item "Fortran 90"		    { "FORTRAN" ChangeMode }
+    item "IPF"			        { "IPF" ChangeMode }
+    item "A51"			        { "A51" ChangeMode }
+    item "CLARION (.CLW)"	    { "CLARION" ChangeMode }
+    item "EBFN"			        { "EBFN" ChangeMode }
+    item "SGML"        		    { "SGML" ChangeMode }
+    item "SIOD (.cscm)"		    { "SIOD" ChangeMode }
+    item "S&Lang"		        { "sl" ChangeMode }
+    item "Module 3"		        { "MODULA3" ChangeMode }
+    item "Tex Info"		        { "TEXINFO" ChangeMode }
+    item "Diff"			        { "DIFF" ChangeMode }
+    item "Merge"		        { "MERGE" ChangeMode }
+    item "Man pages"		    { "CATBS" ChangeMode }
 }
 
 menu Object {
-    item    "&Open...\tF3"		         { FileOpen }
+    item    "&Open...\tF3"		         { "" FileOpen }
     submenu "Open in &Mode...\tCtrl+F3", MOpenInMode;
     submenu "Open in Mode more..",	     MOpenInModeMore;
-    item    "Open &Binary"		         { 'BIN' FileOpenInMode }
+    item    "Open &Binary"		         { "BIN" FileOpenInMode }
     item;
-    item    "Open &Directory\tC+M"       { DirOpen }
+    item    "Open &Directory\tC+M"       { "" DirOpen }
     item;
     item    "&Next\tAlt+Right"	         { FileNext }
     item    "&Previous\tAlt+Left"        { FilePrev }
@@ -123,7 +123,7 @@ menu MCvs {
     item "CVS &Add"            { "add" RunCvs }
     item "CVS &Remove"         { "remove" RunCvs }
     item "CVS S&tatus"         { "status -v" RunCvs }
-    item "CV&S"                { Cvs }
+    item "CV&S"                { "" Cvs }
     item;
     item "&View CVS"	       { ViewCvs }
     item "View CVS Di&ff"      { ViewCvsDiff }
@@ -140,7 +140,7 @@ menu MSvn {
     item "SVN &Add"            { "add" RunSvn }
     item "SVN &Remove"         { "remove" RunSvn }
     item "SVN Lo&g"            { "log" RunSvn }
-    item "SV&N"                { Svn }
+    item "SV&N"                { "" Svn }
     item;
     item "&View SVN"	       { ViewSvn }
     item "View SVN Di&ff"      { ViewSvnDiff }
@@ -174,13 +174,13 @@ menu Window {
     item "&Close view\tCtrl+Alt+F4"   { WinClose }
     item "Close &other views\tF5"     { WinZoom }
     item;
-    item "&Load Desktop"              { DesktopLoad }
+    item "&Load Desktop"              { "" DesktopLoad }
     item "Sa&ve Desktop"              { DesktopSave }
-    item "Save Desktop &As"           { DesktopSaveAs }
+    item "Save Desktop &As"           { "" DesktopSaveAs }
     item;
     item "&Routines\tCtrl+I"          { ListRoutines }
     item "&Buffers\tAlt+0"            { ViewBuffers }
-    item "&Directory\tC+M"            { DirOpen }
+    item "&Directory\tC+M"            { "" DirOpen }
 }
 
 menu Help {
@@ -196,23 +196,23 @@ menu Navigate {
     item "Go &< level\tCtrl+PgUp"     { DirGoUp }
     item "Go &> level\tCtrl+PgDn"     { DirGoDown }
     item "Go to &\\\tCtrl+\\"	      { DirGoRoot }
-    item "&/ Goto Dir\t/"             { DirGoto }
+    item "&/ Goto Dir\t/"             { "" DirGoto }
     item;
     item "R&ename File"               { RenameFile }
     item "&Make Directory"            { MakeDirectory }
     item;
     item "Delete &File\tCtrl+D"       { DeleteFile }
 #    item;
-#    item '&C:\\' { DirGoto 'H:\\' }
+#    item "&C:\\" { DirGoto "H:\\" }
 }
 
 
 menu File {
-    item    "&Open...\tF3"		         { FileOpen }
+    item    "&Open...\tF3"		         { "" FileOpen }
     submenu "Open in &Mode...\tCtrl+F3", MOpenInMode;
     submenu "Open in more",		         MOpenInModeMore;
-    item    "Open &Binary..."		    { 'BIN' FileOpenInMode }
-    item    "Open &Directory\tC+M"	    { DirOpen }
+    item    "Open &Binary..."		    { "BIN" FileOpenInMode }
+    item    "Open &Directory\tC+M"	    { "" DirOpen }
     item    "&Reload\tShift+F3" 	    { FileReload }
     item;
     item    "&Save\tF2" 		        { FileSave }
@@ -253,7 +253,7 @@ menu Line {
     item "&Uppercase"	              { LineCaseUp }
     item "&Lowercase"	              { LineCaseDown }
     item "&Togglecase"	              { LineCaseToggle }
-    item "&Rot13"	                  { 'A-Za-z' 'N-ZA-Mn-za-m' LineTrans }
+    item "&Rot13"	                  { "A-Za-z" "N-ZA-Mn-za-m" LineTrans }
     item;
     item "User &specified..."         { LineTrans }
 }
@@ -281,7 +281,7 @@ menu Translate {
     item "&Uppercase"	              { BlockCaseUp }
     item "&Lowercase"	              { BlockCaseDown }
     item "&Togglecase"	              { BlockCaseToggle }
-    item "&Rot13"	                  { 'A-Za-z' 'N-ZA-Mn-za-m' BlockTrans }
+    item "&Rot13"	                  { "A-Za-z" "N-ZA-Mn-za-m" BlockTrans }
     item;
     item "User &specified..."         { "" BlockTrans }
 }
@@ -440,9 +440,9 @@ menu Local {
 menu DirectoryFile {
     item    "&Selected\tEnter"          { Activate }
     item;
-    item    "&Open...\tF3"		        { FileOpen }
+    item    "&Open...\tF3"		        { "" FileOpen }
     submenu "Open in &Mode...\tCtrl+F3", MOpenInMode;
-    item    "Open &Binary"		        { 'BIN' FileOpenInMode }
+    item    "Open &Binary"		        { "BIN" FileOpenInMode }
     item;
     item    "&Next\tAlt+Right"	        { FileNext }
     item    "&Previous\tAlt+Left"       { FilePrev }

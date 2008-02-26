@@ -359,7 +359,9 @@ int EView::SwitchTo(ExState &State) {
     EModel *M;
     int No;
 
-    if (State.GetIntParam(this, &No) == 0) {
+    No = ParamStack.pop();
+
+    if (No == -1) {
         char str[10] = "";
 
         if (MView->Win->GetStr("Obj.Number", sizeof(str), (char *)str, 0) == 0) return 0;

@@ -789,7 +789,6 @@ int CompileUnconditionalBranch(CurPos &cp, int to) {
     return where;
 }
 
-
 static void UpdateNumber(int index, long num) {
     unsigned long l = num;
     unsigned char b[4];
@@ -802,8 +801,6 @@ static void UpdateNumber(int index, long num) {
     cache[index].obj = malloc(4);
     memcpy(cache[index].obj, b, 4);
 }
-
-
 
 // run through the currently compiled macro in cache, determine the branch offset by counting the (variable sized) macro element
 // returns branch offset, which can be negative. this is determined by the order of compilation position.
@@ -827,8 +824,6 @@ long int BranchOffset(int pos1, int pos2) {
  //   fprintf(stderr,"%d\n",branchoffset*sign);
     return branchoffset*sign;
 }
-
-
 
 static int ParseCommands(CurPos &cp, char *Name) {
     Word cmd;
