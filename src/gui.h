@@ -136,7 +136,7 @@ public:
     int Run();
     void StopLoop();
 
-    int RunProgram(int mode, char *Command);
+    int RunProgram(int mode, const char *Command);
 
     int OpenPipe(char *Command, EModel *notify);
     int SetPipeView(int id, EModel *notify);

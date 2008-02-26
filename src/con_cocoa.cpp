@@ -669,7 +669,7 @@ int GUI::ClosePipe(int id) {
 #endif
 }
 
-int GUI::RunProgram(int mode, char *Command) {
+int GUI::RunProgram(int mode, const char *Command) {
     char Cmd[1024];
 
     strlcpy(Cmd, XShellCommand, sizeof(Cmd));

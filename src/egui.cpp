@@ -151,19 +151,9 @@ int Push(GxView *view, ExState &State) {
  * MACRO: Print a stack diagnostic message to stderr
  */
 int EGUI::Diag(ExState &State) {
-    int count;
-    char msg[256];
-
-    if (State.GetIntParam(0, &count) == 0)
-        count = 0;
-    if (State.GetStrParam(0, msg, sizeof(msg)))
-        fprintf(stderr, "%s: ", msg);
-
-    fprintf(stderr, "cond=%08x, tos=%d, nos=%d, 3rd=%d", BranchCondition, ParamStack.peek(0), ParamStack.peek(1), ParamStack.peek(2));
-    for (int i=3; i <= count; i++)
-        fprintf(stderr, ", %ith=%d", i, ParamStack.peek(i));
-    fprintf(stderr, "\n");
-
+    fprintf(stderr, "cond=%08x, 5th=%d, 4th=%d, 3rd=%d, nos=%d, tos=%d\n", BranchCondition,
+            ParamStack.peek(4), ParamStack.peek(3), ParamStack.peek(2), ParamStack.peek(1),
+            ParamStack.peek(0));
     return 1;
 }
 
@@ -400,11 +390,7 @@ int SwapStr() {
 }
 
 int DiagStr(ExState &State) {
-    char msg[128];
     int ssize = sstack.size();
-
-    if (State.GetStrParam(0, msg, sizeof(msg)))
-        fprintf(stderr, "%s: ", msg);
 
     if (ssize == 0)
         fprintf(stderr, "empty");
@@ -473,6 +459,7 @@ int OverStr() {
     return 1;
 }
 
+// TODO
 int PickStr(ExState &State) {
     int idx;
     if (State.GetIntParam(0, &idx) == 0)
@@ -508,10 +495,6 @@ int SubSearchStr() {
 
     std::string searchIn  = sstack[searchInI];
     std::string searchFor = sstack[searchForI];
-
-    fprintf(stderr, "Search In: %i (%s), Search For: %i (%s)\n",
-            searchInI, searchIn.c_str(),
-            searchForI, searchFor.c_str());
 
     std::string::size_type foundAt = searchIn.find(searchFor, 0);
     ParamStack.push(foundAt == std::string::npos ? -1 : (int) foundAt);
@@ -558,6 +541,7 @@ int SplitStr() {
     return 1;
 }
 
+// LenStr
 int LenStr(ExState &State, GxView *view) {
     EView *View = 0;
     if (view != NULL) {
@@ -584,43 +568,22 @@ int LenStr(ExState &State, GxView *view) {
 }
 
 int MidStr(ExState &State, GxView *view) {
-    int idx = 0, start = -1, end = -1;
-    EView *View = 0;
+    int end = ParamStack.pop();
+    int start = ParamStack.pop();
 
-    if (view != NULL) {
-        ExModelView *V = (ExModelView *)view->Top;
-        View = V->View;
-    }
-
-    if (State.GetIntParam(View, &start)) {
-        if (State.GetIntParam(View, &end)) {
-            if (State.GetIntParam(View, &idx))
-                idx = sstack.size() - 1 - idx;
-        } else {
-            end = -1;
-        }
-    } else {
-        start = -1;
-    }
-
-    idx = sstack.size() - 1 - idx;
-
-    if (end == -1)
-        end = ParamStack.pop();
-    if (start == -1)
-        start = ParamStack.pop();
-
-    if ((unsigned int) idx >= sstack.size()) {
+    if (sstack.size() == 0) {
+        if (view != NULL)
+            ActiveView->Msg(S_ERROR, "String stack underflow error in mid$");
         SetBranchCondition(0);
         return 0;
     }
 
-    std::string tosS = sstack[idx];
+    std::string tos = sstack.back();
 
-    if (start < 0) start = tosS.length() + start;
-    if (end < 0) end = tosS.length() + end;
+    if (start < 0) start = tos.length() + start;
+    if (end < 0) end = tos.length() + end;
 
-    sstack[idx] = tosS.substr(start, end);
+    sstack[sstack.size()-1] = tos.substr(start, end);
 
     SetBranchCondition(1);
     return 1;
@@ -636,12 +599,17 @@ int GetString(ExState &State, GxView *view) {
         return 0;
     }
 
-    char msg[256] = "", str[256] = "";
-    if (State.GetStrParam(View, msg, sizeof(msg)) == 0) {
-        strcpy(msg, "String");
+    if (sstack.size() == 0) {
+        if (View != 0)
+            View->Msg(S_ERROR, "String stack underflow error in GetString");
+        SetBranchCondition(0);
+        return 0;
     }
 
-    if (View->MView->Win->GetStr(msg, sizeof(str), str, HIST_DEFAULT) == 0) {
+    std::string msg = sstack.back(); sstack.pop_back();
+
+    char str[256] = "";
+    if (View->MView->Win->GetStr(msg.c_str(), sizeof(str), str, HIST_DEFAULT) == 0) {
         SetBranchCondition(0);
         return 0;
     }
@@ -726,11 +694,9 @@ int EGUI::ExecuteCommand(ExState &State, GxView *view)
     EView *View = V->View;
     char name[64] = "";
 
-    if (State.GetStrParam(View, name, sizeof(name)) == 0) {
-        if (View->MView->Win->GetStr("Command name", sizeof(name), name,
-                                     HIST_DEFAULT) == 0)
-            return 0;
-    }
+    if (View->MView->Win->GetStr("Command name", sizeof(name), name,
+                                 HIST_DEFAULT) == 0)
+        return 0;
 
     int command = CmdNum(name);
     if (command == 0) {
@@ -1297,6 +1263,7 @@ int EGUI::FileCloseX(EView *View, int CreateNew, int XClose) {
     return 0;
 }
 
+// TODO
 int EGUI::FileClose(EView *View, ExState &State) {
     int x = 0;
 
@@ -1306,6 +1273,7 @@ int EGUI::FileClose(EView *View, ExState &State) {
     return FileCloseX(View, x);
 }
 
+// TODO
 int EGUI::FileCloseAll(EView *View, ExState &State) {
     int x = 0;
 
@@ -1370,12 +1338,14 @@ int EGUI::WinZoom(GxView *View) {
 }
 
 int EGUI::WinResize(ExState &State, GxView *View) {
-    int Delta = 1;
+    int Delta = ParamStack.pop();
 
-    if (State.GetIntParam(0, &Delta)) {
-        if (View->ExpandHeight(Delta) == 0)
-            return 1;
+    if (View->ExpandHeight(Delta) == 0) {
+        SetBranchCondition(1);
+        return 1;
     }
+
+    SetBranchCondition(0);
     return 0;
 }
 
@@ -1437,26 +1407,58 @@ int EGUI::ShowEntryScreen() {
 }
 
 int EGUI::RunProgram(ExState &State, GxView *view) {
-    static char Cmd[512] = "";
+    if (sstack.size() == 0) {
+        if (ActiveView)
+            ActiveView->Msg(S_ERROR, "String stack underflow error in RunProgram");
+        SetBranchCondition(0);
+        return 0;
+    }
+
+    std::string cmd = sstack.back(); sstack.pop_back();
 
     if (ActiveModel)
         SetDefaultDirectory(ActiveModel);
 
-    if (State.GetStrParam(ActiveView, Cmd, sizeof(Cmd)) == 0)
-        if (view->GetStr("Run", sizeof(Cmd), Cmd, HIST_COMPILE) == 0) return 0;
-    gui->RunProgram(RUN_WAIT, Cmd);
+    if (cmd.empty()) {
+        char Cmd[MAXPATH];
+        if (view->GetStr("Run", sizeof(Cmd), Cmd, HIST_COMPILE) == 0) {
+            SetBranchCondition(0);
+            return 0;
+        }
+        cmd = Cmd;
+    }
+
+    gui->RunProgram(RUN_WAIT, cmd.c_str());
+
+    SetBranchCondition(1);
     return 1;
 }
 
 int EGUI::RunProgramAsync(ExState &State, GxView *view) {
-    static char Cmd[512] = "";
+    if (sstack.size() == 0) {
+        if (ActiveView)
+            ActiveView->Msg(S_ERROR, "String stack underflow error in RunProgram");
+        SetBranchCondition(0);
+        return 0;
+    }
+
+    std::string cmd = sstack.back(); sstack.pop_back();
 
     if (ActiveModel)
         SetDefaultDirectory(ActiveModel);
 
-    if (State.GetStrParam(ActiveView, Cmd, sizeof(Cmd)) == 0)
-        if (view->GetStr("Run", sizeof(Cmd), Cmd, HIST_COMPILE) == 0) return 0;
-    gui->RunProgram(RUN_ASYNC, Cmd);
+    if (cmd.empty()) {
+        char Cmd[MAXPATH];
+        if (view->GetStr("Run", sizeof(Cmd), Cmd, HIST_COMPILE) == 0) {
+            SetBranchCondition(0);
+            return 0;
+        }
+        cmd = Cmd;
+    }
+
+    gui->RunProgram(RUN_ASYNC, cmd.c_str());
+
+    SetBranchCondition(1);
     return 1;
 }
 
@@ -1482,12 +1484,18 @@ int EGUI::MainMenu(ExState &State, GxView *view) {
 }
 
 int EGUI::ShowMenu(ExState &State, GxView *View) {
-    char MName[32] = "";
-
-    if (State.GetStrParam(0, MName, sizeof(MName)) == 0)
+    if (sstack.size() == 0) {
+        if (ActiveView)
+            ActiveView->Msg(S_ERROR, "String stack underflow error in ShowMenu");
+        SetBranchCondition(0);
         return 0;
+    }
 
-    View->Parent->PopupMenu(MName);
+    std::string mname = sstack.back(); sstack.pop_back();
+
+    View->Parent->PopupMenu(mname.c_str());
+
+    SetBranchCondition(0); // TODO: Is this right? This is what it was to start, return 0
     return 0;
 }
 
@@ -1504,23 +1512,43 @@ int EGUI::LocalMenu(GxView *View) {
 }
 
 int EGUI::DesktopSaveAs(ExState &State, GxView *view) {
-    if (State.GetStrParam(0, DesktopFileName, sizeof(DesktopFileName)) == 0)
-        if (view->GetFile("Save Desktop", sizeof(DesktopFileName), DesktopFileName, HIST_PATH, GF_SAVEAS) == 0)
-            return 0;
+    if (sstack.size() == 0) {
+        if (ActiveView)
+            ActiveView->Msg(S_ERROR, "String stack underflow error in DesktopSaveAs");
+        SetBranchCondition(0);
+        return 0;
+    }
 
-    if (DesktopFileName[0] != 0)
-        return SaveDesktop(DesktopFileName);
-    return 0;
+    strcpy(DesktopFileName, sstack.back().c_str()); sstack.pop_back();
+
+    if (strlen(DesktopFileName) == 0) {
+        if (view->GetFile("Save Desktop", sizeof(DesktopFileName), DesktopFileName, HIST_PATH, GF_SAVEAS) == 0) {
+            SetBranchCondition(0);
+            return 0;
+        }
+    }
+
+    return SaveDesktop(DesktopFileName);
 }
 
 int EGUI::DesktopLoad(ExState &State, GxView *view) {
-    if (State.GetStrParam(0, DesktopFileName, sizeof(DesktopFileName)) == 0)
-        if (view->GetFile("Load Desktop", sizeof(DesktopFileName), DesktopFileName, HIST_PATH, GF_OPEN) == 0)
-            return 0;
+    if (sstack.size() == 0) {
+        if (ActiveView)
+            ActiveView->Msg(S_ERROR, "String stack underflow error in DesktopLoad");
+        SetBranchCondition(0);
+        return 0;
+    }
 
-    if (DesktopFileName[0] != 0)
-        return LoadDesktop(DesktopFileName);
-    return 0;
+    strcpy(DesktopFileName, sstack.back().c_str()); sstack.pop_back();
+
+    if (strlen(DesktopFileName) == 0) {
+        if (view->GetFile("Load Desktop", sizeof(DesktopFileName), DesktopFileName, HIST_PATH, GF_SAVEAS) == 0) {
+            SetBranchCondition(0);
+            return 0;
+        }
+    }
+
+    return LoadDesktop(DesktopFileName);
 }
 
 int EGUI::FrameNew() {
@@ -1545,7 +1573,10 @@ int EGUI::FrameNew() {
     assert(edit != 0);
     view->PushView(edit);
     frames->Show();
-    return 1;
+
+    int res = ExecMacro(View, "OnFrameNew");
+    SetBranchCondition(res);
+    return res;
 }
 
 int EGUI::FrameClose(GxView *View) {
@@ -1555,27 +1586,42 @@ int EGUI::FrameClose(GxView *View) {
     if (!frames->isLastFrame()) {
         deleteFrame(frames);
     } else {
-        if (ExitEditor(ActiveView) == 0)
+        if (ExitEditor(ActiveView) == 0) {
+            SetBranchCondition(0);
             return 0;
+        }
         deleteFrame(frames);
     }
-    return 1;
+
+    int res = ExecMacro(View, "OnFrameClose");
+    SetBranchCondition(res);
+    return res;
 }
 
-int EGUI::FrameNext(GxView * /*View*/) {
+int EGUI::FrameNext(GxView * View) {
+    int res = 0;
+
     if (!frames->isLastFrame()) {
         frames->Next->Activate();
-        return 1;
+
+        res = ExecMacro(View, "OnFrameNext");
     }
-    return 0;
+
+    SetBranchCondition(res);
+    return res;
 }
 
 int EGUI::FramePrev(GxView * /*View*/) {
+    int res = 0;
+
     if (!frames->isLastFrame()) {
         frames->Prev->Activate();
-        return 1;
+
+        res = ExecMacro(View, "OnFramePrev");
     }
-    return 0;
+
+    SetBranchCondition(res);
+    return res;
 }
 
 int EGUI::findDesktop(char *argv[]) {
@@ -1664,11 +1710,6 @@ void EGUI::EditorInit() {
     assert(SSBuffer != 0);
     BFI(SSBuffer, BFI_Undo) = 0; // disable undo for clipboard
     ActiveModel = 0;
-
-    ActiveView->ExecMacro("OnBoot");
-    ActiveView->ExecMacro("OnUserBoot");
-    if (StartupMacroCommand != NULL)
-        ActiveView->ExecMacro(StartupMacroCommand);
 }
 
 int EGUI::InterfaceInit(int &/*argc*/, char ** /*argv*/) {
@@ -1857,6 +1898,12 @@ int EGUI::Start(int &argc, char **argv) {
 
         ActiveView->SwitchToModel(ActiveModel);
     }
+
+    ActiveView->ExecMacro("OnBoot");
+    ActiveView->ExecMacro("OnUserBoot");
+    if (StartupMacroCommand != NULL)
+        ActiveView->ExecMacro(StartupMacroCommand);
+
     return 0;
 }
 
