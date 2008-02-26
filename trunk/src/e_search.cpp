@@ -904,10 +904,26 @@ int EBuffer::Search(ExState &State, char *aString, int Options, int /*CanResume*
 
     if (aString)
         strcpy(find, aString);
-    else
-        if (State.GetStrParam(View, find, sizeof(find)) == 0)
-            if ((erc = View->MView->Win->GetStr("Find", sizeof(find), find, HIST_SEARCH)) == 0) return 0;
-    if (strlen(find) == 0) return 0;
+    else {
+        if (sstack.size() == 0) {
+            Msg(S_ERROR, "Strink stack underflow in Search");
+            SetBranchCondition(0);
+            return 0;
+        }
+
+        strcpy(find, sstack.back().c_str()); sstack.pop_back();
+
+        if (strlen(find) == 0) {
+            if ((erc = View->MView->Win->GetStr("Find", sizeof(find), find, HIST_SEARCH)) == 0) {
+                SetBranchCondition(0);
+                return 0;
+            }
+        }
+        if (strlen(find) == 0) {
+            SetBranchCondition(0);
+            return 0;
+        }
+    }
 
     if (erc == 2)
         Case ^= SEARCH_NCASE;
@@ -937,17 +953,53 @@ int EBuffer::SearchReplace(ExState &State, char *aString, char *aReplaceString, 
     char replace[MAXSEARCH+1] = "";
     int Case = BFI(this, BFI_MatchCase) ? 0 : SEARCH_NCASE;
 
-    if (aString)
-        strcpy(find, aString);
-    else
-        if (State.GetStrParam(View, find, sizeof(find)) == 0)
-            if (View->MView->Win->GetStr("Find", sizeof(find), find, HIST_SEARCH) == 0) return 0;
-    if (strlen(find) == 0) return 0;
     if (aReplaceString)
         strcpy(replace, aReplaceString);
-    else
-        if (State.GetStrParam(View, replace, sizeof(replace)) == 0)
-            if (View->MView->Win->GetStr("Replace", sizeof(replace), replace, HIST_SEARCH) == 0) return 0;
+    else {
+        if (sstack.size() == 0) {
+            Msg(S_ERROR, "String stack underflow error in SearchReplace");
+            SetBranchCondition(0);
+            return 0;
+        }
+
+        strcpy(replace, sstack.back().c_str()); sstack.pop_back();
+
+        if (strlen(replace) == 0) {
+            if (View->MView->Win->GetStr("Replace", sizeof(replace), replace, HIST_SEARCH) == 0) {
+                SetBranchCondition(0);
+                return 0;
+            }
+        }
+    }
+
+    if (strlen(replace) == 0) {
+        SetBranchCondition(0);
+        return 0;
+    }
+
+    if (aString)
+        strcpy(find, aString);
+    else {
+        if (sstack.size() == 0) {
+            Msg(S_ERROR, "Strink stack underfow error in SearchReplace");
+            SetBranchCondition(0);
+            return 0;
+        }
+
+        strcpy(find, sstack.back().c_str()); sstack.pop_back();
+
+        if (strlen(find) == 0) {
+            if (View->MView->Win->GetStr("Find", sizeof(find), find, HIST_SEARCH) == 0) {
+                SetBranchCondition(0);
+                return 0;
+            }
+        }
+    }
+
+    if (strlen(find) == 0) {
+        SetBranchCondition(0);
+        return 0;
+    }
 
     LSearch.ok = 0;
     strcpy(LSearch.strSearch, find);

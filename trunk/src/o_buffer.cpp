@@ -1630,7 +1630,7 @@ int EBuffer::FindReplace(ExState &State) {
     strcpy(replace, sstack.back().c_str()); sstack.pop_back();
     strcpy(find,    sstack.back().c_str()); sstack.pop_back();
 
-    if (strlen(find) > 0 && strlen(replace) > 0) {
+    if (strlen(find) > 0 && strlen(replace) > 0 && strlen(options) > 0) {
         LSearch.ok = 0;
         strcpy(LSearch.strSearch, find);
         strcpy(LSearch.strReplace, replace);
@@ -1655,12 +1655,28 @@ int EBuffer::FindReplace(ExState &State) {
     } else {
         if (BFS(this, BFS_DefFindReplaceOpt))
             strcpy(options, BFS(this, BFS_DefFindReplaceOpt));
-        if (State.GetStrParam(View, find, sizeof(find)) == 0)
-            if (View->MView->Win->GetStr("Find", sizeof(find), find, HIST_SEARCH) == 0) return 0;
-        if (State.GetStrParam(View, replace, sizeof(replace)) == 0)
-            if (View->MView->Win->GetStr("Replace", sizeof(replace), replace, HIST_SEARCH) == 0) return 0;
-        if (State.GetStrParam(View, options, sizeof(options)) == 0)
-            if (View->MView->Win->GetStr("Options (All/Block/Cur/Delln/Glob/Igncase/Joinln/Rev/Splitln/Noask/Word/regX)", sizeof(options), options, HIST_SEARCHOPT) == 0) return 0;
+        if (strlen(find) == 0) {
+            if (View->MView->Win->GetStr("Find", sizeof(find), find, HIST_SEARCH) == 0) {
+                SetBranchCondition(0);
+                return 0;
+            }
+        }
+
+        if (strlen(replace) == 0) {
+            if (View->MView->Win->GetStr("Replace", sizeof(replace), replace, HIST_SEARCH) == 0) {
+                SetBranchCondition(0);
+                return 0;
+            }
+        }
+
+        if (strlen(options) == 0) {
+            if (View->MView->Win->GetStr("Options (All/Block/Cur/Delln/Glob/Igncase/Joinln/Rev/Splitln/Noask/Word/regX)",
+                                         sizeof(options), options, HIST_SEARCHOPT) == 0)
+            {
+                SetBranchCondition(0);
+                return 0;
+            }
+        }
 
         LSearch.ok = 0;
         strcpy(LSearch.strSearch, find);

@@ -887,7 +887,15 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
             char kmaps[64] = "";
             EEventMap *m;
 
-            if (State.GetStrParam(0, kmaps, sizeof(kmaps)) == 0) {
+            if (sstack.size() == 0) {
+                ActiveView->Msg(S_ERROR, "String stack underflow error in ChangeKeys");
+                SetBranchCondition(0);
+                return 0;
+            }
+
+            strcpy(kmaps, sstack.back().c_str()); sstack.pop_back();
+
+            if (strlen(kmaps) == 0) {
                 SetOverrideMap(0, 0);
                 return 0;
             }

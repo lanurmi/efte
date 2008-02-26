@@ -581,16 +581,28 @@ void EDirectory::GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen) 
 }
 
 int EDirectory::ChangeDir(ExState &State) {
+    if (sstack.size() == 0) {
+        Msg(S_ERROR, "String stack underflow error in ChangeDir");
+        SetBranchCondition(0);
+        return 0;
+    }
+
     char Dir[MAXPATH];
     char Dir2[MAXPATH];
 
-    if (State.GetStrParam(View, Dir, sizeof(Dir)) == 0) {
+    strcpy(Dir, sstack.back().c_str()); sstack.pop_back();
+
+    if (strlen(Dir) == 0) {
         strcpy(Dir, Path);
-        if (View->MView->Win->GetStr("Set directory", sizeof(Dir), Dir, HIST_PATH) == 0)
+        if (View->MView->Win->GetStr("Set directory", sizeof(Dir), Dir, HIST_PATH) == 0) {
+            SetBranchCondition(0);
             return 0;
+        }
     }
-    if (ExpandPath(Dir, Dir2, sizeof(Dir2)) == -1)
+    if (ExpandPath(Dir, Dir2, sizeof(Dir2)) == -1) {
+        SetBranchCondition(0);
         return 0;
+    }
 #if 0
     // is this needed for other systems as well ?
     Slash(Dir2, 1);
@@ -606,9 +618,11 @@ int EDirectory::ChangeDir(ExState &State) {
 int EDirectory::GetContext() {
     return CONTEXT_DIRECTORY;
 }
+
 char *EDirectory::FormatLine(int /*Line*/) {
     return 0;
 }
+
 int EDirectory::CanActivate(int /*Line*/) {
     return 1;
 }

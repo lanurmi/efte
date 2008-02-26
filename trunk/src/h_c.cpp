@@ -383,32 +383,19 @@ int FunctionUsesContinuation = 0;
 
 // this is global, unfortunately -- FIX !!!
 int EBuffer::SetCIndentStyle(ExState &State) {
-    if (State.GetIntParam(View, &C_Indent) == 0)
-        return 0;
-    if (State.GetIntParam(View, &C_BraceOfs) == 0)
-        return 0;
-    if (State.GetIntParam(View, &C_ParenDelta) == 0)
-        return 0;
-    if (State.GetIntParam(View, &C_CaseOfs) == 0)
-        return 0;
-    if (State.GetIntParam(View, &C_CaseDelta) == 0)
-        return 0;
-    if (State.GetIntParam(View, &C_ClassOfs) == 0)
-        return 0;
-    if (State.GetIntParam(View, &C_ClassDelta) == 0)
-        return 0;
-    if (State.GetIntParam(View, &C_ColonOfs) == 0)
-        return 0;
-    if (State.GetIntParam(View, &C_CommentOfs) == 0)
-        return 0;
-    if (State.GetIntParam(View, &C_CommentDelta) == 0)
-        return 0;
-    if (State.GetIntParam(View, &C_FirstLevelWidth) == 0)
-        return 0;
-    if (State.GetIntParam(View, &C_FirstLevelIndent) == 0)
-        return 0;
-    if (State.GetIntParam(View, &C_Continuation) == 0)
-        return 0;
+    C_Continuation = ParamStack.pop();
+    C_FirstLevelIndent = ParamStack.pop();
+    C_FirstLevelWidth = ParamStack.pop();
+    C_CommentDelta = ParamStack.pop();
+    C_CommentOfs = ParamStack.pop();
+    C_ColonOfs = ParamStack.pop();
+    C_ClassDelta = ParamStack.pop();
+    C_ClassOfs = ParamStack.pop();
+    C_CaseDelta = ParamStack.pop();
+    C_CaseOfs = ParamStack.pop();
+    C_ParenDelta = ParamStack.pop();
+    C_BraceOfs = ParamStack.pop();
+    C_Indent = ParamStack.pop();
     return 1;
 }
 
