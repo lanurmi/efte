@@ -1,7 +1,7 @@
-{   3  5 plus    8 PASS }
-{  -2  9 plus    7 PASS }
-{   6 -8 plus   -2 PASS }
-{ -11 -7 plus  -18 PASS }
+{   3  5 +    8 PASS }
+{  -2  9 +    7 PASS }
+{   6 -8 +   -2 PASS }
+{ -11 -7 +  -18 PASS }
 
 { 777           # stack "marker"
    TEST1             #   run tests

@@ -2,8 +2,8 @@
 #    minus, plus, 
 #    primitives defined constants
 
-{ 20 15 minus 5  PASS }
-{ 20 15 plus  35 PASS }
-{ 0 false or   1 plus  true plus 0 PASS  }
-{ 0 false plus 1 minus true mul  1 PASS  }
+{ 20 15 - 5  PASS }
+{ 20 15 + 35 PASS }
+{ 0 false or   1 +  true + 0 PASS  }
+{ 0 false + 1 - true *  1 PASS  }
 { TEST1 TEST2 TEST3 TEST4 }

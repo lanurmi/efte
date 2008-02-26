@@ -1,1 +1,1 @@
-{ 2 0 qdup swap qdup 10 mul plus 10 mul plus 220 PASS } # tests qdup
+{ 2 0 qdup swap qdup 10 * + 10 * + 220 PASS } # tests qdup

@@ -338,7 +338,7 @@ static int Lookup(const OrdLookup *where, char *what) {
 #define P_SYNTAX        1  // unknown
 #define P_WORD          2  // a-zA-Z_
 #define P_NUMBER        3  // 0-9
-#define P_STRING        4  // "'`
+#define P_STRING        4  // "`/
 #define P_ASSIGN        5  // =
 #define P_EOS           6  // ;
 #define P_KEYSPEC       7  // []
@@ -348,7 +348,7 @@ static int Lookup(const OrdLookup *where, char *what) {
 #define P_COMMA        11  // ,
 #define P_QUEST        12
 #define P_VARIABLE     13  // $
-#define P_DOT          14  // . (concat)
+#define P_CHAR         14  // '
 
 #define K_UNKNOWN       0
 #define K_MODE          1
@@ -548,20 +548,25 @@ static char *GetColor(CurPos &cp, char *name) {
     return name;
 }
 
+// A-Za-z0-9!$%&*+,-./0-9<?@|~\^
+#define VALIDWORD(c) ((c >= '!' && c <= '~') && \
+    c != '(' && c != ')' && c != '{' && c != '}' && c != ';' && c != ':' )
+
 static int GetWord(CurPos &cp, char *w) {
     char *p = w;
     int len = 0;
 
-    while (len < int(sizeof(Word)) && cp.c < cp.z &&
-            ((*cp.c >= 'a' && *cp.c <= 'z') ||
-             (*cp.c >= 'A' && *cp.c <= 'Z') ||
-             (*cp.c >= '0' && *cp.c <= '9') ||
-             (*cp.c == '_' || (len > 0 && *cp.c == '$')))) {
+    while (len < int(sizeof(Word)) && cp.c < cp.z && VALIDWORD(*cp.c))
+    {
         *p++ = *cp.c++;
         len++;
     }
-    if (len == sizeof(Word)) return -1;
+
+    if (len == sizeof(Word))
+        return -1;
+
     *p = 0;
+
     return 0;
 }
 
@@ -591,12 +596,10 @@ static int Parse(CurPos &cp) {
             return P_COMMA;
         case ':':
             return P_COLON;
-        case '.':
-            return P_DOT;
         case '\'':
+            return P_CHAR;
         case '"':
         case '`':
-        case '/':
             return P_STRING;
         case '[':
             return P_KEYSPEC;
@@ -608,8 +611,6 @@ static int Parse(CurPos &cp) {
             return P_QUEST;
         case '$':
             return P_VARIABLE;
-        case '-':
-        case '+':
         case '0':
         case '1':
         case '2':
@@ -622,9 +623,9 @@ static int Parse(CurPos &cp) {
         case '9':
             return P_NUMBER;
         default:
-            if ((*cp.c >= 'a' && *cp.c <= 'z') ||
-                    (*cp.c >= 'A' && *cp.c <= 'Z') ||
-                    (*cp.c == '_'))
+            if ((*cp.c == '-' || *cp.c == '+') && cp.c[1] >= '0' && cp.c[1] <= '9')
+                return P_NUMBER;
+            else if VALIDWORD(*cp.c)
                 return P_WORD;
             else
                 return P_SYNTAX;
@@ -643,7 +644,6 @@ static void GetOp(CurPos &cp, int what) {
     case P_COLON:
     case P_QUEST:
     case P_VARIABLE:
-    case P_DOT:
         cp.c++;
         break;
     }
@@ -660,7 +660,7 @@ static char *GetString(CurPos &cp) {
     cp.c++; // skip '"`
     while (cp.c < cp.z) {
         if (*cp.c == '\\') {
-            if (c == '/')
+            if (c == '`')
                 *p++ = *cp.c;
             cp.c++;
             if (cp.c == cp.z) return 0;
@@ -854,10 +854,7 @@ static int ParseCommands(CurPos &cp, char *Name) {
         if (p == P_CLOSEBRACE) break;
         if (p == P_EOF) Fail(cp, "Unexpected EOF");
 
-        if (p == P_DOT) {
-            GetOp(cp, P_DOT);
-            PutNull(cp, CF_CONCAT);
-        } else if (p == P_NUMBER) {
+        if (p == P_NUMBER) {
             long num = GetNumber(cp);
             if (Parse(cp) != P_COLON) {
                 CFteCompileCommand(cp, CFteCmdNum("push"), 1, 0);
@@ -1023,6 +1020,10 @@ static int ParseCommands(CurPos &cp, char *Name) {
             char *s = GetString(cp);
             CFteCompileCommand(cp, CFteCmdNum("push$"), 1, 0);
             PutString(cp, CF_STRING, s);
+        } else if (p == P_CHAR) {
+            char *s = GetString(cp);
+            CFteCompileCommand(cp, CFteCmdNum("push"), 1, 0);
+            PutNumber(cp, CF_INT, s[0]);
         } else if (p == P_QUEST) {
             ign = 1;
             GetOp(cp, P_QUEST);
@@ -1600,6 +1601,7 @@ static int ParseConfigFile(CurPos &cp) {
                     case P_STRING: {
                         long var;
 
+
                         s = GetString(cp);
                         if (s == 0) Fail(cp, "Parse failed");
                         var = Lookup(mode_string, w);
@@ -1888,7 +1890,7 @@ static int PreprocessConfigFile(CurPos &cp) {
                     //printf("define '%s'\n", w);
                     DefineWord(w);
                     if (cp.c < cp.z && *cp.c != ',' && *cp.c != ')')
-                        Fail(cp, "unexpected: %c", cp.c[0]);
+                        Fail(cp, "unexpected: '%c'", cp.c[0]);
                     if (cp.c < cp.z && *cp.c == ',')
                         cp.c++;
                 }
@@ -1911,7 +1913,7 @@ static int PreprocessConfigFile(CurPos &cp) {
                         wasWord = wasWord ? 0 : 1;
 
                     if (cp.c < cp.z && *cp.c != ',' && *cp.c != ')')
-                        Fail(cp, "unexpected: %c", cp.c[0]);
+                        Fail(cp, "unexpected: '%c'", cp.c[0]);
                     if (cp.c < cp.z && *cp.c == ',')
                         cp.c++;
                 }

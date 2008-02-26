@@ -152,7 +152,7 @@ menu MSvn {
 menu Tools {
     item "&Compile...\tF9"      { "mave -k " Compile }
     item "&Grep..."             { "grep -n " Compile }
-    item "Save and &ISpell"     { FileSave; "ispell " . $FilePath RunProgram ; FileReload }
+    #TODO: item "Save and &ISpell"     { FileSave; "ispell " . $FilePath RunProgram ; FileReload }
     item;
     item "&Shell\tAlt+F9"       { "sh" RunProgram }
     item "&Run...\tCtrl+F9"     { "" RunProgram }
@@ -244,10 +244,10 @@ menu Line {
     item "Delete to li&ne start\tCtrl+Sh+BackSp" { KillToLineStart }
     item;
     item "Comment\tCtrl+Alt+C" {
-	    MoveLineStart; /^(\s*)/ /\/\/  \1/ "xnc" ?FindReplace ; MoveDown
+	    MoveLineStart; `^(\s*)/ /\/\`  "\\1" "xnc" ?FindReplace ; MoveDown
     }
     item "Uncomment\tCtrl+Alt+U" {
-	    MoveLineStart; /^[\/][\/]	/ // "xnc" ?FindReplace ; MoveDown
+	    MoveLineStart; `^[\/][\/]`	` ` "xnc" ?FindReplace ; MoveDown
     }
     item;
     item "&Uppercase"	              { LineCaseUp }

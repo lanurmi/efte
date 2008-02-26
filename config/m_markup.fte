@@ -7,4 +7,4 @@
 mode MARKUP: PLAIN {
 }
 
-oinclude 'mym_markup.fte';
+oinclude "mym_markup.fte";

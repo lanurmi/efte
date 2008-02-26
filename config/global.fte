@@ -1,5 +1,5 @@
 object GLOBAL {
-#    ScreenSizeX = 80; ScreenSizeY = 25;
+    #ScreenSizeX = 80; ScreenSizeY = 25;
 
     CursorBlink         = 0; # set to 1 to have a blinking cursor.
     CursorInsertMask    = 127;
@@ -19,7 +19,7 @@ object GLOBAL {
 
     PMDisableAccel      = 0;   # disable Alt+Fx PM accelerators
 
-    DefaultModeName     = 'PLAIN'; 
+    DefaultModeName     = "PLAIN"; 
     
     KeepHistory         = 1;   # load/save history on entry/exit
     LoadDesktopOnEntry  = 0;   # load desktop on fte start (2 = when no files)
@@ -30,7 +30,7 @@ object GLOBAL {
 
     RecheckReadOnly     = 0;   # recheck read only status when trying to modify file (only performed on when read only is set)
 
-    CompletionFilter    = /^{\c.+\.o|a|{bak}|{exe}|{lib}|{class}|{jar}|{zip}|{gz}|{tar.gz}|{tgz}}|{.+~}|{CVS}|{SVN}$/;
+    CompletionFilter    = `^{\c.+\.o|a|{bak}|{exe}|{lib}|{class}|{jar}|{zip}|{gz}|{tar.gz}|{tgz}}|{.+~}|{CVS}|{SVN}$`;
     # {obj} file is also ASCII Object File Format for MAYA graphics editor
     # so it is removed from Completion Filter
     
@@ -38,14 +38,14 @@ object GLOBAL {
     PrintDevice         = "|lpr";
 %endif
 %if(!OS_UNIX)
-    PrintDevice         = '\\DEV\\PRN';
+    PrintDevice         = "\\DEV\\PRN";
 %endif
     
-    CompileCommand      = 'make ';
+    CompileCommand      = "make ";
     KeepMessages        = 1;
 
-    CvsCommand          = 'cvs';
-    SvnCommand          = 'svn';
+    CvsCommand          = "cvs";
+    SvnCommand          = "svn";
 %if(OS_UNIX)
     HelpCommand         = "man";
 %endif
@@ -74,49 +74,49 @@ object GLOBAL {
     C_ParenDelta        = -1;
     # if this is true (1), function parameters will only indent
     # as much as C_Continuation says, rather than line up one column
-    # to the right of the '('.
+    # to the right of the "(".
     FunctionUsesContinuation = 0;
     
     REXX_Indent         = 4;
 #    REXX_Do_Offset      = 0;
 
 # grep -n
-    CompileRx = { 1, 2, 3, /^([\w:._\-\+\/\\]#):(\d+):/ };
+    CompileRx = { 1, 2, 3, `^([\w:._\-\+\/\\]#):(\d+):` };
 # GCC
-    CompileRx = { 1, 2, 3, /^([\w:._\-\+\/\\]+):(\d+):\s(.*)$/ };
+    CompileRx = { 1, 2, 3, `^([\w:._\-\+\/\\]+):(\d+):\s(.*)$` };
 # Borland C++              
-    CompileRx = { 1, 2, 3, /^{Error}|{Warning}\s(\S+)\s(\d+):\s(.*)$/ };
+    CompileRx = { 1, 2, 3, `^{Error}|{Warning}\s(\S+)\s(\d+):\s(.*)$` };
 # Borland C++ 5.5 command line <wirawan0>
-    CompileRx = { 1, 2, 3, /^{Error E}|{Warning W}\d+\s(\S+)\s(\d+):\s(.*)$/ };
+    CompileRx = { 1, 2, 3, `^{Error E}|{Warning W}\d+\s(\S+)\s(\d+):\s(.*)$` };
 # CSet++
-    CompileRx = { 1, 2, 3, /^([\w:._\-\+\/\\]+)\((\d+):\d+\)(.*)$/ };
+    CompileRx = { 1, 2, 3, `^([\w:._\-\+\/\\]+)\((\d+):\d+\)(.*)$` };
 # Watcom C++
-    CompileRx = { 1, 2, 3, /^([\w:._\-\+\/\\]+)\((\d+)\):\x20{Error!}|{Warning!}(.*)$/ };
+    CompileRx = { 1, 2, 3, `^([\w:._\-\+\/\\]+)\((\d+)\):\x20{Error!}|{Warning!}(.*)$` };
 # xlC (AIX)
-    CompileRx = { 1, 2, 3, /^"([\w:._\-\+\/\\]+)", line (\d+){.\d+}?: (.*)$/ };
+    CompileRx = { 1, 2, 3, `^"([\w:._\-\+\/\\]+)", line (\d+){.\d+}?: (.*)$` };
 # IPF compiler
-    CompileRx = { 1, 2, 3, /^\<([^:]+):(\d+)\> (.*)$/ };
+    CompileRx = { 1, 2, 3, `^\<([^:]+):(\d+)\> (.*)$` };
 
-    CompileRx = { 1, 2, 3, /^([\w:._\-\+\/\\]+)\((\d+)\)\s*:\s*(.*)$/ };
-    CompileRx = { 2, 3, 1, /^([^\t]+)\t([^\t]+)\t(\d+)$/ };
-    CompileRx = { 2, 3, 1, /^\s*at\s*([^\(]+)\(([^\:]+)\:(\d+)\)$/ };  # PAF@design.ru
+    CompileRx = { 1, 2, 3, `^([\w:._\-\+\/\\]+)\((\d+)\)\s*:\s*(.*)$` };
+    CompileRx = { 2, 3, 1, `^([^\t]+)\t([^\t]+)\t(\d+)$` };
+    CompileRx = { 2, 3, 1, `^\s*at\s*([^\(]+)\(([^\:]+)\:(\d+)\)$` };  # PAF@design.ru
 
 # jikes +E (tested with version 1.18)
-    CompileRx = { 1, 2, 3, /^.*\s([\w._\-\+\/\\]+):(\d+):\d+:\d+:\d+:\s(.*)$/ };
+    CompileRx = { 1, 2, 3, `^.*\s([\w._\-\+\/\\]+):(\d+):\d+:\d+:\d+:\s(.*)$` };
 
 # Ant (javac)
-    CompileRx = { 1, 2, 3, /^.*\s([\w:._\-\+\/\\]+):(\d+):\s(.*)$/ };
+    CompileRx = { 1, 2, 3, `^.*\s([\w:._\-\+\/\\]+):(\d+):\s(.*)$` };
 
 # Python interpreter tracebacks
-    CompileRx = { 1, 2, 3, /^\s*File\s+"([\w:._\-\+\/\\]+)",\s+line\s+(\d+)(.*)$/ };
+    CompileRx = { 1, 2, 3, `^\s*File\s+"([\w:._\-\+\/\\]+)",\s+line\s+(\d+)(.*)$` };
     
 # bash: <wirawan0>
-    CompileRx = { 1, 2, 3, /^([\w:._\-\/\\]+): line (\d+):\s(.*)$/ };
+    CompileRx = { 1, 2, 3, `^([\w:._\-\/\\]+): line (\d+):\s(.*)$` };
 # perl: <wirawan0>
-    CompileRx = { 2, 3, 1, /^(.*) at ([^ ]+) line ([0-9]+)/ };
+    CompileRx = { 2, 3, 1, `^(.*) at ([^ ]+) line ([0-9]+)` };
     
-    CvsIgnoreRx = /^cvs update: Updating /;
-    CvsIgnoreRx = /^cvs server: Updating /;
-    SvnIgnoreRx = /^svn update: Updating /;
-    SvnIgnoreRx = /^svn server: Updating /;
+    CvsIgnoreRx = `^cvs update: Updating `;
+    CvsIgnoreRx = `^cvs server: Updating `;
+    SvnIgnoreRx = `^svn update: Updating `;
+    SvnIgnoreRx = `^svn server: Updating `;
 }
