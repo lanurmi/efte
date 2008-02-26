@@ -3475,7 +3475,7 @@ int GUI::ShowEntryScreen() {
     return 1;
 }
 
-int GUI::RunProgram(int mode, char *Command) {
+int GUI::RunProgram(int mode, const char *Command) {
     char FailBuf[256];
     char *Args;
     char *Prog;

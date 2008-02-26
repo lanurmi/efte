@@ -827,7 +827,7 @@ int GUI::ShowEntryScreen() {
     return 1;
 }
 
-int GUI::RunProgram(int /*mode */ , char *Command) {
+int GUI::RunProgram(int /*mode */ , const char *Command) {
     int rc, W, H, W1, H1;
 
     ConQuerySize(&W, &H);
