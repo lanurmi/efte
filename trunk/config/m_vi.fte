@@ -4,17 +4,17 @@
 # 
 
 mode VIMODE: MODEOPTS {                               # VI mode
-    key [i] { 'VI_INS' ChangeKeys }
-    key [I] { MoveLineStart; 'VI_INS' ChangeKeys }
-    key [o] { LineAdd; MoveDown; MoveLineStart; 'VI_INS' ChangeKeys }
-    key [O] { LineInsert; MoveLineStart; 'VI_INS' ChangeKeys }
-    key [a] { MoveRight; 'VI_INS' ChangeKeys }
-    key [A] { MoveLineEnd; 'VI_INS' ChangeKeys }
+    key [i] { "VI_INS" ChangeKeys }
+    key [I] { MoveLineStart; "VI_INS" ChangeKeys }
+    key [o] { LineAdd; MoveDown; MoveLineStart; "VI_INS" ChangeKeys }
+    key [O] { LineInsert; MoveLineStart; "VI_INS" ChangeKeys }
+    key [a] { MoveRight; "VI_INS" ChangeKeys }
+    key [A] { MoveLineEnd; "VI_INS" ChangeKeys }
     key [r] { ToggleInsert; InsertChar; ToggleInsert }
-    key [R] { 'VI_OVER' ChangeKeys; ToggleInsert }
-    key [d] { 'VI_DELETE' ChangeKeys }
+    key [R] { "VI_OVER" ChangeKeys; ToggleInsert }
+    key [d] { "VI_DELETE" ChangeKeys }
     key [D] { KillToLineEnd }
-    key [y] { 'VI_YANK' ChangeKeys }
+    key [y] { "VI_YANK" ChangeKeys }
     key [x] { KillChar }
     key [X] { KillCharPrev }
     key [h] { MoveLeft }
@@ -33,7 +33,7 @@ mode VIMODE: MODEOPTS {                               # VI mode
     key [b] { MoveWordPrev }
     key [w] { MoveWordNext }
     key [W] { MoveWordNext }
-    key [c] { 'VI_CHANGE' ChangeKeys }
+    key [c] { "VI_CHANGE" ChangeKeys }
     key [C+N] { MoveDown }
     key [C+P] { MoveUp }
     key [C+B] { MovePageUp }
@@ -48,7 +48,7 @@ mode VIMODE: MODEOPTS {                               # VI mode
     key [-] { MoveUp; MoveLineStart }
     key [+] { MoveDown; MoveLineStart }
     key [J] { LineJoin }
-    key [C] { KillToLineEnd; 'VI_INS' ChangeKeys }
+    key [C] { KillToLineEnd; "VI_INS" ChangeKeys }
 
     key       [G-Left]    { MoveLeft }
     key     [C+G-Left]    { MoveWordPrev }
@@ -67,7 +67,7 @@ mode VIMODE: MODEOPTS {                               # VI mode
 }
 
 mode VI_INS: MODEOPTS {
-    key [Esc] { 'VIMODE' ChangeKeys; MoveLeft }
+    key [Esc] { "VIMODE" ChangeKeys; MoveLeft }
     key [G-Enter] { LineNew }
     key [Space] { InsertSpace }
     key [BackSp] { KillCharPrev }
@@ -76,30 +76,30 @@ mode VI_INS: MODEOPTS {
 
 mode VI_OVER: VI_INS {
     Insert      = 0;
-    key [Esc] { 'VIMODE' ChangeKeys; MoveLeft; ToggleInsert }
+    key [Esc] { "VIMODE" ChangeKeys; MoveLeft; ToggleInsert }
 }
 
 mode VI_DELETE: MODEOPTS {
-    key [Esc] { 'VIMODE' ChangeKeys }
-    key [d]   { BlockSelectLine; BlockCut; 'VIMODE' ChangeKeys }
-    key [$]   { BlockUnmark; BlockMarkStream; MoveLineEnd; BlockMarkStream; BlockCut; 'VIMODE' ChangeKeys }
-    key [0]   { BlockUnmark; BlockMarkStream; MoveLineStart; BlockMarkStream; BlockCut; 'VIMODE' ChangeKeys }
-    key [w]   { KillWord; 'VIMODE' ChangeKeys }
+    key [Esc] { "VIMODE" ChangeKeys }
+    key [d]   { BlockSelectLine; BlockCut; "VIMODE" ChangeKeys }
+    key [$]   { BlockUnmark; BlockMarkStream; MoveLineEnd; BlockMarkStream; BlockCut; "VIMODE" ChangeKeys }
+    key [0]   { BlockUnmark; BlockMarkStream; MoveLineStart; BlockMarkStream; BlockCut; "VIMODE" ChangeKeys }
+    key [w]   { KillWord; "VIMODE" ChangeKeys }
 }
 
 mode VI_CHANGE: MODEOPTS {
-    key [Esc] { 'VIMODE' ChangeKeys }
-    key [w] { KillWord; 'VI_INS' ChangeKeys }
-    key [$] { KillToLineEnd; 'VI_INS' ChangeKeys }
-    key [c] { MoveLineStart; KillToLineEnd; 'VI_INS' ChangeKeys }
+    key [Esc] { "VIMODE" ChangeKeys }
+    key [w] { KillWord; "VI_INS" ChangeKeys }
+    key [$] { KillToLineEnd; "VI_INS" ChangeKeys }
+    key [c] { MoveLineStart; KillToLineEnd; "VI_INS" ChangeKeys }
 }
 
 mode VI_YANK: MODEOPTS {
-    key [Esc] { 'VIMODE' ChangeKeys }
-    key [d]   { BlockSelectLine; BlockCopy; 'VIMODE' ChangeKeys }
-    key [$]   { BlockUnmark; BlockMarkStream; MoveLineEnd; BlockMarkStream; BlockCopy; MovePrevPos; 'VIMODE' ChangeKeys }
-    key [0]   { BlockUnmark; BlockMarkStream; MoveLineStart; BlockMarkStream; BlockCopy; MovePrevPos; 'VIMODE' ChangeKeys }
-    key [w]   { KillWord; 'VIMODE' ChangeKeys }
+    key [Esc] { "VIMODE" ChangeKeys }
+    key [d]   { BlockSelectLine; BlockCopy; "VIMODE" ChangeKeys }
+    key [$]   { BlockUnmark; BlockMarkStream; MoveLineEnd; BlockMarkStream; BlockCopy; MovePrevPos; "VIMODE" ChangeKeys }
+    key [0]   { BlockUnmark; BlockMarkStream; MoveLineStart; BlockMarkStream; BlockCopy; MovePrevPos; "VIMODE" ChangeKeys }
+    key [w]   { KillWord; "VIMODE" ChangeKeys }
 }
 
-oinclude 'mym_vi.fte';
+oinclude "mym_vi.fte";

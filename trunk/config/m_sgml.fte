@@ -134,16 +134,16 @@ sub SGML_TAG {
 
 
 colorize SGML {
-    SyntaxParser = 'SIMPLE';
+    SyntaxParser = "SIMPLE";
     
     color {
-        { 'Normal',     'Editor_Default' },
-        { 'String',     'Lang_String' },
-        { 'Comment',    'Lang_Comment' },
-        { 'Command',    'Markup_Punctuation' },
-        { 'Symbol',     'Markup_Symbol' },
-        { 'Tag',        'Markup_Tag' },
-        { 'Special',    'Markup_Special' },
+        { "Normal",     "Editor_Default" },
+        { "String",     "Lang_String" },
+        { "Comment",    "Lang_Comment" },
+        { "Command",    "Markup_Punctuation" },
+        { "Symbol",     "Markup_Symbol" },
+        { "Tag",        "Markup_Tag" },
+        { "Special",    "Markup_Special" },
     };
 
     keyword "Editor_Keywords" { # should be SGML 3.2 complete
@@ -210,59 +210,59 @@ colorize SGML {
         "SECTION",
     };
 
-    h_state 0 { 'Normal' }
-    h_trans { 4, '<', '<!--', 'Comment' }
-    h_trans { 8, '<', '</', 'Command' }
-    h_trans { 1, '<', '<', 'Command' }
-    h_trans { 2, '<', '&', 'Symbol' }
+    h_state 0 { "Normal" }
+    h_trans { 4, "<", "<!--", "Comment" }
+    h_trans { 8, "<", "</", "Command" }
+    h_trans { 1, "<", "<", "Command" }
+    h_trans { 2, "<", "&", "Symbol" }
 
-    h_state 1 { 'Command' }
-    h_trans { 0, '>', '>', 'Command' }
-    h_trans { 0, '>', '<', 'Command' }
-    h_trans { 0, '>', '/>', 'Command' }
-    h_trans { 6, '<', '/', 'Command' }
-    h_trans { 3, '<', '"', 'String' }
-    h_wtype { -1, -1, -1, 'i', 'a-zA-Z0-9_\-' }
+    h_state 1 { "Command" }
+    h_trans { 0, ">", ">", "Command" }
+    h_trans { 0, ">", "<", "Command" }
+    h_trans { 0, ">", "/>", "Command" }
+    h_trans { 6, "<", "/", "Command" }
+    h_trans { 3, "<", "\"", "String" }
+    h_wtype { -1, -1, -1, "i", "a-zA-Z0-9_\-" }
 
-    h_state 2 { 'Symbol' }
-    h_trans { 0, '>', ';', 'Symbol' }
-    h_trans { 0, '-S', '#a-zA-Z0-9', 'Symbol' }
+    h_state 2 { "Symbol" }
+    h_trans { 0, ">", ";", "Symbol" }
+    h_trans { 0, "-S", "#a-zA-Z0-9", "Symbol" }
 
-    h_state 3 { 'String' }
-    h_trans { 1, '>', '"', 'String' }
+    h_state 3 { "String" }
+    h_trans { 1, ">", "\"", "String" }
 
-    h_state 4 { 'Comment' }
-    h_trans { 5, '>', '--', 'Comment' }
+    h_state 4 { "Comment" }
+    h_trans { 5, ">", "--", "Comment" }
 
-    h_state 5 { 'Special' }
-    h_trans { 4, '>', '--', 'Comment' }
-    h_trans { 0, '>', '>', 'Comment' }
+    h_state 5 { "Special" }
+    h_trans { 4, ">", "--", "Comment" }
+    h_trans { 0, ">", ">", "Comment" }
 
-    h_state 6 { 'Symbol' }
-    h_trans { 7, '-', '//', 'Command' }
-    h_trans { 0, '>', '/', 'Command' }
-    h_trans { 0, '>', '>', 'Symbol' }
-    h_trans { 7, '>', '</', 'Command' }
-    h_trans { 1, '>', '<', 'Command' }
+    h_state 6 { "Symbol" }
+    h_trans { 7, "-", "//", "Command" }
+    h_trans { 0, ">", "/", "Command" }
+    h_trans { 0, ">", ">", "Symbol" }
+    h_trans { 7, ">", "</", "Command" }
+    h_trans { 1, ">", "<", "Command" }
 
-    h_state 7 { 'Command' }
-    h_trans { 6, '>', '/', 'Command' }
+    h_state 7 { "Command" }
+    h_trans { 6, ">", "/", "Command" }
 
-    h_state 8 { 'Command' }
-    h_trans { 0, '>', '>', 'Command' }
-    h_trans { 3, '<', '"', 'String' }
-    h_wtype { -1, -1, -1, 'i', 'a-zA-Z0-9_\-' }
+    h_state 8 { "Command" }
+    h_trans { 0, ">", ">", "Command" }
+    h_trans { 3, "<", "\"", "String" }
+    h_wtype { -1, -1, -1, "i", "a-zA-Z0-9_\-" }
 
 }
 
 mode SGML: MARKUP {
-    FileNameRx          = /\.\c{SGML?}|{SGML?}$/;
+    FileNameRx          = `\.\c{SGML?}|{SGML?}$`;
     HilitOn             = 1;
     Colorizer           = "SGML";
     MultiLineHilit      = 1;
     AutoHilitParen      = 1;
 
-    RoutineRegexp       = /\<[Hh]\d\>/;
+    RoutineRegexp       = `\<[Hh]\d\>`;
 
     SaveFolds           = 2;      # save fold info at end of line
     CommentStart        = "<!--";
@@ -276,4 +276,4 @@ mode SGML: MARKUP {
     Trim                = 1;
 }
 
-oinclude 'mym_sgml.fte';
+oinclude "mym_sgml.fte";

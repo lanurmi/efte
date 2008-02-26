@@ -7,20 +7,20 @@
 # Small changes/fixes by Jon Svendsen (jsvendsen@bergen.frisurf.no)
 
 colorize PYTHON {
-    SyntaxParser = 'SIMPLE';
+    SyntaxParser = "SIMPLE";
 
     color {
-        { 'Normal',        'Editor_Default' },
-        { 'Keyword',       'Editor_Keywords'},
-        { 'Number',        'Lang_DecimalNumber' },
-        { 'HexNumber',     'Lang_Number' },
-        { 'Punctuation',   'Lang_Punctuation' },
-        { 'String',        'Lang_String' },
-        { 'Comment',       'Lang_Comment' },
-        { 'CPreprocessor', 'Lang_Preprocessor' },
-        { 'Function',      'Lang_Function' },
-        { 'Label',         'Lang_Label' },
-        { 'Command',       'Lang_Command' }, # assembler
+        { "Normal",        "Editor_Default" },
+        { "Keyword",       "Editor_Keywords"},
+        { "Number",        "Lang_DecimalNumber" },
+        { "HexNumber",     "Lang_Number" },
+        { "Punctuation",   "Lang_Punctuation" },
+        { "String",        "Lang_String" },
+        { "Comment",       "Lang_Comment" },
+        { "CPreprocessor", "Lang_Preprocessor" },
+        { "Function",      "Lang_Function" },
+        { "Label",         "Lang_Label" },
+        { "Command",       "Lang_Command" }, # assembler
     };
 
     keyword "Editor_Keywords" { # reserved words as of Python 2.3b1
@@ -127,82 +127,82 @@ colorize PYTHON {
         "Jones", "Palin",
     };
 
-    h_state 0 { 'Normal' }
-    h_trans { 8, '', 'def ', 'Keyword' }
-    h_trans { 9, '', 'class ', 'Keyword' }
-    h_trans { 1, '<', '#', 'Comment' }
-    h_trans { 2, '<i', 'u"""', 'String' }    
-    h_trans { 2, '<i', 'r"""', 'String' }    
-    h_trans { 2, '<', '"""', 'String' }
-    h_trans { 10, '<i', 'u\'\'\'', 'String' }
-    h_trans { 10, '<i', 'r\'\'\'', 'String' }
-    h_trans { 10, '<', '\'\'\'', 'String' }
-    h_trans { 3, '<i', 'u"', 'String' }
-    h_trans { 3, '<i', 'r"', 'String' }
-    h_trans { 3, '<', '"', 'String' }
-    h_trans { 4, '<i', 'u\'', 'String' }
-    h_trans { 4, '<i', 'r\'', 'String' }
-    h_trans { 4, '<', '\'', 'String' }
-    h_trans { 5, '-s', 'a-zA-Z_', 'Normal' }
-    h_trans { 6, '<', '0x', 'HexNumber' }
-    h_trans { 7, '<s', '0-9', 'Number' }
-    h_trans { 0, 'S', '_a-zA-Z0-9', 'Punctuation' }
+    h_state 0 { "Normal" }
+    h_trans { 8, "", "def ", "Keyword" }
+    h_trans { 9, "", "class ", "Keyword" }
+    h_trans { 1, "<", "#", "Comment" }
+    h_trans { 2, "<i", `u"""`, "String" }
+    h_trans { 2, "<i", `r"""`, "String" }
+    h_trans { 2, "<", "\"\"\"", "String" }
+    h_trans { 10, "<i", "u\'\'\'", "String" }
+    h_trans { 10, "<i", "r\'\'\'", "String" }
+    h_trans { 10, "<", "\'\'\'", "String" }
+    h_trans { 3, "<i", "u\"", "String" }
+    h_trans { 3, "<i", "r\"", "String" }
+    h_trans { 3, "<", "\"", "String" }
+    h_trans { 4, "<i", "u\'", "String" }
+    h_trans { 4, "<i", "r\'", "String" }
+    h_trans { 4, "<", "\'", "String" }
+    h_trans { 5, "-s", "a-zA-Z_", "Normal" }
+    h_trans { 6, "<", "0x", "HexNumber" }
+    h_trans { 7, "<s", "0-9", "Number" }
+    h_trans { 0, "S", "_a-zA-Z0-9", "Punctuation" }
 
-    h_state 1 { 'Comment' }
-    h_trans { 0, '$', '', 'Normal' }
+    h_state 1 { "Comment" }
+    h_trans { 0, "$", "", "Normal" }
 
-    h_state 2 { 'String' }
-    h_trans { 2, '>', '\\\\', 'String' }
-    h_trans { 2, '>', '\\"', 'String' }
-    h_trans { 0, '>', '"""', 'String' }
+    h_state 2 { "String" }
+    h_trans { 2, ">", "\\\\", "String" }
+    h_trans { 2, ">", "\"", "String" }
+    h_trans { 0, ">", "\"\"\"", "String" }
 
-    h_state 3 { 'String' }
-    h_trans { 3, '>', '\\\\', 'String' } #special case for strings like "\\"
-    h_trans { 3, '>', '\\"', 'String' }
-    h_trans { 11, '>', '\\', 'String' }
-    h_trans { 0, '>', '"', 'String' }
-    h_trans { 0, '$', '', 'String' }
+    h_state 3 { "String" }
+    h_trans { 3, ">", "\\\\", "String" } #special case for strings like "\\"
+    h_trans { 3, ">", "\"", "String" }
+    h_trans { 11, ">", "\\", "String" }
+    h_trans { 0, ">", "\"", "String" }
+    h_trans { 0, "$", "", "String" }
 
-    h_state 4 { 'String' }
-    h_trans { 4, '>', '\\\\', 'String' } #special case for strings like '\\'
-    h_trans { 4, '>', '\\\'', 'String' }
-    h_trans { 12, '>', '\\', 'String' }
-    h_trans { 0, '>', '\'', 'String' }
-    h_trans { 0, '$', '', 'String' }
+    h_state 4 { "String" }
+    h_trans { 4, ">", "\\\\", "String" } #special case for strings like "\\"
+    h_trans { 4, ">", "\\\'", "String" }
+    h_trans { 12, ">", "\\", "String" }
+    h_trans { 0, ">", "\'", "String" }
+    h_trans { 0, "$", "", "String" }
 
-    h_state 5 { 'Normal' }
-    h_trans { 0, '$', '', 'Normal' }
-    h_wtype { 0, 0, 0, 'i', 'a-zA-Z0-9_' }
+    h_state 5 { "Normal" }
+    h_trans { 0, "$", "", "Normal" }
+    h_wtype { 0, 0, 0, "i", "a-zA-Z0-9_" }
 
-    h_state 6 { 'HexNumber' }
-    h_trans { 0, '-S', '0-9A-Fa-f', 'Normal' }
-    h_trans { 0, '$', '', 'Normal' }
+    h_state 6 { "HexNumber" }
+    h_trans { 0, "-S", "0-9A-Fa-f", "Normal" }
+    h_trans { 0, "$", "", "Normal" }
 
-    h_state 7 { 'Number' }
-    h_trans { 0, '-S', '0-9', 'Normal' }
-    h_trans { 0, '$', '', 'Normal' }
+    h_state 7 { "Number" }
+    h_trans { 0, "-S", "0-9", "Normal" }
+    h_trans { 0, "$", "", "Normal" }
 
-    h_state 8 { 'Command' }
-    h_trans { 0, '', '(', 'Punctuation' }
+    h_state 8 { "Command" }
+    h_trans { 0, "", "(", "Punctuation" }
 
-    h_state 9 { 'Command' }
-    h_trans { 0, '', ':', 'Punctuation' }
+    h_state 9 { "Command" }
+    h_trans { 0, "", ":", "Punctuation" }
 
-    h_state 10 { 'String' }
-    h_trans { 10, '>', '\\\\', 'String' }
-    h_trans { 10, '>', '\\\'', 'String' }
-    h_trans { 0, '>', '\'\'\'', 'String' }
+    h_state 10 { "String" }
+    h_trans { 10, ">", "\\\\", "String" }
+    h_trans { 10, ">", "\\\'", "String" }
+    h_trans { 0, ">", "\'\'\'", "String" }
 
-    h_state 11 { 'String' }
-    h_trans { 3, '>', '', 'String' }
+    h_state 11 { "String" }
+    h_trans { 3, ">", "", "String" }
 
-    h_state 12 { 'String' }
-    h_trans { 4, '>', '', 'String' }
+    h_state 12 { "String" }
+    h_trans { 4, ">", "", "String" }
 
 }
 
 mode PYTHON: SOURCE {
-    FileNameRx          = /\.\cPY$/;
+    FileNameRx          = `\.\cPY$`;
     HilitOn             = 1;
     Colorizer           = "PYTHON";
     IndentMode          = "PLAIN";
@@ -215,8 +215,8 @@ mode PYTHON: SOURCE {
 #    WordWrap            = 0;
 #    ToggleAutoIndent    = 1;
 
-    FirstLineRx         = /^\#\!.*python/;
-    RoutineRegexp       = /def[ ]+[^ ]/;
+    FirstLineRx         = `^\#\!.*python`;
+    RoutineRegexp       = `def[ ]+[^ ]`;
 
     SaveFolds           = 2;      # save fold info at end of line
 
@@ -224,7 +224,7 @@ mode PYTHON: SOURCE {
     CommentEnd          = "";
 }
 
-oinclude 'mym_py.fte';
+oinclude "mym_py.fte";
 
 # problems...
 #     we have no indent support at all )-:
