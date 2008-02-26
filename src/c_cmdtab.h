@@ -402,7 +402,6 @@ const struct {
     TAB(FramePrev),
     TAB(ShowHelpWord),
     TAB(ShowHelp),
-    TAB(ConfigRecompile),
     TAB(PlaceGlobalBookmark),
     TAB(RemoveGlobalBookmark),
     TAB(GotoGlobalBookmark),

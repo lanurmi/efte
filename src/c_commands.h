@@ -903,8 +903,6 @@ typedef enum {
     /// Show context help on keyword.
     ExShowHelp,
     /// Show help for eFTE.
-    ExConfigRecompile,
-    /// Recompile the editor configuration.
     ExSetCIndentStyle,
     /// Set C indentation style parameters.
     ///

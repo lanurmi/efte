@@ -144,7 +144,6 @@ public:
     int ViewMessages(ExState &State);
     int CompilePrevError(ExState &State);
     int CompileNextError(ExState &State);
-    int ConfigRecompile(ExState &State);
     int Cvs(ExState &State);
     int RunCvs(ExState &State);
     int ViewCvs(ExState &State);
@@ -172,7 +171,7 @@ public:
     int SvnCommit(char *Options);
     int ViewSvnLog(ExState &State);
     int DirOpen(ExState &State);
-    int OpenDir(char *Directory);
+    int OpenDir(const char *Directory);
     int ShowVersion();
     int ViewModeMap(ExState &State);
     int ClearMessages();
