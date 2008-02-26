@@ -1460,13 +1460,24 @@ int EGUI::RunProgramAsync(ExState &State, GxView *view) {
     return 1;
 }
 
-int EGUI::MainMenu(ExState &State, GxView *View) {
-    char s[3];
+int EGUI::MainMenu(ExState &State, GxView *view) {
+    ExModelView *V = (ExModelView *)view->Top;
+    EView *View = V->View;
 
-    if (State.GetStrParam(0, s, sizeof(s)) == 0)
-        s[0] = 0;
+    if (sstack.size() == 0) {
+        View->Msg(S_ERROR, "Strink stack underflow error in MainMenu");
+        SetBranchCondition(0);
+        return 0;
+    }
 
-    View->Parent->ExecMainMenu(s[0]);
+    std::string mname = sstack.back(); sstack.pop_back();
+    if (mname.empty()) {
+        View->Msg(S_ERROR, "Empty menu name given to MainMenu");
+        SetBranchCondition(0);
+        return 0;
+    }
+
+    view->Parent->ExecMainMenu(mname[0]);
     return 1;
 }
 

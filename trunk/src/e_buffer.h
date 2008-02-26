@@ -683,7 +683,7 @@ public:
     int     FindFold(int Line);
     int     FindNearFold(int Line);
     int     FoldCreate(int Line);
-    int     FoldCreateByRegexp(char *Regexp);
+    int     FoldCreateByRegexp(const char *Regexp);
     int     FoldDestroy(int Line);
     int     FoldDestroyAll();
     int     FoldPromote(int Line);
@@ -695,9 +695,9 @@ public:
     int     FoldCloseAll();
     int     FoldToggleOpenClose();
 
-    int     ChangeMode(char *Mode);
-    int     ChangeKeys(char *Mode);
-    int     ChangeFlags(char *Mode);
+    int ChangeMode(const char *Mode);
+    int ChangeKeys(const char *Mode);
+    int ChangeFlags(const char *Mode);
 
     int ScrollLeft(ExState &State);
     int ScrollRight(ExState &State);
@@ -719,9 +719,9 @@ public:
     int InsertString(ExState &State);
     int SelfInsert(ExState &State);
     int FileReload(ExState &State);
-    int FileSaveAs(char *FileName);
+    int FileSaveAs(const char *FileName);
     int FileSaveAs(ExState &State);
-    int FileWriteTo(char *FileName);
+    int FileWriteTo(const char *FileName);
     int FileWriteTo(ExState &State);
     int BlockReadX(ExState &State, int BlockMode);
     int BlockRead(ExState &State);
