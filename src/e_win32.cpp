@@ -20,11 +20,7 @@
 int EView::SysShowHelp(ExState &State, const char *word) {
     char wordAsk[64] = "";
     if (word == 0) {
-        if (sstack.size() == 0) {
-            Msg(S_ERROR, "String stack underflow error in SysShowHelp");
-            SetBranchCondition(0);
-            return 0;
-        }
+        SSCHECK(1, "SysShowHelp");
 
         strcpy(wordAsk, sstack.back().c_str()); sstack.pop_back();
 
@@ -38,12 +34,7 @@ int EView::SysShowHelp(ExState &State, const char *word) {
         word = wordAsk;
     }
 
-
-    if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow error in SysShowHelp");
-        SetBranchCondition(0);
-        return 0;
-    }
+    SSCHECK(1, "SysShowHelp");
 
     char file[MAXPATH] = "";
     strcpy(file, sstack.back().c_str()); sstack.pop_back();

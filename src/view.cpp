@@ -399,7 +399,7 @@ int EView::FileSaveAll() {
 
 int EView::FileOpen(ExState &State) {
     if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow error in FileOpen");
+        Msg(S_ERROR, "String stack underflow in FileOpen");
         SetBranchCondition(0);
         return 0;
     }
@@ -433,7 +433,7 @@ int EView::FileOpen(ExState &State) {
 
 int EView::FileOpenInMode(ExState &State) {
     if (sstack.size() < 2) {
-        Msg(S_ERROR, "String stack buffer underflow error in FileOpenInMode");
+        Msg(S_ERROR, "String stack underflow in FileOpenInMode");
         SetBranchCondition(0);
         return 0;
     }
@@ -482,7 +482,7 @@ int EView::FileOpenInMode(ExState &State) {
 
 int EView::SetPrintDevice(ExState &State) {
     if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow error in SetPrintDevice");
+        Msg(S_ERROR, "String stack underflow in SetPrintDevice");
         SetBranchCondition(0);
         return 0;
     }
@@ -600,7 +600,7 @@ int EView::ViewRoutines(ExState &/*State*/) {
 
 int EView::DirOpen(ExState &State) {
     if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow error in DirOpen");
+        Msg(S_ERROR, "String stack underflow in DirOpen");
         SetBranchCondition(0);
         return 0;
     }
@@ -647,7 +647,7 @@ int EView::OpenDir(const char *Path) {
 
 int EView::Compile(ExState &State) {
     if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow error in Compile");
+        Msg(S_ERROR, "String stack underflow in Compile");
         SetBranchCondition(0);
         return 0;
     }
@@ -689,7 +689,7 @@ int EView::Compile(ExState &State) {
 
 int EView::RunCompiler(ExState &State) {
     if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow error in RunCompiler");
+        Msg(S_ERROR, "String stack underflow in RunCompiler");
         SetBranchCondition(0);
         return 0;
     }
@@ -800,7 +800,7 @@ int EView::ClearMessages() {
 
 int EView::TagLoad(ExState &State) {
     if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow error in TagLoad");
+        Msg(S_ERROR, "String stack underflow in TagLoad");
         SetBranchCondition(0);
         return 0;
     }
@@ -842,7 +842,7 @@ int EView::TagLoad(ExState &State) {
 
 int EView::RemoveGlobalBookmark(ExState &State) {
     if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow error in RemoveGlobalBookmark");
+        Msg(S_ERROR, "String stack underflow in RemoveGlobalBookmark");
         SetBranchCondition(0);
         return 0;
     }
@@ -864,7 +864,7 @@ int EView::RemoveGlobalBookmark(ExState &State) {
 
 int EView::GotoGlobalBookmark(ExState &State) {
     if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow error in GotoGlobalBookmark");
+        Msg(S_ERROR, "String stack underflow in GotoGlobalBookmark");
         SetBranchCondition(0);
         return 0;
     }
@@ -906,7 +906,7 @@ int EView::GetIntVar(int var, int *value) {
 
 int EView::Cvs(ExState &State) {
     if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow error in Cvs");
+        Msg(S_ERROR, "String stack underflow in Cvs");
         SetBranchCondition(0);
         return 0;
     }
@@ -940,7 +940,7 @@ int EView::Cvs(ExState &State) {
 
 int EView::RunCvs(ExState &State) {
     if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow error in RunCvs");
+        Msg(S_ERROR, "String stack underflow in RunCvs");
         SetBranchCondition(0);
         return 0;
     }
@@ -1019,7 +1019,7 @@ int EView::ViewCvs(ExState &/*State*/) {
 
 int EView::CvsDiff(ExState &State) {
     if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow error in CvsDiff");
+        Msg(S_ERROR, "String stack underflow in CvsDiff");
         SetBranchCondition(0);
         return 0;
     }
@@ -1053,7 +1053,7 @@ int EView::CvsDiff(ExState &State) {
 
 int EView::RunCvsDiff(ExState &State) {
     if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow error in RunCvsDiff");
+        Msg(S_ERROR, "String stack underflow in RunCvsDiff");
         SetBranchCondition(0);
         return 0;
     }
@@ -1119,7 +1119,7 @@ int EView::ViewCvsDiff(ExState &/*State*/) {
 
 int EView::CvsCommit(ExState &State) {
     if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow error in CvsCommit");
+        Msg(S_ERROR, "String stack underflow in CvsCommit");
         SetBranchCondition(0);
         return 0;
     }
@@ -1152,7 +1152,7 @@ int EView::CvsCommit(ExState &State) {
 
 int EView::RunCvsCommit(ExState &State) {
     if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow error in RunCvsCommit");
+        Msg(S_ERROR, "String stack underflow in RunCvsCommit");
         SetBranchCondition(0);
         return 0;
     }
@@ -1215,7 +1215,7 @@ int EView::ViewCvsLog(ExState &/*State*/) {
 
 int EView::Svn(ExState &State) {
     if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow error in Svn");
+        Msg(S_ERROR, "String stack underflow in Svn");
         SetBranchCondition(0);
         return 0;
     }
@@ -1248,7 +1248,7 @@ int EView::Svn(ExState &State) {
 
 int EView::RunSvn(ExState &State) {
     if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow error in RunSvn");
+        Msg(S_ERROR, "String stack underflow in RunSvn");
         SetBranchCondition(0);
         return 0;
     }
@@ -1328,7 +1328,7 @@ int EView::ViewSvn(ExState &/*State*/) {
 
 int EView::SvnDiff(ExState &State) {
     if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow error in SvnDiff");
+        Msg(S_ERROR, "String stack underflow in SvnDiff");
         SetBranchCondition(0);
         return 0;
     }
@@ -1360,7 +1360,7 @@ int EView::SvnDiff(ExState &State) {
 
 int EView::RunSvnDiff(ExState &State) {
     if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow error in RunSvnDiff");
+        Msg(S_ERROR, "String stack underflow in RunSvnDiff");
         SetBranchCondition(0);
         return 0;
     }
@@ -1425,7 +1425,7 @@ int EView::ViewSvnDiff(ExState &/*State*/) {
 
 int EView::SvnCommit(ExState &State) {
     if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow error in SvnCommit");
+        Msg(S_ERROR, "String stack underflow in SvnCommit");
         SetBranchCondition(0);
         return 0;
     }
@@ -1457,7 +1457,7 @@ int EView::SvnCommit(ExState &State) {
 
 int EView::RunSvnCommit(ExState &State) {
     if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow error in RunSvnCommit");
+        Msg(S_ERROR, "String stack underflow in RunSvnCommit");
         SetBranchCondition(0);
         return 0;
     }

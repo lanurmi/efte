@@ -23,124 +23,105 @@ std::vector<std::string> sstack;
 // accomplished, but needs extra provision implemented here.
 
 CircularStack::CircularStack() {
-    this->pos = -1;
-    this->stackdepth = 0;
+    pos = -1;
+    stackdepth = 0;
     for (int i=0; i < STACKSIZE; i++)
-        this->stack[i] = 0;
+        stack[i] = 0;
 }
 
 void CircularStack::push(int integer) {
-    this->pos = (this->pos + 1) & STACKMASK;
-    this->stack[this->pos] = integer;
-    if (this->stackdepth < STACKMASK)
-        this->stackdepth = (this->stackdepth + 1);
-//      this->stackdepth++;}  // no good?
+    pos = (pos + 1) & STACKMASK;
+    stack[pos] = integer;
+    if (stackdepth < STACKMASK)
+        stackdepth++;
 }
 
 int CircularStack::pop() {
     int r = 0;
-//    if (this->stackdepth) {                      // something wrong here
-        r = this->stack[this->pos];
-        this->stack[this->pos] = 0;
-        this->pos = (this->pos - 1) & STACKMASK;
-        this->stackdepth = (this->stackdepth - 1);
-//        this->stackdepth--;  // not good?
-//    } else {
-//        fprintf(stderr, "attempt to underflow stack\n");
-//    }
+    r = stack[pos];
+    stack[pos] = 0;
+    pos = (pos - 1) & STACKMASK;
+    stackdepth--;
     return r;
 }
 
 int CircularStack::peek(int offset) {
-    int p = (this->pos - offset) & STACKMASK;
-//    if (offset < this->stackdepth) {
-        return this->stack[p];
-//    } else {
-//        fprintf(stderr, "stack access attempted outside of stack boundaries\n");
-//        return 0;
-//    }
+    int p = (pos - offset) & STACKMASK;
+    return stack[p];
 }
 
 void CircularStack::dup() {
-    int p = this->pos;
-    this->pos = (this->pos + 1) & STACKMASK;
-    this->stack[this->pos] = this->stack[p];
+    int p = pos;
+    pos = (pos + 1) & STACKMASK;
+    stack[pos] = stack[p];
 }
 
 void CircularStack::swap() {
-    int p1 = (this->pos);
-    int p2 = (this->pos - 1) & STACKMASK;
-    this->stack[p1] ^= this->stack[p2];
-    this->stack[p2] ^= this->stack[p1];
-    this->stack[p1] ^= this->stack[p2];
+    int p1 = (pos);
+    int p2 = (pos - 1) & STACKMASK;
+    stack[p1] ^= stack[p2];
+    stack[p2] ^= stack[p1];
+    stack[p1] ^= stack[p2];
 }
 
-int CircularStack::depth() {
-    return this->stackdepth;
+int CircularStack::size() {
+    return stackdepth;
 }
-
-
-
-
 
 // Where the danger of continuously adding to stack by faulty macros is not given, and we want a test
 // for stack emptyness, a non-wrapping stack is used. cefte/cfte macro compiler uses (should use) this
 // type of stack for tracking flow control branch offsets.
 
 Stack::Stack() {
-    this->pos = 0;
+    pos = 0;
     for (int i=0; i < STACKSIZE; i++)
-        this->stack[i] = 0;
+        stack[i] = 0;
 }
 
 void Stack::init() {
-    this->pos = 0;
+    pos = 0;
 }
 
-
-    void Stack::push(int stackitem) {
-    if (this->pos < STACKSIZE) {
-        this->stack[this->pos] = stackitem;
-        this->pos = (this->pos + 1);
-//  } else {
-//  fatal: stack overflow
+void Stack::push(int stackitem) {
+    if (pos < STACKSIZE) {
+        stack[pos] = stackitem;
+        pos = (pos + 1);
+        //} else {
+        //fatal: stack overflow
     }
-
 }
 
 int Stack::pop() {
-    if (this->pos) {
-        this->pos = (this->pos - 1);
-        int r = this->stack[this->pos];
+    if (pos) {
+        pos = (pos - 1);
+        int r = stack[pos];
         return r;
     } else {
         //        "error: stack underflow attempt"
         return 0;    // may not be what one expects but i have no idea how to deal with exceptions here
-// throw(stack_underflow);  // like this, maybe?
+        // throw(stack_underflow);  // like this, maybe?
     }
 }
 
 int Stack::peek(int offset) {
-    if (offset < this->pos) {
-        int p = (this->pos - offset - 1);
-        return this->stack[p];
+    if (offset < pos) {
+        int p = (pos - offset - 1);
+        return stack[p];
     } else {
         // error: attempt to access stack below bottom
         return 0;
     }
 }
 
-
 void Stack::dup() {
-    if (this->pos) {
-        this->stack[this->pos] = this->stack[(this->pos - 1)];
+    if (pos) {
+        stack[pos] = stack[(pos - 1)];
     } else {
-        this->stack[this->pos] = 0;
+        stack[pos] = 0;
     }
-    this->pos = (this->pos + 1);
+    pos = (pos + 1);
 }
 
-
-int Stack::depth() {
-    return this->pos;
+int Stack::size() {
+    return pos;
 }

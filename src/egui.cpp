@@ -160,6 +160,7 @@ int EGUI::Diag(ExState &State) {
 // --- arithmetic ---
 
 int EGUI::Plus() {
+    PSCHECK(2, "Plus");
     ParamStack.push(ParamStack.pop()+ParamStack.pop());
     return 1;
 }
@@ -167,45 +168,61 @@ int EGUI::Plus() {
 // don't really need - could provide "Invert" and do
 //2's complement add in macro
 int EGUI::Minus() {
+    PSCHECK(2, "Minus");
     int tos=ParamStack.pop();
     ParamStack.push(+ParamStack.pop()-tos);
     return 1;
 }
 
-
 int EGUI::Mul() {
+    PSCHECK(2, "Mul");
     ParamStack.push(ParamStack.pop()*ParamStack.pop());
     return 1;
 }
 
-
 int EGUI::Div() {
+    PSCHECK(2, "Div)");
     int tos=ParamStack.pop();
-    if (!tos) return 0;           // div by 0
+
+    if (!tos) {
+         // Pop the other expected argument off so other macros
+        // don't wind up having an extra param on the stack
+        ParamStack.pop();
+        ActiveView->Msg(S_ERROR, "Divide by zero, macro aborted");
+        SetBranchCondition(0);
+        return 0;
+    }
+
     ParamStack.push(ParamStack.pop()/tos);
+    SetBranchCondition(1);
     return 1;
 }
 
 // --- bits ---
 
 int EGUI::And() {
+    PSCHECK(2, "And");
     ParamStack.push(ParamStack.pop() & ParamStack.pop());
     return 1;
 }
 
 int EGUI::Or() {
+    PSCHECK(2, "Or");
     ParamStack.push(ParamStack.pop() | ParamStack.pop());
     return 1;
 }
 
 int EGUI::Xor() {
+    PSCHECK(2, "Xor");
     ParamStack.push(ParamStack.pop() ^ ParamStack.pop());
     return 1;
 }
 
 int EGUI::Shift() {
+    PSCHECK(1, "Shift");
     int tos = ParamStack.pop();                         // shift count and direction
     if (tos) {
+        PSCHECK(1, "Shift");
         unsigned int nos = ParamStack.pop();            // shift value
         if (tos < 0)  {
             ParamStack.push(nos>>(-tos));
@@ -221,6 +238,7 @@ int EGUI::Shift() {
 
 // replace top two stack items against identity flag
 int EGUI::Equals() {
+    PSCHECK(2, "Equals");
     ParamStack.push(-(ParamStack.pop() == ParamStack.pop()));
     return 1;
 }
@@ -228,6 +246,7 @@ int EGUI::Equals() {
 // true if 2nd item less than top item:
 //  3 4 Less   ( true )
 int EGUI::Less() {
+    PSCHECK(2, "Less");
     ParamStack.push(-(ParamStack.pop() > ParamStack.pop()));
     return 1;
 }
@@ -270,26 +289,31 @@ int EGUI::Abort() {
 // --- stack ---
 
 int EGUI::Dup() {
+    PSCHECK(1, "Dup");
     ParamStack.dup();
     return 1;
 }
 
 int EGUI::Drop() {
+    PSCHECK(1, "Drop");
     ParamStack.pop();
     return 1;
 }
 
 int EGUI::Swap() {
+    PSCHECK(2, "Swap");
     ParamStack.swap();
     return 1;
 }
 
 int EGUI::Over() {
+    PSCHECK(2, "Over");
     ParamStack.push(ParamStack.peek(1));
     return 1;
 }
 
 int EGUI::Rot() {
+    PSCHECK(3, "Rot");
     int tos = ParamStack.pop();
     ParamStack.swap();
     ParamStack.push(tos);
@@ -299,26 +323,31 @@ int EGUI::Rot() {
 
 // --- stack2 ---
 int EGUI::ToR() {
+    PSCHECK(1, "ToR");
     ControlStack.push(ParamStack.pop());
     return 1;
 }
 
 int EGUI::RFrom() {
+    CSCHECK(1, "RFrom");
     ParamStack.push(ControlStack.pop());
     return 1;
 }
 
 int EGUI::RFetch() {
+    CSCHECK(1, "RFetch");
     ParamStack.push(ControlStack.peek(0));
     return 1;
 }
 
 int EGUI::I() {
+    CSCHECK(1, "I");
     ParamStack.push(ControlStack.peek(0));
     return 1;
 }
 
 int EGUI::J() {
+    CSCHECK(3, "J");
     ParamStack.push(ControlStack.peek(2));
     return 1;
 }
@@ -568,15 +597,11 @@ int LenStr(ExState &State, GxView *view) {
 }
 
 int MidStr(ExState &State, GxView *view) {
+    PSCHECK(2, "mid$");
     int end = ParamStack.pop();
     int start = ParamStack.pop();
 
-    if (sstack.size() == 0) {
-        if (view != NULL)
-            ActiveView->Msg(S_ERROR, "String stack underflow error in mid$");
-        SetBranchCondition(0);
-        return 0;
-    }
+    SSCHECK(1, "mid$");
 
     std::string tos = sstack.back();
 
@@ -599,12 +624,7 @@ int GetString(ExState &State, GxView *view) {
         return 0;
     }
 
-    if (sstack.size() == 0) {
-        if (View != 0)
-            View->Msg(S_ERROR, "String stack underflow error in GetString");
-        SetBranchCondition(0);
-        return 0;
-    }
+    SSCHECK(1, "GetString");
 
     std::string msg = sstack.back(); sstack.pop_back();
 
@@ -887,11 +907,7 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
             char kmaps[64] = "";
             EEventMap *m;
 
-            if (sstack.size() == 0) {
-                ActiveView->Msg(S_ERROR, "String stack underflow error in ChangeKeys");
-                SetBranchCondition(0);
-                return 0;
-            }
+            SSCHECK(1, "ChangeKeys");
 
             strcpy(kmaps, sstack.back().c_str()); sstack.pop_back();
 
@@ -1417,7 +1433,7 @@ int EGUI::ShowEntryScreen() {
 int EGUI::RunProgram(ExState &State, GxView *view) {
     if (sstack.size() == 0) {
         if (ActiveView)
-            ActiveView->Msg(S_ERROR, "String stack underflow error in RunProgram");
+            ActiveView->Msg(S_ERROR, "String stack underflow in RunProgram");
         SetBranchCondition(0);
         return 0;
     }
@@ -1445,7 +1461,7 @@ int EGUI::RunProgram(ExState &State, GxView *view) {
 int EGUI::RunProgramAsync(ExState &State, GxView *view) {
     if (sstack.size() == 0) {
         if (ActiveView)
-            ActiveView->Msg(S_ERROR, "String stack underflow error in RunProgram");
+            ActiveView->Msg(S_ERROR, "String stack underflow in RunProgram");
         SetBranchCondition(0);
         return 0;
     }
@@ -1475,7 +1491,7 @@ int EGUI::MainMenu(ExState &State, GxView *view) {
     EView *View = V->View;
 
     if (sstack.size() == 0) {
-        View->Msg(S_ERROR, "Strink stack underflow error in MainMenu");
+        View->Msg(S_ERROR, "String stack underflow in MainMenu");
         SetBranchCondition(0);
         return 0;
     }
@@ -1494,7 +1510,7 @@ int EGUI::MainMenu(ExState &State, GxView *view) {
 int EGUI::ShowMenu(ExState &State, GxView *View) {
     if (sstack.size() == 0) {
         if (ActiveView)
-            ActiveView->Msg(S_ERROR, "String stack underflow error in ShowMenu");
+            ActiveView->Msg(S_ERROR, "String stack underflow in ShowMenu");
         SetBranchCondition(0);
         return 0;
     }
@@ -1522,7 +1538,7 @@ int EGUI::LocalMenu(GxView *View) {
 int EGUI::DesktopSaveAs(ExState &State, GxView *view) {
     if (sstack.size() == 0) {
         if (ActiveView)
-            ActiveView->Msg(S_ERROR, "String stack underflow error in DesktopSaveAs");
+            ActiveView->Msg(S_ERROR, "String stack underflow in DesktopSaveAs");
         SetBranchCondition(0);
         return 0;
     }
@@ -1542,7 +1558,7 @@ int EGUI::DesktopSaveAs(ExState &State, GxView *view) {
 int EGUI::DesktopLoad(ExState &State, GxView *view) {
     if (sstack.size() == 0) {
         if (ActiveView)
-            ActiveView->Msg(S_ERROR, "String stack underflow error in DesktopLoad");
+            ActiveView->Msg(S_ERROR, "String stack underflow in DesktopLoad");
         SetBranchCondition(0);
         return 0;
     }

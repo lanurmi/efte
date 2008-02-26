@@ -13,11 +13,7 @@
 #include "fte.h"
 
 int EView::SysShowHelp(ExState &State, const char *word) {
-    if (sstack.size() < 2) {
-        Msg(S_ERROR, "String stack underflow in SysShowHelp (%i)", sstack.size());
-        SetBranchCondition(0);
-        return 0;
-    }
+    SSCHECK(2, "SysShowHelp");
 
     char file[MAXPATH] = "";
     char wordAsk[64] = "";
