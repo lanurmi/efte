@@ -920,7 +920,7 @@ int EBuffer::MoveToColumn(ExState &State) {
 
 int EBuffer::FoldCreateByRegexp(ExState &State) {
     if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow error in FoldCreateByRegexp");
+        Msg(S_ERROR, "String stack underflow in FoldCreateByRegexp");
         SetBranchCondition(0);
         return 0;
     }
@@ -1013,7 +1013,7 @@ int EBuffer::GetUserBookmarkForLine(int searchFrom, int searchForLine, char *&Na
 
 int EBuffer::PlaceBookmark(ExState &State) {
     if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow error in PlaceBookmark");
+        Msg(S_ERROR, "String stack underflow in PlaceBookmark");
         SetBranchCondition(0);
         return 0;
     }
@@ -1036,7 +1036,7 @@ int EBuffer::PlaceBookmark(ExState &State) {
 
 int EBuffer::RemoveBookmark(ExState &State) {
     if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow error in RemoveBookmark");
+        Msg(S_ERROR, "String stack underflow in RemoveBookmark");
         SetBranchCondition(0);
         return 0;
     }
@@ -1057,7 +1057,7 @@ int EBuffer::RemoveBookmark(ExState &State) {
 
 int EBuffer::GotoBookmark(ExState &State) {
     if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow error in RemoveBookmark");
+        Msg(S_ERROR, "String stack underflow in RemoveBookmark");
         SetBranchCondition(0);
         return 0;
     }
@@ -1078,7 +1078,7 @@ int EBuffer::GotoBookmark(ExState &State) {
 
 int EBuffer::PlaceGlobalBookmark(ExState &State) {
     if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow error in RemoveBookmark");
+        Msg(S_ERROR, "String stack underflow in RemoveBookmark");
         SetBranchCondition(0);
         return 0;
     }
@@ -1178,7 +1178,7 @@ int EBuffer::GetChoice(ExState &State) {
 
     // Count of choices + 2 (title and message)
     if (count + 2 > sstack.size()) {
-        Msg(S_ERROR, "Stack underflow error in GetChoice");
+        Msg(S_ERROR, "String stack underflow in GetChoice");
         SetBranchCondition(0);
         return 0;
     }
@@ -1475,7 +1475,7 @@ int EBuffer::BlockReadColumn(ExState &State) {
 
 int EBuffer::BlockWrite(ExState &State) {
     if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow error in BlockWrite");
+        Msg(S_ERROR, "String stack underflow in BlockWrite");
         SetBranchCondition(0);
         return 0;
     }
@@ -1997,7 +1997,7 @@ int EBuffer::ScrollUp(ExState &State) {
 
 int EBuffer::FindTag(ExState &State) {
     if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow error in FindTag");
+        Msg(S_ERROR, "String stack underflow in FindTag");
         SetBranchCondition(0);
         return 0;
     }
@@ -2039,7 +2039,7 @@ int EBuffer::FindTag(ExState &State) {
 // these two will probably be replaced in the future
 int EBuffer::InsertDate(ExState &State) {
     if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow error in InsertDate");
+        Msg(S_ERROR, "String stack underflow in InsertDate");
         SetBranchCondition(0);
         return 0;
     }

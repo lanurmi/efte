@@ -231,11 +231,7 @@ int EBuffer::BlockCaseToggle() {
 }
 
 int EBuffer::GetTrans(ExState &State, TransTable tab) {
-    if (sstack.size() < 2) {
-        Msg(S_ERROR, "String stack underflow error in GetTrans (%i)", sstack.size());
-        SetBranchCondition(0);
-        return 0;
-    }
+    SSCHECK(2, "GetTrans");
 
     char TrS[512] = "";
     char TrD[512] = "";

@@ -999,7 +999,7 @@ static int ParseCommands(CurPos &cp, char *Name) {
 
                 case COND_LEAVE:
                     int i = 0;
-                    while (i < CondStack.depth()) {
+                    while (i < CondStack.size()) {
                         if (CondStack.peek(i) == COND_DO) {
                             branchaddress=CondStack.peek(i+1);
                             CFteCompileCommand(cp,ExLeaveRuntime,BranchOffset(cpos,branchaddress),1);
@@ -1040,7 +1040,7 @@ static int ParseCommands(CurPos &cp, char *Name) {
         } else
             Fail(cp, "Syntax error");
     }
-    if (CondStack.depth()) {
+    if (CondStack.size()) {
         Fail(cp, "unterminated conditions left over");
     }
     GetOp(cp, P_CLOSEBRACE);

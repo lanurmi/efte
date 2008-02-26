@@ -905,11 +905,7 @@ int EBuffer::Search(ExState &State, char *aString, int Options, int /*CanResume*
     if (aString)
         strcpy(find, aString);
     else {
-        if (sstack.size() == 0) {
-            Msg(S_ERROR, "Strink stack underflow in Search");
-            SetBranchCondition(0);
-            return 0;
-        }
+        SSCHECK(1, "Search");
 
         strcpy(find, sstack.back().c_str()); sstack.pop_back();
 
@@ -956,11 +952,7 @@ int EBuffer::SearchReplace(ExState &State, char *aString, char *aReplaceString, 
     if (aReplaceString)
         strcpy(replace, aReplaceString);
     else {
-        if (sstack.size() == 0) {
-            Msg(S_ERROR, "String stack underflow error in SearchReplace");
-            SetBranchCondition(0);
-            return 0;
-        }
+        SSCHECK(1, "SearchReplace");
 
         strcpy(replace, sstack.back().c_str()); sstack.pop_back();
 
@@ -981,7 +973,7 @@ int EBuffer::SearchReplace(ExState &State, char *aString, char *aReplaceString, 
         strcpy(find, aString);
     else {
         if (sstack.size() == 0) {
-            Msg(S_ERROR, "Strink stack underfow error in SearchReplace");
+            Msg(S_ERROR, "String stack underfow error in SearchReplace");
             SetBranchCondition(0);
             return 0;
         }

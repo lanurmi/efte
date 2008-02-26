@@ -32,7 +32,7 @@ public:
     int peek(int offset=0);
     void dup();
     void swap();
-    int depth();
+    int size();
 };
 
 #endif /* U_CIRCSTACK_H */
@@ -55,7 +55,19 @@ public:
     int pop();
     int peek(int offset=0);
     void dup();
-    int depth();
+    int size();
 };
+
+#define PSCHECK(x,f) if (ParamStack.size() < x) { \
+    ActiveView->Msg(S_ERROR, "Stack underflow in " f " (%i)", ParamStack.size()); \
+    SetBranchCondition(0); \
+    return 0; \
+}
+#define SSCHECK(x,f) if (sstack.size() < x) { \
+    ActiveView->Msg(S_ERROR, "String stack underflow in " f " (%i)", sstack.size()); \
+    SetBranchCondition(0); \
+    return 0; \
+}
+#define CSCHECK(x,f) // No checking yet
 
 #endif /* U_STACK_H */

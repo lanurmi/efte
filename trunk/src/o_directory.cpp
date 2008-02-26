@@ -582,7 +582,7 @@ void EDirectory::GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen) 
 
 int EDirectory::ChangeDir(ExState &State) {
     if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow error in ChangeDir");
+        Msg(S_ERROR, "String stack underflow in ChangeDir");
         SetBranchCondition(0);
         return 0;
     }
