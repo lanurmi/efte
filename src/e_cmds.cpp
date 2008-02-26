@@ -1507,7 +1507,7 @@ int EBuffer::SetRightMargin() {
     return 1;
 }
 
-int EBuffer::ChangeMode(char *AMode) {
+int EBuffer::ChangeMode(const char *AMode) {
     if (FindMode(AMode) != 0) {
         Mode = FindMode(AMode);
         Flags = Mode->Flags;
@@ -1521,7 +1521,7 @@ int EBuffer::ChangeMode(char *AMode) {
     return 0;
 }
 
-int EBuffer::ChangeKeys(char *AMode) {
+int EBuffer::ChangeKeys(const char *AMode) {
     if (FindMode(AMode) != 0) {
         Mode = FindMode(AMode);
         HilitProc = 0;
@@ -1534,7 +1534,7 @@ int EBuffer::ChangeKeys(char *AMode) {
     return 0;
 }
 
-int EBuffer::ChangeFlags(char *AMode) {
+int EBuffer::ChangeFlags(const char *AMode) {
     if (FindMode(AMode) != 0) {
         EMode *XMode;
         XMode = FindMode(AMode);

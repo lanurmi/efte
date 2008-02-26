@@ -333,13 +333,13 @@ menu Search {
     item "Find &Prev\tCtrl+H"           { FindRepeatReverse }
     item "Find and &Replace...\tCtrl+R" { FindReplace }
     item;
-    item "P&lace Bookmark..."           { PlaceBookmark }
-    item "Goto &Bookmark..."            { GotoBookmark }
+    item "P&lace Bookmark..."           { "" PlaceBookmark }
+    item "Goto &Bookmark..."            { "" GotoBookmark }
     item;
     submenu "&Tags", Tags;
     item "&Match Paren\tAlt+-"          { MatchBracket }
-    item "&Goto Line...\tAlt+J"         { MoveToLine }
-    item "Goto &Column..."              { MoveToColumn }
+    item "&Goto Line...\tAlt+J"         { -1 MoveToLine }
+    item "Goto &Column..."              { -1 MoveToColumn }
     submenu "&Words",                   SearchWords;
 }
 

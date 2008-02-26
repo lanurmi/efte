@@ -20,7 +20,7 @@ eventmap MODEL {
     key       [F6]      { FileNext }
     key     [S+F6]      { FilePrev }
     key   [A+S-F6]      { FileLast }
-    key       [F7]      { $Word Find }
+    key       [F7]      { $Word "" Find }
     key       [F10]     { MainMenu }
     key     [C+F10]     { FileClose }
     key     [C+F9]      { "sh" RunProgram }
@@ -177,7 +177,7 @@ eventmap PLAIN: MODEL {
 
     key       [Esc]     { BlockMarkStream; BlockUnmark }
     key       [F2]      { FileSave }
-    key     [S+F2]      { FileSaveAs }
+    key     [S+F2]      { "" FileSaveAs }
     key   [A+S+F2]      { FileSave; FileClose }
     key     [S+F3]      { FileReload; WinRefresh }
     key     [C+F3]      { FileOpenInMode }
@@ -280,14 +280,14 @@ eventmap PLAIN: MODEL {
     
     #key     [C+C]       { MoveToColumn }
     key     [C+D]       { LineDuplicate }
-    key     [C+F]       { Find }
+    key     [C+F]       { "" "" Find }
     key     [C+G]       { FindRepeat }
     key     [C+I]       { ListRoutines }
     key     [C+J]       { LineJoin }
     key     [C+H]       { FindRepeatReverse }
     key     [C+M]       { DirOpen }
-    key     [C+Q]       { InsertChar }
-    key     [C+R]       { FindReplace }
+    key     [C+Q]       { -1 InsertChar }
+    key     [C+R]       { "" "" "" FindReplace }
     key     [C+T]       { KillWord }
     key     [C+Y]       { KillLine }
     #key     [C+E]       { LineTrim }
@@ -298,7 +298,7 @@ eventmap PLAIN: MODEL {
     key     [A+E]       { 'E' MainMenu }
     key     [A+G]       { BlockCut }
     key     [A+I]       { BlockIndent }
-    key     [A+J]       { MoveToLine }
+    key     [A+J]       { -1 MoveToLine }
     key     [A+K]       { BlockMarkColumn }
     key     [A+L]       { BlockMarkLine }
     key     [A+O]       { 'O' MainMenu }
@@ -312,10 +312,10 @@ eventmap PLAIN: MODEL {
     key     [C+O_C+E]   { ToggleTrim }
     key     [C+O_C+I]   { ToggleInsert }
     key     [C+O_C+M]   { 'MChangeMode' ShowMenu }
-    key     [C+O_S-M]   { ChangeMode }
+    key     [C+O_S-M]   { '' ChangeMode }
     key     [C+O_C+R]   { ToggleReadOnly }
     key     [C+O_C+S]   { ToggleSysClipboard }
-    key     [C+O_C+T]   { ChangeTabSize }
+    key     [C+O_C+T]   { -1 ChangeTabSize }
     key     [C+O_C+U]   { ToggleUndo }
     key     [C+O_C+W]   { ToggleWordWrap }
     key     [C+O_C+V]   { 'MCvs' ShowMenu }
@@ -323,12 +323,12 @@ eventmap PLAIN: MODEL {
     key     [C+O_.]     { ToggleShowMarkers }
     key     [C+O_[]     { SetLeftMargin }     # set margin to current cursor pos
     key     [C+O_\]]    { SetRightMargin }
-    key     [C+O_A+[]   { ChangeLeftMargin }
-    key     [C+O_A+\]]  { ChangeRightMargin }
+    key     [C+O_A+[]   { -1 ChangeLeftMargin }
+    key     [C+O_A+\]]  { -1 ChangeRightMargin }
     key     [C+O_Tab]   { ToggleShowTabs ; WinRefresh }
     key     [C+O_C+Tab] { ToggleExpandTabs ; WinRefresh }
-    key     [C+O_G-Del]   { ToggleDeleteKillTab }
-    key     [C+O_G-Ins]   { ToggleInsert }
+    key     [C+O_G-Del] { ToggleDeleteKillTab }
+    key     [C+O_G-Ins] { ToggleInsert }
     key    [C+O_BackSp] { ToggleBackSpKillTab }
     key     [C+O_Space] { ToggleIndentWithTabs }
     key  [C+O_C+BackSp] { ToggleBackSpUnindents }

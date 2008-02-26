@@ -198,7 +198,7 @@ int EBuffer::FoldCreate(int Line) { /*FOLD00*/
     return 1;
 }
 
-int EBuffer::FoldCreateByRegexp(char *Regexp) { /*FOLD00*/
+int EBuffer::FoldCreateByRegexp(const char *Regexp) {
     RxNode *R;
     int err = 1;
 
