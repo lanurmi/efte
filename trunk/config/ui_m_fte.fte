@@ -216,9 +216,9 @@ menu File {
     item    "&Reload\tShift+F3" 	    { FileReload }
     item;
     item    "&Save\tF2" 		        { FileSave }
-    item    "Save &As...\tShift+F2"	    { FileSaveAs }
+    item    "Save &As...\tShift+F2"	    { "" FileSaveAs }
     item    "Save Al&l\tCtrl+F2"	    { FileSaveAll }
-    item    "Write &To..."		        { FileWriteTo }
+    item    "Write &To..."		        { "" FileWriteTo }
     item;
     item    "Prin&t"			        { FilePrint }
     item;
@@ -273,7 +273,7 @@ menu Edit {
     item;
     submenu "&Line", Line;
     item;
-    item "&Quote Literal...\tCtrl+Q"  { InsertChar }
+    item "&Quote Literal...\tCtrl+Q"  { -1 InsertChar }
     item "&ASCII Table...\tCtrl+Sh+A" { ASCIITable }
 }
 
@@ -295,10 +295,10 @@ menu Block {
     #item "Select Wor&d"              { BlockSelectWord }
     #item "Selec&t Line"              { BlockSelectLine }
     #item;
-    item "&Write..."		         { BlockWrite }
-    item "&Read Stream..."	         { BlockReadStream }
-    item "Re&ad Column..."	         { BlockReadColumn }
-    item "Rea&d Line..."	         { BlockReadLine }
+    item "&Write..."		         { "" BlockWrite }
+    item "&Read Stream..."	         { "" BlockReadStream }
+    item "Re&ad Column..."	         { "" BlockReadColumn }
+    item "Rea&d Line..."	         { "" BlockReadLine }
     item "&Print"		             { BlockPrint }
     item;
     submenu "Translat&e",	         Translate;
@@ -311,8 +311,8 @@ menu Block {
 }
 
 menu Tags {
-    item "&Find word\tCtrl+]"	     { TagFindWord }
-    item "&Search tag...\tCtrl+Sh+]" { TagFind }
+    item "&Find word\tCtrl+]"	     { "" TagFindWord }
+    item "&Search tag...\tCtrl+Sh+]" { "" TagFind }
     item "&Go back\tCtrl+["	         { TagPop }
     item "&Next tag\tAlt+]"	         { TagNext }
     item "&Previous tag\tAlt+["      { TagPrev }
@@ -328,10 +328,10 @@ menu SearchWords {
 }
 
 menu Search {
-    item "&Find...\tCtrl+F"             { Find }
+    item "&Find...\tCtrl+F"             { "" "" Find }
     item "Find &Next\tCtrl+G"           { FindRepeat }
     item "Find &Prev\tCtrl+H"           { FindRepeatReverse }
-    item "Find and &Replace...\tCtrl+R" { FindReplace }
+    item "Find and &Replace...\tCtrl+R" { "" "" "" FindReplace }
     item;
     item "P&lace Bookmark..."           { "" PlaceBookmark }
     item "Goto &Bookmark..."            { "" GotoBookmark }
@@ -353,7 +353,7 @@ menu Fold {
     item "Close all &folds\tAlt+Gr/"    { FoldCloseAll }
     item;
     item "&Create fold\tAlt+Gr+"        { FoldCreate }
-    item "Create folds by &regexp..."   { FoldCreateByRegexp }
+    item "Create folds by &regexp..."   { "" FoldCreateByRegexp }
     item "Create folds at routine&s"    { FoldCreateAtRoutines }
     item;
     item "&Destroy fold\tAlt+Gr-"       { FoldDestroy }
@@ -394,14 +394,14 @@ menu Options {
     item "&Insert mode\tC+O C+I"	    { ToggleInsert }
     item "&Word wrap\tC+O C+W"		    { ToggleWordWrap }
     item;
-    item "&Left margin...\tC+O A+["	    { ChangeLeftMargin }
-    item "Ri&ght margin...\tC+O A+]"	{ ChangeRightMargin }
+    item "&Left margin...\tC+O A+["	    { -1 ChangeLeftMargin }
+    item "Ri&ght margin...\tC+O A+]"	{ -1 ChangeRightMargin }
     item;
     item "&Show markers\tC+O C+."	    { ToggleShowMarkers; WinRefresh }
     item "Highlight tags"		        { ToggleHilitTags; WinRefresh }
     item "Show &bookmarks"		        { ToggleShowBookmarks; WinRefresh }
     item "S&how tabs\tC+O   Tab"	    { ToggleShowTabs; WinRefresh }
-    item "&Tab size...\tC+O C+T"	    { ChangeTabSize; WinRefresh }
+    item "&Tab size...\tC+O C+T"	    { -1 ChangeTabSize; WinRefresh }
     item "E&xpand tabs\tC+O C+Tab"	    { ToggleExpandTabs; WinRefresh }
     item "&Insert tabulator\tS+Tab"	    { InsertTab }
     item "File Trim &EOL"		        { FileTrim; WinRefresh }
