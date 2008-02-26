@@ -8,6 +8,18 @@
  *
  */
 
+#define PSCHECK(x,f) if (ParamStack.size() < x) { \
+    ActiveView->Msg(S_ERROR, "Stack underflow in " f " (%i)", ParamStack.size()); \
+    SetBranchCondition(0); \
+    return 0; \
+}
+#define SSCHECK(x,f) if (sstack.size() < x) { \
+    ActiveView->Msg(S_ERROR, "String stack underflow in " f " (%i)", sstack.size()); \
+    SetBranchCondition(0); \
+    return 0; \
+}
+#define CSCHECK(x,f) // No checking yet
+
 #ifndef U_CIRCSTACK_H
 #define U_CIRCSTACK_H
 // CircularStack size must be 2**n - required by the fast wrap used here.
@@ -58,16 +70,5 @@ public:
     int size();
 };
 
-#define PSCHECK(x,f) if (ParamStack.size() < x) { \
-    ActiveView->Msg(S_ERROR, "Stack underflow in " f " (%i)", ParamStack.size()); \
-    SetBranchCondition(0); \
-    return 0; \
-}
-#define SSCHECK(x,f) if (sstack.size() < x) { \
-    ActiveView->Msg(S_ERROR, "String stack underflow in " f " (%i)", sstack.size()); \
-    SetBranchCondition(0); \
-    return 0; \
-}
-#define CSCHECK(x,f) // No checking yet
-
 #endif /* U_STACK_H */
+
