@@ -1,7 +1,7 @@
 
 sub JAVA_Base {
     MoveFileStart;
-    "package /* package name */;" InsertString;
+    "package /* package name *`;" InsertString;
     2:LineNew;
     "import java.util.*;" InsertString; LineNew;
     "import javax.swing.*;" InsertString; 2:LineNew;
@@ -20,50 +20,50 @@ sub JAVA_Base {
 }
 
 colorize JAVA {
-    SyntaxParser        = 'C';
+    SyntaxParser        = "C";
     
     color {
-        { 'Normal',        'Editor_Default' },
-        { 'Number',        'Lang_DecimalNumber' },
-        { 'HexNumber',     'Lang_HexNumber' },
-        { 'Punctuation',   'Lang_Punctuation' },
-        { 'String',        'Lang_String' },
-        { 'Comment',       'Lang_Comment' },
-        { 'CPreprocessor', 'Lang_Preprocessor' },
-        { 'Function',      'Lang_Function' },
-        { 'Label',         'Lang_Label' },
+        { "Normal",        "Editor_Default" },
+        { "Number",        "Lang_DecimalNumber" },
+        { "HexNumber",     "Lang_HexNumber" },
+        { "Punctuation",   "Lang_Punctuation" },
+        { "String",        "Lang_String" },
+        { "Comment",       "Lang_Comment" },
+        { "CPreprocessor", "Lang_Preprocessor" },
+        { "Function",      "Lang_Function" },
+        { "Label",         "Lang_Label" },
     };
     
-    keyword 'Editor_Keywords' {
-        'abstract',  'default',  'goto',       'null',      'synchronized',
-        'boolean',   'do',       'if',         'package',   'this',
-        'break',     'double',   'implements', 'private',   'threadsafe', 
-        'byte',      'else',     'import',     'protected', 'throw', 
-        'byvalue',   'extends',  'instanceof', 'public',    'transient',
-        'case',      'false',    'int',        'return',    'true',
-        'catch',     'final',    'interface',  'short',     'try',
-        'char',      'finally',  'long',       'static',    'void',
-        'class',     'float',    'native',     'super',     'while',
-        'const',     'for',      'new',        'switch',    'continue', 
-        'throws'
+    keyword "Editor_Keywords" {
+        "abstract",  "default",  "goto",       "null",      "synchronized",
+        "boolean",   "do",       "if",         "package",   "this",
+        "break",     "double",   "implements", "private",   "threadsafe", 
+        "byte",      "else",     "import",     "protected", "throw", 
+        "byvalue",   "extends",  "instanceof", "public",    "transient",
+        "case",      "false",    "int",        "return",    "true",
+        "catch",     "final",    "interface",  "short",     "try",
+        "char",      "finally",  "long",       "static",    "void",
+        "class",     "float",    "native",     "super",     "while",
+        "const",     "for",      "new",        "switch",    "continue", 
+        "throws"
     };
 }
 
 mode JAVA: SOURCE {      # JAVA Mode
-    FileNameRx          = /\.\c{JAVA}$/;
+    FileNameRx          = `\.\c{JAVA}$`;
     HilitOn             = 1;
-    Colorizer           = 'JAVA';
+    Colorizer           = "JAVA";
     AutoIndent          = 1;
-    IndentMode          = 'C';
+    IndentMode          = "C";
     MatchCase           = 1;
     Trim                = 1;
     MultiLineHilit      = 1;
     AutoHilitParen      = 1;
-    RoutineRegexp	= /^\s*\w[\w._]+{\s+[\w._]+}+[\w_]+\s*\([^;]*$/;
+    RoutineRegexp	= `^\s*\w[\w._]+{\s+[\w._]+}+[\w_]+\s*\([^;]*$`;
 
     SaveFolds           = 2;      # save fold info at end of line
-    CommentStart        = ' /*';
-    CommentEnd          = '*/';
+    CommentStart        = " /*";
+    CommentEnd          = "*/";
 }
 
-oinclude 'mym_java.fte';
+oinclude "mym_java.fte";

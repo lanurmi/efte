@@ -115,19 +115,19 @@ sub XSLT_Sort {
 
 
 colorize XSLT {
-    SyntaxParser = 'SIMPLE';
+    SyntaxParser = "SIMPLE";
     
     color {
-        { 'Normal',     'Editor_Default' },
-        { 'Command',    'Markup_Punctuation' },
-        { 'String',     'Markup_String' },
-        { 'Symbol',     'Markup_Control' },
-        { 'Tag',        'Markup_Tag' },
-        { 'Comment',    'Markup_Comment' },
-	{ 'Directive',  'Markup_Symbol' },
-	{ 'Special',    'Markup_Special' },
-	{ 'Variable',   'Lang_Variable' },
-	{ 'Keyword',    'Editor_Keywords' },
+        { "Normal",     "Editor_Default" },
+        { "Command",    "Markup_Punctuation" },
+        { "String",     "Markup_String" },
+        { "Symbol",     "Markup_Control" },
+        { "Tag",        "Markup_Tag" },
+        { "Comment",    "Markup_Comment" },
+	{ "Directive",  "Markup_Symbol" },
+	{ "Special",    "Markup_Special" },
+	{ "Variable",   "Lang_Variable" },
+	{ "Keyword",    "Editor_Keywords" },
     };
     
     keyword "Editor_Keywords" { # HTML 4.0 keywords
@@ -171,147 +171,147 @@ colorize XSLT {
         "isindex", "menu"
     };
     
-    h_state 0 { 'Normal' }
-    h_trans { 10, '<', '<xsl:', 'Directive' }   # Open XSLT Tag
-    h_trans { 10, '<', '</xsl:', 'Directive' }  # Close XSLT Tag
-    h_trans { 7, '<', '<?', 'Special' }         # Processing Instruction
-    h_trans { 5, '<', '<!--', 'Comment' }       # Comment
-    h_trans { 18, '<', '<![CDATA[', 'Keyword' } # CDATA
-    h_trans { 1, '<', '<', 'Command' }          # Open Non-XSLT Tag
-    h_trans { 2, '<', '&', 'Symbol' }           # Close Non-XSLT Tag
+    h_state 0 { "Normal" }
+    h_trans { 10, "<", "<xsl:", "Directive" }   # Open XSLT Tag
+    h_trans { 10, "<", "</xsl:", "Directive" }  # Close XSLT Tag
+    h_trans { 7, "<", "<?", "Special" }         # Processing Instruction
+    h_trans { 5, "<", "<!--", "Comment" }       # Comment
+    h_trans { 18, "<", "<![CDATA[", "Keyword" } # CDATA
+    h_trans { 1, "<", "<", "Command" }          # Open Non-XSLT Tag
+    h_trans { 2, "<", "&", "Symbol" }           # Close Non-XSLT Tag
     
     # Not-XSLT tag
-    h_state 1 { 'Command' }
-    h_trans { 0, '>', '>', 'Command' }          # End
-    h_trans { 3, '<', '\'', 'String' }          # String
-    h_trans { 4, '<', '"', 'String' }           # String
-    h_trans { 7, '<', '?>', 'Special' }         # Begin
-    h_wtype { -1, -1, -1, 'i', 'a-zA-Z0-9_\-' } # Tag Text
+    h_state 1 { "Command" }
+    h_trans { 0, ">", ">", "Command" }          # End
+    h_trans { 3, "<", "\'", "String" }          # String
+    h_trans { 4, "<", "\"", "String" }           # String
+    h_trans { 7, "<", "?>", "Special" }         # Begin
+    h_wtype { -1, -1, -1, "i", "a-zA-Z0-9_\-" } # Tag Text
     
     # Entity
-    h_state 2 { 'Symbol' }
-    h_trans { 0, '>', ';', 'Symbol' }           # End
-    h_trans { 0, '-S', '#a-zA-Z0-9', 'Symbol' } # Entity Text
+    h_state 2 { "Symbol" }
+    h_trans { 0, ">", ";", "Symbol" }           # End
+    h_trans { 0, "-S", "#a-zA-Z0-9", "Symbol" } # Entity Text
     
     # String
-    h_state 3 { 'String' }
-    h_trans { 8, '<', '&', 'Symbol' }           # Entity
-    h_trans { 1, '>', '\'', 'String' }          # End
+    h_state 3 { "String" }
+    h_trans { 8, "<", "&", "Symbol" }           # Entity
+    h_trans { 1, ">", "\'", "String" }          # End
     
     # String
-    h_state 4 { 'String' }
-    h_trans { 9, '<', '&', 'Symbol' }           # Entity
-    h_trans { 1, '>', '"', 'String' }           # End
+    h_state 4 { "String" }
+    h_trans { 9, "<", "&", "Symbol" }           # Entity
+    h_trans { 1, ">", "\"", "String" }           # End
     
     # Format Comment End Symbols
-    h_state 5 { 'Comment' }
-    h_trans { 6, '>', '--', 'Comment' }         # End (Symbols)
+    h_state 5 { "Comment" }
+    h_trans { 6, ">", "--", "Comment" }         # End (Symbols)
     
-    h_state 6 { 'Special' }
-    h_trans { 5, '>', '--', 'Comment' }         # Format Comment End Symbols
-    h_trans { 0, '>', '>', 'Comment' }          # End
+    h_state 6 { "Special" }
+    h_trans { 5, ">", "--", "Comment" }         # Format Comment End Symbols
+    h_trans { 0, ">", ">", "Comment" }          # End
     
     # Processing Instructions
-    h_state 7 { 'Special' }
-    h_trans { 1, '-S', '<?', 'Special' }        # Begin
-    h_trans { 0, '-S', '?>', 'Special' }        # End
+    h_state 7 { "Special" }
+    h_trans { 1, "-S", "<?", "Special" }        # Begin
+    h_trans { 0, "-S", "?>", "Special" }        # End
     
     # Entity
-    h_state 8 { 'Symbol' }
-    h_trans { 3, '>', ';', 'Symbol' }           # End
-    h_trans { 3, '-S', '#a-zA-Z0-9', 'Symbol' } # Entity Text
+    h_state 8 { "Symbol" }
+    h_trans { 3, ">", ";", "Symbol" }           # End
+    h_trans { 3, "-S", "#a-zA-Z0-9", "Symbol" } # Entity Text
     
     # Entity
-    h_state 9 { 'Symbol' }
-    h_trans { 4, '>', ';', 'Symbol' }           # End
-    h_trans { 4, '-S', '#a-zA-Z0-9', 'Symbol' } # Entity Text
+    h_state 9 { "Symbol" }
+    h_trans { 4, ">", ";", "Symbol" }           # End
+    h_trans { 4, "-S", "#a-zA-Z0-9", "Symbol" } # Entity Text
     
     
     # XSLT tags
-    h_state 10 { 'Special' }
-    h_wtype { -1, 15, 15, '', 'a-z\-' }         # Tags
-    h_words 'Markup_Symbol' {
-	'apply-imports', 'apply-templates', 'attribute', 'attribute-set', 'call-template',
-	'choose', 'comment', 'copy', 'copy-of', 'decimal-format', 'element', 'fallback',
-	'for-each', 'if', 'import', 'include', 'key', 'message', 'namespace-alias',
-	'number', 'otherwise', 'output', 'param', 'preserve-space', 'processing-instruction',
-	'sort', 'strip-space', 'stylesheet', 'template', 'text', 'transform', 'value-of',
-	'variable', 'when', 'with-param'
+    h_state 10 { "Special" }
+    h_wtype { -1, 15, 15, "", "a-z\-" }         # Tags
+    h_words "Markup_Symbol" {
+	"apply-imports", "apply-templates", "attribute", "attribute-set", "call-template",
+	"choose", "comment", "copy", "copy-of", "decimal-format", "element", "fallback",
+	"for-each", "if", "import", "include", "key", "message", "namespace-alias",
+	"number", "otherwise", "output", "param", "preserve-space", "processing-instruction",
+	"sort", "strip-space", "stylesheet", "template", "text", "transform", "value-of",
+	"variable", "when", "with-param"
     }
     
     # String inside XSLT tag
-    h_state 11 { 'String' }
-    h_trans { 13, '<', '&', 'Symbol' }          # Entity
-    h_trans { 16, '<', '$', 'Variable' }        # Variable
-    h_trans { 11, 's', ':.*|@[]()', 'Tag' }     # Special Symbols
-    h_trans { 15, '>', '\'', 'String' }         # End of String
+    h_state 11 { "String" }
+    h_trans { 13, "<", "&", "Symbol" }          # Entity
+    h_trans { 16, "<", "$", "Variable" }        # Variable
+    h_trans { 11, "s", ":.*|@[]()", "Tag" }     # Special Symbols
+    h_trans { 15, ">", "\'", "String" }         # End of String
     
     # String inside XSLT tag
-    h_state 12 { 'String' }
-    h_trans { 14, '<', '&', 'Symbol' }          # Entity
-    h_trans { 17, '<', '$', 'Variable' }        # Variable
-    h_trans { 12, 's', ':.*|@[]()', 'Tag' }     # Special Symbols
-    h_trans { 15, '>', '"', 'String' }          # End of String
+    h_state 12 { "String" }
+    h_trans { 14, "<", "&", "Symbol" }          # Entity
+    h_trans { 17, "<", "$", "Variable" }        # Variable
+    h_trans { 12, "s", ":.*|@[]()", "Tag" }     # Special Symbols
+    h_trans { 15, ">", "\"", "String" }          # End of String
     
     # Entity
-    h_state 13 { 'Symbol' }
-    h_trans { 11, '>', ';', 'Symbol' }          # End of Entity
-    h_trans { 11, '-S', '#a-zA-Z0-9', 'Symbol' }# Entity Text
+    h_state 13 { "Symbol" }
+    h_trans { 11, ">", ";", "Symbol" }          # End of Entity
+    h_trans { 11, "-S", "#a-zA-Z0-9", "Symbol" }# Entity Text
     
     # Entity
-    h_state 14 { 'Symbol' }
-    h_trans { 12, '>', ';', 'Symbol' }          # End of Entity
-    h_trans { 12, '-S', '#a-zA-Z0-9', 'Symbol' }# Entity Text
+    h_state 14 { "Symbol" }
+    h_trans { 12, ">", ";", "Symbol" }          # End of Entity
+    h_trans { 12, "-S", "#a-zA-Z0-9", "Symbol" }# Entity Text
     
     # Process XSLT tag
-    h_state 15 { 'Command' }
-    h_trans { 0, '>', '>', 'Directive' }        # End of Tag
-    h_trans { 11, '<', '\'', 'String' }         # String
-    h_trans { 12, '<', '"', 'String' }          # String
-    h_trans { 19, '<', 'xmlns:', 'Keyword' }    # Namespace
-    h_wtype { -1, -1, -1, '', 'a-z\-' }         # Tags
-#    h_words 'Markup_Control' {
+    h_state 15 { "Command" }
+    h_trans { 0, ">", ">", "Directive" }        # End of Tag
+    h_trans { 11, "<", "\'", "String" }         # String
+    h_trans { 12, "<", "\"", "String" }          # String
+    h_trans { 19, "<", "xmlns:", "Keyword" }    # Namespace
+    h_wtype { -1, -1, -1, "", "a-z\-" }         # Tags
+#    h_words "Markup_Control" {
     # XSLT attributes
-    h_words 'Markup_Symbol' {
-	'test', 'select', 'mode', 'name', 'namespace', 'use-attribute-sets', 'decimal-separator',
-	'grouping-separator', 'infinity', 'minus-sign', 'NaN', 'percent', 'per-mille',
-	'zero-digit', 'digit', 'pattern-separator', 'href', 'match', 'use', 'terminate',
-	'stylesheet-prefix', 'result-prefix', 'level', 'count', 'from', 'value', 'format',
-	'lang', 'letter-value', 'grouping-size', 'method', 'version', 'encoding',
-	'omit-xml-declaration', 'standalone', 'doctype-public', 'doctype-system',
-	'cdata-section-elements', 'indent', 'media-type', 'elements', 'data-type', 'order',
-	'case-order', 'id', 'extension-element-prefixes', 'exclude-result-prefixes',
-        'priority', 'disable-output-escaping'
+    h_words "Markup_Symbol" {
+	"test", "select", "mode", "name", "namespace", "use-attribute-sets", "decimal-separator",
+	"grouping-separator", "infinity", "minus-sign", "NaN", "percent", "per-mille",
+	"zero-digit", "digit", "pattern-separator", "href", "match", "use", "terminate",
+	"stylesheet-prefix", "result-prefix", "level", "count", "from", "value", "format",
+	"lang", "letter-value", "grouping-size", "method", "version", "encoding",
+	"omit-xml-declaration", "standalone", "doctype-public", "doctype-system",
+	"cdata-section-elements", "indent", "media-type", "elements", "data-type", "order",
+	"case-order", "id", "extension-element-prefixes", "exclude-result-prefixes",
+        "priority", "disable-output-escaping"
     }
     
     # Variable
-    h_state 16 { 'Variable' }
-    h_trans { 11, '-S', 'a-zA-Z0-9_\$', 'Variable' }
+    h_state 16 { "Variable" }
+    h_trans { 11, "-S", "a-zA-Z0-9_\$", "Variable" }
     
     # Variable
-    h_state 17 { 'Variable' }
-    h_trans { 12, '-S', 'a-zA-Z0-9_\$', 'Variable' }
+    h_state 17 { "Variable" }
+    h_trans { 12, "-S", "a-zA-Z0-9_\$", "Variable" }
     
     # CDATA
-    h_state 18 { 'String' }
-    h_trans { 0, '<', ']]>', 'Keyword' }
+    h_state 18 { "String" }
+    h_trans { 0, "<", "]]>", "Keyword" }
     
     # >>> Namespace
-    h_state 19 { 'Special' }
-    h_trans { 15, '>', '=', 'Command' }          # End of Namespace
-    h_trans { 20, '-s', 'a-z\_', 'Tag' }
+    h_state 19 { "Special" }
+    h_trans { 15, ">", "=", "Command" }          # End of Namespace
+    h_trans { 20, "-s", "a-z\_", "Tag" }
     # First qname is azure
-    h_state 20 { 'Tag' }
-    h_wtype { -1, 21, 21, '', 'a-z0-9\-\_' }
+    h_state 20 { "Tag" }
+    h_wtype { -1, 21, 21, "", "a-z0-9\-\_" }
     # Second qname must be red
-    h_state 21 { 'Special' }
-    h_trans { 15, '>', '=', 'Command' }
+    h_state 21 { "Special" }
+    h_trans { 15, ">", "=", "Command" }
     # <<< Namespace
 
 }
 
 mode XSLT: HTML {
-    FileNameRx          = /\.\c{{XSLT?}|{XML}|{XDR}|{WSC}}$/;
+    FileNameRx          = `\.\c{{XSLT?}|{XML}|{XDR}|{WSC}}$`;
     TabSize             = 4;
     SpaceTabs           = 0;
     ShowTabs            = 1;
@@ -320,7 +320,7 @@ mode XSLT: HTML {
     MultiLineHilit      = 1;
     AutoHilitParen      = 1;
 
-    RoutineRegexp       = /\<xsl\:template/;
+    RoutineRegexp       = `\<xsl\:template`;
 
     SaveFolds           = 2;      # save fold info at end of line
     CommentStart        = " <!--";
@@ -347,4 +347,4 @@ eventmap XSLT {
     key [C+E_s]     { XSLT_Sort }
 }
 
-oinclude 'mym_xslt.fte';
+oinclude "mym_xslt.fte";

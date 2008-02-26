@@ -4,12 +4,12 @@
 
 # Runs current file in browser
 sub HTML_View {
-    RunProgram "netscape.exe -browser -l en_US file:///" . $FilePath;
+    "netscape.exe -browser -l en_US file:///" $FilePath merge$ RunProgram;
 }
 
 # Runs Dave Ragget's HTML Tidy on current file
 sub HTML_Tidy {
-    RunProgram "f:\\os2_apps\\tidy\\tidy.exe -m " . $FilePath;
+    "f:\\os2_apps\\tidy\\tidy.exe -m " $FilePath merge$ RunProgram;
 }
 
 # Basic stuff
@@ -39,12 +39,12 @@ sub HTML_BODY {
 }
 
 sub HTML_META {
-    MoveFileStart; /<head>/ "i" ?Find; MoveLineEnd; LineNew;
+    MoveFileStart; `<head>` "i" ?Find; MoveLineEnd; LineNew;
     "<meta name=\"\" content=\"\" />" InsertString; 15:MoveLeft
 }
 
 sub HTML_BASEURL {
-    MoveFileStart; /<head>/ "i" ?Find; MoveLineEnd; LineNew
+    MoveFileStart; `<head>` "i" ?Find; MoveLineEnd; LineNew
     "<base href=\"\" />" InsertString; 4:MoveLeft
 }
 
@@ -553,15 +553,15 @@ sub HTML_Base {
 # Converts plain text to HTML
 sub HTML_TXT {
     MoveFileStart;
-    /&/ /&amp;/ "agn"    ?FindReplace ;
-    /</ /&lt;/ "agn"     ?FindReplace ;
-    />/ /&gt;/ "agn"     ?FindReplace ;
-    /</ /&lt;/ "agn"     ?FindReplace ;
-    /"/ /&quot;/ "agn"   ?FindReplace ;
-    /(c)/ /&copy;/ "agn" ?FindReplace ;
-    /|/ /&brvbar;/ "agn" ?FindReplace ;
-    /ª/ /&not;/ "agn"    ?FindReplace ;
-    /(tm)/ /<sup><small>tm<//small><//sup>/ "agn" ?FindReplace;
+    `&` `&amp;` "agn"    ?FindReplace ;
+    `<` `&lt;` "agn"     ?FindReplace ;
+    `>` `&gt;` "agn"     ?FindReplace ;
+    `<` `&lt;` "agn"     ?FindReplace ;
+    `"` `&quot;` "agn"   ?FindReplace ;
+    `(c)` `&copy;` "agn" ?FindReplace ;
+    `|` `&brvbar;` "agn" ?FindReplace ;
+    `` `&not;` "agn"    ?FindReplace ;
+    `(tm)` `<sup><small>tm<//small><//sup>` "agn" ?FindReplace;
     MoveFileStart;
     LineInsert;
     "<pre>" InsertString; MoveFileEnd;
@@ -572,20 +572,20 @@ sub HTML_TXT {
 # basic frame skeleton
 sub HTML_BaseFrame {
     HTML_Base; SavePos; MoveFileStart; KillLine; HTML_DTD_X1F;
-    /body>/ /frameset>/ "agn" ?FindReplace; MoveSavedPos;
+    `body>` `frameset>` "agn" ?FindReplace; MoveSavedPos;
 }
 
 colorize HTML {
-    SyntaxParser = 'SIMPLE';
+    SyntaxParser = "SIMPLE";
     
     color {
-        { 'Normal',     'Editor_Default' },
-        { 'String',     'Lang_String' },
-        { 'Comment',    'Lang_Comment' },
-        { 'Command',    'Markup_Punctuation' },
-        { 'Symbol',     'Markup_Symbol' },
-        { 'Tag',        'Markup_Tag' },
-        { 'Special',    'Markup_Special' },
+        { "Normal",     "Editor_Default" },
+        { "String",     "Lang_String" },
+        { "Comment",    "Lang_Comment" },
+        { "Command",    "Markup_Punctuation" },
+        { "Symbol",     "Markup_Symbol" },
+        { "Tag",        "Markup_Tag" },
+        { "Special",    "Markup_Special" },
     };
     
     keyword "Editor_Keywords" { # XHTML 1.0 keywords
@@ -642,47 +642,47 @@ colorize HTML {
         "alink", "background", "bgcolor", "language", "link", "text", "vlink",
     };
 
-    h_state 0 { 'Normal' }
-    h_trans { 5, '<', '<!--', 'Comment' }
-    h_trans { 1, '<', '<', 'Command' }
-    h_trans { 2, '<', '&', 'Symbol' }
+    h_state 0 { "Normal" }
+    h_trans { 5, "<", "<!--", "Comment" }
+    h_trans { 1, "<", "<", "Command" }
+    h_trans { 2, "<", "&", "Symbol" }
 
-    h_state 1 { 'Command' }
-    h_trans { 0, '>', '>', 'Command' }
-    h_trans { 3, '<', '\'', 'String' }
-    h_trans { 4, '<', '"', 'String' }
-    h_wtype { -1, -1, -1, 'i', 'a-zA-Z0-9_\-' }
+    h_state 1 { "Command" }
+    h_trans { 0, ">", ">", "Command" }
+    h_trans { 3, "<", "\"", "String" }
+    h_trans { 4, "<", "\"", "String" }
+    h_wtype { -1, -1, -1, "i", "a-zA-Z0-9_\-" }
 
-    h_state 2 { 'Symbol' }
-    h_trans { 0, '>', ';', 'Symbol' }
-    h_trans { 0, '-S', '#a-zA-Z0-9', 'Symbol' }
+    h_state 2 { "Symbol" }
+    h_trans { 0, ">", ";", "Symbol" }
+    h_trans { 0, "-S", "#a-zA-Z0-9", "Symbol" }
 
-    h_state 3 { 'String' }
-    h_trans { 1, '>', '\'', 'String' }
+    h_state 3 { "String" }
+    h_trans { 1, ">", "'", "String" }
 
-    h_state 4 { 'String' }
-    h_trans { 1, '>', '"', 'String' }
+    h_state 4 { "String" }
+    h_trans { 1, ">", "\"", "String" }
 
-    h_state 5 { 'Comment' }
-    h_trans { 6, '>', '--', 'Comment' }
+    h_state 5 { "Comment" }
+    h_trans { 6, ">", "--", "Comment" }
 
-    h_state 6 { 'Special' }
-    h_trans { 5, '>', '--', 'Comment' }
-    h_trans { 0, '>', '>', 'Comment' }
+    h_state 6 { "Special" }
+    h_trans { 5, ">", "--", "Comment" }
+    h_trans { 0, ">", ">", "Comment" }
 }
 
 mode HTML: MARKUP {
-    FileNameRx          = /\.\c{S?HTML?}$/;
+    FileNameRx          = `\.\c{S?HTML?}$`;
     HilitOn             = 1;
     Colorizer           = "HTML";
     MultiLineHilit      = 1;
     AutoHilitParen      = 1;
 
-    RoutineRegexp       = /\<[Hh]\d\>/;
+    RoutineRegexp       = `\<[Hh]\d\>`;
 
     SaveFolds           = 2;      # save fold info at end of line
     CommentStart        = " <!--";
     CommentEnd          = "-->";
 }
 
-oinclude 'mym_html.fte';
+oinclude "mym_html.fte";

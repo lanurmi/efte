@@ -185,59 +185,59 @@ eventmap TEX: PLAIN {
 }
 
 include "m_4gl.fte";
-#include "m_a51.fte";
-#include "m_ada.fte";
-#include "m_asm.fte";
-#include "m_asm370.fte";
-#include "m_bin.fte";
+include "m_a51.fte";
+include "m_ada.fte";
+include "m_asm.fte";
+include "m_asm370.fte";
+include "m_bin.fte";
 include "m_c.fte";
-#include "m_catbs.fte";
-#include "m_clario.fte";
-#include "m_diff.fte";
-#include "m_ebnf.fte";
-#include "m_fort90.fte";
-#include "m_falcon.fte";
+include "m_catbs.fte";
+include "m_clario.fte";
+include "m_diff.fte";
+include "m_ebnf.fte";
+include "m_fort90.fte";
+include "m_falcon.fte";
 include "m_fte.fte";
-#include "m_gawk.fte";
-#include "m_html.fte";
-#include "m_idl.fte";
-#include "m_ipf.fte";
-#include "m_java.fte";
-#include "m_ldsgml.fte";
-#include "m_lua.fte";
-#include "m_make.fte";
-#include "m_merge.fte";
-#include "m_mod3.fte";
-#include "m_msg.fte";
-#include "m_pascal.fte";
-#include "m_perl.fte";
-#include "m_php.fte";
-#include "m_py.fte";
-#include "m_resdlg.fte";
-#include "m_rexx.fte";
-#include "m_rpm.fte";
-#include "m_ruby.fte";
+include "m_gawk.fte";
+include "m_html.fte";
+include "m_idl.fte";
+include "m_ipf.fte";
+include "m_java.fte";
+include "m_ldsgml.fte";
+include "m_lua.fte";
+include "m_make.fte";
+include "m_merge.fte";
+include "m_mod3.fte";
+include "m_msg.fte";
+include "m_pascal.fte";
+include "m_perl.fte";
+include "m_php.fte";
+include "m_py.fte";
+include "m_resdlg.fte";
+include "m_rexx.fte";
+include "m_rpm.fte";
+include "m_ruby.fte";
 %if(SELFTEST)
 include "m_selftest.fte";
 %endif
-#include "m_sgml.fte";
-#include "m_sh.fte";
-#include "m_siod.fte";
-#include "m_sl.fte";
-#include "m_sml.fte";
-#include "m_sql.fte";
-#include "m_tcl.fte";
-#include "m_tex.fte";
-#include "m_texi.fte";
-#include "m_text.fte";
-#include "m_unrealscript.fte";
-#include "m_xml.fte";
-#include "m_xslt.fte";
-#include "m_rst.fte";
+include "m_sgml.fte";
+include "m_sh.fte";
+include "m_siod.fte";
+include "m_sl.fte";
+include "m_sml.fte";
+include "m_sql.fte";
+include "m_tcl.fte";
+include "m_tex.fte";
+include "m_texi.fte";
+include "m_text.fte";
+include "m_unrealscript.fte";
+include "m_xml.fte";
+include "m_xslt.fte";
+include "m_rst.fte";
 
 # Must be included AFTER m_text.fte in order for the filename regexp to
 # match correctly (i.e. CMakeLists.txt should match CMAKE mode, not TEXT mode)
-#include "m_cmake.fte";
+include "m_cmake.fte";
 
 # C indentation style menu
 include "uicstyle.fte";
@@ -273,10 +273,10 @@ include "ab_c.fte";
 %if(OS_OS2)
 include "ab_c_os2.fte";
 %endif
-#include "ab_rexx.fte";
-#include "ab_sh.fte";
-#include "ab_java.fte";
-#include "ab_perl.fte";
+include "ab_rexx.fte";
+include "ab_sh.fte";
+include "ab_java.fte";
+include "ab_perl.fte";
 
 # some customizations
 
@@ -295,92 +295,3 @@ eventmap MODEL {
     key [C+S+F12] { "~/results.selftest" FileOpen MoveFileStart selftest }
 }
 %endif
-
-# some editors have a SmartPaste feature.  We can do that too.
-#eventmap C { key [S+G-Ins] { BlockPasteStream; BlockReIndent } }
-
-eventmap PLAIN {
-    key [A+S+-] { # select block between {}()[]<>
-        BlockUnmark; BlockMarkStream; MatchBracket; BlockMarkStream;
-        SavePos; MoveBlockEnd;
-        2:MoveNext; ?MoveLeft;  # do this to mark a newline after })>]
-        BlockEnd; MoveSavedPos;
-    }
-
-    key [A+C+F] { IndentFunction }
-    key [A+C+M] { BlockMarkFunction }
-    key [A+C+[] { MoveFunctionPrev }
-    key [A+C+\]] { MoveFunctionNext }
-
-#    key [C+F1] { ShowHelpWord
-#%if(OS_OS2)
-#        # OS/2 - helpfile (can be contatenated)
-#        "CPREF+PMWIN+PMMSG+PMGPI+PMREL+PMFUN+PMHOK"
-#%endif
-#%if(OS_UNIX)
-## UNIX - specify options to MAN
-#        ""
-#%endif
-#%if(OS_NT)
-#            # Win32 - helpfile
-#            #        ""
-#%endif
-#    }
-#%if(OS_OS2)
-#    key [S+F1] { ShowHelpWord "EMXDEV+EMXGNU+EMXLIB+EMXRT+EMXBSD" }
-#%if(!UI_BRIEF)
-#    key [F1] { ShowHelp "FTE" "" }
-#%endif
-#%endif
-
-    #key [C+A+F1] {
-    #    InsertString $FileName
-    #    InsertString $FilePath
-    #    InsertString $CurDirectory
-    #}
-    key [C+A+U] {
-        MoveLineStart; `^\/\/ ` `` "xnc" ?FindReplace; MoveDown
-        #MoveLineStart; ?FindReplace /^(\s*)\/\// /\1/ "xnc"; MoveDown
-    }
-    key [C+A+C] {
-        MoveLineStart; `^(\s*)/ /\/\  \1` "xnc" ?FindReplace ; MoveDown
-        #MoveLineStart; `^(\s*)\/\// /\1` "xnc" ?FindReplace;
-        #MoveLineStart; `^(\s*)/ /\1\/\/` "xnc" ?FindReplace; MoveDown
-    }
-    key [G-Home] { MoveBeginOrNonWhite }
-    key [C+G-Up] { PopGlobalBookmark }
-    key [C+G-Down] { PushGlobalBookmark }
-    #key [C+A+S+F] {
-    #    LineNew;
-    #    InsertString "path:" . $FilePath; LineNew;
-    #    InsertString "name:" . $FileName; LineNew;
-    #    InsertString "dir:"  . $FileDirectory; LineNew;
-    #    InsertString "base:" . $FileBaseName; LineNew;.
-    #    InsertString "ext:"  . $FileExtension; LineNew;
-    #}
-}
-
-#and here is my function noumlaut:
-
-#sub noumlaut {
-#    PlaceBookmark "0";
-#    /ä/ /\"a/ "agn" ?FindReplace ;
-#    /ö/ /\"o/ "agn" ?FindReplace ;
-#    /ü/ /\"u/ "agn" ?FindReplace ;
-#    /Ä/ /\"A/ "agn" ?FindReplace ;
-#    /Ö/ /\"O/ "agn" ?FindReplace ;
-#    /Ü/ /\"U/ "agn" ?FindReplace ;
-#    /ß/ /{\ss}/ "agn" ?FindReplace ;
-#    GotoBookmark "0";
-#}
-
-#object GLOBAL {
-#    SevenBit = 1;  # seven bit characters only for user interface...
-#}
-#eventmap PLAIN {
-#left arrow at the beginning of line moves to previous line
-#   key [G-Left] { MovePrev }
-#right arrow at the end of line moves to next line
-#   key [G-Right] { MoveNext }
-#   key [A+C+Enter] { noumlaut; RunProgram "latex " . $FileName; }
-#}
