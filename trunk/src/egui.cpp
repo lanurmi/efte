@@ -1574,7 +1574,7 @@ int EGUI::FrameNew() {
     view->PushView(edit);
     frames->Show();
 
-    int res = ExecMacro(View, "OnFrameNew");
+    int res = ExecMacro(view, "OnFrameNew");
     SetBranchCondition(res);
     return res;
 }
@@ -1611,7 +1611,7 @@ int EGUI::FrameNext(GxView * View) {
     return res;
 }
 
-int EGUI::FramePrev(GxView * /*View*/) {
+int EGUI::FramePrev(GxView *View) {
     int res = 0;
 
     if (!frames->isLastFrame()) {
