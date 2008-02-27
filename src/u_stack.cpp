@@ -54,6 +54,7 @@ void CircularStack::dup() {
     int p = pos;
     pos = (pos + 1) & STACKMASK;
     stack[pos] = stack[p];
+    stackdepth++;
 }
 
 void CircularStack::swap() {
