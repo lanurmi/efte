@@ -713,6 +713,25 @@ int EGUI::ExecuteCommand(ExState &State, GxView *view)
 }
 
 int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
+    if (verbosity > 1) {
+        // Command name
+        fprintf(stderr, "%-15s: ", GetCommandName(Command));
+        // Param Stack
+        for (int idx=ParamStack.size()-1; idx > -1; idx--)
+            fprintf(stderr, "%i=%i ", idx, ParamStack.peek(idx));
+        // String Stack
+        for (int idx=sstack.size()-1; idx > -1; idx--) {
+            std::size_t  found=std::string::npos;
+            std::string s = sstack[idx];
+            while((found = s.find("\n")) != std::string::npos)
+                s.replace(found, 1, "\\n");
+            while((found = s.find("\r")) != std::string::npos)
+                s.replace(found, 1, "\\r");
+            fprintf(stderr, "%i='%s' ", idx, s.c_str());
+        }
+        fprintf(stderr, "\n");
+    }
+
     if (Command & CMD_EXT) {
         return ExecMacro(view, Command & ~CMD_EXT);
     }
