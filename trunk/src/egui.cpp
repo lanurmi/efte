@@ -89,32 +89,14 @@ EGUI::~EGUI() {
  */
 
 int Print(GxView *view, ExState &State) {
-    FILE *f;
-    int whereTo, found, vI;
-    char vS[256];
-    EView *View = 0;
+    PSCHECK(1, "Print");
+    SSCHECK(1, "Print");
 
-    if (view != NULL) {
-        ExModelView *V = (ExModelView *)view->Top;
-        View = V->View;
-    }
+    int whereTo = ParamStack.pop();
+    FILE *f = whereTo == 2 ? stderr : stdout;
 
-    if (State.GetIntParam(View, &whereTo) == 0)
-        whereTo = 1;
+    fprintf(f, sstack.back().c_str()); sstack.pop_back();
 
-    f = whereTo == 2 ? stderr : stdout;
-
-    do {
-        found = 1;
-        if (State.GetIntParam(View, &vI) != 0)
-            fprintf(f, "%i", vI);
-        else if (State.GetStrParam(View, vS, sizeof(vS)) != 0)
-            fprintf(f, vS);
-        else
-            found = 0;
-    } while (found == 1);
-
-    SetBranchCondition(1);
     return 1;
 }
 
@@ -151,8 +133,10 @@ int Push(GxView *view, ExState &State) {
  * MACRO: Print a stack diagnostic message to stderr
  */
 int EGUI::Diag(ExState &State) {
-    fprintf(stderr, "cond=%08x, 5th=%d, 4th=%d, 3rd=%d, nos=%d, tos=%d\n", BranchCondition,
-            ParamStack.peek(4), ParamStack.peek(3), ParamStack.peek(2), ParamStack.peek(1),
+    fprintf(stderr, "cond=%08x", BranchCondition);
+    for (int i=ParamStack.size() - 1; i > 2; i--)
+        fprintf(stderr, ", %ith=%i", i, ParamStack.peek(i));
+    fprintf(stderr, ", 3rd=%d, nos=%d, tos=%d\n",  ParamStack.peek(2), ParamStack.peek(1),
             ParamStack.peek(0));
     return 1;
 }

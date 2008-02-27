@@ -274,6 +274,13 @@ sub padded  {
       rfetch swap 0 do dup splice loop
    endif rfrom drop2 }
 
+# --- debugging
+
+sub println { "\n" merge$ print }
+sub pout { 1 print }
+sub perr { 2 print }
+sub poutln { 1 println }
+sub perrln { 2 println }
 
 # --- "app" level number output words ---
 sub dot       { dup tor
