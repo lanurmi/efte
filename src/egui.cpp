@@ -967,6 +967,7 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
         if (m->cmds[i].type != CT_COMMAND) {
             continue;
         }
+        unsigned int macroclass;
         // fprintf(stderr, "Executor loop at m=8%x, i=%d\n", m, i);
         switch (m->cmds[i].u.num) {
 
@@ -1079,36 +1080,35 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
             // method              run time code in class, after does                  sub const { here cell allot
             //                     like an implied method                                          does fetch }
 
-        unsigned int macroclass;
         case ExOld:
             ParamStack.push(m->cmds[0].repeat);                     // push address of instance data
             if (m->cmds[1].repeat) {                                // does class have a "does" runtime part?
 
                 fprintf(stderr, "\n(ok) This is an executing instance\n");
                 fprintf(stderr, "(ok) Found method\n");
-                fprintf(stderr, "     in macro %d\n", m->cmds[1].u.num);
-                fprintf(stderr, "(ok) at idx=%d\n", m->cmds[1].repeat);
-                fprintf(stderr, "(ok) Currently at m=8%x, i=%d\n", m, i);
+                fprintf(stderr, "     in macro %i\n", m->cmds[1].u.num);
+                fprintf(stderr, "(ok) at idx=%i\n", m->cmds[1].repeat);
+                fprintf(stderr, "(ok) Currently at m=%i, i=%i\n", m, i);
 
                 fprintf(stderr, "\n(ok) Control:\n");
-                fprintf(stderr, "     State.Macro=8%x (execution token of instance)\n", State.Macro);
+                fprintf(stderr, "     State.Macro=%i (execution token of instance)\n", State.Macro);
 
-                fprintf(stderr, "(ok) &Macros[State.Macro]=8%x (address of instance)\n", m);
-                fprintf(stderr, "(ok) lookup at 8%x\n", &Macros[State.Macro]);
-                fprintf(stderr, "(ok) ExOld=%d (execution token of Old)\n", ExOld);
-                fprintf(stderr, "(ok) m->cmds[i].u.num)=%d (execution token of Old, as read from macro)\n", m->cmds[i].u.num);
+                fprintf(stderr, "(ok) &Macros[State.Macro]=%i (address of instance)\n", m);
+                fprintf(stderr, "(ok) lookup at %i\n", &Macros[State.Macro]);
+                fprintf(stderr, "(ok) ExOld=%i (execution token of Old)\n", ExOld);
+                fprintf(stderr, "(ok) m->cmds[i].u.num)=%i (execution token of Old, as read from macro)\n", m->cmds[i].u.num);
 
                 i = m->cmds[1].repeat;                              // yes: continue execution at class/index
                 State.Pos = i;
                 State.Macro = m->cmds[1].u.num;
-//                State.Macro = macroclass;
-//                m = macroclass;
+                //State.Macro = macroclass;
+                //m = macroclass;
                 m = &Macros[State.Macro];
 
                 fprintf(stderr, "\n(ok) Here we try to go:\n");
-                fprintf(stderr, "(\?\?) State.Macro=8%x\n", State.Macro);
-                fprintf(stderr, "     new m=8%x\n", m);
-                fprintf(stderr, "(ok) new i=%d\n", i);
+                fprintf(stderr, "(\?\?) State.Macro=%i\n", State.Macro);
+                fprintf(stderr, "     new m=%i\n", m);
+                fprintf(stderr, "(ok) new i=%i\n", i);
 
             } else {
                 i = m->Count;                                       // no: instance data is all we want. good bye.
@@ -1118,7 +1118,7 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
 
         case ExNew:                                                 // instantiator
             if (i) {                                                // prevent    "sub foo { new }" by skipping.
-                macroclass = m->cmds[i-1].u.num;
+                macroclass = m->cmds[i-1].u.num & ~CMD_EXT;
                 // PatchMacro(m, 0, ExOld, ParamStack.peek(0));
                 m->cmds[0].u.num = ExOld;                           // code to push address of instance data.
                 m->cmds[0].repeat = ParamStack.peek(0);             // instance data address
@@ -1128,10 +1128,10 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
                 m->cmds[1].repeat = doesindex;                      // index to run time code in class. this code is sort
 
                 fprintf(stderr, "\n(ok) Instantiation (new):\n");
-                fprintf(stderr, "     class=%d ('new' thinks that this is the class)\n", macroclass);
+                fprintf(stderr, "     class=%i ('new' thinks that this is the class)\n", macroclass);
                 fprintf(stderr, "     (/me thinks too that this is the class)\n");
                 if (doesindex)
-                    fprintf(stderr, "(ok) index=%d ('new' thinks that this is index to method)\n", doesindex);
+                    fprintf(stderr, "(ok) index=%i ('new' thinks that this is index to method)\n", doesindex);
                                                                    // of an implied method, when instance is executed
                 doesindex = 0;
             }
@@ -1141,7 +1141,7 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
 
         case ExDoes:                                                // set index to runtime portion, defined
             doesmacro = State.Macro;                                // in data structure descriptor, executed
-            doesindex = i+1;                                        // by "instances"
+            doesindex = i;                                        // by "instances"
             fprintf(stderr, "\n(ok) Instantiation (does):\n");
             fprintf(stderr, "(ok) class notifies 'new' of available method for instance:\n");
             fprintf(stderr, "     macro %d\n", Macro);
