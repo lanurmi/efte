@@ -43,6 +43,8 @@ typedef enum {
     /// excuted by "converted" data structure accessor, to publish data location
     ExNew,
     /// converts a sub to a data structure accessor
+    ExDoes,
+    /// seperates instance creation time code from instance run time code
 
     //!Stack Operations
     ExExit,

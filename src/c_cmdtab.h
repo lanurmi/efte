@@ -63,6 +63,7 @@ const struct {
     TAB(Times),
     TAB(Old),
     TAB(New),
+    TAB(Does),
 
     TAB(Diag),
 

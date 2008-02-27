@@ -937,6 +937,16 @@ int EGUI::ExecMacro(GxView *view, const char *name) {
     return result;
 }
 
+
+//void PatchMacro(int index, int with, int data) {
+//   m->cmds[index].u.num = with;
+//   m->cmds[index].repeat = data;
+//}
+
+
+unsigned int doesindex = 0;
+unsigned int doesmacro = 0;
+
 int EGUI::ExecMacro(GxView *view, int Macro) {
     STARTFUNC("EGUI::ExecMacro");
 
@@ -957,6 +967,7 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
         if (m->cmds[i].type != CT_COMMAND) {
             continue;
         }
+        // fprintf(stderr, "Executor loop at m=8%x, i=%d\n", m, i);
         switch (m->cmds[i].u.num) {
 
         case ExNop:
@@ -1047,22 +1058,100 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
             break;                                                  // would reintroduce conditional skip with  0/1 times command
 
 
+// ------------------------------------------------------------------------------------------------------
 
-            // these two, ExOld and ExNew, implement a very cheeky data structure applicator.
+            // the next three, ExOld, ExNew and ExDoes, implement a very cheeky data structure applicator.
             // this is quite wild, relying on self-modifying macros, but it's the best extendable
             // scheme conceived as far. its use, in terms of "syntax", is even quite satisfactory.
+            // these are made to mimick the Forth  "create ... does> ..." construct. Given the limitations
+            // of the underlying macro executor, these are only a crude approximation. Yet. :D
+
+            // Terminology in comments starts to get confusing, therefore definition of new terms here.
+            // Borrowing from object orientation, in the hope that this won't confuse matters more than necessary.
+            // But in fact, there are some similarities to OO. But we can't subclass, have no inheritance
+            // and no polymorphism. There is some concept of encapsulation, but not forced, and we don't
+            // require methods to access instance data, as instances share the address to their instance data freely.
+
+            // when we say:        we mean:                                            example:
+            // class               the macro, describing the data structure            sub var { here cell allot }
+            // instance            an object, based on class                           sub foo { var new }
+            // instantiation       first time execution of instance, finalizing it     { ... 123 foo store }
+            // method              run time code in class, after does                  sub const { here cell allot
+            //                     like an implied method                                          does fetch }
+
+        unsigned int macroclass;
         case ExOld:
-            ParamStack.push(m->cmds[i].repeat);
-            i++;
+            ParamStack.push(m->cmds[0].repeat);                     // push address of instance data
+            if (m->cmds[1].repeat) {                                // does class have a "does" runtime part?
+
+                fprintf(stderr, "\n(ok) This is an executing instance\n");
+                fprintf(stderr, "(ok) Found method\n");
+                fprintf(stderr, "     in macro %d\n", m->cmds[1].u.num);
+                fprintf(stderr, "(ok) at idx=%d\n", m->cmds[1].repeat);
+                fprintf(stderr, "(ok) Currently at m=8%x, i=%d\n", m, i);
+
+                fprintf(stderr, "\n(ok) Control:\n");
+                fprintf(stderr, "     State.Macro=8%x (execution token of instance)\n", State.Macro);
+
+                fprintf(stderr, "(ok) &Macros[State.Macro]=8%x (address of instance)\n", m);
+                fprintf(stderr, "(ok) lookup at 8%x\n", &Macros[State.Macro]);
+                fprintf(stderr, "(ok) ExOld=%d (execution token of Old)\n", ExOld);
+                fprintf(stderr, "(ok) m->cmds[i].u.num)=%d (execution token of Old, as read from macro)\n", m->cmds[i].u.num);
+
+                i = m->cmds[1].repeat;                              // yes: continue execution at class/index
+                State.Pos = i;
+                State.Macro = m->cmds[1].u.num;
+//                State.Macro = macroclass;
+//                m = macroclass;
+                m = &Macros[State.Macro];
+
+                fprintf(stderr, "\n(ok) Here we try to go:\n");
+                fprintf(stderr, "(\?\?) State.Macro=8%x\n", State.Macro);
+                fprintf(stderr, "     new m=8%x\n", m);
+                fprintf(stderr, "(ok) new i=%d\n", i);
+
+            } else {
+                i = m->Count;                                       // no: instance data is all we want. good bye.
+            }
             break;
 
-        case ExNew:                                                 // messy data structure initializer
-            // m->cmds[i].u.num = m->cmds[i-1].u.num;               // optional - may want it for "methods" emulation
-            m->cmds[i-1].u.num = ExOld;
-            m->cmds[i-1].repeat = ParamStack.peek(0);
+
+        case ExNew:                                                 // instantiator
+            if (i) {                                                // prevent    "sub foo { new }" by skipping.
+                macroclass = m->cmds[i-1].u.num;
+                // PatchMacro(m, 0, ExOld, ParamStack.peek(0));
+                m->cmds[0].u.num = ExOld;                           // code to push address of instance data.
+                m->cmds[0].repeat = ParamStack.peek(0);             // instance data address
+
+                // PatchMacro(m, 1, descriptor, doesindex);
+                m->cmds[1].u.num = macroclass;                      // macro exec token
+                m->cmds[1].repeat = doesindex;                      // index to run time code in class. this code is sort
+
+                fprintf(stderr, "\n(ok) Instantiation (new):\n");
+                fprintf(stderr, "     class=%d ('new' thinks that this is the class)\n", macroclass);
+                fprintf(stderr, "     (/me thinks too that this is the class)\n");
+                if (doesindex)
+                    fprintf(stderr, "(ok) index=%d ('new' thinks that this is index to method)\n", doesindex);
+                                                                   // of an implied method, when instance is executed
+                doesindex = 0;
+            }
+            i = m->Count;
             break;
 
 
+        case ExDoes:                                                // set index to runtime portion, defined
+            doesmacro = State.Macro;                                // in data structure descriptor, executed
+            doesindex = i+1;                                        // by "instances"
+            fprintf(stderr, "\n(ok) Instantiation (does):\n");
+            fprintf(stderr, "(ok) class notifies 'new' of available method for instance:\n");
+            fprintf(stderr, "     macro %d\n", Macro);
+            fprintf(stderr, "     lookup at 8%x\n", &Macros[State.Macro]);
+            fprintf(stderr, "     really at 8%x\n", m);
+            fprintf(stderr, "(ok) index %d\n", doesindex);
+            i = m->Count;                                           
+            break;
+
+// ------------------------------------------------------------------------------------------------------
 
         default:
             State.Pos = i+1;
