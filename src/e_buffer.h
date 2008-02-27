@@ -760,6 +760,16 @@ public:
     int InsertDate(ExState& state);
     int InsertUid();
 
+    // Stack pushes
+    int PushFileName();
+    int PushCurDir();
+    int QuestionAt();
+    int PushCurChar();
+    int PushCurWord();
+    int PushCurLine();
+    int PushSelection();
+    int PushEfteVerNo();
+
     int ShowHelpWord(ExState &State);
     int Message(ExState &State);
     int GetChoice(ExState &State);

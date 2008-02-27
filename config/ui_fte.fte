@@ -9,7 +9,7 @@ include "ui_k_fte.fte";
 #include "menu/m_sgml.fte";
 #include "menu/m_rst.fte";
 
-#include "kbd/k_c.fte";
+include "kbd/k_c.fte";
 #include "kbd/k_java.fte";
 #include "kbd/k_perl.fte";
 #include "kbd/k_rexx.fte";

@@ -42,39 +42,8 @@ include "selftest.fte";
 %define(GUI_X11)
 %endif
 
-# to customize FTE to your preferences you should only need
-# to add stuff in this file.
-# Some examples are below. If you find something that cannot be
-# configured here, tell me about it.
-# If you wish to modify only a specific mode, add customizations
-# at the end of file. To also modify all of the descendants,
-# put customizations right after the include statement for mode.
-
-# The current hierarchy of modes is:
-# PLAIN
-#   TEXT
-#     MSG
-#   C
-#   ...
-#   BIN
-
-# The order of things in this file is important! If you change a setting
-# before the default is set in one of the included files, your
-# setting will have no effect.
-# The file is processed in one pass, so everything should be defined,
-# before it is used.
-
-# My ultimate goal is to have the default files unmodifiable and
-# have all customization done here, but this is not currently possible for
-# all things (menus come to mind).
-
 include "global.fte";
-
 include "pal_base.fte";
-
-#color_palette {
-#    { "Comment", "green:black" },
-#}
 
 %if(COLORS_BLACK_BG)
 %if(UI_KB)
@@ -96,7 +65,7 @@ include "pal_blue.fte";
 %endif
 
 %if(COLORS_BLUEZ_BG)
-include "pal_bluez.fte"; # alternate blue from andyz @ sf.net
+include "pal_bluez.fte";
 %endif
 
 %if(COLORS_NCE_BG)
@@ -180,7 +149,7 @@ mode PLAIN {
 
 eventmap TEX: PLAIN {
     key [F9] {
-        "latex " Compile #. $FileName
+        "latex " $FileName merge$ Compile
     }
 }
 

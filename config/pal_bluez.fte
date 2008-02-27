@@ -1,8 +1,11 @@
+#
+# alternate blue from andyz @ sf.net
+#
 # color palette (black background)
-
+#
 # the color palette is the definition of the symbolic colors
 # that are used everywhere else in the configuration files
-
+#
 # syntax of the color specification is:
 #
 #   fore back
