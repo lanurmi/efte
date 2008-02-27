@@ -2379,6 +2379,27 @@ int EBuffer::GetStrVar(int var, char *str, int buflen) {
     }
     return 1;
 
+    case mvChar: {
+        PELine L;
+        int P;
+
+        L = RLine(CP.Row);
+        P = CharOffset(L, CP.Col);
+
+        strlcpy(str, "", buflen);
+
+        if (CP.Col < LineLen()) {
+            char tmp[2];
+
+            // make copy of character
+            tmp[0] = L->Chars[P];
+            tmp[1] = 0;
+
+            strlcat(str, tmp, buflen);
+        }
+    }
+    return 1;
+
     case mvWord: {
         PELine L;
         int P, C;
