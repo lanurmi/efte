@@ -944,7 +944,25 @@ typedef enum {
     /// current position
     ExPrint,
     /// Print a string to the console
-    ExExecuteCommand
+    ExExecuteCommand,
+
+    //!Info To Stack Commands
+    ExPushFileName,
+    /// Full filename including path of current file
+    ExPushCurDir,
+    /// Current working directory
+    ExQuestionAt,
+    /// Where is the cursor?
+    ExPushCurChar,
+    /// Current character
+    ExPushCurWord,
+    /// Current word
+    ExPushCurLine,
+    /// Current line
+    ExPushSelection,
+    /// Selected text
+    ExPushEfteVersion,
+    /// eFTE version number
 
     //*** END
 } ExCommands;

@@ -178,7 +178,6 @@ const struct {
     TAB(InsPrevLineChar),
     TAB(InsPrevLineToEol),
     TAB(LineDuplicate),
-    TABS(Selection),
     TAB(BlockBegin),
     TAB(BlockEnd),
     TAB(BlockUnmark),
@@ -448,7 +447,17 @@ const struct {
     TAB(ViewSvnLog),
 
     TAB(Print),
-    TAB(ExecuteCommand)
+    TAB(ExecuteCommand),
+
+    // Stack vars
+    { ExPushFileName, "FileName$" },
+    { ExPushCurDir, "CurDir$" },
+    { ExQuestionAt, "at?" },
+    { ExPushCurChar, "curchar$" },
+    { ExPushCurWord, "curword$" },
+    { ExPushCurLine, "curline$" },
+    { ExPushSelection, "selection$" },
+    { ExPushEfteVersion, "eftever$" }
 
 #if 0
 //TAB(ShowMsg),

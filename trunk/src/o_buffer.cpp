@@ -874,6 +874,23 @@ int EBuffer::ExecCommand(int Command, ExState &State) {
         return GetChoice(State);
     case ExToggleConditionDisplay:
         return ToggleConditionDisplay();
+
+        // Stack based pushes
+
+    case ExPushFileName:
+        return PushFileName();
+    case ExQuestionAt:
+        return QuestionAt();
+    case ExPushCurChar:
+        return PushCurChar();
+    case ExPushCurWord:
+        return PushCurWord();
+    case ExPushCurLine:
+        return PushCurLine();
+    case ExPushSelection:
+        return PushSelection();
+    case ExPushEfteVersion:
+        return PushEfteVerNo();
     }
     return EModel::ExecCommand(Command, State);
 }
@@ -2079,6 +2096,174 @@ int EBuffer::InsertUid() {
     return InsertString(p, strlen(p));
 }
 
+int EBuffer::PushFileName() {
+    sstack.push_back(FileName);
+    return 1;
+}
+
+int EBuffer::PushCurDir() {
+    return 0;
+}
+
+int EBuffer::QuestionAt() {
+    ParamStack.push(VToR(CP.Row) + 1);
+    ParamStack.push(CP.Col);
+    return 1;
+}
+
+int EBuffer::PushCurChar() {
+    PELine L;
+    int P;
+
+    L = RLine(CP.Row);
+    P = CharOffset(L, CP.Col);
+
+    if (CP.Col < LineLen()) {
+        char tmp[2];
+        tmp[0] = L->Chars[P];
+        tmp[1] = 0;
+
+        sstack.push_back(tmp);
+    } else
+        sstack.push_back("");
+
+    return 1;
+}
+
+int EBuffer::PushCurWord() {
+    PELine L;
+    int P, C;
+    int wordBegin, wordEnd;
+
+    L = RLine(CP.Row);
+    P = CharOffset(L, CP.Col);
+
+    std::string word;
+
+    if (ChClass(L->Chars[P])) {
+        C = ChClassK(L->Chars[P]);
+
+        // search start of word
+        while ((P > 0) && (C == ChClassK(L->Chars[P-1]))) P--;
+        wordBegin = P;
+
+        // search end of word
+        while ((P < L->Count) && (C == ChClassK(L->Chars[P]))) P++;
+        wordEnd = P;
+
+        // copy word to buffer
+        word.append(L->Chars, wordBegin, wordEnd - wordBegin);
+        sstack.push_back(word);
+    } else {
+        sstack.push_back("");
+    }
+    return 1;
+}
+
+int EBuffer::PushCurLine() {
+    PELine L = RLine(CP.Row);
+
+    if (L->Count > 0) {
+        std::string line;
+        line.append(L->Chars, 0, L->Count);
+
+        sstack.push_back(line);
+    } else {
+        sstack.push_back("");
+    }
+
+    return 1;
+}
+
+int EBuffer::PushSelection() {
+    //int error = 0;
+    EPoint B, E;
+    int L;
+    PELine LL;
+    int A, Z;
+    int bc = 0, lc = 0, oldc = 0;
+
+
+    AutoExtend = 0;
+    if (CheckBlock() == 0) {
+        SetBranchCondition(0);
+        return 0;
+    }
+
+    if (RCount == 0) {
+        SetBranchCondition(0);
+        return 0;
+    }
+
+    std::string buf;
+    B = BB;
+    E = BE;
+    for (L = B.Row; L <= E.Row; L++) {
+        A = -1;
+        Z = -1;
+        LL = RLine(L);
+        switch (BlockMode) {
+        case bmLine:
+            if (L < E.Row) {
+                A = 0;
+                Z = LL->Count;
+            }
+            break;
+        case bmColumn:
+            if (L < E.Row) {
+                A = CharOffset(LL, B.Col);
+                Z = CharOffset(LL, E.Col);
+            }
+            break;
+        case bmStream:
+            if (B.Row == E.Row) {
+                A = CharOffset(LL, B.Col);
+                Z = CharOffset(LL, E.Col);
+            } else if (L == B.Row) {
+                A = CharOffset(LL, B.Col);
+                Z = LL->Count;
+            } else if (L < E.Row) {
+                A = 0;
+                Z  = LL->Count;
+            } else if (L == E.Row) {
+                A = 0;
+                Z = CharOffset(LL, E.Col);
+            }
+            break;
+        }
+        if (A != -1 && Z != -1) {
+            if (A < LL->Count) {
+                if (Z > LL->Count)
+                    Z = LL->Count;
+                if (Z > A) {
+                    buf.append(LL->Chars, A, Z-A);
+                    bc += Z - A;
+                }
+            }
+            if (BFI(this, BFI_AddCR) == 1) {
+                buf.append("\n");
+                bc++;
+            }
+
+            if (BFI(this, BFI_AddLF) == 1) {
+                buf.append("\r");
+                bc++;
+                lc++;
+            }
+        }
+    }
+
+    sstack.push_back(buf);
+
+    SetBranchCondition(1);
+    return 1;
+}
+
+int EBuffer::PushEfteVerNo() {
+    sstack.push_back(VERSION);
+    return 1;
+}
+
 int EBuffer::ShowHelpWord(ExState &State) {
     //** Code for BlockSelectWord to find the word under the cursor,
     const char *achr = "+-_."; // these are accepted characters
@@ -2191,27 +2376,6 @@ int EBuffer::GetStrVar(int var, char *str, int buflen) {
             strlcpy(str, dot, buflen);
         else
             str[0] = 0;
-    }
-    return 1;
-
-    case mvChar: {
-        PELine L;
-        int P;
-
-        L = RLine(CP.Row);
-        P = CharOffset(L, CP.Col);
-
-        strlcpy(str, "", buflen);
-
-        if (CP.Col < LineLen()) {
-            char tmp[2];
-
-            // make copy of character
-            tmp[0] = L->Chars[P];
-            tmp[1] = 0;
-
-            strlcat(str, tmp, buflen);
-        }
     }
     return 1;
 

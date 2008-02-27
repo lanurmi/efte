@@ -296,6 +296,13 @@ sub dot0r     { lesshash                                                # zero p
                 hashmoretype }
 
 
+# --- file editing buffer helpers
+
+# ( -- len )
+sub linelen { curline$ len$ }
+
+# ( x y -- )
+sub at { movetocolumn movetoline }
+
 # --- initialisation ---
 sub OnBoot { decimal }
-
