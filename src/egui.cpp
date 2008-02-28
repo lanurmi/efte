@@ -479,11 +479,6 @@ int PickStr(ExState &State) {
     SSCHECK(idx + 1, "pick$");
     idx = sstack.size() - 1 - idx;
 
-    if ((unsigned int) idx >= sstack.size()) {
-        SetBranchCondition(0);
-        return 0;
-    }
-
     sstack.push_back(sstack[idx]);
 
     SetBranchCondition(1);
@@ -692,6 +687,18 @@ int MemoryEnd() {
     return 1;
 }
 
+int Tick() {
+    SSCHECK(1, "tick");
+    std::string cname = sstack.back(); sstack.pop_back();
+    ParamStack.push(CmdNum(cname.c_str()));
+    return 1;
+}
+
+int EGUI::Execute(ExState &State, GxView *view) {
+    PSCHECK(1, "execute");
+    return ExecCommand(view, ParamStack.pop(), State);
+}
+
 int EGUI::ExecuteCommand(ExState &State, GxView *view)
 {
     ExModelView *V = (ExModelView *)view->Top;
@@ -758,6 +765,10 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
         return Print(view, State);
     case ExPush:
         return Push(view, State);
+    case ExTick:
+        return Tick();
+    case ExExecute:
+        return Execute(State, view);
 
 
     case ExPlus:
