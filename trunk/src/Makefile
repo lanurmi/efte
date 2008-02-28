@@ -215,6 +215,5 @@ vefte: defcfg.h $(OBJS) $(VOBJS)
 
 .depend.mak: Makefile
 	which g++ 2>/dev/null >/dev/null || touch "$@"
-	for f in $(addsuffix .cpp,$(basename $(OBJS))) $(addsuffix .cpp,$(basename $(XOBJS))) \
-		$(addsuffix .cpp,$(basename $(NOBJS))) $(addsuffix .cpp,$(basename $(VOBJS))) ; do \
-		g++ -MM $$f >> "$@" 2>/dev/null ; done
+	for f in $(addsuffix .cpp,$(basename $(OBJS) $(XOBJS) $(NOBJS) $(VOBJS) )) ; do \
+		g++ $(CXXFLAGS) -MM $$f >> "$@" 2>/dev/null ; done
