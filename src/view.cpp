@@ -892,18 +892,6 @@ int EView::PopGlobalBookmark() {
     return 1;
 }
 
-int EView::GetStrVar(int var, char *str, int buflen) {
-    //switch (var) {
-    //}
-    return Model->GetStrVar(var, str, buflen);
-}
-
-int EView::GetIntVar(int var, int *value) {
-    //switch (var) {
-    //}
-    return Model->GetIntVar(var, value);
-}
-
 int EView::Cvs(ExState &State) {
     if (sstack.size() == 0) {
         Msg(S_ERROR, "String stack underflow in Cvs");

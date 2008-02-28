@@ -84,8 +84,6 @@ public:
 #define CT_COMMAND  0
 #define CT_NUMBER   1
 #define CT_STRING   2
-#define CT_VARIABLE 3
-#define CT_CONCAT   4 /* concatenate strings */
 
 typedef struct {
     int type;
@@ -131,9 +129,6 @@ class ExState { // state of macro execution
 public:
     int Macro;
     int Pos;
-
-    int GetStrParam(EView *view, char *str, int buflen);
-    int GetIntParam(EView *view, int *value);
 };
 
 extern EMode *Modes;

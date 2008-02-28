@@ -347,8 +347,7 @@ static int Lookup(const OrdLookup *where, char *what) {
 #define P_COLON        10  // :
 #define P_COMMA        11  // ,
 #define P_QUEST        12
-#define P_VARIABLE     13  // $
-#define P_CHAR         14  // '
+#define P_CHAR         13  // '
 
 #define K_UNKNOWN       0
 #define K_MODE          1
@@ -419,28 +418,6 @@ static const OrdLookup CfgKW[] = {
     { "submenucond", K_SUBMENUCOND },
     { "CvsIgnoreRx", K_CVSIGNRX },
     { "SvnIgnoreRx", K_SVNIGNRX },
-    { 0, 0 },
-};
-
-static const OrdLookup CfgVar[] = {
-    { "FilePath", mvFilePath },
-    { "FileName", mvFileName },
-    { "FileDirectory", mvFileDirectory },
-    { "FileBaseName", mvFileBaseName },
-    { "FileExtension", mvFileExtension },
-    { "CurDirectory", mvCurDirectory },
-    { "CurRow", mvCurRow, },
-    { "CurCol", mvCurCol },
-    { "Char", mvChar },
-    { "Word", mvWord },
-    { "Line", mvLine },
-    { "LineLength", mvLineLength },
-    { "Selection", mvSelection },
-    { "FTEVer", mvFTEVer },
-    { "TosStr", mvTopOfStackAsString },
-    { "TosChar", mvTopOfStackAsChar },
-    { "TosInt", mvTopOfStackAsInt },
-    { "tos$", mvStrTopOfStack },
     { 0, 0 },
 };
 
@@ -609,8 +586,6 @@ static int Parse(CurPos &cp) {
             return P_CLOSEBRACE;
         case '?':
             return P_QUEST;
-        case '$':
-            return P_VARIABLE;
         case '0':
         case '1':
         case '2':
@@ -643,7 +618,6 @@ static void GetOp(CurPos &cp, int what) {
     case P_EOS:
     case P_COLON:
     case P_QUEST:
-    case P_VARIABLE:
         cp.c++;
         break;
     }
@@ -1027,14 +1001,6 @@ static int ParseCommands(CurPos &cp, char *Name) {
         } else if (p == P_QUEST) {
             ign = 1;
             GetOp(cp, P_QUEST);
-        } else if (p == P_VARIABLE) {
-            GetOp(cp, P_VARIABLE);
-            if (Parse(cp) != P_WORD) Fail(cp, "Syntax error (variable name expected)");
-            Word w;
-            if (GetWord(cp, w) != 0) Fail(cp, "Syntax error (bad variable name)");
-            long var = Lookup(CfgVar, w);
-            if (var == -1) Fail(cp, "Unrecognized variable: %s", w);
-            PutNumber(cp, CF_VARIABLE, var);
         } else if (p == P_EOS) {
             GetOp(cp, P_EOS);
             cnt = 1;

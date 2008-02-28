@@ -124,7 +124,7 @@ sub ascn      { dup$ 1 mid$ asc }               # ( n -- c ) get ascii of nth ch
 
 # -- i/o --
 sub key       { getchar }                       # wait for key, place its ascii on stack
-sub read      { $Char }                         # read char under cursor
+sub read      { curchar$ }                      # read char under cursor
 sub emit      { char$ insertstring }
 sub type1     { count emit }
 sub type      { times type1 drop }              # string output

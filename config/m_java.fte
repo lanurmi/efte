@@ -6,12 +6,12 @@ sub JAVA_Base {
     "import java.util.*;" InsertString; LineNew;
     "import javax.swing.*;" InsertString; 2:LineNew;
     "public class " InsertString;
-    InsertString $FileBaseName;
+    filename$ InsertString; # TODO: was filebasename
     LineNew;
     "{" InsertString; LineIndent;
     2:LineNew;
     "public " InsertString;
-    InsertString $FileBaseName;
+    filename$ InsertString; # TODO: was filebasename
     "()" InsertString; LineIndent; LineNew;
     "{" InsertString; LineIndent; 2:LineNew;
     "}" InsertString; LineIndent; 2:LineNew;

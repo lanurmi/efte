@@ -603,17 +603,6 @@ static int ReadCommands(CurPos &cp, const char *Name) {
             if (AddNumber(Cmd, num) == 0) ENDFUNCRC(-1);
         }
         break;
-        case CF_VARIABLE: {
-            long num;
-
-            if (GetNum(cp, num) == 0) ENDFUNCRC(-1);
-            if (AddVariable(Cmd, num) == 0) ENDFUNCRC(-1);
-        }
-        break;
-        case CF_CONCAT:
-            if (AddConcat(Cmd) == 0) ENDFUNCRC(-1);
-            cpos++;
-            break;
         case CF_END:
             cpos++;
             ENDFUNCRC(Cmd);

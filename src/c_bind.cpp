@@ -631,26 +631,6 @@ int AddNumber(int no, long number) {
     return 1;
 }
 
-int AddConcat(int no) {
-    Macros[no].cmds = (CommandType *)realloc(Macros[no].cmds, sizeof(CommandType) * (Macros[no].Count + 1));
-    Macros[no].cmds[Macros[no].Count].type = CT_CONCAT;
-    Macros[no].cmds[Macros[no].Count].u.num = 0;
-    Macros[no].cmds[Macros[no].Count].repeat = 0;
-    Macros[no].cmds[Macros[no].Count].ign = 0;
-    Macros[no].Count++;
-    return 1;
-}
-
-int AddVariable(int no, int number) {
-    Macros[no].cmds = (CommandType *)realloc(Macros[no].cmds, sizeof(CommandType) * (Macros[no].Count + 1));
-    Macros[no].cmds[Macros[no].Count].type = CT_VARIABLE;
-    Macros[no].cmds[Macros[no].Count].u.num = number;
-    Macros[no].cmds[Macros[no].Count].repeat = 0;
-    Macros[no].cmds[Macros[no].Count].ign = 0;
-    Macros[no].Count++;
-    return 1;
-}
-
 int NewCommand(const char *Name) {
     Macros = (ExMacro *) realloc(Macros, sizeof(ExMacro) * (1 + CMacros));
     Macros[CMacros].Count = 0;
@@ -659,58 +639,6 @@ int NewCommand(const char *Name) {
     CMacros++;
     return CMacros - 1;
 }
-
-int ExState::GetStrParam(EView *view, char *str, int maxlen) {
-    assert(maxlen >= 0);
-    if (Macro == -1
-            || Pos == -1
-            || Pos >= Macros[Macro].Count)
-        return 0;
-    if (Macros[Macro].cmds[Pos].type == CT_STRING) {
-        if (maxlen > 0) {
-            strncpy(str, Macros[Macro].cmds[Pos].u.string, maxlen);
-            str[maxlen - 1] = 0;
-        }
-        Pos++;
-    } else if (view && Macros[Macro].cmds[Pos].type == CT_VARIABLE) {
-        if (view->GetStrVar(Macros[Macro].cmds[Pos].u.num, str, maxlen) == 0)
-            return 0;
-        Pos++;
-    } else
-        return 0;
-    if (Pos < Macros[Macro].Count) {
-        if (Macros[Macro].cmds[Pos].type == CT_CONCAT) {
-            Pos++;
-            int len = strlen(str);
-            int left = maxlen - len;
-
-            assert(left >= 0);
-
-            //puts("concat\x7");
-            if (GetStrParam(view, str + len, left) == 0)
-                return 0;
-        }
-    }
-    return 1;
-}
-
-int ExState::GetIntParam(EView *view, int *value) {
-    if (Macro == -1
-            || Pos == -1
-            || Pos >= Macros[Macro].Count)
-        return 0;
-    if (Macros[Macro].cmds[Pos].type == CT_NUMBER) {
-        *value = Macros[Macro].cmds[Pos].u.num;
-        Pos++;
-    } else if (view && Macros[Macro].cmds[Pos].type == CT_VARIABLE) {
-        if (view->GetIntVar(Macros[Macro].cmds[Pos].u.num, value) == 0)
-            return 0;
-        Pos++;
-    } else
-        return 0;
-    return 1;
-}
-
 int HashStr(const char *p, int maxim) {
     unsigned int i = 1;
 

@@ -1143,16 +1143,15 @@ int EBuffer::GetChar(ExState &State) {
     char Ch;
     int No;
 
-    if (State.GetIntParam(View, &No) == 0) {
-        TEvent E;
-        E.What = evKeyDown;
-        E.Key.Code = View->MView->Win->GetChar("Character:");
-        if (!GetCharFromEvent(E, &Ch)) {
-            SetBranchCondition(0);
-            return 0;
-        }
-        No = Ch;
+    TEvent E;
+    E.What = evKeyDown;
+    E.Key.Code = View->MView->Win->GetChar("Character:");
+    if (!GetCharFromEvent(E, &Ch)) {
+        SetBranchCondition(0);
+        return 0;
     }
+    No = Ch;
+
     if (No < 0 || No > 255) {
         SetBranchCondition(0);
         return 0;
@@ -2308,181 +2307,4 @@ int EBuffer::ShowHelpWord(ExState &State) {
     //    return 0;
     //}
     return View->SysShowHelp(State, buf[0] ? buf : 0);
-}
-
-int EBuffer::GetStrVar(int var, char *str, int buflen) {
-    assert(buflen >= 0);
-    if (buflen == 0)
-        return 0;
-
-    switch (var) {
-    case mvStrTopOfStack:
-        if (sstack.empty())
-            return 0;
-
-        strncpy(str, ((std::string)sstack[sstack.size()-1]).c_str(), buflen);
-        str[buflen - 1] = 0;
-        sstack.pop_back();
-        return 1;
-
-    case mvTopOfStackAsString:
-        snprintf(str, buflen, "%d", ParamStack.pop());
-        str[buflen - 1] = 0;
-        return 1;
-
-    case mvTopOfStackAsChar:
-        snprintf(str, buflen, "%c", ParamStack.pop());
-        str[buflen - 1] = 0;
-        return 1;
-
-    case mvFilePath:
-        strncpy(str, FileName, buflen);
-        str[buflen - 1] = 0;
-        return 1;
-
-    case mvFileName:
-        JustFileName(FileName, str, buflen);
-        return 1;
-
-    case mvFileDirectory:
-        JustDirectory(FileName, str, buflen);
-        return 1;
-
-    case mvFileBaseName: {
-        char buf[MAXPATH];
-        char *dot, *dot2;
-
-        JustFileName(FileName, buf, sizeof(buf));
-
-        dot = strchr(buf, '.');
-        while ((dot2 = strchr(dot + 1, '.')) != NULL)
-            dot = dot2;
-        if (dot)
-            *dot = 0;
-        strlcpy(str, buf, buflen);
-    }
-    return 1;
-
-    case mvFileExtension: {
-        char buf[MAXPATH];
-        char *dot, *dot2;
-
-        JustFileName(FileName, buf, sizeof(buf));
-
-        dot = strchr(buf, '.');
-        while ((dot2 = strchr(dot + 1, '.')) != NULL)
-            dot = dot2;
-        if (dot)
-            strlcpy(str, dot, buflen);
-        else
-            str[0] = 0;
-    }
-    return 1;
-
-    case mvChar: {
-        PELine L;
-        int P;
-
-        L = RLine(CP.Row);
-        P = CharOffset(L, CP.Col);
-
-        strlcpy(str, "", buflen);
-
-        if (CP.Col < LineLen()) {
-            char tmp[2];
-
-            // make copy of character
-            tmp[0] = L->Chars[P];
-            tmp[1] = 0;
-
-            strlcat(str, tmp, buflen);
-        }
-    }
-    return 1;
-
-    case mvWord: {
-        PELine L;
-        int P, C;
-        int wordBegin, wordEnd;
-
-        L = RLine(CP.Row);
-        P = CharOffset(L, CP.Col);
-
-        strlcpy(str, "", buflen);
-
-        if (ChClass(L->Chars[P])) {
-            C = ChClassK(L->Chars[P]);
-
-            // search start of word
-            while ((P > 0) && (C == ChClassK(L->Chars[P-1]))) P--;
-
-            wordBegin = P;
-
-            // search end of word
-            while ((P < L->Count) && (C == ChClassK(L->Chars[P]))) P++;
-
-            wordEnd = P;
-
-            // calculate total length for buffer copy
-            int length = wordEnd - wordBegin;
-
-            if ((length + 1) < buflen) {
-                length++;
-            } else {
-                length = buflen;
-            }
-
-            // copy word to buffer
-            strlcpy(str, &L->Chars[wordBegin], length);
-        }
-    }
-    return 1;
-
-    case mvLine: {
-        PELine L;
-
-        L = RLine(CP.Row);
-
-        strlcpy(str, "", buflen);
-
-        if (L->Count > 0) {
-            // calculate total length for buffer copy
-            int length = L->Count;
-
-            if ((length + 1) < buflen) {
-                length++;
-            } else {
-                length = buflen;
-            }
-
-            // copy word to buffer
-            strlcpy(str, L->Chars, length);
-        }
-    }
-    return 1;
-
-    case mvFTEVer:
-        strlcpy(str, VERSION, buflen);
-        return 1;
-    }
-
-    return EModel::GetStrVar(var, str, buflen);
-}
-
-int EBuffer::GetIntVar(int var, int *value) {
-    switch (var) {
-    case mvCurRow:
-        *value = VToR(CP.Row) + 1;
-        return 1;
-    case mvCurCol:
-        *value = CP.Col;
-        return 1;
-    case mvLineLength:
-         *value = LineLen();
-         return 1;
-    case mvTopOfStackAsInt:
-        *value = ParamStack.pop();
-        return 1;
-    }
-    return EModel::GetIntVar(var, value);
 }

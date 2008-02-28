@@ -196,15 +196,3 @@ void EModel::UpdateTitle() {
         V = V->NextView;
     }
 }
-
-int EModel::GetStrVar(int var, char *str, int buflen) {
-    switch (var) {
-    case mvCurDirectory:
-        return GetDefaultDirectory(this, str, buflen);
-    }
-    return 0;
-}
-
-int EModel::GetIntVar(int /*var*/, int * /*value*/) {
-    return 0;
-}
