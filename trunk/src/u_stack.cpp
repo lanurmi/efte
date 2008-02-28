@@ -32,8 +32,10 @@ CircularStack::CircularStack() {
 void CircularStack::push(int integer) {
     pos = (pos + 1) & STACKMASK;
     stack[pos] = integer;
+    fprintf(stderr, "Pushing\n");
     if (stackdepth < STACKMASK)
         stackdepth++;
+    fprintf(stderr, "New depth: %i\n", stackdepth);
 }
 
 int CircularStack::pop() {
@@ -41,7 +43,8 @@ int CircularStack::pop() {
     r = stack[pos];
     stack[pos] = 0;
     pos = (pos - 1) & STACKMASK;
-    stackdepth--;
+    if (stackdepth > 0)
+        stackdepth--;
     return r;
 }
 
