@@ -251,23 +251,8 @@ int EGUI::Flag() {
     return 1;
 }
 
-// old commands return false on fail, causing termination of macro execution.
-// this prevents the macro to deal with the condition, therefore those commands
-// should return "true".
-// Because we want to be able to mimick the former behaviour, the condition, as
-// left by those commands, will be read by "Abort" and returned to macro interpreter
-// as return code. i.e. a command, followed by Abort, will terminate macro execution
-// if its condition was "false".
-// this replaces the previous idea of not terminating macro execution if a command is
-// followed by a branch - which doesn't work. simply negating the test condition, instead
-// of branching directly, would render this unfunctional already. So we have instead:
-// macro  { FailingCommand MacroContinues ... }   or
-// macro  { FailingCommand Abort MacroHasTerminated } or
-// macro  { SuccessfulCommand Abort MacroContinues ... }
 int EGUI::Abort() {
-    int failcondition=BranchCondition & 1;
-    BranchCondition = (BranchCondition >> 1);
-    return failcondition;
+    return 0;
 }
 
 // --- stack ---
