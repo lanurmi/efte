@@ -47,6 +47,8 @@ typedef enum {
     /// seperates instance creation time code from instance run time code
 
     //!Stack Operations
+    ExDepth,
+    /// Depth of param stack
     ExExit,
     /// Exit the macro.
     ExPlus,

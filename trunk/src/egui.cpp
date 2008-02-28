@@ -136,6 +136,11 @@ int EGUI::Diag(ExState &State) {
     return 1;
 }
 
+int ParamDepth() {
+    ParamStack.push(ParamStack.size());
+    return 1;
+}
+
 // --- arithmetic ---
 
 int EGUI::Plus() {
@@ -716,6 +721,8 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
 
     // Commands that will run regardless of a View or Buffer
     switch (Command) {
+    case ExDepth:
+        return ParamDepth();
     case ExStore:
         return MemoryStore(State);
     case ExFetch:
