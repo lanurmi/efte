@@ -1953,6 +1953,9 @@ int EGUI::Start(int &argc, char **argv) {
         ActiveView->SwitchToModel(ActiveModel);
     }
 
+    if (verbosity > 1)
+        fprintf(stderr, "Macro count: %i memory: %i\n", CMacros, CMacros * sizeof(ExMacro));
+
     ActiveView->ExecMacro("OnBoot");
     ActiveView->ExecMacro("OnUserBoot");
     if (StartupMacroCommand != NULL)
