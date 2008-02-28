@@ -129,6 +129,30 @@ int Push(GxView *view, ExState &State) {
     return 1;
 }
 
+/// "A" -> 65
+int SSAsc() {
+    SSCHECK(1, "asc");
+
+    std::string s = sstack.back(); sstack.pop_back();
+    ParamStack.push(s[0]);
+
+    return 1;
+}
+
+/// 65 -> "A"
+int PSChar() {
+    PSCHECK(1, "char$");
+
+    char t[2];
+    t[0] = ParamStack.pop();
+    t[1] = 0;
+
+    sstack.push_back(t);
+
+    return 1;
+}
+
+
 /**
  * MACRO: Print a stack diagnostic message to stderr
  */
@@ -854,6 +878,10 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
         return MidStr(State, view);
     case ExGetString:
         return GetString(State, view);
+    case ExAsc:
+        return SSAsc();
+    case ExChar:
+        return PSChar();
     }
 
     if (view->IsModelView()) {

@@ -968,6 +968,10 @@ typedef enum {
     /// Selected text
     ExPushEfteVersion,
     /// eFTE version number
+    ExAsc,
+    /// Move a character from paramstack to string stack 65 -> "A"
+    ExChar,
+    /// Move a character from string stack to paramstack  "A" -> 65
 
     //*** END
 } ExCommands;

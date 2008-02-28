@@ -459,7 +459,9 @@ const struct {
     { ExPushCurWord, "curword$" },
     { ExPushCurLine, "curline$" },
     { ExPushSelection, "selection$" },
-    { ExPushEfteVersion, "eftever$" }
+    { ExPushEfteVersion, "eftever$" },
+    { ExAsc, "asc" },
+    { ExChar, "char$" }
 
 #if 0
 //TAB(ShowMsg),
