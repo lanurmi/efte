@@ -118,8 +118,8 @@ sub equals$   { compare$ not }
 
 
 sub slice     { 1 split$ push $tos$ }           # ( -- asc ) cut first char off string and return as ascii
-sub asc       { dup$ 1 mid$ push $tos$ }        # ( n -- c ) get ascii of nth char in top string
-sub char$     { push$ $toschar }                # ( c -- )   asc on stack becomes char string on stringstack
+#sub asc       { dup$ 1 mid$ push $tos$ }        # ( n -- c ) get ascii of nth char in top string
+#sub char$     { push$ $toschar }                # ( c -- )   asc on stack becomes char string on stringstack
 sub splice    { char$ swap$ merge$ }            # ( asc -- ) prepend char to string
 
 
