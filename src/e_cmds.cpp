@@ -773,6 +773,8 @@ int EBuffer::BackSpace() {
             if (SetPos(C1, CP.Row) == 0) return 0;
             if (C > LineIndented(Y)) return 0;
             if (DelText(Y, C1, C - C1) == 0) return 0;
+            if (BFI(this, BFI_Insert) == 0)
+                if (InsText(Y, C1, 1, " ") == 0) return 0;
         } else if (BFI(this, BFI_BackSpKillTab)) {
             int P;
             int C = CP.Col, C1;
@@ -780,7 +782,10 @@ int EBuffer::BackSpace() {
             P = CharOffset(RLine(Y), C - 1);
             C1 = ScreenPos(RLine(Y), P);
             if (SetPos(C1, CP.Row) == 0) return 0;
+
             if (DelText(Y, C1, C - C1) == 0) return 0;
+            if (BFI(this, BFI_Insert) == 0)
+                if (InsText(Y, C1, 1, " ") == 0) return 0;
         } else {
             if (MovePrev() == 0) return 0;
 
@@ -795,6 +800,8 @@ int EBuffer::BackSpace() {
             }
 
             if (DelText(Y, ScreenPos(L, C), 1) == 0) return 0;
+            if (BFI(this, BFI_Insert) == 0)
+                if (InsText(Y, ScreenPos(L, C), 1, " ") == 0) return 0;
         }
     }
     if (BFI(this, BFI_WordWrap) == 2) {
