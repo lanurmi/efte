@@ -76,13 +76,17 @@ sub count     { inc dup dec fetch }
 #    memory
 # =============================================================================
 
+sub off       { false swap store }               # ( a -- )   sets contents of a to false
+sub on        { true swap store }                # ( a -- )   sets contents of a to true
 sub free      { memend here - }
-sub plusstore { dup tor fetch + rfrom store } # ( x a -- )  adds x to contents of address a
+sub plusstore { dup tor fetch + rfrom store }    # ( x a -- )  adds x to contents of address a
 sub comma     { here cell allot store }          # ( x -- )    allocate 1 location, initialized to x
                                                  # can then use vars like:      sub bar { var new }
                                                  #                foo fetch   bar store
+
 sub exchange  { dup fetch tor store rfrom }      # ( x1 a -- x2 )
 sub link      { here swap exchange comma }       # ( a -- )
+
 
 
 sub var       { here dup cell allot }            # for the new construct:       sub foo { var new }
@@ -113,8 +117,10 @@ sub drop2$    { 2:drop$ }
 sub equals$   { compare$ not }
 
 
-sub asc   { dup$ 1 mid$ push $tos$ }            # ( n -- c ) get ascii of nth char in top string
-sub char$ { push$ $toschar }                    # ( c -- )   asc on stack becomes char string on stringstack
+sub slice     { 1 split$ push $tos$ }           # ( -- asc ) cut first char off string and return as ascii
+sub asc       { dup$ 1 mid$ push $tos$ }        # ( n -- c ) get ascii of nth char in top string
+sub char$     { push$ $toschar }                # ( c -- )   asc on stack becomes char string on stringstack
+sub splice    { char$ swap$ merge$ }            # ( asc -- ) prepend char to string
 
 
 # -- i/o --
@@ -158,8 +164,6 @@ sub search$   {                                 # ( n1 -- n2 )
   drop$
 }
 
-sub slice  { 1 split$ push $tos$ }              # ( -- asc ) cut first char off string and return as ascii
-sub splice { char$ swap$ merge$ }               # ( asc -- ) prepend char to string
 
 sub embed$ {                                    # ( asc n -- ) store char at pos n of topmost string, overwriting
    dup dup$ left$                               # cut and keep chars left of write pos
@@ -316,5 +320,53 @@ sub linelen { curline$ len$ drop$ }
 # ( x y -- )
 sub at { movetocolumn movetoline }
 
+
+# --- hehe - very crude yet, but demonstrates the principle ---
+
+sub ip        { var new }              # instruction pointer. program counter for highlevel macros
+
+sub branch    { ip fetch               # runtime code for unconditional branch in highlevel macros
+                count +
+                ip store }
+
+sub lit       { ip fetch               # runtime code for numbers in high level macros
+                count swap
+                ip store }
+
+sub compile   { tick qdup if comma else "xlerb?" type$ endif }
+sub literal   { "lit" compile comma }
+
+sub run       { ip store               # ( a -- )    start execution of high level macro at a
+                begin
+                   ip fetch
+                   dup inc
+                   ip store
+                qdup while
+                   fetch execute
+                repeat  }
+
+
+# --- define new macro class ---
+sub macro       { here does run }                # our data construct builder is way cool ...
+
+# --- build a macro ---
+
+
+sub usermacro   { macro new                      # new data type "macro" :)
+                  7 literal                      #  compile misc stuff to macro:
+                  11 literal
+                  "+"   compile                  #          7 11 + dot
+                  "dot" compile                  #
+                  "cursordown" compile           #          cursordown
+                  "cursorleft" compile           #          begin cursorleft
+                  "branch" compile -3 comma      #          again
+                  0 comma                        #          exit  (though cursorleft will fail)
+                  usermacro }                    # instantiate macro - great place to do that!
+                                                 # macro is ready, can be executed as "usermacro"
+                                                 # (actually, it is the other way around - when executed
+                                                 # the first time, macro will instantiate - and at the end
+                                                 # of instantiation, call itself here)
+
 # --- initialisation ---
-sub OnBoot { decimal }
+sub OnBoot    { decimal }
+

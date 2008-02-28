@@ -150,8 +150,8 @@ menu MSvn {
 }
 
 menu Tools {
-    item "&Compile...\tF9"      { "mave -k " Compile }
-    item "&Grep..."             { "grep -n " Compile }
+    item "&Compile...\tF9"      { "make -k " AskCompiler }
+    item "&Grep..."             { "grep -n " AskCompiler }
     #TODO: item "Save and &ISpell"     { FileSave; "ispell " . $FilePath RunProgram ; FileReload }
     item;
     item "&Shell\tAlt+F9"       { "sh" RunProgram }

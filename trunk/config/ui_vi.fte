@@ -1,7 +1,7 @@
 # Basic Commands (Global) #FOLD00
 menu Tools { #fold01
-    item "&Compile\tF9" { Compile "make -k " }
-    item "&Grep" { Compile "grep -n " }
+    item "&Compile\tF9" { AskCompiler "make -k " }
+    item "&Grep" { AskCompiler "grep -n " }
 #    item "&Diff" { Compile "cvs diff" }
     item;
     item "Go to prev &error\tF11" { CompilePrevError }

@@ -54,7 +54,7 @@ eventmap MODEL { #FOLD01
     key   [C+S+G-Down]  { WinResize +1 }
     
     # this is also useful for 'grep -n' etc. if configured
-    key       [F9]      { FileSaveAll; Compile "make"; ViewMessages }
+    key       [F9]      { FileSaveAll; AskCompiler "make"; ViewMessages }
     key       [F11]     { CompilePrevError }
     key       [F12]     { CompileNextError }
     key       [S+F9]    { ViewMessages }
@@ -405,8 +405,8 @@ menu MSvn {
 }
 
 menu Tools {
-    item "&Compile\tF9" { FileSaveAll; Compile "make" }
-    item "&Grep" { Compile "grep -n " }
+    item "&Compile\tF9" { FileSaveAll; AskCompiler "make" }
+    item "&Grep" { AskCompiler "grep -n " }
     item;
     item "&Shell\tAlt+F9" { RunProgram "" }
     item;

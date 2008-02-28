@@ -295,7 +295,7 @@ const struct {
     TAB(ListRoutines),
     TAB(DirOpen),
 
-    TAB(Compile),
+    TAB(AskCompiler),
     TAB(CompilePrevError),
     TAB(CompileNextError),
     TAB(ViewMessages),

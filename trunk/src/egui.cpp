@@ -1109,21 +1109,11 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
         case ExNew:                                                 // instantiator
             if (i) {                                                // prevent    "sub foo { new }" by skipping.
                 macroclass = m->cmds[i-1].u.num & ~CMD_EXT;
-                // PatchMacro(m, 0, ExOld, ParamStack.peek(0));
                 m->cmds[0].u.num = ExOld;                           // code to push address of instance data.
                 m->cmds[0].repeat = ParamStack.pop();               // instance data address
-
-                // PatchMacro(m, 1, descriptor, doesindex);
                 m->cmds[1].u.num = macroclass;                      // macro exec token
                 m->cmds[1].repeat = doesindex;                      // index to run time code in class. this code is sort
-
-                fprintf(stderr, "\n(ok) Instantiation (new):\n");
-                fprintf(stderr, "     class=%i ('new' thinks that this is the class)\n", macroclass);
-                fprintf(stderr, "     (/me thinks too that this is the class)\n");
-                if (doesindex)
-                    fprintf(stderr, "(ok) index=%i ('new' thinks that this is index to method)\n", doesindex);
-                                                                   // of an implied method, when instance is executed
-                doesindex = 0;
+                doesindex = 0;                                      // of an implied method, when instance is executed
             } else {
                 i = m->Count;
             }
@@ -1131,13 +1121,7 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
 
 
         case ExDoes:                                                // set index to runtime portion, defined
-            doesindex = i;                                        // by "instances"
-            fprintf(stderr, "\n(ok) Instantiation (does):\n");
-            fprintf(stderr, "(ok) class notifies 'new' of available method for instance:\n");
-            fprintf(stderr, "     macro %d\n", Macro);
-            fprintf(stderr, "     lookup at 8%x\n", &Macros[State.Macro]);
-            fprintf(stderr, "     really at 8%x\n", m);
-            fprintf(stderr, "(ok) index %d\n", doesindex);
+            doesindex = i;                                          // by "instances"
             i = m->Count;                                           
             break;
 
