@@ -448,6 +448,8 @@ const struct {
 
     TAB(Print),
     TAB(ExecuteCommand),
+    { ExTick, "tick" },
+    { ExExecute, "execute" },
 
     // Stack vars
     { ExPushFileName, "FileName$" },

@@ -945,6 +945,11 @@ typedef enum {
     ExPrint,
     /// Print a string to the console
     ExExecuteCommand,
+    /// Prompt user for a command to execute
+    ExExecute,
+    /// Execute the command on tos
+    ExTick,
+    /// Look up the command name on tos$
 
     //!Info To Stack Commands
     ExPushFileName,
