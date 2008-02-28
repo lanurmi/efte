@@ -196,7 +196,7 @@ sub spaces$ { bl swap repeat$ }                # ( u -- ) create a string of u s
 
 
 sub minleading$ {                               # ( -- ) remove leading spaces
-   len$                                         # assume removing whole string
+   len$                                    # assume removing whole string
    dup 0 do                                  # loop through string,
       i ascn bl equals not                       # looking for non-space
       if drop i leave endif                     # found, return index to space
@@ -229,7 +229,7 @@ sub scan$ {                                     # ( asc -- -1 | u )  search for 
       over i ascn equals
       if drop i leave endif
    loop
-   nip }
+   drop$ nip }
 
 
 
