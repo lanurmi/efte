@@ -9,7 +9,7 @@ addtest()  {
          RUN="test_${TESTCOUNT}_${SUBCOUNT}"
          echo -n "sub $RUN"
       fi
-      LINE=$(sed "s/TEST/test_${TESTCOUNT}_/g;s/PASS/ $((TESTCOUNT*1000+SUBCOUNT)) pass/g" <<< $LINE)
+      LINE=$(sed "s/TEST/test_${TESTCOUNT}_/g;s/PASS/ $((TESTCOUNT*1000+SUBCOUNT)) pass depth 0 $((TESTCOUNT*1000+SUBCOUNT)) pass/g" <<< $LINE)
       echo " $LINE"
    done < $FILE
    if (( SUBCOUNT )) ; then
@@ -37,7 +37,6 @@ done
 echo
 echo "sub selftest {"
 echo "\"selftest started\" message"
-echo -n "   12345678      # stack 'marker'"
 i=0
 for SELFTEST in ${RUNTEST[*]} ; do
    if (( (i % 8) == 0 )) ; then
@@ -47,7 +46,8 @@ for SELFTEST in ${RUNTEST[*]} ; do
    (( i++ ))
 done
 echo
-echo "   12345678 99999 pass # all tests balanced?"
+echo "depth 0 PASS"
+echo
 echo "   \"selftest finished\" message"
 echo "}"
 ) > ../config/selftest.fte

@@ -2,10 +2,4 @@
 {  -2  9 +    7 PASS }
 {   6 -8 +   -2 PASS }
 { -11 -7 +  -18 PASS }
-
-{ 777           # stack "marker"
-   TEST1             #   run tests
-   TEST2 
-   TEST3 
-   TEST4 
-  777 PASS }    #is stack balanced?
+{ TEST1 TEST2 TEST3 TEST4 }

@@ -31,35 +31,35 @@ sub pass   {
 sub accumulate { 10 * + }
 
 # components/alwayspass
-sub test_1_1 { 222 222  1001 pass } # just two passing tests to test test and test that pass will pass
-sub test_1_2 { 222 dup  1002 pass }
+sub test_1_1 { 222 222  1001 pass depth 0 1001 pass } # just two passing tests to test test and test that pass will pass
+sub test_1_2 { 222 dup  1002 pass depth 0 1002 pass }
 sub test_1_3 { test_1_1 test_1_2 }
 
 
 # components/between
-sub test_2_1 { 10 8 12 between true  2001 pass }
-sub test_2_2 { 8 8 12 between true  2002 pass }
-sub test_2_3 { 12 8 12 between true  2003 pass }
+sub test_2_1 { 10 8 12 between true  2001 pass depth 0 2001 pass }
+sub test_2_2 { 8 8 12 between true  2002 pass depth 0 2002 pass }
+sub test_2_3 { 12 8 12 between true  2003 pass depth 0 2003 pass }
  
-sub test_2_4 { 5 8 12 between false  2004 pass }
-sub test_2_5 { 15 8 12 between false  2005 pass }
+sub test_2_4 { 5 8 12 between false  2004 pass depth 0 2004 pass }
+sub test_2_5 { 15 8 12 between false  2005 pass depth 0 2005 pass }
  
-sub test_2_6 { -5 -10 0 between true  2006 pass }
-sub test_2_7 { -15 -10 0 between false  2007 pass }
-sub test_2_8 { 10 -20 -10 between false  2008 pass }
+sub test_2_6 { -5 -10 0 between true  2006 pass depth 0 2006 pass }
+sub test_2_7 { -15 -10 0 between false  2007 pass depth 0 2007 pass }
+sub test_2_8 { 10 -20 -10 between false  2008 pass depth 0 2008 pass }
  
 sub test_2_9 { test_2_1 test_2_2 test_2_3 test_2_4 test_2_5 test_2_6 test_2_7 test_2_8 }
 
 
 # components/bits
-sub test_3_1 { 2 invert -3  3001 pass } # test invert
-sub test_3_2 { -5 invert 4  3002 pass }
+sub test_3_1 { 2 invert -3  3001 pass depth 0 3001 pass } # test invert
+sub test_3_2 { -5 invert 4  3002 pass depth 0 3002 pass }
  
-sub test_3_3 { 0 not true  3003 pass } # test not
-sub test_3_4 { 1234 not false  3004 pass }
-sub test_3_5 { -321 not false  3005 pass }
-sub test_3_6 { true not false  3006 pass }
-sub test_3_7 { false not true  3007 pass }
+sub test_3_3 { 0 not true  3003 pass depth 0 3003 pass } # test not
+sub test_3_4 { 1234 not false  3004 pass depth 0 3004 pass }
+sub test_3_5 { -321 not false  3005 pass depth 0 3005 pass }
+sub test_3_6 { true not false  3006 pass depth 0 3006 pass }
+sub test_3_7 { false not true  3007 pass depth 0 3007 pass }
  
 sub test_3_8 { test_3_1 test_3_2 test_3_3 test_3_4 test_3_5 test_3_6 test_3_7 }
 
@@ -69,137 +69,143 @@ sub test_3_8 { test_3_1 test_3_2 test_3_3 test_3_4 test_3_5 test_3_6 test_3_7 }
  # minus, plus,
  # primitives defined constants
  
-sub test_4_1 { 20 15 - 5  4001 pass }
-sub test_4_2 { 20 15 + 35  4002 pass }
-sub test_4_3 { 0 false or 1 + true + 0  4003 pass }
-sub test_4_4 { 0 false + 1 - true * 1  4004 pass }
+sub test_4_1 { 20 15 - 5  4001 pass depth 0 4001 pass }
+sub test_4_2 { 20 15 + 35  4002 pass depth 0 4002 pass }
+sub test_4_3 { 0 false or 1 + true + 0  4003 pass depth 0 4003 pass }
+sub test_4_4 { 0 false + 1 - true * 1  4004 pass depth 0 4004 pass }
 sub test_4_5 { test_4_1 test_4_2 test_4_3 test_4_4 }
 
 
 # components/doloop
-sub test_5_1 { 0 101 0 do i + loop 5050  5001 pass }
-sub test_5_2 { 0 200 100 do i + i 150 equals if leave endif inc loop lshift 12850  5002 pass }
+sub test_5_1 { 0 101 0 do i + loop 5050  5001 pass depth 0 5001 pass }
+sub test_5_2 { 0 200 100 do i + i 150 equals if leave endif inc loop lshift 12850  5002 pass depth 0 5002 pass }
 sub test_5_3 { test_5_1 test_5_2 }
 
 
 # components/exit
 sub test_6_1 { 333 exit lshift } # tests exit
-sub test_6_2 { test_6_1 inc 334  6002 pass }
+sub test_6_2 { test_6_1 inc 334  6002 pass depth 0 6002 pass }
 
 
 # components/iftelsethen
-sub test_7_1 { 5 inc true if lshift inc else drop 0 endif lshift 26  7001 pass }
-sub test_7_2 { 3 inc false if drop 0 else inc lshift endif inc 11  7002 pass }
+sub test_7_1 { 5 inc true if lshift inc else drop 0 endif lshift 26  7001 pass depth 0 7001 pass }
+sub test_7_2 { 3 inc false if drop 0 else inc lshift endif inc 11  7002 pass depth 0 7002 pass }
 sub test_7_3 { test_7_1 test_7_2 }
 
 
 # components/incdecnegate
-sub test_8_1 { 30 inc inc inc 33  8001 pass }
-sub test_8_2 { -2 inc inc inc inc inc 3  8002 pass }
-sub test_8_3 { 20 dec dec 18  8003 pass }
-sub test_8_4 { 1 dec dec dec dec -3  8004 pass }
-sub test_8_5 { 12 negate -12  8005 pass }
-sub test_8_6 { -15 negate 15  8006 pass }
-sub test_8_7 { -8 abs 8  8007 pass }
-sub test_8_8 { 5 abs 5  8008 pass }
+sub test_8_1 { 30 inc inc inc 33  8001 pass depth 0 8001 pass }
+sub test_8_2 { -2 inc inc inc inc inc 3  8002 pass depth 0 8002 pass }
+sub test_8_3 { 20 dec dec 18  8003 pass depth 0 8003 pass }
+sub test_8_4 { 1 dec dec dec dec -3  8004 pass depth 0 8004 pass }
+sub test_8_5 { 12 negate -12  8005 pass depth 0 8005 pass }
+sub test_8_6 { -15 negate 15  8006 pass depth 0 8006 pass }
+sub test_8_7 { -8 abs 8  8007 pass depth 0 8007 pass }
+sub test_8_8 { 5 abs 5  8008 pass depth 0 8008 pass }
 sub test_8_9 { test_8_1 test_8_2 test_8_3 test_8_4 test_8_5 test_8_6 test_8_7 test_8_8 }
  
 
 
 # components/lshift
-sub test_9_1 { 4 lshift 8  9001 pass } # test lshift
-sub test_9_2 { -4 lshift -8  9002 pass }
+sub test_9_1 { 4 lshift 8  9001 pass depth 0 9001 pass } # test lshift
+sub test_9_2 { -4 lshift -8  9002 pass depth 0 9002 pass }
 sub test_9_3 { test_9_1 test_9_2 }
 
 
+# components/memory
+sub test_10_1 { here 5 allot here - -5  10001 pass depth 0 10001 pass }
+sub test_10_2 { here dup dup 100 + store here swap  10002 pass depth 0 10002 pass }
+sub test_10_3 { here dup 6 1 do i over store inc loop drop
+ 6 1 do 1 allot loop
+ 0 6 1 do tor count rfrom + loop nip
+ 15  10003 pass depth 0 10003 pass }
+ 
+sub test_10_4 { test_10_1 test_10_2 test_10_3 }
+
+
 # components/minmax
-sub test_10_1 { 2 5 min 2  10001 pass }
-sub test_10_2 { 2 5 max 5  10002 pass }
-sub test_10_3 { -3 -7 min -7  10003 pass }
-sub test_10_4 { -3 -7 max -3  10004 pass }
+sub test_11_1 { 2 5 min 2  11001 pass depth 0 11001 pass }
+sub test_11_2 { 2 5 max 5  11002 pass depth 0 11002 pass }
+sub test_11_3 { -3 -7 min -7  11003 pass depth 0 11003 pass }
+sub test_11_4 { -3 -7 max -3  11004 pass depth 0 11004 pass }
  
-sub test_10_5 { -2 5 min -2  10005 pass }
-sub test_10_6 { -2 5 max 5  10006 pass }
-sub test_10_7 { 3 -7 min -7  10007 pass }
-sub test_10_8 { 3 -7 max 3  10008 pass }
+sub test_11_5 { -2 5 min -2  11005 pass depth 0 11005 pass }
+sub test_11_6 { -2 5 max 5  11006 pass depth 0 11006 pass }
+sub test_11_7 { 3 -7 min -7  11007 pass depth 0 11007 pass }
+sub test_11_8 { 3 -7 max 3  11008 pass depth 0 11008 pass }
  
-sub test_10_9 { test_10_1 test_10_2 test_10_3 test_10_4 test_10_5 test_10_6 test_10_7 test_10_8 }
+sub test_11_9 { test_11_1 test_11_2 test_11_3 test_11_4 test_11_5 test_11_6 test_11_7 test_11_8 }
 
 
 # components/mod
-sub test_11_1 { 20 5 mod 0  11001 pass }
-sub test_11_2 { 15 4 mod 3  11002 pass }
-sub test_11_3 { -18 4 mod -2  11003 pass }
-sub test_11_4 { -24 -7 mod -3  11004 pass }
-sub test_11_5 { test_11_1 test_11_2 test_11_3 test_11_4 }
+sub test_12_1 { 20 5 mod 0  12001 pass depth 0 12001 pass }
+sub test_12_2 { 15 4 mod 3  12002 pass depth 0 12002 pass }
+sub test_12_3 { -18 4 mod -2  12003 pass depth 0 12003 pass }
+sub test_12_4 { -24 -7 mod -3  12004 pass depth 0 12004 pass }
+sub test_12_5 { test_12_1 test_12_2 test_12_3 test_12_4 }
  
 
 
 # components/niptuckpluck
-sub test_12_1 { 4 6 8 drop accumulate 64  12001 pass } # test drop
-sub test_12_2 { 3 6 swap accumulate 36  12002 pass } # test swap
-sub test_12_3 { 2 5 over 2:accumulate 252  12003 pass } # test over
-sub test_12_4 { 1 2 3 nip accumulate 31  12004 pass } # test nip
-sub test_12_5 { 4 5 6 minrot 2:accumulate 546  12005 pass } # test minrot
-sub test_12_6 { 7 8 9 tuck 3:accumulate 9897  12006 pass } # test tuck
-sub test_12_7 { 2 4 6 pluck 3:accumulate 2642  12007 pass } # test pluck
-sub test_12_8 { test_12_1 test_12_2 test_12_3 test_12_4 test_12_5 test_12_6 test_12_7 }
+sub test_13_1 { 4 6 8 drop accumulate 64  13001 pass depth 0 13001 pass } # test drop
+sub test_13_2 { 3 6 swap accumulate 36  13002 pass depth 0 13002 pass } # test swap
+sub test_13_3 { 2 5 over 2:accumulate 252  13003 pass depth 0 13003 pass } # test over
+sub test_13_4 { 1 2 3 nip accumulate 31  13004 pass depth 0 13004 pass } # test nip
+sub test_13_5 { 4 5 6 minrot 2:accumulate 546  13005 pass depth 0 13005 pass } # test minrot
+sub test_13_6 { 7 8 9 tuck 3:accumulate 9897  13006 pass depth 0 13006 pass } # test tuck
+sub test_13_7 { 2 4 6 pluck 3:accumulate 2642  13007 pass depth 0 13007 pass } # test pluck
+sub test_13_8 { test_13_1 test_13_2 test_13_3 test_13_4 test_13_5 test_13_6 test_13_7 }
 
 
 # components/plus
-sub test_13_1 { 3 5 + 8  13001 pass }
-sub test_13_2 { -2 9 + 7  13002 pass }
-sub test_13_3 { 6 -8 + -2  13003 pass }
-sub test_13_4 { -11 -7 + -18  13004 pass }
- 
-sub test_13_5 { 777 # stack "marker"
- test_13_1 # run tests
- test_13_2
- test_13_3
- test_13_4
- 777  13005 pass } #is stack balanced?
+sub test_14_1 { 3 5 + 8  14001 pass depth 0 14001 pass }
+sub test_14_2 { -2 9 + 7  14002 pass depth 0 14002 pass }
+sub test_14_3 { 6 -8 + -2  14003 pass depth 0 14003 pass }
+sub test_14_4 { -11 -7 + -18  14004 pass depth 0 14004 pass }
+sub test_14_5 { test_14_1 test_14_2 test_14_3 test_14_4 }
 
 
 # components/qdup
-sub test_14_1 { 2 0 qdup swap qdup 10 * + 10 * + 220  14001 pass } # tests qdup
+sub test_15_1 { 2 0 qdup swap qdup 10 * + 10 * + 220  15001 pass depth 0 15001 pass } # tests qdup
 
 
 # components/rfromtor
-sub test_15_1 { 5 7 9 tor swap rfrom 2:accumulate 957  15001 pass }
-sub test_15_2 { 2 3 tor 5 rfetch swap rfrom 3:accumulate 3532  15002 pass }
-sub test_15_3 { test_15_1 test_15_2 }
-
-
-# components/rshift
-sub test_16_1 { 10 dup rshift dup +  16001 pass } # test rshift
-sub test_16_2 { -10 dup rshift dup +  16002 pass }
+sub test_16_1 { 5 7 9 tor swap rfrom 2:accumulate 957  16001 pass depth 0 16001 pass }
+sub test_16_2 { 2 3 tor 5 rfetch swap rfrom 3:accumulate 3532  16002 pass depth 0 16002 pass }
 sub test_16_3 { test_16_1 test_16_2 }
 
 
+# components/rshift
+sub test_17_1 { 10 dup rshift dup +  17001 pass depth 0 17001 pass } # test rshift
+sub test_17_2 { -10 dup rshift dup +  17002 pass depth 0 17002 pass }
+sub test_17_3 { test_17_1 test_17_2 }
+
+
 # components/stringpush
-sub test_17_1 { depth$ "ABCD 12345" depth$ accumulate 10  17001 pass }
+sub test_18_1 { depth$ "ABCD 12345" depth$ accumulate 10  18001 pass depth 0 18001 pass }
 
 
 # components/times
-sub test_18_1 { inc }
-sub test_18_2 { 0 0 inc lshift lshift lshift times test_18_1 dec dec dec 5  18002 pass }
-sub test_18_3 { test_18_2 }
+sub test_19_1 { inc }
+sub test_19_2 { 0 0 inc lshift lshift lshift times test_19_1 dec dec dec 5  19002 pass depth 0 19002 pass }
+sub test_19_3 { test_19_2 }
 
 
 # components/whileuntilagain
-sub test_19_1 { 50 6 inc begin lshift dec dup2 less if exit endif dec again drop 0 }
-sub test_19_2 { test_19_1 + 133  19002 pass }
-sub test_19_3 { 200 3 lshift begin dec lshift dup2 more while dec lshift repeat + 714  19003 pass }
-sub test_19_4 { 100 2 inc begin lshift inc dup2 less until + 227  19004 pass }
-sub test_19_5 { test_19_2 test_19_3 test_19_4 }
+sub test_20_1 { 50 6 inc begin lshift dec dup2 less if exit endif dec again drop 0 }
+sub test_20_2 { test_20_1 + 133  20002 pass depth 0 20002 pass }
+sub test_20_3 { 200 3 lshift begin dec lshift dup2 more while dec lshift repeat + 714  20003 pass depth 0 20003 pass }
+sub test_20_4 { 100 2 inc begin lshift inc dup2 less until + 227  20004 pass depth 0 20004 pass }
+sub test_20_5 { test_20_2 test_20_3 test_20_4 }
 
 
 sub selftest {
 "selftest started" message
-   12345678      # stack 'marker'
+
     test_1_3 test_2_9 test_3_8 test_4_5 test_5_3 test_6_2 test_7_3 test_8_9
-    test_9_3 test_10_9 test_11_5 test_12_8 test_13_5 test_14_1 test_15_3 test_16_3
-    test_17_1 test_18_3 test_19_5
-   12345678 99999 pass # all tests balanced?
+    test_9_3 test_10_4 test_11_9 test_12_5 test_13_8 test_14_5 test_15_1 test_16_3
+    test_17_3 test_18_1 test_19_3 test_20_5
+depth 0 PASS
+
    "selftest finished" message
 }
