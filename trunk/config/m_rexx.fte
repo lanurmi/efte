@@ -12,7 +12,7 @@
 sub REXX_Heading {
     InsertString "/*";
     LineNew; InsertString "* Filename: ";
-    InsertString $FileName;
+    filename$ InsertString;
     LineNew; InsertString "*   Author: ";
     LineNew; InsertString "*  Created: ";
     InsertDate;

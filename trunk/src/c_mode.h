@@ -275,25 +275,4 @@ extern EBufferFlags DefaultBufferFlags;
 #define STATE_TAGASNEXT    0x0002
 #define STATE_NOGRAB       0x0004
 
-typedef enum {
-    mvFilePath = 1,  /* directory + name + extension */
-    mvFileName,      /* name + extension */
-    mvFileDirectory, /* directory + '/' */
-    mvFileBaseName,  /* without the last extension */
-    mvFileExtension, /* the last one */
-    mvCurDirectory,
-    mvCurRow,
-    mvCurCol,
-    mvChar,
-    mvWord,
-    mvLine,
-    mvLineLength,
-    mvSelection,
-    mvFTEVer,
-    mvTopOfStackAsInt,
-    mvTopOfStackAsString,
-    mvTopOfStackAsChar,
-    mvStrTopOfStack
-} MacroVariable;
-
 #endif

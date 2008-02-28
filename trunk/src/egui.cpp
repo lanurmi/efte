@@ -100,35 +100,6 @@ int Print(GxView *view, ExState &State) {
     return 1;
 }
 
-/**
- * MACRO: Push a number/char from a macro onto the stack
- */
-int Push(GxView *view, ExState &State) {
-    int found;
-    int x = 0;
-    char s[64] = "";
-    EView *View = 0;
-
-    if (view != NULL) {
-        ExModelView *V = (ExModelView *)view->Top;
-        View = V->View;
-    }
-
-    do {
-        found = 0;
-        if (State.GetIntParam(View, &x)) {
-            ParamStack.push(x);
-            found = 1;
-        } else if (State.GetStrParam(View, s, sizeof(s))) {
-            ParamStack.push((int) s[0]);
-            found = 1;
-        }
-    } while(found == 1);
-
-    SetBranchCondition(1);
-    return 1;
-}
-
 /// "A" -> 65
 int SSAsc() {
     SSCHECK(1, "asc");
@@ -360,33 +331,6 @@ int EGUI::J() {
     return 1;
 }
 
-int PushStr(GxView *view, ExState &State) {
-    int found;
-    int x = 0;
-    char s[1024] = "";
-    EView *View = 0;
-
-    if (view != NULL) {
-        ExModelView *V = (ExModelView *)view->Top;
-        View = V->View;
-    }
-
-    do {
-        found = 0;
-        if (State.GetIntParam(View, &x)) {
-            snprintf(s, 1024, "%i", x);
-            sstack.push_back(s);
-            found = 1;
-        } else if (State.GetStrParam(View, s, sizeof(s))) {
-            sstack.push_back(s);
-            found = 1;
-        }
-    } while(found == 1);
-
-    SetBranchCondition(1);
-    return 1;
-}
-
 int DupStr() {
     if (sstack.size() == 0) {
         SetBranchCondition(0);
@@ -472,14 +416,9 @@ int CompareStr(ExState &State) {
     std::string what = sstack[tos];
     sstack.pop_back();
 
-    if (State.GetIntParam(0, &compareTo)) {
-        compareTo = tos - compareTo;
-        ParamStack.push(-(what.compare(sstack[compareTo])));
-    } else {
-        compareTo = tos - 1;
-        ParamStack.push(-(what.compare(sstack[compareTo])));
-        sstack.pop_back();
-    }
+    compareTo = tos - 1;
+    ParamStack.push(-(what.compare(sstack[compareTo])));
+    sstack.pop_back();
 
     SetBranchCondition(1);
     return 1;
@@ -590,12 +529,7 @@ int LenStr(ExState &State, GxView *view) {
         View = V->View;
     }
 
-    int idx;
-    if (State.GetIntParam(View, &idx)) {
-        idx = sstack.size() - 1 - idx;
-    } else {
-        idx = sstack.size() - 1;
-    }
+    int idx = sstack.size() - 1;
 
     if ((unsigned int) idx >= sstack.size()) {
         SetBranchCondition(0);
@@ -1014,7 +948,13 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
     m = &Macros[State.Macro];
 
     for (i=State.Pos; i < m->Count; i++) {
-        if (m->cmds[i].type != CT_COMMAND) {
+        switch (m->cmds[i].type) {
+        case CT_NUMBER:
+            ParamStack.push(m->cmds[i].u.num);
+            continue;
+
+        case CT_STRING:
+            sstack.push_back(m->cmds[i].u.string);
             continue;
         }
         unsigned int macroclass;
@@ -1387,22 +1327,16 @@ int EGUI::FileCloseX(EView *View, int CreateNew, int XClose) {
     return 0;
 }
 
-// TODO
+// TODO: Find a way to set X
 int EGUI::FileClose(EView *View, ExState &State) {
     int x = 0;
-
-    if (State.GetIntParam(View, &x) == 0)
-        x = OpenAfterClose;
 
     return FileCloseX(View, x);
 }
 
-// TODO
+// TODO: Find a way to set X
 int EGUI::FileCloseAll(EView *View, ExState &State) {
     int x = 0;
-
-    if (State.GetIntParam(View, &x) == 0)
-        x = OpenAfterClose;
 
     while (ActiveModel)
         if (FileCloseX(View, x, 1) == 0) return 0;

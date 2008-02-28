@@ -777,9 +777,6 @@ public:
     int PlaceGlobalBookmark(ExState &State);
     int PushGlobalBookmark();
 
-    virtual int GetStrVar(int var, char *str, int buflen);
-    virtual int GetIntVar(int var, int *value);
-
     int SetIndentWithTabs(ExState &State);
     int FoldCreateAtRoutines();
 };

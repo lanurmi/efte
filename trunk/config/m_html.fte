@@ -4,12 +4,12 @@
 
 # Runs current file in browser
 sub HTML_View {
-    "netscape.exe -browser -l en_US file:///" $FilePath merge$ RunProgram;
+    "netscape.exe -browser -l en_US file:///" filename$ merge$ RunProgram;
 }
 
 # Runs Dave Ragget's HTML Tidy on current file
 sub HTML_Tidy {
-    "f:\\os2_apps\\tidy\\tidy.exe -m " $FilePath merge$ RunProgram;
+    "f:\\os2_apps\\tidy\\tidy.exe -m " filename$ merge$ RunProgram;
 }
 
 # Basic stuff
@@ -526,13 +526,13 @@ sub HTML_Base {
     "<html>" InsertString; 2:LineNew;
     "<head>" InsertString; LineNew;
     "<!-- copyright (c)  -->" InsertString; 4:MoveLeft;
-    InsertDate "%Y"; " by " InsertString; InsertUid; MoveLineEnd; LineNew;
+    "%Y" InsertDate; " by " InsertString; InsertUid; MoveLineEnd; LineNew;
     "<meta name=\"generator\" content=\"FTE " InsertString;
-    InsertString $FTEVer;
+    eftever$ InsertString;
     "\" />" InsertString;
     LineNew;
     "<meta name=\"revised\" content=\"\" />" InsertString; 4:MoveLeft;
-    InsertUid; ","; InsertDate "%Y-%m-%d" InsertString; MoveLineEnd;
+    InsertUid; ","; "%Y-%m-%d" InsertDate ; MoveLineEnd;
     LineNew;
     "<meta name=\"keywords\" content=\"\" />" InsertString; LineNew;
     "<meta name=\"description\" content=\"\" />" InsertString;
@@ -541,7 +541,7 @@ sub HTML_Base {
     InsertUid; 4:MoveRight; LineNew;
     "<meta http-equiv=\"content-type\" content=\"text/html; charset=ISO-8859-1\" />" InsertString;
     LineNew;
-    "<title>" InsertString; InsertString $FileBaseName;
+    "<title>" InsertString; filename$ InsertString; # TODO: Was FileBaseName
     "</title>" InsertString; LineNew;
     "</head>" InsertString; 2:LineNew;
     "<body>" InsertString; 2:LineNew; MoveFileEnd; LineAdd;
