@@ -49,8 +49,6 @@ typedef enum {
     //!Stack Operations
     ExExit,
     /// Exit the macro.
-    ExPush,
-    /// Push a number onto stack.
     ExPlus,
     /// Add top two stack items.
     ExMinus,
@@ -118,8 +116,6 @@ typedef enum {
     //!String Stack Commands
     ExDiagStr,
     /// Print string stack info
-    ExPushStr,
-    /// Push a string to the string stack
     ExDupStr,
     /// Duplicate StrTos
     ExDropStr,
