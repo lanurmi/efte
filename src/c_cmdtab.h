@@ -26,7 +26,6 @@ const struct {
     TAB(Fail),
 
     TAB(Exit),
-    TAB(Push),
     TAB(Fetch),
     TAB(Store),
     TAB(MemEnd),
@@ -68,7 +67,6 @@ const struct {
     TAB(Diag),
 
     TABS(Diag),
-    TABS(Push),
     TABS(Dup),
     TABS(Drop),
     TABS(Swap),

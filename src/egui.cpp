@@ -730,8 +730,6 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
         return MemoryAllot();
     case ExPrint:
         return Print(view, State);
-    case ExPush:
-        return Push(view, State);
     case ExTick:
         return Tick();
     case ExExecute:
@@ -791,8 +789,6 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
 
     case ExDiagStr:
         return DiagStr(State);
-    case ExPushStr:
-        return PushStr(view, State);
     case ExDupStr:
         return DupStr();
     case ExDropStr:

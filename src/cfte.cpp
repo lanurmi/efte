@@ -831,7 +831,6 @@ static int ParseCommands(CurPos &cp, char *Name) {
         if (p == P_NUMBER) {
             long num = GetNumber(cp);
             if (Parse(cp) != P_COLON) {
-                CFteCompileCommand(cp, CFteCmdNum("push"), 1, 0);
                 PutNumber(cp, CF_INT, num);
             } else {
                 cnt = num;
@@ -992,11 +991,9 @@ static int ParseCommands(CurPos &cp, char *Name) {
             cnt = 1;
         } else if (p == P_STRING) {
             char *s = GetString(cp);
-            CFteCompileCommand(cp, CFteCmdNum("push$"), 1, 0);
             PutString(cp, CF_STRING, s);
         } else if (p == P_CHAR) {
             char *s = GetString(cp);
-            CFteCompileCommand(cp, CFteCmdNum("push"), 1, 0);
             PutNumber(cp, CF_INT, s[0]);
         } else if (p == P_QUEST) {
             ign = 1;
