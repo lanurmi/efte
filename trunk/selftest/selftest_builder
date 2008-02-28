@@ -46,7 +46,7 @@ for SELFTEST in ${RUNTEST[*]} ; do
    (( i++ ))
 done
 echo
-echo "depth 0 PASS"
+echo "depth depth$ + 0 PASS"
 echo
 echo "   \"selftest finished\" message"
 echo "}"
