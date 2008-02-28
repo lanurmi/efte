@@ -472,11 +472,11 @@ int OverStr() {
     return 1;
 }
 
-// TODO
 int PickStr(ExState &State) {
-    int idx;
-    if (State.GetIntParam(0, &idx) == 0)
-        idx = ParamStack.pop();
+    PSCHECK(1, "pick$");
+    int idx = ParamStack.pop();
+
+    SSCHECK(idx + 1, "pick$");
     idx = sstack.size() - 1 - idx;
 
     if ((unsigned int) idx >= sstack.size()) {
