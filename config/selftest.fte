@@ -205,7 +205,7 @@ sub selftest {
     test_1_3 test_2_9 test_3_8 test_4_5 test_5_3 test_6_2 test_7_3 test_8_9
     test_9_3 test_10_4 test_11_9 test_12_5 test_13_8 test_14_5 test_15_1 test_16_3
     test_17_3 test_18_1 test_19_3 test_20_5
-depth 0 PASS
+depth depth$ + 0 PASS
 
    "selftest finished" message
 }
