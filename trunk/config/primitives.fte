@@ -311,7 +311,7 @@ sub dot0r     { lesshash                                                # zero p
 # --- file editing buffer helpers
 
 # ( -- len )
-sub linelen { curline$ len$ }
+sub linelen { curline$ len$ drop$ }
 
 # ( x y -- )
 sub at { movetocolumn movetoline }
