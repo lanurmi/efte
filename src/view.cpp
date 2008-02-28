@@ -168,8 +168,8 @@ int EView::ExecCommand(int Command, ExState &State) {
         return DirOpen(State) && ExecMacro("DirOpen");
     case ExViewMessages:
         return ViewMessages(State);
-    case ExCompile:
-        return Compile(State) && ExecMacro("OnCompile");
+    case ExAskCompiler:
+        return AskCompiler(State) && ExecMacro("OnCompile");
     case ExRunCompiler:
         return RunCompiler(State) && ExecMacro("OnRunCompiler");
     case ExCompilePrevError:
@@ -645,7 +645,7 @@ int EView::OpenDir(const char *Path) {
     return 1;
 }
 
-int EView::Compile(ExState &State) {
+int EView::AskCompiler(ExState &State) {
     if (sstack.size() == 0) {
         Msg(S_ERROR, "String stack underflow in Compile");
         SetBranchCondition(0);

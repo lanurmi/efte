@@ -71,8 +71,8 @@ menu MSvn {
 }
 
 menu Tools {
-    item "&Compile\tF9"               { Compile "make -k " }
-    item "&Grep"                      { Compile "grep -n " }
+    item "&Compile\tF9"               { AskCompiler "make -k " }
+    item "&Grep"                      { AskCompiler "grep -n " }
     item;
     item "Sh&ell\tAlt+F9"             { RunProgram "" }
     item;

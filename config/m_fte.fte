@@ -39,7 +39,7 @@ colorize FTE {
         "ChangeRightMargin", "ChangeTabSize", "CharCaseDown", "CharCaseToggle",
         "CharCaseUp", "CharTrans", "ChildClose", "ClearCvsMessages",
         "ClearMessages", "ClearSvnMessages", "ClipClear", "CloseActivate", "CompareS",
-        "Compile", "CompileNextError", "CompilePrevError", "CompleteWord", "ConfigRecompile",
+        "AskCompiler", "CompileNextError", "CompilePrevError", "CompleteWord", "ConfigRecompile",
         "CursorDown", "CursorLeft", "CursorRight", "CursorUp", "Cvs", "CvsCommit",
         "CvsDiff",
 

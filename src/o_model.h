@@ -138,7 +138,7 @@ public:
     int ShowKey(ExState &State);
     int ViewBuffers(ExState &State);
     int ViewRoutines(ExState &State);
-    int Compile(ExState &State);
+    int AskCompiler(ExState &State);
     int RunCompiler(ExState &State);
     int Compile(char *Command);
     int ViewMessages(ExState &State);

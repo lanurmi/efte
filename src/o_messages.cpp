@@ -521,7 +521,7 @@ bad:
     return 1;
 }
 
-int EMessages::Compile(char * /*Command*/) {
+int EMessages::AskCompiler(char * /*Command*/) {
     return 0;
 }
 

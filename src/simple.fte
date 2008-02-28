@@ -172,7 +172,7 @@ keyword 'Editor_Keywords2' {
 'ChangeRightMargin','ChangeTabSize','CharCaseDown','CharCaseToggle',
 'CharCaseUp','CharTrans','ChildClose','ClearCvsMessages',
 'ClearMessages','ClearSvnMessages','ClipClear','CloseActivate','CompareS',
-'Compile','CompileNextError','CompilePrevError','CompleteWord','ConfigRecompile',
+'AskCompiler','CompileNextError','CompilePrevError','CompleteWord','ConfigRecompile',
 'CursorDown','CursorLeft','CursorRight','CursorUp','Cvs','CvsCommit',
 'CvsDiff',
 'Delete','DeleteFile','DepthS','DesktopLoad','DesktopSave','DesktopSaveAs',
@@ -361,8 +361,8 @@ item;
 item "E&xit\tAlt+X" {ExitEditor}
 }
 menu Tools {
-item "&Compile...\tF9" {Compile "make -k "}
-item "&Grep..." {Compile "grep -n "}
+item "&Compile...\tF9" {AskCompiler "make -k "}
+item "&Grep..." {AskCompiler "grep -n "}
 item "Save and &ISpell" {FileSave; RunProgram "ispell " . $FilePath; FileReload}
 item;
 item "&Shell\tAlt+F9" {RunProgram ""}

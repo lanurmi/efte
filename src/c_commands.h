@@ -668,7 +668,7 @@ typedef enum {
     /// Display a choice dialog and push selection index onto the parameter stack
 
     //!Compiler Commands
-    ExCompile,
+    ExAskCompiler,
     /// Ask for compile command and run compiler.
     ///
     /// See also: RunCompiler

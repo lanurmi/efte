@@ -76,8 +76,8 @@ menu Search {
 }               
 
 menu Tools {
-    item "&Compile\tF9" { Compile "make -k " }
-    item "&Grep" { Compile "grep -n " }
+    item "&Compile\tF9" { AskCompiler "make -k " }
+    item "&Grep" { AskCompiler "grep -n " }
     item;
     item "Sh&ell"                  { RunProgram "" }
     item;
@@ -179,7 +179,7 @@ eventmap MODEL { # basic commands, for files, directories, message view, etc.
     key   [C+S+G-Down]  { WinResize +1 }
     
     # this is also useful for 'grep -n' etc. if configured
-    key       [F9]      { Compile; ViewMessages }
+    key       [F9]      { AskCompiler; ViewMessages }
     key       [F11]     { CompilePrevError }
     key       [F12]     { CompileNextError }
     key       [S+F9]    { ViewMessages }
