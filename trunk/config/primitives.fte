@@ -61,20 +61,9 @@ sub range     { over + swap }                # start n -> limit start conversion
 sub cursorhome { movelinestart }
 sub cursorend  { movelineend }
 
-# -- i/o --
-sub key       { getchar }                       # wait for key, place its ascii on stack
-sub read      { push $Char }                    # read char under cursor
-sub emit      { insertstring $toschar }
 
-
-sub bl        { 32 }
-sub space     { 32 emit }                       # print a space character
-sub spaces    { times space }
-sub cr        { linenew cursorhome }            # carriage return
 
 sub count     { inc dup dec fetch }
-sub type1     { count emit }
-sub type      { times type1 drop }              # string output
 
 
 
@@ -90,11 +79,14 @@ sub type      { times type1 drop }              # string output
 sub free      { memend here - }
 sub plusstore { dup tor fetch + rfrom store } # ( x a -- )  adds x to contents of address a
 sub comma     { here cell allot store }          # ( x -- )    allocate 1 location, initialized to x
-sub var       { here cell allot }                # for the new construct:       sub foo { var new }
                                                  # can then use vars like:      sub bar { var new }
                                                  #                foo fetch   bar store
 sub exchange  { dup fetch tor store rfrom }      # ( x1 a -- x2 )
 sub link      { here swap exchange comma }       # ( a -- )
+
+
+sub var       { here dup cell allot }            # for the new construct:       sub foo { var new }
+
 
 
 
@@ -119,7 +111,24 @@ sub minrot$   { 2:rot$  }
 sub dup2$     { 2:over$ }
 sub drop2$    { 2:drop$ }
 sub equals$   { compare$ not }
-sub type$     { insertstring $tos$ }
+
+
+sub asc   { dup$ 1 mid$ push $tos$ }            # ( n -- c ) get ascii of nth char in top string
+sub char$ { push$ $toschar }                    # ( c -- )   asc on stack becomes char string on stringstack
+
+
+# -- i/o --
+sub key       { getchar }                       # wait for key, place its ascii on stack
+sub read      { $Char }                         # read char under cursor
+sub emit      { char$ insertstring }
+sub type1     { count emit }
+sub type      { times type1 drop }              # string output
+sub type$     { insertstring }
+sub bl        { 32 }
+sub space     { 32 emit }                       # print a space character
+sub spaces    { times space }
+sub cr        { linenew cursorhome }            # carriage return
+
 
 
 sub left$     {                                 # ( n -- )
@@ -150,8 +159,6 @@ sub search$   {                                 # ( n1 -- n2 )
 }
 
 
-sub asc   { dup$ 1 mid$ push $tos$ }          # ( n -- c ) get ascii of nth char in top string
-sub char$ { push$ $toschar }                    # ( c -- )   asc on stack becomes char string on stringstack
 
 sub slice  { 1 split$ push $tos$ }              # ( -- asc ) cut first char off string and return as ascii
 sub splice { char$ swap$ merge$ }               # ( asc -- ) prepend char to string
@@ -235,7 +242,7 @@ sub fetch$    {                                 # ( a -- ) transfers the string 
       count char$ merge$
    loop drop }
 
-sub var$ { here len$ inc dup inc comma allot } # string var description.
+sub var$ { here dup len$ inc dup inc comma allot } # string var description.
 # (varsize) (strlen) (char) (char) (char) ...
 
 
