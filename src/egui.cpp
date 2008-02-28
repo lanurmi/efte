@@ -566,8 +566,17 @@ int SplitStr() {
     std::string tosS = sstack[tos];
 
     sstack.pop_back();
-    sstack.push_back(tosS.substr(pos));
-    sstack.push_back(tosS.substr(0, pos));
+
+    if (pos > tosS.size()) {
+        sstack.push_back("");
+        sstack.push_back(tosS);
+    } else if (pos == 0) {
+        sstack.push_back(tosS);
+        sstack.push_back("");
+    } else {
+        sstack.push_back(tosS.substr(pos));
+        sstack.push_back(tosS.substr(0, pos));
+    }
 
     SetBranchCondition(1);
     return 1;
