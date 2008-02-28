@@ -63,7 +63,6 @@ sub cursorend  { movelineend }
 
 
 
-sub count     { inc dup dec fetch }
 
 
 
@@ -78,7 +77,7 @@ sub count     { inc dup dec fetch }
 
 sub off       { false swap store }               # ( a -- )   sets contents of a to false
 sub on        { true swap store }                # ( a -- )   sets contents of a to true
-sub free      { memend here - }
+sub count     { inc dup dec fetch }
 sub plusstore { dup tor fetch + rfrom store }    # ( x a -- )  adds x to contents of address a
 sub comma     { here cell allot store }          # ( x -- )    allocate 1 location, initialized to x
                                                  # can then use vars like:      sub bar { var new }
@@ -86,6 +85,7 @@ sub comma     { here cell allot store }          # ( x -- )    allocate 1 locati
 
 sub exchange  { dup fetch tor store rfrom }      # ( x1 a -- x2 )
 sub link      { here swap exchange comma }       # ( a -- )
+sub free      { memend here - }
 
 
 
@@ -117,10 +117,9 @@ sub drop2$    { 2:drop$ }
 sub equals$   { compare$ not }
 
 
-sub slice     { 1 split$ push $tos$ }           # ( -- asc ) cut first char off string and return as ascii
-#sub asc       { dup$ 1 mid$ push $tos$ }        # ( n -- c ) get ascii of nth char in top string
-#sub char$     { push$ $toschar }                # ( c -- )   asc on stack becomes char string on stringstack
+sub slice     { 1 split$ asc }                  # ( -- asc ) cut first char off string and return as ascii
 sub splice    { char$ swap$ merge$ }            # ( asc -- ) prepend char to string
+sub ascn      { dup$ 1 mid$ asc }               # ( n -- c ) get ascii of nth char in top string
 
 
 # -- i/o --
@@ -173,7 +172,7 @@ sub embed$ {                                    # ( asc n -- ) store char at pos
 
 sub capitalize$ {                               # ( -- )  capitalize all chars of top string
    len$ 0 do                                    # loop though all chars:
-      i asc dup lowercase if
+      i ascn dup lowercase if
          capitalize
          dup i embed$                           #   replace char in string
       endif drop
@@ -199,7 +198,7 @@ sub spaces$ { bl swap repeat$ }                # ( u -- ) create a string of u s
 sub minleading$ {                               # ( -- ) remove leading spaces
    len$                                         # assume removing whole string
    dup 0 do                                  # loop through string,
-      i asc bl equals not                       # looking for non-space
+      i ascn bl equals not                       # looking for non-space
       if drop i leave endif                     # found, return index to space
    loop
    negate left$                                 # remove leading spaces
@@ -209,7 +208,7 @@ sub minleading$ {                               # ( -- ) remove leading spaces
 sub mintrailing$ {                              # ( -- ) remove trailing spaces
    len$
    dup 0 do                                  # loop through sting chars
-      dec dup asc                               # select chars, starting with last
+      dec dup ascn                               # select chars, starting with last
       bl equals not if                          # until char not space
          inc leave
       endif
@@ -221,6 +220,18 @@ sub mintrailing$ {                              # ( -- ) remove trailing spaces
 sub trim$ {                                     # ( -- ) remove leading and trailing spaces
    minleading$
    mintrailing$ }          
+
+
+
+sub scan$ {                                     # ( asc -- -1 | u )  search for asc in string.
+   -1
+   len$ 0 do
+      over i ascn equals
+      if drop i leave endif
+   loop
+   nip }
+
+
 
 
 sub brmovebr$  {                                # ( a n -- )  copy n chars of tos$ to a
