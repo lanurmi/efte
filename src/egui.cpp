@@ -1953,8 +1953,19 @@ int EGUI::Start(int &argc, char **argv) {
         ActiveView->SwitchToModel(ActiveModel);
     }
 
-    if (verbosity > 1)
-        fprintf(stderr, "Macro count: %i memory: %i\n", CMacros, CMacros * sizeof(ExMacro));
+    if (verbosity > 1) {
+        unsigned mem=0;
+        int mc = CMacros;
+        while (mc--) {
+            if (Macros[mc].Name != NULL)
+                mem += strlen(Macros[mc].Name);
+            for (int i = 0; i < Macros[mc].Count; ++i)
+                if (Macros[mc].cmds[i].type == CT_STRING)
+                    mem += strlen(Macros[mc].cmds[i].u.string);
+            mem += sizeof(ExMacro);
+        }
+        fprintf(stderr, "Macro count: %i memory: %i\n", CMacros, mem);
+    }
 
     ActiveView->ExecMacro("OnBoot");
     ActiveView->ExecMacro("OnUserBoot");
@@ -2009,21 +2020,6 @@ void EGUI::Stop() {
     DoSaveHistoryOnExit();
 
     // free macros
-    if (Macros != 0) {
-        while (CMacros--) {
-            free(Macros[CMacros].Name);
-
-            for (int i = 0; i < Macros[CMacros].Count; ++i)
-                if (Macros[CMacros].cmds[i].type == CT_STRING)
-                    free(Macros[CMacros].cmds[i].u.string);
-
-            free(Macros[CMacros].cmds);
-        }
-
-        free(Macros);
-
-        Macros = 0;
-    }
 
     // free colorizers
     while (EColorize *p = Colorizers) {
