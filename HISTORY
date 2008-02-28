@@ -50,6 +50,7 @@ Revision history
     plain text configuration files
   + Added a nicer help screen
   + Added a string stack and related commands
+  + Got rid of the entire variable system
 
 0.50.1 -- January 17, 2008
   - Forked from FTE (http://fte.sourceforge.net)

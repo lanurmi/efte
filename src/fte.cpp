@@ -22,6 +22,10 @@ gid_t effgid;
 char ConfigFileName[MAXPATH] = "";
 char *StartupMacroCommand = NULL;
 
+static void Version() {
+    printf("eFTE version " VERSION " " COPYRIGHT "\n");
+}
+
 static void Usage() {
     printf("Usage: " PROGRAM " [-?] [-h] [--help] [-CDHTmlrt] files...\n"
            "Version: " VERSION " " COPYRIGHT "\n"
@@ -32,6 +36,7 @@ static void Usage() {
            "  --                End of options, only files remain.\n"
            "  -+                Next option is file.\n"
            "  -? -h --help      Display usage.\n"
+           "  --version         Display eFTE version.\n"
            "  -!                Ignore config file, use builtin defaults (also -c).\n"
            "  -dWORD            Define a preprocessor word for config file parsing\n"
            "  -C[<.cnf>]        Use specified configuration file (no arg=builtin).\n"
@@ -100,11 +105,17 @@ static int CmdLoadConfiguration(int &argc, char **argv) {
 
     for (Arg = 1; Arg < argc; Arg++) {
         if (!QuoteAll && !QuoteNext && (argv[Arg][0] == '-')) {
-            if (argv[Arg][1] == '-') {
+            if (strcmp(argv[Arg], "--version") == 0 ||
+                strcmp(argv[Arg], "-version") == 0)
+            {
+                Version();
+                return 0;
+            } else if (argv[Arg][1] == '-') {
                 if (strcmp(argv[Arg], "--help") == 0) {
                     Usage();
                     return 0;
                 }
+
                 int debug_clean = strcmp(argv[Arg], "--debugclean") == 0;
                 if (debug_clean || strcmp(argv[Arg], "--debug") == 0) {
 #ifndef FTE_NO_LOGGING
