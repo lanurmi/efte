@@ -158,8 +158,6 @@ sub search$   {                                 # ( n1 -- n2 )
   drop$
 }
 
-
-
 sub slice  { 1 split$ push $tos$ }              # ( -- asc ) cut first char off string and return as ascii
 sub splice { char$ swap$ merge$ }               # ( asc -- ) prepend char to string
 

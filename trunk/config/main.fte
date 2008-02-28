@@ -9,7 +9,7 @@
 #
 
 include "primitives.fte";
-#include "macros.fte";
+include "macros.fte";
 
 # to include use the -dSELFTEST parameter to efte
 %if(SELFTEST)
