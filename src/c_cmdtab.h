@@ -25,6 +25,7 @@ const struct {
     TAB(Nop),
     TAB(Fail),
 
+    { ExDepth, "depth" },
     TAB(Exit),
     TAB(Fetch),
     TAB(Store),
