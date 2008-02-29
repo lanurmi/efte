@@ -1,0 +1,8 @@
+{ 4 6 8 drop   accumulate 64 PASS } # test drop
+{ 3 6 swap     accumulate 36 PASS } # test swap
+{ 2 5 over     2:accumulate 252 PASS } # test over
+{ 1 2 3 nip    accumulate    31 PASS }  # test nip
+{ 4 5 6 minrot 2:accumulate 546 PASS }  # test minrot
+{ 7 8 9 tuck   3:accumulate 9897 PASS } # test tuck
+{ 2 4 6  pluck 3:accumulate 2642 PASS } # test pluck
+{ TEST1 TEST2 TEST3 TEST4 TEST5 TEST6 TEST7 }
