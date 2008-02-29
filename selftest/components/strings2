@@ -14,8 +14,13 @@
 { "abcdefgh"  0 2 mid$  "ab"  equals$  true PASS }
 { "123456"    1 3 mid$  "234" equals$  true PASS }
 { "ABCDEF"    4 6 mid$  "EF"  equals$  true PASS }
+{ "abcde"     10 10 mid$  ""  equals$  true PASS }
 
-{ TEST1 TEST2 TEST3 TEST4 TEST5 TEST6 TEST7 TEST8 }
+# negative len not tested
+
+
+
+{ TEST1 TEST2 TEST3 TEST4 TEST5 TEST6 TEST7 TEST8 TEST9 }
 
 
 
