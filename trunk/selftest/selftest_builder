@@ -9,7 +9,7 @@ addtest()  {
          RUN="test_${TESTCOUNT}_${SUBCOUNT}"
          echo -n "sub $RUN"
       fi
-      LINE=$(sed "s/TEST/test_${TESTCOUNT}_/g;s/PASS/ $((TESTCOUNT*1000+SUBCOUNT)) pass depth 0 $((TESTCOUNT*1000+SUBCOUNT)) pass/g" <<< $LINE)
+      LINE=$(sed "s/TEST/test_${TESTCOUNT}_/g;s/PASS/ $((TESTCOUNT*1000+SUBCOUNT)) pass depth depth$ or 0 $((TESTCOUNT*1000+SUBCOUNT)) pass emptyall/g" <<< $LINE)
       echo " $LINE"
    done < $FILE
    if (( SUBCOUNT )) ; then
@@ -31,13 +31,13 @@ echo "# -----------------------------------------------------------------------"
 cat pass
 for FILE in components/* ; do
    echo
-   echo "# $FILE"
+   echo "$TESTCOUNT - $FILE" 1>&2
+   echo "# $TESTCOUNT - $FILE"
    addtest $FILE
 done
 echo
 echo "sub selftest {"
-echo "\"selftest started\" message"
-i=0
+echo -n "   \"selftest started\" type$ cr"
 for SELFTEST in ${RUNTEST[*]} ; do
    if (( (i % 8) == 0 )) ; then
       echo ; echo -n "   "
@@ -46,8 +46,7 @@ for SELFTEST in ${RUNTEST[*]} ; do
    (( i++ ))
 done
 echo
-echo "depth depth$ + 0 PASS"
-echo
-echo "   \"selftest finished\" message"
+echo "    depth depth$ or 0 999999 pass"
+echo "   \"selftest finished\" type$ cr"
 echo "}"
 ) > ../config/selftest.fte
