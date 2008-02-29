@@ -287,6 +287,8 @@ keyword 'Editor_Keywords4' {
 'Else','EndIf',
 'If',
 'Loop',
+'Plusloop',
+'Minloop'.
 'Repeat',
 'Until',
 'While'
@@ -667,11 +669,11 @@ key [F5] {WinZoom}
 key [F6] {FileNext}
 key [S+F6] {FilePrev}
 key [A+S-F6] {FileLast}
-key [F7] {Find $Word}
+key [F7] {$Word Find}
 key [F10] {MainMenu}
 key [C+F10] {FileClose}
 key [C+F9] {RunProgram}
-key [A+F9] {RunProgram ""}
+key [A+F9] {"" RunProgram}
 key [S+F10] {LocalMenu}
 key [A+G-Up] {WinPrev}
 key [A+G-Down] {WinNext}
@@ -744,7 +746,7 @@ key [A+N] {MainMenu 'N'}
 eventmap BUFFERS: MLIST {
 MainMenu = "BufferListMain";
 LocalMenu = "BufferListLocal";
-key [Esc] {FileClose 0}
+key [Esc] {0 FileClose}
 key [C+C] {BufListFileClose}
 key [G-Del] {BufListFileClose}
 key [C+S] {BufListFileSave}
@@ -760,7 +762,7 @@ key [G-End] {MoveLineEnd}
 eventmap EVENTMAPVIEW: MLIST {
 MainMenu = "EventMapViewMain";
 LocalMenu = "EventMapViewLocal";
-key [Esc] {FileClose 0}
+key [Esc] {0 FileClose}
 }
 eventmap PLAIN: MODEL {
 MainMenu = 'Main';
@@ -816,7 +818,7 @@ key [S-BackSp] {BackSpace}
 key [G-Ins] {ToggleInsert}
 key [G-Del] {Delete}
 key [Tab] {InsertTab}
-key [S+Tab] {InsertSpacesToTab 10}
+key [S+Tab] {10 InsertSpacesToTab}
 key [C+Tab] {CompleteWord}
 key [C+BackSp] {KillWordPrev}
 key [C+S+BackSp] {KillToLineStart}

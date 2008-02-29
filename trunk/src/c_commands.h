@@ -59,6 +59,9 @@ typedef enum {
     /// Multiply top two stack items.
     ExDiv,
     /// Divide top two stack items.
+    ExRandom,
+    /// generate random number.
+
     ExAnd,
     /// And
     ExOr,

@@ -38,6 +38,7 @@ const struct {
     { ExMinus, "-" },
     { ExMul, "*" },
     { ExDiv, "/" },
+    TAB(Random),
 
     TAB(And),
     TAB(Or),
