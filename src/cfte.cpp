@@ -848,7 +848,7 @@ static int ParseCommands(CurPos &cp, char *Name) {
                 Command = Lookup(ConditionalKW, cmd);
                 if (Command == -1) {
                     CFteCompileCommand(cp, ExAbort, 1, 0);
-                    fprintf(stderr,"Unrecognized command: %s\n", cmd);
+                    fprintf(stderr,"Unrecognized command: %s at %s:%i\n", cmd, cp.name, cp.line);
                     // Fail(cp, "Unrecognized command: %s", cmd);
                 }
 
