@@ -128,11 +128,14 @@ int PSChar() {
  * MACRO: Print a stack diagnostic message to stderr
  */
 int EGUI::Diag(ExState &State) {
-    fprintf(stderr, "cond=%08x", BranchCondition);
-    for (int i=ParamStack.size() - 1; i > 2; i--)
-        fprintf(stderr, ", %ith=%i", i, ParamStack.peek(i));
-    fprintf(stderr, ", 3rd=%d, nos=%d, tos=%d\n",  ParamStack.peek(2), ParamStack.peek(1),
-            ParamStack.peek(0));
+    fprintf(stderr, "Param stack: ");
+    int i = ParamStack.size();
+    if (i)
+        for ( ; i; )
+            fprintf(stderr, "%i ", ParamStack.peek(--i));
+    else
+        fprintf(stderr, "empty");
+    fprintf(stderr, "\n");
     return 1;
 }
 
@@ -149,8 +152,6 @@ int EGUI::Plus() {
     return 1;
 }
 
-// don't really need - could provide "Invert" and do
-//2's complement add in macro
 int EGUI::Minus() {
     PSCHECK(2, "Minus");
     int tos=ParamStack.pop();
@@ -360,22 +361,21 @@ int SwapStr() {
     return 1;
 }
 
-int DiagStr(ExState &State) {
-    int ssize = sstack.size();
 
-    if (ssize == 0)
+int DiagStr(ExState &State) {
+    fprintf(stderr, "Stringstack: ");
+
+    int tos = sstack.size();
+    if (tos)
+        for ( int i=0; i<tos ; )
+            fprintf(stderr, "'%s' ", sstack[i++].c_str());
+    else
         fprintf(stderr, "empty");
-    else {
-        int tos = sstack.size()-1;
-        for (int i = ssize - 1; i >= 0; i--) {
-            fprintf(stderr, "%i='%s'", i, sstack[tos-i].c_str());
-            if (i != 0) fprintf(stderr, ", ");
-        }
-    }
 
     fprintf(stderr, "\n");
     return 1;
 }
+
 
 int RotStr(ExState &State) {
     if (sstack.size() < 3) {
@@ -951,7 +951,6 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
             continue;
         }
         unsigned int macroclass;
-        // fprintf(stderr, "Executor loop at m=8%x, i=%d\n", m, i);
         switch (m->cmds[i].u.num) {
 
         case ExNop:
@@ -998,31 +997,32 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
             break;
 
 
-        case ExPlusLoopRuntime:                                     // executed once per loop iteration:
-            rtos = ControlStack.pop();
-            rnos = ControlStack.peek(0);
-            tos = rtos - rnos;
-            rtos += ParamStack.pop();
-            if ( (( rtos - rnos ) ^ tos ) > 0 )  {
+        case ExPlusLoopRuntime:                                     // Executed once per loop iteration:
+            rtos = ControlStack.pop();                              // as loop increment can be either positive or negative, the
+            rnos = ControlStack.peek(0);                            // method to determine when index has passed limit is a bit
+            tos = rtos - rnos;                                      // complicated. simple =, < or > won't do. we need something like
+            rtos += ParamStack.pop();                               // "if it was < before adding, is it > now?" and "if it was >
+            if ( (( rtos - rnos ) ^ tos ) > 0 )  {                  // before, is it < now?" done by xoring diff before and after adding loop increment.
+                                                                    // result will be negative when limit has been passed.
                 ControlStack.push(rtos);                            //       keep loop index for next round
                 i += m->cmds[i].repeat;                             //       branch back to behind DO
-            } else {                                                //    no:
-                ControlStack.pop();                                 //    yes: clean up
+            } else {
+                ControlStack.pop();                                 // loop limit passed: clean up
             }
             break;
 
 
-        case ExMinLoopRuntime:                                    // executed once per loop iteration:
-            rtos = ControlStack.pop();
-            rnos = ControlStack.peek(0)+1;
-            tos = rtos - rnos;
-            rtos -= ParamStack.pop();
-            if ( (( rtos - rnos ) ^ tos ) > 0 )  {
-                ControlStack.push(rtos);                            //       keep loop index for next round
-                i += m->cmds[i].repeat;                             //       branch back to behind DO
-            } else {                                                //    no:
-                ControlStack.pop();                                 //    yes: clean up
-            }
+        case ExMinLoopRuntime:                                      // Executed once per loop iteration:
+            rtos = ControlStack.pop();                              // almost identical to ExPlusLoopRuntime. Read up there.
+            rnos = ControlStack.peek(0)+1;                          // This one exists for better symmetry with plusloop for
+            tos = rtos - rnos;                                      // count down loops: I think the standard has messed up there.
+            rtos -= ParamStack.pop();                               // Providing MinLoop next to PlusLoop seems the only way
+            if ( (( rtos - rnos ) ^ tos ) > 0 )  {                  // to provide symmetricity without violating the standard
+                ControlStack.push(rtos);                            // (by changing plusloop to behave symmetrically). Thus, the
+                i += m->cmds[i].repeat;                             // deal is: for symmetric up/down loops, don't use negative
+            } else {                                                // increment with plusloop. Use positive increment with minloop
+                ControlStack.pop();                                 // instead. For standard-conform down loops, use (standard-
+            }                                                       // compliant) plusloop with negative increment.
             break;
 
 
