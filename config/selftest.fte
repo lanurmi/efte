@@ -260,33 +260,56 @@ sub test_19_5 { "ABCDEFG" -2 5 mid$ "ABCDE" equals$ true  19005 "   strings2" pa
 sub test_19_6 { "abcdefgh" 0 2 mid$ "ab" equals$ true  19006 "   strings2" pass }
 sub test_19_7 { "123456" 1 3 mid$ "234" equals$ true  19007 "   strings2" pass }
 sub test_19_8 { "ABCDEF" 4 6 mid$ "EF" equals$ true  19008 "   strings2" pass }
+sub test_19_9 { "abcde" 10 10 mid$ "" equals$ true  19009 "   strings2" pass }
  
-sub test_19_9 { test_19_1 test_19_2 test_19_3 test_19_4 test_19_5 test_19_6 test_19_7 test_19_8 }
+ # negative len not tested
+ 
+ 
+ 
+sub test_19_10 { test_19_1 test_19_2 test_19_3 test_19_4 test_19_5 test_19_6 test_19_7 test_19_8 test_19_9 }
  
  
  
 
 
-# 20 - components/times
-sub test_20_1 { inc }
-sub test_20_2 { 0 0 inc lshift lshift lshift times test_20_1 dec dec dec 5  20002 "   times" pass }
-sub test_20_3 { 5 0 times test_20_1 dec 4  20003 "   times" pass }
-sub test_20_4 { test_20_2 test_20_3 }
+# 20 - components/strings3
+ # split$ merge$
+ 
+sub test_20_1 { "abcdefgh" 3 split$ "abc" equals$ "defgh" equals$ and true  20001 "   strings3" pass }
+sub test_20_2 { "1234" 0 split$ "" equals$ "1234" equals$ and true  20002 "   strings3" pass }
+sub test_20_3 { "ABCDE" 10 split$ "ABCDE" equals$ "" equals$ and true  20003 "   strings3" pass }
+sub test_20_4 { "" 0 split$ "" equals$ "" equals$ and true  20004 "   strings3" pass }
+sub test_20_5 { "" 5 split$ "" equals$ "" equals$ and true  20005 "   strings3" pass }
+sub test_20_6 { "" -2 split$ "" equals$ "" equals$ and true  20006 "   strings3" pass }
+ 
+sub test_20_7 { "123" "abcd" merge$ "abcd123" equals$ true  20007 "   strings3" pass }
+sub test_20_8 { "456" "" merge$ "456" equals$ true  20008 "   strings3" pass }
+sub test_20_9 { "" "efg" merge$ "efg" equals$ true  20009 "   strings3" pass }
+ 
+sub test_20_10 { test_20_1 test_20_2 test_20_3 test_20_4 test_20_5 test_20_6 test_20_7 test_20_8 test_20_9 }
+ 
 
 
-# 21 - components/whileuntilagain
-sub test_21_1 { 50 6 inc begin lshift dec dup2 less if exit endif dec again drop 0 }
-sub test_21_2 { test_21_1 + 133  21002 "   whileuntilagain" pass }
-sub test_21_3 { 200 3 lshift begin dec lshift dup2 more while dec lshift repeat + 714  21003 "   whileuntilagain" pass }
-sub test_21_4 { 100 2 inc begin lshift inc dup2 less until + 227  21004 "   whileuntilagain" pass }
-sub test_21_5 { test_21_2 test_21_3 test_21_4 }
+# 21 - components/times
+sub test_21_1 { inc }
+sub test_21_2 { 0 0 inc lshift lshift lshift times test_21_1 dec dec dec 5  21002 "   times" pass }
+sub test_21_3 { 5 0 times test_21_1 dec 4  21003 "   times" pass }
+sub test_21_4 { test_21_2 test_21_3 }
+
+
+# 22 - components/whileuntilagain
+sub test_22_1 { 50 6 inc begin lshift dec dup2 less if exit endif dec again drop 0 }
+sub test_22_2 { test_22_1 + 133  22002 "   whileuntilagain" pass }
+sub test_22_3 { 200 3 lshift begin dec lshift dup2 more while dec lshift repeat + 714  22003 "   whileuntilagain" pass }
+sub test_22_4 { 100 2 inc begin lshift inc dup2 less until + 227  22004 "   whileuntilagain" pass }
+sub test_22_5 { test_22_2 test_22_3 test_22_4 }
 
 
 sub selftest {
    "selftest started" type$ cr
     test_1_3 test_2_9 test_3_8 test_4_5 test_5_11 test_6_2 test_7_3 test_8_9
     test_9_3 test_10_4 test_11_9 test_12_5 test_13_8 test_14_5 test_15_1 test_16_3
-    test_17_3 test_18_17 test_19_9 test_20_4 test_21_5
+    test_17_3 test_18_17 test_19_10 test_20_10 test_21_4 test_22_5
     depth depth$ or 0 999999 "   whileuntilagain" pass
    "selftest finished" type$ cr
 }
