@@ -4,5 +4,11 @@
            6 1 do 1 allot loop
          0 6 1 do tor count rfrom + loop nip
          15 PASS }
+{ 123 here 10 + store here 9 + count drop fetch 123 PASS }
+{  0 here 5 0 do i comma loop
+  10 allot
+   5 0 do count rot + swap loop +
+   here PASS }
+   
 
-{ TEST1 TEST2 TEST3 }
+{ TEST1 TEST2 TEST3 TEST4 TEST5 }
