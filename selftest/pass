@@ -8,18 +8,27 @@ sub dot33 {                    # ( n -- ) print as nnn:nnn
    hashmoretype
 }
 
+sub accumulate { 10 * + }
+sub emptyall  {
+   depth$ times drop$
+   depth times drop
+}
+
 sub dot9r { 9 dotr }      # ( n -- ) space padded right aligned 9 chars signed number out
 
 sub pass   {
-   tor dup2 equals if          "PASS" type$
+   tor
+   dup2 equals
+   depth depth$ accumulate  
+   13 equals and if            "PASS" type$
    else                        "FAIL" type$
    endif 
    rfrom 
    " test " type$ dot33
    "wants"  type$  dot9r
    ", got"  type$  dot9r
+   type$
+   emptyall
    cr
 }
 
-sub accumulate { 10 * + }
-sub emptyall  { depth$ times drop$    depth times drop }
