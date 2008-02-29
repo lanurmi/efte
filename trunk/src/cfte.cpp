@@ -846,8 +846,11 @@ static int ParseCommands(CurPos &cp, char *Name) {
                 CFteCompileCommand(cp, Command, cnt, ign);
             } else {
                 Command = Lookup(ConditionalKW, cmd);
-                if (Command == -1)
-                    Fail(cp, "Unrecognized command: %s", cmd);
+                if (Command == -1) {
+                    CFteCompileCommand(cp, ExAbort, 1, 0);
+                    fprintf(stderr,"Unrecognized command: %s\n", cmd);
+                    // Fail(cp, "Unrecognized command: %s", cmd);
+                }
 
                 // ---------------------------------- flow control compiling statements -------------------------------
                 int endif_paired;
