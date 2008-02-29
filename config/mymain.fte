@@ -5,7 +5,7 @@
 # without adversely affecting other users.
 
 # include the system main config - usually in /usr/share/fte/localconfig.
-include 'systemmain.fte';
+include "systemmain.fte";
 
 # Personal settings go here.
 
