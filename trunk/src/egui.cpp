@@ -919,13 +919,10 @@ int EGUI::ExecMacro(GxView *view, const char *name) {
 }
 
 
-//void PatchMacro(int index, int with, int data) {
-//   m->cmds[index].u.num = with;
-//   m->cmds[index].repeat = data;
-//}
 
 
 unsigned int doesindex = 0;
+int faillevel = 0;
 
 int EGUI::ExecMacro(GxView *view, int Macro) {
     STARTFUNC("EGUI::ExecMacro");
@@ -1093,8 +1090,8 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
             break;
 
 
-        case ExDoes:                                                // set index to runtime portion, defined
-            doesindex = i;                                          // by "instances"
+        case ExDoes:                                                // class publishes method location
+            doesindex = i;
             i = m->Count;                                           
             break;
 
@@ -1105,14 +1102,23 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
             for (j=(m->cmds[i].repeat); j; --j) {
                 ResultOfCommandExecution=ExecCommand(view, m->cmds[i].u.num, State);
                 if (!(ResultOfCommandExecution || m->cmds[i].ign)) {
-                    ParamStack.empty();
-                    ControlStack.empty();
-
-                    // sstack.empty();
-                    tos = sstack.size();
-                    while (tos--)
-                        sstack.pop_back();
-
+                    // interesting ... executed twice on Fail .. does ExecCommand (two lines above) run
+                    // through this loop, execute fail, and then continue after return from ExecCommand,
+                    // falling through to this fail handler again?
+                    faillevel++;
+                    if (faillevel > 1) {
+                        fprintf(stderr,"Fail condition in OnFail macro - recursive exception handler execution, level %d\n", faillevel);
+                        fprintf(stderr,"OnDoubleFail hook catches this condition\n");
+                        ActiveView->ExecMacro("OnDoubleFail");
+                    } else {
+                        ActiveView->ExecMacro("OnFail");
+                        ParamStack.empty();
+                        ControlStack.empty();
+                        tos = sstack.size();
+                        while (tos--)
+                            sstack.pop_back();
+                    }
+                    faillevel--;
                     return ErFAIL;
                 }
             }
@@ -1121,6 +1127,9 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
     }
     ENDFUNCRC(ErOK);
 }
+
+
+
 
 void EGUI::SetMsg(char *Msg) {
     char CharMap[128] = "";
