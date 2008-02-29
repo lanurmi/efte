@@ -183,6 +183,12 @@ int EGUI::Div() {
     return 1;
 }
 
+int EGUI::Random() {
+    ParamStack.push(random());
+    return 1;
+}
+
+
 // --- bits ---
 
 int EGUI::And() {
@@ -744,6 +750,8 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
         return Mul();
     case ExDiv:
         return Div();
+    case ExRandom:
+        return Random();
 
     case ExAnd:
         return And();

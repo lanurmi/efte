@@ -63,6 +63,7 @@ public:
     int Minus();
     int Mul();
     int Div();
+    int Random();
 
     int And();
     int Or();
