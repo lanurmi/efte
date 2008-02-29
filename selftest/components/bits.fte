@@ -1,0 +1,10 @@
+{ 2 invert  -3 PASS }  # test invert
+{ -5 invert 4 PASS }
+
+{ 0 not true PASS }      # test not
+{ 1234 not false PASS }
+{ -321 not false PASS }
+{ true not false PASS }
+{ false not true PASS }
+
+{ TEST1 TEST2 TEST3 TEST4 TEST5 TEST6 TEST7 }

@@ -1,0 +1,3 @@
+{ 5 7 9  tor swap rfrom 2:accumulate 957 PASS }
+{ 2 3  tor  5 rfetch swap rfrom 3:accumulate 3532 PASS }
+{ TEST1 TEST2 }

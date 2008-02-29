@@ -1,0 +1,3 @@
+{  4 lshift   8 PASS }     # test lshift
+{ -4 lshift  -8 PASS }
+{ TEST1 TEST2 }
