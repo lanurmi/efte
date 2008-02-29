@@ -1107,7 +1107,12 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
                 if (!(ResultOfCommandExecution || m->cmds[i].ign)) {
                     ParamStack.empty();
                     ControlStack.empty();
-//                    sstack.empty();
+
+                    // sstack.empty();
+                    tos = sstack.size();
+                    while (tos--)
+                        sstack.pop_back();
+
                     return ErFAIL;
                 }
             }
