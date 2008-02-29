@@ -203,10 +203,9 @@ int EGUI::Xor() {
 }
 
 int EGUI::Shift() {
-    PSCHECK(1, "Shift");
+    PSCHECK(2, "Shift");
     int tos = ParamStack.pop();                         // shift count and direction
     if (tos) {
-        PSCHECK(1, "Shift");
         unsigned int nos = ParamStack.pop();            // shift value
         if (tos < 0)  {
             ParamStack.push(nos>>(-tos));
@@ -310,13 +309,13 @@ int EGUI::RFetch() {
 }
 
 int EGUI::I() {
-    CSCHECK(1, "I");
+    CSCHECK(2, "I");
     ParamStack.push(ControlStack.peek(0));
     return 1;
 }
 
 int EGUI::J() {
-    CSCHECK(3, "J");
+    CSCHECK(4, "J");
     ParamStack.push(ControlStack.peek(2));
     return 1;
 }
@@ -347,9 +346,10 @@ int DropStr() {
 
 int SwapStr() {
     int tosIdx = sstack.size();
-    if (tosIdx < 2)
+    if (tosIdx < 2) {
+        SetBranchCondition(0);
         return 0;
-
+    }
     tosIdx--;
 
     std::string tos = sstack.at(tosIdx);
@@ -440,7 +440,6 @@ int PickStr(ExState &State) {
 
 int DepthStr() {
     ParamStack.push(sstack.size());
-    SetBranchCondition(1);
     return 1;
 }
 
@@ -587,6 +586,7 @@ int MemoryDump() {
 }
 
 int MemoryStore(ExState &State) {
+    PSCHECK(2, "!");
     int loc = ParamStack.pop();
 
     if (loc > MEMORY_LIMIT) {
@@ -605,6 +605,8 @@ int MemoryStore(ExState &State) {
 }
 
 int MemoryFetch(ExState &State) {
+    PSCHECK(1, "@");
+
     int loc = ParamStack.pop();
 
     if (loc > MEMORY_LIMIT) {
@@ -630,6 +632,8 @@ int MemoryHere()  {
 }
 
 int MemoryAllot()  {
+    PSCHECK(1, "allot");
+
     int requested = ParamStack.pop();
     if (dp+requested+1024 >= MEMORY_LIMIT) {
         SetBranchCondition(0);
@@ -655,6 +659,10 @@ int EGUI::Execute(ExState &State, GxView *view) {
     PSCHECK(1, "execute");
     return ExecCommand(view, ParamStack.pop(), State);
 }
+
+
+
+
 
 int EGUI::ExecuteCommand(ExState &State, GxView *view)
 {
@@ -1096,8 +1104,12 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
             State.Pos = i+1;
             for (j=(m->cmds[i].repeat); j; --j) {
                 ResultOfCommandExecution=ExecCommand(view, m->cmds[i].u.num, State);
-                if (!(ResultOfCommandExecution || m->cmds[i].ign))
+                if (!(ResultOfCommandExecution || m->cmds[i].ign)) {
+                    ParamStack.empty();
+                    ControlStack.empty();
+//                    sstack.empty();
                     return ErFAIL;
+                }
             }
         }
         State.Pos=i;

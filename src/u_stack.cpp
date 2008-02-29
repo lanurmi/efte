@@ -29,6 +29,10 @@ CircularStack::CircularStack() {
         stack[i] = 0;
 }
 
+void CircularStack::empty() {
+    stackdepth = 0;
+}
+
 void CircularStack::push(int integer) {
     pos = (pos + 1) & STACKMASK;
     stack[pos] = integer;
@@ -81,6 +85,10 @@ Stack::Stack() {
 }
 
 void Stack::init() {
+    pos = 0;
+}
+
+void Stack::empty() {
     pos = 0;
 }
 

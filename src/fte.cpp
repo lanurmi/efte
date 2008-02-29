@@ -22,8 +22,10 @@ gid_t effgid;
 char ConfigFileName[MAXPATH] = "";
 char *StartupMacroCommand = NULL;
 
+// #include "build"
 static void Version() {
-    printf("eFTE version " VERSION " " COPYRIGHT "\n");
+//    printf("eFTE version " VERSION ", build " BUILD ", " COPYRIGHT "\n");
+    printf("eFTE version " VERSION ", " COPYRIGHT "\n");
 }
 
 static void Usage() {
@@ -102,7 +104,6 @@ static int CmdLoadConfiguration(int &argc, char **argv) {
     int QuoteAll = 0, QuoteNext = 0;
     int haveConfig = 0;
     int Arg;
-
     for (Arg = 1; Arg < argc; Arg++) {
         if (!QuoteAll && !QuoteNext && (argv[Arg][0] == '-')) {
             if (strcmp(argv[Arg], "--version") == 0 ||

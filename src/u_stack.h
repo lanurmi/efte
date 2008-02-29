@@ -23,7 +23,7 @@
 #ifndef U_CIRCSTACK_H
 #define U_CIRCSTACK_H
 // CircularStack size must be 2**n - required by the fast wrap used here.
-#define CIRCSTACKSIZE 32
+#define CIRCSTACKSIZE 128
 
 #include <vector>
 #include <string>
@@ -39,6 +39,7 @@ private:
 
 public:
     CircularStack();
+    void empty();
     void push(int integer);
     int pop();
     int peek(int offset=0);
@@ -53,7 +54,7 @@ public:
 #ifndef U_STACK_H
 #define U_STACK_H
 
-#define STACKSIZE 32
+#define STACKSIZE 128
 
 class Stack {
 private:
@@ -63,6 +64,7 @@ private:
 public:
     Stack();
     void init();
+    void empty();
     void push(int integer);
     int pop();
     int peek(int offset=0);
