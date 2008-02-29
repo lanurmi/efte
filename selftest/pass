@@ -22,3 +22,4 @@ sub pass   {
 }
 
 sub accumulate { 10 * + }
+sub emptyall  { depth$ times drop$    depth times drop }
