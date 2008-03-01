@@ -12,11 +12,14 @@
 
 #include "fte.h"
 #include "log.h"
+#include "throw.h"
 
 int LastEventChar = -1;
+int exception = 0;
 
 #define MEMORY_LIMIT 5242880
 std::vector<int> memory;
+
 
 EFrame::EFrame(int XSize, int YSize): GFrame(XSize, YSize) {
     CMap = 0;
@@ -224,10 +227,8 @@ int EGUI::Div() {
     int tos=ParamStack.pop();
 
     if (!tos) {
-         // Pop the other expected argument off so other macros
-        // don't wind up having an extra param on the stack
-        ParamStack.pop();
         ActiveView->Msg(S_ERROR, "Divide by zero, macro aborted");
+        exception = DIVZERO;
         SetBranchCondition(0);
         return 0;
     }
@@ -543,6 +544,10 @@ int MergeStr() {
     return 1;
 }
 
+
+
+
+
 int SplitStr() {
     int tos = sstack.size() - 1;
     if (tos < 0) {
@@ -558,7 +563,7 @@ int SplitStr() {
     if (pos > tosS.size()) {
         sstack.push_back("");
         sstack.push_back(tosS);
-    } else if (pos == 0) {
+    } else if (pos <= 0) {
         sstack.push_back(tosS);
         sstack.push_back("");
     } else {
@@ -569,6 +574,13 @@ int SplitStr() {
     SetBranchCondition(1);
     return 1;
 }
+
+
+
+
+
+
+
 
 // LenStr
 int LenStr(ExState &State, GxView *view) {
@@ -1168,6 +1180,9 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
                     // through this loop, execute fail, and then continue after return from ExecCommand,
                     // falling through to this fail handler again?
                     faillevel++;
+                    if (exception)
+                        fprintf(stderr,"exception %d\n", exception);
+
                     if (faillevel > 1) {
                         fprintf(stderr,"Fail condition in OnFail macro - recursive exception handler execution, level %d\n", faillevel);
                         fprintf(stderr,"OnDoubleFail hook catches this condition\n");
@@ -1180,6 +1195,7 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
                         while (tos--)
                             sstack.pop_back();
                     }
+                    exception = 0;
                     faillevel--;
                     return ErFAIL;
                 }
