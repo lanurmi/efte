@@ -27,7 +27,7 @@ sub pass   {
    " test " type$ dot33
    "wants"  type$  dot9r
    ", got"  type$  dot9r
-   type$
+   3 spaces type$
    emptyall
    cr
 }
