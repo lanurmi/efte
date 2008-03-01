@@ -1,0 +1,4 @@
+{ inc }
+{ 0 0 inc lshift lshift lshift times TEST1 dec dec dec 5 PASS }
+{ 5  0 times TEST1 dec  4 PASS }
+{ TEST2 TEST3 }
