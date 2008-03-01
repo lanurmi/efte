@@ -1,3 +1,0 @@
-{ 222 222 PASS }      # just two passing tests to test test and test that pass will pass
-{ 222 dup PASS }
-{ TEST1 TEST2 }
