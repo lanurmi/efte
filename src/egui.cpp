@@ -62,13 +62,11 @@ void EFrame::UpdateMenu() {
             NMenu = "Main";
         CMap = Map;
 
-        if (OMenu && strcmp(OMenu, NMenu) == 0) {
-            // ok
-        } else {
+        if (OMenu && strcmp(OMenu, NMenu))
             SetMenu(NMenu);
-        }
-    } /*else if (CMap == 0 && Map == 0) {
-        SetMenu("Main");
+
+    } /*else if (CMap == 0 && Map == 0) {   // will never be exeuted:  if (CMap == 0 ...) else if (CMap == 0 )
+    SetMenu("Main");
     }*/
 
     GFrame::UpdateMenu();
@@ -143,6 +141,62 @@ int ParamDepth() {
     ParamStack.push(ParamStack.size());
     return 1;
 }
+
+
+
+
+
+
+// --- virtual machine ---
+/*       for a full blown user macros system, a bit of support here will greatly speed up things.
+          this implements a virtual machine for user code and data execution (yes, data executes):
+          *** this is how our macro executor had looked like, had it been implemented using a
+          technique to transfer control between commands using "threaded code". it would have eliminated
+          the need for decoding all the special types of things to execute, and made the long
+          lists of case statements, to find out what command needs to be executed, unnecessary.
+
+          the macro executur loop itself would have been something like:
+          for (ip = macro; ; next())
+
+          or, to speed up a bit,
+          for (ip = macro; ; next())
+          { next(); next(); next(); next(); next(); next(); next(); next(); }
+          ( unroll-loops compiler optimization option could have a similar effect )
+
+
+ unsigned int ip, w;
+
+ next {
+    w = memory[ip++];
+    ExecCommand[w++];
+}
+
+ nest()  {
+    ControlStack.push(ip);
+    ip = w;
+    next();
+}
+
+ unnest() {
+    ip = ControlStack.pop();
+    next();
+ }
+
+ dodata() {
+    ParamStack.push(w);
+    next();
+}
+
+
+*/
+
+
+
+
+
+
+
+
 
 // --- arithmetic ---
 
