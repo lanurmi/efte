@@ -11,7 +11,7 @@
 eventmap MODEL {
     key       [F1]      { ViewModeMap }
     key     [C+F2]      { FileSaveAll }
-    key       [F3]      { FileOpen }
+    key       [F3]      { "" FileOpen }
     key       [F4]      { WinNext }
     key     [C+F4]      { WinHSplit }
     key     [S+F4]      { WinPrev }
