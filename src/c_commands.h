@@ -61,6 +61,8 @@ typedef enum {
     /// Divide top two stack items.
     ExRandom,
     /// generate random number.
+    ExTime,
+    /// time stamp.
 
     ExAnd,
     /// And

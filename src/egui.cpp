@@ -13,6 +13,8 @@
 #include "fte.h"
 #include "log.h"
 #include "throw.h"
+#include <sys/time.h>
+#include <time.h>
 
 int LastEventChar = -1;
 int exception = 0;
@@ -240,6 +242,14 @@ int EGUI::Div() {
 
 int EGUI::Random() {
     ParamStack.push(random());
+    return 1;
+}
+
+
+struct timeval tv;
+int EGUI::Time()  {
+    gettimeofday(&tv, NULL);
+    ParamStack.push((tv.tv_sec * 1000000 + tv.tv_usec)/1000);
     return 1;
 }
 
@@ -819,6 +829,9 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
         return Div();
     case ExRandom:
         return Random();
+    case ExTime:
+        return Time();
+
 
     case ExAnd:
         return And();
