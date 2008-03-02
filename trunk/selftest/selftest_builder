@@ -63,7 +63,7 @@ done
 echo
 
 echo "sub selftest {"
-echo -n "   \"selftest started\" type$ cr"
+echo -n  "   beforealltests" 
 
 i=0
 for SELFTEST in ${RUNTEST[*]} ; do
@@ -75,6 +75,6 @@ for SELFTEST in ${RUNTEST[*]} ; do
 done
 
 echo
-echo "   \"selftest finished\" type$ cr"
+echo "   afteralltests"
 echo "}"
 ) > ../config/selftest.fte

@@ -22,6 +22,24 @@ sub emptyall  {
    depth times drop
 }
 
+sub emptyfile {
+   movefilestart blockbegin
+   movefileend   blockend
+   blockkill }
+
+sub testfilename { var$ new }
+
+
+sub beforealltests {
+   emptyfile
+   "selftest started" type$ cr
+   }
+
+
+sub afteralltests {
+   "selftest finished" type$ cr
+   }
+
 
 sub pass   {    # ( got wants testnum -- )  ( filename$ -- )
    tor
@@ -272,7 +290,7 @@ sub test_21_2 { "ABCD" "12345" "x" "ab" "" depth$ dup times drop$ 5  21002 "stri
 sub test_21_3 { "" ?len$ 0  21003 "strings/strings1.fte" pass }
  
  # test len$
-sub test_21_4 { "12345" len$ "abc" len$ "" ?len$ "a" len$ 4:accumulate 1035  21004 "strings/strings1.fte" pass }
+sub test_21_4 { "12345" len$ "abc" len$ "" ?len$ "a" len$ 3:accumulate 1035  21004 "strings/strings1.fte" pass }
  
  # test asc / char$
 sub test_21_5 { "1" asc inc char$ 3 asc + char$ 2 asc + '7'  21005 "strings/strings1.fte" pass }
@@ -340,7 +358,7 @@ sub test_23_7 { "123" "abcd" merge$ "abcd123" equals$ true  23007 "strings/strin
 sub test_23_8 { "456" "" merge$ "456" equals$ true  23008 "strings/strings3.fte" pass }
 sub test_23_9 { "" "efg" merge$ "efg" equals$ true  23009 "strings/strings3.fte" pass }
  
-sub test_23_10 { test_23_1 test_23_2 test_23_3 test_23_4 test_23_5 test_23_6 test_23_7 test_23_8 test_23_9 }
+sub test_23_10 { test_23_1 test_23_2 test_23_3 test_23_4 test_23_5 test_23_6 test_23_7 test_23_8 }
  
 
 
@@ -349,9 +367,9 @@ sub test_24_1 { depth depth$ or 0  24001 "zzz_final.fte" pass }
 
 
 sub selftest {
-   "selftest started" type$ cr
+   beforealltests
     test_1_3 test_2_9 test_3_9 test_4_9 test_5_5 test_6_5 test_7_8 test_8_3
     test_9_3 test_10_5 test_11_12 test_12_2 test_13_3 test_14_4 test_15_5 test_16_4
     test_17_8 test_18_1 test_19_3 test_20_7 test_21_17 test_22_10 test_23_10 test_24_1
-   "selftest finished" type$ cr
+   afteralltests
 }
