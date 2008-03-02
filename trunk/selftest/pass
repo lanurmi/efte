@@ -14,6 +14,7 @@ sub emptyall  {
    depth times drop
 }
 
+sub testfilename { var$ new }
 
 sub pass   {    # ( got wants testnum -- )  ( filename$ -- )
    tor
@@ -26,5 +27,6 @@ sub pass   {    # ( got wants testnum -- )  ( filename$ -- )
    ", got"  type$ 9 dotr
    3 spaces type$ cr
    emptyall
+   filesave
 }
 

@@ -138,7 +138,10 @@ int EGUI::Diag(ExState &State) {
             fprintf(stderr, "%i ", ParamStack.peek(--i));
     else
         fprintf(stderr, "empty");
-    fprintf(stderr, "\n");
+
+    if (verbosity <= 1)                  // don't linefeed if verbosity >1:  command trace will advance.
+        fprintf(stderr, "\n");
+
     return 1;
 }
 
@@ -252,6 +255,24 @@ int EGUI::Time()  {
     ParamStack.push((tv.tv_sec * 1000000 + tv.tv_usec)/1000);
     return 1;
 }
+
+
+
+// sleep for <tos> milliseconds
+int EGUI::Ms()  {
+    int tos=ParamStack.pop();
+    int nos=tos % 1000;
+    tos /= 1000;
+    if (tos)
+        sleep(tos);
+/*    if (nos)
+        nanosleep(nos*1000000);
+*/
+    return 1;
+}
+
+
+
 
 
 // --- bits ---
@@ -444,7 +465,8 @@ int DiagStr(ExState &State) {
     else
         fprintf(stderr, "empty");
 
-    fprintf(stderr, "\n");
+    if (verbosity <= 1)                 // don't linefeed if verbosity >1:  command trace will advance.
+        fprintf(stderr, "\n");
     return 1;
 }
 
@@ -745,6 +767,59 @@ int EGUI::Execute(ExState &State, GxView *view) {
 
 
 
+// -----------------------------------------------------------------------------------------------------------
+
+
+void StackTrace()  {
+    if (verbosity > 1) {
+
+        // Param Stack
+        for (int idx=ParamStack.size()-1; idx > -1; idx--)
+            fprintf(stderr, "%i ", ParamStack.peek(idx));
+
+        // String Stack
+        fprintf(stderr, "   ");
+
+        for (int idx=sstack.size()-1; idx > -1; idx--) {
+            std::size_t  found=std::string::npos;
+            std::string s = sstack[idx];
+            while((found = s.find("\n")) != std::string::npos)
+                s.replace(found, 1, "\\n");
+            while((found = s.find("\r")) != std::string::npos)
+                s.replace(found, 1, "\\r");
+            fprintf(stderr, "'%s' ", s.c_str());
+        }
+        fprintf(stderr, "\n");
+    }
+}
+
+
+
+
+#define INDENT 3
+unsigned int indent = 0;
+
+void Dodent()  {
+    fprintf(stderr, "\n");
+    int i = indent;
+    for ( ; i>1; i--) {
+        fprintf(stderr, "|");
+        int j = INDENT-1;
+        for ( ;j ;j--)
+            fprintf(stderr, " ");
+
+    }
+}
+
+void Redent(int change)  { indent += change; }
+void Nodent()            { indent=0; }
+void Indent()            { Redent(1);  }
+void Undent()            { Redent(-1); }
+
+
+
+
+
 
 
 int EGUI::ExecuteCommand(ExState &State, GxView *view)
@@ -765,26 +840,25 @@ int EGUI::ExecuteCommand(ExState &State, GxView *view)
     }
 
     return ExecCommand(view, command, State);
+
 }
 
+
+
+
 int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
+    // somehow stack display is behind the wrong command.
+    // more intuitive would be:
+    //     command        stack after command has been executed
+    // but it is:
+    //     command        stack before command execution
+    // i'll try to split this, and keep only execution trace here for now,
+    // looking for a place where to stick in stack dump after command has executed.
+    // what i don't quite manage to do is to align stack display, after command name has been printed.
+
     if (verbosity > 1) {
-        // Command name
-        fprintf(stderr, "%-15s: ", GetCommandName(Command));
-        // Param Stack
-        for (int idx=ParamStack.size()-1; idx > -1; idx--)
-            fprintf(stderr, "%i=%i ", idx, ParamStack.peek(idx));
-        // String Stack
-        for (int idx=sstack.size()-1; idx > -1; idx--) {
-            std::size_t  found=std::string::npos;
-            std::string s = sstack[idx];
-            while((found = s.find("\n")) != std::string::npos)
-                s.replace(found, 1, "\\n");
-            while((found = s.find("\r")) != std::string::npos)
-                s.replace(found, 1, "\\r");
-            fprintf(stderr, "%i='%s' ", idx, s.c_str());
-        }
-        fprintf(stderr, "\n");
+        Dodent();
+        fprintf(stderr, "%-15s ", GetCommandName(Command));
     }
 
     if (Command & CMD_EXT) {
@@ -831,6 +905,8 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
         return Random();
     case ExTime:
         return Time();
+    case ExMs:
+        return Ms();
 
 
     case ExAnd:
@@ -1013,6 +1089,7 @@ unsigned int doesindex = 0;
 int faillevel = 0;
 
 int EGUI::ExecMacro(GxView *view, int Macro) {
+    Indent();
     STARTFUNC("EGUI::ExecMacro");
 
     int i, j, tos, rtos, rnos, ResultOfCommandExecution;
@@ -1193,13 +1270,15 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
                     // interesting ... executed twice on Fail .. does ExecCommand (two lines above) run
                     // through this loop, execute fail, and then continue after return from ExecCommand,
                     // falling through to this fail handler again?
-                    faillevel++;
-                    if (exception)
-                        fprintf(stderr,"*** exception %d ***\n", exception);
+                    if (verbosity > 1)                 // new line because command/stack display on same line
+                        Nodent();                      // reset indent level - fail can happen on any level.
+                    if (exception || verbosity > 1)
+                        fprintf(stderr,"\n*** exception %d ***", exception);
 
+                    faillevel++;
                     if (faillevel > 1) {
-                        fprintf(stderr,"Fail condition in OnFail macro - recursive exception handler execution, level %d\n", faillevel);
-                        fprintf(stderr,"OnDoubleFail hook catches this condition\n");
+                        fprintf(stderr,"\nFail condition in OnFail macro - recursive exception handler execution, level %d", faillevel);
+                        fprintf(stderr,"\nOnDoubleFail hook catches this condition\n");
                         ActiveView->ExecMacro("OnDoubleFail");
                     } else {
                         ActiveView->ExecMacro("OnFail");
@@ -1217,6 +1296,7 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
         }
         State.Pos=i;
     }
+    Undent();
     ENDFUNCRC(ErOK);
 }
 

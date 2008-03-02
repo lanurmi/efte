@@ -40,6 +40,7 @@ const struct {
     { ExDiv, "/" },
     TAB(Random),
     TAB(Time),
+    TAB(Ms),
 
     TAB(And),
     TAB(Or),
