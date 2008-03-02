@@ -11,7 +11,9 @@
 { 0 -20 -10 do i + 2 minloop -70 PASS }
 { 0 -20 -10 do i + -2 plusloop -90 PASS }
 
+{ 1 5 1 do 4 1 do i * j + loop loop 4396 PASS }
 
 { TEST1  TEST2  TEST3  TEST4  TEST5
-  TEST6  TEST7  TEST8  TEST9  TEST10 }
+  TEST6  TEST7  TEST8  TEST9  TEST10
+  TEST11 }
   
