@@ -313,6 +313,7 @@ int EGUI::Flag() {
 }
 
 int EGUI::Abort() {
+    exception = ABORTED;
     return 0;
 }
 
@@ -1181,7 +1182,7 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
                     // falling through to this fail handler again?
                     faillevel++;
                     if (exception)
-                        fprintf(stderr,"exception %d\n", exception);
+                        fprintf(stderr,"*** exception %d ***\n", exception);
 
                     if (faillevel > 1) {
                         fprintf(stderr,"Fail condition in OnFail macro - recursive exception handler execution, level %d\n", faillevel);
