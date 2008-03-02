@@ -14,7 +14,24 @@ sub emptyall  {
    depth times drop
 }
 
+sub emptyfile {
+   movefilestart blockbegin
+   movefileend   blockend
+   blockkill }
+
 sub testfilename { var$ new }
+
+
+sub beforealltests {
+   emptyfile
+   "selftest started" type$ cr
+   }
+
+
+sub afteralltests {
+   "selftest finished" type$ cr
+   }
+
 
 sub pass   {    # ( got wants testnum -- )  ( filename$ -- )
    tor

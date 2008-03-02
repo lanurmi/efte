@@ -67,13 +67,9 @@ void EFrame::UpdateMenu() {
             NMenu = "Main";
         CMap = Map;
 
-        if (!OMenu || strcmp(OMenu, NMenu) != 0)
+        if ( !(OMenu) || strcmp(OMenu, NMenu))
             SetMenu(NMenu);
-
-    } /*else if (CMap == 0 && Map == 0) {   // will never be exeuted:  if (CMap == 0 ...) else if (CMap == 0 )
-    SetMenu("Main");
-    }*/
-
+    }
     GFrame::UpdateMenu();
 }
 
@@ -1266,12 +1262,12 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
             State.Pos = i+1;
             for (j=(m->cmds[i].repeat); j; --j) {
                 ResultOfCommandExecution=ExecCommand(view, m->cmds[i].u.num, State);
+
                 if (!(ResultOfCommandExecution || m->cmds[i].ign)) {
                     // interesting ... executed twice on Fail .. does ExecCommand (two lines above) run
                     // through this loop, execute fail, and then continue after return from ExecCommand,
                     // falling through to this fail handler again?
-                    if (verbosity > 1)                 // new line because command/stack display on same line
-                        Nodent();                      // reset indent level - fail can happen on any level.
+
                     if (exception || verbosity > 1)
                         fprintf(stderr,"\n*** exception %d ***", exception);
 
@@ -1288,6 +1284,9 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
                         while (tos--)
                             sstack.pop_back();
                     }
+                    if (verbosity > 1)                 // new line because command/stack display on same line
+                        Nodent();                      // reset indent level - fail can happen on any level.
+
                     exception = 0;
                     faillevel--;
                     return ErFAIL;
