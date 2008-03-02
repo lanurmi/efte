@@ -67,7 +67,7 @@ void EFrame::UpdateMenu() {
             NMenu = "Main";
         CMap = Map;
 
-        if (OMenu && strcmp(OMenu, NMenu))
+        if (!OMenu || strcmp(OMenu, NMenu) != 0)
             SetMenu(NMenu);
 
     } /*else if (CMap == 0 && Map == 0) {   // will never be exeuted:  if (CMap == 0 ...) else if (CMap == 0 )
