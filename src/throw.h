@@ -4,7 +4,8 @@
 
 */
 
-#define STACKUNDERFLOW -4          // param stack underflow
+#define ABORTED              -1    // aborted
+#define STACKUNDERFLOW       -4    // param stack underflow
 #define RETURNSTACKUNDERFLOW -6    // return stack underflow
 #define DICTOVERFLOW         -8    // dictionary overflow
 #define INVALIDADDR          -9    // invalid memory address
