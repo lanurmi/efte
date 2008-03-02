@@ -22,10 +22,14 @@ gid_t effgid;
 char ConfigFileName[MAXPATH] = "";
 char *StartupMacroCommand = NULL;
 
-// #include "build"
+#include "build.h"
 static void Version() {
-//    printf("eFTE version " VERSION ", build " BUILD ", " COPYRIGHT "\n");
+#ifdef BUILD
+    printf("eFTE version " VERSION ", build " BUILD ", " COPYRIGHT "\n");
+#else
     printf("eFTE version " VERSION ", " COPYRIGHT "\n");
+#endif
+
 }
 
 static void Usage() {
