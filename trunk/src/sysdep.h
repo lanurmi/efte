@@ -49,6 +49,9 @@
 #    define strnicmp strncasecmp
 #    define stricmp strcasecmp
 #    define filecmp strcmp
+#    define HAVE_GETTIMEOFDAY
+
+
 //#    define memicmp strncasecmp   // FIX, fails for nulls
 extern "C" int memicmp(const void *s1, const void *s2, size_t n);
 #endif
