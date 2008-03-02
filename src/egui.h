@@ -65,6 +65,7 @@ public:
     int Div();
     int Random();
     int Time();
+    int Ms();
 
     int And();
     int Or();

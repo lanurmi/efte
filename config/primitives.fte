@@ -255,8 +255,16 @@ sub fetch$    {                                 # ( a -- ) transfers the string 
       count char$ merge$
    loop drop }
 
-sub var$ { here dup len$ inc dup inc comma allot } # string var description.
+#sub var$ { here dup len$ inc dup inc comma allot } # string var description.
 # (varsize) (strlen) (char) (char) (char) ...
+
+sub var$ {
+   here              diag diag$  "A " 2 print
+   dup$ len$ inc     diag diag$  "B " 2 print
+   dup inc comma     diag diag$  "C " 2 print
+   allot             diag diag$  "D " 2 print
+   dup store$        diag diag$  "E " 2 print
+   }
 
 
 

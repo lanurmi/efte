@@ -63,6 +63,8 @@ typedef enum {
     /// generate random number.
     ExTime,
     /// time stamp.
+    ExMs,
+    /// sleep for <tos> milliseconds
 
     ExAnd,
     /// And
