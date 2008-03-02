@@ -14,21 +14,17 @@ sub emptyall  {
    depth times drop
 }
 
-sub dot9r { 9 dotr }      # ( n -- ) space padded right aligned 9 chars signed number out
 
-sub pass   {
+sub pass   {    # ( got wants testnum -- )  ( filename$ -- )
    tor
-   dup2 equals
-   depth depth$ accumulate  
-   13 equals and if            "PASS" type$
-   else                        "FAIL" type$
-   endif 
+      dup2 equals
+      depth depth$ accumulate 13 equals and
+      if "PASS" else "FAIL" endif type$
    rfrom 
    " test " type$ dot33
-   "wants"  type$  dot9r
-   ", got"  type$  dot9r
-   3 spaces type$
+   "wanted" type$ 9 dotr
+   ", got"  type$ 9 dotr
+   3 spaces type$ cr
    emptyall
-   cr
 }
 
