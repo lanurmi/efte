@@ -174,9 +174,7 @@ int Hilit_SH(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, 
                 break;
             case hsSH_SQuote:
                 Color = CLR_String;
-                if ((len >= 2) && (*p == '\\'))
-                    j++;
-                else if (*p == '\'')
+                if (*p == '\'')
                     State = hsSH_Normal;
                 break;
             case hsSH_DQuote:
