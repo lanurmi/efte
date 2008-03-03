@@ -22,16 +22,17 @@ sub emptyall  {
    depth times drop
 }
 
-sub emptyfile {
+sub emptybuffer {
    movefilestart blockbegin
-   movefileend   blockend
-   blockkill }
+   movefileend    blockend
+   blockkill                # fails if buffer empty. force to continue
+}
 
 sub testfilename { var$ new }
 
 
 sub beforealltests {
-   emptyfile
+   emptybuffer
    "selftest started" type$ cr
    }
 
