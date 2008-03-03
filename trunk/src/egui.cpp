@@ -19,6 +19,11 @@
 int LastEventChar = -1;
 int exception = 0;
 
+int nestlevel = 0;
+#define NEST "(nestlevel++)"
+#define UNNEST "(--nestlevel)"
+
+
 #define MEMORY_LIMIT 5242880
 std::vector<int> memory;
 
@@ -347,7 +352,7 @@ int Flag() {
     return 1;
 }
 
-int Abort() {
+int Fail() {
     exception = ABORTED;
     return 0;
 }
@@ -768,7 +773,10 @@ int Tick() {
 
 int EGUI::Execute(ExState &State, GxView *view) {
     PSCHECK(1, "execute");
-    return ExecCommand(view, ParamStack.pop(), State);
+    NEST;
+    int ret = ExecCommand(view, ParamStack.pop(), State);
+    UNNEST;
+    return ret;
 }
 
 
@@ -871,10 +879,6 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
         return ExecMacro(view, Command & ~CMD_EXT);
     }
 
-    if (Command == ExFail) {
-        return ErFAIL;
-    }
-
     // Commands that will run regardless of a View or Buffer
     switch (Command) {
     case ExDepth:
@@ -930,8 +934,8 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
         return Less();
     case ExFlag:
         return Flag();
-    case ExAbort:
-        return Abort();
+    case ExFail:
+        return Fail();
 
     case ExDup:
         return Dup();

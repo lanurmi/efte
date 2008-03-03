@@ -1,8 +1,8 @@
 { here 5 allot here -  -5 PASS }
-{ here dup dup 100 + store here swap PASS }
-{ here dup 6 1 do i over store inc loop drop
+{ here dup dup 100 + ! here swap PASS }
+{ here dup 6 1 do i over ! inc loop drop
            6 1 do 1 allot loop
-         0 6 1 do tor count rfrom + loop nip
+         0 6 1 do >r count r> + loop nip
          15 PASS }
 
 { TEST1 TEST2 TEST3 }

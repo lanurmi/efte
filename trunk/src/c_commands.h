@@ -21,7 +21,6 @@ typedef enum {
     // { decoded in executor loop
     ExNop,
     //    { accessing macro internals one way or another
-    ExFail,
     ExUnconditionalBranch,
     /// unconditional branch, offset from command repeat count
     ExConditionalBranch,
@@ -84,7 +83,7 @@ typedef enum {
     /// Compare top two stack items for less than.
     ExFlag,
     /// Reflect condition register in [[Tos]].
-    ExAbort,
+    ExFail,
     /// Return last condition from register, causing macro interpreter
     /// to terminate macro execution if condition was a failure.
     ExDup,

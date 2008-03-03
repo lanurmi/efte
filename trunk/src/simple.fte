@@ -155,7 +155,7 @@ keyword 'Editor_Keywords' {
 'color_palette',
 };
 keyword 'Editor_Keywords2' {
-'Abort','Activate','ActivateInOtherWindow','And','ASCIITable',
+'Activate','ActivateInOtherWindow','And','ASCIITable',
 'BackSpace','BlockBegin','BlockCaseDown','BlockCaseToggle','BlockCaseUp',
 'BlockClear','BlockCopy','BlockCopyAppend','BlockCut',
 'BlockCutAppend','BlockEnd','BlockEnTab','BlockExtendBegin',
