@@ -203,27 +203,26 @@ int ParamDepth() {
 
 
 // --- arithmetic ---
-
-int EGUI::Plus() {
+int Plus() {
     PSCHECK(2, "Plus");
     ParamStack.push(ParamStack.pop()+ParamStack.pop());
     return 1;
 }
 
-int EGUI::Minus() {
+int Minus() {
     PSCHECK(2, "Minus");
     int tos=ParamStack.pop();
     ParamStack.push(+ParamStack.pop()-tos);
     return 1;
 }
 
-int EGUI::Mul() {
+int Mul() {
     PSCHECK(2, "Mul");
     ParamStack.push(ParamStack.pop()*ParamStack.pop());
     return 1;
 }
 
-int EGUI::Div() {
+int Div() {
     PSCHECK(2, "Div)");
     int tos=ParamStack.pop();
 
@@ -239,59 +238,68 @@ int EGUI::Div() {
     return 1;
 }
 
-int EGUI::Random() {
+int Random() {
     ParamStack.push(random());
     return 1;
 }
 
 
 struct timeval tv;
-int EGUI::Time()  {
+int Millisecs()  {         // wraps every 49d 17h 2m 47s
     gettimeofday(&tv, NULL);
-    ParamStack.push((tv.tv_sec * 1000000 + tv.tv_usec)/1000);
+    ParamStack.push((tv.tv_sec * 1000 + tv.tv_usec)/1000);
     return 1;
 }
 
+int Microsecs()  {         // wraps every 1h 11m 34s
+    gettimeofday(&tv, NULL);
+    ParamStack.push((tv.tv_sec * 1000000 + tv.tv_usec));
+    return 1;
+}
+
+// for longer intervals, if needed, secs would wrap
+// every 136y 144d 23296s. will be provided on user request.
 
 
+/*
 // sleep for <tos> milliseconds
-int EGUI::Ms()  {
+int Ms()  {
     int tos=ParamStack.pop();
-    int nos=tos % 1000;
+   int nos=tos % 1000;
     tos /= 1000;
     if (tos)
         sleep(tos);
-/*    if (nos)
+    if (nos)
         nanosleep(nos*1000000);
-*/
+
     return 1;
 }
-
+*/
 
 
 
 
 // --- bits ---
 
-int EGUI::And() {
+int And() {
     PSCHECK(2, "And");
     ParamStack.push(ParamStack.pop() & ParamStack.pop());
     return 1;
 }
 
-int EGUI::Or() {
+int Or() {
     PSCHECK(2, "Or");
     ParamStack.push(ParamStack.pop() | ParamStack.pop());
     return 1;
 }
 
-int EGUI::Xor() {
+int Xor() {
     PSCHECK(2, "Xor");
     ParamStack.push(ParamStack.pop() ^ ParamStack.pop());
     return 1;
 }
 
-int EGUI::Shift() {
+int Shift() {
     PSCHECK(2, "Shift");
     int tos = ParamStack.pop();                         // shift count and direction
     if (tos) {
@@ -309,7 +317,7 @@ int EGUI::Shift() {
 // --- comparison ---
 
 // replace top two stack items against identity flag
-int EGUI::Equals() {
+int Equals() {
     PSCHECK(2, "Equals");
     ParamStack.push(-(ParamStack.pop() == ParamStack.pop()));
     return 1;
@@ -317,7 +325,7 @@ int EGUI::Equals() {
 
 // true if 2nd item less than top item:
 //  3 4 Less   ( true )
-int EGUI::Less() {
+int Less() {
     PSCHECK(2, "Less");
     ParamStack.push(-(ParamStack.pop() > ParamStack.pop()));
     return 1;
@@ -332,45 +340,45 @@ int EGUI::Less() {
 // to use or ignore as we see fit.
 // as soon we need one of the last n result flags, each
 // execution of Flag delivers the next, back into history.
-int EGUI::Flag() {
+int Flag() {
     // TODO: warning C4146: unary minus operator applied to unsigned type, result still unsigned
     ParamStack.push(-(int)(BranchCondition & 1));
     BranchCondition = (BranchCondition >> 1);
     return 1;
 }
 
-int EGUI::Abort() {
+int Abort() {
     exception = ABORTED;
     return 0;
 }
 
 // --- stack ---
 
-int EGUI::Dup() {
+int Dup() {
     PSCHECK(1, "Dup");
     ParamStack.dup();
     return 1;
 }
 
-int EGUI::Drop() {
+int Drop() {
     PSCHECK(1, "Drop");
     ParamStack.pop();
     return 1;
 }
 
-int EGUI::Swap() {
+int Swap() {
     PSCHECK(2, "Swap");
     ParamStack.swap();
     return 1;
 }
 
-int EGUI::Over() {
+int Over() {
     PSCHECK(2, "Over");
     ParamStack.push(ParamStack.peek(1));
     return 1;
 }
 
-int EGUI::Rot() {
+int Rot() {
     PSCHECK(3, "Rot");
     int tos = ParamStack.pop();
     ParamStack.swap();
@@ -380,35 +388,37 @@ int EGUI::Rot() {
 }
 
 // --- stack2 ---
-int EGUI::ToR() {
+int ToR() {
     PSCHECK(1, "ToR");
     ControlStack.push(ParamStack.pop());
     return 1;
 }
 
-int EGUI::RFrom() {
+int RFrom() {
     CSCHECK(1, "RFrom");
     ParamStack.push(ControlStack.pop());
     return 1;
 }
 
-int EGUI::RFetch() {
+int RFetch() {
     CSCHECK(1, "RFetch");
     ParamStack.push(ControlStack.peek(0));
     return 1;
 }
 
-int EGUI::I() {
+int I() {
     CSCHECK(2, "I");
     ParamStack.push(ControlStack.peek(0));
     return 1;
 }
 
-int EGUI::J() {
+int J() {
     CSCHECK(4, "J");
     ParamStack.push(ControlStack.peek(2));
     return 1;
 }
+
+// --- string stack ---
 
 int DupStr() {
     if (sstack.size() == 0) {
@@ -899,10 +909,10 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
         return Div();
     case ExRandom:
         return Random();
-    case ExTime:
-        return Time();
-    case ExMs:
-        return Ms();
+    case ExMillisecs:
+        return Millisecs();
+    case ExMicrosecs:
+        return Microsecs();
 
 
     case ExAnd:
@@ -1074,8 +1084,7 @@ int EGUI::BeginMacro(GxView *view) {
 int EGUI::ExecMacro(GxView *view, const char *name) {
     int num = MacroNum(name);
     if (num == 0) return 1;
-    int result = ExecMacro(view, num);
-    return result;
+    return ExecMacro(view, num);
 }
 
 
@@ -1289,6 +1298,8 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
 
                     exception = 0;
                     faillevel--;
+
+                    fprintf(stderr,"\nReturning from fail handler with fail code: %d\n", ErFAIL);
                     return ErFAIL;
                 }
             }
@@ -1368,9 +1379,10 @@ void EGUI::DispatchKey(GxView *view, TEvent &Event) {
                     return ;
                 } else {
                     SetMap(0, &key->fKey);
-                    ExecMacro(view, key->Cmd);
+                    if (ExecMacro(view, key->Cmd) == ErFAIL)
+                        fprintf(stderr,"continues after fail at DispatchKey 1 - fail condition is lost here");
                     Event.What = evNone;
-                    return ;
+                    return;
                 }
             }
             map = map->fParent;
@@ -1389,9 +1401,10 @@ void EGUI::DispatchKey(GxView *view, TEvent &Event) {
                     Event.What = evNone;
                     return ;
                 } else {
-                    ExecMacro(view, key->Cmd);
+                    if (ExecMacro(view, key->Cmd) == ErFAIL)
+                        fprintf(stderr,"continues after fail at DispatchKey 2 - fail conditions is lost here");
                     Event.What = evNone;
-                    return ;
+                    return;
                 }
             }
         }
@@ -1415,8 +1428,10 @@ void EGUI::DispatchCommand(GxView *view, TEvent &Event) {
         Event.What = evNone;
     } else if (Event.Msg.Command >= 65536) {
         Event.Msg.Command -= 65536;
-        ExecMacro(view, Event.Msg.Command);
+        if (ExecMacro(view, Event.Msg.Command) == ErFAIL)
+            fprintf(stderr,"continues after fail at DispatchCommand 1 - fail condition is lost here");
         Event.What = evNone;
+        return;
     }
 }
 
@@ -1818,7 +1833,7 @@ int EGUI::FrameNew() {
     frames->Show();
 
     int res = ExecMacro(view, "OnFrameNew");
-    SetBranchCondition(res);
+     SetBranchCondition(res);
     return res;
 }
 
@@ -1850,7 +1865,7 @@ int EGUI::FrameNext(GxView * View) {
         res = ExecMacro(View, "OnFrameNext");
     }
 
-    SetBranchCondition(res);
+    // SetBranchCondition(res); // why return fail (res=0) almost always?
     return res;
 }
 
@@ -1863,7 +1878,7 @@ int EGUI::FramePrev(GxView *View) {
         res = ExecMacro(View, "OnFramePrev");
     }
 
-    SetBranchCondition(res);
+    // SetBranchCondition(res);   // why return fail (res=0) almost always?
     return res;
 }
 

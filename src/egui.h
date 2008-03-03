@@ -58,37 +58,6 @@ public:
 
     virtual void DispatchEvent(GFrame *frame, GView *view, TEvent &Event);
 
-    // Stack related
-    int Plus();
-    int Minus();
-    int Mul();
-    int Div();
-    int Random();
-    int Time();
-    int Ms();
-
-    int And();
-    int Or();
-    int Xor();
-    int Shift();
-
-    int Equals();
-    int Less();
-    int Flag();
-    int Abort();
-
-    int Dup();
-    int Drop();
-    int Swap();
-    int Over();
-    int Rot();
-
-    int ToR();
-    int RFrom();
-    int RFetch();
-    int I();
-    int J();
-
     int Diag(ExState &State);
     int Execute(ExState &State, GxView *view);
     int ExecuteCommand(ExState &State, GxView *view);

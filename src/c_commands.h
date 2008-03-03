@@ -18,15 +18,14 @@ typedef enum {
 
 typedef enum {
     //!Non macro commands
+    // { decoded in executor loop
     ExNop,
+    //    { accessing macro internals one way or another
     ExFail,
     ExUnconditionalBranch,
     /// unconditional branch, offset from command repeat count
     ExConditionalBranch,
     /// conditional branch, offset from command repeat count
-
-    //*** START
-
     ExDoRuntime,
     /// macro run time code associate with DO
     ExLoopRuntime,
@@ -43,8 +42,12 @@ typedef enum {
     /// excuted by "converted" data structure accessor, to publish data location
     ExNew,
     /// converts a sub to a data structure accessor
+    //    }
+    // }
+    //*** START
+
     ExDoes,
-    /// seperates instance creation time code from instance run time code
+    /// seperates instance creation time code from instance run time code, signaling "new" where to find it. used in classes
 
     //!Stack Operations
     ExDepth,
@@ -59,12 +62,13 @@ typedef enum {
     /// Multiply top two stack items.
     ExDiv,
     /// Divide top two stack items.
+
     ExRandom,
     /// generate random number.
-    ExTime,
-    /// time stamp.
-    ExMs,
-    /// sleep for <tos> milliseconds
+    ExMillisecs,
+    /// time stamp, returning milliseconds
+    ExMicrosecs,
+    /// time stamp, returning microseconds
 
     ExAnd,
     /// And
