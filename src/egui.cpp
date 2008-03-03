@@ -247,7 +247,7 @@ int Random() {
 struct timeval tv;
 int Millisecs()  {         // wraps every 49d 17h 2m 47s
     gettimeofday(&tv, NULL);
-    ParamStack.push((tv.tv_sec * 1000 + tv.tv_usec)/1000);
+    ParamStack.push(tv.tv_sec * 1000 + tv.tv_usec/1000);
     return 1;
 }
 
