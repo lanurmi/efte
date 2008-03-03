@@ -43,11 +43,11 @@ sub afteralltests {
 
 
 sub pass   {    # ( got wants testnum -- )  ( filename$ -- )
-   tor
+   >r
       dup2 equals
       depth depth$ accumulate 13 equals and
       if "PASS" else "FAIL" endif type$
-   rfrom 
+   r>
    " test " type$ dot33
    "wanted" type$ 9 dotr
    ", got"  type$ 9 dotr
@@ -165,13 +165,13 @@ sub test_11_2 { 0 200 100 do i + i 150 equals if leave endif inc loop lshift 128
 sub test_11_3 { 10 20 20 do inc inc inc loop dec 9  11003 "flowcontrol/doloop.fte" pass }
 sub test_11_4 { 20 0 0 do dec dec dec loop inc 21  11004 "flowcontrol/doloop.fte" pass }
  
-sub test_11_5 { 0 20 10 do i + 3 plusloop 58  11005 "flowcontrol/doloop.fte" pass }
-sub test_11_6 { 0 -20 -10 do i + 3 minloop -58  11006 "flowcontrol/doloop.fte" pass }
-sub test_11_7 { 0 -20 -10 do i + -3 plusloop -58  11007 "flowcontrol/doloop.fte" pass }
+sub test_11_5 { 0 20 10 do i + 3 +loop 58  11005 "flowcontrol/doloop.fte" pass }
+sub test_11_6 { 0 -20 -10 do i + 3 -loop -58  11006 "flowcontrol/doloop.fte" pass }
+sub test_11_7 { 0 -20 -10 do i + -3 +loop -58  11007 "flowcontrol/doloop.fte" pass }
  
-sub test_11_8 { 0 20 10 do i + 2 plusloop 70  11008 "flowcontrol/doloop.fte" pass }
-sub test_11_9 { 0 -20 -10 do i + 2 minloop -70  11009 "flowcontrol/doloop.fte" pass }
-sub test_11_10 { 0 -20 -10 do i + -2 plusloop -90  11010 "flowcontrol/doloop.fte" pass }
+sub test_11_8 { 0 20 10 do i + 2 +loop 70  11008 "flowcontrol/doloop.fte" pass }
+sub test_11_9 { 0 -20 -10 do i + 2 -loop -70  11009 "flowcontrol/doloop.fte" pass }
+sub test_11_10 { 0 -20 -10 do i + -2 +loop -90  11010 "flowcontrol/doloop.fte" pass }
  
 sub test_11_11 { 1 5 1 do 4 1 do i * j + loop loop 4396  11011 "flowcontrol/doloop.fte" pass }
  
@@ -200,19 +200,19 @@ sub test_14_4 { test_14_2 test_14_3 }
 
 
 # 15 - flowcontrol/whileuntilagain.fte
-sub test_15_1 { 50 6 inc begin lshift dec dup2 less if exit endif dec again drop 0 }
+sub test_15_1 { 50 6 inc begin lshift dec dup2 < if exit endif dec again drop 0 }
 sub test_15_2 { test_15_1 + 133  15002 "flowcontrol/whileuntilagain.fte" pass }
-sub test_15_3 { 200 3 lshift begin dec lshift dup2 more while dec lshift repeat + 714  15003 "flowcontrol/whileuntilagain.fte" pass }
-sub test_15_4 { 100 2 inc begin lshift inc dup2 less until + 227  15004 "flowcontrol/whileuntilagain.fte" pass }
+sub test_15_3 { 200 3 lshift begin dec lshift dup2 > while dec lshift repeat + 714  15003 "flowcontrol/whileuntilagain.fte" pass }
+sub test_15_4 { 100 2 inc begin lshift inc dup2 < until + 227  15004 "flowcontrol/whileuntilagain.fte" pass }
 sub test_15_5 { test_15_2 test_15_3 test_15_4 }
 
 
 # 16 - memory.fte
 sub test_16_1 { here 5 allot here - -5  16001 "memory.fte" pass }
-sub test_16_2 { here dup dup 100 + store here swap  16002 "memory.fte" pass }
-sub test_16_3 { here dup 6 1 do i over store inc loop drop
+sub test_16_2 { here dup dup 100 + ! here swap  16002 "memory.fte" pass }
+sub test_16_3 { here dup 6 1 do i over ! inc loop drop
  6 1 do 1 allot loop
- 0 6 1 do tor count rfrom + loop nip
+ 0 6 1 do >r count r> + loop nip
  15  16003 "memory.fte" pass }
  
 sub test_16_4 { test_16_1 test_16_2 test_16_3 }
@@ -234,8 +234,8 @@ sub test_18_1 { 2 0 qdup swap qdup 10 * + 10 * + 220  18001 "stack/qdup.fte" pas
 
 
 # 19 - stack/rfromtor.fte
-sub test_19_1 { 5 7 9 tor swap rfrom 2:accumulate 957  19001 "stack/rfromtor.fte" pass }
-sub test_19_2 { 2 3 tor 5 rfetch swap rfrom 3:accumulate 3532  19002 "stack/rfromtor.fte" pass }
+sub test_19_1 { 5 7 9 >r swap r> 2:accumulate 957  19001 "stack/rfromtor.fte" pass }
+sub test_19_2 { 2 3 >r 5 r@ swap r> 3:accumulate 3532  19002 "stack/rfromtor.fte" pass }
 sub test_19_3 { test_19_1 test_19_2 }
 
 

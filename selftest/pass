@@ -35,11 +35,11 @@ sub afteralltests {
 
 
 sub pass   {    # ( got wants testnum -- )  ( filename$ -- )
-   tor
+   >r
       dup2 equals
       depth depth$ accumulate 13 equals and
       if "PASS" else "FAIL" endif type$
-   rfrom 
+   r>
    " test " type$ dot33
    "wanted" type$ 9 dotr
    ", got"  type$ 9 dotr

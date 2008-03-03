@@ -432,8 +432,8 @@ static const OrdLookup ConditionalKW[] = {
     { "Again",COND_AGAIN },
     { "Do",COND_DO },
     { "Loop",COND_LOOP },
-    { "PlusLoop",COND_PLUSLOOP },
-    { "MinLoop",COND_MINLOOP },
+    { "+Loop",COND_PLUSLOOP },
+    { "-Loop",COND_MINLOOP },
     { "Leave", COND_LEAVE },
     { 0, 0 },
 };
@@ -847,7 +847,7 @@ static int ParseCommands(CurPos &cp, char *Name) {
             } else {
                 Command = Lookup(ConditionalKW, cmd);
                 if (Command == -1) {
-                    CFteCompileCommand(cp, ExAbort, 1, 0);
+                    CFteCompileCommand(cp, ExFail, 1, 0);
                     fprintf(stderr,"Unrecognized command: %s at %s:%i\n", cmd, cp.name, cp.line);
                     // Fail(cp, "Unrecognized command: %s", cmd);
                 }

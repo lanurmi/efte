@@ -23,12 +23,11 @@ const struct {
     const char *Name;
 } Command_Table[] = {
     TAB(Nop),
-    TAB(Fail),
 
-    { ExDepth, "depth" },
     TAB(Exit),
-    TAB(Fetch),
-    TAB(Store),
+    { ExDepth, "depth" },
+    { ExFetch, "@" },
+    { ExStore, "!" },
     TAB(MemEnd),
     TAB(Here),
     TAB(Allot),
@@ -48,12 +47,11 @@ const struct {
     TAB(Xor),
     TAB(Shift),
 
-    TAB(Equals),
-    { ExEquals, "="},
-    TAB(Less),
+    { ExEquals, "equals"},
+    // { ExEquals, "="},         // cefte gives syntax error
     { ExLess, "<"},
     TAB(Flag),
-    TAB(Abort),
+    TAB(Fail),
 
     TAB(Dup),
     TAB(Drop),
@@ -61,11 +59,8 @@ const struct {
     TAB(Over),
     TAB(Rot),
 
-    TAB(ToR),
     { ExToR, ">r"},
-    TAB(RFrom),
     { ExRFrom, "r>"},
-    TAB(RFetch),
     { ExRFetch, "r@"},
     TAB(I),
     TAB(J),

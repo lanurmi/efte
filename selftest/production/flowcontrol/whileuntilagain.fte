@@ -1,5 +1,5 @@
-{ 50 6 inc begin lshift dec dup2 less if exit endif dec again drop 0 }
+{ 50 6 inc begin lshift dec dup2 < if exit endif dec again drop 0 }
 { TEST1 + 133 PASS }
-{ 200 3 lshift begin dec lshift dup2 more while dec lshift repeat + 714 PASS }
-{ 100 2 inc begin lshift inc dup2 less until + 227 PASS }
+{ 200 3 lshift begin dec lshift dup2 > while dec lshift repeat + 714 PASS }
+{ 100 2 inc begin lshift inc dup2 < until + 227 PASS }
 { TEST2 TEST3 TEST4 }
