@@ -39,8 +39,9 @@ const struct {
     { ExMul, "*" },
     { ExDiv, "/" },
     TAB(Random),
-    TAB(Time),
-    TAB(Ms),
+    TAB(Millisecs),
+    TAB(Microsecs),
+
 
     TAB(And),
     TAB(Or),
@@ -48,7 +49,9 @@ const struct {
     TAB(Shift),
 
     TAB(Equals),
+    { ExEquals, "="},
     TAB(Less),
+    { ExLess, "<"},
     TAB(Flag),
     TAB(Abort),
 
@@ -59,8 +62,11 @@ const struct {
     TAB(Rot),
 
     TAB(ToR),
+    { ExToR, ">r"},
     TAB(RFrom),
+    { ExRFrom, "r>"},
     TAB(RFetch),
+    { ExRFetch, "r@"},
     TAB(I),
     TAB(J),
     TAB(Times),
