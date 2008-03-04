@@ -1168,8 +1168,6 @@ int EBuffer::GetChar(ExState &State) {
  * MACRO: Display a message on the status bar
  */
 int EBuffer::Message(ExState &State) {
-    char msg[256];
-
     if (sstack.size() == 0) {
         Msg(S_ERROR, "String stack underflow in Message");
         SetBranchCondition(0);
@@ -1188,9 +1186,9 @@ int EBuffer::Message(ExState &State) {
  */
 int EBuffer::GetChoice(ExState &State) {
     const char *title, *msg, *c1, *c2, *c3, *c4, *c5, *c6;
-    int count = ParamStack.pop();
+    unsigned int count = (unsigned int) ParamStack.pop();
 
-    fprintf(stderr, "Count: %i, Stack Size: %i\n", count, sstack.size());
+    fprintf(stderr, "Count: %i, Stack Size: %i\n", count, (int) sstack.size());
 
     // Count of choices + 2 (title and message)
     if (count + 2 > sstack.size()) {
@@ -2066,7 +2064,6 @@ int EBuffer::InsertDate(ExState &State) {
     char buf[128], *p;
 
     if (format.empty()) {
-        char strArg[128] = "";
         //** 012345678901234567890123
         //** Wed Jan 02 02:23:54 1991
         p = ctime(&t);
@@ -2180,7 +2177,7 @@ int EBuffer::PushSelection() {
     int L;
     PELine LL;
     int A, Z;
-    int bc = 0, lc = 0, oldc = 0;
+    int bc = 0, lc = 0;
 
 
     AutoExtend = 0;

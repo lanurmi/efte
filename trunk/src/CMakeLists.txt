@@ -50,6 +50,7 @@ ENDIF( USE_GPM )
 # =============================================================================
 
 SET( BASE_FTE_SOURCES
+  w_execute.cpp w_memory.cpp w_misc.cpp w_number.cpp w_string.cpp
   cfte.cpp c_bind.cpp c_color.cpp c_config.cpp c_desktop.cpp c_hilit.cpp c_history.cpp
   c_mode.cpp commands.cpp e_block.cpp e_buffer.cpp e_cmds.cpp e_cvslog.cpp
   e_file.cpp e_fold.cpp e_line.cpp e_loadsave.cpp e_mark.cpp e_print.cpp

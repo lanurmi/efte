@@ -73,5 +73,7 @@
 #endif //_DEBUG && MSVC && MSVCDEBUG
 
 extern char *StartupMacroCommand;
+extern int LastEventChar;
+extern int exception;
 
 #endif

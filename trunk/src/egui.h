@@ -14,6 +14,13 @@
 #include "gui.h"
 #include "c_bind.h"  // KeySel
 
+// Words for firescript
+#include "w_execute.h"
+#include "w_memory.h"
+#include "w_misc.h"
+#include "w_number.h"
+#include "w_string.h"
+
 void SetBranchCondition(int cond);
 
 class EEventMap;
