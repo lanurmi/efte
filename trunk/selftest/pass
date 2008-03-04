@@ -25,6 +25,7 @@ sub testfilename { var$ new }
 
 sub beforealltests {
    emptybuffer
+   256 bl repeat$ testfilename store$           # initialize file name variable to 256 chars
    "selftest started" type$ cr
    }
 
@@ -34,16 +35,16 @@ sub afteralltests {
    }
 
 
-sub pass   {    # ( got wants testnum -- )  ( filename$ -- )
+sub pass   {    # ( got wants testnum -- )
    >r
       dup2 equals
-      depth depth$ accumulate 13 equals and
+      depth depth$ accumulate 03 equals and
       if "PASS" else "FAIL" endif type$
    r>
    " test " type$ .33
    "wanted" type$ 9 .r
    ", got"  type$ 9 .r
-   3 spaces type$ cr
+   3 spaces testfilename fetch$ type$ cr
    emptyall
    filesave
 }

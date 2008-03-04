@@ -4,26 +4,31 @@
 DEFAULT="production"
 BASEDIR="$PWD/${1:-$DEFAULT}"
 
-
+seperator()  {
+   echo "# -------------------------------------------------------------------------------------------------"
+   echo
+}
 
 addtest()  {
+   seperator
    FILE="$1"
    RELATIVEFILE="${FILE#$BASEDIR/}"
    echo "# $TESTCOUNT - $RELATIVEFILE"
    SUBCOUNT=0
-
    while read LINE ; do
       if [[ $LINE == {* ]] ; then
          (( SUBCOUNT++ ))
          RUN="test_${TESTCOUNT}_${SUBCOUNT}"
          echo -n "sub $RUN"
       fi
-      LINE=$(sed "s~TEST~test_${TESTCOUNT}_~g;s~PASS~ $((TESTCOUNT*1000+SUBCOUNT)) \"$RELATIVEFILE\" pass~g" <<< $LINE)
+      LINE=$(sed "s~TEST~test_${TESTCOUNT}_~g;s~PASS~ $((TESTCOUNT*1000+SUBCOUNT)) pass~g" <<< $LINE)
       echo " $LINE"
    done < $FILE
+
+   echo "sub test_${TESTCOUNT} { \"$RELATIVEFILE\" testfilename store$ test_${TESTCOUNT}_${SUBCOUNT} }"
    
    if (( SUBCOUNT )) ; then
-      RUNTEST[TESTCOUNT]="$RUN"
+      RUNTEST[TESTCOUNT]="test_${TESTCOUNT}"
       (( TESTCOUNT++ ))
    fi
    echo
@@ -42,39 +47,65 @@ echo "# -----------------------------------------------------------------------"
 }
 
 
-
-
 if [[ ! -d $BASEDIR ]] ; then
    echo "test dir $BASEDIR doesn't exist"
    exit 1
 fi
+
+
+spaces() {
+   NSPACES=${1:-0}
+   while (( NSPACES-- )) ; do echo -n " " ; done
+}
+
+indent() {
+   spaces $1
+   shift
+   echo -n "$*"
+}   
+
+indentcr() {
+   indent "$@"
+   echo 
+}
+
 
 (
 header $BASEDIR
 TESTCOUNT=1
 cat pass
 
+# --- add once section for every test ---
 for FILE in $(find  $BASEDIR -type f | grep ".fte$") ; do
-   echo
    echo "$TESTCOUNT - $FILE" 1>&2
    addtest $FILE
 done
 
-echo
+seperator
+
+# --- pull all tests together ---
+TESTSPERLINE=6
+TABSIZE=5
+INDENT=3
 
 echo "sub selftest {"
-echo -n  "   beforealltests" 
+indent $INDENT "beforealltests"
 
-i=0
-for SELFTEST in ${RUNTEST[*]} ; do
-   if (( (i % 8) == 0 )) ; then
-      echo ; echo -n "   "
+for (( i=1; i<$TESTCOUNT; i++ )) ; do
+   if ! (( (i-1) % TESTSPERLINE )) ; then
+      echo ; spaces $(( INDENT*2 ))
    fi
-   echo -n " $SELFTEST"
-   (( i++ ))
-done
 
-echo
-echo "   afteralltests"
+   echo -n "test_$i"
+
+   if (( i % TESTSPERLINE )) ; then
+      (( padding = TABSIZE - ${#i} ))
+      if (( padding < 0 )) ; then padding=0 ; fi
+      spaces $padding
+   fi
+   
+done
+echo 
+indentcr $INDENT "afteralltests"
 echo "}"
 ) > ../config/selftest.fte
