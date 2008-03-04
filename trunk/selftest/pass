@@ -38,13 +38,18 @@ sub afteralltests {
 sub pass   {    # ( got wants testnum -- )
    >r
       dup2 equals
-      depth depth$ accumulate 03 equals and
-      if "PASS" else "FAIL" endif type$
-   r>
-   " test " type$ .33
-   "wanted" type$ 9 .r
-   ", got"  type$ 9 .r
-   3 spaces testfilename fetch$ type$ cr
+      depth depth$ accumulate 03 equals
+      dup >r
+         and if "PASS" else "FAIL" endif type$
+      r>   # stack: 0:err
+   r> 
+   " test " type$       .33
+   "wanted" type$ swap 9 .r
+   ", got"  type$ swap 9 .r
+   3 spaces "stacks " type$  
+   if "ok " else "off" endif type$
+   3 spaces 
+   testfilename fetch$ type$ cr
    emptyall
    filesave
 }
