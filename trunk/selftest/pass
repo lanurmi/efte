@@ -17,7 +17,7 @@ sub emptyall  {
 sub emptybuffer {
    movefilestart blockbegin
    movefileend    blockend
-   blockkill                # fails if buffer empty. force to continue
+   ?blockkill                # fails if buffer empty. force to continue
 }
 
 sub testfilename { var$ new }
