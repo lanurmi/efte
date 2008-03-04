@@ -21,17 +21,21 @@ sub emptybuffer {
 }
 
 sub testfilename { var$ new }
-
+sub timestarted  { var new }
 
 sub beforealltests {
+   timestarted off
    emptybuffer
    256 bl repeat$ testfilename store$           # initialize file name variable to 256 chars
    "selftest started" type$ cr
+   microsecs timestarted !
    }
 
 
 sub afteralltests {
+   microsecs
    "selftest finished" type$ cr
+   timestarted @ -  "Time elapsed: " type$ . "microsecs" type$ cr
    }
 
 
