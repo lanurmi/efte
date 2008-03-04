@@ -1,4 +1,9 @@
 OBJS = \
+w_execute.$(OEXT) \
+w_memory.$(OEXT) \
+w_misc.$(OEXT) \
+w_number.$(OEXT) \
+w_string.$(OEXT) \
 cfte.$(OEXT) \
 indent.$(OEXT) \
 e_mark.$(OEXT) \

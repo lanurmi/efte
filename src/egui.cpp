@@ -19,15 +19,6 @@
 int LastEventChar = -1;
 int exception = 0;
 
-int nestlevel = 0;
-#define NEST "(nestlevel++)"
-#define UNNEST "(--nestlevel)"
-
-
-#define MEMORY_LIMIT 5242880
-std::vector<int> memory;
-
-
 EFrame::EFrame(int XSize, int YSize): GFrame(XSize, YSize) {
     CMap = 0;
     CModel = 0;
@@ -88,74 +79,6 @@ EGUI::EGUI(int &argc, char **argv, int XSize, int YSize)
 EGUI::~EGUI() {
 }
 
-/**
- * MACRO: Print a string to the console
- */
-
-int Print(GxView *view, ExState &State) {
-    PSCHECK(1, "Print");
-    SSCHECK(1, "Print");
-
-    int whereTo = ParamStack.pop();
-    FILE *f = whereTo == 2 ? stderr : stdout;
-
-    fprintf(f, sstack.back().c_str()); sstack.pop_back();
-
-    return 1;
-}
-
-/// "A" -> 65
-int SSAsc() {
-    SSCHECK(1, "asc");
-
-    std::string s = sstack.back(); sstack.pop_back();
-    ParamStack.push(s[0]);
-
-    return 1;
-}
-
-/// 65 -> "A"
-int PSChar() {
-    PSCHECK(1, "char$");
-
-    char t[2];
-    t[0] = ParamStack.pop();
-    t[1] = 0;
-
-    sstack.push_back(t);
-
-    return 1;
-}
-
-
-/**
- * MACRO: Print a stack diagnostic message to stderr
- */
-int EGUI::Diag(ExState &State) {
-    fprintf(stderr, "Param stack: ");
-    int i = ParamStack.size();
-    if (i)
-        for ( ; i; )
-            fprintf(stderr, "%i ", ParamStack.peek(--i));
-    else
-        fprintf(stderr, "empty");
-
-    if (verbosity <= 1)                  // don't linefeed if verbosity >1:  command trace will advance.
-        fprintf(stderr, "\n");
-
-    return 1;
-}
-
-int ParamDepth() {
-    ParamStack.push(ParamStack.size());
-    return 1;
-}
-
-
-
-
-
-
 // --- virtual machine ---
 /*       for a full blown user macros system, a bit of support here will greatly speed up things.
           this implements a virtual machine for user code and data execution (yes, data executes):
@@ -195,59 +118,7 @@ int ParamDepth() {
     ParamStack.push(w);
     next();
 }
-
-
 */
-
-
-
-
-
-
-
-
-
-// --- arithmetic ---
-int Plus() {
-    PSCHECK(2, "Plus");
-    ParamStack.push(ParamStack.pop()+ParamStack.pop());
-    return 1;
-}
-
-int Minus() {
-    PSCHECK(2, "Minus");
-    int tos=ParamStack.pop();
-    ParamStack.push(+ParamStack.pop()-tos);
-    return 1;
-}
-
-int Mul() {
-    PSCHECK(2, "Mul");
-    ParamStack.push(ParamStack.pop()*ParamStack.pop());
-    return 1;
-}
-
-int Div() {
-    PSCHECK(2, "Div)");
-    int tos=ParamStack.pop();
-
-    if (!tos) {
-        ActiveView->Msg(S_ERROR, "Divide by zero, macro aborted");
-        exception = DIVZERO;
-        SetBranchCondition(0);
-        return 0;
-    }
-
-    ParamStack.push(ParamStack.pop()/tos);
-    SetBranchCondition(1);
-    return 1;
-}
-
-int Random() {
-    ParamStack.push(random());
-    return 1;
-}
-
 
 struct timeval tv;
 int Millisecs()  {         // wraps every 49d 17h 2m 47s
@@ -282,583 +153,7 @@ int Ms()  {
 */
 
 
-
-
-// --- bits ---
-
-int And() {
-    PSCHECK(2, "And");
-    ParamStack.push(ParamStack.pop() & ParamStack.pop());
-    return 1;
-}
-
-int Or() {
-    PSCHECK(2, "Or");
-    ParamStack.push(ParamStack.pop() | ParamStack.pop());
-    return 1;
-}
-
-int Xor() {
-    PSCHECK(2, "Xor");
-    ParamStack.push(ParamStack.pop() ^ ParamStack.pop());
-    return 1;
-}
-
-int Shift() {
-    PSCHECK(2, "Shift");
-    int tos = ParamStack.pop();                         // shift count and direction
-    if (tos) {
-        unsigned int nos = ParamStack.pop();            // shift value
-        if (tos < 0)  {
-            ParamStack.push(nos>>(-tos));
-        } else {
-            ParamStack.push(nos << tos);
-        }
-    }
-    return 1;
-}
-
-
-// --- comparison ---
-
-// replace top two stack items against identity flag
-int Equals() {
-    PSCHECK(2, "Equals");
-    ParamStack.push(-(ParamStack.pop() == ParamStack.pop()));
-    return 1;
-}
-
-// true if 2nd item less than top item:
-//  3 4 Less   ( true )
-int Less() {
-    PSCHECK(2, "Less");
-    ParamStack.push(-(ParamStack.pop() > ParamStack.pop()));
-    return 1;
-}
-
-// interface condition, provided by old commands, to
-// condition reading of new commands (passed on stack)
-// old commands buffer their conditions, until read
-// and transported to stack by "Flag"
-// That way, the number of test results and conditions
-// provided by old commands is irrelevant. we can choose
-// to use or ignore as we see fit.
-// as soon we need one of the last n result flags, each
-// execution of Flag delivers the next, back into history.
-int Flag() {
-    // TODO: warning C4146: unary minus operator applied to unsigned type, result still unsigned
-    ParamStack.push(-(int)(BranchCondition & 1));
-    BranchCondition = (BranchCondition >> 1);
-    return 1;
-}
-
-int Fail() {
-    exception = ABORTED;
-    return 0;
-}
-
-// --- stack ---
-
-int Dup() {
-    PSCHECK(1, "Dup");
-    ParamStack.dup();
-    return 1;
-}
-
-int Drop() {
-    PSCHECK(1, "Drop");
-    ParamStack.pop();
-    return 1;
-}
-
-int Swap() {
-    PSCHECK(2, "Swap");
-    ParamStack.swap();
-    return 1;
-}
-
-int Over() {
-    PSCHECK(2, "Over");
-    ParamStack.push(ParamStack.peek(1));
-    return 1;
-}
-
-int Rot() {
-    PSCHECK(3, "Rot");
-    int tos = ParamStack.pop();
-    ParamStack.swap();
-    ParamStack.push(tos);
-    ParamStack.swap();
-    return 1;
-}
-
-// --- stack2 ---
-int ToR() {
-    PSCHECK(1, "ToR");
-    ControlStack.push(ParamStack.pop());
-    return 1;
-}
-
-int RFrom() {
-    CSCHECK(1, "RFrom");
-    ParamStack.push(ControlStack.pop());
-    return 1;
-}
-
-int RFetch() {
-    CSCHECK(1, "RFetch");
-    ParamStack.push(ControlStack.peek(0));
-    return 1;
-}
-
-int I() {
-    CSCHECK(2, "I");
-    ParamStack.push(ControlStack.peek(0));
-    return 1;
-}
-
-int J() {
-    CSCHECK(4, "J");
-    ParamStack.push(ControlStack.peek(2));
-    return 1;
-}
-
-// --- string stack ---
-
-int DupStr() {
-    if (sstack.size() == 0) {
-        SetBranchCondition(0);
-        return 0;
-    }
-
-    sstack.push_back(sstack[sstack.size()-1]);
-
-    SetBranchCondition(1);
-    return 1;
-}
-
-int DropStr() {
-    if (sstack.size() == 0) {
-        SetBranchCondition(0);
-        return 0;
-    }
-
-    sstack.pop_back();
-
-    SetBranchCondition(1);
-    return 1;
-}
-
-int SwapStr() {
-    int tosIdx = sstack.size();
-    if (tosIdx < 2) {
-        SetBranchCondition(0);
-        return 0;
-    }
-    tosIdx--;
-
-    std::string tos = sstack.at(tosIdx);
-    sstack[tosIdx] = sstack[tosIdx - 1];
-    sstack[tosIdx - 1] = tos;
-
-    SetBranchCondition(1);
-    return 1;
-}
-
-
-int DiagStr(ExState &State) {
-    fprintf(stderr, "Stringstack: ");
-
-    int tos = sstack.size();
-    if (tos)
-        for ( int i=0; i<tos ; )
-            fprintf(stderr, "'%s' ", sstack[i++].c_str());
-    else
-        fprintf(stderr, "empty");
-
-    if (verbosity <= 1)                 // don't linefeed if verbosity >1:  command trace will advance.
-        fprintf(stderr, "\n");
-    return 1;
-}
-
-
-int RotStr(ExState &State) {
-    if (sstack.size() < 3) {
-        SetBranchCondition(0);
-        return 0;
-    }
-
-    std::string tos = sstack[sstack.size() - 1];
-    sstack.pop_back();
-
-    SwapStr();
-    sstack.push_back(tos);
-    SwapStr();
-
-    SetBranchCondition(1);
-    return 1;
-}
-
-int CompareStr(ExState &State) {
-    if (sstack.size() < 2) {
-        SetBranchCondition(0);
-        return 0;
-    }
-
-    int tos = sstack.size() - 1;
-    int compareTo;
-
-    std::string what = sstack[tos];
-    sstack.pop_back();
-
-    compareTo = tos - 1;
-    ParamStack.push(-(what.compare(sstack[compareTo])));
-    sstack.pop_back();
-
-    SetBranchCondition(1);
-    return 1;
-}
-
-int OverStr() {
-    if (sstack.size() < 2) {
-        SetBranchCondition(0);
-        return 0;
-    }
-
-    sstack.push_back(sstack[sstack.size()-2]);
-    SetBranchCondition(1);
-    return 1;
-}
-
-int PickStr(ExState &State) {
-    PSCHECK(1, "pick$");
-    int idx = ParamStack.pop();
-
-    SSCHECK(idx + 1, "pick$");
-    idx = sstack.size() - 1 - idx;
-
-    sstack.push_back(sstack[idx]);
-
-    SetBranchCondition(1);
-    return 1;
-}
-
-int DepthStr() {
-    ParamStack.push(sstack.size());
-    return 1;
-}
-
-int SubSearchStr() {
-    int tos = sstack.size() - 1;
-    int searchInI  = tos - ParamStack.pop();
-    int searchForI = tos - ParamStack.pop();
-
-    if (searchInI < 0 || searchForI < 0) {
-        SetBranchCondition(0);
-        return 0;
-    }
-
-    std::string searchIn  = sstack[searchInI];
-    std::string searchFor = sstack[searchForI];
-
-    std::string::size_type foundAt = searchIn.find(searchFor, 0);
-    ParamStack.push(foundAt == std::string::npos ? -1 : (int) foundAt);
-
-    SetBranchCondition(1);
-    return 1;
-}
-
-int MergeStr() {
-    unsigned int tos = sstack.size();
-    if (tos < 2) {
-        SetBranchCondition(0);
-        return 0;
-    }
-
-    tos--; // 0 based index
-
-    std::string tosS = sstack[tos];
-    std::string nosS = sstack[tos-1];
-    sstack.pop_back();
-    sstack.pop_back();
-
-    sstack.push_back(nosS + tosS);
-
-    SetBranchCondition(1);
-    return 1;
-}
-
-
-
-
-
-int SplitStr() {
-    int tos = sstack.size() - 1;
-    if (tos < 0) {
-        SetBranchCondition(0);
-        return 0;
-    }
-
-    unsigned int pos = ParamStack.pop();
-    std::string tosS = sstack[tos];
-
-    sstack.pop_back();
-
-    if (pos > tosS.size()) {
-        sstack.push_back("");
-        sstack.push_back(tosS);
-    } else if (pos <= 0) {
-        sstack.push_back(tosS);
-        sstack.push_back("");
-    } else {
-        sstack.push_back(tosS.substr(pos));
-        sstack.push_back(tosS.substr(0, pos));
-    }
-
-    SetBranchCondition(1);
-    return 1;
-}
-
-
-
-
-
-
-
-
-// LenStr
-int LenStr(ExState &State, GxView *view) {
-    EView *View = 0;
-    if (view != NULL) {
-        ExModelView *V = (ExModelView *)view->Top;
-        View = V->View;
-    }
-
-    int idx = sstack.size() - 1;
-
-    if ((unsigned int) idx >= sstack.size()) {
-        SetBranchCondition(0);
-        return 0;
-    }
-
-    ParamStack.push(sstack[idx].length());
-
-    SetBranchCondition(1);
-    return 1;
-}
-
-int MidStr(ExState &State, GxView *view) {
-    PSCHECK(2, "mid$");
-    int end = ParamStack.pop();
-    int start = ParamStack.pop();
-
-    SSCHECK(1, "mid$");
-
-    std::string tos = sstack.back();
-
-    if (start < 0) start = tos.length() + start;
-    if (end < 0) end = tos.length() + end;
-
-    sstack[sstack.size()-1] = tos.substr(start, end);
-
-    SetBranchCondition(1);
-    return 1;
-}
-
-int GetString(ExState &State, GxView *view) {
-    EView *View = 0;
-    if (view != NULL) {
-        ExModelView *V = (ExModelView *)view->Top;
-        View = V->View;
-    } else {
-        SetBranchCondition(0);
-        return 0;
-    }
-
-    SSCHECK(1, "GetString");
-
-    std::string msg = sstack.back(); sstack.pop_back();
-
-    char str[256] = "";
-    if (View->MView->Win->GetStr(msg.c_str(), sizeof(str), str, HIST_DEFAULT) == 0) {
-        SetBranchCondition(0);
-        return 0;
-    }
-
-    sstack.push_back(str);
-
-    SetBranchCondition(1);
-    return 1;
-}
-
-int MemoryDump() {
-    for (std::vector<int>::size_type i=0; i < memory.size(); i++) {
-        if (i>0) fprintf(stderr, ", ");
-        fprintf(stderr, "%i=%i", i, memory[i]);
-    }
-    fprintf(stderr, "\n");
-
-    return 1;
-}
-
-int MemoryStore(ExState &State) {
-    PSCHECK(2, "!");
-    int loc = ParamStack.pop();
-
-    if (loc > MEMORY_LIMIT) {
-        SetBranchCondition(0);
-        return 0;
-    }
-
-    int initialized = memory.size();
-    while (loc >= initialized++ )
-        memory.push_back(0);
-
-    memory[loc] = ParamStack.pop();
-
-    SetBranchCondition(1);
-    return 1;
-}
-
-int MemoryFetch(ExState &State) {
-    PSCHECK(1, "@");
-
-    int loc = ParamStack.pop();
-
-    if (loc > MEMORY_LIMIT) {
-        SetBranchCondition(0);
-        return 0;
-    }
-
-    int initialized = memory.size();
-    while (loc >= initialized++ )
-        memory.push_back(0);
-
-    ParamStack.push(memory[loc]);
-
-    SetBranchCondition(1);
-    return 1;
-}
-
-unsigned int dp=0;            // "dictionary pointer". pointer to free memory. what is below, is allocated memory.
-
-int MemoryHere()  {
-    ParamStack.push(dp);
-    return 1;
-}
-
-int MemoryAllot()  {
-    PSCHECK(1, "allot");
-
-    int requested = ParamStack.pop();
-    if (dp+requested+1024 >= MEMORY_LIMIT) {
-        SetBranchCondition(0);
-        return 0;
-    }
-    dp += requested;
-    return 1;
-}
-
-int MemoryEnd() {
-    ParamStack.push(MEMORY_LIMIT);
-    return 1;
-}
-
-int Tick() {
-    SSCHECK(1, "tick");
-    std::string cname = sstack.back(); sstack.pop_back();
-    ParamStack.push(CmdNum(cname.c_str()));
-    return 1;
-}
-
-int EGUI::Execute(ExState &State, GxView *view) {
-    PSCHECK(1, "execute");
-    NEST;
-    int ret = ExecCommand(view, ParamStack.pop(), State);
-    UNNEST;
-    return ret;
-}
-
-
-
 // -----------------------------------------------------------------------------------------------------------
-
-
-void StackTrace()  {
-    if (verbosity > 1) {
-
-        // Param Stack
-        for (int idx=ParamStack.size()-1; idx > -1; idx--)
-            fprintf(stderr, "%i ", ParamStack.peek(idx));
-
-        // String Stack
-        fprintf(stderr, "   ");
-
-        for (int idx=sstack.size()-1; idx > -1; idx--) {
-            std::size_t  found=std::string::npos;
-            std::string s = sstack[idx];
-            while((found = s.find("\n")) != std::string::npos)
-                s.replace(found, 1, "\\n");
-            while((found = s.find("\r")) != std::string::npos)
-                s.replace(found, 1, "\\r");
-            fprintf(stderr, "'%s' ", s.c_str());
-        }
-        fprintf(stderr, "\n");
-    }
-}
-
-
-
-
-#define INDENT 3
-unsigned int indent = 0;
-
-void Dodent()  {
-    fprintf(stderr, "\n");
-    int i = indent;
-    for ( ; i>1; i--) {
-        fprintf(stderr, "|");
-        int j = INDENT-1;
-        for ( ;j ;j--)
-            fprintf(stderr, " ");
-
-    }
-}
-
-void Redent(int change)  { indent += change; }
-void Nodent()            { indent=0; }
-void Indent()            { Redent(1);  }
-void Undent()            { Redent(-1); }
-
-
-
-
-
-
-
-int EGUI::ExecuteCommand(ExState &State, GxView *view)
-{
-    ExModelView *V = (ExModelView *)view->Top;
-    EView *View = V->View;
-    char name[64] = "";
-
-    if (View->MView->Win->GetStr("Command name", sizeof(name), name,
-                                 HIST_DEFAULT) == 0)
-        return 0;
-
-    int command = CmdNum(name);
-    if (command == 0) {
-        View->Msg(S_INFO, "%s is an unknown command", name);
-        SetBranchCondition(0);
-        return 0;
-    }
-
-    return ExecCommand(view, command, State);
-
-}
-
-
-
 
 int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
     // somehow stack display is behind the wrong command.
@@ -884,9 +179,9 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
     case ExDepth:
         return ParamDepth();
     case ExStore:
-        return MemoryStore(State);
+        return MemoryStore();
     case ExFetch:
-        return MemoryFetch(State);
+        return MemoryFetch();
     case ExDump:
         return MemoryDump();
     case ExMemEnd:
@@ -962,7 +257,7 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
         return Diag(State);
 
     case ExDiagStr:
-        return DiagStr(State);
+        return DiagStr();
     case ExDupStr:
         return DupStr();
     case ExDropStr:
@@ -970,13 +265,13 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
     case ExSwapStr:
         return SwapStr();
     case ExRotStr:
-        return RotStr(State);
+        return RotStr();
     case ExCompareStr:
-        return CompareStr(State);
+        return CompareStr();
     case ExOverStr:
         return OverStr();
     case ExPickStr:
-        return PickStr(State);
+        return PickStr();
     case ExDepthStr:
         return DepthStr();
     case ExSubSearchStr:
@@ -986,11 +281,11 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
     case ExMergeStr:
         return MergeStr();
     case ExLenStr:
-        return LenStr(State, view);
+        return LenStr();
     case ExMidStr:
-        return MidStr(State, view);
+        return MidStr();
     case ExGetString:
-        return GetString(State, view);
+        return GetString(view);
     case ExAsc:
         return SSAsc();
     case ExChar:
@@ -1090,9 +385,6 @@ int EGUI::ExecMacro(GxView *view, const char *name) {
     if (num == 0) return 1;
     return ExecMacro(view, num);
 }
-
-
-
 
 unsigned int doesindex = 0;
 int faillevel = 0;
@@ -1313,9 +605,6 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
     Undent();
     ENDFUNCRC(ErOK);
 }
-
-
-
 
 void EGUI::SetMsg(char *Msg) {
     char CharMap[128] = "";

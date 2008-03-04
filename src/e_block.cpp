@@ -748,7 +748,7 @@ int EBuffer::BlockGet() {
     int L;
     PELine LL;
     int A, Z;
-    int bc = 0, lc = 0, oldc = 0;
+    int bc = 0, lc = 0;
 
 
     AutoExtend = 0;
