@@ -8,16 +8,24 @@
  *
  */
 
-#define PSCHECK(x,f) if (ParamStack.size() < x) { \
+#define PSCHECK(x,f) if (x < 0) {\
+    ActiveView->Msg(S_ERROR, "Attempt to access negative integer stack index in " f); \
+    SetBranchCondition(0);\
+    return 0; \
+    } else if (ParamStack.size() < x) { \
     ActiveView->Msg(S_ERROR, "Stack underflow in " f " (%i)", ParamStack.size()); \
     SetBranchCondition(0); \
     return 0; \
-}
-#define SSCHECK(x,f) if (sstack.size() < x) { \
+    }
+#define SSCHECK(x,f) if (x < 0) {\
+    ActiveView->Msg(S_ERROR, "Attempt to access negative string stack index in " f); \
+    SetBranchCondition(0);\
+    return 0;\
+    } else if (sstack.size() < x) { \
     ActiveView->Msg(S_ERROR, "String stack underflow in " f " (%i)", sstack.size()); \
     SetBranchCondition(0); \
     return 0; \
-}
+    }
 #define CSCHECK(x,f) // No checking yet
 
 #ifndef U_CIRCSTACK_H

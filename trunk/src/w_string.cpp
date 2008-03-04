@@ -145,7 +145,7 @@ int PickStr() {
     PSCHECK(1, "pick$");
     int idx = ParamStack.pop();
 
-    SSCHECK(idx + 1, "pick$");
+    SSCHECK((unsigned int) idx + 1, "pick$");
     idx = sstack.size() - 1 - idx;
 
     sstack.push_back(sstack[idx]);
