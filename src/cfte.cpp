@@ -854,9 +854,12 @@ static int ParseCommands(CurPos &cp, char *Name) {
 
                 // ---------------------------------- flow control compiling statements -------------------------------
                 int endif_paired;
+
                 switch(Command) {
 
                 case COND_IF:
+//                    EGUI::ExecCommand(view, ExDiag, State);
+//                   EGUI::ExecCommand(view, ExDiag, State);
                     CondStack.push(CompileConditionalBranch(cp,0));
                     CondStack.push(COND_IF);                                                // allow test for proper nesting
                     break;
