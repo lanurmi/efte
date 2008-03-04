@@ -46,13 +46,18 @@ sub afteralltests {
 sub pass   {    # ( got wants testnum -- )
    >r
       dup2 equals
-      depth depth$ accumulate 03 equals and
-      if "PASS" else "FAIL" endif type$
-   r>
-   " test " type$ .33
-   "wanted" type$ 9 .r
-   ", got"  type$ 9 .r
-   3 spaces testfilename fetch$ type$ cr
+      depth depth$ accumulate 03 equals
+      dup >r
+         and if "PASS" else "FAIL" endif type$
+      r>   # stack: 0:err
+   r> 
+   " test " type$       .33
+   "wanted" type$ swap 9 .r
+   ", got"  type$ swap 9 .r
+   3 spaces "stacks " type$  
+   if "ok " else "off" endif type$
+   3 spaces 
+   testfilename fetch$ type$ cr
    emptyall
    filesave
 }
@@ -411,9 +416,8 @@ sub test_24 { "zzz_final.fte" testfilename store$ test_24_1 }
 
 sub selftest {
    beforealltests
-      test_1    test_2    test_3    test_4    test_5    test_6
-      test_7    test_8    test_9    test_10   test_11   test_12
-      test_13   test_14   test_15   test_16   test_17   test_18
-      test_19   test_20   test_21   test_22   test_23   test_24
+      test_1    test_2    test_3    test_4    test_5    test_6    test_7    test_8
+      test_9    test_10   test_11   test_12   test_13   test_14   test_15   test_16
+      test_17   test_18   test_19   test_20   test_21   test_22   test_23   test_24
    afteralltests
 }

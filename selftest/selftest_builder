@@ -84,7 +84,7 @@ done
 seperator
 
 # --- pull all tests together ---
-TESTSPERLINE=6
+TESTSPERLINE=8
 TABSIZE=5
 INDENT=3
 
