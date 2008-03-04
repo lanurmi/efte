@@ -11,6 +11,8 @@
 # assume these to be present, as factored out functionality.
 #
 
+# can't use this chars in names (yet):   = , #
+
 # -- constants --
 sub false     { 0 }
 sub true      { -1 }                            # "true" represented as all bits sets
@@ -117,10 +119,12 @@ sub minrot$   { 2:rot$  }
 sub dup2$     { 2:over$ }
 sub drop2$    { 2:drop$ }
 sub equals$   { compare$ not }
+sub append$   { merge$ }                        # merge$ is a rename candidate
+sub prepend$  { swap$ merge$ }                  # merge$ is a rename candidate
 
 
 sub slice     { 1 split$ asc }                  # ( -- asc ) cut first char off string and return as ascii
-sub splice    { char$ swap$ merge$ }            # ( asc -- ) prepend char to string
+sub splice    { char$ prepend$ }                # ( asc -- ) prepend char to string
 sub ascn      { dup$ 1 mid$ asc }               # ( n -- c ) get ascii of nth char in top string
 
 
@@ -169,7 +173,7 @@ sub search$   {                                 # ( n1 -- n2 )
 sub embed$ {                                    # ( asc n -- ) store char at pos n of topmost string, overwriting
    dup dup$ left$                               # cut and keep chars left of write pos
    invert swap$ left$                           # cut and keep chars right of write pos (tricky)
-   splice merge$                                # recombine, with char between
+   splice append$                               # recombine, with char between
 }
 
 sub capitalize$ {                               # ( -- )  capitalize all chars of top string
@@ -186,9 +190,9 @@ sub repeat$ {                                   # ( c u -- ) create a string of 
    qdup if
       over char$
       dup 1 do
-         merge$ dup$
+         append$ dup$
       i +loop
-      swap$ len$ - left$ merge$
+      swap$ len$ - left$ append$
    endif
    drop
 }
@@ -251,10 +255,10 @@ sub store$   {                                  # ( a -- ) transfers string on s
    brmovebr$ }
 
 sub fetch$    {                                 # ( a -- ) transfers the string at a to string stack.
-   cell +
+   cell +                                       # skip first cell (containing amount of allocated space to string var)
    ""
-   count 0 do
-      count char$ merge$
+   count 0 do                                   # for all chars in string do ...
+      count char$ append$                       # get char and add to string
    loop drop }
 
 sub var$ { here dup len$ inc dup inc comma allot } # string var description.
@@ -271,6 +275,14 @@ sub var$ { here dup len$ inc dup inc comma allot } # string var description.
 
 
 
+# --- debugging
+
+sub println { "\n" append$ print }
+sub pout { 1 print }
+sub perr { 2 print }
+sub poutln { 1 println }
+sub perrln { 2 println }
+
 
 
 
@@ -286,80 +298,63 @@ sub binary    {  2 base ! }
 
 
 # --- pictured number conversion ---
-sub digit     { 48 + dup 57 > if 7 + endif }  # ( u -- asc )
-sub slashmod  { dup2 / dup >r * - abs r> }                  # ( n1 n2 -- r q )
-sub lesshash  { "" } 	    		                      	      		# ( n -- n ) start pictured num conversion
-sub hold      { splice }                                                # ( n asc -- n )
+sub digit     { 48 + dup 57 > if 7 + endif }    # ( u -- asc )
+sub slashmod  { dup2 / dup >r * - abs r> }      # ( n1 n2 -- r q )
+sub <hash     { "" } 	  		                # ( n -- n ) start pictured num conversion
+sub hold      { splice }                        # ( n asc -- n )
 sub hash      { base @ slashmod >r digit splice r> }            # ( n1 -- n2 )
-sub hashes    { begin hash dup not until }                              # ( n1 -- n2 )
-sub hashmoretype { drop type$ }                                         # ( n -- )  end pic num conv and print
-sub hashmore  { drop }                                                  # ( n -- )  end pic num conv - should convert
-                                                                        # string stack to ( a n ) to comply with standard.
-                                                                        # this version leaves converted number on top of string stack
-sub sign      { negative if '-' splice endif }                           # ( n -- }
-sub brdotbr   { dup >r lesshash hashes r> sign hashmore }           # ( n -- )
+sub hashes    { begin hash dup not until }      # ( n1 -- n2 )
+sub hash>     { drop }                          # ( n -- )  end pic num conv - should convert
+                                                # string stack to ( a n ) to comply with standard.
+                                                # this version leaves converted number on top of string stack
+sub sign      { negative if '-' splice endif }  # ( n -- }
+sub brdotbr   { dup >r <hash hashes r> sign hash> }           # ( n -- )
 
-sub padded  {
-   >r len$ -                                                       # ( n c -- ) can't call it "pad" because pad is a
-   dup negative not if                                                  #  standard word which does something else
-#      r@ swap repeat$ swap$ merge$   // bug
-      r@ swap 0 do dup splice loop
-   endif r> drop2 }
+sub padded  {                                   # ( n c -- )
+   >r len$ -                                    # can't call it "pad" because pad is a
+   0 max qdup if                                # standard word which does something else
+      r@ swap repeat$ prepend$
+   endif r> drop }
 
-# --- debugging
+#   dup negative not if                         # standard word which does something else
+#   r@ swap 0 do dup splice loop
 
-sub println { "\n" merge$ print }
-sub pout { 1 print }
-sub perr { 2 print }
-sub poutln { 1 println }
-sub perrln { 2 println }
 
 # --- "app" level number output words ---
-sub dot       { dup >r
-                lesshash
-                   bl splice
-                   hashes
-                   r> sign
-                hashmoretype }
+# ( n -- ) signed number output with one trailing space
+sub . { dup >r <hash bl hold  hashes r> sign hash> type$ }
+sub dot { . }
 
-sub dotr      { >r dup >r                                             # space padded signed number: ( n1 u -- )
-                lesshash
-                   hashes
-                   r> sign
-                   r> bl padded
-                hashmoretype }
+# ( n u -- ) space padded signed number
+sub .r { >r dup >r <hash hashes  r> sign  r> bl padded  hash> type$ }
 
-sub dot0r     { lesshash                                                # zero padded signed number:  ( n1 u -- )
-      		    bl splice
-                times hash
-                hashmoretype }
+# ( n -- )   zero padded signed number with one trailing space
+sub .0r     { <hash  bl hold  times hash  hash> type$ }
+
 
 
 # --- file editing buffer helpers
+sub linelen { curline$ len$ drop$ }             # ( -- len )
+sub at { movetocolumn movetoline }              # ( x y -- )
 
-# ( -- len )
-sub linelen { curline$ len$ drop$ }
-
-# ( x y -- )
-sub at { movetocolumn movetoline }
 
 
 # --- hehe - very crude yet, but demonstrates the principle ---
 
-sub ip        { var new }              # instruction pointer. program counter for highlevel macros
+sub ip        { var new }                       # instruction pointer. program counter for highlevel macros
 
-sub branch    { ip @               # runtime code for unconditional branch in highlevel macros
+sub branch    { ip @                            # runtime code for unconditional branch in highlevel macros
                 count +
                 ip ! }
 
-sub lit       { ip @               # runtime code for numbers in high level macros
+sub lit       { ip @                            # runtime code for numbers in high level macros
                 count swap
                 ip ! }
 
 sub compile   { tick qdup if comma else "xlerb?" type$ endif }
 sub literal   { "lit" compile comma }
 
-sub run       { ip !               # ( a -- )    start execution of high level macro at a
+sub run       { ip !                            # ( a -- )    start execution of high level macro at a
                 begin
                    ip @
                    dup inc
@@ -370,25 +365,25 @@ sub run       { ip !               # ( a -- )    start execution of high level m
 
 
 # --- define new macro class ---
-sub macro       { here does run }                # our data construct builder is way cool ...
+sub macro       { here does run }               # our data construct builder is way cool ...
 
 # --- build a macro ---
 
-
-sub usermacro   { macro new                      # new data type "macro" :)
-                  7 literal                      #  compile misc stuff to macro:
+                                                
+sub usermacro   { macro new                     # new data type "macro" :)
+                  7 literal                     #  compile misc stuff to macro:
                   11 literal
-                  "+"   compile                  #          7 11 + dot
-                  "dot" compile                  #
-                  "cursordown" compile           #          cursordown
-                  "cursorleft" compile           #          begin cursorleft
-                  "branch" compile -3 comma      #          again
-                  0 comma                        #          exit  (though cursorleft will fail)
-                  usermacro }                    # instantiate macro - great place to do that!
-                                                 # macro is ready, can be executed as "usermacro"
-                                                 # (actually, it is the other way around - when executed
-                                                 # the first time, macro will instantiate - and at the end
-                                                 # of instantiation, call itself here)
+                  "+"   compile                 #          7 11 + dot
+                  "dot" compile                 #
+                  "cursordown" compile          #          cursordown
+                  "cursorleft" compile          #          begin cursorleft
+                  "branch" compile -3 comma     #          again
+                  0 comma                       #          exit  (though cursorleft will fail)
+                  usermacro }                   # instantiate macro - great place to do that!
+                                                # macro is ready, can be executed as "usermacro"
+                                                # (actually, it is the other way around - when executed
+                                                # the first time, macro will instantiate - and at the end
+                                                # of instantiation, call itself here)
 
 # --- initialisation ---
 sub OnBoot    { decimal }

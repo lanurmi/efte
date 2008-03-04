@@ -7,13 +7,13 @@
 # Copyright (c) 2008 eFTE Group
 # -----------------------------------------------------------------------
 
-sub dot33 {                    # ( n -- ) print as nnn:nnn
-   lesshash                    
+sub .33 {                    # ( n -- ) print as nnn:nnn
+   <hash                    
    bl hold
    3:hash
-   58 hold
+   ':' hold
    3:hash
-   hashmoretype
+   hash> type$
 }
 
 sub accumulate { 10 * + }
@@ -48,9 +48,9 @@ sub pass   {    # ( got wants testnum -- )  ( filename$ -- )
       depth depth$ accumulate 13 equals and
       if "PASS" else "FAIL" endif type$
    r>
-   " test " type$ dot33
-   "wanted" type$ 9 dotr
-   ", got"  type$ 9 dotr
+   " test " type$ .33
+   "wanted" type$ 9 .r
+   ", got"  type$ 9 .r
    3 spaces type$ cr
    emptyall
    filesave
