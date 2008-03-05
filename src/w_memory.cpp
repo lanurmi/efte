@@ -96,7 +96,6 @@ int MemoryEnd() {
 
 // --- shared variables ---
 void InitSharedVars() {          // --- need to init before they can be used ---
-    fprintf(stderr,"init shared vars to dp=%d\n", dp);
     int initialized = memory.size();
     while (dp > initialized++ )
         memory.push_back(0);
