@@ -336,11 +336,10 @@ sub test_21_1 { depth$ "ABCD 12345" depth$ drop$ accumulate 10  21001 pass }
  # test push with different string lengths
 sub test_21_2 { "ABCD" "12345" "x" "ab" "" depth$ dup times drop$ 5  21002 pass }
  
- # len$ fails
-sub test_21_3 { "" ?len$ 0  21003 pass }
+sub test_21_3 { "" len$ 0  21003 pass }
  
  # test len$
-sub test_21_4 { "12345" len$ "abc" len$ "" ?len$ "a" len$ 3:accumulate 1035  21004 pass }
+sub test_21_4 { "12345" len$ "abc" len$ "" len$ "a" len$ 3:accumulate 1035  21004 pass }
  
  # test asc / char$
 sub test_21_5 { "1" asc inc char$ 3 asc + char$ 2 asc + '7'  21005 pass }

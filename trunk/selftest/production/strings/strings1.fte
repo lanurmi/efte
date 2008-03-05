@@ -7,11 +7,10 @@
 # test push with different string lengths
 { "ABCD" "12345" "x" "ab"  "" depth$ dup times drop$  5 PASS }
 
-# len$   fails 
-{ "" ?len$ 0 PASS }
+{ "" len$ 0 PASS }
 
 # test len$
-{ "12345" len$  "abc" len$  "" ?len$  "a" len$  3:accumulate 1035 PASS }
+{ "12345" len$  "abc" len$  "" len$  "a" len$  3:accumulate 1035 PASS }
 
 # test asc / char$
 { "1" asc inc char$ 3 asc + char$ 2 asc +  '7' PASS }
