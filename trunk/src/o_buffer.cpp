@@ -1705,53 +1705,69 @@ int EBuffer::FindReplace(ExState &State) {
     return 1;
 }
 
-int EBuffer::FindRepeat(ExState &State) {
-    if (LSearch.ok == 0) return Find(State);
-    LSearch.Options |= SEARCH_NEXT;
-    LSearch.Options &= ~SEARCH_GLOBAL;
-    if (Find(LSearch) == 0) return 0;
-    return 1;
-}
 
-int EBuffer::FindRepeatReverse(ExState &State) {
-    int rc;
+
+
+
+
+/* TODO sorry i don't understand the Find string stack effect.
+   sometimes it returns items, sometimes it doesn't and i can't really
+   see a clear line of when it does and when it doesn't.
+   now these functions sometimes get their empty strings which they
+   need to pass to find to avoid underflow back, it seems to have
+   to do something with finding or not finding the string. but at least
+   they don't abort or refuse to run because of stack underflows anymore/
+*/
+
+
+
+int EBuffer::FindWithModifier(ExState &State, int PlusFlags, int MinFlags, int ToggleFlags) {
+    int rc = 1;
+    int prevstack = sstack.size();
     sstack.push_back("");
     sstack.push_back("");
 
     if (LSearch.ok == 0)  {
         rc = Find(State);
     } else {
-        LSearch.Options |= SEARCH_NEXT;
-        LSearch.Options &= ~SEARCH_GLOBAL;
-        LSearch.Options ^= SEARCH_BACK;
+        LSearch.Options |= PlusFlags;
+        LSearch.Options &= ~MinFlags;
+        LSearch.Options ^= ToggleFlags;
         rc = Find(LSearch);
-        LSearch.Options ^= SEARCH_BACK;
+        LSearch.Options ^= ToggleFlags;
     }
+    // fix stack
 
-    sstack.pop_back();
-    sstack.pop_back();
+    int nowstack = sstack.size();
+//    nowstack = prevstack: ok
+//    nowstack < prevstac: bad but can't help it.
+//    nowstack > prevstack: bad too, but can drop
+    while (nowstack-- > prevstack)
+        sstack.pop_back();
+
     return rc;
 }
 
+
+int EBuffer::FindRepeat(ExState &State) {
+    return FindWithModifier(State, SEARCH_NEXT, SEARCH_GLOBAL, 0);
+}
+
+int EBuffer::FindRepeatReverse(ExState &State) {
+    return FindWithModifier(State, SEARCH_NEXT, SEARCH_GLOBAL, SEARCH_BACK);
+}
 
 int EBuffer::FindRepeatOnce(ExState &State) {
-    int rc = 1;
-    sstack.push_back("");
-    sstack.push_back("");
-
-    if (LSearch.ok == 0) {
-        rc = Find(State);
-    } else {
-        LSearch.Options |= SEARCH_NEXT;
-        LSearch.Options &= ~SEARCH_GLOBAL;
-        LSearch.Options &= ~SEARCH_ALL;
-        rc = Find(LSearch);
-    }
-
-    sstack.pop_back();
-    sstack.pop_back();
-    return rc;
+    return FindWithModifier(State, SEARCH_NEXT, SEARCH_GLOBAL|SEARCH_ALL, 0);
 }
+
+
+
+
+
+
+
+
 
 
 int EBuffer::ChangeMode(ExState &State) {

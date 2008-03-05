@@ -144,6 +144,80 @@ int OverStr() {
 
 
 
+int LenStr() {
+    int ret = 0;
+    int idx = sstack.size();
+    if (idx) {
+        ParamStack.push(sstack[idx-1].length());
+        sstack.pop_back();
+        ret++;
+    }
+    SetBranchCondition(ret);
+    return ret;
+}
+
+
+
+int AppendStr() {
+    int ret = 0;
+    unsigned int tos = sstack.size();
+
+    if (tos > 1) {
+
+        std::string tosS = sstack[--tos];
+        std::string nosS = sstack[--tos];
+        sstack.pop_back();
+        sstack.pop_back();
+
+        sstack.push_back(nosS + tosS);
+        ret++;
+    }
+    SetBranchCondition(ret);
+    return ret;
+}
+
+
+
+int SplitStr() {
+    int ret = 0;
+    int tos = sstack.size();
+
+    if (tos) {
+        unsigned int pos = ParamStack.pop();
+        std::string tosS = sstack[--tos];
+
+        sstack.pop_back();
+
+        if (pos > tosS.size()) {
+            sstack.push_back("");
+            sstack.push_back(tosS);
+        } else if (pos <= 0) {
+            sstack.push_back(tosS);
+            sstack.push_back("");
+        } else {
+            sstack.push_back(tosS.substr(pos));
+            sstack.push_back(tosS.substr(0, pos));
+        }
+        ret++;
+    }
+
+    SetBranchCondition(ret);
+    return ret;
+}
+
+
+
+int DepthStr() {
+    ParamStack.push(sstack.size());
+    return 1;
+}
+
+
+
+
+// stopped reversing conds here.  TODO: remove this TODO when not needed anymore
+
+
 int PickStr() {
     PSCHECK(1, "pick$");
     int idx = ParamStack.pop();
@@ -154,13 +228,6 @@ int PickStr() {
     sstack.push_back(sstack[idx]);
 
     SetBranchCondition(1);
-    return 1;
-}
-
-
-
-int DepthStr() {
-    ParamStack.push(sstack.size());
     return 1;
 }
 
@@ -185,74 +252,6 @@ int SubSearchStr() {
     SetBranchCondition(1);
     return 1;
 }
-
-
-
-
-int LenStr() {
-    int ret = 0;
-    int idx = sstack.size();
-    if (idx) {
-        ParamStack.push(sstack[idx-1].length());
-        sstack.pop_back();
-        ret++;
-    }
-    SetBranchCondition(ret);
-    return ret;
-}
-
-
-
-
-// stopped reversing conds here
-
-int AppendStr() {
-    unsigned int tos = sstack.size();
-    if (tos < 2) {
-        SetBranchCondition(0);
-        return 0;
-    }
-
-    tos--; // 0 based index
-
-    std::string tosS = sstack[tos];
-    std::string nosS = sstack[tos-1];
-    sstack.pop_back();
-    sstack.pop_back();
-
-    sstack.push_back(nosS + tosS);
-
-    SetBranchCondition(1);
-    return 1;
-}
-
-int SplitStr() {
-    int tos = sstack.size() - 1;
-    if (tos < 0) {
-        SetBranchCondition(0);
-        return 0;
-    }
-
-    unsigned int pos = ParamStack.pop();
-    std::string tosS = sstack[tos];
-
-    sstack.pop_back();
-
-    if (pos > tosS.size()) {
-        sstack.push_back("");
-        sstack.push_back(tosS);
-    } else if (pos <= 0) {
-        sstack.push_back(tosS);
-        sstack.push_back("");
-    } else {
-        sstack.push_back(tosS.substr(pos));
-        sstack.push_back(tosS.substr(0, pos));
-    }
-
-    SetBranchCondition(1);
-    return 1;
-}
-
 
 
 
