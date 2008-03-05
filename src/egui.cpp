@@ -596,8 +596,8 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
 
                     exception = 0;
                     faillevel--;
-
-                    fprintf(stderr,"\nReturning from fail handler with fail code: %d\n", ErFAIL);
+                    if (memory[verbosity])
+                        fprintf(stderr,"\nReturning from fail handler with fail code: %d\n", ErFAIL);
                     return ErFAIL;
                 }
             }
@@ -675,7 +675,8 @@ void EGUI::DispatchKey(GxView *view, TEvent &Event) {
                 } else {
                     SetMap(0, &key->fKey);
                     if (ExecMacro(view, key->Cmd) == ErFAIL)
-                        fprintf(stderr,"continues after fail at DispatchKey 1 - fail condition is lost here");
+                        if (memory[verbosity])
+                            fprintf(stderr,"continues after fail at DispatchKey 1 - fail condition is lost here");
                     Event.What = evNone;
                     return;
                 }
@@ -697,7 +698,8 @@ void EGUI::DispatchKey(GxView *view, TEvent &Event) {
                     return ;
                 } else {
                     if (ExecMacro(view, key->Cmd) == ErFAIL)
-                        fprintf(stderr,"continues after fail at DispatchKey 2 - fail conditions is lost here");
+                        if (memory[verbosity])
+                            fprintf(stderr,"continues after fail at DispatchKey 2 - fail conditions is lost here");
                     Event.What = evNone;
                     return;
                 }
@@ -724,7 +726,8 @@ void EGUI::DispatchCommand(GxView *view, TEvent &Event) {
     } else if (Event.Msg.Command >= 65536) {
         Event.Msg.Command -= 65536;
         if (ExecMacro(view, Event.Msg.Command) == ErFAIL)
-            fprintf(stderr,"continues after fail at DispatchCommand 1 - fail condition is lost here");
+            if (memory[verbosity])
+                fprintf(stderr,"continues after fail at DispatchCommand 1 - fail condition is lost here");
         Event.What = evNone;
         return;
     }
