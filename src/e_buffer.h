@@ -732,6 +732,7 @@ public:
     int BlockGet();
     int Find(ExState &State);
     int FindReplace(ExState &State);
+    int FindWithModifier(ExState &State, int PlusFlags, int MinFlags, int ToggleFlags);
     int FindRepeat(ExState &State);
     int FindRepeatOnce(ExState &State);
     int FindRepeatReverse(ExState &State);
