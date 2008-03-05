@@ -394,7 +394,7 @@ sub test_22 { "strings/strings2.fte" testfilename store$ test_22_10 }
 # -------------------------------------------------------------------------------------------------
 
 # 23 - strings/strings3.fte
- # split$ merge$
+ # split$ append$
  
 sub test_23_1 { "abcdefgh" 3 split$ "abc" equals$ "defgh" equals$ and true  23001 pass }
 sub test_23_2 { "1234" 0 split$ "" equals$ "1234" equals$ and true  23002 pass }
@@ -403,9 +403,9 @@ sub test_23_4 { "" 0 split$ "" equals$ "" equals$ and true  23004 pass }
 sub test_23_5 { "" 5 split$ "" equals$ "" equals$ and true  23005 pass }
 sub test_23_6 { "" -2 split$ "" equals$ "" equals$ and true  23006 pass }
  
-sub test_23_7 { "123" "abcd" merge$ "abcd123" equals$ true  23007 pass }
-sub test_23_8 { "456" "" merge$ "456" equals$ true  23008 pass }
-sub test_23_9 { "" "efg" merge$ "efg" equals$ true  23009 pass }
+sub test_23_7 { "123" "abcd" append$ "abcd123" equals$ true  23007 pass }
+sub test_23_8 { "456" "" append$ "456" equals$ true  23008 pass }
+sub test_23_9 { "" "efg" append$ "efg" equals$ true  23009 pass }
  
 sub test_23_10 { test_23_1 test_23_2 test_23_3 test_23_4 test_23_5 test_23_6 test_23_7 test_23_8 }
 sub test_23 { "strings/strings3.fte" testfilename store$ test_23_10 }
