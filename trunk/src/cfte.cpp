@@ -42,7 +42,6 @@ static DefinedMacro *CFteMacros = 0;
 
 static int lntotal = 0;
 static long pos = 0;
-// int verbosity = 0;
 
 #include "c_commands.h"
 #include "c_cmdtab.h"
