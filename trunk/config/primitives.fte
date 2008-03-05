@@ -56,17 +56,35 @@ sub gcd       { begin tuck mod qdup not until } # greatest common denominator
 sub sqrt      { 0 tuck do inc dup lshift inc +loop }
 sub range     { over + swap }                   # start n -> limit start conversion for DO LOOP
 
+
+# --- define a variables class
+sub var       { here dup cell allot }           # for the new construct:       sub foo { var new }
+
+
+# --- number conversion words respect base, and convert accordingly
+sub base      { var new }                        # number base for num conversion
+sub decimal   { 10 base ! }
+sub hex       { 16 base ! }
+sub octal     {  8 base ! }
+sub binary    {  2 base ! }
+
+
 # --- character test
 sub capital   { 'A' 'Z' between }
 sub lowercase { 'a' 'z' between }
 sub capitalize { dup lowercase if 32 - endif }
 
+sub numeric   {             # ( asc -- u -1 | 0 )  converts ascii to numeric value, and flag if legal digit
+   capitalize '0' -
+   dup 10 16 between or
+   dup 16 > 7 and -
+   dup 0 base @ dec between # legal are {0..9,a..f,A..F}
+   qdup nip  }
+
+
 # -- cursor --
 sub cursorhome { movelinestart }
 sub cursorend  { movelineend }
-
-
-
 
 
 
@@ -93,7 +111,6 @@ sub free      { memend here - }
 
 
 
-sub var       { here dup cell allot }           # for the new construct:       sub foo { var new }
 
 
 
@@ -284,15 +301,6 @@ sub perrln  { 2 println }
 
 
 
-# --- the number conversion words below respect base, and convert accordingly ---
-# we need to init base somewhere - vars are initialized to zero, which is not a good number base.
-# using number output without setting base first will result in division by zero
-# time for checking out the OnStart: event, which should be ideally suited for one-time init.
-sub base      { var new }                        # number base for pic'd num conversion
-sub decimal   { 10 base ! }
-sub hex       { 16 base ! }
-sub octal     {  8 base ! }
-sub binary    {  2 base ! }
 
 
 # --- pictured number conversion ---
