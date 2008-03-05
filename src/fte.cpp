@@ -146,7 +146,7 @@ static int CmdLoadConfiguration(int &argc, char **argv) {
             } else if (argv[Arg][1] == '+') {
                 QuoteNext = 1;
             } else if (argv[Arg][1] == 'v') {
-                verbosity++;
+                memory[verbosity]++;
             } else if (argv[Arg][1] == '?' || argv[Arg][1] == 'h') {
                 Usage();
                 return 0;
@@ -252,6 +252,7 @@ int main(int argc, char **argv) {
     // setup locale from environment
     setlocale(LC_ALL, "");
 #endif
+    InitSharedVars();
 
     if (CmdLoadConfiguration(argc, argv) == 0)
         return 1;

@@ -31,6 +31,7 @@ const struct {
     TAB(MemEnd),
     TAB(Here),
     TAB(Allot),
+    TAB(Verbosity),
     TAB(Dump),
 
     { ExPlus, "+" },

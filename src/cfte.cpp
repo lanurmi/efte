@@ -42,7 +42,7 @@ static DefinedMacro *CFteMacros = 0;
 
 static int lntotal = 0;
 static long pos = 0;
-int verbosity = 0;
+// int verbosity = 0;
 
 #include "c_commands.h"
 #include "c_cmdtab.h"
@@ -454,7 +454,7 @@ void DefineWord(const char *w) {
     if (!w || !w[0])
         return ;
     if (!DefinedWord(w)) {
-        if (verbosity > 0) {
+        if (memory[verbosity] > 0) {
             fprintf(stderr, ACTION "%s\n", "define", w);
         }
         words = (char **)realloc(words, sizeof(char *) * (wordCount + 1));
@@ -1778,7 +1778,7 @@ static int ParseConfigFile(CurPos &cp) {
                 if (Parse(cp) != P_STRING) Fail(cp, "String expected");
                 fn = GetString(cp);
 
-                if (verbosity > 0)
+                if (memory[verbosity] > 0)
                     fprintf(stderr, ACTION "%s... ", "include", fn);
                 if (LoadFile(cp.name, fn) != 0) Fail(cp, "Include of file '%s' failed", fn);
                 if (Parse(cp) != P_EOS) Fail(cp, "';' expected");
@@ -1791,15 +1791,15 @@ static int ParseConfigFile(CurPos &cp) {
                 if (Parse(cp) != P_STRING) Fail(cp, "String expected");
                 fn = GetString(cp);
 
-                if (verbosity > 1)
+                if (memory[verbosity] > 1)
                     fprintf(stderr, ACTION "%s... ", "opt include", fn);
                 if (LoadFile(cp.name, fn, 1, 1) != 0) {
-                    if (verbosity > 1)
+                    if (memory[verbosity] > 1)
                         fprintf(stderr, "not found\n");
                     GetOp(cp, P_EOS);
                     continue; // This is an optional include
                 }
-                if (verbosity == 1)
+                if (memory[verbosity] == 1)
                     fprintf(stderr, ACTION "%s... found: %s\n", "opt include", fn, cp.name);
                 if (Parse(cp) != P_EOS)
                     Fail(cp, "';' expected");
@@ -2046,7 +2046,7 @@ static int LoadFile(const char *WhereName, const char *CfgName, int Level, int o
             return -1;
         }
     }
-    if (verbosity > optional) // optional = 0/1
+    if (memory[verbosity] > optional) // optional = 0/1
         fprintf(stderr, "found: %s\n", Cfg);
 
     if ((fd = open(Cfg, O_RDONLY | O_BINARY)) == -1) {

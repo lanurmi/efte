@@ -35,7 +35,7 @@ typedef struct {
 #define CACHE_SIZE 512000
 extern CachedObject cache[CACHE_SIZE];
 extern unsigned int cpos;
-extern int verbosity;
+extern unsigned int verbosity;
 
 // commands may flag branch conditions in here
 // by shifting left, and setting (or not) bit 0

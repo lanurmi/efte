@@ -165,7 +165,7 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
     // looking for a place where to stick in stack dump after command has executed.
     // what i don't quite manage to do is to align stack display, after command name has been printed.
 
-    if (verbosity > 1) {
+    if (memory[verbosity] > 1) {
         Dodent();
         fprintf(stderr, "%-15s ", GetCommandName(Command));
     }
@@ -190,6 +190,8 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
         return MemoryHere();
     case ExAllot:
         return MemoryAllot();
+    case ExVerbosity:
+        return Verbosity();
     case ExPrint:
         return Print(view, State);
     case ExTick:
@@ -573,7 +575,7 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
                     // through this loop, execute fail, and then continue after return from ExecCommand,
                     // falling through to this fail handler again?
 
-                    if (exception || verbosity > 1)
+                    if (exception || memory[verbosity] > 1)
                         fprintf(stderr,"\n*** exception %d ***", exception);
 
                     faillevel++;
@@ -589,7 +591,7 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
                         while (tos--)
                             sstack.pop_back();
                     }
-                    if (verbosity > 1)                 // new line because command/stack display on same line
+                    if (memory[verbosity] > 1)                 // new line because command/stack display on same line
                         Nodent();                      // reset indent level - fail can happen on any level.
 
                     exception = 0;
@@ -1450,7 +1452,7 @@ int EGUI::Start(int &argc, char **argv) {
         ActiveView->SwitchToModel(ActiveModel);
     }
 
-    if (verbosity > 1) {
+    if (memory[verbosity] > 1) {
         unsigned mem=0;
         int mc = CMacros;
         while (mc--) {
