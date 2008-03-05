@@ -119,9 +119,7 @@ sub minrot$   { 2:rot$  }
 sub dup2$     { 2:over$ }
 sub drop2$    { 2:drop$ }
 sub equals$   { compare$ not }
-sub append$   { merge$ }                        # merge$ is a rename candidate
-sub prepend$  { swap$ merge$ }                  # merge$ is a rename candidate
-
+sub prepend$  { swap$ append$ }
 
 sub slice     { 1 split$ asc }                  # ( -- asc ) cut first char off string and return as ascii
 sub splice    { char$ prepend$ }                # ( asc -- ) prepend char to string

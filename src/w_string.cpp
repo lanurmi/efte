@@ -206,7 +206,7 @@ int LenStr() {
 
 // stopped reversing conds here
 
-int MergeStr() {
+int AppendStr() {
     unsigned int tos = sstack.size();
     if (tos < 2) {
         SetBranchCondition(0);

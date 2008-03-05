@@ -149,7 +149,7 @@ mode PLAIN {
 
 eventmap TEX: PLAIN {
     key [F9] {
-        "latex " filename$ merge$ AskCompiler
+        "latex " filename$ append$ AskCompiler
     }
 }
 

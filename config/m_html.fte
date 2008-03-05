@@ -4,12 +4,12 @@
 
 # Runs current file in browser
 sub HTML_View {
-    "netscape.exe -browser -l en_US file:///" filename$ merge$ RunProgram;
+    "netscape.exe -browser -l en_US file:///" filename$ append$ RunProgram;
 }
 
 # Runs Dave Ragget's HTML Tidy on current file
 sub HTML_Tidy {
-    "f:\\os2_apps\\tidy\\tidy.exe -m " filename$ merge$ RunProgram;
+    "f:\\os2_apps\\tidy\\tidy.exe -m " filename$ append$ RunProgram;
 }
 
 # Basic stuff

@@ -22,7 +22,7 @@ int OverStr();
 int PickStr();
 int DepthStr();
 int SubSearchStr();
-int MergeStr();
+int AppendStr();
 int SplitStr();
 int LenStr();
 int MidStr();
