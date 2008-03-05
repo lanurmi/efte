@@ -1557,7 +1557,6 @@ int EBuffer::Find(ExState &State) {
         SetBranchCondition(0);
         return 0;
     }
-
     char find[MAXSEARCH+1] = "";
     char options[32] = "";
 
@@ -1716,24 +1715,44 @@ int EBuffer::FindRepeat(ExState &State) {
 
 int EBuffer::FindRepeatReverse(ExState &State) {
     int rc;
+    sstack.push_back("");
+    sstack.push_back("");
 
-    if (LSearch.ok == 0) return Find(State);
-    LSearch.Options |= SEARCH_NEXT;
-    LSearch.Options &= ~SEARCH_GLOBAL;
-    LSearch.Options ^= SEARCH_BACK;
-    rc = Find(LSearch);
-    LSearch.Options ^= SEARCH_BACK;
+    if (LSearch.ok == 0)  {
+        rc = Find(State);
+    } else {
+        LSearch.Options |= SEARCH_NEXT;
+        LSearch.Options &= ~SEARCH_GLOBAL;
+        LSearch.Options ^= SEARCH_BACK;
+        rc = Find(LSearch);
+        LSearch.Options ^= SEARCH_BACK;
+    }
+
+    sstack.pop_back();
+    sstack.pop_back();
     return rc;
 }
 
+
 int EBuffer::FindRepeatOnce(ExState &State) {
-    if (LSearch.ok == 0) return Find(State);
-    LSearch.Options |= SEARCH_NEXT;
-    LSearch.Options &= ~SEARCH_GLOBAL;
-    LSearch.Options &= ~SEARCH_ALL;
-    if (Find(LSearch) == 0) return 0;
-    return 1;
+    int rc = 1;
+    sstack.push_back("");
+    sstack.push_back("");
+
+    if (LSearch.ok == 0) {
+        rc = Find(State);
+    } else {
+        LSearch.Options |= SEARCH_NEXT;
+        LSearch.Options &= ~SEARCH_GLOBAL;
+        LSearch.Options &= ~SEARCH_ALL;
+        rc = Find(LSearch);
+    }
+
+    sstack.pop_back();
+    sstack.pop_back();
+    return rc;
 }
+
 
 int EBuffer::ChangeMode(ExState &State) {
     if (sstack.size() == 0) {
