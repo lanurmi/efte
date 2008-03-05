@@ -17,4 +17,6 @@ int MemoryHere();
 int MemoryAllot();
 int MemoryEnd();
 
+int Verbosity();
+void InitSharedVars();
 #endif // W_MEMORY_H

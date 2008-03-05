@@ -90,7 +90,7 @@ int DiagStr() {
     else
         fprintf(stderr, "empty");
 
-    if (verbosity < 2)                 // don't linefeed if verbosity >1:  command trace will advance.
+    if (memory[verbosity] < 2)                 // don't linefeed if verbosity >1:  command trace will advance.
         fprintf(stderr, "\n");
     return 1;
 }

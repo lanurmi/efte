@@ -43,25 +43,30 @@ int MemoryStore() {
 
 int MemoryFetch() {
     PSCHECK(1, "@");
-
+    int ret = 0;
     int loc = ParamStack.pop();
 
-    if (loc > MEMORY_LIMIT) {
-        SetBranchCondition(0);
-        return 0;
+    if (loc < MEMORY_LIMIT) {
+
+        int initialized = memory.size();
+        while (loc >= initialized++ )
+            memory.push_back(0);
+
+        ParamStack.push(memory[loc]);
+        ret++;
     }
 
-    int initialized = memory.size();
-    while (loc >= initialized++ )
-        memory.push_back(0);
+    SetBranchCondition(ret);
+    return ret;
 
-    ParamStack.push(memory[loc]);
-
-    SetBranchCondition(1);
-    return 1;
 }
 
+
+
+
 unsigned int dp=0;            // "dictionary pointer". pointer to free memory. what is below, is allocated memory.
+
+
 
 int MemoryHere()  {
     ParamStack.push(dp);
@@ -84,4 +89,24 @@ int MemoryEnd() {
     ParamStack.push(MEMORY_LIMIT);
     return 1;
 }
+
+
+
+
+
+// --- shared variables ---
+void InitSharedVars() {          // --- need to init before they can be used ---
+    fprintf(stderr,"init shared vars to dp=%d\n", dp);
+    int initialized = memory.size();
+    while (dp > initialized++ )
+        memory.push_back(0);
+}
+
+
+unsigned int verbosity = dp++;
+int Verbosity() {
+    ParamStack.push(verbosity);
+    return 1;
+}
+
 

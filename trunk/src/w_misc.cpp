@@ -10,7 +10,7 @@
 #include "fte.h"
 
 void StackTrace()  {
-    if (verbosity > 1) {
+    if (memory[verbosity] > 1) {
 
         // Param Stack
         for (int idx=ParamStack.size()-1; idx > -1; idx--)
