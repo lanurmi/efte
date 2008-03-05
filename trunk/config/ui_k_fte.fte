@@ -281,10 +281,13 @@ eventmap PLAIN: MODEL {
     #key     [C+C]       { MoveToColumn }
     key     [C+D]       { LineDuplicate }
     key     [C+F]       { "" "" Find }
-    key     [C+G]       { FindRepeat }
+
+# TODO FindRepeat should fix this, not the config.
+    key     [C+G]       { "" "" FindRepeat 2:drop$ }
+    key     [C+H]       { "" "" FindRepeatReverse 2:drop$ }
+
     key     [C+I]       { ListRoutines }
     key     [C+J]       { LineJoin }
-    key     [C+H]       { FindRepeatReverse }
     key     [C+M]       { DirOpen }
     key     [C+Q]       { -1 InsertChar }
     key     [C+R]       { "" "" "" FindReplace }
