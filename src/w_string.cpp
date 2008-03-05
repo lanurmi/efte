@@ -35,45 +35,48 @@ int PSChar() {
 }
 
 // --- string stack ---
+// i changed logic to branch in error case, instead of in good case.
+// branching will most likely cause the CPU to throw away the work
+// it has done in its pipeline, and having to start filling the
+// pipeline with operations again.
 
 int DupStr() {
-    if (sstack.size() == 0) {
-        SetBranchCondition(0);
-        return 0;
+    int ret = 0;
+    if (sstack.size()) {
+        sstack.push_back(sstack[sstack.size()-1]);
+        ret++;
     }
-
-    sstack.push_back(sstack[sstack.size()-1]);
-
-    SetBranchCondition(1);
-    return 1;
+    SetBranchCondition(ret);
+    return ret;
 }
+
+
 
 int DropStr() {
-    if (sstack.size() == 0) {
-        SetBranchCondition(0);
-        return 0;
+    int ret = 0;
+    if (sstack.size()) {
+        sstack.pop_back();
+        ret++;
     }
-
-    sstack.pop_back();
-
-    SetBranchCondition(1);
-    return 1;
+    SetBranchCondition(ret);
+    return ret;
 }
 
+
 int SwapStr() {
+    int ret = 0;
     int tosIdx = sstack.size();
-    if (tosIdx < 2) {
-        SetBranchCondition(0);
-        return 0;
+    if (tosIdx > 1) {
+        tosIdx--;
+
+        std::string tos = sstack.at(tosIdx);
+        sstack[tosIdx] = sstack[tosIdx - 1];
+        sstack[tosIdx - 1] = tos;
+        ret++;
     }
-    tosIdx--;
+    SetBranchCondition(ret);
+    return ret;
 
-    std::string tos = sstack.at(tosIdx);
-    sstack[tosIdx] = sstack[tosIdx - 1];
-    sstack[tosIdx - 1] = tos;
-
-    SetBranchCondition(1);
-    return 1;
 }
 
 
@@ -87,59 +90,59 @@ int DiagStr() {
     else
         fprintf(stderr, "empty");
 
-    if (verbosity <= 1)                 // don't linefeed if verbosity >1:  command trace will advance.
+    if (verbosity < 2)                 // don't linefeed if verbosity >1:  command trace will advance.
         fprintf(stderr, "\n");
     return 1;
 }
 
 
 int RotStr() {
-    if (sstack.size() < 3) {
-        SetBranchCondition(0);
-        return 0;
+    int ret = 0;
+    if (sstack.size() > 2) {
+        std::string tos = sstack[sstack.size() - 1];
+        sstack.pop_back();
+        SwapStr();
+        sstack.push_back(tos);
+        SwapStr();
+        ret++;
     }
-
-    std::string tos = sstack[sstack.size() - 1];
-    sstack.pop_back();
-
-    SwapStr();
-    sstack.push_back(tos);
-    SwapStr();
-
-    SetBranchCondition(1);
-    return 1;
+    SetBranchCondition(ret);
+    return ret;
 }
+
+
 
 int CompareStr() {
-    if (sstack.size() < 2) {
-        SetBranchCondition(0);
-        return 0;
+    int ret = 0;
+    if (sstack.size() > 1) {
+        int tos = sstack.size() - 1;
+        int compareTo;
+
+        std::string what = sstack[tos];
+        sstack.pop_back();
+
+        compareTo = tos - 1;
+        ParamStack.push(-(what.compare(sstack[compareTo])));
+        sstack.pop_back();
+        ret++;
     }
-
-    int tos = sstack.size() - 1;
-    int compareTo;
-
-    std::string what = sstack[tos];
-    sstack.pop_back();
-
-    compareTo = tos - 1;
-    ParamStack.push(-(what.compare(sstack[compareTo])));
-    sstack.pop_back();
-
-    SetBranchCondition(1);
-    return 1;
+    SetBranchCondition(ret);
+    return ret;
 }
+
+
 
 int OverStr() {
-    if (sstack.size() < 2) {
-        SetBranchCondition(0);
-        return 0;
+    int ret = 0;
+    if (sstack.size() > 1) {
+        sstack.push_back(sstack[sstack.size()-2]);
+        ret++;
     }
-
-    sstack.push_back(sstack[sstack.size()-2]);
-    SetBranchCondition(1);
-    return 1;
+    SetBranchCondition(ret);
+    return ret;
 }
+
+
 
 int PickStr() {
     PSCHECK(1, "pick$");
@@ -154,10 +157,14 @@ int PickStr() {
     return 1;
 }
 
+
+
 int DepthStr() {
     ParamStack.push(sstack.size());
     return 1;
 }
+
+
 
 int SubSearchStr() {
     int tos = sstack.size() - 1;
@@ -178,6 +185,26 @@ int SubSearchStr() {
     SetBranchCondition(1);
     return 1;
 }
+
+
+
+
+int LenStr() {
+    int ret = 0;
+    int idx = sstack.size();
+    if (idx) {
+        ParamStack.push(sstack[idx-1].length());
+        sstack.pop_back();
+        ret++;
+    }
+    SetBranchCondition(ret);
+    return ret;
+}
+
+
+
+
+// stopped reversing conds here
 
 int MergeStr() {
     unsigned int tos = sstack.size();
@@ -226,19 +253,9 @@ int SplitStr() {
     return 1;
 }
 
-int LenStr() {
-    int idx = sstack.size() - 1;
 
-    if ((unsigned int) idx >= sstack.size()) {
-        SetBranchCondition(0);
-        return 0;
-    }
 
-    ParamStack.push(sstack[idx].length());
 
-    SetBranchCondition(1);
-    return 1;
-}
 
 int MidStr() {
     PSCHECK(2, "mid$");

@@ -144,7 +144,7 @@ sub cr        { cursorend linenew cursorhome }  # carriage return
 
 sub left$     {                                 # ( n -- )
    dup negative if                              # negative n: strip first n chars
-      negate len$ over -
+      negate dup$ len$ over -
    else                                         # positive n: keep first n chars
       0 swap
    endif
@@ -152,7 +152,7 @@ sub left$     {                                 # ( n -- )
 
 sub right$    {                                 # ( n -- )
   dup negative if                               # negative n: strip last n chars
-     0 len$ rot +
+     0 dup$ len$ rot +
   else                                          # positive n: keep last n chars
      dup negate swap
   endif
@@ -177,7 +177,7 @@ sub embed$ {                                    # ( asc n -- ) store char at pos
 }
 
 sub capitalize$ {                               # ( -- )  capitalize all chars of top string
-   len$ 0 do                                    # loop though all chars:
+   dup$ len$ 0 do                                    # loop though all chars:
       i ascn dup lowercase if
          capitalize
          dup i embed$                           #   replace char in string
@@ -192,7 +192,7 @@ sub repeat$ {                                   # ( u c -- ) create a string of 
       dup 1 do
          append$ dup$
       i +loop
-      swap$ len$ - left$ append$
+      swap$ dup$ len$ - left$ append$
    endif
    drop
 }
@@ -202,7 +202,7 @@ sub spaces$ { bl repeat$ }                      # ( u -- ) create a string of u 
 
 
 sub minleading$ {                               # ( -- ) remove leading spaces
-   len$                                         # assume removing whole string
+   dup$ len$                                         # assume removing whole string
    dup 0 do                                     # loop through string,
       i ascn bl equals not                      # looking for non-space
       if drop i leave endif                     # found, return index to space
@@ -212,7 +212,7 @@ sub minleading$ {                               # ( -- ) remove leading spaces
 
 
 sub mintrailing$ {                              # ( -- ) remove trailing spaces
-   len$
+   dup$ len$
    dup 0 do                                     # loop through sting chars
       dec dup ascn                              # select chars, starting with last
       bl equals not if                          # until char not space
@@ -231,7 +231,7 @@ sub trim$ {                                     # ( -- ) remove leading and trai
 
 sub scan$ {                                     # ( asc -- -1 | u )  search for asc in string.
    -1
-   len$ 0 do
+   dup$ len$ 0 do
       over i ascn equals
       if drop i leave endif
    loop
@@ -246,12 +246,12 @@ sub brmovebr$  {                                # ( a n -- )  copy n chars of to
       slice i !
    loop drop$ }
 
-sub move$    { len$  brmovebr$ }                # ( a -- ) transfers string on string stack to a
+sub move$    { dup$ len$  brmovebr$ }           # ( a -- ) transfers string on string stack to a
 
 sub store$   {                                  # ( a -- ) transfers string on string stack to a
    count                                        # structure size
    2 cells -                                    # subtract space for structure size and leading string count
-   len$ min                                     # move smaller of this max and string size number of chars.
+   dup$ len$ min                                # move smaller of this max and string size number of chars.
    brmovebr$ }
 
 sub fetch$    {                                 # ( a -- ) transfers the string at a to string stack.
@@ -261,7 +261,7 @@ sub fetch$    {                                 # ( a -- ) transfers the string 
       count char$ append$                       # get char and add to string
    loop drop }
 
-sub var$ { here dup len$ inc dup inc comma allot } # string var description.
+sub var$ { here dup dup$ len$ inc dup inc comma allot } # string var description.
 # (varsize) (strlen) (char) (char) (char) ...
 
 
@@ -311,7 +311,7 @@ sub sign      { negative if '-' hold endif }    # ( n -- }
 sub brdotbr   { dup <hash hashes hash> sign }   # ( n -- )
 
 sub padded  {                                   # ( n c -- )
-   >r len$ -                                    # can't call it "pad" because pad is a
+   >r dup$ len$ -                                    # can't call it "pad" because pad is a
    0 max qdup if                                # standard word which does something else
       r@ repeat$ prepend$
    endif r> drop }
@@ -332,7 +332,7 @@ sub .0r     { <hash  bl hold  times hash  hash> type$ }
 
 
 # --- file editing buffer helpers
-sub linelen { curline$ len$ drop$ }             # ( -- len )
+sub linelen { curline$ dup$ len$ drop$ }        # ( -- len )
 sub at { movetocolumn movetoline }              # ( x y -- )
 
 
