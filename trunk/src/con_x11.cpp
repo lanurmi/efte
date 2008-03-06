@@ -513,6 +513,16 @@ static int SetupXWindow(int argc, char **argv) {
 #ifdef USE_XICON
     // Set icon using WMHints
     Pixmap icon_pixmap, icon_shape;
+    XWMHints wm_hints;
+    wm_hints.flags = (InputHint|StateHint);
+    wm_hints.input = True;
+
+    if (XpmCreatePixmapFromData(display, win, const_cast<char**>(fte16x16_xpm), &icon_pixmap, &icon_shape, NULL) == XpmSuccess) {
+        wm_hints.flags |= IconPixmapHint | IconMaskHint;
+        wm_hints.icon_pixmap = icon_pixmap;
+        wm_hints.icon_mask = icon_shape;
+    }
+    XSetWMHints(display, win, &wm_hints);
 
     // Set icons using _NET_WM_ICON property
     static const char **xpmData[ICON_COUNT] = { fte16x16_xpm, ftepm, fte48x48_xpm, fte64x64_xpm };
@@ -592,7 +602,6 @@ static int SetupXWindow(int argc, char **argv) {
     XWMHints wm_hints;
     wm_hints.flags = (InputHint|StateHint);
     wm_hints.input = True;
-    wm_initial_state = NormalState;
     XSetWMHints(display, win, &wm_hints);
 #endif
 
