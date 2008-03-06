@@ -328,7 +328,7 @@ sub test_20 { "strings/strings0.fte" testfilename store$ test_20_7 }
 
 # 21 - strings/strings1.fte
  
- # depth$ - string pushing - len$ - asc/char$ - split$
+ # depth$ - string pushing - len$ - asc/char$ - cut$
  
  # see whether depth$ reports correctly
 sub test_21_1 { depth$ "ABCD 12345" depth$ drop$ accumulate 10  21001 pass }
@@ -344,19 +344,19 @@ sub test_21_4 { "12345" len$ "abc" len$ "" len$ "a" len$ 3:accumulate 1035  2100
  # test asc / char$
 sub test_21_5 { "1" asc inc char$ 3 asc + char$ 2 asc + '7'  21005 pass }
  
- # split$ tests
+ # cut$ tests
 sub test_21_6 { "" asc 0  21006 pass }
-sub test_21_7 { "123456" 0 split$ len$ len$ accumulate 60  21007 pass }
-sub test_21_8 { "ABCDEFGH" -100 split$ len$ len$ accumulate 80  21008 pass }
-sub test_21_9 { "1234" 100 split$ len$ len$ accumulate 4  21009 pass }
-sub test_21_10 { "12345678 " 1 split$ asc drop$ '1'  21010 pass }
-sub test_21_11 { "45678" 2 split$ asc drop$ '4'  21011 pass }
-sub test_21_12 { "abcdef" 3 split$ asc drop$ 'a'  21012 pass }
+sub test_21_7 { "123456" 0 cut$ len$ len$ accumulate 60  21007 pass }
+sub test_21_8 { "ABCDEFGH" -100 cut$ len$ len$ accumulate 80  21008 pass }
+sub test_21_9 { "1234" 100 cut$ len$ len$ accumulate 4  21009 pass }
+sub test_21_10 { "12345678 " 1 cut$ asc drop$ '1'  21010 pass }
+sub test_21_11 { "45678" 2 cut$ asc drop$ '4'  21011 pass }
+sub test_21_12 { "abcdef" 3 cut$ asc drop$ 'a'  21012 pass }
  
-sub test_21_13 { "12345678" 0 split$ drop$ asc '1'  21013 pass }
-sub test_21_14 { "12345678" 1 split$ drop$ asc '2'  21014 pass }
-sub test_21_15 { "45678" 2 split$ drop$ asc '6'  21015 pass }
-sub test_21_16 { "abcdef" 3 split$ drop$ asc 'd'  21016 pass }
+sub test_21_13 { "12345678" 0 cut$ drop$ asc '1'  21013 pass }
+sub test_21_14 { "12345678" 1 cut$ drop$ asc '2'  21014 pass }
+sub test_21_15 { "45678" 2 cut$ drop$ asc '6'  21015 pass }
+sub test_21_16 { "abcdef" 3 cut$ drop$ asc 'd'  21016 pass }
  
  
 sub test_21_17 { test_21_1 test_21_2 test_21_3 test_21_4 test_21_5 test_21_6 test_21_7 test_21_8
@@ -365,119 +365,65 @@ sub test_21 { "strings/strings1.fte" testfilename store$ test_21_17 }
 
 # -------------------------------------------------------------------------------------------------
 
-# 22 - strings/strings1a.fte
- 
- # depth$ - string pushing - len$ - asc/char$ - cut$
- 
- # see whether depth$ reports correctly
-sub test_22_1 { depth$ "ABCD 12345" depth$ drop$ accumulate 10  22001 pass }
- 
- # test push with different string lengths
-sub test_22_2 { "ABCD" "12345" "x" "ab" "" depth$ dup times drop$ 5  22002 pass }
- 
-sub test_22_3 { "" len$ 0  22003 pass }
- 
- # test len$
-sub test_22_4 { "12345" len$ "abc" len$ "" len$ "a" len$ 3:accumulate 1035  22004 pass }
- 
- # test asc / char$
-sub test_22_5 { "1" asc inc char$ 3 asc + char$ 2 asc + '7'  22005 pass }
- 
- # cut$ tests
-sub test_22_6 { "" asc 0  22006 pass }
-sub test_22_7 { "123456" 0 cut$ len$ len$ accumulate 60  22007 pass }
-sub test_22_8 { "ABCDEFGH" -100 cut$ len$ len$ accumulate 80  22008 pass }
-sub test_22_9 { "1234" 100 cut$ len$ len$ accumulate 4  22009 pass }
-sub test_22_10 { "12345678 " 1 cut$ asc drop$ '1'  22010 pass }
-sub test_22_11 { "45678" 2 cut$ asc drop$ '4'  22011 pass }
-sub test_22_12 { "abcdef" 3 cut$ asc drop$ 'a'  22012 pass }
- 
-sub test_22_13 { "12345678" 0 cut$ drop$ asc '1'  22013 pass }
-sub test_22_14 { "12345678" 1 cut$ drop$ asc '2'  22014 pass }
-sub test_22_15 { "45678" 2 cut$ drop$ asc '6'  22015 pass }
-sub test_22_16 { "abcdef" 3 cut$ drop$ asc 'd'  22016 pass }
- 
- 
-sub test_22_17 { test_22_1 test_22_2 test_22_3 test_22_4 test_22_5 test_22_6 test_22_7 test_22_8
- test_22_9 test_22_10 test_22_11 test_22_12 test_22_13 test_22_14 test_22_15 test_22_16}
-sub test_22 { "strings/strings1a.fte" testfilename store$ test_22_17 }
-
-# -------------------------------------------------------------------------------------------------
-
-# 23 - strings/strings2.fte
+# 22 - strings/strings2.fte
  # equal$ mid$
  
  
  # equal$ ( needed for next tests )
-sub test_23_1 { "a" "a" equals$ true  23001 pass }
-sub test_23_2 { "B" 'A' inc char$ equals$ true  23002 pass }
-sub test_23_3 { "A" 'B' inc char$ equals$ false  23003 pass }
+sub test_22_1 { "a" "a" equals$ true  22001 pass }
+sub test_22_2 { "B" 'A' inc char$ equals$ true  22002 pass }
+sub test_22_3 { "A" 'B' inc char$ equals$ false  22003 pass }
  
  # mid$
  # interesting case. return "ABC" or "ABCDE"? trying both
-sub test_23_4 { "ABCDEFG" -2 5 mid$ "ABC" equals$ true  23004 pass }
-sub test_23_5 { "ABCDEFG" -2 5 mid$ "ABCDE" equals$ true  23005 pass }
+sub test_22_4 { "ABCDEFG" -2 5 mid$ "ABC" equals$ true  22004 pass }
+sub test_22_5 { "ABCDEFG" -2 5 mid$ "ABCDE" equals$ true  22005 pass }
  
-sub test_23_6 { "abcdefgh" 0 2 mid$ "ab" equals$ true  23006 pass }
-sub test_23_7 { "123456" 1 3 mid$ "234" equals$ true  23007 pass }
-sub test_23_8 { "ABCDEF" 4 6 mid$ "EF" equals$ true  23008 pass }
+sub test_22_6 { "abcdefgh" 0 2 mid$ "ab" equals$ true  22006 pass }
+sub test_22_7 { "123456" 1 3 mid$ "234" equals$ true  22007 pass }
+sub test_22_8 { "ABCDEF" 4 6 mid$ "EF" equals$ true  22008 pass }
  
- #{ "abcde" 10 10 mid$ "" equals$ true  23008 pass }
-sub test_23_9 { false false not  23009 pass } # just an attention drawer for the line above - terminates efte.
+ #{ "abcde" 10 10 mid$ "" equals$ true  22008 pass }
+sub test_22_9 { false false not  22009 pass } # just an attention drawer for the line above - terminates efte.
  
  # negative len not tested yet
  
  
-sub test_23_10 { test_23_1 test_23_2 test_23_3 test_23_4 test_23_5 test_23_6 test_23_7 test_23_8 test_23_9 }
-sub test_23 { "strings/strings2.fte" testfilename store$ test_23_10 }
+sub test_22_10 { test_22_1 test_22_2 test_22_3 test_22_4 test_22_5 test_22_6 test_22_7 test_22_8 test_22_9 }
+sub test_22 { "strings/strings2.fte" testfilename store$ test_22_10 }
 
 # -------------------------------------------------------------------------------------------------
 
-# 24 - strings/strings3.fte
- # split$
- 
-sub test_24_1 { "abcdefgh" 3 split$ "abc" equals$ "defgh" equals$ and true  24001 pass }
-sub test_24_2 { "1234" 0 split$ "" equals$ "1234" equals$ and true  24002 pass }
-sub test_24_3 { "ABCDE" 10 split$ "ABCDE" equals$ "" equals$ and true  24003 pass }
-sub test_24_4 { "" 0 split$ "" equals$ "" equals$ and true  24004 pass }
-sub test_24_5 { "" 5 split$ "" equals$ "" equals$ and true  24005 pass }
-sub test_24_6 { "" -2 split$ "" equals$ "" equals$ and true  24006 pass }
- 
-sub test_24_7 { test_24_1 test_24_2 test_24_3 test_24_4 test_24_5 test_24_6 }
-sub test_24 { "strings/strings3.fte" testfilename store$ test_24_7 }
-
-# -------------------------------------------------------------------------------------------------
-
-# 25 - strings/strings3a.fte
+# 23 - strings/strings3.fte
  # cut$ append$
  
-sub test_25_1 { "abcdefgh" 3 cut$ "abc" equals$ "defgh" equals$ and true  25001 pass }
-sub test_25_2 { "1234" 0 cut$ "" equals$ "1234" equals$ and true  25002 pass }
-sub test_25_3 { "ABCDE" 10 cut$ "ABCDE" equals$ "" equals$ and true  25003 pass }
-sub test_25_4 { "" 0 cut$ "" equals$ "" equals$ and true  25004 pass }
-sub test_25_5 { "" 5 cut$ "" equals$ "" equals$ and true  25005 pass }
-sub test_25_6 { "" -2 cut$ "" equals$ "" equals$ and true  25006 pass }
+sub test_23_1 { "abcdefgh" 3 cut$ "abc" equals$ "defgh" equals$ and true  23001 pass }
+sub test_23_2 { "1234" 0 cut$ "" equals$ "1234" equals$ and true  23002 pass }
+sub test_23_3 { "ABCDE" 10 cut$ "ABCDE" equals$ "" equals$ and true  23003 pass }
+sub test_23_4 { "" 0 cut$ "" equals$ "" equals$ and true  23004 pass }
+sub test_23_5 { "" 5 cut$ "" equals$ "" equals$ and true  23005 pass }
+sub test_23_6 { "" -2 cut$ "" equals$ "" equals$ and true  23006 pass }
  
-sub test_25_7 { test_25_1 test_25_2 test_25_3 test_25_4 test_25_5 test_25_6 }
-sub test_25 { "strings/strings3a.fte" testfilename store$ test_25_7 }
+sub test_23_7 { test_23_1 test_23_2 test_23_3 test_23_4 test_23_5 test_23_6 }
+sub test_23 { "strings/strings3.fte" testfilename store$ test_23_7 }
 
 # -------------------------------------------------------------------------------------------------
 
-# 26 - strings/strings4.fte
+# 24 - strings/strings4.fte
  # append$
  
-sub test_26_1 { "123" "abcd" append$ "abcd123" equals$ true  26001 pass }
-sub test_26_2 { "456" "" append$ "456" equals$ true  26002 pass }
-sub test_26_3 { "" "efg" append$ "efg" equals$ true  26003 pass }
+sub test_24_1 { "123" "abcd" append$ "abcd123" equals$ true  24001 pass }
+sub test_24_2 { "456" "" append$ "456" equals$ true  24002 pass }
+sub test_24_3 { "" "efg" append$ "efg" equals$ true  24003 pass }
  
-sub test_26_4 { test_26_1 test_26_2 test_26_3 }
-sub test_26 { "strings/strings4.fte" testfilename store$ test_26_4 }
+sub test_24_4 { test_24_1 test_24_2 test_24_3 }
+sub test_24 { "strings/strings4.fte" testfilename store$ test_24_4 }
 
 # -------------------------------------------------------------------------------------------------
 
-# 27 - zzz_final.fte
-sub test_27_1 { depth depth$ or 0  27001 pass }
-sub test_27 { "zzz_final.fte" testfilename store$ test_27_1 }
+# 25 - zzz_final.fte
+sub test_25_1 { depth depth$ or 0  25001 pass }
+sub test_25 { "zzz_final.fte" testfilename store$ test_25_1 }
 
 # -------------------------------------------------------------------------------------------------
 
@@ -486,6 +432,6 @@ sub selftest {
       test_1    test_2    test_3    test_4    test_5    test_6    test_7    test_8
       test_9    test_10   test_11   test_12   test_13   test_14   test_15   test_16
       test_17   test_18   test_19   test_20   test_21   test_22   test_23   test_24
-      test_25   test_26   test_27   
+      test_25   
    afteralltests
 }

@@ -146,8 +146,6 @@ typedef enum {
     /// Push the number of strings on the stack
     ExSubSearchStr,
     /// Substring search through stringstack
-    ExSplitStr,
-    /// Split a string into two on the stack at the given location
     ExAppendStr,
     /// Appending StrTos onto StrNos
     ExRotStr,

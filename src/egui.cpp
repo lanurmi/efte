@@ -278,8 +278,6 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
         return DepthStr();
     case ExSubSearchStr:
         return SubSearchStr();
-    case ExSplitStr:
-        return SplitStr();
     case ExAppendStr:
         return AppendStr();
     case ExLenStr:

@@ -138,7 +138,12 @@ sub drop2$    { 2:drop$ }
 sub equals$   { compare$ not }
 sub prepend$  { swap$ append$ }
 
-sub slice     { 1 split$ asc }                  # ( -- asc ) cut first char off string and return as ascii
+sub cut$ {                                      # ( n -- )  s( $1 -- $2 $3 )  splits string at position n,
+  dup$ len$ dup >r min 0 max                    # returns left part as tos$ and right part as nos$
+  dup$ dup r> mid$
+  swap$ 0 swap mid$ }
+
+sub slice     { 1 cut$ asc }                    # ( -- asc ) cut first char off string and return as ascii
 sub splice    { char$ prepend$ }                # ( asc -- ) prepend char to string
 sub ascn      { dup$ 1 mid$ asc }               # ( n -- c ) get ascii of nth char in top string
 
@@ -156,10 +161,6 @@ sub spaces    { times space }
 sub cr        { cursorend linenew cursorhome }  # carriage return
 
 
-sub cut$ {
-  dup$ len$ dup >r min 0 max
-  dup$ dup r> mid$
-  swap$ 0 swap mid$ }
 
 
 sub left$     {                                 # ( n -- )
