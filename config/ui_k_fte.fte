@@ -127,7 +127,7 @@ eventmap DIRECTORY: MLIST {
     
     key     [A+N]       { "Navigate" MainMenu }
     key     [C+O_C+V]   { "MSvn" ShowMenu }
-    key     [C+O_C+N]   { ShowMenu }
+    key     [C+O_C+N]   { "MCvs" ShowMenu }
 }
 
 # Buffer List
