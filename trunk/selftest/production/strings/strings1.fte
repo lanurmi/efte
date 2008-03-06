@@ -17,9 +17,9 @@
 
 # split$ tests
 { ""  asc                         0  PASS }
-{ "123456"      0 split$ len$ len$ accumulate  6 PASS }
-{ "ABCDEFGH" -100 split$ len$ len$ accumulate  8 PASS }
-{ "1234"      100 split$ len$ len$ accumulate 40 PASS }
+{ "123456"      0 split$ len$ len$ accumulate 60 PASS }
+{ "ABCDEFGH" -100 split$ len$ len$ accumulate 80 PASS }
+{ "1234"      100 split$ len$ len$ accumulate  4 PASS }
 { "12345678   " 1 split$ asc drop$  '1' PASS }
 { "45678"       2 split$ asc drop$  '4' PASS }
 { "abcdef"      3 split$ asc drop$  'a' PASS }

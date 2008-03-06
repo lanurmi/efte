@@ -346,9 +346,9 @@ sub test_21_5 { "1" asc inc char$ 3 asc + char$ 2 asc + '7'  21005 pass }
  
  # split$ tests
 sub test_21_6 { "" asc 0  21006 pass }
-sub test_21_7 { "123456" 0 split$ len$ len$ accumulate 6  21007 pass }
-sub test_21_8 { "ABCDEFGH" -100 split$ len$ len$ accumulate 8  21008 pass }
-sub test_21_9 { "1234" 100 split$ len$ len$ accumulate 40  21009 pass }
+sub test_21_7 { "123456" 0 split$ len$ len$ accumulate 60  21007 pass }
+sub test_21_8 { "ABCDEFGH" -100 split$ len$ len$ accumulate 80  21008 pass }
+sub test_21_9 { "1234" 100 split$ len$ len$ accumulate 4  21009 pass }
 sub test_21_10 { "12345678 " 1 split$ asc drop$ '1'  21010 pass }
 sub test_21_11 { "45678" 2 split$ asc drop$ '4'  21011 pass }
 sub test_21_12 { "abcdef" 3 split$ asc drop$ 'a'  21012 pass }
