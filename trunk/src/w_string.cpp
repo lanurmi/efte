@@ -178,35 +178,6 @@ int AppendStr() {
 
 
 
-int SplitStr() {
-    int ret = 0;
-    int tos = sstack.size();
-
-    if (tos) {
-        unsigned int pos = ParamStack.pop();
-        std::string tosS = sstack[--tos];
-
-        sstack.pop_back();
-
-        if (pos > tosS.size()) {
-            sstack.push_back("");
-            sstack.push_back(tosS);
-        } else if (pos <= 0) {
-            sstack.push_back(tosS);
-            sstack.push_back("");
-        } else {
-            sstack.push_back(tosS.substr(pos));
-            sstack.push_back(tosS.substr(0, pos));
-        }
-        ret++;
-    }
-
-    SetBranchCondition(ret);
-    return ret;
-}
-
-
-
 int DepthStr() {
     ParamStack.push(sstack.size());
     return 1;

@@ -23,7 +23,6 @@ int PickStr();
 int DepthStr();
 int SubSearchStr();
 int AppendStr();
-int SplitStr();
 int LenStr();
 int MidStr();
 int GetString(GxView *view);

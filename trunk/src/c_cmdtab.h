@@ -81,7 +81,6 @@ const struct {
     TABS(Pick),
     TABS(Depth),
     TABS(SubSearch),
-    TABS(Split),
     TABS(Append),
     TABS(Rot),
     TABS(Len),
