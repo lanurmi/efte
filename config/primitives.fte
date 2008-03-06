@@ -156,6 +156,11 @@ sub spaces    { times space }
 sub cr        { cursorend linenew cursorhome }  # carriage return
 
 
+sub cut$ {
+  dup$ len$ dup >r min 0 max
+  dup$ dup r> mid$
+  swap$ 0 swap mid$ }
+
 
 sub left$     {                                 # ( n -- )
    dup negative if                              # negative n: strip first n chars
