@@ -352,7 +352,8 @@ sub test_21_9 { "1234" 100 split$ len$ len$ accumulate 4  21009 pass }
 sub test_21_10 { "12345678 " 1 split$ asc drop$ '1'  21010 pass }
 sub test_21_11 { "45678" 2 split$ asc drop$ '4'  21011 pass }
 sub test_21_12 { "abcdef" 3 split$ asc drop$ 'a'  21012 pass }
-sub test_21_13 { "12345678" 0 split$ drop$ len$ '1'  21013 pass }
+ 
+sub test_21_13 { "12345678" 0 split$ drop$ asc '1'  21013 pass }
 sub test_21_14 { "12345678" 1 split$ drop$ asc '2'  21014 pass }
 sub test_21_15 { "45678" 2 split$ drop$ asc '6'  21015 pass }
 sub test_21_16 { "abcdef" 3 split$ drop$ asc 'd'  21016 pass }
@@ -390,7 +391,8 @@ sub test_22_9 { "1234" 100 cut$ len$ len$ accumulate 4  22009 pass }
 sub test_22_10 { "12345678 " 1 cut$ asc drop$ '1'  22010 pass }
 sub test_22_11 { "45678" 2 cut$ asc drop$ '4'  22011 pass }
 sub test_22_12 { "abcdef" 3 cut$ asc drop$ 'a'  22012 pass }
-sub test_22_13 { "12345678" 0 cut$ drop$ len$ '1'  22013 pass }
+ 
+sub test_22_13 { "12345678" 0 cut$ drop$ asc '1'  22013 pass }
 sub test_22_14 { "12345678" 1 cut$ drop$ asc '2'  22014 pass }
 sub test_22_15 { "45678" 2 cut$ drop$ asc '6'  22015 pass }
 sub test_22_16 { "abcdef" 3 cut$ drop$ asc 'd'  22016 pass }
@@ -432,7 +434,7 @@ sub test_23 { "strings/strings2.fte" testfilename store$ test_23_10 }
 # -------------------------------------------------------------------------------------------------
 
 # 24 - strings/strings3.fte
- # split$ append$
+ # split$
  
 sub test_24_1 { "abcdefgh" 3 split$ "abc" equals$ "defgh" equals$ and true  24001 pass }
 sub test_24_2 { "1234" 0 split$ "" equals$ "1234" equals$ and true  24002 pass }
@@ -441,12 +443,8 @@ sub test_24_4 { "" 0 split$ "" equals$ "" equals$ and true  24004 pass }
 sub test_24_5 { "" 5 split$ "" equals$ "" equals$ and true  24005 pass }
 sub test_24_6 { "" -2 split$ "" equals$ "" equals$ and true  24006 pass }
  
-sub test_24_7 { "123" "abcd" append$ "abcd123" equals$ true  24007 pass }
-sub test_24_8 { "456" "" append$ "456" equals$ true  24008 pass }
-sub test_24_9 { "" "efg" append$ "efg" equals$ true  24009 pass }
- 
-sub test_24_10 { test_24_1 test_24_2 test_24_3 test_24_4 test_24_5 test_24_6 test_24_7 test_24_8 }
-sub test_24 { "strings/strings3.fte" testfilename store$ test_24_10 }
+sub test_24_7 { test_24_1 test_24_2 test_24_3 test_24_4 test_24_5 test_24_6 }
+sub test_24 { "strings/strings3.fte" testfilename store$ test_24_7 }
 
 # -------------------------------------------------------------------------------------------------
 
@@ -460,18 +458,26 @@ sub test_25_4 { "" 0 cut$ "" equals$ "" equals$ and true  25004 pass }
 sub test_25_5 { "" 5 cut$ "" equals$ "" equals$ and true  25005 pass }
 sub test_25_6 { "" -2 cut$ "" equals$ "" equals$ and true  25006 pass }
  
-sub test_25_7 { "123" "abcd" append$ "abcd123" equals$ true  25007 pass }
-sub test_25_8 { "456" "" append$ "456" equals$ true  25008 pass }
-sub test_25_9 { "" "efg" append$ "efg" equals$ true  25009 pass }
- 
-sub test_25_10 { test_25_1 test_25_2 test_25_3 test_25_4 test_25_5 test_25_6 test_25_7 test_25_8 }
-sub test_25 { "strings/strings3a.fte" testfilename store$ test_25_10 }
+sub test_25_7 { test_25_1 test_25_2 test_25_3 test_25_4 test_25_5 test_25_6 }
+sub test_25 { "strings/strings3a.fte" testfilename store$ test_25_7 }
 
 # -------------------------------------------------------------------------------------------------
 
-# 26 - zzz_final.fte
-sub test_26_1 { depth depth$ or 0  26001 pass }
-sub test_26 { "zzz_final.fte" testfilename store$ test_26_1 }
+# 26 - strings/strings4.fte
+ # append$
+ 
+sub test_26_1 { "123" "abcd" append$ "abcd123" equals$ true  26001 pass }
+sub test_26_2 { "456" "" append$ "456" equals$ true  26002 pass }
+sub test_26_3 { "" "efg" append$ "efg" equals$ true  26003 pass }
+ 
+sub test_26_4 { test_26_1 test_26_2 test_26_3 }
+sub test_26 { "strings/strings4.fte" testfilename store$ test_26_4 }
+
+# -------------------------------------------------------------------------------------------------
+
+# 27 - zzz_final.fte
+sub test_27_1 { depth depth$ or 0  27001 pass }
+sub test_27 { "zzz_final.fte" testfilename store$ test_27_1 }
 
 # -------------------------------------------------------------------------------------------------
 
@@ -480,6 +486,6 @@ sub selftest {
       test_1    test_2    test_3    test_4    test_5    test_6    test_7    test_8
       test_9    test_10   test_11   test_12   test_13   test_14   test_15   test_16
       test_17   test_18   test_19   test_20   test_21   test_22   test_23   test_24
-      test_25   test_26   
+      test_25   test_26   test_27   
    afteralltests
 }
