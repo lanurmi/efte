@@ -23,7 +23,8 @@
 { "12345678   " 1 split$ asc drop$  '1' PASS }
 { "45678"       2 split$ asc drop$  '4' PASS }
 { "abcdef"      3 split$ asc drop$  'a' PASS }
-{ "12345678"    0 split$ drop$ len$ '1' PASS }
+
+{ "12345678"    0 split$ drop$ asc  '1' PASS }
 { "12345678"    1 split$ drop$ asc  '2' PASS }
 { "45678"       2 split$ drop$ asc  '6' PASS }
 { "abcdef"      3 split$ drop$ asc  'd' PASS }
