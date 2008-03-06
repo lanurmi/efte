@@ -516,6 +516,7 @@ static int SetupXWindow(int argc, char **argv) {
     XWMHints wm_hints;
     wm_hints.flags = (InputHint|StateHint);
     wm_hints.input = True;
+    wm_hints.initial_state = NormalState;
 
     if (XpmCreatePixmapFromData(display, win, const_cast<char**>(fte16x16_xpm), &icon_pixmap, &icon_shape, NULL) == XpmSuccess) {
         wm_hints.flags |= IconPixmapHint | IconMaskHint;
@@ -602,6 +603,7 @@ static int SetupXWindow(int argc, char **argv) {
     XWMHints wm_hints;
     wm_hints.flags = (InputHint|StateHint);
     wm_hints.input = True;
+    wm_hints.initial_state = NormalState;
     XSetWMHints(display, win, &wm_hints);
 #endif
 
