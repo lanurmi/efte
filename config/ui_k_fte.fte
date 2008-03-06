@@ -125,7 +125,7 @@ eventmap DIRECTORY: MLIST {
     key [C+G]           { DirSearchNext }
     key [C+H]           { DirSearchPrev }
     
-    key     [A+N]       { "MCvs" MainMenu }
+    key     [A+N]       { "Navigate" MainMenu }
     key     [C+O_C+V]   { "MSvn" ShowMenu }
     key     [C+O_C+N]   { ShowMenu }
 }
