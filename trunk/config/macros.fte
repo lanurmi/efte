@@ -24,7 +24,7 @@ sub blockrange { moveblockend at? drop moveblockstart at? drop }
 #
 # Return True/False if the current character is equal to Tos
 #
-sub isscreenchar { curchar$ 0 asc drop$ equals }
+sub isscreenchar { curchar$ asc equals }
 
 # ( -- )
 #
