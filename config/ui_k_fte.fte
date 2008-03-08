@@ -9,33 +9,33 @@
 #
 
 eventmap MODEL {
-    key       [F1]      { ViewModeMap }
-    key     [C+F2]      { FileSaveAll }
-    key       [F3]      { "" FileOpen }
-    key       [F4]      { WinNext }
-    key     [C+F4]      { WinHSplit }
-    key     [S+F4]      { WinPrev }
-    key   [A+S+F4]      { WinClose }
-    key       [F5]      { WinZoom }
-    key       [F6]      { FileNext }
-    key     [S+F6]      { FilePrev }
-    key   [A+S-F6]      { FileLast }
-    key       [F7]      { curword$ "" Find }
-    key       [F10]     { MainMenu }
-    key     [C+F10]     { FileClose }
-    key     [C+F9]      { "sh" RunProgram }
-    key     [A+F9]      { "" RunProgram }
-    key     [S+F10]     { LocalMenu }
+    key [F1]          { ViewModeMap }
+    key [C+F2]        { FileSaveAll }
+    key [F3]          { "" FileOpen }
+    key [F4]          { WinNext }
+    key [C+F4]        { WinHSplit }
+    key [S+F4]        { WinPrev }
+    key [A+S+F4]      { WinClose }
+    key [F5]          { WinZoom }
+    key [F6]          { FileNext }
+    key [S+F6]        { FilePrev }
+    key [A+S-F6]      { FileLast }
+    key [F7]          { curword$ "" Find }
+    key [F10]         { "File" MainMenu }
+    key [C+F10]       { FileClose }
+    key [C+F9]        { "sh" RunProgram }
+    key [A+F9]        { "" RunProgram }
+    key [S+F10]       { LocalMenu }
     
-    key   [A+G-Up]      { WinPrev }
-    key   [A+G-Down]    { WinNext }
-    key   [A+G-Left]    { FilePrev }
-    key   [A+G-Right]   { FileNext }
-    key   [A+C+G-Left]  { FramePrev }
-    key   [A+C+G-Right] { FrameNext }
+    key [A+G-Up]      { WinPrev }
+    key [A+G-Down]    { WinNext }
+    key [A+G-Left]    { FilePrev }
+    key [A+G-Right]   { FileNext }
+    key [A+C+G-Left]  { FramePrev }
+    key [A+C+G-Right] { FrameNext }
     
-    key   [A+G-PgUp]    { WinPrev; MovePageUp; WinNext }
-    key   [A+G-PgDn]    { WinNext; MovePageDown; WinPrev }
+    key [A+G-PgUp]    { WinPrev; MovePageUp; WinNext }
+    key [A+G-PgDn]    { WinNext; MovePageDown; WinPrev }
     key [A+C+G-PgUp]    { WinNext; MovePageUp; WinPrev }
     key [A+C+G-PgDn]    { WinPrev; MovePageDown; WinNext }
     
