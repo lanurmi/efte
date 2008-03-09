@@ -232,30 +232,28 @@ menu File {
 }
 
 menu Line {
-    item "&Insert line\tShift+Enter"	{ LineInsert }
-    item "&Add line\tAlt+Enter" 	    { LineAdd }
-    item "&Split line\tCtrl+Enter"	    { LineSplit }
-    item "&Join line\tCtrl+J"		    { LineJoin }
-    item "Dup&licate line\tCtrl+D"	    { LineDuplicate }
-    item "&Delete line\tCtrl+Y" 	    { KillLine }
-    item "&Center line" 		        { LineCenter }
+    item "&Insert line\tShift+Enter"	         { LineInsert }
+    item "&Add line\tAlt+Enter" 	             { LineAdd }
+    item "&Split line\tCtrl+Enter"	             { LineSplit }
+    item "&Join line\tCtrl+J"		             { LineJoin }
+    item "Dup&licate line\tCtrl+D"	             { LineDuplicate }
+    item "&Delete line\tCtrl+Y" 	             { KillLine }
+    item "&Center line" 		                 { LineCenter }
     item;
-    item "Delete to line &end\tAlt+End" { KillToLineEnd }
+    item "Delete to line &end\tAlt+End"          { KillToLineEnd }
     item "Delete to li&ne start\tCtrl+Sh+BackSp" { KillToLineStart }
     item;
-    item "Comment\tCtrl+Alt+C" {
-	    MoveLineStart; `^(\s*)/ /\/\`  "\\1" "xnc" ?FindReplace ; MoveDown
-    }
-    item "Uncomment\tCtrl+Alt+U" {
-	    MoveLineStart; `^[\/][\/]`	` ` "xnc" ?FindReplace ; MoveDown
-    }
+    item "Comment\tCtrl+Alt+C"                   {
+	    MoveLineStart; `^(\s*)/ /\/\`  "\\1" "xnc" ?FindReplace ; MoveDown }
+    item "Uncomment\tCtrl+Alt+U"                 {
+	    MoveLineStart; `^[\/][\/]`	` ` "xnc" ?FindReplace ; MoveDown }
     item;
-    item "&Uppercase"	              { LineCaseUp }
-    item "&Lowercase"	              { LineCaseDown }
-    item "&Togglecase"	              { LineCaseToggle }
-    item "&Rot13"	                  { "A-Za-z" "N-ZA-Mn-za-m" LineTrans }
+    item "&Uppercase"	                         { LineCaseUp }
+    item "&Lowercase"	                         { LineCaseDown }
+    item "&Togglecase"	                         { LineCaseToggle }
+    item "&Rot13"	                             { "A-Za-z" "N-ZA-Mn-za-m" LineTrans }
     item;
-    item "User &specified..."         { LineTrans }
+    item "User &specified..."                    { LineTrans }
 }
 
 menu Edit {
