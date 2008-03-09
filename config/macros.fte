@@ -53,7 +53,7 @@ sub gotocharinline {
     cursorright
   loop
   nip
-  dup negative if drop movelinestart endif
+  dup negative if movelinestart else nip endif
 }
 
 # ( -- )
@@ -84,6 +84,26 @@ sub alignchar {
     cursordown
   loop
   drop2
+}
 
-diag diag$
+# ( -- )
+#
+# Join current line with line below eatting all whitespace in
+# between except one
+#
+
+sub GreedyJoinLineNext {
+    CursorDown MoveFirstNonWhite EatWhiteSpaceBack
+    CursorUp MoveLineEnd KillChar
+}
+
+# ( -- )
+#
+# Join current line with line above eatting all whitespace
+# in between except one
+#
+
+sub GreedyJoinLinePrev {
+    MoveFirstNonWhiteSpace EatWhiteSpaceBack
+    CursorUp MoveLineEnd EatWhiteSpaceBack KillChar
 }

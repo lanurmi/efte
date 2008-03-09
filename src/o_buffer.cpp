@@ -1185,7 +1185,7 @@ int EBuffer::Message(ExState &State) {
  * MACRO: Display a choice to the user and push the result onto the stack
  */
 int EBuffer::GetChoice(ExState &State) {
-    const char *title, *msg, *c1, *c2, *c3, *c4, *c5, *c6;
+    const char *title, *msg, *c1=NULL, *c2=NULL, *c3=NULL, *c4=NULL, *c5=NULL, *c6=NULL;
     unsigned int count = (unsigned int) ParamStack.pop();
 
     fprintf(stderr, "Count: %i, Stack Size: %i\n", count, (int) sstack.size());
@@ -1666,8 +1666,6 @@ int EBuffer::FindReplace(ExState &State) {
         if (DLGGetFindReplace(View->MView->Win, LSearch) == 0)
             return 0;
     } else {
-        if (BFS(this, BFS_DefFindReplaceOpt))
-            strcpy(options, BFS(this, BFS_DefFindReplaceOpt));
         if (strlen(find) == 0) {
             if (View->MView->Win->GetStr("Find", sizeof(find), find, HIST_SEARCH) == 0) {
                 SetBranchCondition(0);
@@ -1683,6 +1681,8 @@ int EBuffer::FindReplace(ExState &State) {
         }
 
         if (strlen(options) == 0) {
+            if (BFS(this, BFS_DefFindReplaceOpt))
+                strcpy(options, BFS(this, BFS_DefFindReplaceOpt));
             if (View->MView->Win->GetStr("Options (All/Block/Cur/Delln/Glob/Igncase/Joinln/Rev/Splitln/Noask/Word/regX)",
                                          sizeof(options), options, HIST_SEARCHOPT) == 0)
             {
