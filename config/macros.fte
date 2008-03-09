@@ -53,7 +53,7 @@ sub gotocharinline {
     cursorright
   loop
   nip
-  dup negative if movelinestart else nip endif
+  dup negative if movelinestart endif
 }
 
 # ( -- )
