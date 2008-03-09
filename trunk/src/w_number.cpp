@@ -80,7 +80,11 @@ int Div() {
 }
 
 int Random() {
+#ifdef NT
+    ParamStack.push(rand());
+#else
     ParamStack.push(random());
+#endif
     return 1;
 }
 
