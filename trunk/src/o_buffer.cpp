@@ -2137,8 +2137,8 @@ int EBuffer::PushCurDir() {
 }
 
 int EBuffer::QuestionAt() {
-    ParamStack.push(VToR(CP.Row) + 1);
     ParamStack.push(CP.Col);
+    ParamStack.push(VToR(CP.Row));
     return 1;
 }
 
