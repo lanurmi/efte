@@ -412,7 +412,7 @@ sub test_23 { "strings/strings3.fte" testfilename store$ test_23_7 }
 # 24 - strings/strings4.fte
  # append$
  
-sub test_24_1 { "123" "abcd" append$ "abcd123" equals$ true  24001 pass }
+sub test_24_1 { "123" "abcd" append$ "123abcd" equals$ true  24001 pass }
 sub test_24_2 { "456" "" append$ "456" equals$ true  24002 pass }
 sub test_24_3 { "" "efg" append$ "efg" equals$ true  24003 pass }
  
@@ -421,9 +421,96 @@ sub test_24 { "strings/strings4.fte" testfilename store$ test_24_4 }
 
 # -------------------------------------------------------------------------------------------------
 
-# 25 - zzz_final.fte
-sub test_25_1 { depth depth$ or 0  25001 pass }
-sub test_25 { "zzz_final.fte" testfilename store$ test_25_1 }
+# 25 - strings/strings5.fte
+ # minleading$
+ 
+sub test_25_1 { "xaaaaaa" 'a' minleading$ "xaaaaaa" equals$ true  25001 pass }
+sub test_25_2 { "aaxaaaaaa" 'a' minleading$ "xaaaaaa" equals$ true  25002 pass }
+sub test_25_3 { "aaaaxaaaaaa" 'a' minleading$ "xaaaaaa" equals$ true  25003 pass }
+sub test_25_4 { "aaaaaaxaaaaaa" 'a' minleading$ "xaaaaaa" equals$ true  25004 pass }
+sub test_25_5 { "bbbybbbbbb" 'a' minleading$ "ybbbbbb" equals$ false  25005 pass }
+sub test_25_6 { "bbbbybbbbbb" 'x' minleading$ "ybbbbbb" equals$ false  25006 pass }
+sub test_25_7 { "bbbbbybbbbbb" 'b' minleading$ "ybbbbbb" equals$ true  25007 pass }
+sub test_25_8 { " aaxa" 'a' minleading$ " aaxa" equals$ true  25008 pass }
+sub test_25_9 { " bbyb" 'a' minleading$ " bbyb" equals$ true  25009 pass }
+sub test_25_10 { " bbyb" 'x' minleading$ " bbyb" equals$ true  25010 pass }
+sub test_25_11 { " bbyb" 'b' minleading$ " bbyb" equals$ true  25011 pass }
+sub test_25_12 { " a" bl minleading$ "a" equals$ true  25012 pass }
+ 
+sub test_25_13 { " " bl minleading$ len$ 0  25013 pass }
+sub test_25_14 { "xxxxx" 'x' minleading$ len$ 0  25014 pass }
+ 
+ 
+sub test_25_15 { test_25_1 test_25_2 test_25_3 test_25_4 test_25_5 test_25_6
+ test_25_7 test_25_8 test_25_9 test_25_10 test_25_11 test_25_12
+ test_25_13 test_25_14 }
+sub test_25 { "strings/strings5.fte" testfilename store$ test_25_15 }
+
+# -------------------------------------------------------------------------------------------------
+
+# 26 - strings/strings6.fte
+ # mintrailing$
+ 
+sub test_26_1 { "xaaaaaaa" 'a' mintrailing$ "x" equals$ true  26001 pass }
+sub test_26_2 { "aaxaaaaa" 'a' mintrailing$ "aax" equals$ true  26002 pass }
+sub test_26_3 { "aaaaxaaa" 'a' mintrailing$ "aaaax" equals$ true  26003 pass }
+sub test_26_4 { "aaaaaxaa" 'a' mintrailing$ "aaaaax" equals$ true  26004 pass }
+ 
+sub test_26_5 { "bbbybbbbbb" 'a' mintrailing$ "bbbby" equals$ false  26005 pass }
+sub test_26_6 { "bbbbybbbbbb" 'x' mintrailing$ "bbbby" equals$ false  26006 pass }
+sub test_26_7 { "bbbbbybbbbbb" 'b' mintrailing$ "bbbbby" equals$ true  26007 pass }
+ 
+sub test_26_8 { " aaxa " 'a' mintrailing$ " aaxa " equals$ true  26008 pass }
+sub test_26_9 { " bbyb " 'a' mintrailing$ " bbyb " equals$ true  26009 pass }
+sub test_26_10 { " bbyb " 'y' mintrailing$ " bbyb " equals$ true  26010 pass }
+sub test_26_11 { " bbyb " 'b' mintrailing$ " bbyb " equals$ true  26011 pass }
+ 
+sub test_26_12 { "a " bl mintrailing$ "a" equals$ true  26012 pass }
+ 
+sub test_26_13 { " " bl mintrailing$ len$ 0  26013 pass }
+sub test_26_14 { "xxxxx" 'x' mintrailing$ len$ 0  26014 pass }
+ 
+sub test_26_15 { test_26_1 test_26_2 test_26_3 test_26_4 test_26_5 test_26_6
+ test_26_7 test_26_8 test_26_9 test_26_10 test_26_11 test_26_12
+ test_26_13 test_26_14 }
+sub test_26 { "strings/strings6.fte" testfilename store$ test_26_15 }
+
+# -------------------------------------------------------------------------------------------------
+
+# 27 - strings/strings7.fte
+ # skip$ scan$ split$
+sub test_27_1 { "11111111233333333" '1' skip$ 8  27001 pass }
+sub test_27_2 { "444455" '1' skip$ 0  27002 pass }
+sub test_27_3 { "6666666" '6' skip$ -1  27003 pass }
+ 
+sub test_27_4 { "11111111233333333" '1' scan$ 0  27004 pass }
+sub test_27_5 { "11111111233333333" '2' scan$ 8  27005 pass }
+sub test_27_6 { "444455" '1' scan$ -1  27006 pass }
+sub test_27_7 { "6666666" '6' scan$ 0  27007 pass }
+ 
+ # this version of split$ does not remove delimiter from nos
+sub test_27_8 { "aaaa bbb" bl split$ "aaaa" equals$ " bbb" equals$ and true  27008 pass }
+sub test_27_9 { "ccccddd " bl split$ "ccccddd" equals$ " " equals$ and true  27009 pass }
+sub test_27_10 { " eee fff" bl split$ "" equals$ " eee fff" equals$ and true  27010 pass }
+ 
+sub test_27_11 { " " bl skip$ -1  27011 pass }
+sub test_27_12 { " " bl scan$ 0  27012 pass }
+sub test_27_13 { " " bl split$ "" equals$ " " equals$ and true  27013 pass }
+ 
+sub test_27_14 { "" bl skip$ -1  27014 pass }
+sub test_27_15 { "" bl scan$ -1  27015 pass }
+sub test_27_16 { "" bl split$ "" equals$ "" equals$ and true  27016 pass }
+ 
+ 
+sub test_27_17 { test_27_1 test_27_2 test_27_3 test_27_4 test_27_5 test_27_6 test_27_7 test_27_8 test_27_9 test_27_10
+ test_27_11 test_27_12 test_27_13 test_27_14 test_27_15 test_27_16 }
+sub test_27 { "strings/strings7.fte" testfilename store$ test_27_17 }
+
+# -------------------------------------------------------------------------------------------------
+
+# 28 - zzz_final.fte
+sub test_28_1 { depth depth$ or 0  28001 pass }
+sub test_28 { "zzz_final.fte" testfilename store$ test_28_1 }
 
 # -------------------------------------------------------------------------------------------------
 
@@ -432,6 +519,6 @@ sub selftest {
       test_1    test_2    test_3    test_4    test_5    test_6    test_7    test_8
       test_9    test_10   test_11   test_12   test_13   test_14   test_15   test_16
       test_17   test_18   test_19   test_20   test_21   test_22   test_23   test_24
-      test_25   
+      test_25   test_26   test_27   test_28   
    afteralltests
 }

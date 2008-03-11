@@ -12,6 +12,9 @@
 #
 
 # can't use this chars in names (yet):   = , # :
+# TODO: fix bugs. a few words in here exist to work around known bugs.
+#   insertstring:   prompts for string when trying to insert empty stringdd
+
 
 # -- constants --
 sub false     { 0 }
@@ -37,7 +40,7 @@ sub swap2     { rot >r rot r> }                 # swap top two pairs of items
 sub inc       { 1 + }                           # increment top of stack by one
 sub dec       { 1 - }                           # decrement top of stack by one
 sub invert    { -1 xor }                        # complement all bits
-sub negate    { invert inc }                    # change sign
+sub negate    { 0 swap - }                      # change sign
 sub not       { 0 equals }                      # logical inversion: 0->true,  x->0
 sub lshift    { 1 shift }                       # bit shift left once
 sub rshift    { -1 shift }                      # bit shift right once
@@ -48,7 +51,7 @@ sub failure   { flag not }                      # push inverted command return c
 sub >         { swap < }                        # true if nos > tos
 sub between   { rot tuck < minrot > or not }
 sub negative  { 0 < }                           # < zero?
-sub abs       { dup negative if negate endif }  # remove sign
+sub abs       { dup 0 < if negate endif }       # remove sign
 sub min       { dup2 > if swap endif drop }
 sub max       { dup2 < if swap endif drop }
 sub mod       { dup2 / * - }                    # modulo (remainder) function
@@ -73,12 +76,20 @@ sub binary    {  2 base ! }
 sub capital   { 'A' 'Z' between }
 sub lowercase { 'a' 'z' between }
 sub capitalize { dup lowercase if 32 - endif }
+sub undercast  { dup capital   if 32 + endif }
 
-sub numeric   {             # ( asc -- u -1 | 0 )  converts ascii to numeric value, and flag if legal digit
-   capitalize '0' -
-   dup 10 16 between or
+
+sub numeric   {             # ( asc -- flag )      converts ascii to numeric value, and flag if legal cipher.
+   capitalize '0' -         #                      respects base, and reports only those chars valid which are
+   dup 10 16 between or     #                      legal in the resp. base
    dup 16 > 7 and -
-   dup 0 base @ dec between # legal are {0..9,a..f,A..F}
+   0 base @ dec between }
+
+sub cipher   {               # ( asc -- u -1 | 0 )  converts ascii to numeric value, and flag if legal cipher.
+   capitalize '0' -         #                      respects base, and reports only those chars valid which are
+   dup 10 16 between or     #                      legal in the resp. base
+   dup 16 > 7 and -
+   dup 0 base @ dec between
    qdup nip  }
 
 
@@ -90,7 +101,6 @@ sub cursorend  { movelineend }
 
 # need:
 #  test block marked?
-#  0 split$ no fail
 
 
 # =============================================================================
@@ -150,21 +160,21 @@ sub ascn      { dup$ 1 mid$ asc }               # ( n -- c ) get ascii of nth ch
 
 # -- i/o --
 sub key       { getchar }                       # wait for key, place its ascii on stack
-sub read      { curchar$ }                      # read char under cursor
+sub read$     { curchar$ }                      # read char under cursor as string
+sub read      { curchar$ asc }                  # read char under cursor as asc
+sub curchar   { curchar$ asc }                  # read char under cursor, convert to asc
 sub emit      { char$ insertstring }
 sub type1     { count emit }
 sub type      { times type1 drop }              # string output
-sub type$     { insertstring }
-sub bl        { 32 }
-sub space     { 32 emit }                       # print a space character
-sub spaces    { times space }
+sub type$     { dup$ len$ if dup$ insertstring endif drop$  }  # fixing name and empty string bug
+sub bl        { ' ' }
 sub cr        { cursorend linenew cursorhome }  # carriage return
 
 
 
 
 sub left$     {                                 # ( n -- )
-   dup negative if                              # negative n: strip first n chars
+   dup 0 < if                                   # negative n: strip first n chars
       negate dup$ len$ over -
    else                                         # positive n: keep first n chars
       0 swap
@@ -172,12 +182,14 @@ sub left$     {                                 # ( n -- )
    mid$ }
 
 sub right$    {                                 # ( n -- )
-  dup negative if                               # negative n: strip last n chars
-     0 dup$ len$ rot +
+  dup 0 < if                                    # negative n: strip last n chars
+     0 swap
+     dup$ len$ +
   else                                          # positive n: keep last n chars
      dup negate swap
   endif
   mid$ }
+
 
 
 sub search$   {                                 # ( n1 -- n2 )
@@ -218,47 +230,76 @@ sub repeat$ {                                   # ( u c -- ) create a string of 
    drop
 }
 
+sub spaces$   { bl repeat$ }                    # ( u -- ) create a string of u spaces
+sub spaces    { spaces$ type$ }
+sub space     { " " insertstring }              # print a space character
 
-sub spaces$ { bl repeat$ }                      # ( u -- ) create a string of u spaces
 
 
-sub minleading$ {                               # ( -- ) remove leading spaces
-   dup$ len$                                         # assume removing whole string
-   dup 0 do                                     # loop through string,
-      i ascn bl equals not                      # looking for non-space
-      if drop i leave endif                     # found, return index to space
+sub skip$ {                                     # ( asc -- idx )  search for first char which is not asc.
+   -1                                           #                 index or -1 as result (not other than asc)
+   dup$ len$ 0 do                               #                 drops string.
+      over i ascn xor
+      if drop i leave endif
    loop
-   negate left$                                 # remove leading spaces
-}
+   drop$ nip
+   }
 
 
-sub mintrailing$ {                              # ( -- ) remove trailing spaces
-   dup$ len$
-   dup 0 do                                     # loop through sting chars
-      dec dup ascn                              # select chars, starting with last
-      bl equals not if                          # until char not space
-         inc leave
-      endif
-   loop
-   left$ }                                      # keep the non-space chars
-
-
-# test with empty string, and spaces only string
-sub trim$ {                                     # ( -- ) remove leading and trailing spaces
-   minleading$
-   mintrailing$ }          
-
-
-
-sub scan$ {                                     # ( asc -- -1 | u )  search for asc in string.
-   -1
-   dup$ len$ 0 do
+sub scan$ {                                     # ( asc -- idx )  search for first occurance of asc in string
+   -1                                           #                 index or -1 as result.
+   dup$ len$ 0 do                               #                 drops string.
       over i ascn equals
       if drop i leave endif
    loop
    drop$ nip }
 
 
+sub split$    {                                 # ( asc -- )      cut string at asc, leaving left part as tos, rest as nos
+   dup$ scan$                                   #                 if asc not found, leave whole string as tos, empty string as nos.
+   dup 0< if
+      drop dup$ len$
+   endif
+   cut$
+#   swap$ -1 left$ swap$                        # remove asc from string remainder
+   }
+
+sub diags { diag diag$ }
+
+sub minleading$ {                               # ( asc -- ) remove leading occurances of string
+   dup$ skip$                                   # index, or -1 for no leading occurences of asc
+   dup 0 < if  drop$ "" else
+   dup     if  dup negate left$ endif
+   endif drop
+}
+
+
+
+sub mintrailing$ {                              # ( asc -- ) remove trailing occurences of asc
+   0                                            # assume no different chars
+   0 dup$ len$ do                               # loop through string chars
+      over i 1 - ascn                           # select chars, starting with last
+      xor if                                    # until different asc
+         drop i leave
+      endif
+   1 -loop
+   left$                                        # keep left part except trailing asc
+   drop }                                       
+
+
+
+sub parse$ {                                    # ( asc -- )      search for asc in string, keep part left of asc.
+   dup minleading$                              #                 skip leading asc first
+   dup$ scan$
+   dup -1 > if  dup left$  endif                #                 asc not found: return whole string, otherwise cut at asc
+   drop }
+
+
+
+# test with empty string, and spaces only string
+sub trim$ {                                     # ( -- ) remove leading and trailing spaces
+   bl minleading$
+   bl mintrailing$ }
 
 
 sub brmovebr$  {                                # ( a n -- )  copy n chars of tos$ to a
@@ -268,6 +309,7 @@ sub brmovebr$  {                                # ( a n -- )  copy n chars of to
    loop drop$ }
 
 sub move$    { dup$ len$  brmovebr$ }           # ( a -- ) transfers string on string stack to a
+
 
 sub store$   {                                  # ( a -- ) transfers string on string stack to a
    count                                        # structure size
@@ -283,9 +325,8 @@ sub fetch$    {                                 # ( a -- ) transfers the string 
    loop drop }
 
 sub var$ { here dup dup$ len$ inc dup inc comma allot } # string var description.
+
 # (varsize) (strlen) (char) (char) (char) ...
-
-
 #sub var$ {
 #   here              diag diag$  "A " 2 print
 #   dup$ len$ inc     diag diag$  "B " 2 print
@@ -305,21 +346,17 @@ sub poutln  { 1 println }
 sub perrln  { 2 println }
 
 
-
-
-
-
 # --- pictured number conversion ---
-sub digit     { '0' + dup '9' > if 7 + endif }  # ( u -- asc )
+sub digit     { dup 10 < 3 xor '4' + + }        # ( u -- asc )
 sub /mod      { dup2 / dup >r * - abs r> }      # ( n1 n2 -- r q )
-sub <hash     { "" } 	  		                # ( n -- n ) start pictured num conversion
+sub <hash     { "" } 	  		                # ( n -- n ) start pictured num conversion with empty string
 sub hold      { char$ prepend$ }                # ( n asc -- n )
 sub hash      { base @ /mod swap digit hold }   # ( n1 -- n2 )
 sub hashes    { begin hash dup not until }      # ( n1 -- n2 )
 sub hash>     { drop }                          # ( n -- )  end pic num conv - should convert
                                                 # string stack to ( a n ) to comply with standard.
                                                 # this version leaves converted number on top of string stack
-sub sign      { negative if '-' hold endif }    # ( n -- }
+sub sign      { 0 < if '-' hold endif }         # ( n -- }
 sub brdotbr   { dup <hash hashes hash> sign }   # ( n -- )
 
 sub padded  {                                   # ( n c -- )
@@ -332,8 +369,7 @@ sub padded  {                                   # ( n c -- )
 
 # --- "app" level number output words ---
 # ( n -- ) signed number output with one trailing space
-sub . { dup >r <hash bl hold  hashes r> sign hash> type$ }
-sub dot { . }
+sub .    { dup >r <hash bl hold  hashes r> sign hash> type$ }
 
 # ( n u -- ) space padded signed number
 sub .r { >r dup >r <hash hashes  r> sign  r> bl padded  hash> type$ }
@@ -344,8 +380,10 @@ sub .0r     { <hash  bl hold  times hash  hash> type$ }
 
 
 # --- file editing buffer helpers
-sub linelen { curline$ dup$ len$ drop$ }        # ( -- len )
-sub at { movetocolumn movetoline }              # ( x y -- )
+sub linelen    { curline$ dup$ len$ drop$ }     # ( -- len )
+sub at         { movetoline movetocolumn }      # ( x y -- )
+sub cursorcol  { at? nip }                      # ( -- x )
+sub cursorrow  { at? drop }                     # ( -- y )
 
 
 

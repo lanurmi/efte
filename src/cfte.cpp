@@ -868,7 +868,7 @@ static int ParseCommands(CurPos &cp, char *Name) {
                         branchaddress=CondStack.pop();
                         UpdateNumber(branchaddress+1,BranchOffset(branchaddress,cpos));     // resolve the branch, compiled by IF
                     } else {
-                        Fail(cp, "Unstructured: Else needs a previous If");
+                        Fail(cp, "Unstructured: Else without If");
                     }
                     CondStack.push(CompileUnconditionalBranch(cp,0));                       // compile a branch to ENDIF (to be resolved by ENDIF)
                     CondStack.push(COND_ELSE);                                              // allow test for proper nesting
@@ -881,7 +881,7 @@ static int ParseCommands(CurPos &cp, char *Name) {
                         branchaddress=CondStack.pop();
                         UpdateNumber(branchaddress+1,BranchOffset(branchaddress,cpos)-1);   // resolve the branch, compiled by IF or ELSE
                     } else {
-                        Fail(cp, "Unstructured: EndIf needs a previous If or Else");
+                        Fail(cp, "Unstructured: EndIf without If or Else");
                     }
                     break;
 
@@ -897,7 +897,7 @@ static int ParseCommands(CurPos &cp, char *Name) {
                             branchaddress=CondStack.pop();
                             CompileConditionalBranch(cp,BranchOffset(cpos,branchaddress)-1);    // compile a branch to BEGIN
                         } else {
-                            Fail(cp, "Unstructured: Until needs a previous Begin");
+                            Fail(cp, "Unstructured: Until without Begin");
                         }
                         break;
 
@@ -907,14 +907,14 @@ static int ParseCommands(CurPos &cp, char *Name) {
                         branchaddress=CondStack.pop();
                         CompileUnconditionalBranch(cp,BranchOffset(cpos,branchaddress)-1);    // compile a branch to BEGIN
                     } else {
-                        Fail(cp, "Unstructured: Again needs a previous Begin");
+                        Fail(cp, "Unstructured: Again without Begin");
                     }
                     break;
 
 
                 case COND_WHILE:                                                            // while is almost identical to an IF
                     if (!CondStackPairedWith(COND_BEGIN)) {
-                        Fail(cp, "Unstructured: While needs a previous Begin");
+                        Fail(cp, "Unstructured: While without Begin");
                     }
                     CondStack.push(CompileConditionalBranch(cp,0));                         // compile a branch to REPEAT (to be resolved by REPEAT)
                     CondStack.push(COND_WHILE);                                             // allow test for proper nesting
@@ -928,7 +928,7 @@ static int ParseCommands(CurPos &cp, char *Name) {
                         branchaddress=CondStack.pop();
                         CompileUnconditionalBranch(cp,BranchOffset(cpos,branchaddress)-1);  // compile a branch back to BEGIN
                     } else {
-                        Fail(cp, "Unstructured: Repeat needs a previous While");
+                        Fail(cp, "Unstructured: Repeat without While");
                     }
                     break;
 
@@ -946,7 +946,7 @@ static int ParseCommands(CurPos &cp, char *Name) {
                         CFteCompileCommand(cp,ExLoopRuntime,BranchOffset(cpos,branchaddress),1);  // LOOP back to (behind) DO
                         UpdateNumber(branchaddress+1,BranchOffset(branchaddress,cpos)-1);   // resolve DO forward ref
                     } else {
-                        Fail(cp, "Unstructured: Loop needs a previous Do");
+                        Fail(cp, "Unstructured: Loop without Do");
                     }
                     break;
 
@@ -957,7 +957,7 @@ static int ParseCommands(CurPos &cp, char *Name) {
                         CFteCompileCommand(cp,ExPlusLoopRuntime,BranchOffset(cpos,branchaddress),1);  // LOOP back to (behind) DO
                         UpdateNumber(branchaddress+1,BranchOffset(branchaddress,cpos)-1);   // resolve DO forward ref
                     } else {
-                        Fail(cp, "Unstructured: PlusLoop needs a previous Do");
+                        Fail(cp, "Unstructured: PlusLoop without Do");
                     }
                     break;
 
@@ -967,7 +967,7 @@ static int ParseCommands(CurPos &cp, char *Name) {
                         CFteCompileCommand(cp,ExMinLoopRuntime,BranchOffset(cpos,branchaddress),1);  // LOOP back to (behind) DO
                         UpdateNumber(branchaddress+1,BranchOffset(branchaddress,cpos)-1);   // resolve DO forward ref
                     } else {
-                        Fail(cp, "Unstructured: MinLoop needs a previous Do");
+                        Fail(cp, "Unstructured: MinLoop without Do");
                     }
                     break;
 
@@ -984,7 +984,7 @@ static int ParseCommands(CurPos &cp, char *Name) {
                         i+=2;
                     }
                     if (i >= 0)
-                        Fail(cp, "Unstructured: Leave must be used between Do and Loop");
+                        Fail(cp, "Unstructured: Leave without Do");
                     break;
 
 
@@ -1010,7 +1010,7 @@ static int ParseCommands(CurPos &cp, char *Name) {
             Fail(cp, "Syntax error");
     }
     if (CondStack.size()) {
-        Fail(cp, "unterminated conditions left over");
+        Fail(cp, "Unstructured: unfinished structure(s)");
     }
     GetOp(cp, P_CLOSEBRACE);
     return 0;
