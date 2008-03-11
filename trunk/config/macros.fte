@@ -12,19 +12,24 @@
 #
 # Push the line range onto the stack for iterating via a Do ... Loop
 #
-sub linerange { linelen at? swap drop }
+sub linerange { linelen cursorrow }
 
 # ( -- endingRow startingRow )
 #
 # Push the block range onto the stack for iterating via a Do ... Loop
 #
-sub blockrange { moveblockend at? drop moveblockstart at? drop }
+sub blockrange { moveblockend cursorcol moveblockstart cursorcol }
 
 # ( ch -- num )
 #
 # Return True/False if the current character is equal to Tos
 #
-sub isscreenchar { curchar$ asc equals }
+sub isscreenchar { curchar equals }
+# sub curchar    { curchar$ asc }        # defined in primitives, for
+#                                        # more consistency. with this,
+#                                        # we have curchar$, curchar, iscurchar
+sub iscurchar    { curchar equals }
+
 
 # ( -- )
 #
@@ -33,7 +38,7 @@ sub isscreenchar { curchar$ asc equals }
 sub eatwhitespaceback {
   ?2:cursorleft  # leave at least 1 white space
   begin
-    bl isscreenchar dup if
+    bl iscurchar dup if
       killchar ?cursorleft success and
     endif
   not until
@@ -49,11 +54,16 @@ sub eatwhitespaceback {
 sub gotocharinline {
   -1
   movelinestart linelen 0 do
-    over isscreenchar if drop at? swap drop leave endif
+    over iscurchar
+    if
+       drop
+       cursorcol
+       leave
+    endif
     cursorright
   loop
   nip
-  dup negative if movelinestart endif
+  dup 0 < if movelinestart endif
 }
 
 # ( -- )
@@ -74,13 +84,16 @@ sub alignchar {
   getchar
   0
   blockrange do
-    over gotocharinline drop eatwhitespaceback at? swap drop max
+    over gotocharinline drop
+    eatwhitespaceback
+    cursorcol max
     cursordown
   loop
 
-  moveblockstart blockrange blockunmark do
+#  moveblockstart   ( blockrange moves cursor anyway? maybe it shouldn't, but restore to org pos )
+  blockrange blockunmark do
     over gotocharinline
-    dup negative not if dup2 - spaces endif drop
+    dup 0 < not if dup2 - spaces endif drop
     cursordown
   loop
   drop2
@@ -97,13 +110,3 @@ sub GreedyJoinLineNext {
     CursorUp MoveLineEnd KillChar
 }
 
-# ( -- )
-#
-# Join current line with line above eatting all whitespace
-# in between except one
-#
-
-sub GreedyJoinLinePrev {
-    MoveFirstNonWhiteSpace EatWhiteSpaceBack
-    CursorUp MoveLineEnd EatWhiteSpaceBack KillChar
-}
