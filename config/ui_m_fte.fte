@@ -61,22 +61,22 @@ menu MChangeMode {
 }
 
 menu MOpenInModeMore {
-    item "ASM"			        { "ASM" FileOpenInMode }
-    item "ASM 370 (.CPY,.MLC)"	{ "ASM370" FileOpenInMode }
-    item "TCL"			        { "TCL" FileOpenInMode }
-    item "Fortran 90"		    { "FORTRAN" FileOpenInMode }
-    item "IPF"			        { "IPF" FileOpenInMode }
-    item "A51"			        { "A51" FileOpenInMode }
-    item "CLARION (.CLW)"	    { "CLARION" FileOpenInMode }
-    item "EBFN"			        { "EBFN" FileOpenInMode }
-    item "SGML"			        { "SGML" FileOpenInMode }
-    item "SIOD (.cscm)"		    { "SIOD" FileOpenInMode }
-    item "S&Lang"		        { "sl" FileOpenInMode }
-    item "Module 3"		        { "MODULA3" FileOpenInMode }
-    item "Tex Info"		        { "TEXINFO" FileOpenInMode }
-    item "Diff"			        { "DIFF" FileOpenInMode }
-    item "Merge"		        { "MERGE" FileOpenInMode }
-    item "Man pages"		    { "CATBS" FileOpenInMode }
+    item "ASM"			        { "" "ASM" FileOpenInMode }
+    item "ASM 370 (.CPY,.MLC)"	{ "" "ASM370" FileOpenInMode }
+    item "TCL"			        { "" "TCL" FileOpenInMode }
+    item "Fortran 90"		    { "" "FORTRAN" FileOpenInMode }
+    item "IPF"			        { "" "IPF" FileOpenInMode }
+    item "A51"			        { "" "A51" FileOpenInMode }
+    item "CLARION (.CLW)"	    { "" "CLARION" FileOpenInMode }
+    item "EBFN"			        { "" "EBFN" FileOpenInMode }
+    item "SGML"			        { "" "SGML" FileOpenInMode }
+    item "SIOD (.cscm)"		    { "" "SIOD" FileOpenInMode }
+    item "S&Lang"		        { "" "sl" FileOpenInMode }
+    item "Module 3"		        { "" "MODULA3" FileOpenInMode }
+    item "Tex Info"		        { "" "TEXINFO" FileOpenInMode }
+    item "Diff"			        { "" "DIFF" FileOpenInMode }
+    item "Merge"		        { "" "MERGE" FileOpenInMode }
+    item "Man pages"		    { "" "CATBS" FileOpenInMode }
 }
 
 menu MChangeModeMore {
@@ -102,7 +102,7 @@ menu Object {
     item    "&Open...\tF3"		         { "" FileOpen }
     submenu "Open in &Mode...\tCtrl+F3", MOpenInMode;
     submenu "Open in Mode more..",	     MOpenInModeMore;
-    item    "Open &Binary"		         { "BIN" FileOpenInMode }
+    item    "Open &Binary"		         { "" "BIN" FileOpenInMode }
     item;
     item    "Open &Directory\tC+M"       { "" DirOpen }
     item;
@@ -211,7 +211,7 @@ menu File {
     item    "&Open...\tF3"		         { "" FileOpen }
     submenu "Open in &Mode...\tCtrl+F3", MOpenInMode;
     submenu "Open in more",		         MOpenInModeMore;
-    item    "Open &Binary..."		    { "BIN" FileOpenInMode }
+    item    "Open &Binary..."		    { "" "BIN" FileOpenInMode }
     item    "Open &Directory\tC+M"	    { "" DirOpen }
     item    "&Reload\tShift+F3" 	    { FileReload }
     item;
@@ -438,7 +438,7 @@ menu DirectoryFile {
     item;
     item    "&Open...\tF3"		        { "" FileOpen }
     submenu "Open in &Mode...\tCtrl+F3", MOpenInMode;
-    item    "Open &Binary"		        { "BIN" FileOpenInMode }
+    item    "Open &Binary"		        { "" "BIN" FileOpenInMode }
     item;
     item    "&Next\tAlt+Right"	        { FileNext }
     item    "&Previous\tAlt+Left"       { FilePrev }
