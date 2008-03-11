@@ -825,15 +825,13 @@ int EGUI::FileCloseX(EView *View, int CreateNew, int XClose) {
 
 // TODO: Find a way to set X
 int EGUI::FileClose(EView *View, ExState &State) {
-    int x = 0;
-
+    int x = OpenAfterClose;
     return FileCloseX(View, x);
 }
 
 // TODO: Find a way to set X
 int EGUI::FileCloseAll(EView *View, ExState &State) {
-    int x = 0;
-
+    int x = OpenAfterClose;
     while (ActiveModel)
         if (FileCloseX(View, x, 1) == 0) return 0;
     return 1;
