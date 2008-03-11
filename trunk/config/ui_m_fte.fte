@@ -251,7 +251,7 @@ menu Line {
     item "&Togglecase"	                         { LineCaseToggle }
     item "&Rot13"	                             { "A-Za-z" "N-ZA-Mn-za-m" LineTrans }
     item;
-    item "User &specified..."                    { LineTrans }
+    item "User &specified..."                    { "" "" LineTrans }
 }
 
 menu Edit {
