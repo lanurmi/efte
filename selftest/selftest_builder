@@ -76,7 +76,7 @@ TESTCOUNT=1
 cat pass
 
 # --- add once section for every test ---
-for FILE in $(find  $BASEDIR -type f | grep ".fte$") ; do
+for FILE in $(find  $BASEDIR -type f | grep ".fte$" | sort ) ; do
    echo "$TESTCOUNT - $FILE" 1>&2
    addtest $FILE
 done
