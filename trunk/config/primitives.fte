@@ -177,7 +177,22 @@ sub cut$ {                                      # ( n -- )  s( $1 -- $2 $3 )  sp
 
 sub slice     { 1 cut$ asc }                    # ( -- asc ) cut first char off string and return as ascii
 sub splice    { char$ prepend$ }                # ( asc -- ) prepend char to string
-sub ascn      { dup$ 1 mid$ asc }               # ( n -- c ) get ascii of nth char in top string
+#sub ascn      { dup$ 1 mid$ asc }               # ( n -- c ) get ascii of nth char in top string
+
+# work around for mid$ bugs:
+# ( n -- c ) get ascii of nth char in top string
+sub ascn      {
+   dup  dup$ len$ dup >r negate
+   dup invert between           # - len ... len-1, other return 0
+   dup if
+      drop dup 0 <
+      if
+         r@ +
+      endif
+      dup$ 1 mid$ asc
+   endif
+   r> drop
+   }
 
 
 # -- i/o --
