@@ -224,9 +224,6 @@ int SubSearchStr() {
     return 1;
 }
 
-
-
-
 int MidStr() {
     PSCHECK(2, "mid$");
     int end = ParamStack.pop();
@@ -236,10 +233,14 @@ int MidStr() {
 
     std::string tos = sstack.back();
 
-    if (start < 0) start = tos.length() + start;
-    if (end < 0) end = tos.length() + end;
+    if (start < (signed int) tos.length()) {
+        if (start < 0) start = tos.length() + start;
+        if (end < 0) end = tos.length() + end;
 
-    sstack[sstack.size()-1] = tos.substr(start, end);
+        sstack[sstack.size()-1] = tos.substr(start, end);
+    } else {
+        sstack[sstack.size()-1] = "";
+    }
 
     SetBranchCondition(1);
     return 1;
