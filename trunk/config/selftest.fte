@@ -22,11 +22,6 @@ sub emptyall  {
    depth times drop
 }
 
-sub emptybuffer {
-   movefilestart blockbegin
-   movefileend    blockend
-   ?blockkill                # fails if buffer empty. force to continue
-}
 
 sub testfilename { var$ new }
 sub timestarted  { var new }
@@ -383,8 +378,8 @@ sub test_22_6 { "abcdefgh" 0 2 mid$ "ab" equals$ true  22006 pass }
 sub test_22_7 { "123456" 1 3 mid$ "234" equals$ true  22007 pass }
 sub test_22_8 { "ABCDEF" 4 6 mid$ "EF" equals$ true  22008 pass }
  
- #{ "abcde" 10 10 mid$ "" equals$ true  22008 pass }
-sub test_22_9 { false false not  22009 pass } # just an attention drawer for the line above - terminates efte.
+sub test_22_9 { "abcde" 10 10 mid$ "" equals$ true  22009 pass }
+ #{ false false not  22009 pass } # just an attention drawer for the line above - terminates efte.
  
  # negative len not tested yet
  
