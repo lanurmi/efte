@@ -233,14 +233,13 @@ int MidStr() {
 
     std::string tos = sstack.back();
 
-    if (start < (signed int) tos.length()) {
-        if (start < 0) start = tos.length() + start;
-        if (end < 0) end = tos.length() + end;
+    if (start < 0) start = tos.length() + start;
+    if (end < 0) end = tos.length() + end;
 
+    if (start < tos.length())
         sstack[sstack.size()-1] = tos.substr(start, end);
-    } else {
+    else
         sstack[sstack.size()-1] = "";
-    }
 
     SetBranchCondition(1);
     return 1;
