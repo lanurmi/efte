@@ -54,10 +54,26 @@ sub negative  { 0 < }                           # < zero?
 sub abs       { dup 0 < if negate endif }       # remove sign
 sub min       { dup2 > if swap endif drop }
 sub max       { dup2 < if swap endif drop }
+
+
+sub umin {
+   dup2
+   dup2 xor 0 < if swap endif
+   > if swap endif drop
+}
+
+
+
+#sub umin      { dup2 xor 0 < if max else min endif }  # ( u1 u2 -- u1|u2 ) unsigned min
+sub umax      { dup2 xor 0 < if min else max endif }  # ( u1 u2 -- u1|u2 ) unsigned max
 sub mod       { dup2 / * - }                    # modulo (remainder) function
 sub gcd       { begin tuck mod qdup not until } # greatest common denominator
 sub sqrt      { 0 tuck do inc dup lshift inc +loop }
 sub range     { over + swap }                   # start n -> limit start conversion for DO LOOP
+sub or!       { dup >r @ or  r> ! }             # ( x a -- )  bitwise  or x into address a
+sub and!      { dup >r @ and r> ! }             # ( x a -- )  bitwise and x into address a
+sub xor!      { dup >r @ xor r> ! }             # ( x a -- )  bitwise xor x into address a
+
 
 
 # --- define a variables class
@@ -72,11 +88,17 @@ sub octal     {  8 base ! }
 sub binary    {  2 base ! }
 
 
+
+
+
 # --- character test
+sub bl        { ' ' }
 sub capital   { 'A' 'Z' between }
 sub lowercase { 'a' 'z' between }
 sub capitalize { dup lowercase if 32 - endif }
 sub undercast  { dup capital   if 32 + endif }
+sub printable   { bl 127 between }
+
 
 
 sub numeric   {             # ( asc -- flag )      converts ascii to numeric value, and flag if legal cipher.
@@ -167,7 +189,6 @@ sub emit      { char$ insertstring }
 sub type1     { count emit }
 sub type      { times type1 drop }              # string output
 sub type$     { dup$ len$ if dup$ insertstring endif drop$  }  # fixing name and empty string bug
-sub bl        { ' ' }
 sub cr        { cursorend linenew cursorhome }  # carriage return
 
 
@@ -189,6 +210,36 @@ sub right$    {                                 # ( n -- )
      dup negate swap
   endif
   mid$ }
+
+
+
+
+# unsigned number string to numeric
+sub unumber? {                          # ( -- n -1 | 0 )
+   -1 0                                 # assume valid number, initial value 0
+   dup$ len$ 0 do                       # loop through chars
+      base @ *                          #  accu*radix
+      i ascn cipher if +                #  next char valid cipher? yes: accumulate
+      else
+         2:drop 0 0 leave               #  no: signal "not a number" and leave
+      endif
+   loop
+   drop$
+   swap qdup drop                       # return result as specified in stack diagram.
+}
+
+
+sub number? {                           # ( -- n -1 | 0 )
+   0 ascn '-' equals
+   if
+      -1 left$
+      unumber?
+      dup >r if negate endif r>
+   else
+      unumber?
+   endif
+}
+
 
 
 
@@ -381,63 +432,25 @@ sub .0r     { <hash  bl hold  times hash  hash> type$ }
 
 # --- file editing buffer helpers
 sub linelen    { curline$ dup$ len$ drop$ }     # ( -- len )
-sub at         { movetoline movetocolumn }      # ( x y -- )
-sub cursorcol  { at? nip }                      # ( -- x )
-sub cursorrow  { at? drop }                     # ( -- y )
+sub at         { 1 + movetoline  1 + movetocolumn } # ( x y -- )
+
+sub cursorcol  { at? drop 1 + }                     # ( -- x )
+sub cursorrow  { at? nip  1 + }                     # ( -- y )
+
+sub emptybuffer {
+   movefilestart blockbegin
+   movefileend    blockend
+   ?blockkill
+}
+
+sub cls         { emptybuffer }                     # wipe current buffer
+
+sub linecount {                                     # ( -- u )    number of lines in file
+   at? movefileend
+   cursorrow minrot
+   at }
 
 
-
-# --- run time defined macros - very crude, but it demonstrates the principle, and can be improved ---
-
-sub ip        { var new }                       # instruction pointer. program counter for highlevel macros
-
-sub branch    { ip @                            # runtime code for unconditional branch
-                count +
-                ip ! }
-
-sub branch0   { if ip @ inc                     # runtime code for conditional branch
-                else ip @ count +
-                endif ip ! }
-
-sub lit       { ip @                            # runtime code for literal numbers
-                count swap
-                ip ! }
-
-sub compile   { tick
-                qdup if comma
-                else "xlerb?" type$
-                endif }
-
-sub literal   { "lit" compile
-                comma }
-
-sub run       { ip !                            # ( a -- )    start execution of high level macro at a
-                begin lit                       # stealing from lit - happens to do the same as instruction fetch
-                qdup while execute
-                repeat  }
-
-
-# --- define new macro class ---
-sub macro       { here does run }               # our data construct builder is way cool ...
-
-# --- build a macro ---
-
-                                                
-sub usermacro   { macro new                     # new data type "macro" :)
-                  5 literal                     #    5
-                  "dup" compile                 #    begin
-                  "." compile                   #       dup .
-                  "dec" compile                 #       dec
-                  "qdup" compile                #       qdup
-                  "not" compile                 #       not
-                  "branch0" compile -7 comma    #    until
-                  "cr" compile                  #    cr
-                  0 comma                       #    exit
-                  usermacro }                   # instantiate macro - great place to do that!
-                                                # macro is ready, can be executed as "usermacro"
-                                                # (actually, it is the other way around - when executed
-                                                # the first time, macro will instantiate - and at the end
-                                                # of instantiation, call itself here)
 
 # --- initialisation ---
 sub OnBoot    { decimal }

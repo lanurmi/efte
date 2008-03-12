@@ -14,11 +14,6 @@ sub emptyall  {
    depth times drop
 }
 
-sub emptybuffer {
-   movefilestart blockbegin
-   movefileend    blockend
-   ?blockkill                # fails if buffer empty. force to continue
-}
 
 sub testfilename { var$ new }
 sub timestarted  { var new }
