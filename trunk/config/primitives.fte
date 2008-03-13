@@ -473,5 +473,8 @@ sub linecount {                                     # ( -- u )    number of line
 
 
 # --- initialisation ---
-sub OnBoot    { decimal }
+sub OnBoot    {
+   decimal
+   "InitInterpreter" tick execute
+   }
 

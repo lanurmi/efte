@@ -1,0 +1,440 @@
+
+sub last    { var new }                          # anchor of linked list through words
+sub state   { var new }                          # compilation/interpretation switch
+sub w       { var new }                          # VM word pointer
+sub ip      { var new }                          # VM instruction pointer
+sub loading { var new }
+
+sub compiling    { state @ }
+sub interpreting { compiling not }
+
+
+
+# --- virtual machine ---
+sub exec      {
+   dup -65536 and
+   if
+      dup 1 + w ! @
+   endif
+   execute }
+
+
+sub donest    {
+   ip @ >r                                      # push return address
+   w @ ip !                                     # set instruction pointer to called macro
+   begin                                        # having an efte support command here would speed this up.
+      ip @
+      dup 1 +
+      ip !
+   @ qdup while
+      exec
+   repeat
+   r> ip !
+   }
+
+
+
+# --- run time words ---
+
+sub dovar     { w @ }                           # push data address
+
+sub branch    { ip @                            # runtime code for unconditional branch
+                count +
+                ip ! }
+
+sub branch0   { if ip @ 1                       # runtime code for conditional branch
+                else ip @ count
+                endif + ip ! }
+
+sub lit       { ip @                            # runtime code for literal numbers
+                dup 1 + ip !
+                @
+               }
+
+sub slit      { ip @                            # runtime code for literal strings
+                count
+                dup2 + ip !
+                combine
+               }
+
+
+
+# --- "buffered i/o", source line parsing ---
+
+sub source$ { var$ new }
+
+sub word$   {                                   # ( c -- )  must clear input line from string stack
+    source$ fetch$                              # this is a but cludgy and slow, but the easiest way for now/
+    dup bl equals if
+       dup minleading$
+    endif
+    split$
+    swap$ -1 left$
+    source$ store$
+    }
+
+
+
+sub prompt  {
+   loading @ not if
+      interpreting if
+         "  ok [" type$   depth 0 .r   "/" type$   depth$ 0 .r   "]" type$   cr
+      endif
+   endif
+ }
+
+
+
+
+# TODO: check split$ / word$ with leading spaces - there may be a stack imbalance.
+# TODO: repeated  1 + dup @ .  , printing last address after a while (non-alloc'd mem) stack error?
+
+
+sub query    {
+   curline$ source$ store$
+   loading @ if ?cursordown else cr endif }
+
+sub endloading { loading off  fileclose }
+
+sub error    {
+   state off
+   loading off
+   type$ cr
+   fail }
+
+sub notfound { "word not found: " prepend$ error }
+
+
+# --- dictionary ---
+
+sub revealbit      { 1 }
+sub precedencebit  { 2 }
+
+
+# --- header structure ---
+#         --- lfa ---
+# link+0  pointer to prev word
+#         --- cfa ---
+# link+1  pointer to cfa
+#         --- nfa ---
+# link+2  header flags
+# link+3  name len
+# link+4+ name
+#         ---
+#         body
+#         ...
+
+
+sub xt>    {               # ( xt -- cfa )
+   dup 65536 < if "can't do that with an internal command" error endif
+   here dup begin 1 - dup2 @ equals until nip }
+sub >xt    { @ }           # ( cfa -- xt )
+
+sub >body  { >xt 1 +  }    # ( cfa -- body )
+sub body>  { 1- xt> }      # ( body -- cfa )
+
+sub link>  { 1 + }         # ( lfa -- cfa )
+sub >link  { 1 - }         # ( cfa -- lfa )
+
+sub >name  { 1 + }         # ( cfa -- nfa )
+sub name>  { 1 - }         # ( -- cfa )
+sub name$  { fetch$ }
+sub .name  { fetch$ type$ }
+sub headerflags { @  }     # ( nfa -- flags )
+
+sub latest    { last @ link> }
+sub immediate { precedencebit    latest >name   or! }   # ( -- )
+sub reveal    { revealbit        latest >name   or! }   # ( -- )
+sub hide      { revealbit invert latest >name  and! }   # ( -- )
+
+
+
+sub header {
+   last link                       # add new header to linked list of headers
+   here 0 comma                    # pointer to word body
+   0 comma                         # header flags
+   here
+   dup$ len$ 1 + allot
+   move$
+   here swap ! }
+
+
+sub nextheader  {                   # ( cfa1 -- cfa2|0 )
+   >link @
+   dup if
+      link>
+   endif }
+
+
+sub findheader  {                   # ( cfa -- xt headerflags | 0 )
+   begin
+      dup >name                     # cfa nfa
+      dup headerflags               # cfa nfa headerfl
+      dup revealbit and
+      if
+         dup$
+         over name$ equals$
+         if
+            drop$
+            >r drop >xt r>
+            exit
+        endif
+      endif
+      drop2
+  nextheader
+  dup not until
+  drop$
+}
+
+sub locate {             # ( -- xt headers | 0 )   search for word name on string stack
+   dup$
+   latest findheader
+   qdup if
+      drop$
+   else
+      tick
+      dup if
+        revealbit
+      endif
+   endif
+ }
+
+
+
+sub postpone   {
+   dup$ locate
+   if drop$ comma
+   else notfound
+   endif }
+
+sub create    {
+   bl word$ header
+   "dovar" postpone
+   reveal }
+
+sub sub {
+   bl word$ header
+   "donest" postpone
+   state on
+   }
+
+sub endsub  {
+   0 comma
+   state off
+   reveal }
+
+
+
+sub newtick {
+   bl word$
+   dup$ locate
+   not if notfound endif
+   drop$
+}
+
+
+sub literal   {            # compiling: ( x -- ),  interpreting: ( x -- x )
+   compiling if
+      "lit" postpone
+      comma
+   endif }
+
+sub sliteral  {
+   "slit" postpone         #     compile as string literal:
+   here                    #     .. goes string to
+   dup$ len$ 1 + allot     #     allocate string len + 1 (for leading count)
+   move$                   #     place string
+}
+
+
+sub words {
+  "(-:hidden, #:immediate)" type$ cr
+  last
+  begin @
+  qdup while
+     dup link> >name
+     dup headerflags
+     " "
+     dup revealbit and not
+     if drop$ "-"
+     else
+         dup precedencebit and
+         if drop$ "#"
+         endif
+     endif
+     drop type$ space
+     .name  cr
+  repeat }
+
+
+
+# --- compiler/interpreter ---
+
+# needs some serious factoring out here.
+sub maybesomethingelse {         # ( -- f ) not a word in dictionary - try alternatives
+   dup$
+   number? if
+      literal                    # yes, compile number (if compiling)
+      drop$                      # (kept for error case)
+      true exit
+   endif
+
+   0 ascn 39 equals if           # 'x'
+      1 ascn literal
+      drop$
+      true exit
+   endif
+
+   0 ascn '$' equals if
+      base @ hex >r
+      dup$ -1 left$
+      number?
+      r> base !
+      if
+         literal
+         drop$
+         true exit
+      endif
+   endif
+
+   0 ascn '#' equals if
+      base @ decimal >r
+      dup$ -1 left$
+      number?
+      r> base !
+      if
+         literal
+         drop$
+         true exit
+      endif
+   endif
+
+   0 ascn '%' equals if
+      base @ binary >r
+      dup$ -1 left$
+      number?
+      r> base !
+      if
+         literal
+         drop$
+         true exit
+      endif
+   endif
+
+   0 ascn '"' equals if          # unknown word starts with double quotes?
+      -1 left$                   # remove leading "
+      -1 ascn  '"' equals        # last char " ?
+      if                         # yes: string without spaces, completely parsed
+         -1 right$               # remove trailing "
+      else                       # no: need to parse rest of string
+         " " append$
+         '"' word$ append$       # parse rest of string
+      endif
+      compiling if               #  compiling?
+         sliteral
+      endif
+      true exit
+
+   endif
+   false  }
+
+
+
+
+sub interpret {                         # the interpreter/compiler
+    begin
+       bl word$
+       dup$ len$                        # still input?
+    while
+       dup$ locate                      # look up in dictionary
+       qdup if                          # found:
+          drop$                         # (kept name for error case)
+          precedencebit and             # immediate words execute always
+          interpreting or
+          if
+             exec                       # not compiling or immediate: execute straight away.
+          else
+             comma                      # compile execution token to mem
+          endif
+       else                             # word not in dictionary:
+          maybesomethingelse
+          not if notfound endif
+       endif
+    repeat
+    drop$
+    }
+
+
+
+sub load {                              # compile from file.  not nestable now.
+   bl word$ fileopen
+   0 0 at
+   loading on
+   linecount 0 do
+      query interpret
+   loop
+   endloading
+   cr
+}
+
+
+sub colondef { header "donest" postpone }
+sub InitInterpreter {
+   256 spaces$ source$ store$
+   0 state !
+   0 last !
+   0 ip !
+   0 w !
+   0 loading !
+   65536 here - dup 0 > if dup allot endif drop
+   ":"       colondef "sub"     postpone  endsub
+   ";"       colondef "endsub"  postpone  endsub  immediate
+   "execute" colondef "exec"    postpone endsub
+   "'"       colondef "newtick" postpone endsub
+   }
+
+
+
+# --------- hexdump and toys below ---------
+
+
+sub slashstring { over min tuck - >r + r> }             # ( a1 u1 u -- a2 u2 )
+
+sub safeemit    {                                       # ( asc -- )
+    count dup printable
+    not if
+      drop '.'
+    endif
+    emit
+}
+
+
+sub hexdigits   { base @ >r hex   <hash bl hold times hash hash> type$  r> base ! }
+sub .addr       { 8 hexdigits }                         # ( a -- )
+sub .byte       { 2 hexdigits }                         # ( c -- )
+sub .nextbyte   { count .byte }                         # ( a1 -- a2 )
+sub dumpbytes   { times .nextbyte drop }                # ( a n -- )
+sub dumpchars   { times safeemit drop }                 # ( a n -- )
+
+sub dump1line  {                                        # ( a n -- )
+   dup if
+      over .addr space
+      dup2 dumpbytes
+      16 over - 3 * 2 + spaces    # pad with spaces to ascii dump. a dumpline could be < 16 bytes.
+      dup2 dumpchars
+   endif drop2 }
+
+sub hexdump {                                           # ( a n -- )
+   begin
+      dup
+   while
+      dup2 16 min dump1line cr
+      16 slashstring
+   repeat drop2
+}
+
+
+
+eventmap PLAIN: MODEL {
+    key [G+Enter]     { query interpret prompt }
+}
