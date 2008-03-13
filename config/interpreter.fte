@@ -1,9 +1,10 @@
 
-sub last    { var new }                          # anchor of linked list through words
-sub state   { var new }                          # compilation/interpretation switch
-sub w       { var new }                          # VM word pointer
-sub ip      { var new }                          # VM instruction pointer
-sub loading { var new }
+sub last         { var new }                    # anchor of linked list through words
+sub state        { var new }                    # compilation/interpretation switch
+sub w            { var new }                    # VM word pointer
+sub ip           { var new }                    # VM instruction pointer
+sub loading      { var new }
+sub baseprefix   { var new 2 allot }            # associate number base prefix with number base
 
 sub compiling    { state @ }
 sub interpreting { compiling not }
@@ -115,33 +116,26 @@ sub precedencebit  { 2 }
 #         --- lfa ---
 # link+0  pointer to prev word
 #         --- cfa ---
-# link+1  pointer to cfa
+# link+1  pointer to xt
 #         --- nfa ---
 # link+2  header flags
 # link+3  name len
 # link+4+ name
 #         ---
+#   xt    xt of word handler
 #         body
 #         ...
 
 
-sub xt>    {               # ( xt -- cfa )
-   dup 65536 < if "can't do that with an internal command" error endif
-   here dup begin 1 - dup2 @ equals until nip }
-sub >xt    { @ }           # ( cfa -- xt )
-
-sub >body  { >xt 1 +  }    # ( cfa -- body )
-sub body>  { 1- xt> }      # ( body -- cfa )
-
-sub link>  { 1 + }         # ( lfa -- cfa )
-sub >link  { 1 - }         # ( cfa -- lfa )
-
-sub >name  { 1 + }         # ( cfa -- nfa )
-sub name>  { 1 - }         # ( -- cfa )
-sub name$  { fetch$ }
-sub .name  { fetch$ type$ }
-sub headerflags { @  }     # ( nfa -- flags )
-
+sub >xt       { @ }                # ( cfa -- xt )
+sub >body     { >xt 1 +  }         # ( cfa -- body )
+sub link>     { 1 + }              # ( lfa -- cfa )
+sub >link     { 1 - }              # ( cfa -- lfa )
+sub >name     { 1 + }              # ( cfa -- nfa )
+sub name>     { 1 - }              # ( -- cfa )
+sub name$     { fetch$ }
+sub .name     { fetch$ type$ }
+sub headerflags { @  }             # ( nfa -- flags )
 sub latest    { last @ link> }
 sub immediate { precedencebit    latest >name   or! }   # ( -- )
 sub reveal    { revealbit        latest >name   or! }   # ( -- )
@@ -159,7 +153,7 @@ sub header {
    here swap ! }
 
 
-sub nextheader  {                   # ( cfa1 -- cfa2|0 )
+sub nextheader  {                   # ( cfa1 -- cfa2 | 0 )
    >link @
    dup if
       link>
@@ -186,6 +180,7 @@ sub findheader  {                   # ( cfa -- xt headerflags | 0 )
   drop$
 }
 
+
 sub locate {             # ( -- xt headers | 0 )   search for word name on string stack
    dup$
    latest findheader
@@ -200,23 +195,25 @@ sub locate {             # ( -- xt headers | 0 )   search for word name on strin
  }
 
 
-
 sub postpone   {
    dup$ locate
    if drop$ comma
    else notfound
    endif }
 
+
 sub create    {
    bl word$ header
    "dovar" postpone
    reveal }
+
 
 sub sub {
    bl word$ header
    "donest" postpone
    state on
    }
+
 
 sub endsub  {
    0 comma
@@ -239,12 +236,14 @@ sub literal   {            # compiling: ( x -- ),  interpreting: ( x -- x )
       comma
    endif }
 
+
 sub sliteral  {
-   "slit" postpone         #     compile as string literal:
-   here                    #     .. goes string to
-   dup$ len$ 1 + allot     #     allocate string len + 1 (for leading count)
-   move$                   #     place string
-}
+   compiling if
+      "slit" postpone         #     compile as string literal:
+      here                    #     .. goes string to
+      dup$ len$ 1 + allot     #     allocate string len + 1 (for leading count)
+      move$                   #     place string
+   endif }
 
 
 sub words {
@@ -254,15 +253,8 @@ sub words {
   qdup while
      dup link> >name
      dup headerflags
-     " "
-     dup revealbit and not
-     if drop$ "-"
-     else
-         dup precedencebit and
-         if drop$ "#"
-         endif
-     endif
-     drop type$ space
+     revealbit precedencebit or and
+     "- -#" 1 mid$ type$ space
      .name  cr
   repeat }
 
@@ -285,36 +277,16 @@ sub maybesomethingelse {         # ( -- f ) not a word in dictionary - try alter
       true exit
    endif
 
-   0 ascn '$' equals if
-      base @ hex >r
-      dup$ -1 left$
-      number?
+   0 ascn "$#%" scan$            # $xxxx  #nnnn  %100101  style of number base designator?
+   dup 0< if
+      drop
+   else
+      baseprefix + @             # read number base
+      base exchange >r           # use
+      dup$ -1 left$              # strip prefix from what could be a number
+      number?                    # is it?
       r> base !
-      if
-         literal
-         drop$
-         true exit
-      endif
-   endif
-
-   0 ascn '#' equals if
-      base @ decimal >r
-      dup$ -1 left$
-      number?
-      r> base !
-      if
-         literal
-         drop$
-         true exit
-      endif
-   endif
-
-   0 ascn '%' equals if
-      base @ binary >r
-      dup$ -1 left$
-      number?
-      r> base !
-      if
+      if                         # yes, compile number, or leave on stack.
          literal
          drop$
          true exit
@@ -330,13 +302,12 @@ sub maybesomethingelse {         # ( -- f ) not a word in dictionary - try alter
          " " append$
          '"' word$ append$       # parse rest of string
       endif
-      compiling if               #  compiling?
-         sliteral
-      endif
+      sliteral                   # compile string to word, or leave on stack
       true exit
 
    endif
-   false  }
+   false
+ }
 
 
 
@@ -348,7 +319,7 @@ sub interpret {                         # the interpreter/compiler
     while
        dup$ locate                      # look up in dictionary
        qdup if                          # found:
-          drop$                         # (kept name for error case)
+          drop$                         # (kept name for not-found case)
           precedencebit and             # immediate words execute always
           interpreting or
           if
@@ -356,8 +327,8 @@ sub interpret {                         # the interpreter/compiler
           else
              comma                      # compile execution token to mem
           endif
-       else                             # word not in dictionary:
-          maybesomethingelse
+       else                             # word not in dictionary: test for alternatives, like:
+          maybesomethingelse            #   "strings"  'A'sciis  $hex  #decimal  %binary numbers
           not if notfound endif
        endif
     repeat
@@ -379,7 +350,13 @@ sub load {                              # compile from file.  not nestable now.
 
 
 sub colondef { header "donest" postpone }
+
 sub InitInterpreter {
+
+   16 baseprefix !
+   10 baseprefix 1 + !
+    2 baseprefix 2 + !
+
    256 spaces$ source$ store$
    0 state !
    0 last !
@@ -387,8 +364,8 @@ sub InitInterpreter {
    0 w !
    0 loading !
    65536 here - dup 0 > if dup allot endif drop
-   ":"       colondef "sub"     postpone  endsub
-   ";"       colondef "endsub"  postpone  endsub  immediate
+   ":"       colondef "sub"     postpone endsub
+   ";"       colondef "endsub"  postpone endsub  immediate
    "execute" colondef "exec"    postpone endsub
    "'"       colondef "newtick" postpone endsub
    }
