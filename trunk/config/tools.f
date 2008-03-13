@@ -12,6 +12,7 @@
 : #s ( n1 -- n2 )        hashes ;
 : <# ( -- )              <hash ;
 : #> ( n -- )            hash> ;
+
 : -rot                   minrot ;
 : ?dup                   qdup ;
 
@@ -21,24 +22,29 @@
 : ?exit                  ['] branch0 ,  1 ,  0 ,  ; immediate
 
 : ?comp            ( -- )          state @ ?exit   "compilation only" error ;
-: pairedwith       ( x1 x2 -- )    = ?exit  "unpaired" error ;
+: pairedwith       ( x1 x2 -- )    = ?exit  "unmatching conditionals" error ;
 : pairedwitheither ( x1 x2 x3 -- ) >r over = swap r> = or true pairedwith ;
 : me         ( -- )     ?comp latest >xt  postpone literal ; immediate
 
-\ mark a forward branch, for later resolve
-: mark       ( -- a )    here  ;
-: forwards   ( -- a )    mark ['] branch ,  0 , ;
-: ?forwards  ( -- a )    mark ['] branch0 , 0 , ;
-: resolve    ( a -- )    1 + here over 1 + - swap ! ;
-: backwards  ( a -- )    ['] branch , mark 1 + - , ;
-: ?backwards ( a -- )    ['] branch0 , mark 1 + - , ;
 
+\ --- flow control tool kit ---
+: mark         ( -- a )        here  ;
+: offset       ( a1 a2 -- n )  1 + -  ;
+: condbranch   ( -- )          ['] branch0 , ;
+: uncondbranch ( -- )          ['] branch  , ;
+: forwards     ( -- a )        mark uncondbranch 0 , ;
+: ?forwards    ( -- a )        mark   condbranch 0 , ;
+: resolve      ( a -- )        1 + here over offset swap ! ;
+: <resolve     ( a -- )        here offset , ;
+: backwards    ( a -- )        uncondbranch <resolve  ;
+: ?backwards   ( a -- )        condbranch   <resolve  ;
 
+\ --- flow control statements ---
 : if     ?comp                                       ?forwards              me ; immediate
 : else   ?comp      ['] if          pairedwith        forwards swap resolve me ; immediate
 : endif  ?comp      ['] if ['] else pairedwitheither                resolve    ; immediate
-: begin  ?comp      mark me    ; immediate
+: begin  ?comp                                                       mark   me ; immediate
 : while  ?comp      ['] begin       pairedwith       ?forwards              me ; immediate
 : repeat ?comp      ['] while       pairedwith  swap  backwards     resolve    ; immediate
-: until  ?comp     ?backwards  ; immediate
-: again  ?comp      backwards  ; immediate
+: until  ?comp      ['] begin       pairedwith       ?backwards                ; immediate
+: again  ?comp      ['] begin       pairedwith        backwards                ; immediate
