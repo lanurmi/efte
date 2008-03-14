@@ -137,20 +137,20 @@ int Microsecs()  {         // wraps every 1h 11m 34s
 // every 136y 144d 23296s. will be provided on user request.
 
 
-/*
+
 // sleep for <tos> milliseconds
 int Ms()  {
+//    view->Repaint();
     int tos=ParamStack.pop();
-   int nos=tos % 1000;
+    int nos=tos % 1000;
     tos /= 1000;
     if (tos)
         sleep(tos);
-    if (nos)
-        nanosleep(nos*1000000);
-
+//    if (nos)
+//        nanosleep(nos*1000000);
     return 1;
 }
-*/
+
 
 
 // -----------------------------------------------------------------------------------------------------------
@@ -214,6 +214,8 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
         return Millisecs();
     case ExMicrosecs:
         return Microsecs();
+    case ExMs:
+        return Ms();
 
 
     case ExAnd:

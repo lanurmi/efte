@@ -54,26 +54,16 @@ sub negative  { 0 < }                           # < zero?
 sub abs       { dup 0 < if negate endif }       # remove sign
 sub min       { dup2 > if swap endif drop }
 sub max       { dup2 < if swap endif drop }
-
-
-sub umin {
-   dup2
-   dup2 xor 0 < if swap endif
-   > if swap endif drop
-}
-
-
-
-#sub umin      { dup2 xor 0 < if max else min endif }  # ( u1 u2 -- u1|u2 ) unsigned min
+sub umin      { dup2 xor 0 < if max else min endif }  # ( u1 u2 -- u1|u2 ) unsigned min
 sub umax      { dup2 xor 0 < if min else max endif }  # ( u1 u2 -- u1|u2 ) unsigned max
 sub mod       { dup2 / * - }                    # modulo (remainder) function
 sub gcd       { begin tuck mod qdup not until } # greatest common denominator
 sub sqrt      { 0 tuck do inc dup lshift inc +loop }
 sub range     { over + swap }                   # start n -> limit start conversion for DO LOOP
+sub +!        { dup >r @ +   r> ! }             # ( x a -- )  adds x to contents of address a
 sub or!       { dup >r @ or  r> ! }             # ( x a -- )  bitwise  or x into address a
 sub and!      { dup >r @ and r> ! }             # ( x a -- )  bitwise and x into address a
 sub xor!      { dup >r @ xor r> ! }             # ( x a -- )  bitwise xor x into address a
-
 
 
 # --- define a variables class
@@ -89,15 +79,13 @@ sub binary    {  2 base ! }
 
 
 
-
-
 # --- character test
 sub bl        { ' ' }
 sub capital   { 'A' 'Z' between }
 sub lowercase { 'a' 'z' between }
-sub capitalize { dup lowercase if 32 - endif }
-sub undercast  { dup capital   if 32 + endif }
-sub printable   { bl 127 between }
+sub capitalize { dup lowercase 32 and - }
+sub undercast  { dup capital   32 and + }
+sub printable  { bl 127 between }
 
 
 
@@ -107,7 +95,7 @@ sub numeric   {             # ( asc -- flag )      converts ascii to numeric val
    dup 16 > 7 and -
    0 base @ dec between }
 
-sub cipher   {               # ( asc -- u -1 | 0 )  converts ascii to numeric value, and flag if legal cipher.
+sub cipher   {              # ( asc -- u -1 | 0 )  converts ascii to numeric value, and flag if legal cipher.
    capitalize '0' -         #                      respects base, and reports only those chars valid which are
    dup 10 16 between or     #                      legal in the resp. base
    dup 16 > 7 and -
@@ -131,12 +119,8 @@ sub cursorend  { movelineend }
 
 sub off       { false swap ! }                  # ( a -- )   sets contents of a to false
 sub on        { true swap ! }                   # ( a -- )   sets contents of a to true
-sub count     { inc dup dec @ }
-sub +!        { dup >r @ + r> ! }               # ( x a -- )  adds x to contents of address a
+sub count     { 1 + dup 1 - @ }
 sub comma     { here cell allot ! }             # ( x -- )    allocate 1 location, initialized to x
-                                                # can then use vars like:      sub bar { var new }
-                                                #                foo @   bar !
-
 sub exchange  { dup @ >r ! r> }                 # ( x1 a -- x2 )
 sub link      { here swap exchange comma }      # ( a -- )
 sub free      { memend here - }
@@ -170,6 +154,8 @@ sub drop2$    { 2:drop$ }
 sub equals$   { compare$ not }
 sub prepend$  { swap$ append$ }
 
+
+# TODO: can maybe simplify now after mid$ index fix.
 sub cut$ {                                      # ( n -- )  s( $1 -- $2 $3 )  splits string at position n,
   dup$ len$ dup >r min 0 max                    # returns left part as tos$ and right part as nos$
   dup$ dup r> mid$
@@ -196,15 +182,17 @@ sub ascn      { dup$ 1 mid$ asc }               # ( n -- c ) get ascii of nth ch
 
 
 # -- i/o --
-sub key       { getchar }                       # wait for key, place its ascii on stack
+sub key       { winrefresh getchar }            # wait for key, place its ascii on stack
 sub read$     { curchar$ }                      # read char under cursor as string
 sub read      { curchar$ asc }                  # read char under cursor as asc
 sub curchar   { curchar$ asc }                  # read char under cursor, convert to asc
-sub emit      { char$ insertstring }
+sub emit      { typechar }
 sub type1     { count emit }
 sub type      { times type1 drop }              # string output
 sub type$     { dup$ len$ if dup$ insertstring endif drop$  }  # fixing name and empty string bug
-sub cr        { cursorend linenew cursorhome }  # carriage return
+#TODO: change insertstring to not behave funny when empty string is sent.
+#sub cr        { cursorend linenew cursorhome }  # carriage return
+sub cr        { ?cursordown failure if linenew cursorhome exit endif cursorhome killtolineend }  # carriage return
 
 
 
@@ -298,7 +286,7 @@ sub repeat$ {                                   # ( u c -- ) create a string of 
 
 sub spaces$   { bl repeat$ }                    # ( u -- ) create a string of u spaces
 sub spaces    { spaces$ type$ }
-sub space     { " " insertstring }              # print a space character
+sub space     { insertspace }                   # print a space character
 
 
 
@@ -454,7 +442,8 @@ sub .0r     { <hash  bl hold  times hash  hash> type$ }
 sub linelen    { curline$ dup$ len$ drop$ }     # ( -- len )
 sub at         { 1 + movetoline  1 + movetocolumn } # ( x y -- )
 
-sub cursorcol  { at? drop 1 + }                     # ( -- x )
+sub cursorcol  { at? drop 1 + }                     # ( -- x )  fade out
+sub cursorcolumn { at? drop 1 + }                   # ( -- x )
 sub cursorrow  { at? nip  1 + }                     # ( -- y )
 
 sub emptybuffer {
@@ -463,18 +452,23 @@ sub emptybuffer {
    ?blockkill
 }
 
-sub cls         { emptybuffer }                     # wipe current buffer
+sub cls        { emptybuffer }                      # wipe current buffer
 
-sub linecount {                                     # ( -- u )    number of lines in file
+sub linecount  {                                    # ( -- u )    number of lines in file
    at? movefileend
    cursorrow minrot
    at }
 
 
+sub blockmove   { blockcut blockpaste }             # move block to cursor
+
+# sub sleep  { winrefresh ms }  # winrefresh doesn't do what i hoped it would
 
 # --- initialisation ---
+sub attempt   { tick execute }                      # execute macro, name given as string, if it exists only
 sub OnBoot    {
    decimal
-   "InitInterpreter" tick execute
+   "InitInterpreter" attempt
+   "InitMySettings"  attempt
    }
 
