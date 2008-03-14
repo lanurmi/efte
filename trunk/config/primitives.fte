@@ -191,8 +191,14 @@ sub type1     { count emit }
 sub type      { times type1 drop }              # string output
 sub type$     { dup$ len$ if dup$ insertstring endif drop$  }  # fixing name and empty string bug
 #TODO: change insertstring to not behave funny when empty string is sent.
-#sub cr        { cursorend linenew cursorhome }  # carriage return
-sub cr        { ?cursordown failure if linenew cursorhome exit endif cursorhome killtolineend }  # carriage return
+
+#sub cr        { cursorend linenew cursorhome }
+#sub cr        { ?cursordown failure if linenew endif cursorhome }
+sub cr        {                                 # carriage return
+    ?cursordown failure if 
+        linenew cursorhome exit 
+    endif 
+    cursorhome killtolineend }
 
 
 

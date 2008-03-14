@@ -95,7 +95,26 @@ sub word$   {                                   # ( c -- )  must clear input lin
 sub prompt  {
    loading @ not if
       interpreting if
-         "  ok [" type$   depth 0 .r   "/" type$   depth$ 0 .r   "]" type$   cr
+      
+#         " ok [" type$   depth 0 .r   "/" type$   depth$ 0 .r   "]" type$
+
+#         depth depth$ dup2 min >r
+#         " [ok]"
+#         r@   '$' repeat$ append$
+#         r@ - 'S' repeat$ append$
+#         r> - '|' repeat$ append$ type$
+#         killtolineend
+
+#         " [ok]" type$
+#         depth depth$ swap
+#         dup2 or if space endif
+#         qdup if            0 .r endif
+#         qdup if '/' emit   0 .r endif
+ 
+         "[ok]" type$
+         depth$ '$' repeat$ type$
+         depth  '.' repeat$ type$
+         cr
       endif
    endif
  }
@@ -107,11 +126,18 @@ sub prompt  {
 # TODO: repeated  1 + dup @ .  , printing last address after a while (non-alloc'd mem) stack error?
 
 
-sub query    {
-   curline$ source$ store$
-   loading @ if ?cursordown else cr endif }
+sub query    {     # ( -- n )
+   curline$
+   bl minleading$
+   dup$ source$ store$
+   len$
+}
+   
 
-sub endloading { loading off  fileclose }
+sub endloading { 
+   loading off  
+   fileclose }
+
 
 sub error    {
    state off
@@ -119,7 +145,7 @@ sub error    {
    type$ cr
    fail }
 
-sub notfound { "word not found: " prepend$ error }
+sub notfound { "Undefined word: " prepend$ error }
 
 
 # --- dictionary ---
@@ -344,14 +370,16 @@ sub load {                              # compile from file.  not nestable now.
    0 0 at
    loading on
    linecount 0 do
-      query interpret
+      query if interpret endif
+      ?cursordown
    loop
    endloading
-   cr
+#   cr
 }
 
 
 sub colondef { header "donest" postpone }
+#sub backslash { 0 word$ drop$ }
 
 sub InitInterpreter {
 
@@ -366,10 +394,12 @@ sub InitInterpreter {
    0 w !
    0 loading !
    65536 here - dup 0 > if dup allot endif drop
-   ":"       colondef "sub"     postpone endsub
-   ";"       colondef "endsub"  postpone endsub  immediate
-   "execute" colondef "exec"    postpone endsub
-   "'"       colondef "newtick" postpone endsub
+   ":"       colondef "sub"       postpone endsub
+   ";"       colondef "endsub"    postpone endsub  immediate
+   "execute" colondef "exec"      postpone endsub
+   "'"       colondef "newtick"   postpone endsub
+#  "\\"       colondef "backslash" postpone endsub  immediate
+#  "ok"      colondef "backslash" postpone endsub  immediate
    }
 
 
@@ -381,6 +411,7 @@ sub InitInterpreter {
 sub words {
   base @ hex
   last
+  cr
   30 '-' repeat$ type$ cr
   " addr f name" type$ cr
   30 '-' repeat$ type$ cr
@@ -427,6 +458,7 @@ sub dump1line  {                                        # ( a n -- )
    endif drop2 }
 
 sub hexdump {                                           # ( a n -- )
+   cr
    begin
       dup
    while
@@ -438,5 +470,21 @@ sub hexdump {                                           # ( a n -- )
 
 
 eventmap PLAIN: MODEL {
-    key [G+Enter]     { query interpret prompt }
+    key [G+Enter]     { 
+    query
+
+    loading @ if 
+      ?cursordown
+    else 
+      cursorend space 
+    endif
+
+    if
+       interpret
+       cr
+    endif
+    prompt }
+
+   
+
 }

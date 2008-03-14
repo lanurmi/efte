@@ -17,6 +17,8 @@
 : -rot                   minrot ;
 : ?dup                   qdup ;
 
+: recurse                latest >xt , ; immediate
+
 : dump                   hexdump ;
 : execute                exec ;
 : exit,                  0, ;      immediate
@@ -66,3 +68,7 @@
 ; immediate
 
 : i    ?comp ['] r@ , ; immediate
+
+
+: variable create 0 , ;
+
