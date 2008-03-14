@@ -41,6 +41,7 @@ const struct {
     TAB(Random),
     TAB(Millisecs),
     TAB(Microsecs),
+    TAB(Ms),
 
 
     TAB(And),
@@ -51,7 +52,7 @@ const struct {
     { ExEquals, "equals"},
     // { ExEquals, "="},         // cefte gives syntax error
     { ExLess, "<"},
-    TAB(Flag),
+//    TAB(Flag),
     TAB(Fail),
 
     TAB(Dup),
@@ -66,7 +67,7 @@ const struct {
     TAB(I),
     TAB(J),
     TAB(Times),
-    TAB(Old),
+//    TAB(Old),
     TAB(New),
     TAB(Does),
 

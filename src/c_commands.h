@@ -68,6 +68,8 @@ typedef enum {
     /// time stamp, returning milliseconds
     ExMicrosecs,
     /// time stamp, returning microseconds
+    ExMs,
+    /// refresh and sleep
 
     ExAnd,
     /// And

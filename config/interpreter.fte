@@ -39,13 +39,29 @@ sub donest    {
 
 sub dovar     { w @ }                           # push data address
 
+# not factoring here for .. hmm .. "performance" :D
 sub branch    { ip @                            # runtime code for unconditional branch
-                count +
-                ip ! }
+                dup @ +
+                1 + ip ! }
 
-sub branch0   { if ip @ 1                       # runtime code for conditional branch
-                else ip @ count
-                endif + ip ! }
+sub branch0   { if ip @                         # runtime code for conditional branch
+                else ip @ dup @ +
+                endif  1 + ip ! }
+
+sub dodo      { dup2 equals if  drop2
+                           ip @
+                           dup @ + 3 +
+                else       swap >r >r
+                           ip @ 1 +
+                endif      ip !
+                }
+
+sub doloop    { 
+   r> 1 + dup r@ equals
+   if      r> drop2   ip @  1 + ip !  exit
+   endif   >r  ip @ dup @ + ip !
+}
+
 
 sub lit       { ip @                            # runtime code for literal numbers
                 dup 1 + ip !
@@ -246,20 +262,6 @@ sub sliteral  {
    endif }
 
 
-sub words {
-  "(-:hidden, #:immediate)" type$ cr
-  last
-  begin @
-  qdup while
-     dup link> >name
-     dup headerflags
-     revealbit precedencebit or and
-     "- -#" 1 mid$ type$ space
-     .name  cr
-  repeat }
-
-
-
 # --- compiler/interpreter ---
 
 # needs some serious factoring out here.
@@ -372,7 +374,30 @@ sub InitInterpreter {
 
 
 
-# --------- hexdump and toys below ---------
+# --------- hexdump, words, utilities ---------
+
+
+
+sub words {
+  base @ hex
+  last
+  30 '-' repeat$ type$ cr
+  " addr f name" type$ cr
+  30 '-' repeat$ type$ cr
+  begin @
+  qdup while
+     dup link>
+     dup .
+     >name  dup headerflags
+     revealbit precedencebit or and
+     "- -#" 1 mid$ type$ space
+     .name cr
+  repeat
+  30 '-' repeat$ type$ cr
+  base ! }
+
+
+
 
 
 sub slashstring { over min tuck - >r + r> }             # ( a1 u1 u -- a2 u2 )
