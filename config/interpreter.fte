@@ -457,7 +457,7 @@ sub dump1line  {                                        # ( a n -- )
       dup2 dumpchars
    endif drop2 }
 
-sub hexdump {                                           # ( a n -- )
+sub dump {                                              # ( a n -- )
    cr
    begin
       dup
@@ -474,12 +474,13 @@ eventmap PLAIN: MODEL {
     query
 
     loading @ if 
-      ?cursordown
+#      ?cursordown
     else 
-      cursorend space 
+      cursorend
     endif
 
     if
+       space
        interpret
        cr
     endif

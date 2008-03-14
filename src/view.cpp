@@ -8,6 +8,19 @@
  *
  */
 
+
+// TODO:   Msg(S_ERROR, "String stack underflow in <function>");
+//  repeated throughout the file. that calls for factoring. like,
+//  pass function name as string, and call a common error handler?
+
+
+// TODO:  consider to replace CVS and SVN specifics completely, and
+// replace against a series of  OnVCS...  script calls. Now the actually
+// used VCS, and the respective commands,  can be set in scripts.
+
+
+
+
 #include "fte.h"
 
 EView *ActiveView = 0;

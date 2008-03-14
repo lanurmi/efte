@@ -31,9 +31,11 @@ const struct {
     TAB(MemEnd),
     TAB(Here),
     TAB(Allot),
+    
+    // --- shared variables ---
+    TAB(Base),
     TAB(Verbosity),
-    TAB(Dump),
-
+    // ------------------------
     { ExPlus, "+" },
     { ExMinus, "-" },
     { ExMul, "*" },
@@ -52,7 +54,7 @@ const struct {
     { ExEquals, "equals"},
     // { ExEquals, "="},         // cefte gives syntax error
     { ExLess, "<"},
-//    TAB(Flag),
+    TAB(Flag),
     TAB(Fail),
 
     TAB(Dup),
@@ -67,7 +69,7 @@ const struct {
     TAB(I),
     TAB(J),
     TAB(Times),
-//    TAB(Old),
+    { ExFor, "For"},          // flow control. execute next if true
     TAB(New),
     TAB(Does),
 
