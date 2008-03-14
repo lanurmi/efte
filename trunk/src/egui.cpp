@@ -182,24 +182,26 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
         return MemoryStore();
     case ExFetch:
         return MemoryFetch();
-    case ExDump:
-        return MemoryDump();
     case ExMemEnd:
         return MemoryEnd();
     case ExHere:
         return MemoryHere();
     case ExAllot:
         return MemoryAllot();
+
+        // Shared Variables
     case ExVerbosity:
         return Verbosity();
-    case ExPrint:
-        return Print(view, State);
+    case ExBase:
+        return Base();
+
+        // command calls
     case ExTick:
         return Tick();
     case ExExecute:
         return Execute(State, view);
 
-
+        // Arithmetics
     case ExPlus:
         return Plus();
     case ExMinus:
@@ -217,7 +219,7 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
     case ExMs:
         return Ms();
 
-
+        // Bool
     case ExAnd:
         return And();
     case ExOr:
@@ -227,6 +229,7 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
     case ExShift:
         return Shift();
 
+        // Compare
     case ExEquals:
         return Equals();
     case ExLess:
@@ -236,6 +239,7 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
     case ExFail:
         return Fail();
 
+        // Stack
     case ExDup:
         return Dup();
     case ExDrop:
@@ -247,6 +251,7 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
     case ExRot:
         return Rot();
 
+        // Return stack
     case ExToR:
         return ToR();
     case ExRFrom:
@@ -257,11 +262,16 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
         return I();
     case ExJ:
         return J();
+
+        // Diagnostics
+    case ExPrint:
+        return Print(view, State);
     case ExDiag:
         return Diag(State);
-
     case ExDiagStr:
         return DiagStr();
+
+        // String stack
     case ExDupStr:
         return DupStr();
     case ExDropStr:
@@ -508,6 +518,13 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
             if (tos)
                 m->cmds[i--].repeat = tos;
             break;                                                  // would reintroduce conditional skip with  0/1 times command
+
+
+        case ExFor:
+            tos = ParamStack.pop();
+            if (tos == 0)
+                i++;
+            break;
 
 
 // ------------------------------------------------------------------------------------------------------

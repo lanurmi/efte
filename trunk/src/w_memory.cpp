@@ -12,6 +12,7 @@
 #define MEMORY_LIMIT 5242880
 std::vector<int> memory;
 
+/*
 int MemoryDump() {
     for (std::vector<int>::size_type i=0; i < memory.size(); i++) {
         if (i>0) fprintf(stderr, ", ");
@@ -21,25 +22,27 @@ int MemoryDump() {
 
     return 1;
 }
+*/
+
+
 
 int MemoryStore() {
     PSCHECK(2, "!");
+    int ret = 0;
     int loc = ParamStack.pop();
 
-    if (loc > MEMORY_LIMIT) {
-        SetBranchCondition(0);
-        return 0;
+    if (loc < MEMORY_LIMIT) {
+        int initialized = memory.size();
+        while (loc >= initialized++ )
+            memory.push_back(0);
+
+        memory[loc] = ParamStack.pop();
+        ret++;
     }
-
-    int initialized = memory.size();
-    while (loc >= initialized++ )
-        memory.push_back(0);
-
-    memory[loc] = ParamStack.pop();
-
-    SetBranchCondition(1);
-    return 1;
+    SetBranchCondition(ret);
+    return ret;
 }
+
 
 int MemoryFetch() {
     PSCHECK(1, "@");
@@ -58,14 +61,12 @@ int MemoryFetch() {
 
     SetBranchCondition(ret);
     return ret;
-
 }
 
 
 
 
 unsigned int dp=0;            // "dictionary pointer". pointer to free memory. what is below, is allocated memory.
-
 
 
 int MemoryHere()  {
@@ -75,21 +76,22 @@ int MemoryHere()  {
 
 int MemoryAllot()  {
     PSCHECK(1, "allot");
-
+    int ret = 1;
     int requested = ParamStack.pop();
-    if (dp+requested+1024 >= MEMORY_LIMIT) {
-        SetBranchCondition(0);
-        return 0;
-    }
     dp += requested;
-    return 1;
+    if (dp > (MEMORY_LIMIT-1024)) {
+        dp -= requested;
+        ret--;
+    }
+    SetBranchCondition(ret);
+    return ret;
 }
+
 
 int MemoryEnd() {
     ParamStack.push(MEMORY_LIMIT);
     return 1;
 }
-
 
 
 
@@ -101,10 +103,15 @@ void InitSharedVars() {          // --- need to init before they can be used ---
         memory.push_back(0);
 }
 
-
 unsigned int verbosity = dp++;
 int Verbosity() {
     ParamStack.push(verbosity);
+    return 1;
+}
+
+unsigned int base = dp++;
+int Base() {
+    ParamStack.push(base);
     return 1;
 }
 

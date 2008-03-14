@@ -37,6 +37,8 @@ typedef enum {
     /// macro run time code for breaking out of a loop
     ExTimes,
     /// set repeat counter of next command to top of stack
+    ExFor,
+    /// slip next command in macro if tos is false
     ExOld,
     /// excuted by "converted" data structure accessor, to publish data location
     ExNew,
@@ -122,12 +124,10 @@ typedef enum {
     /// Push the dictonary pointer to stack (though we don't have a dictionary where the pointer points to...)
     ExAllot,
     /// Reserve an amount of memory, by bumping dictionary pointer
-    ExVerbosity,
-    /// pushes shared memory address of verbosity variable
-    ExDump,
-    /// Dump memory contents
+
     ExToggleConditionDisplay,
     /// Toggle displaying the condition code in the status bar.
+
 
     //!String Stack Commands
     ExDiagStr,
@@ -158,6 +158,12 @@ typedef enum {
     /// Get a substring of a string
     ExGetString,
     /// Get a string from the user and place onto the string stack
+
+    //!Shared Variables
+    ExVerbosity,
+    /// pushes shared memory address of verbosity variable
+    ExBase,
+    /// radix for number conversion, from and to binary
 
     //!Cursor Commands
     ExCursorLeft,

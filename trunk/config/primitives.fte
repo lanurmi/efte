@@ -26,7 +26,7 @@ sub cells     { }
 
 
 # -- stack --
-sub qdup      { dup if dup endif }              # duplicate top of stack if <> 0
+sub qdup      { dup for dup }                   # duplicate top of stack if <> 0
 sub nip       { swap drop }                     # drop second of stack
 sub tuck      { swap over }                     # copy top of stack below second of stack
 sub pluck     { >r over r> swap }               # copy 3rd item to top
@@ -51,9 +51,9 @@ sub failure   { flag not }                      # push inverted command return c
 sub >         { swap < }                        # true if nos > tos
 sub between   { rot tuck < minrot > or not }
 sub negative  { 0 < }                           # < zero?
-sub abs       { dup 0 < if negate endif }       # remove sign
-sub min       { dup2 > if swap endif drop }
-sub max       { dup2 < if swap endif drop }
+sub abs       { dup 0 < for negate }            # remove sign
+sub min       { dup2 > for swap drop }
+sub max       { dup2 < for swap drop }
 sub umin      { dup2 xor 0 < if max else min endif }  # ( u1 u2 -- u1|u2 ) unsigned min
 sub umax      { dup2 xor 0 < if min else max endif }  # ( u1 u2 -- u1|u2 ) unsigned max
 sub mod       { dup2 / * - }                    # modulo (remainder) function
@@ -71,7 +71,6 @@ sub var       { here dup cell allot }           # for the new construct:       s
 
 
 # --- number conversion words respect base, and convert accordingly
-sub base      { var new }                        # number base for num conversion
 sub decimal   { 10 base ! }
 sub hex       { 16 base ! }
 sub octal     {  8 base ! }
@@ -195,12 +194,8 @@ sub type$     { dup$ len$ if dup$ insertstring endif drop$  }  # fixing name and
 #sub cr        { cursorend linenew cursorhome }
 #sub cr        { ?cursordown failure if linenew endif cursorhome }
 sub cr        {                                 # carriage return
-    ?cursordown failure if 
-        linenew cursorhome exit 
-    endif 
+    ?cursordown failure for linenew
     cursorhome killtolineend }
-
-
 
 
 sub left$     {                                 # ( n -- )
@@ -460,7 +455,7 @@ sub emptybuffer {
 
 sub cls        { emptybuffer }                      # wipe current buffer
 
-sub linecount  {                                    # ( -- u )    number of lines in file
+sub linecount  {                                    # ( -- u ) number of lines in file
    at? movefileend
    cursorrow minrot
    at }
@@ -470,10 +465,52 @@ sub blockmove   { blockcut blockpaste }             # move block to cursor
 
 # sub sleep  { winrefresh ms }  # winrefresh doesn't do what i hoped it would
 
+
+sub @2  { dup @ swap 1 + @ }    # ( a -- x1 x2 ) double fetch, from 2 consecutive addresses
+sub !2  { tuck 1 + ! ! }        # ( x1 x2 a -- ) double store, to 2 consecutive addresses
+
+
+
+# bookmark slots, numbered  (0..255)
+sub BookMark { var new  512 allot }
+sub StoreBookmark  { at? rot lshift BookMark + !2 }
+sub MoveToBookmark { lshift BookMark +  @2 at }
+
+
+# global bookmarks: bookmark stack. location 0  is stack pointer. 1 is max size.
+sub BookMarkStack { var new  512 allot } 
+
+sub PopBookmark {
+   BookMarkStack @ 2 < if
+      "bookmarkstack empty" message fail
+   else
+      -2  BookMarkStack
+      dup @ @2 at  +!
+   endif }   
+      
+
+sub PushBookmark { 
+   BookMarkStack @2 < if
+      at? 
+      BookMarkStack 
+      2 over +!  
+      @ !2
+   else
+      "bookmarkstack full" message fail
+   endif }   
+
+
+
+
+
+
 # --- initialisation ---
 sub attempt   { tick execute }                      # execute macro, name given as string, if it exists only
 sub OnBoot    {
    decimal
+   0 BookMark !
+   0 BookMarkStack !
+   510 BookMarkStack 1 + !
    "InitInterpreter" attempt
    "InitMySettings"  attempt
    }
