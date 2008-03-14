@@ -115,6 +115,8 @@ sub prompt  {
          depth$ '$' repeat$ type$
          depth  '.' repeat$ type$
          cr
+      else
+         5 spaces
       endif
    endif
  }
