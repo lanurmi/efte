@@ -289,7 +289,7 @@ eventmap PLAIN: MODEL {
 
     key  [C+I]          { ListRoutines }
     key  [C+J]          { LineJoin }
-    key  [C+M]          { DirOpen }
+    key  [C+M]          { "" DirOpen }
     key  [C+Q]          { -1 InsertChar }
     key  [C+R]          { "" "" "" FindReplace }
     key  [C+T]          { KillWord }

@@ -20,6 +20,8 @@
 
 #include "fte.h"
 
+#include "config.h"
+
 #define slen(s) ((s) ? (strlen(s) + 1) : 0)
 #define ACTION "[%-11s] "
 
@@ -1995,20 +1997,14 @@ static int LoadFile(const char *WhereName, const char *CfgName, int Level, int o
         strlcpy(Cfg, CfgName, sizeof(Cfg));
     } else {
 #if PATHTYPE == PT_UNIXISH
-#       define SEARCH_PATH_LEN 11
+#       define SEARCH_PATH_LEN 5
         char dirs[SEARCH_PATH_LEN][MAXPATH];
 
         snprintf(dirs[0],  MAXPATH, "~/.efte/%s", CfgName);
-        snprintf(dirs[1],  MAXPATH, "/etc/efte/local/%s", CfgName);
-        snprintf(dirs[2],  MAXPATH, "/usr/share/efte/local/%s", CfgName);
-        snprintf(dirs[3],  MAXPATH, "/opt/share/efte/local/%s", CfgName);
-        snprintf(dirs[4],  MAXPATH, "/usr/local/share/efte/local/%s", CfgName);
-        snprintf(dirs[5],  MAXPATH, "/opt/local/share/efte/local/%s", CfgName);
-        snprintf(dirs[6],  MAXPATH, "/etc/efte/config/%s", CfgName);
-        snprintf(dirs[7],  MAXPATH, "/usr/share/efte/config/%s", CfgName);
-        snprintf(dirs[8],  MAXPATH, "/opt/share/efte/config/%s", CfgName);
-        snprintf(dirs[9],  MAXPATH, "/usr/local/share/efte/config/%s", CfgName);
-        snprintf(dirs[10], MAXPATH, "/opt/local/share/efte/config/%s", CfgName);
+        snprintf(dirs[1],  MAXPATH, "%s/share/efte/local/%s", EFTE_INSTALL_DIR, CfgName);
+        snprintf(dirs[2],  MAXPATH, "/etc/efte/local/%s", CfgName);
+        snprintf(dirs[3],  MAXPATH, "%s/share/efte/config/%s", EFTE_INSTALL_DIR, CfgName);
+        snprintf(dirs[4],  MAXPATH, "/etc/efte/config/%s", CfgName);
 #else // if PT_UNIXISH
 #       define SEARCH_PATH_LEN 8
         char dirs[SEARCH_PATH_LEN][MAXPATH];
