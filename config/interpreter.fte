@@ -467,8 +467,3 @@ sub fireshell {
     endif
     prompt }
 
-
-eventmap PLAIN: MODEL {
-    key [G+Enter]     { fireshell }
-
-}
