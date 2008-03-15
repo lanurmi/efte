@@ -13,7 +13,9 @@ sub .33 {                    # ( n -- ) print as nnn:nnn
    3:hash
    ':' hold
    3:hash
-   hash> type$
+   hash>
+   verbosity @ if dup$ perr endif
+   type$
 }
 
 sub accumulate { 10 * + }
@@ -27,9 +29,7 @@ sub testfilename { var$ new }
 sub timestarted  { var new }
 
 sub beforealltests {
-   timestarted off
    emptybuffer
-   256 bl repeat$ testfilename store$           # initialize file name variable to 256 chars
    "selftest started" type$ cr
    microsecs timestarted !
    }
@@ -42,14 +42,18 @@ sub afteralltests {
    }
 
 
+# TODO: fix the multiple verbosity if ...
 sub pass   {    # ( got wants testnum -- )
    >r
       dup2 equals
       depth depth$ accumulate 03 equals
       >r
-      r@ and if "PASS" else "FAIL" endif type$
+      r@ and if "PASS" else "FAIL" endif
+      verbosity @ if "\n" perr dup$ perr endif type$
       r> minrot                                 # stacks: 0=err
-   r> " test "    type$       .33
+      " test " verbosity @ if dup$ perr endif type$
+   r> .33
+
    "wanted" type$  9 .r
    ", got"  type$  9 .r
 
@@ -62,6 +66,11 @@ sub pass   {    # ( got wants testnum -- )
    filesave
 }
 
+
+sub initselftest {
+   0 timestarted !
+   256 bl repeat$ testfilename store$
+}
 # -------------------------------------------------------------------------------------------------
 
 # 1 - alwayspass.fte

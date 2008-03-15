@@ -316,8 +316,7 @@ sub maybesomethingelse {         # ( -- f ) not a word in dictionary - try alter
       if                         # yes: string without spaces, completely parsed
          -1 right$               # remove trailing "
       else                       # no: need to parse rest of string
-         " " append$
-         '"' word$ append$       # parse rest of string
+         " " '"' word$ 2:append$ # parse rest of string
       endif
       sliteral                   # compile string to word, or leave on stack
       true exit
@@ -458,16 +457,9 @@ sub dump {                                              # ( a n -- )
 
 
 
-eventmap PLAIN: MODEL {
-    key [G+Enter]     { 
+sub fireshell {
     query
-
-    loading @ if 
-#      ?cursordown
-    else 
-      cursorend
-    endif
-
+    loading @ not for cursorend
     if
        space
        interpret
@@ -475,6 +467,8 @@ eventmap PLAIN: MODEL {
     endif
     prompt }
 
-   
+
+eventmap PLAIN: MODEL {
+    key [G+Enter]     { fireshell }
 
 }
