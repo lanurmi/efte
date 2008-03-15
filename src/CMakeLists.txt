@@ -138,6 +138,22 @@ INCLUDE_DIRECTORIES("${CMAKE_CURRENT_BINARY_DIR}")
 
 # =============================================================================
 #
+# PLATFORM INDEPENDENT BUILDS
+#
+# =============================================================================
+
+ADD_LIBRARY( eftebase STATIC ${BASE_FTE_SOURCES} )
+
+ADD_EXECUTABLE( bin2c bin2c.cpp )
+GET_TARGET_PROPERTY( BIN2C_EXE bin2c LOCATION )
+
+ADD_CUSTOM_COMMAND(
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/defcfg.h
+  COMMAND ${BIN2C_EXE} ${CMAKE_CURRENT_SOURCE_DIR}/simple.fte > ${CMAKE_CURRENT_BINARY_DIR}/defcfg.h
+  DEPENDS bin2c simple.fte )
+
+# =============================================================================
+#
 # PLATFORM SPECIFIC BUILDS
 #
 # =============================================================================
@@ -214,19 +230,3 @@ ELSEIF( WIN32 )
   ADD_EXECUTABLE( efte ${CMAKE_CURRENT_BINARY_DIR}/defcfg.h ${WFTE_SOURCES} )
   TARGET_LINK_LIBRARIES( efte eftebase ${SYSTEM_LIBS} )
 ENDIF( UNIX )
-
-# =============================================================================
-#
-# PLATFORM INDEPENDENT BUILDS
-#
-# =============================================================================
-
-ADD_LIBRARY( eftebase STATIC ${BASE_FTE_SOURCES} )
-
-ADD_EXECUTABLE( bin2c bin2c.cpp )
-GET_TARGET_PROPERTY( BIN2C_EXE bin2c LOCATION )
-
-ADD_CUSTOM_COMMAND(
-  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/defcfg.h
-  COMMAND ${BIN2C_EXE} ${CMAKE_CURRENT_SOURCE_DIR}/simple.fte > ${CMAKE_CURRENT_BINARY_DIR}/defcfg.h
-  DEPENDS bin2c simple.fte )
