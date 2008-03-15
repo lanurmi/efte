@@ -29,7 +29,7 @@
 : +indent  2 shellindent +! ;
 
 : -indent -2 shellindent +!    \ a bit unwieldy without loops yet.
-    cursorcol cursorhome
+    cursorcolumn cursorhome
     read bl = ?? killchar
     read bl = ?? killchar
     movetocolumn    

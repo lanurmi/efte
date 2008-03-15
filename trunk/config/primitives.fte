@@ -156,9 +156,17 @@ sub prepend$  { swap$ append$ }
 
 # TODO: can maybe simplify now after mid$ index fix.
 sub cut$ {                                      # ( n -- )  s( $1 -- $2 $3 )  splits string at position n,
-  dup$ len$ dup >r min 0 max                    # returns left part as tos$ and right part as nos$
-  dup$ dup r> mid$
-  swap$ 0 swap mid$ }
+   dup if
+      dup dup$ len$ + 0 >
+      if 
+         dup$ dup -1 mid$
+         swap$ 0 swap mid$
+         exit
+      endif
+   endif 
+   drop ""
+}
+
 
 sub slice     { 1 cut$ asc }                    # ( -- asc ) cut first char off string and return as ascii
 sub splice    { char$ prepend$ }                # ( asc -- ) prepend char to string
@@ -238,7 +246,9 @@ sub number? {                           # ( -- n -1 | 0 )
    if
       -1 left$
       unumber?
-      dup >r if negate endif r>
+      >r 
+      r@ for negate 
+      r>
    else
       unumber?
    endif
@@ -357,6 +367,7 @@ sub trim$ {                                     # ( -- ) remove leading and trai
    bl mintrailing$ }
 
 
+
 sub brmovebr$  {                                # ( a n -- )  copy n chars of tos$ to a
    swap dup2 ! inc
    swap range do
@@ -370,7 +381,8 @@ sub store$   {                                  # ( a -- ) transfers string on s
    count                                        # structure size
    2 cells -                                    # subtract space for structure size and leading string count
    dup$ len$ min                                # move smaller of this max and string size number of chars.
-   brmovebr$ }
+   brmovebr$
+   }
 
 
 sub combine {
@@ -420,7 +432,7 @@ sub sign      { 0 < if '-' hold endif }         # ( n -- }
 sub brdotbr   { dup <hash hashes hash> sign }   # ( n -- )
 
 sub padded  {                                   # ( n c -- )
-   >r dup$ len$ -                                    # can't call it "pad" because pad is a
+   >r dup$ len$ -                               # can't call it "pad" because pad is a
    0 max qdup if                                # standard word which does something else
       r@ repeat$ prepend$
    endif r> drop }
@@ -500,6 +512,11 @@ sub PushBookmark {
    endif }   
 
 
+sub InitBookmarks {
+   0 BookMark !
+   0 BookMarkStack !
+   510 BookMarkStack 1 + !
+ }
 
 
 
@@ -508,10 +525,9 @@ sub PushBookmark {
 sub attempt   { tick execute }                      # execute macro, name given as string, if it exists only
 sub OnBoot    {
    decimal
-   0 BookMark !
-   0 BookMarkStack !
-   510 BookMarkStack 1 + !
-   "InitInterpreter" attempt
+   "InitBookmarks" attempt
    "InitMySettings"  attempt
+   "InitSelftest"  attempt
+   "InitInterpreter" attempt
    }
 
