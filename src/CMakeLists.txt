@@ -134,7 +134,6 @@ ENDIF( WIN32 )
 
 CONFIGURE_FILE(config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 
-
 INCLUDE_DIRECTORIES("${CMAKE_CURRENT_BINARY_DIR}")
 
 # =============================================================================
@@ -163,13 +162,13 @@ IF( UNIX )
     IF( X11_LIBRARIES )
       MESSAGE( STATUS "X11 found on system, X11 enabled efte will be built" )
       INCLUDE_DIRECTORIES( ${X11_INCLUDE_DIR} )
-      ADD_EXECUTABLE( efte ${BASE_FTE_SOURCES} ${UNIX_SOURCES} ${XFTE_SOURCES} )
+      ADD_EXECUTABLE( efte ${UNIX_SOURCES} ${XFTE_SOURCES} )
 
       FIND_LIBRARY( XPM_LIBRARY Xpm )
       IF( NOT XPM_LIBRARY )
         MESSAGE( SEND_ERROR "Could not find Xpm library which is required for X11 version" )
       ENDIF( NOT XPM_LIBRARY )
-      TARGET_LINK_LIBRARIES( efte ${X11_LIBRARIES} ${XPM_LIBRARY} ${SYSTEM_LIBS} )
+      TARGET_LINK_LIBRARIES( efte eftebase ${X11_LIBRARIES} ${XPM_LIBRARY} ${SYSTEM_LIBS} )
       INSTALL( TARGETS efte RUNTIME DESTINATION bin )
     ELSE( X11_LIBRARIES )
       MESSAGE( STATUS "X11 not found, X11 enabled efte will not be built" )
@@ -194,8 +193,8 @@ IF( UNIX )
     IF( CURSES_LIBRARY )
       MESSAGE( STATUS "Curses found on system, nefte will be built" )
 
-      ADD_EXECUTABLE( nefte ${BASE_FTE_SOURCES} ${UNIX_SOURCES} ${NFTE_SOURCES} )
-      TARGET_LINK_LIBRARIES( nefte ${CURSES_LIBRARY} ${GPM_LIBRARY} ${SYSTEM_LIBS} )
+      ADD_EXECUTABLE( nefte ${UNIX_SOURCES} ${NFTE_SOURCES} )
+      TARGET_LINK_LIBRARIES( nefte eftebase ${CURSES_LIBRARY} ${GPM_LIBRARY} ${SYSTEM_LIBS} )
       INSTALL( TARGETS nefte RUNTIME DESTINATION bin )
     ELSE( CURSES_LIBRARY )
       MESSAGE( SEND_ERROR "Could not find curses library" )
@@ -205,15 +204,15 @@ IF( UNIX )
 
     IF( LINUX )
       MESSAGE( STATUS "Using Linux, vefte will be build" )
-      ADD_EXECUTABLE( vefte ${BASE_FTE_SOURCES} ${UNIX_SOURCES} ${VFTE_SOURCES} )
-      TARGET_LINK_LIBRARIES( vefte ${GPM_LIBRARY} ${SYSTEM_LIBS} )
+      ADD_EXECUTABLE( vefte ${UNIX_SOURCES} ${VFTE_SOURCES} )
+      TARGET_LINK_LIBRARIES( vefte eftebase ${GPM_LIBRARY} ${SYSTEM_LIBS} )
       INSTALL( TARGETS vefte RUNTIME DESTINATION bin )
     ENDIF( LINUX )
   ENDIF( BUILD_CONSOLE )
 ELSEIF( WIN32 )
   ADD_DEFINITIONS( -DNT -DNTCONSOLE -DWIN32 -D_CONSOLE )
-  ADD_EXECUTABLE( efte ${CMAKE_CURRENT_BINARY_DIR}/defcfg.h ${BASE_FTE_SOURCES} ${WFTE_SOURCES} )
-  TARGET_LINK_LIBRARIES( efte ${SYSTEM_LIBS} )
+  ADD_EXECUTABLE( efte ${CMAKE_CURRENT_BINARY_DIR}/defcfg.h ${WFTE_SOURCES} )
+  TARGET_LINK_LIBRARIES( efte eftebase ${SYSTEM_LIBS} )
 ENDIF( UNIX )
 
 # =============================================================================
@@ -221,6 +220,8 @@ ENDIF( UNIX )
 # PLATFORM INDEPENDENT BUILDS
 #
 # =============================================================================
+
+ADD_LIBRARY( eftebase STATIC ${BASE_FTE_SOURCES} )
 
 ADD_EXECUTABLE( bin2c bin2c.cpp )
 GET_TARGET_PROPERTY( BIN2C_EXE bin2c LOCATION )
