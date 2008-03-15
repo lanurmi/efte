@@ -5,7 +5,7 @@ sub w            { var new }                    # VM word pointer
 sub ip           { var new }                    # VM instruction pointer
 sub loading      { var new }
 sub baseprefix   { var new 2 allot }            # associate number base prefix with number base
-
+sub shellindent  { var new }
 sub compiling    { state @ }
 sub interpreting { compiling not }
 
@@ -95,28 +95,12 @@ sub word$   {                                   # ( c -- )  must clear input lin
 sub prompt  {
    loading @ not if
       interpreting if
-      
-#         " ok [" type$   depth 0 .r   "/" type$   depth$ 0 .r   "]" type$
-
-#         depth depth$ dup2 min >r
-#         " [ok]"
-#         r@   '$' repeat$ append$
-#         r@ - 'S' repeat$ append$
-#         r> - '|' repeat$ append$ type$
-#         killtolineend
-
-#         " [ok]" type$
-#         depth depth$ swap
-#         dup2 or if space endif
-#         qdup if            0 .r endif
-#         qdup if '/' emit   0 .r endif
- 
          "[ok]" type$
          depth$ '$' repeat$ type$
          depth  '.' repeat$ type$
          cr
       else
-         5 spaces
+         shellindent @ spaces
       endif
    endif
  }
@@ -142,6 +126,7 @@ sub endloading {
 
 
 sub error    {
+   shellindent off
    state off
    loading off
    type$ cr
@@ -256,10 +241,12 @@ sub sub {
    bl word$ header
    "donest" postpone
    state on
+   5 shellindent !
    }
 
 
 sub endsub  {
+   shellindent off
    0 comma
    state off
    reveal }
@@ -384,7 +371,7 @@ sub colondef { header "donest" postpone }
 #sub backslash { 0 word$ drop$ }
 
 sub InitInterpreter {
-
+   0 shellindent !
    16 baseprefix !
    10 baseprefix 1 + !
     2 baseprefix 2 + !
@@ -414,9 +401,10 @@ sub words {
   base @ hex
   last
   cr
-  30 '-' repeat$ type$ cr
+  30 '-' repeat$
+  dup$ type$ cr   # seperator
   " addr f name" type$ cr
-  30 '-' repeat$ type$ cr
+  dup$ type$ cr   # seperator
   begin @
   qdup while
      dup link>
@@ -426,10 +414,8 @@ sub words {
      "- -#" 1 mid$ type$ space
      .name cr
   repeat
-  30 '-' repeat$ type$ cr
+  type$           # seperator
   base ! }
-
-
 
 
 
@@ -458,6 +444,7 @@ sub dump1line  {                                        # ( a n -- )
       16 over - 3 * 2 + spaces    # pad with spaces to ascii dump. a dumpline could be < 16 bytes.
       dup2 dumpchars
    endif drop2 }
+
 
 sub dump {                                              # ( a n -- )
    cr
