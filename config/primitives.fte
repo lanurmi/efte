@@ -558,6 +558,7 @@ sub File  {   # ( -- n )  given filename as string, adds it to filestack if not 
 
 
 
+sub ToggleTrim  { autotrim toggle }
 
 # --- initialisation ---
 sub attempt   { tick execute }                      # execute macro, name given as string, if it exists only

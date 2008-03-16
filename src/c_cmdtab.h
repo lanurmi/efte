@@ -335,7 +335,6 @@ const struct {
     TAB(ToggleIndentWithTabs),
     TAB(ToggleBackSpUnindents),
     TAB(ToggleWordWrap),
-    TAB(ToggleTrim),
     TAB(ToggleShowMarkers),
     TAB(ToggleHilitTags),
     TAB(ToggleShowBookmarks),

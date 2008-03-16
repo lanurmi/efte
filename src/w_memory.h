@@ -22,5 +22,4 @@ int Base();
 int AutoTrim();
 void InitSharedVars();
 
-int ToggleTrim();
 #endif // W_MEMORY_H

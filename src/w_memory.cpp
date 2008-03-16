@@ -122,9 +122,4 @@ int AutoTrim() {
 }
 
 
-int ToggleTrim()  {
-    memory[autotrim] = -!memory[autotrim];
-    return 1;
-}
-
 

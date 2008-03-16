@@ -806,8 +806,6 @@ typedef enum {
     ///
     ExToggleWordWrap,
     ///
-    ExToggleTrim,
-    ///
     ExToggleShowMarkers,
     ///
     ExToggleHilitTags,
