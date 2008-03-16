@@ -42,15 +42,16 @@ sub dec       { 1 - }                           # decrement top of stack by one
 sub invert    { -1 xor }                        # complement all bits
 sub negate    { 0 swap - }                      # change sign
 sub not       { 0 equals }                      # logical inversion: 0->true,  x->0
-sub lshift    { 1 shift }                       # bit shift left once
-sub rshift    { -1 shift }                      # bit shift right once
+sub lshift    { 1 shift }                       # bit shift left by 1
+sub rshift    { -1 shift }                      # bit shift right by one
 sub <<        { shift }                         
 sub >>        { negate shift }
 sub success   { flag }                          # push command return code
 sub failure   { flag not }                      # push inverted command return code
 sub >         { swap < }                        # true if nos > tos
 sub between   { rot tuck < minrot > or not }
-sub negative  { 0 < }                           # < zero?
+sub negative  { 0 < }                           # -n
+sub positive  { -1 > }                          # 0..n
 sub abs       { dup 0 < for negate }            # remove sign
 sub min       { dup2 > for swap drop }
 sub max       { dup2 < for swap drop }
@@ -64,7 +65,7 @@ sub +!        { dup >r @ +   r> ! }             # ( x a -- )  adds x to contents
 sub or!       { dup >r @ or  r> ! }             # ( x a -- )  bitwise  or x into address a
 sub and!      { dup >r @ and r> ! }             # ( x a -- )  bitwise and x into address a
 sub xor!      { dup >r @ xor r> ! }             # ( x a -- )  bitwise xor x into address a
-
+sub toggle    { true swap xor! }                # ( a -- )  bitwise invert of contents of a
 
 # --- define a variables class
 sub var       { here dup cell allot }           # for the new construct:       sub foo { var new }
@@ -125,9 +126,11 @@ sub link      { here swap exchange comma }      # ( a -- )
 sub free      { memend here - }
 
 
-
-
-
+sub spread {           # ( x0 x1 x2 ... xn-1 a n -- )  store xn at a+n
+   >r 1 - r> 
+   range swap do 
+      i ! 
+   1 -loop }
 
 
 # =============================================================================
@@ -172,41 +175,29 @@ sub slice     { 1 cut$ asc }                    # ( -- asc ) cut first char off 
 sub splice    { char$ prepend$ }                # ( asc -- ) prepend char to string
 sub ascn      { dup$ 1 mid$ asc }               # ( n -- c ) get ascii of nth char in top string
 
-# work around for mid$ bugs:
-# ( n -- c ) get ascii of nth char in top string
-#sub ascn      {
-#   dup  dup$ len$ dup >r negate
-#   dup invert between           # - len ... len-1, other return 0
-#   dup if
-#      drop dup 0 <
-#      if
-#         r@ +
-#      endif
-#      dup$ 1 mid$ asc
-#   endif
-#   r> drop
-#   }
-
-
 # -- i/o --
-sub key       { winrefresh getchar }            # wait for key, place its ascii on stack
-sub read$     { curchar$ }                      # read char under cursor as string
-sub read      { curchar$ asc }                  # read char under cursor as asc
-sub curchar   { curchar$ asc }                  # read char under cursor, convert to asc
-sub emit      { typechar }
-sub type1     { count emit }
-sub type      { times type1 drop }              # string output
-sub type$     { dup$ len$ if dup$ insertstring endif drop$  }  # fixing name and empty string bug
+sub key        { winrefresh getchar }            # wait for key, place its ascii on stack
+sub read$      { curchar$ }                      # read char under cursor as string
+sub read       { curchar$ asc }                  # read char under cursor as asc
+sub cursorchar { curchar$ asc }                  # read char under cursor, convert to asc
+sub emit       { typechar }
+sub type1      { count emit }
+sub type       { times type1 drop }              # string output
+#TODO:  insertstring bug when empty string. workaround here.
+sub type$      { dup$ len$ if dup$ insertstring endif drop$  }
 #TODO: change insertstring to not behave funny when empty string is sent.
+#TODO: output words more clearly taking account of mode:
+#TODO:    insert insert$            always insert char or string
+#TODO:    overtype overtype$        always overtype char or string
+#TODO:    emit  type$               depends on overtype/insert mode
 
-#sub cr        { cursorend linenew cursorhome }
-#sub cr        { ?cursordown failure if linenew endif cursorhome }
-sub cr        {                                 # carriage return
+# stateful linenew may autoindent - workaround here
+sub cr         {
     ?cursordown failure for linenew
     cursorhome killtolineend }
 
 
-sub left$     {                                 # ( n -- )
+sub left$      {                                # ( n -- )
    dup 0 < if                                   # negative n: strip first n chars
       negate dup$ len$ over -
    else                                         # positive n: keep first n chars
@@ -514,9 +505,56 @@ sub PushBookmark {
 
 sub InitBookmarks {
    0 BookMark !
-   0 BookMarkStack !
-   510 BookMarkStack 1 + !
+   0 510 BookMarkStack 2 spread
  }
+
+
+
+sub comma$  {   # ( -- )     "comma" string to dp
+   dup$ len$
+   1 + dup comma
+   here swap allot
+   move$ }
+
+
+
+
+# random access stack of filenames. adding returns token. token converts to filename
+sub FileStack { var new 512 allot }
+
+sub AddFile {      # ( -- n )    file name passed as string
+   FileStack @ 1 +
+   dup FileStack !
+   here comma$
+   over FileStack + !
+   }
+
+
+sub FileName {     # ( token -- )    places filename on string stack
+   fileStack + @ fetch$  }
+
+
+sub FindFile {    # ( -- 0 | token )  file name as string
+   0
+   FileStack
+   dup @ 0 do
+      1 +
+      dup$
+      dup @ fetch$
+      equals$ if
+         filestack -
+         swap leave
+      endif
+   loop drop drop$ }
+
+
+sub File  {   # ( -- n )  given filename as string, adds it to filestack if not already in it. returns file token
+   dup$ FindFile
+   qdup not if
+      dup$ AddFile
+   endif
+   drop$ }
+
 
 
 
@@ -525,9 +563,10 @@ sub InitBookmarks {
 sub attempt   { tick execute }                      # execute macro, name given as string, if it exists only
 sub OnBoot    {
    decimal
-   "InitBookmarks" attempt
+   0 510 FileStack 2 spread
+   "InitBookmarks"   attempt
    "InitMySettings"  attempt
-   "InitSelftest"  attempt
+   "InitSelftest"    attempt
    "InitInterpreter" attempt
    }
 

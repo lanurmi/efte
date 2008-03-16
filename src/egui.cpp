@@ -194,6 +194,8 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
         return Verbosity();
     case ExBase:
         return Base();
+    case ExAutoTrim:
+        return AutoTrim();
 
         // command calls
     case ExTick:
@@ -302,6 +304,10 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
         return SSAsc();
     case ExChar:
         return PSChar();
+
+        // --- migrated BFI_TOGGLEs ---
+    case ExToggleTrim:
+        return ToggleTrim();
     }
 
     if (view->IsModelView()) {

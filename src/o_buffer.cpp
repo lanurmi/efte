@@ -741,8 +741,8 @@ int EBuffer::ExecCommand(int Command, ExState &State) {
         return ToggleBackSpUnindents();
     case ExToggleWordWrap:
         return ToggleWordWrap();
-    case ExToggleTrim:
-        return ToggleTrim();
+//    case ExToggleTrim:
+//        return ToggleTrim();
     case ExToggleShowMarkers:
         return ToggleShowMarkers();
     case ExToggleHilitTags:

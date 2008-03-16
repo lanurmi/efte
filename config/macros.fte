@@ -24,11 +24,7 @@ sub blockrange { moveblockend cursorcol moveblockstart cursorcol }
 #
 # Return True/False if the current character is equal to Tos
 #
-sub isscreenchar { curchar equals }
-# sub curchar    { curchar$ asc }        # defined in primitives, for
-#                                        # more consistency. with this,
-#                                        # we have curchar$, curchar, iscurchar
-sub iscurchar    { curchar equals }
+sub iscursorchar    { cursorchar equals }
 
 
 # ( -- )
@@ -38,8 +34,10 @@ sub iscurchar    { curchar equals }
 sub eatwhitespaceback {
   ?2:cursorleft  # leave at least 1 white space
   begin
-    bl iscurchar dup if
-      killchar ?cursorleft success and
+    bl iscursorchar
+    dup if
+      killchar 
+      ?cursorleft success and
     endif
   not until
   ?2:cursorright # go back to original location (minus whitespace)
@@ -53,8 +51,9 @@ sub eatwhitespaceback {
 #
 sub gotocharinline {
   -1
-  movelinestart linelen 0 do
-    over iscurchar
+  cursorhome
+  linelen 0 do
+    over iscursorchar
     if
        drop
        cursorcol
@@ -63,7 +62,7 @@ sub gotocharinline {
     cursorright
   loop
   nip
-  dup 0 < if movelinestart endif
+  dup 0 < for cursorhome
 }
 
 # ( -- )
@@ -81,8 +80,8 @@ sub gotocharinline {
 #    int ad  = 30;
 #
 sub alignchar {
-  getchar
-  0
+  key
+  -1
   blockrange do
     over gotocharinline drop
     eatwhitespaceback
@@ -91,12 +90,15 @@ sub alignchar {
   loop
 
 #  moveblockstart   ( blockrange moves cursor anyway? maybe it shouldn't, but restore to org pos )
-  blockrange blockunmark do
-    over gotocharinline
-    dup 0 < not if dup2 - spaces endif drop
-    cursordown
-  loop
+  dup positive if             # only do this if char was actually found
+    blockrange blockunmark do
+      over gotocharinline
+      dup positive if dup2 - spaces endif drop
+      cursordown
+    loop
+  endif
   drop2
+  
 }
 
 # ( -- )

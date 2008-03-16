@@ -115,4 +115,16 @@ int Base() {
     return 1;
 }
 
+unsigned int autotrim = dp++;
+int AutoTrim() {
+    ParamStack.push(autotrim);
+    return 1;
+}
+
+
+int ToggleTrim()  {
+    memory[autotrim] = -!memory[autotrim];
+    return 1;
+}
+
 

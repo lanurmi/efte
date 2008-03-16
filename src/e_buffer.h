@@ -652,7 +652,7 @@ public:
     int     ToggleIndentWithTabs();
     int     ToggleBackSpUnindents();
     int     ToggleWordWrap();
-    int     ToggleTrim();
+//    int     ToggleTrim();
     int     ToggleShowMarkers();
     int     ToggleHilitTags();
     int     ToggleShowBookmarks();

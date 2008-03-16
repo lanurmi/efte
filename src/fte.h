@@ -75,5 +75,6 @@
 extern char *StartupMacroCommand;
 extern int LastEventChar;
 extern int exception;
-
+extern unsigned int dp;           // index to next shared variable space
+extern unsigned int autotrim;
 #endif
