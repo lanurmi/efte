@@ -4,6 +4,7 @@
 : ]    ( -- )            state on ;
 : ,    ( x -- )          comma ;
 : postpone ( -- )        ' , ; immediate
+: compile ( -- )         r> count , >r ; 
 : literal                literal ;  immediate
 : [']   ( -- )           ' postpone literal ; immediate
 : =  ( x1 x2 -- f )      equals ;
@@ -37,21 +38,63 @@
 
 
 \ --- flow control tool kit ---
-: branch,      ( -- )          ['] branch  , ;
-: branch0,     ( -- )          ['] branch0 , ;
+: back         ( a -- )        here - , ;
 : ahead        ( -- a )        here 0, ;
 : resolve      ( a -- )        here over - 1 - swap ! ;
-: back         ( a -- )        here - , ;
 
 \ --- flow control statements ---
-: if     ?comp  +indent                                          branch0, ahead                me ; immediate
-: else   ?comp  -indent +indent ['] if          pairedwith       branch,  ahead  swap resolve  me ; immediate
-: endif  ?comp  -indent         ['] if ['] else pairedwitheither                      resolve     ; immediate
-: begin  ?comp  +indent                                                               here     me ; immediate
-: while  ?comp  -indent +indent ['] begin       pairedwith       branch0, ahead                me ; immediate
-: repeat ?comp  -indent         ['] while       pairedwith  swap branch,  back        resolve     ; immediate
-: until  ?comp  -indent         ['] begin       pairedwith       branch0, back                    ; immediate
-: again  ?comp  -indent         ['] begin       pairedwith       branch,  back                    ; immediate
+: if  ?comp +indent
+   compile branch0 ahead
+   me 
+; immediate
+   
+: else   ?comp -indent +indent
+   ['] if pairedwith
+   compile branch ahead
+   swap resolve
+   me 
+; immediate
+   
+: endif  ?comp -indent
+   ['] if ['] else  pairedwitheither
+   resolve 
+; immediate
+   
+: begin  ?comp +indent
+   here me 
+; immediate
+   
+: while  ?comp -indent +indent
+   ['] begin pairedwith
+   compile branch0 ahead
+   me 
+; immediate
 
-: do     ?comp  +indent                                      [']   dodo , ahead                me ; immediate
-: loop   ?comp  -indent  ['] do  pairedwith     dup resolve  ['] doloop ,   1 + back              ; immediate
+: repeat ?comp -indent
+   ['] while pairedwith
+   swap 
+   compile branch back
+   resolve 
+; immediate
+
+: until  ?comp -indent
+   ['] begin pairedwith
+   compile branch0 back 
+; immediate
+   
+: again  ?comp -indent
+   ['] begin pairedwith
+   compile branch back
+; immediate
+   
+: do     ?comp +indent
+   compile dodo ahead
+   me 
+; immediate
+
+: loop   ?comp -indent
+   ['] do pairedwith
+   dup resolve
+   compile doloop 1 + back
+; immediate
+

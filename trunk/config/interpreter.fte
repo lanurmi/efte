@@ -48,18 +48,23 @@ sub branch0   { if ip @                         # runtime code for conditional b
                 else ip @ dup @ +
                 endif  1 + ip ! }
 
-sub dodo      { dup2 equals if  drop2
-                           ip @
-                           dup @ + 3 +
-                else       swap >r >r
-                           ip @ 1 +
-                endif      ip !
+sub dodo      { 
+   dup2 equals if
+         drop2
+         ip @
+         dup @ + 3 +
+   else  swap >r >r
+         ip @ 1 +
+   endif ip !
                 }
 
-sub doloop    { 
-   r> 1 + dup r@ equals
-   if      r> drop2   ip @  1 + ip !  exit
-   endif   >r  ip @ dup @ + ip !
+sub doloop    {                                 # runtim code for simple count up loops
+   r> 1 + 
+   dup r@ xor if      
+      >r  ip @ dup @ + ip ! exit
+   endif
+   r> drop2
+   ip @  1 + ip !
 }
 
 
@@ -121,15 +126,21 @@ sub query    {     # ( -- n )
    
 
 sub endloading { 
-   loading off  
-   fileclose }
+   loading off
+   fileclose
+   }
 
 
 sub error    {
    shellindent off
    state off
-   loading off
-   type$ cr
+   false loading exchange
+   qdup if
+      " while loading from " append$ filename$ append$
+      ", line " append$ <hash hashes hash> append$
+      fileclose
+   endif
+   cr type$ cr
    fail }
 
 sub notfound { "Undefined word: " prepend$ error }
@@ -356,25 +367,35 @@ sub interpret {                         # the interpreter/compiler
 sub load {                              # compile from file.  not nestable now.
    bl word$ fileopen
    0 0 at
-   loading on
+   1 loading !
    linecount 0 do
       query if interpret endif
       ?cursordown
+      1 loading +!
    loop
    endloading
 #   cr
 }
 
 
+sub fireshellenable { var new }
+sub fireshell {
+    query
+    loading @ not for cursorend
+    if
+       space
+       interpret
+       cr
+    endif
+    prompt }
+
+
 sub colondef { header "donest" postpone }
-#sub backslash { 0 word$ drop$ }
 
 sub InitInterpreter {
+   false fireshellenable !
    0 shellindent !
-   16 baseprefix !
-   10 baseprefix 1 + !
-    2 baseprefix 2 + !
-
+   16 10 2 baseprefix 3 spread
    256 spaces$ source$ store$
    0 state !
    0 last !
@@ -386,15 +407,12 @@ sub InitInterpreter {
    ";"       colondef "endsub"    postpone endsub  immediate
    "execute" colondef "exec"      postpone endsub
    "'"       colondef "newtick"   postpone endsub
-#  "\\"       colondef "backslash" postpone endsub  immediate
-#  "ok"      colondef "backslash" postpone endsub  immediate
    }
 
 
+# --------- fireshell utilities ---------
 
-# --------- hexdump, words, utilities ---------
-
-
+sub bye { fireshellenable off }
 
 sub words {
   base @ hex
@@ -415,6 +433,12 @@ sub words {
   repeat
   type$           # seperator
   base ! }
+
+
+
+
+# --------- hexdump, words, utilities ---------
+
 
 
 
@@ -454,16 +478,3 @@ sub dump {                                              # ( a n -- )
       16 slashstring
    repeat drop2
 }
-
-
-
-sub fireshell {
-    query
-    loading @ not for cursorend
-    if
-       space
-       interpret
-       cr
-    endif
-    prompt }
-

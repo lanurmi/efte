@@ -35,6 +35,7 @@ const struct {
     // --- shared variables ---
     TAB(Base),
     TAB(Verbosity),
+    TAB(AutoTrim),
     // ------------------------
     { ExPlus, "+" },
     { ExMinus, "-" },

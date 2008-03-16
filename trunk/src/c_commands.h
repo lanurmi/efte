@@ -164,6 +164,8 @@ typedef enum {
     /// pushes shared memory address of verbosity variable
     ExBase,
     /// radix for number conversion, from and to binary
+    ExAutoTrim,
+    /// migrating TrimToggle to shared vars, for AutoTrim on, off, toggle, @, !
 
     //!Cursor Commands
     ExCursorLeft,

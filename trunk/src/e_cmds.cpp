@@ -744,6 +744,7 @@ int EBuffer::KillBlockOrCharPrev() {
         return BlockKill();
 }
 
+
 int EBuffer::BackSpace() {
     int Y = VToR(CP.Row);
 
@@ -807,10 +808,13 @@ int EBuffer::BackSpace() {
     if (BFI(this, BFI_WordWrap) == 2) {
         if (DoWrap(0) == 0) return 0;
     }
-    if (BFI(this, BFI_Trim)) {
+
+//    if (BFI(this, BFI_Trim)) {
+    if (memory[autotrim]) {
         Y = VToR(CP.Row);
         if (TrimLine(Y) == 0) return 0;
     }
+
     return 1;
 }
 
@@ -849,7 +853,8 @@ int EBuffer::Delete() {
                 if (SetPos(BFI(this, BFI_LeftMargin), CP.Row + 1) == 0) return 0;
             }
     }
-    if (BFI(this, BFI_Trim))
+//    if (BFI(this, BFI_Trim))
+    if (memory[autotrim])
         if (TrimLine(VToR(CP.Row)) == 0)
             return 0;
     return 1;
@@ -867,7 +872,8 @@ int EBuffer::LineAdd() {
 
 int EBuffer::LineSplit() {
     if (SplitLine(VToR(CP.Row), CP.Col) == 0) return 0;
-    if (BFI(this, BFI_Trim))
+//    if (BFI(this, BFI_Trim))
+    if (memory[autotrim])
         if (TrimLine(VToR(CP.Row)) == 0) return 0;
     return 1;
 }
@@ -898,7 +904,8 @@ int EBuffer::LineNew() {
         //  if (InsText(Row, C, Indent, 0) == 0)
         //    return 0;
 
-        if (BFI(this, BFI_Trim))
+        // if (BFI(this, BFI_Trim))
+        if (memory[autotrim])
             if (TrimLine(VToR(CP.Row - 1)) == 0)
                 return 0;
     }
@@ -930,7 +937,8 @@ int EBuffer::LineIndent() {
         }
     }
     if (rc == 0) return 0;
-    if (BFI(this, BFI_Trim))
+    // if (BFI(this, BFI_Trim))
+    if (memory[autotrim])
         if (TrimLine(VToR(CP.Row)) == 0) return 0;
     return 1;
 }
@@ -1050,7 +1058,8 @@ int EBuffer::InsertString(const char *aStr, int aCount) {
         return 0;
     }
 
-    if (BFI(this, BFI_Trim) && *aStr != '\t') {
+    // if (BFI(this, BFI_Trim) && *aStr != '\t') {
+    if ((memory[autotrim]) && *aStr != '\t') {
         if (TrimLine(L) == 0) {
             SetBranchCondition(0);
             return 0;
@@ -1477,9 +1486,11 @@ int EBuffer::ToggleIndentWithTabs() {
 int EBuffer::ToggleBackSpUnindents() {
     TOGGLE(BackSpUnindents);
 }
-int EBuffer::ToggleTrim() {
-    TOGGLE(Trim);
-}
+
+// int EBuffer::ToggleTrim() {
+//     TOGGLE(Trim);
+// }
+
 int EBuffer::ToggleShowMarkers() {
     TOGGLE_R(ShowMarkers);
 }
