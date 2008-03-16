@@ -37,38 +37,21 @@
 
 
 \ --- flow control tool kit ---
-: mark         ( -- a )        here  ;
-: offset       ( a1 a2 -- n )  1 + -  ;
-: branch,      ( -- )          ['] branch , ;
-: branch0,     ( -- )          ['] branch0  , ;
-: forwards     ( -- a )        mark  branch,  0, ;
-: ?forwards    ( -- a )        mark  branch0, 0, ;
-: resolve      ( a -- )        1 + here over offset swap ! ;
-: <resolve     ( a -- )        here offset , ;
-: backwards    ( a -- )        branch,  <resolve  ;
-: ?backwards   ( a -- )        branch0, <resolve  ;
+: branch,      ( -- )          ['] branch  , ;
+: branch0,     ( -- )          ['] branch0 , ;
+: ahead        ( -- a )        here 0, ;
+: resolve      ( a -- )        here over - 1 - swap ! ;
+: back         ( a -- )        here - , ;
 
 \ --- flow control statements ---
-: if     ?comp  +indent                                          ?forwards              me ; immediate
-: else   ?comp  -indent +indent ['] if          pairedwith        forwards swap resolve me ; immediate
-: endif  ?comp  -indent         ['] if ['] else pairedwitheither                resolve    ; immediate
-: begin  ?comp  +indent                                                          mark   me ; immediate
-: while  ?comp  -indent +indent ['] begin       pairedwith       ?forwards              me ; immediate
-: repeat ?comp  -indent         ['] while       pairedwith  swap  backwards     resolve    ; immediate
-: until  ?comp  -indent         ['] begin       pairedwith       ?backwards                ; immediate
-: again  ?comp  -indent         ['] begin       pairedwith        backwards                ; immediate
+: if     ?comp  +indent                                          branch0, ahead                me ; immediate
+: else   ?comp  -indent +indent ['] if          pairedwith       branch,  ahead  swap resolve  me ; immediate
+: endif  ?comp  -indent         ['] if ['] else pairedwitheither                      resolve     ; immediate
+: begin  ?comp  +indent                                                               here     me ; immediate
+: while  ?comp  -indent +indent ['] begin       pairedwith       branch0, ahead                me ; immediate
+: repeat ?comp  -indent         ['] while       pairedwith  swap branch,  back        resolve     ; immediate
+: until  ?comp  -indent         ['] begin       pairedwith       branch0, back                    ; immediate
+: again  ?comp  -indent         ['] begin       pairedwith       branch,  back                    ; immediate
 
-: do
-    ?comp 
-    +indent
-    ['] dodo , 
-    mark  0, 
-    me ;  immediate
-        
-: loop  ?comp 
-    -indent
-    ['] do pairedwith 
-    ['] doloop , 
-    dup 2 + <resolve
-    here 2 - over offset swap ! ;
-; immediate
+: do     ?comp  +indent                                      [']   dodo , ahead                me ; immediate
+: loop   ?comp  -indent  ['] do  pairedwith     dup resolve  ['] doloop ,   1 + back              ; immediate
