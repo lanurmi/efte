@@ -304,12 +304,7 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
         return SSAsc();
     case ExChar:
         return PSChar();
-
-        // --- migrated BFI_TOGGLEs ---
-    case ExToggleTrim:
-        return ToggleTrim();
     }
-
     if (view->IsModelView()) {
         ExModelView *V = (ExModelView *)view->Top;
         EView *View = V->View;
