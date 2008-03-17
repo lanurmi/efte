@@ -56,7 +56,7 @@ sub >         { swap < }                        # true if nos > tos
 sub between   { rot tuck < minrot > or not }
 sub negative  { 0 < }                           # -n
 sub positive  { -1 > }                          # 0..n
-sub abs       { dup 0 < will negate }            # remove sign
+sub abs       { dup 0 < will negate }           # remove sign
 sub min       { dup2 > will swap drop }
 sub max       { dup2 < will swap drop }
 sub umin      { dup2 xor 0 < if max else min endif }  # ( u1 u2 -- u1|u2 ) unsigned min
@@ -94,18 +94,15 @@ sub printable  { bl 127 between }
 
 
 
-sub numeric   {             # ( asc -- flag )      converts ascii to numeric value, and flag if legal cipher.
-   capitalize '0' -         #                      respects base, and reports only those chars valid which are
-   dup 10 16 between or     #                      legal in the resp. base
-   dup 16 > 7 and -
-   0 base @ dec between }
 
-sub cipher   {              # ( asc -- u -1 | 0 )  converts ascii to numeric value, and flag if legal cipher.
-   capitalize '0' -         #                      respects base, and reports only those chars valid which are
-   dup 10 16 between or     #                      legal in the resp. base
+sub cipher   {                                  # ( asc -- u -1 | 0 )  converts ascii to numeric value, and flag if legal cipher.
+   capitalize '0' -                             #                      respects base, and reports only those chars valid which are
+   dup 10 16 between or                         #                      legal in the resp. base
    dup 16 > 7 and -
    dup 0 base @ dec between
    qdup nip  }
+
+sub numeric   { cipher dup will nip }           # ( asc -- flag )  converts ascii to numeric value, and flag if legal cipher.
 
 
 # -- cursor --
@@ -181,13 +178,13 @@ sub splice    { char$ prepend$ }                # ( asc -- ) prepend char to str
 sub ascn      { dup$ 1 mid$ asc }               # ( n -- c ) get ascii of nth char in top string
 
 # -- i/o --
-sub key        { winrefresh getchar }            # wait for key, place its ascii on stack
-sub read$      { curchar$ }                      # read char under cursor as string
-sub read       { curchar$ asc }                  # read char under cursor as asc
+sub key        { winrefresh getchar }           # wait for key, place its ascii on stack
+sub read$      { curchar$ }                     # read char under cursor as string
+sub read       { curchar$ asc }                 # read char under cursor as asc
 
 sub emit       { typechar }
 sub type1      { count emit }
-sub type       { times type1 drop }              # string output
+sub type       { times type1 drop }             # string output
 #TODO:  insertstring bug when empty string. workaround here.
 sub type$      { dup$ len$ if dup$ insertstring endif drop$  }
 #TODO: change insertstring to not behave funny when empty string is sent.
@@ -200,6 +197,8 @@ sub type$      { dup$ len$ if dup$ insertstring endif drop$  }
 sub cr         {
     ?cursordown failure will linenew
     cursorhome killtolineend }
+
+
 
 
 sub left$      {                                # ( n -- )
@@ -223,21 +222,21 @@ sub right$    {                                 # ( n -- )
 
 
 # unsigned number string to numeric
-sub unumber? {                          # ( -- n -1 | 0 )
-   -1 0                                 # assume valid number, initial value 0
-   dup$ len$ 0 do                       # loop through chars
-      base @ *                          #  accu*radix
-      i ascn cipher if +                #  next char valid cipher? yes: accumulate
+sub unumber? {                                  # ( -- n -1 | 0 )
+   -1 0                                         # assume valid number, initial value 0
+   dup$ len$ 0 do                               # loop through chars
+      base @ *                                  #  accu*radix
+      i ascn cipher if +                        #  next char valid cipher? yes: accumulate
       else
-         2:drop 0 0 leave               #  no: signal "not a number" and leave
+         2:drop 0 0 leave                       #  no: signal "not a number" and leave
       endif
    loop
    drop$
-   swap qdup drop                       # return result as specified in stack diagram.
+   swap qdup drop                               # return result as specified in stack diagram.
 }
 
 
-sub number? {                           # ( -- n -1 | 0 )
+sub number? {                                   # ( -- n -1 | 0 )
    0 ascn '-' equals
    if
       -1 left$
@@ -445,13 +444,31 @@ sub .    { dup >r <hash bl hold  hashes r> sign hash> type$ }
 # ( n u -- ) space padded signed number
 sub .r { >r dup >r <hash hashes  r> sign  r> bl padded  hash> type$ }
 
-# ( n -- )   zero padded signed number with one trailing space
-sub .0r     { <hash  bl hold  times hash  hash> type$ }
+# ( u n -- )  zero padded signed number, no trailing space
+sub .00     { <hash times hash hash> type$ }
 
 
 # ----- number conversion: integer to string, string to integer -----
 sub number$   { dup <hash hashes hash> sign }   # ( n -- )
 sub number    { number? not will fail }
+
+
+
+# ----- date & time -----
+sub time      { seconds  60 /mod 60 /mod 24 mod }    # ( -- s m h )
+sub time$     { seconds 86400 mod                    # ( -- ) returns hh:mm:ss as string
+               base @ >r
+               <hash
+                  2 0 do                     # wanted to factor st like    :00 :00  but have no good legal name)
+                     decimal  hash
+                     6 base ! hash
+                     ':' hold
+                  loop
+                  decimal
+                  2:hash
+               hash>
+               r> base ! }
+sub .time   { time$ type$ }
 
 
 
@@ -622,11 +639,11 @@ sub stack3 {                            # create: ( size -- )    run:  ( -- a )
 
 
 
-# --- these work on any type of our user level stacks ---
+# --- stack type independent ---
 sub push  { dup 2 + @ execute }         # "message" executes push vector from stack meta data
 sub pop   { dup 3 + @ execute }         # "message" executes pop  vector from stack meta data
-sub item  { dup 4 + @ execute }
-sub items { dup 5 + @ execute }
+sub item  { dup 4 + @ execute }         # returns an indexed stack item
+sub items { dup 5 + @ execute }         # returns number of items on stack.
 
 
 
@@ -651,20 +668,20 @@ sub items { dup 5 + @ execute }
 # random access stack of filenames. adding returns token. token converts to filename
 
 
-sub FileStack { stack1 new }
+sub FileStack { stack1 new }         # single items (pointers to file names)
 
 
-sub AddFile {      # ( -- n )    file name passed as string. add to filestack
+sub AddFile {                        # ( -- n )    file name passed as string. add to filestack
    filestack items
    here comma$
    filestack push }
 
 
-sub FileName {     # ( token -- )    put filename on string stack
+sub FileName {                       # ( token -- )    put filename on string stack
    fileStack item fetch$  }
 
 
-sub FindFile {    # ( -- -1 | token )  file name as string
+sub FindFile {                       # ( -- -1 | token )  file name as string
    -1
    filestack items 0 do
       dup$  i filename equals$
@@ -675,7 +692,7 @@ sub FindFile {    # ( -- -1 | token )  file name as string
    loop drop$ }
 
 
-sub File  {   # ( -- n )  given filename as string, adds it to filestack if not already in it. returns file token
+sub File  {                          # ( -- n )  given filename as string, adds it to filestack if not already in it. returns file token
    dup$ FindFile
    dup negative if
       drop
@@ -707,7 +724,7 @@ sub File  {   # ( -- n )  given filename as string, adds it to filestack if not 
 
 
 # global bookmarks: bookmark stack. location 0  is stack pointer. 1 is max size.
-sub BookMarkStack { stack3 new }     # stack3 = 3 items per stack item.  cursor x, y and file handle in this case
+sub BookMarkStack { stack3 new }     # stack3 = 3 items per stack item.  cursor x, y and file handle
 
 
 sub PushBookmark {
