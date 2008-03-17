@@ -237,6 +237,8 @@ int main(int argc, char **argv) {
     argv[0] = getProgramName(argv[0]);
 #endif
 
+    srand(time(0));
+
 #if defined(UNIX) && defined(LINUX)
     // security fix - when we need to be suid to access vcsa
     effuid = geteuid();
