@@ -381,7 +381,7 @@ sub load {                              # compile from file.  not nestable now.
 sub fireshellenable { var new }
 sub fireshell {
     query
-    loading @ not for cursorend
+    loading @ not will cursorend
     if
        space
        interpret

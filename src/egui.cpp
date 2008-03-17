@@ -523,7 +523,7 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
             break;                                                  // would reintroduce conditional skip with  0/1 times command
 
 
-        case ExFor:
+        case ExWill:
             tos = ParamStack.pop();
             if (tos == 0)
                 i++;
