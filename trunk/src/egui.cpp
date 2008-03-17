@@ -121,21 +121,24 @@ EGUI::~EGUI() {
 */
 
 struct timeval tv;
-int Millisecs()  {         // wraps every 49d 17h 2m 47s
+
+int Seconds()  {         // wraps every 136y 144d 6h
+    gettimeofday(&tv, NULL);
+    ParamStack.push(tv.tv_sec);
+    return 1;
+}
+
+int Milliseconds()  {         // wraps every 49d 17h 2m 47s
     gettimeofday(&tv, NULL);
     ParamStack.push(tv.tv_sec * 1000 + tv.tv_usec/1000);
     return 1;
 }
 
-int Microsecs()  {         // wraps every 1h 11m 34s
+int Microseconds()  {         // wraps every 1h 11m 34s
     gettimeofday(&tv, NULL);
     ParamStack.push((tv.tv_sec * 1000000 + tv.tv_usec));
     return 1;
 }
-
-
-// for longer intervals, if needed, secs would wrap
-// every 136y 144d 23296s. will be provided on user request.
 
 
 
@@ -217,10 +220,12 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
         return Div();
     case ExRandom:
         return Random();
-    case ExMillisecs:
-        return Millisecs();
-    case ExMicrosecs:
-        return Microsecs();
+    case ExSeconds:
+        return Seconds();
+    case ExMilliseconds:
+        return Milliseconds();
+    case ExMicroseconds:
+        return Microseconds();
     case ExMs:
         return Ms();
 

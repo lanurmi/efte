@@ -31,14 +31,14 @@ sub timestarted  { var new }
 sub beforealltests {
    emptybuffer
    "selftest started" type$ cr
-   microsecs timestarted !
+   microseconds timestarted !
    }
 
 
 sub afteralltests {
-   microsecs
+   microseconds
    "selftest finished" type$ cr
-   timestarted @ -  "Time elapsed: " type$ . "microsecs" type$ cr
+   timestarted @ -  "Time elapsed: " type$ . "microseconds" type$ cr
    }
 
 
