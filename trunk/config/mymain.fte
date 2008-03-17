@@ -42,13 +42,15 @@ sub bubbleuplast      {                      # last line handling is a bit more 
 
 
 eventmap PLAIN: MODEL {
+    key [C+S+Up]      { PushBookmark }
+    key [C+S+Down]    { PopBookmark }
     key [C+9]         { }
     key [C+1]         { fireshellenable toggle }
     key [Enter]       { fireshellenable @ if fireshell else LineNew endif }
     key [G+Enter]     { fireshell }
     key [F10]         { ToggleConditionDisplay }
     key [C+G-Up]      { depth dup if drop dup endif }
-    key [C+G-Down]    { depth for drop }
+    key [C+G-Down]    { depth will drop }
     key [C+G-+]       { depth not        qdup drop inc }
     key [C+G--]       { depth not negate qdup drop dec }
     

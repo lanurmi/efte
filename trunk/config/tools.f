@@ -19,6 +19,7 @@
 : execute  ( a -- )      exec ;
 : exit,    ( -- )        0, ;      immediate
 : ??       ( f -- )      ['] branch0 ,  1 ,       ; immediate
+: will     ( f -- )      ['] branch0 ,  1 ,       ; immediate
 : unless   ( f -- )      postpone ?? postpone exit, ; immediate
 : ?comp    ( -- )        state @ unless "compilation only" error ;
 : variable ( -- )        create 0, ;

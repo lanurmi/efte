@@ -18,13 +18,13 @@ sub linerange { linelen cursorrow }
 #
 # Push the block range onto the stack for iterating via a Do ... Loop
 #
-sub blockrange { moveblockend cursorcol moveblockstart cursorcol }
+sub blockrange { moveblockend cursorcolumn moveblockstart cursorcolumn }
 
 # ( ch -- num )
 #
 # Return True/False if the current character is equal to Tos
 #
-sub iscursorchar    { cursorchar equals }
+sub iscursorchar    { read equals }
 
 
 # ( -- )
@@ -56,13 +56,13 @@ sub gotocharinline {
     over iscursorchar
     if
        drop
-       cursorcol
+       cursorcolumn
        leave
     endif
     cursorright
   loop
   nip
-  dup 0 < for cursorhome
+  dup 0 < will cursorhome
 }
 
 # ( -- )
@@ -85,7 +85,7 @@ sub alignchar {
   blockrange do
     over gotocharinline drop
     eatwhitespaceback
-    cursorcol max
+    cursorcolumn max
     cursordown
   loop
 
