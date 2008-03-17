@@ -31,9 +31,13 @@ sub nip       { swap drop }                     # drop second of stack
 sub tuck      { swap over }                     # copy top of stack below second of stack
 sub pluck     { >r over r> swap }               # copy 3rd item to top
 sub minrot    { 2:rot }                         # rotate top item below second item
+
 sub dup2      { 2:over }                        # duplicate top two items
 sub drop2     { 2:drop }                        # drop top two items
 sub swap2     { rot >r rot r> }                 # swap top two pairs of items
+sub @2        { dup @ swap 1 + @ }              # ( a -- x1 x2 ) double fetch, from 2 consecutive addresses
+sub !2        { tuck 1 + ! ! }                  # ( x1 x2 a -- ) double store, to 2 consecutive addresses
+
 
 
 # -- arithmetic, bool, bits, comparison  --
@@ -480,14 +484,13 @@ sub blockmove   { blockcut blockpaste }             # move block to cursor
 # sub sleep  { winrefresh ms }  # winrefresh doesn't do what i hoped it would
 
 
-sub @2  { dup @ swap 1 + @ }    # ( a -- x1 x2 ) double fetch, from 2 consecutive addresses
-sub !2  { tuck 1 + ! ! }        # ( x1 x2 a -- ) double store, to 2 consecutive addresses
 
+# ---- user/app stacks ----
 
+# structure:   sp size *push *pop *item *items item0 item1 ...
+#   * indicate execution vectors: an address, containing an execution token.
+#   they can be seen as methods, invoked when a message demands their execution.
 
-# ---- stacks ----
-
-# structure:   sp size push pop item0 item1 ...
 
 sub pop1 {                              # ( a -- x )
    dup @                                # read stack pointer
@@ -518,6 +521,7 @@ sub items1 { @ 6 - }
 # will need double and triple cell items stack, those will be called stack2 resp. stack3, and
 # push/pop 2 resp 3 items. for bookmarks - global bookmarks want x, y and file as one single logical item.
 # for now single item only, to test the stack creation and action messaging logic.
+
 sub stack1 {                            # create: ( size -- )    run:  ( -- a )
     >r here                             # keep stack size, obtain stack base address (metadata address)
     6 comma                             # initial stack pointer (behind meta data)
@@ -528,10 +532,105 @@ sub stack1 {                            # create: ( size -- )    run:  ( -- a )
     "items1" tick comma                 # execution vector to stack peek, "method" like.
     r> allot }                          # allocate space for items
 
+
+
+
+
+
+# --- stacks with dual items ---
+# structure:   sp size *push *pop *item *items item0a item0b item1a item1b ...
+
+
+sub pop2 {                              # ( a -- x )
+   dup @                                # read stack pointer
+   dup 7 < for fail                     # would point to stack meta data below stack items
+   2 - swap                             # decrement stack pointer
+   dup2 ! + @2                          # store new stack pointer, add index to stack base, fetch item.
+}
+
+
+sub push2 {                             # ( x a -- )
+   dup @2                               # read pointer and size
+   over < for fail                      # protect against overflow
+   dup2 2 + swap !                      # increment stack pointer. store in meta data
+   + !2                                 # calc item address and store item.
+}
+
+sub item2 {                             # ( n a -- x )
+   over 0 < for fail                    # reading below first item
+   >r  dup +                            # get a out of the way and index>offset
+   r@ @ 7 - over < for fail             # reading above last item
+   6 +  r> + @2                         # read and return item
+}
+
+sub items2 { @ 6 - rshift }
+
+sub stack2 {                            # create: ( size -- )    run:  ( -- a )
+    lshift >r here                      # calc stack size, obtain stack base address (metadata address)
+    6 comma                             # initial stack pointer (behind meta data)
+    r@ 5 + comma                        # stack size for overflow test: metadata+items-1
+    "push2" tick comma                  # execution vector to stack push, "method" like
+    "pop2" tick comma                   # execution vector to stack pop, "method" like
+    "item2" tick comma                  # execution vector to stack peek, "method" like.
+    "items2" tick comma                 # execution vector to stack peek, "method" like.
+    r> allot }                          # allocate space for items
+
+
+
+
+# --- stacks with triple items ---
+# structure:   sp size *push *pop *item *items item0a item0b item0c item1a item1b item1c ...
+
+sub scrape { range do i @ loop }        # ( a n -- x0 x1 ... xn-1 )
+sub @3 { 3 scrape }                     #  ( a -- x1 x2 x3 )
+sub !3 { 3 spread }                     # ( x1 x2 x3 a -- )
+
+sub pop3 {                              # ( a -- x )
+   dup @                                # read stack pointer
+   dup 7 < for fail                     # would point to stack meta data below stack items
+   3 - swap                             # decrement stack pointer
+   dup2 ! + @3                          # store new stack pointer, add index to stack base, fetch item.
+}
+
+
+sub push3 {                             # ( x a -- )
+   dup @2                               # read pointer and size
+   over < for fail                      # protect against overflow
+   dup2 3 + swap !                      # increment stack pointer. store in meta data
+   + !3                                 # calc item address and store item.
+}
+
+sub item3 {                             # ( n a -- x )
+   over 0 < for fail                    # reading below first item
+   >r  3 *                              # get a out of the way and index>offset
+   r@ @ 7 - over < for fail             # reading above last item
+   6 +  r> + @3                         # read and return item
+}
+
+sub items3 { @ 6 - 3 / }
+
+sub stack3 {                            # create: ( size -- )    run:  ( -- a )
+    3 * >r here                         # keep stack size, obtain stack base address (metadata address)
+    6 comma                             # initial stack pointer (behind meta data)
+    r@ 5 + comma                        # stack size for overflow test: metadata+items-1
+    "push3" tick comma                  # execution vector to stack push, "method" like
+    "pop3" tick comma                   # execution vector to stack pop, "method" like
+    "item3" tick comma                  # execution vector to stack peek, "method" like.
+    "items3" tick comma                 # execution vector to stack peek, "method" like.
+    r> allot }                          # allocate space for items
+
+
+
+
+
+
+# --- these work on any type of our user level stacks ---
 sub push  { dup 2 + @ execute }         # "message" executes push vector from stack meta data
 sub pop   { dup 3 + @ execute }         # "message" executes pop  vector from stack meta data
 sub item  { dup 4 + @ execute }
 sub items { dup 5 + @ execute }
+
+
 
 # example of use:
 # define a new stack:
@@ -553,12 +652,15 @@ sub items { dup 5 + @ execute }
 # ----------------------------------- file name stack --------------------------------------
 # random access stack of filenames. adding returns token. token converts to filename
 
+
 sub FileStack { stack1 new }
+
 
 sub AddFile {      # ( -- n )    file name passed as string. add to filestack
    filestack items
    here comma$
    filestack push }
+
 
 sub FileName {     # ( token -- )    put filename on string stack
    fileStack item fetch$  }
@@ -573,6 +675,7 @@ sub FindFile {    # ( -- -1 | token )  file name as string
          leave
       endif
    loop drop$ }
+
 
 sub File  {   # ( -- n )  given filename as string, adds it to filestack if not already in it. returns file token
    dup$ FindFile
@@ -591,58 +694,39 @@ sub File  {   # ( -- n )  given filename as string, adds it to filestack if not 
 
 
 # ----------------------------------- bookmarks --------------------------------------
-# TODO: take advantage of new stack class
-# TODO: stack also file token
 # TODO: local bookmarks: only pop if filename$ matches bookmark creator.
 # TODO: local bookmarks: 1 stack per file? use an aggregated stack?   aggregated may call for roll.
 #       advantage of aggregated: identical push operation for local and global. one stack for all.
 #       only difference is pop bookmark: local restore searches for own file, global uses top.
 
 
-sub sizeofbookmark { 2 }
-
 # bookmark slots, numbered  (0..255)
-sub BookMark { var new  256 sizeofbookmark * allot }
-sub StoreBookmark  { sizeofbookmark * BookMark +   at? rot !2 }
-sub MoveToBookmark { sizeofbookmark * BookMark +    @2 at }
+#sub BookMark { stack3 new }
+
+#sub StoreBookmark  {  * BookMark +   at? rot !2 }
+#sub MoveToBookmark {  * BookMark +    @2 at }
+
 
 
 # global bookmarks: bookmark stack. location 0  is stack pointer. 1 is max size.
-sub BookMarkStack { var new  256 sizeofbookmark * allot }
+sub BookMarkStack { stack3 new }     # stack3 = 3 items per stack item.  cursor x, y and file handle in this case
+
+
+sub PushBookmark {
+   at? filename$ file
+   bookmarkstack push
+}
 
 sub PopBookmark {
-   BookMarkStack @ 2 < if
-      "bookmarkstack empty" message fail
-   else
-      sizeofbookmark negate
-      BookMarkStack
-      dup @ @2 at  +!
-   endif }   
-      
-
-sub PushBookmark { 
-   BookMarkStack @2 < if
-      at? 
-      BookMarkStack 
-      sizeofbookmark over +!
-      @ !2
-   else
-      "bookmarkstack full" message fail
-   endif }   
-
-
-
-sub InitStacks {
-    256 FileStack
- }
+   bookmarkstack pop
+   filename fileopen at
+}
 
 
 sub InitBookmarks {
-   InitStacks
-   0 BookMark !
-   0 510 BookMarkStack 2 spread
+   256 FileStack
+   512 BookmarkStack
  }
-
 
 
 
@@ -651,6 +735,7 @@ sub InitBookmarks {
 # --- migrated toggles ---
 sub ToggleTrim   { autotrim toggle }
 sub ToggleInsert { insert toggle }
+
 
 # --- initialisation ---
 sub attempt   { tick execute }                      # execute macro, name given as string, if existing
