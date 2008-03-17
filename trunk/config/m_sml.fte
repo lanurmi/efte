@@ -55,7 +55,7 @@ mode SML: SOURCE {
     AutoIndent     = 1;
     IndentMode     = "PLAIN";
     MatchCase      = 1;
-    Trim           = 1;
+#    Trim           = 1;
     MultiLineHilit = 1;
     AutoHilitParen = 1;
     SaveFolds      = 2;

@@ -196,6 +196,8 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
         return Base();
     case ExAutoTrim:
         return AutoTrim();
+    case ExInsert:
+        return Insert();
 
         // command calls
     case ExTick:

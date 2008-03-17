@@ -36,6 +36,7 @@ const struct {
     TAB(Base),
     TAB(Verbosity),
     TAB(AutoTrim),
+    TAB(Insert),
     // ------------------------
     { ExPlus, "+" },
     { ExMinus, "-" },
@@ -322,7 +323,7 @@ const struct {
     TAB(ChangeFlags),
 
     TAB(ToggleAutoIndent),
-    TAB(ToggleInsert),
+//    TAB(ToggleInsert),
     TAB(ToggleExpandTabs),
     TAB(ToggleShowTabs),
     TAB(ToggleUndo),

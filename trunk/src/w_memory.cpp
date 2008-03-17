@@ -121,5 +121,10 @@ int AutoTrim() {
     return 1;
 }
 
+unsigned int insert = dp++;
+int Insert() {
+    ParamStack.push(insert);
+    return 1;
+}
 
 

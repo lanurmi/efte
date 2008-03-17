@@ -774,7 +774,8 @@ int EBuffer::BackSpace() {
             if (SetPos(C1, CP.Row) == 0) return 0;
             if (C > LineIndented(Y)) return 0;
             if (DelText(Y, C1, C - C1) == 0) return 0;
-            if (BFI(this, BFI_Insert) == 0)
+            // if (BFI(this, BFI_Insert) == 0)
+            if (memory[insert] == 0)
                 if (InsText(Y, C1, 1, " ") == 0) return 0;
         } else if (BFI(this, BFI_BackSpKillTab)) {
             int P;
@@ -785,7 +786,8 @@ int EBuffer::BackSpace() {
             if (SetPos(C1, CP.Row) == 0) return 0;
 
             if (DelText(Y, C1, C - C1) == 0) return 0;
-            if (BFI(this, BFI_Insert) == 0)
+            // if (BFI(this, BFI_Insert) == 0)
+            if (memory[insert] == 0)
                 if (InsText(Y, C1, 1, " ") == 0) return 0;
         } else {
             if (MovePrev() == 0) return 0;
@@ -801,7 +803,8 @@ int EBuffer::BackSpace() {
             }
 
             if (DelText(Y, ScreenPos(L, C), 1) == 0) return 0;
-            if (BFI(this, BFI_Insert) == 0)
+            // if (BFI(this, BFI_Insert) == 0)
+            if (memory[insert] == 0)
                 if (InsText(Y, ScreenPos(L, C), 1, " ") == 0) return 0;
         }
     }
@@ -1034,7 +1037,8 @@ int EBuffer::InsertString(const char *aStr, int aCount) {
         }
     }
 
-    if (BFI(this, BFI_Insert) == 0) {
+    // if (BFI(this, BFI_Insert) == 0) {
+    if (memory[insert] == 0) {
         if (CP.Col < LineLen()) {
             if (KillChar() == 0) {
                 SetBranchCondition(0);
@@ -1117,7 +1121,8 @@ int EBuffer::InsertSpacesToTab(int TSize) {
         TSize = BFI(this, BFI_TabSize);
 
     P1 = NextTab(P, TSize);
-    if (BFI(this, BFI_Insert) == 0) {
+    // if (BFI(this, BFI_Insert) == 0) {
+    if (memory[insert] == 0) {
         if (CP.Col < LineLen())
             if (DelText(VToR(CP.Row), CP.Col, P1 - P) == 0) return 0;
     }
@@ -1449,9 +1454,9 @@ int EBuffer::BlockTrim() {
 int EBuffer::ToggleAutoIndent() {
     TOGGLE(AutoIndent);
 }
-int EBuffer::ToggleInsert() {
-    TOGGLE(Insert);
-}
+//int EBuffer::ToggleInsert() {
+//    TOGGLE(Insert);
+//}
 int EBuffer::ToggleExpandTabs() {
     TOGGLE_R(ExpandTabs);
 }

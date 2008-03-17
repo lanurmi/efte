@@ -130,7 +130,7 @@ mode ASM51: SOURCE {      # C/C++ Mode
                              # it"s been known to cause a mess in sources ;-)
     SpaceTabs           = 0;
     MatchCase           = 1;
-    Trim                = 1;
+#    Trim                = 1;
     MultiLineHilit      = 1;
     AutoHilitParen      = 1;
     

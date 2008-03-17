@@ -715,8 +715,8 @@ int EBuffer::ExecCommand(int Command, ExState &State) {
         return HilitMatchBracket();
     case ExToggleAutoIndent:
         return ToggleAutoIndent();
-    case ExToggleInsert:
-        return ToggleInsert();
+//    case ExToggleInsert:
+//        return ToggleInsert();
     case ExToggleExpandTabs:
         return ToggleExpandTabs();
     case ExToggleShowTabs:

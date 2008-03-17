@@ -1,11 +1,94 @@
-# Default personal main fte config file.
+# bugs:
+#  "abc" 100 cut$ aborts outofrange.
+#   at? at not consistent with 0/1 basing their parameters.
+#   at? returns results reversed
+#    at is 1-based
+#   insertstring does not respect overtype
 
-# The purpose of this file is to allow individual users to add extra
-# functionality over and above what the sysadmin may have made available
-# without adversely affecting other users.
 
-# include the system main config - usually in /usr/share/fte/localconfig.
+%define(SELFTEST)
+
 include "systemmain.fte";
 
-# Personal settings go here.
 
+object GLOBAL {
+   OpenAfterClose = 0;
+   BackupDirectory = "~/.backups";
+   ShowMenuBar = 0;
+}
+
+
+sub  InitMySettings   {
+     autotrim on
+   }
+
+
+sub bubbleup          {
+    cursorup cursordown                      # lazy way to abort macro when on first line
+    cursorcolumn
+    cursorhome
+    blockselectline
+    cursorup blockmove
+    blockunmark
+    movetocolumn
+    }
+
+
+sub bubbleuplast      {                      # last line handling is a bit more complicated,
+    lineadd                                  # if it isn't terminated by eol.
+    cursorup bubbleup
+    cursordown linejoin
+}
+
+
+eventmap PLAIN: MODEL {
+    key [C+9]         { }
+    key [C+1]         { fireshellenable toggle }
+    key [Enter]       { fireshellenable @ if fireshell else LineNew endif }
+    key [G+Enter]     { fireshell }
+    key [F10]         { ToggleConditionDisplay }
+    key [C+G-Up]      { depth dup if drop dup endif }
+    key [C+G-Down]    { depth for drop }
+    key [C+G-+]       { depth not        qdup drop inc }
+    key [C+G--]       { depth not negate qdup drop dec }
+    
+    key [Esc]         { "F" MainMenu }
+    key [A+G-Right]   { BlockSelectLine BlockIndent BlockUnmark }
+    key [A+G-Left]    { BlockSelectLine BlockUnindent BlockUnmark }
+    key [F9]          { FileSave RunCompiler }
+
+    key [A+U]         { BlockUnmark }
+    key [A+G]         { BlockCut }
+    key [A+C]         { blockcopy blockpaste }
+    key [A+M]         { blockmove }
+
+    key [A+N]         { filenext }
+    key [A+P]         { fileprev }
+    key [C+N]         { winnext }
+    key [C+P]         { winprev }
+
+    key [C+-]         { cursorup read$ cursordown type$ }
+
+    key [A+G-Up]      {
+       ?cursordown
+       success if
+          cursorup
+          bubbleup
+       else
+          bubbleuplast
+          cursorup
+       endif
+    }
+
+    key [A+G-Down]    {     # last line handling adds a bit of complexity
+       cursordown
+       ?cursordown
+       success if
+          cursorup
+          bubbleup
+          cursordown
+       else
+          bubbleuplast
+       endif
+    }
+}

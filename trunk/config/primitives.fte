@@ -58,6 +58,7 @@ sub max       { dup2 < for swap drop }
 sub umin      { dup2 xor 0 < if max else min endif }  # ( u1 u2 -- u1|u2 ) unsigned min
 sub umax      { dup2 xor 0 < if min else max endif }  # ( u1 u2 -- u1|u2 ) unsigned max
 sub mod       { dup2 / * - }                    # modulo (remainder) function
+sub percent   { * 100 / }
 sub gcd       { begin tuck mod qdup not until } # greatest common denominator
 sub sqrt      { 0 tuck do inc dup lshift inc +loop }
 sub range     { over + swap }                   # start n -> limit start conversion for DO LOOP
@@ -558,12 +559,14 @@ sub File  {   # ( -- n )  given filename as string, adds it to filestack if not 
 
 
 
-sub ToggleTrim  { autotrim toggle }
+sub ToggleTrim   { autotrim toggle }
+sub ToggleInsert { insert toggle }
 
 # --- initialisation ---
 sub attempt   { tick execute }                      # execute macro, name given as string, if it exists only
 sub OnBoot    {
    decimal
+   insert on
    0 510 FileStack 2 spread
    "InitBookmarks"   attempt
    "InitMySettings"  attempt

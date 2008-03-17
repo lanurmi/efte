@@ -20,6 +20,7 @@ int MemoryEnd();
 int Verbosity();
 int Base();
 int AutoTrim();
+int Insert();
 void InitSharedVars();
 
 #endif // W_MEMORY_H

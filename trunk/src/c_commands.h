@@ -166,6 +166,9 @@ typedef enum {
     /// radix for number conversion, from and to binary
     ExAutoTrim,
     /// migrating TrimToggle to shared vars, for AutoTrim on, off, toggle, @, !
+    ExInsert,
+    /// migrating Insert to shared vars, for insert on, off, toggle, @, !
+
 
     //!Cursor Commands
     ExCursorLeft,
@@ -780,8 +783,8 @@ typedef enum {
     //!Option Commands
     ExToggleAutoIndent,
     ///
-    ExToggleInsert,
-    ///
+    //    ExToggleInsert,
+    //    ///
     ExToggleExpandTabs,
     ///
     ExToggleShowTabs,

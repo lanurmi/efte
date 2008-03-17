@@ -145,11 +145,11 @@ typedef struct _OrdLookup {
 
 static const OrdLookup mode_num[] = {
     MODE_BFI(AutoIndent),
-    MODE_BFI(Insert),
+//    MODE_BFI(Insert),
     MODE_BFI(DrawOn),
     MODE_BFI(HilitOn),
     MODE_BFI(ExpandTabs),
-    MODE_BFI(Trim),
+//    MODE_BFI(Trim),
     MODE_BFI(TabSize),
     MODE_BFI(ShowTabs),
     MODE_BFI(LineChar),
