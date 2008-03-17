@@ -133,6 +133,7 @@ int Microsecs()  {         // wraps every 1h 11m 34s
     return 1;
 }
 
+
 // for longer intervals, if needed, secs would wrap
 // every 136y 144d 23296s. will be provided on user request.
 
@@ -438,7 +439,7 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
             break;
 
 
-        case ExExit:             // works now as exit: early terminate a macro
+        case ExExit:                                                // works now as exit: early terminate a macro
             i = m->Count;
             break;
 
@@ -611,13 +612,11 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
                         while (tos--)
                             sstack.pop_back();
                     }
-                    if (memory[verbosity] > 1)                 // new line because command/stack display on same line
-                        Nodent();                      // reset indent level - fail can happen on any level.
-
+                    Nodent();                      // reset indent level - fail can happen on any level.
                     exception = 0;
                     faillevel--;
                     if (memory[verbosity])
-                        fprintf(stderr,"\nReturning from fail handler with fail code: %d\n", ErFAIL);
+                        fprintf(stderr,"\nReturning from fail handler level %d with fail code: %d\n", faillevel, ErFAIL);
                     return ErFAIL;
                 }
             }
@@ -1047,11 +1046,8 @@ int EGUI::MainMenu(ExState &State, GxView *view) {
     }
 
     std::string mname = sstack.back(); sstack.pop_back();
-    if (mname.empty()) {
-        View->Msg(S_ERROR, "Empty menu name given to MainMenu");
-        SetBranchCondition(0);
-        return 0;
-    }
+    if (mname.empty())
+        std::string mname = "F";
 
     view->Parent->ExecMainMenu(mname[0]);
     return 1;
@@ -1069,8 +1065,10 @@ int EGUI::ShowMenu(ExState &State, GxView *View) {
 
     View->Parent->PopupMenu(mname.c_str());
 
-    SetBranchCondition(0); // TODO: Is this right? This is what it was to start, return 0
-    return 0;
+    // SetBranchCondition(0); // TODO: Is this right? This is what it was to start, return 0
+    // return 0;
+    SetBranchCondition(1); // TODO: as expected, showmenu fails. trying the opposite
+    return 1;
 }
 
 int EGUI::LocalMenu(GxView *View) {
@@ -1082,7 +1080,8 @@ int EGUI::LocalMenu(GxView *View) {
     if (MName == 0)
         MName = "Local";
     View->Parent->PopupMenu(MName);
-    return 0;
+    // return 0;    // TODO: again, this aborts script. not sure what the intention of menus failing is.
+    return 1;
 }
 
 int EGUI::DesktopSaveAs(ExState &State, GxView *view) {
