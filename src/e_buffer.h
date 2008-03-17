@@ -639,7 +639,7 @@ public:
     int     BlockEnTab();
 
     int     ToggleAutoIndent();
-    int     ToggleInsert();
+//    int     ToggleInsert();
     int     ToggleExpandTabs();
     int     ToggleShowTabs();
     int     ToggleUndo();

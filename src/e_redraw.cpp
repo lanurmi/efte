@@ -430,7 +430,8 @@ void EBuffer::Redraw() {
                         ActLine + 1,
                         CurColumn + 1,
                         //                    CurPos + 1,
-                        (BFI(this, BFI_Insert)) ? 'I' : ' ',
+                        //(BFI(this, BFI_Insert)) ? 'I' : ' ',
+                        (memory[insert]) ? 'I' : ' ',
                         (BFI(this, BFI_AutoIndent)) ? 'A' : ' ',
                         //                    (BFI(this, BFI_ExpandTabs))?'T':' ',
                         (BFI(this, BFI_MatchCase)) ? 'C' : ' ',
@@ -481,7 +482,8 @@ void EBuffer::Redraw() {
             V->MView->ConPutBox(0, W->Rows, W->Cols, 1, B);
             if (V->MView->IsActive()) {
                 V->MView->ConSetCursorPos(W->CP.Col - W->TP.Col, W->CP.Row - W->TP.Row);
-                V->MView->ConSetInsertState(BFI(this, BFI_Insert));
+                //  V->MView->ConSetInsertState(BFI(this, BFI_Insert));
+                V->MView->ConSetInsertState(memory[insert]);
                 V->MView->ConShowCursor();
             }
         }

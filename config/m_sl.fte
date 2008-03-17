@@ -66,7 +66,7 @@ mode sl: SOURCE {      # SLang Mode
     TabSize             = 3; # think twice before changing this, historically
                              # it"s been known to cause a mess in sources ;-)
     MatchCase           = 1;
-    Trim                = 1;
+#    Trim                = 1;
     MultiLineHilit      = 1;
     AutoHilitParen      = 1;
 

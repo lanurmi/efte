@@ -268,7 +268,7 @@ mode PYTHON: SOURCE {
     AutoIndent          = 1;
     MultiLineHilit      = 1;
     AutoHilitParen      = 1;
-    Trim                = 1;
+#    Trim                = 1;
     SpaceTabs           = 1;
     MatchCase           = 1;
 #    WordWrap            = 0;

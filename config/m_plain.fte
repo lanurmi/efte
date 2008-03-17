@@ -30,7 +30,7 @@ mode PLAIN {
     HilitTags           = 0;
     IndentMode          = "PLAIN";   # indentation mode
     IndentWithTabs      = 0;         # use tabs for auto-indent
-    Insert              = 1;         # insert mode
+#    Insert              = 1;         # insert mode
     InsertKillBlock     = 0;         # inserting char kills selected block
     KeepBackups         = 1;         # save backup files
     LeftMargin          = 1;         # wrap left margin
@@ -48,7 +48,7 @@ mode PLAIN {
     SpaceTabs           = 0;         # insert tabs as spaces
     StripChar           = 13;        # remove this char at eol when loading
     TabSize             = 8;         # tab size 1-32
-    Trim                = 0;         # remove whitespace from eol when editing
+#    Trim                = 0;         # remove whitespace from eol when editing
     TrimOnSave          = 0;         # remove whitespace before saving
     Undo                = 1;         # undo/redo enabled
     UndoLimit           = 1023;      # num of changes to save
