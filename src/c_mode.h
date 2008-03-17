@@ -61,11 +61,11 @@ typedef int ChColor;
 #define INDENT_FALCON 4
 
 #define BFI_AutoIndent          0
-#define BFI_Insert              1
+// #define BFI_Insert              1
 #define BFI_DrawOn              2
 #define BFI_HilitOn             3
 #define BFI_ExpandTabs          4
-#define BFI_Trim                5
+// #define BFI_Trim                5
 #define BFI_TabSize             6
 #define BFI_ShowTabs            9
 #define BFI_HardMode           15

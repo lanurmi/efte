@@ -249,6 +249,8 @@ sub number? {                           # ( -- n -1 | 0 )
 
 
 
+
+
 sub search$   {                                 # ( n1 -- n2 )
   true swap                                     # search though n1 string stack items,
   0 do                                          # matching against top string. returns
@@ -388,17 +390,18 @@ sub fetch$    {                                 # ( a -- ) transfers the string 
    count
    combine }
 
+
+sub comma$  {   # ( -- )     "comma" string to dp
+   dup$ len$
+   1 + dup comma
+   here swap allot
+   move$ }
+
+
+
+
+
 sub var$ { here dup dup$ len$ inc dup inc comma allot } # string var description.
-
-# (varsize) (strlen) (char) (char) (char) ...
-#sub var$ {
-#   here              diag diag$  "A " 2 print
-#   dup$ len$ inc     diag diag$  "B " 2 print
-#   dup inc comma     diag diag$  "C " 2 print
-#   allot             diag diag$  "D " 2 print
-#   dup store$        diag diag$  "E " 2 print
-#   }
-
 
 
 # --- debugging
@@ -408,6 +411,7 @@ sub pout    { 1 print }
 sub perr    { 2 print }
 sub poutln  { 1 println }
 sub perrln  { 2 println }
+
 
 
 # --- pictured number conversion ---
@@ -421,7 +425,6 @@ sub hash>     { drop }                          # ( n -- )  end pic num conv - s
                                                 # string stack to ( a n ) to comply with standard.
                                                 # this version leaves converted number on top of string stack
 sub sign      { 0 < if '-' hold endif }         # ( n -- }
-sub brdotbr   { dup <hash hashes hash> sign }   # ( n -- )
 
 sub padded  {                                   # ( n c -- )
    >r dup$ len$ -                               # can't call it "pad" because pad is a
@@ -431,7 +434,7 @@ sub padded  {                                   # ( n c -- )
 
 
 
-# --- "app" level number output words ---
+# ----- "app" level number output words -----
 # ( n -- ) signed number output with one trailing space
 sub .    { dup >r <hash bl hold  hashes r> sign hash> type$ }
 
@@ -442,14 +445,20 @@ sub .r { >r dup >r <hash hashes  r> sign  r> bl padded  hash> type$ }
 sub .0r     { <hash  bl hold  times hash  hash> type$ }
 
 
+# ----- number conversion: integer to string, string to integer -----
+sub number$   { dup <hash hashes hash> sign }   # ( n -- )
+sub number    { number? not for fail }
 
-# --- file editing buffer helpers
-sub linelen    { curline$ dup$ len$ drop$ }     # ( -- len )
+
+
+
+# --- file buffer navigation ---
+sub linelen    { curline$ dup$ len$ drop$ }         # ( -- len )
 sub at         { 1 + movetoline  1 + movetocolumn } # ( x y -- )
 
-sub cursorcol  { at? drop 1 + }                     # ( -- x )  fade out
+sub cursorcol    { at? drop 1 + }                   # ( -- x )  fade out
 sub cursorcolumn { at? drop 1 + }                   # ( -- x )
-sub cursorrow  { at? nip  1 + }                     # ( -- y )
+sub cursorrow    { at? nip  1 + }                   # ( -- y )
 
 sub emptybuffer {
    movefilestart blockbegin
@@ -465,6 +474,7 @@ sub linecount  {                                    # ( -- u ) number of lines i
    at }
 
 
+
 sub blockmove   { blockcut blockpaste }             # move block to cursor
 
 # sub sleep  { winrefresh ms }  # winrefresh doesn't do what i hoped it would
@@ -475,20 +485,137 @@ sub !2  { tuck 1 + ! ! }        # ( x1 x2 a -- ) double store, to 2 consecutive 
 
 
 
+# ---- stacks ----
+
+# structure:   sp size push pop item0 item1 ...
+
+sub pop1 {                              # ( a -- x )
+   dup @                                # read stack pointer
+   dup 7 < for fail                     # would point to stack meta data below stack items
+   1 - swap                             # decrement stack pointer
+   dup2 ! + @                           # store new stack pointer, add index to stack base, fetch item.
+}
+
+
+sub push1 {                             # ( x a -- )
+   dup @2                               # read pointer and size
+   over < for fail                      # protect against overflow
+   dup2 1 + swap !                      # increment stack pointer. store in meta data
+   + !                                  # calc item address and store item.
+}
+
+sub item1 {                             # ( n a -- x )
+   over 0 < for fail                    # reading below first item
+   tuck @ 7 - over < for fail           # reading above last item
+   6 + + @                              # read and return item
+}
+
+sub items1 { @ 6 - }
+
+
+# --- new stack class ---
+# called stack1 because of single cell items.
+# will need double and triple cell items stack, those will be called stack2 resp. stack3, and
+# push/pop 2 resp 3 items. for bookmarks - global bookmarks want x, y and file as one single logical item.
+# for now single item only, to test the stack creation and action messaging logic.
+sub stack1 {                            # create: ( size -- )    run:  ( -- a )
+    >r here                             # keep stack size, obtain stack base address (metadata address)
+    6 comma                             # initial stack pointer (behind meta data)
+    r@ 5 + comma                        # stack size for overflow test: metadata+items-1
+    "push1" tick comma                  # execution vector to stack push, "method" like
+    "pop1" tick comma                   # execution vector to stack pop, "method" like
+    "item1" tick comma                  # execution vector to stack peek, "method" like.
+    "items1" tick comma                 # execution vector to stack peek, "method" like.
+    r> allot }                          # allocate space for items
+
+sub push  { dup 2 + @ execute }         # "message" executes push vector from stack meta data
+sub pop   { dup 3 + @ execute }         # "message" executes pop  vector from stack meta data
+sub item  { dup 4 + @ execute }
+sub items { dup 5 + @ execute }
+
+# example of use:
+# define a new stack:
+#      sub foo  { stack1 new }
+# execute at init time, to set stack size and allocate stack space:
+#      sub InitWhatever   { ... (other init)    8 foo     ... (more init)  }
+# push to stack:
+#      n foo push
+# pop from stack:
+#      foo pop
+# stack depth:
+#      foo items
+# stack peek:
+#      n foo item
+
+
+
+
+# ----------------------------------- file name stack --------------------------------------
+# random access stack of filenames. adding returns token. token converts to filename
+
+sub FileStack { stack1 new }
+
+sub AddFile {      # ( -- n )    file name passed as string. add to filestack
+   filestack items
+   here comma$
+   filestack push }
+
+sub FileName {     # ( token -- )    put filename on string stack
+   fileStack item fetch$  }
+
+
+sub FindFile {    # ( -- -1 | token )  file name as string
+   -1
+   filestack items 0 do
+      dup$  i filename equals$
+      if
+         drop i
+         leave
+      endif
+   loop drop$ }
+
+sub File  {   # ( -- n )  given filename as string, adds it to filestack if not already in it. returns file token
+   dup$ FindFile
+   dup negative if
+      drop
+      dup$ AddFile
+   endif
+   drop$ }
+
+
+# example of use:
+# obtain token for filename:   (creates new filestack entry if needed, i.e. if new file)
+#       filename$ file
+# obtain filename for token:
+#       filename
+
+
+# ----------------------------------- bookmarks --------------------------------------
+# TODO: take advantage of new stack class
+# TODO: stack also file token
+# TODO: local bookmarks: only pop if filename$ matches bookmark creator.
+# TODO: local bookmarks: 1 stack per file? use an aggregated stack?   aggregated may call for roll.
+#       advantage of aggregated: identical push operation for local and global. one stack for all.
+#       only difference is pop bookmark: local restore searches for own file, global uses top.
+
+
+sub sizeofbookmark { 2 }
+
 # bookmark slots, numbered  (0..255)
-sub BookMark { var new  512 allot }
-sub StoreBookmark  { at? rot lshift BookMark + !2 }
-sub MoveToBookmark { lshift BookMark +  @2 at }
+sub BookMark { var new  256 sizeofbookmark * allot }
+sub StoreBookmark  { sizeofbookmark * BookMark +   at? rot !2 }
+sub MoveToBookmark { sizeofbookmark * BookMark +    @2 at }
 
 
 # global bookmarks: bookmark stack. location 0  is stack pointer. 1 is max size.
-sub BookMarkStack { var new  512 allot } 
+sub BookMarkStack { var new  256 sizeofbookmark * allot }
 
 sub PopBookmark {
    BookMarkStack @ 2 < if
       "bookmarkstack empty" message fail
    else
-      -2  BookMarkStack
+      sizeofbookmark negate
+      BookMarkStack
       dup @ @2 at  +!
    endif }   
       
@@ -497,78 +624,40 @@ sub PushBookmark {
    BookMarkStack @2 < if
       at? 
       BookMarkStack 
-      2 over +!  
+      sizeofbookmark over +!
       @ !2
    else
       "bookmarkstack full" message fail
    endif }   
 
 
+
+sub InitStacks {
+    256 FileStack
+ }
+
+
 sub InitBookmarks {
+   InitStacks
    0 BookMark !
    0 510 BookMarkStack 2 spread
  }
 
 
 
-sub comma$  {   # ( -- )     "comma" string to dp
-   dup$ len$
-   1 + dup comma
-   here swap allot
-   move$ }
 
 
 
-
-# random access stack of filenames. adding returns token. token converts to filename
-sub FileStack { var new 512 allot }
-
-sub AddFile {      # ( -- n )    file name passed as string
-   FileStack @ 1 +
-   dup FileStack !
-   here comma$
-   over FileStack + !
-   }
-
-
-sub FileName {     # ( token -- )    places filename on string stack
-   fileStack + @ fetch$  }
-
-
-sub FindFile {    # ( -- 0 | token )  file name as string
-   0
-   FileStack
-   dup @ 0 do
-      1 +
-      dup$
-      dup @ fetch$
-      equals$ if
-         filestack -
-         swap leave
-      endif
-   loop drop drop$ }
-
-
-sub File  {   # ( -- n )  given filename as string, adds it to filestack if not already in it. returns file token
-   dup$ FindFile
-   qdup not if
-      dup$ AddFile
-   endif
-   drop$ }
-
-
-
-
+# --- migrated toggles ---
 sub ToggleTrim   { autotrim toggle }
 sub ToggleInsert { insert toggle }
 
 # --- initialisation ---
-sub attempt   { tick execute }                      # execute macro, name given as string, if it exists only
+sub attempt   { tick execute }                      # execute macro, name given as string, if existing
 sub OnBoot    {
    decimal
    insert on
-   0 510 FileStack 2 spread
-   "InitBookmarks"   attempt
+   InitBookmarks                                    # don't need to attempt - init it right above.
    "InitMySettings"  attempt
    "InitSelftest"    attempt
    "InitInterpreter" attempt
