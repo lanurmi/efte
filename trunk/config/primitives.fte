@@ -194,9 +194,12 @@ sub type$      { dup$ len$ if dup$ insertstring endif drop$  }
 #TODO:    emit  type$               depends on overtype/insert mode
 
 # stateful linenew may autoindent - workaround here
-sub cr         {
-    ?cursordown failure will linenew
-    cursorhome killtolineend }
+sub cr     {
+    ?cursordown
+    failure will lineadd
+    cursorhome
+    ?killtolineend
+}
 
 
 
@@ -208,6 +211,7 @@ sub left$      {                                # ( n -- )
       0 swap
    endif
    mid$ }
+
 
 sub right$    {                                 # ( n -- )
   dup 0 < if                                    # negative n: strip last n chars
@@ -791,6 +795,67 @@ sub InitBookmarks {
 
 
 
+# -------- attempting to save configuration - writing to other files is more difficult than expected --------
+
+sub SaveFilename  { '"' emit  filename type$ '"' emit " file " type$ space }
+sub SaveBookmarks {
+   "sub RestoreBookmarks {"  type$ cr
+   10 0 do
+      i Bookmarkslot @3
+      dup positive if
+         4 spaces
+         rot . swap . SaveFilename
+         i . "bookmarkslot !3" type$  cr
+      else
+         drop2 drop
+      endif
+   loop
+   Bookmarkstack items 0 do
+      i bookmarkstack item
+      4 spaces
+      rot . swap . SaveFilename
+      "bookmarkstack push" type$ cr
+   loop
+   "}" type$ cr
+
+}
+
+
+sub SaveDesktop  {
+   "desktop.fte" ?fileopen
+   filename$
+   begin
+      ?filenext
+      dup$ filename$ equals$
+   not while
+#      filename$ over$ diag$ To
+   repeat
+   drop$
+}
+
+sub To {                                                      # str1 filen
+    ?fileopen
+#    type$
+#    filesave
+    fileclose
+  drop2$
+}
+
+sub In {                                                      # ( a -- )  s( filenm )
+    fileopen
+    execute
+    filesave
+    fileclose
+}
+
+sub xxx {
+    10 0 do
+       cr i .
+       filename$
+       "test" "foobar" to
+       ?fileopen
+    loop
+}
 
 
 
@@ -845,6 +910,17 @@ sub InitContext {
 
 # may be of use for file type modes, with an own set of variable settings for each.
 
+
+# --- data type flip flop ---
+# flip flop instances instances contain a state, which is toggled and
+# returned upon execution
+sub flipflop { here 0 comma does dup toggle @ }
+
+# example:
+# sub yesno { flipflop new }
+# sub makeupyourmind { yesno if "yes" else "no" endif  type$ }
+# as usual, instances must be initialized:
+#    { ... yesno .... }
 
 
 
