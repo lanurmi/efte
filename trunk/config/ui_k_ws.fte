@@ -212,7 +212,7 @@ eventmap PLAIN: MODEL {
     key   [S+G-Del]     { BlockCut }
     key   [A+G-Ins]     { BlockPasteColumn }
     key [A+G-S+Ins]     { BlockPasteLine }
-    key     [G-Enter]   { LineNew }
+    key     [G-Enter]   { Fireshell }
     key       [BackSp]  { BackSpace }
     key     [G-Ins]     { ToggleInsert }
     key     [G-Del]     { Delete }
