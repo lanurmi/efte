@@ -390,14 +390,14 @@ sub ok {
 
 
 
-sub togglefireshell { flipflop new }
-sub Fireshell       { togglefireshell if ok else linenew endif }
-sub bye             { togglefireshell drop }
+sub fireshellenable { var new }
+sub Fireshell       { fireshellenable @ if ok else linenew endif }
+sub bye             { fireshellenable off }
 
 sub colondef        { header "donest" postpone }
 
 sub InitInterpreter {
-   togglefireshell
+   bye
    0 shellindent !
    16 10 2 baseprefix 3 spread
    256 spaces$ source$ store$

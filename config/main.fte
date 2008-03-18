@@ -17,6 +17,8 @@ include "macros.fte";
 include "selftest.fte";
 %endif
 
+include "fireshell.fte";
+
 #%define(UI_KB)
 %define(UI_FTE)
 #%define(UI_WS)
@@ -261,7 +263,6 @@ object GLOBAL {
 }
 
 
-include "interpreter.fte";
 
 %if(SELFTEST)
 eventmap MODEL {

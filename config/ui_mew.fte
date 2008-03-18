@@ -550,7 +550,7 @@ eventmap PLAIN: MODEL { #FOLD02
     key [A+G-C+Right]   { MoveNextTab }
     key   [A+G-Ins]     { BlockPasteColumn }
     key [A+G-S+Ins]     { BlockPasteLine }
-    key     [G-Enter]   { LineNew }
+    key     [G-Enter]   { Fireshell }
     key       [BackSp]  { BackSpace }
     key     [G-Ins]     { ToggleInsert }
     key     [G-Del]     { Delete }
@@ -694,7 +694,7 @@ eventmap C: PLAIN { #FOLD02
     LocalMenu           = 'Local_C';  # local menu
 
     key       [Tab]     { LineIndent; LineTrim }
-    key       [G-Enter] { LineIndent; LineNew }
+    key       [G-Enter] { LineIndent; Fireshell }
     key       [{]       { SelfInsert; ?LineIndent }
     key       [}]       { SelfInsert; ?LineIndent; MoveLeft; ?HilitMatchBracket; MoveRight }
     key       [)]       { SelfInsert; MoveLeft; ?HilitMatchBracket; MoveRight }
@@ -715,7 +715,7 @@ mode C { #FOLD02
 # REXX  #FOLD01
 eventmap REXX: PLAIN { #FOLD02
     key      [Tab]      { LineIndent LineTrim }
-    key      [G-Enter]  { LineIndent LineNew }
+    key      [G-Enter]  { LineIndent Fireshell }
     key      [:]        { SelfInsert LineIndent }
     key      [A+\\]     { BlockReIndent }
 }
@@ -725,7 +725,7 @@ mode REXX { EventMap = 'REXX'; } #FOLD02
 # PERL #FOLD01
 eventmap PERL: PLAIN { #FOLD02
     key      [Tab]      { LineIndent LineTrim }
-    key      [G-Enter]  { LineIndent LineNew }
+    key      [G-Enter]  { LineIndent Fireshell }
 
     key      [#]        { SelfInsert LineIndent }
     key      [{]        { SelfInsert LineIndent }
@@ -739,7 +739,7 @@ mode PERL { EventMap = 'PERL'; } #FOLD02
 
 eventmap JAVA: PLAIN { #FOLD02
     key       [Tab]     { LineIndent; LineTrim }
-    key       [G-Enter] { LineIndent; LineNew }
+    key       [G-Enter] { LineIndent; Fireshell }
     key       [{]       { SelfInsert; LineIndent }
     key       [}]       { SelfInsert; LineIndent }
     key       [:]       { SelfInsert; LineIndent }
@@ -901,7 +901,7 @@ mode HTML { EventMap = 'HTML'; } #FOLD02
 # FTE  #FOLD01
 eventmap FTE: PLAIN { #FOLD02
     key       [Tab]     { LineIndent; LineTrim }
-    key       [G-Enter] { LineIndent; LineNew }
+    key       [G-Enter] { LineIndent; Fireshell }
     key       [{]       { SelfInsert; LineIndent }
     key       [}]       { SelfInsert; LineIndent }
 }

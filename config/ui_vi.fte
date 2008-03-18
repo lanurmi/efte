@@ -470,7 +470,7 @@ eventmap PLAIN: MODEL { #FOLD02
 
 eventmap VI_INS: MODEOPTS {
     key [Esc] { ChangeKeys; MoveLeft }
-    key [G-Enter] { LineNew }
+    key [G-Enter] { Fireshell }
     key [Space] { InsertSpace }
     key [BackSp] { KillCharPrev }
     key [Tab] { InsertTab }
@@ -506,7 +506,7 @@ eventmap VI_YANK: MODEOPTS {
 
 mode PLAIN { EventMap = 'PLAIN'; }
 
-# C #fold01
+# C #FOLD01
 menu Local_C { #fold02
     item "&Unmark\tEsc" { BlockMarkStream; BlockUnmark }
     item "Cu&t\tShift+Del" { BlockCut }
@@ -524,7 +524,7 @@ menu Local_C { #fold02
     item "I&ndent block\tAlt+\\"  { BlockReIndent }
 }
 
-eventmap C: PLAIN { #fold02
+eventmap C: PLAIN { #FOLD02
     LocalMenu           = 'Local_C';  # local menu
 
     key       [=]     { LineIndent; LineTrim }
@@ -546,20 +546,20 @@ mode C { #fold02
     EventMap = 'C';
 }
 
-# REXX  #fold01
-eventmap REXX: PLAIN { #fold02
+# REXX  #FOLD01
+eventmap REXX: PLAIN { #FOLD02
     key      [Tab]      { LineIndent LineTrim }
-    key      [G-Enter]  { LineIndent LineNew }
+    key      [G-Enter]  { LineIndent Fireshell }
     key      [:]        { SelfInsert LineIndent }
     key      [A+\\]     { BlockReIndent }
 }
 
 mode REXX { EventMap = 'REXX'; } #fold02
 
-# PERL #fold01
-eventmap PERL: PLAIN { #fold02
+# PERL #FOLD01
+eventmap PERL: PLAIN { #FOLD02
     key      [Tab]      { LineIndent LineTrim }
-    key      [G-Enter]  { LineIndent LineNew }
+    key      [G-Enter]  { LineIndent Fireshell }
 
     key      [#]        { SelfInsert LineIndent }
     key      [{]        { SelfInsert LineIndent }
@@ -569,11 +569,11 @@ eventmap PERL: PLAIN { #fold02
 
 mode PERL { EventMap = 'PERL'; } #fold02
 
-# JAVA #fold01
+# JAVA #FOLD01
 
-eventmap JAVA: PLAIN { #fold02
+eventmap JAVA: PLAIN { #FOLD02
     key       [Tab]     { LineIndent; LineTrim }
-    key       [G-Enter] { LineIndent; LineNew }
+    key       [G-Enter] { LineIndent; Fireshell }
     key       [{]       { SelfInsert; LineIndent }
     key       [}]       { SelfInsert; LineIndent }
     key       [:]       { SelfInsert; LineIndent }
@@ -583,7 +583,7 @@ eventmap JAVA: PLAIN { #fold02
 
 mode JAVA { EventMap = 'JAVA'; } #fold02
 
-# HTML #fold01
+# HTML #FOLD01
 
 menu HTML_Physical { #fold02
     item    "&Bold        <B>   C-E C-B" { HTML_B }
@@ -628,7 +628,7 @@ menu HTML_Table { #fold02
     item    "&Data     <TD>       C-E A-D" { HTML_TD }
 }
 
-menu HTMLTags { #fold02
+menu HTMLTags { #FOLD02
     item    "&Paragraph     <P>       C-E C-P  " { HTML_P }
     item    "Line brea&k    <BR>      C-E Enter" { HTML_BR }
     item    "Horiz.line    <HR>      C-E &-    " { HTML_HR }
@@ -661,7 +661,7 @@ menu Main_HTML { #fold02
     submenu "&Help",    Help;
 }
 
-eventmap HTML: PLAIN { #fold02
+eventmap HTML: PLAIN { #FOLD02
     
     MainMenu            = "Main_HTML";   # menu for menubar
 
@@ -733,10 +733,10 @@ eventmap HTML: PLAIN { #fold02
 # make sure proper eventmap is used
 mode HTML { EventMap = 'HTML'; } #fold02
 
-# FTE  #fold01
-eventmap FTE: PLAIN { #fold02
+# FTE  #FOLD01
+eventmap FTE: PLAIN { #FOLD02
     key       [Tab]     { LineIndent; LineTrim }
-    key       [G-Enter] { LineIndent; LineNew }
+    key       [G-Enter] { LineIndent; Fireshell }
     key       [{]       { SelfInsert; LineIndent }
     key       [}]       { SelfInsert; LineIndent }
 }

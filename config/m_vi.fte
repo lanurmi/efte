@@ -68,7 +68,7 @@ mode VIMODE: MODEOPTS {                               # VI mode
 
 mode VI_INS: MODEOPTS {
     key [Esc] { "VIMODE" ChangeKeys; MoveLeft }
-    key [G-Enter] { LineNew }
+    key [G-Enter] { Fireshell }
     key [Space] { InsertSpace }
     key [BackSp] { KillCharPrev }
     key [Tab] { InsertTab }
