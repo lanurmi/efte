@@ -17,11 +17,11 @@
 
 
 # -- constants --
-sub false     { 0 }
-sub true      { -1 }                            # "true" represented as all bits sets
-sub cell      { 1 }                             # memory increments per integer
-sub cell+     { 1 + }
-sub cell-     { 1 - }
+sub false     {  0 }
+sub true      { -1 }                             # "true" represented as all bits sets
+sub cell      {  1 }                             # memory increments per integer
+sub cell+     {  1 + }
+sub cell-     {  1 - }
 sub cells     { }
 
 
@@ -54,7 +54,7 @@ sub success   { flag }                          # push command return code
 sub failure   { flag not }                      # push inverted command return code
 sub >         { swap < }                        # true if nos > tos
 sub between   { rot tuck < minrot > or not }
-sub negative  { 0 < }                           # -n
+sub negative  {  0 < }                          # -n
 sub positive  { -1 > }                          # 0..n
 sub abs       { dup 0 < will negate }           # remove sign
 sub min       { dup2 > will swap drop }
@@ -102,7 +102,7 @@ sub cipher   {                                  # ( asc -- u -1 | 0 )  converts 
    dup 0 base @ dec between
    qdup nip  }
 
-sub numeric   { cipher dup will nip }           # ( asc -- flag )  converts ascii to numeric value, and flag if legal cipher.
+sub numeric   { cipher dup will nip }           # ( asc -- flag )  flag if legal cipher.
 
 
 # -- cursor --
@@ -183,8 +183,8 @@ sub read$      { curchar$ }                     # read char under cursor as stri
 sub read       { curchar$ asc }                 # read char under cursor as asc
 
 sub emit       { typechar }
-sub type1      { count emit }
-sub type       { times type1 drop }             # string output
+#sub type1      { count emit }
+#sub type       { times type1 drop }             # string outpu
 #TODO:  insertstring bug when empty string. workaround here.
 sub type$      { dup$ len$ if dup$ insertstring endif drop$  }
 #TODO: change insertstring to not behave funny when empty string is sent.
@@ -510,7 +510,7 @@ sub blockmove   { blockcut blockpaste }             # move block to cursor
 
 sub pop1 {                              # ( a -- x )
    dup @                                # read stack pointer
-   dup 7 < will fail                     # would point to stack meta data below stack items
+   dup 7 < will fail                    # would point to stack meta data below stack items
    1 - swap                             # decrement stack pointer
    dup2 ! + @                           # store new stack pointer, add index to stack base, fetch item.
 }
@@ -518,18 +518,19 @@ sub pop1 {                              # ( a -- x )
 
 sub push1 {                             # ( x a -- )
    dup @2                               # read pointer and size
-   over < will fail                      # protect against overflow
+   over < will fail                     # protect against overflow
    dup2 1 + swap !                      # increment stack pointer. store in meta data
    + !                                  # calc item address and store item.
 }
 
 sub item1 {                             # ( n a -- x )
-   over 0 < will fail                    # reading below first item
-   tuck @ 7 - over < will fail           # reading above last item
+   over 0 < will fail                   # reading below first item
+   tuck @ 7 - over < will fail          # reading above last item
    6 + + @                              # read and return item
 }
 
 sub items1 { @ 6 - }
+
 
 
 # --- new stack class ---
@@ -662,6 +663,38 @@ sub items { dup 5 + @ execute }         # returns number of items on stack.
 #      n foo item
 
 
+# --- arrays ---
+
+sub array {
+  here swap dup 1 + comma allot
+  does
+     >r
+     dup 0 < will fail
+     1 +  r>
+     dup2 @ < not will fail
+     + }
+
+sub array2 {
+  here swap lshift dup 1 + comma allot
+  does
+     >r
+     dup 0 < will fail
+     lshift 1 +  r>
+     dup2 @ < not will fail
+     + }
+
+# 3 elements per entry  (suitable for x, y, file to use with slotted bookmarks)
+sub array3 {
+  here swap 3 * dup 1 + comma allot
+  does
+     >r
+     dup 0 < will fail
+     3 * 1 +  r>
+     dup2 @ < not will fail
+     + }
+
+
+# set array size at instatntiation:    sub foo { array new }      { ... 5 foo ... }
 
 
 # ----------------------------------- file name stack --------------------------------------
@@ -715,33 +748,50 @@ sub File  {                          # ( -- n )  given filename as string, adds 
 #       only difference is pop bookmark: local restore searches for own file, global uses top.
 
 
-# bookmark slots, numbered  (0..255)
-#sub BookMark { stack3 new }
 
-#sub StoreBookmark  {  * BookMark +   at? rot !2 }
-#sub MoveToBookmark {  * BookMark +    @2 at }
-
-
+# ----------- stacked bookmarks. push to save, pop to restore -----------
 
 # global bookmarks: bookmark stack. location 0  is stack pointer. 1 is max size.
 sub BookMarkStack { stack3 new }     # stack3 = 3 items per stack item.  cursor x, y and file handle
 
-
 sub PushBookmark {
-   at? filename$ file
-   bookmarkstack push
+    at? filename$ file
+    bookmarkstack push
 }
 
 sub PopBookmark {
-   bookmarkstack pop
-   filename fileopen at
+    bookmarkstack pop
+    filename fileopen at
 }
 
+# ----------- slotted bookmarks. store to save, fetch to restore. restore is non-destructive ------------
+
+sub BookmarkSlot  { array3 new }
+
+sub SaveBookmark  {                 # ( n -- )
+    >r at? filename$ file
+    r> BookmarkSlot !3
+}
+
+sub FetchBookmark  {                # ( n -- )
+    BookmarkSlot @3
+    dup negative will fail
+    filename fileopen at
+}
+
+# ----------- initialize both type of bookmarks ------------
 
 sub InitBookmarks {
    256 FileStack
-   512 BookmarkStack
+   512 BookmarkStack    # for push/pop bookmarks
+# for slotted bookmarks. instantiate and initialize to "unused" (so that fetch attempt will fail)
+# need more bookmarks? increase 10 to the number you need.
+   10 dup BookmarkSlot 0 do -1 -1 -1  i Bookmarkslot !3 loop
  }
+
+
+
+
 
 
 
@@ -770,14 +820,15 @@ sub foo             { contextvar new }      # a context variable
 sub bar             { contextvar new }      # and another
 
 # unluckily, we need to initialize the whole lot - can't do that at compile time yet.
+# "initializing" does not just mean "adding a defined value" - it means "instantiate" including mem allocation
 sub InitContext {
-   0 activecontext !       # init var, containing context base address
+#   0 activecontext !       # init var, containing context base address. not needed: activating a context instantiates activecontext.
    0 contextvars !         # init var, containig next context var offset
    context1                # init instance of context
    context2                # init instance of context
+   context1                # execute instance, making this context active
    foo                     # init context var
    bar                     # init context var
-   context1                # execute instance, making this context active
 }
 
 # sub contextdemo  {
