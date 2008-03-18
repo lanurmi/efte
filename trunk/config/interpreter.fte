@@ -378,8 +378,7 @@ sub load {                              # compile from file.  not nestable now.
 }
 
 
-sub fireshellenable { var new }
-sub fireshell {
+sub ok {
     query
     loading @ not will cursorend
     if
@@ -390,10 +389,15 @@ sub fireshell {
     prompt }
 
 
-sub colondef { header "donest" postpone }
+
+sub togglefireshell { flipflop new }
+sub Fireshell       { togglefireshell if ok else linenew endif }
+sub bye             { togglefireshell drop }
+
+sub colondef        { header "donest" postpone }
 
 sub InitInterpreter {
-   false fireshellenable !
+   togglefireshell
    0 shellindent !
    16 10 2 baseprefix 3 spread
    256 spaces$ source$ store$
@@ -412,7 +416,6 @@ sub InitInterpreter {
 
 # --------- fireshell utilities ---------
 
-sub bye { fireshellenable off }
 
 sub words {
   base @ hex
