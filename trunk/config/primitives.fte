@@ -745,6 +745,56 @@ sub InitBookmarks {
 
 
 
+# --- context variables ---
+# contrary to vars, which are global, contextvars values are local to their respective context,
+# while their symbols are global. you can see them as global vars which can contain many
+# values. which value is visible, depends on the context.
+# a context can be saved and restored by reading from and writing to var activecontext. named
+# contexts can be created by instantiation of class context.
+
+
+sub contextsize     { 64 }
+sub activecontext   { var new }
+sub contextvars     { var new }
+sub contextvar      { 1 contextvars dup @ >r +! r> does activecontext @ + }
+sub context         { here contextsize allot does activecontext ! }
+
+# -- yes, that's all. :)
+
+# example of use:
+
+sub context1        { context new }         # create a new named context
+sub context2        { context new }         # and another.   executing these activates the resp contexts.
+
+sub foo             { contextvar new }      # a context variable
+sub bar             { contextvar new }      # and another
+
+# unluckily, we need to initialize the whole lot - can't do that at compile time yet.
+sub InitContext {
+   0 activecontext !       # init var, containing context base address
+   0 contextvars !         # init var, containig next context var offset
+   context1                # init instance of context
+   context2                # init instance of context
+   foo                     # init context var
+   bar                     # init context var
+   context1                # execute instance, making this context active
+}
+
+# sub contextdemo  {
+#   context1      100 foo !   200 bar !
+#   context2      11  foo !   22  bar !
+#   context1      foo @ .  bar @ . cr
+#   context2      foo @ .  bar @ . cr
+# }
+
+# targetted to support the (non-existing) multitasker, allowing tasks to set
+# context-local contexts of misc variables. a good candidate for a context
+# variable would be the current global var   base (number i/o radix) so that
+# each task can have base in its local context.
+
+# may be of use for file type modes, with an own set of variable settings for each.
+
+
 
 
 # --- migrated toggles ---
@@ -758,6 +808,7 @@ sub OnBoot    {
    decimal
    insert on
    InitBookmarks                                    # don't need to attempt - init it right above.
+   InitContext
    "InitMySettings"  attempt
    "InitSelftest"    attempt
    "InitInterpreter" attempt

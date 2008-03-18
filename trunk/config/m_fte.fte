@@ -246,7 +246,7 @@ mode FTE: SOURCE {
     IndentMode          = "PLAIN";
     TabSize             = 4;
     SpaceTabs           = 1;
-#    Trim                = 1;
+    Trim                = 1;
     MatchCase           = 0;
     MultiLineHilit      = 1;
     AutoHilitParen      = 1;

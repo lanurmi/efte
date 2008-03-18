@@ -61,11 +61,11 @@ typedef int ChColor;
 #define INDENT_FALCON 4
 
 #define BFI_AutoIndent          0
-// #define BFI_Insert              1
+#define BFI_Insert              1
 #define BFI_DrawOn              2
 #define BFI_HilitOn             3
 #define BFI_ExpandTabs          4
-// #define BFI_Trim                5
+#define BFI_Trim                5
 #define BFI_TabSize             6
 #define BFI_ShowTabs            9
 #define BFI_HardMode           15
@@ -132,8 +132,13 @@ typedef int ChColor;
 #define BFS_WordChars           (100 | 256) // ext
 #define BFS_CapitalChars        (101 | 256)
 
+#define SH(y,x) (memory[x])
+#define SH_SET(y,x,v) (memory[x]=(v))
+
 #define BFI(y,x) ((y)->Flags.num[(x) & 0xFF])
 #define BFI_SET(y,x,v) ((y)->Flags.num[(x) & 0xFF]=(v))
+
+#define BFS(y,x) ((y)->Flags.str[(x) & 0xFF])
 #define BFS(y,x) ((y)->Flags.str[(x) & 0xFF])
 
 #define WSETBIT(x,y,z) \
