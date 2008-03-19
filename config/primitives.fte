@@ -556,6 +556,8 @@ sub OnBoot    {
 
    decimal
    insert on
+   autotrim on
+
     "InitBookmarks"    attempt
 
     # move to where they are included.

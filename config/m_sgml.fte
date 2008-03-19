@@ -273,7 +273,7 @@ mode SGML: MARKUP {
     
 #    Insert              = 1;
     IndentMode          = "Plain";
-#    Trim                = 1;
+    Trim                = 1;
 }
 
 oinclude "mym_sgml.fte";

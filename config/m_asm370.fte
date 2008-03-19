@@ -138,7 +138,7 @@ mode ASM370: SOURCE {
     CommentEnd          = "";
     KeepBackups         = 0;
     AutoIndent          = 1;
-#    Trim                = 1;
+    Trim                = 1;
 }
 
 oinclude "mym_asm370.fte";
