@@ -429,6 +429,42 @@ sub var$ {                                      # string variable class
     allot }
 
 
+# --- file name decomposition ---
+# could factor out the searched.
+
+sub directorydelimiter  { '/' }
+sub basename$ {                                 # ( -- )  s( filename -- basename
+    dup$  directorydelimiter  scan$
+    dup positive if
+       begin
+          1 + negate left$
+          dup$  directorydelimiter scan$
+       dup 0 < until
+    endif
+    drop
+}
+
+sub extension$ {                                # ( -- ) s( filename -- extension )
+    basename$
+    dup$  '.' scan$
+    dup 0 < if
+       drop$ ""
+    else
+       begin
+           1 + negate left$
+           dup$  '.' scan$
+       dup 0 < until
+    endif
+    drop  }
+
+
+sub directory$ {                                # ( -- ) s( filename -- directory )
+    dup$ len$
+    dup$ basename$ len$ -
+    1 - 0 max left$  }
+
+
+
 # --- debugging ---
 
 sub println { print "\n" print }
