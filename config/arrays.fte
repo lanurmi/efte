@@ -1,0 +1,35 @@
+
+# --- arrays ---
+
+sub array {
+  here swap dup 1 + comma allot
+  does
+     >r
+     dup 0 < will fail
+     1 +  r>
+     dup2 @ < not will fail
+     + }
+
+sub array2 {
+  here swap lshift dup 1 + comma allot
+  does
+     >r
+     dup 0 < will fail
+     lshift 1 +  r>
+     dup2 @ < not will fail
+     + }
+
+# 3 elements per entry  (suitable for x, y, file to use with slotted bookmarks)
+sub array3 {
+  here swap 3 * dup 1 + comma allot
+  does
+     >r
+     dup 0 < will fail
+     3 * 1 +  r>
+     dup2 @ < not will fail
+     + }
+
+
+# set array size at instatntiation:    sub foo { array new }      { ... 5 foo ... }
+
+

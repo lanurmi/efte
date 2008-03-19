@@ -18,8 +18,8 @@
 
 # -- constants --
 sub false     {  0 }
-sub true      { -1 }                             # "true" represented as all bits sets
-sub cell      {  1 }                             # memory increments per integer
+sub true      { -1 }                            # "true" represented as all bits sets
+sub cell      {  1 }                            # memory increments per integer
 sub cell+     {  1 + }
 sub cell-     {  1 - }
 sub cells     { }
@@ -92,9 +92,6 @@ sub capitalize { dup lowercase 32 and - }
 sub undercast  { dup capital   32 and + }
 sub printable  { bl 127 between }
 
-
-
-
 sub cipher   {                                  # ( asc -- u -1 | 0 )  converts ascii to numeric value, and flag if legal cipher.
    capitalize '0' -                             #                      respects base, and reports only those chars valid which are
    dup 10 16 between or                         #                      legal in the resp. base
@@ -102,17 +99,36 @@ sub cipher   {                                  # ( asc -- u -1 | 0 )  converts 
    dup 0 base @ dec between
    qdup nip  }
 
-sub numeric   { cipher dup will nip }           # ( asc -- flag )  flag if legal cipher.
+sub numeric    { cipher dup will nip }              # ( asc -- flag )  flag if legal cipher.
 
 
-# -- cursor --
+
+
+# =============================================================================
+# -- cursor, file buffer --
+# =============================================================================
 sub cursorhome { movelinestart }
 sub cursorend  { movelineend }
+sub at         { 1 + movetoline  1 + movetocolumn } # ( x y -- )
+sub cursorcolumn { at? drop 1 + }                   # ( -- x )
+sub cursorrow    { at? nip  1 + }                   # ( -- y )
+
+sub emptybuffer {
+   movefilestart blockbegin
+   movefileend    blockend
+   ?blockkill
+}
+
+sub cls        { emptybuffer }                      # wipe current buffer
+
+sub linecount  {                                    # ( -- u ) number of lines in file
+   at? movefileend
+   cursorrow minrot
+   at }
+
+sub linelen    { curline$ dup$ len$ drop$ }         # ( -- len )
 
 
-
-# need:
-#  test block marked?
 
 
 # =============================================================================
@@ -133,6 +149,31 @@ sub spread    {                                 # ( x0 x1 x2 ... xn-1 a n -- )
    range swap do 
       i ! 
    1 -loop }
+
+
+
+# =============================================================================
+# -- i/o --
+# =============================================================================
+sub key        { winrefresh getchar }           # wait for key, place its ascii on stack
+sub read$      { curchar$ }                     # read char under cursor as string
+sub read       { curchar$ asc }                 # read char under cursor as asc
+
+sub emit       { typechar }
+sub cr     {
+    ?cursordown
+    failure will lineadd
+    cursorhome
+    ?killtolineend
+}
+
+sub type$      { dup$ len$ if dup$ insertstring endif drop$  }
+#TODO: insertstring bug when empty string. workaround here.
+#TODO: output words more clearly taking account of mode:
+#TODO:    insert insert$            always insert char or string
+#TODO:    overtype overtype$        always overtype char or string
+#TODO:    emit  type$               depends on overtype/insert mode
+
 
 
 # =============================================================================
@@ -176,31 +217,6 @@ sub cut$ {                                      # ( n -- )  s( $1 -- $2 $3 )  sp
 sub slice     { 1 cut$ asc }                    # ( -- asc ) cut first char off string and return as ascii
 sub splice    { char$ prepend$ }                # ( asc -- ) prepend char to string
 sub ascn      { dup$ 1 mid$ asc }               # ( n -- c ) get ascii of nth char in top string
-
-# -- i/o --
-sub key        { winrefresh getchar }           # wait for key, place its ascii on stack
-sub read$      { curchar$ }                     # read char under cursor as string
-sub read       { curchar$ asc }                 # read char under cursor as asc
-
-sub emit       { typechar }
-#sub type1      { count emit }
-#sub type       { times type1 drop }             # string outpu
-#TODO:  insertstring bug when empty string. workaround here.
-sub type$      { dup$ len$ if dup$ insertstring endif drop$  }
-#TODO: change insertstring to not behave funny when empty string is sent.
-#TODO: output words more clearly taking account of mode:
-#TODO:    insert insert$            always insert char or string
-#TODO:    overtype overtype$        always overtype char or string
-#TODO:    emit  type$               depends on overtype/insert mode
-
-# stateful linenew may autoindent - workaround here
-sub cr     {
-    ?cursordown
-    failure will lineadd
-    cursorhome
-    ?killtolineend
-}
-
 
 
 
@@ -398,20 +414,21 @@ sub fetch$    {                                 # ( a -- ) transfers the string 
    combine }
 
 
-sub comma$  {   # ( -- )     "comma" string to dp
+sub comma$  {                                   # ( -- )     "comma" string to dp
    dup$ len$
    1 + dup comma
    here swap allot
    move$ }
 
 
+sub var$ {                                      # string variable class
+    here dup
+    dup$ len$ inc
+    dup inc comma
+    allot }
 
 
-
-sub var$ { here dup dup$ len$ inc dup inc comma allot } # string var description.
-
-
-# --- debugging
+# --- debugging ---
 
 sub println { print "\n" print }
 sub pout    { 1 print }
@@ -442,14 +459,29 @@ sub padded  {                                   # ( n c -- )
 
 
 # ----- "app" level number output words -----
-# ( n -- ) signed number output with one trailing space
-sub .    { dup >r <hash bl hold  hashes r> sign hash> type$ }
+sub .    {                                      # ( n -- ) signed number output with one trailing space
+    dup >r
+    <hash
+        bl hold
+        hashes
+        r> sign
+    hash> type$
+}
 
-# ( n u -- ) space padded signed number
-sub .r { >r dup >r <hash hashes  r> sign  r> bl padded  hash> type$ }
+sub .r {                                        # ( n u -- ) space padded signed number
+    >r dup >r
+    <hash
+        hashes
+        r> sign
+        r> bl padded
+    hash> type$
+}
 
-# ( u n -- )  zero padded signed number, no trailing space
-sub .00     { <hash times hash hash> type$ }
+sub .00  {                                      # ( u n -- )  zero padded signed number, no trailing space
+    <hash
+        times hash
+    hash> type$
+}
 
 
 # ----- number conversion: integer to string, string to integer -----
@@ -459,485 +491,77 @@ sub number    { number? not will fail }
 
 
 # ----- date & time -----
-sub time      { seconds  60 /mod 60 /mod 24 mod }    # ( -- s m h )
-sub time$     { seconds 86400 mod                    # ( -- ) returns hh:mm:ss as string
-               base @ >r
-               <hash
-                  2 0 do                     # wanted to factor st like    :00 :00  but have no good legal name)
-                     decimal  hash
-                     6 base ! hash
-                     ':' hold
-                  loop
-                  decimal
-                  2:hash
-               hash>
-               r> base ! }
-sub .time   { time$ type$ }
-
-
-
-
-# --- file buffer navigation ---
-sub linelen    { curline$ dup$ len$ drop$ }         # ( -- len )
-sub at         { 1 + movetoline  1 + movetocolumn } # ( x y -- )
-
-sub cursorcolumn { at? drop 1 + }                   # ( -- x )
-sub cursorrow    { at? nip  1 + }                   # ( -- y )
-
-sub emptybuffer {
-   movefilestart blockbegin
-   movefileend    blockend
-   ?blockkill
+sub time      {                                 # ( -- s m h )
+    seconds
+    60 /mod
+    60 /mod
+    24 mod
 }
 
-sub cls        { emptybuffer }                      # wipe current buffer
+sub |00  {
+    decimal  hash
+    6 base ! hash
+    decimal ':' hold
+}
 
-sub linecount  {                                    # ( -- u ) number of lines in file
-   at? movefileend
-   cursorrow minrot
-   at }
+sub time$     {                                 # ( -- ) returns hh:mm:ss as string
+    seconds 86400 mod
+    base @ >r
+    <hash
+       |00 |00 2:hash
+    hash>
+    r> base !
+}
+
+sub .time   { time$ type$ }
+
+sub sleep  { winrefresh 1000 / ms }                 # ( n -- )   sleep for n seconds
 
 
+
+
+# --- blocks ---
+# need:
+#  test block marked?
 
 sub blockmove   { blockcut blockpaste }             # move block to cursor
 
-# sub sleep  { winrefresh ms }  # winrefresh doesn't do what i hoped it would
 
-
-
-# ---- user/app stacks ----
-
-# structure:   sp size *push *pop *item *items item0 item1 ...
-#   * indicate execution vectors: an address, containing an execution token.
-#   they can be seen as methods, invoked when a message demands their execution.
-
-
-sub pop1 {                              # ( a -- x )
-   dup @                                # read stack pointer
-   dup 7 < will fail                    # would point to stack meta data below stack items
-   1 - swap                             # decrement stack pointer
-   dup2 ! + @                           # store new stack pointer, add index to stack base, fetch item.
-}
-
-
-sub push1 {                             # ( x a -- )
-   dup @2                               # read pointer and size
-   over < will fail                     # protect against overflow
-   dup2 1 + swap !                      # increment stack pointer. store in meta data
-   + !                                  # calc item address and store item.
-}
-
-sub item1 {                             # ( n a -- x )
-   over 0 < will fail                   # reading below first item
-   tuck @ 7 - over < will fail          # reading above last item
-   6 + + @                              # read and return item
-}
-
-sub items1 { @ 6 - }
-
-
-
-# --- new stack class ---
-# called stack1 because of single cell items.
-# will need double and triple cell items stack, those will be called stack2 resp. stack3, and
-# push/pop 2 resp 3 items. for bookmarks - global bookmarks want x, y and file as one single logical item.
-# for now single item only, to test the stack creation and action messaging logic.
-
-sub stack1 {                            # create: ( size -- )    run:  ( -- a )
-    >r here                             # keep stack size, obtain stack base address (metadata address)
-    6 comma                             # initial stack pointer (behind meta data)
-    r@ 5 + comma                        # stack size for overflow test: metadata+items-1
-    "push1" tick comma                  # execution vector to stack push, "method" like
-    "pop1" tick comma                   # execution vector to stack pop, "method" like
-    "item1" tick comma                  # execution vector to stack peek, "method" like.
-    "items1" tick comma                 # execution vector to stack peek, "method" like.
-    r> allot }                          # allocate space for items
-
-
-
-
-
-
-# --- stacks with dual items ---
-# structure:   sp size *push *pop *item *items item0a item0b item1a item1b ...
-
-
-sub pop2 {                              # ( a -- x )
-   dup @                                # read stack pointer
-   dup 7 < will fail                     # would point to stack meta data below stack items
-   2 - swap                             # decrement stack pointer
-   dup2 ! + @2                          # store new stack pointer, add index to stack base, fetch item.
-}
-
-
-sub push2 {                             # ( x a -- )
-   dup @2                               # read pointer and size
-   over < will fail                      # protect against overflow
-   dup2 2 + swap !                      # increment stack pointer. store in meta data
-   + !2                                 # calc item address and store item.
-}
-
-sub item2 {                             # ( n a -- x )
-   over 0 < will fail                    # reading below first item
-   >r  dup +                            # get a out of the way and index>offset
-   r@ @ 7 - over < will fail             # reading above last item
-   6 +  r> + @2                         # read and return item
-}
-
-sub items2 { @ 6 - rshift }
-
-sub stack2 {                            # create: ( size -- )    run:  ( -- a )
-    lshift >r here                      # calc stack size, obtain stack base address (metadata address)
-    6 comma                             # initial stack pointer (behind meta data)
-    r@ 5 + comma                        # stack size for overflow test: metadata+items-1
-    "push2" tick comma                  # execution vector to stack push, "method" like
-    "pop2" tick comma                   # execution vector to stack pop, "method" like
-    "item2" tick comma                  # execution vector to stack peek, "method" like.
-    "items2" tick comma                 # execution vector to stack peek, "method" like.
-    r> allot }                          # allocate space for items
-
-
-
-
-# --- stacks with triple items ---
-# structure:   sp size *push *pop *item *items item0a item0b item0c item1a item1b item1c ...
-
-sub @3 { 3 scrape }                     #  ( a -- x1 x2 x3 )
-sub !3 { 3 spread }                     # ( x1 x2 x3 a -- )
-
-sub pop3 {                              # ( a -- x )
-   dup @                                # read stack pointer
-   dup 7 < will fail                     # would point to stack meta data below stack items
-   3 - swap                             # decrement stack pointer
-   dup2 ! + @3                          # store new stack pointer, add index to stack base, fetch item.
-}
-
-
-sub push3 {                             # ( x a -- )
-   dup @2                               # read pointer and size
-   over < will fail                      # protect against overflow
-   dup2 3 + swap !                      # increment stack pointer. store in meta data
-   + !3                                 # calc item address and store item.
-}
-
-sub item3 {                             # ( n a -- x )
-   over 0 < will fail                    # reading below first item
-   >r  3 *                              # get a out of the way and index>offset
-   r@ @ 7 - over < will fail             # reading above last item
-   6 +  r> + @3                         # read and return item
-}
-
-sub items3 { @ 6 - 3 / }
-
-sub stack3 {                            # create: ( size -- )    run:  ( -- a )
-    3 * >r here                         # keep stack size, obtain stack base address (metadata address)
-    6 comma                             # initial stack pointer (behind meta data)
-    r@ 5 + comma                        # stack size for overflow test: metadata+items-1
-    "push3" tick comma                  # execution vector to stack push, "method" like
-    "pop3" tick comma                   # execution vector to stack pop, "method" like
-    "item3" tick comma                  # execution vector to stack peek, "method" like.
-    "items3" tick comma                 # execution vector to stack peek, "method" like.
-    r> allot }                          # allocate space for items
-
-
-
-
-
-
-# --- stack type independent ---
-sub push  { dup 2 + @ execute }         # "message" executes push vector from stack meta data
-sub pop   { dup 3 + @ execute }         # "message" executes pop  vector from stack meta data
-sub item  { dup 4 + @ execute }         # returns an indexed stack item
-sub items { dup 5 + @ execute }         # returns number of items on stack.
-
-
-
-# example of use:
-# define a new stack:
-#      sub foo  { stack1 new }
-# execute at init time, to set stack size and allocate stack space:
-#      sub InitWhatever   { ... (other init)    8 foo     ... (more init)  }
-# push to stack:
-#      n foo push
-# pop from stack:
-#      foo pop
-# stack depth:
-#      foo items
-# stack peek:
-#      n foo item
-
-
-# --- arrays ---
-
-sub array {
-  here swap dup 1 + comma allot
-  does
-     >r
-     dup 0 < will fail
-     1 +  r>
-     dup2 @ < not will fail
-     + }
-
-sub array2 {
-  here swap lshift dup 1 + comma allot
-  does
-     >r
-     dup 0 < will fail
-     lshift 1 +  r>
-     dup2 @ < not will fail
-     + }
-
-# 3 elements per entry  (suitable for x, y, file to use with slotted bookmarks)
-sub array3 {
-  here swap 3 * dup 1 + comma allot
-  does
-     >r
-     dup 0 < will fail
-     3 * 1 +  r>
-     dup2 @ < not will fail
-     + }
-
-
-# set array size at instatntiation:    sub foo { array new }      { ... 5 foo ... }
-
-
-# ----------------------------------- file name stack --------------------------------------
-# random access stack of filenames. adding returns token. token converts to filename
-
-
-sub FileStack { stack1 new }         # single items (pointers to file names)
-
-
-sub AddFile {                        # ( -- n )    file name passed as string. add to filestack
-   filestack items
-   here comma$
-   filestack push }
-
-
-sub FileName {                       # ( token -- )    put filename on string stack
-   fileStack item fetch$  }
-
-
-sub FindFile {                       # ( -- -1 | token )  file name as string
-   -1
-   filestack items 0 do
-      dup$  i filename equals$
-      if
-         drop i
-         leave
-      endif
-   loop drop$ }
-
-
-sub File  {                          # ( -- n )  given filename as string, adds it to filestack if not already in it. returns file token
-   dup$ FindFile
-   dup negative if
-      drop
-      dup$ AddFile
-   endif
-   drop$ }
-
-
-# example of use:
-# obtain token for filename:   (creates new filestack entry if needed, i.e. if new file)
-#       filename$ file
-# obtain filename for token:
-#       filename
-
-
-# ----------------------------------- bookmarks --------------------------------------
-# TODO: local bookmarks: only pop if filename$ matches bookmark creator.
-# TODO: local bookmarks: 1 stack per file? use an aggregated stack?   aggregated may call for roll.
-#       advantage of aggregated: identical push operation for local and global. one stack for all.
-#       only difference is pop bookmark: local restore searches for own file, global uses top.
-
-
-
-# ----------- stacked bookmarks. push to save, pop to restore -----------
-
-# global bookmarks: bookmark stack. location 0  is stack pointer. 1 is max size.
-sub BookMarkStack { stack3 new }     # stack3 = 3 items per stack item.  cursor x, y and file handle
-
-sub PushBookmark {
-    at? filename$ file
-    bookmarkstack push
-}
-
-sub PopBookmark {
-    bookmarkstack pop
-    filename fileopen at
-}
-
-# ----------- slotted bookmarks. store to save, fetch to restore. restore is non-destructive ------------
-
-sub BookmarkSlot  { array3 new }
-
-sub SaveBookmark  {                 # ( n -- )
-    >r at? filename$ file
-    r> BookmarkSlot !3
-}
-
-sub FetchBookmark  {                # ( n -- )
-    BookmarkSlot @3
-    dup negative will fail
-    filename fileopen at
-}
-
-# ----------- initialize both type of bookmarks ------------
-
-sub InitBookmarks {
-   256 FileStack
-   512 BookmarkStack    # for push/pop bookmarks
-# for slotted bookmarks. instantiate and initialize to "unused" (so that fetch attempt will fail)
-# need more bookmarks? increase 10 to the number you need.
-   10 dup BookmarkSlot 0 do -1 -1 -1  i Bookmarkslot !3 loop
- }
-
-
-
-# -------- attempting to save configuration - writing to other files is more difficult than expected --------
-
-sub SaveFilename  { '"' emit  filename type$ '"' emit " file " type$ space }
-sub SaveBookmarks {
-   "sub RestoreBookmarks {"  type$ cr
-   10 0 do
-      i Bookmarkslot @3
-      dup positive if
-         4 spaces
-         rot . swap . SaveFilename
-         i . "bookmarkslot !3" type$  cr
-      else
-         drop2 drop
-      endif
-   loop
-   Bookmarkstack items 0 do
-      i bookmarkstack item
-      4 spaces
-      rot . swap . SaveFilename
-      "bookmarkstack push" type$ cr
-   loop
-   "}" type$ cr
-
-}
-
-
-sub SaveDesktop  {
-   "desktop.fte" ?fileopen
-   filename$
-   begin
-      ?filenext
-      dup$ filename$ equals$
-   not while
-#      filename$ over$ diag$ To
-   repeat
-   drop$
-}
-
-sub To {                                                      # str1 filen
-    ?fileopen
-#    type$
-#    filesave
-    fileclose
-  drop2$
-}
-
-sub In {                                                      # ( a -- )  s( filenm )
-    fileopen
-    execute
-    filesave
-    fileclose
-}
-
-sub xxx {
-    10 0 do
-       cr i .
-       filename$
-       "test" "foobar" to
-       ?fileopen
-    loop
-}
-
-
-
-
-# --- context variables ---
-# contrary to vars, which are global, contextvars values are local to their respective context,
-# while their symbols are global. you can see them as global vars which can contain many
-# values. which value is visible, depends on the context.
-# a context can be saved and restored by reading from and writing to var activecontext. named
-# contexts can be created by instantiation of class context.
-
-
-sub contextsize     { 64 }
-sub activecontext   { var new }
-sub contextvars     { var new }
-sub contextvar      { 1 contextvars dup @ >r +! r> does activecontext @ + }
-sub context         { here contextsize allot does activecontext ! }
-
-# -- yes, that's all. :)
-
-# example of use:
-
-sub context1        { context new }         # create a new named context
-sub context2        { context new }         # and another.   executing these activates the resp contexts.
-
-sub foo             { contextvar new }      # a context variable
-sub bar             { contextvar new }      # and another
-
-# unluckily, we need to initialize the whole lot - can't do that at compile time yet.
-# "initializing" does not just mean "adding a defined value" - it means "instantiate" including mem allocation
-sub InitContext {
-#   0 activecontext !       # init var, containing context base address. not needed: activating a context instantiates activecontext.
-   0 contextvars !         # init var, containig next context var offset
-   context1                # init instance of context
-   context2                # init instance of context
-   context1                # execute instance, making this context active
-   foo                     # init context var
-   bar                     # init context var
-}
-
-# sub contextdemo  {
-#   context1      100 foo !   200 bar !
-#   context2      11  foo !   22  bar !
-#   context1      foo @ .  bar @ . cr
-#   context2      foo @ .  bar @ . cr
-# }
-
-# targetted to support the (non-existing) multitasker, allowing tasks to set
-# context-local contexts of misc variables. a good candidate for a context
-# variable would be the current global var   base (number i/o radix) so that
-# each task can have base in its local context.
-
-# may be of use for file type modes, with an own set of variable settings for each.
-
-
-# --- data type flip flop ---
-# flip flop instances instances contain a state, which is toggled and
-# returned upon execution
-sub flipflop { here 0 comma does dup toggle @ }
-
-# example:
-# sub yesno { flipflop new }
-# sub makeupyourmind { yesno if "yes" else "no" endif  type$ }
-# as usual, instances must be initialized:
-#    { ... yesno .... }
-
-
+                                                    # winrefresh doesn't do what i hoped it would
 
 # --- migrated toggles ---
 sub ToggleTrim   { autotrim toggle }
 sub ToggleInsert { insert toggle }
 
 
+
+
+
+# --- includes ---
+
+%if(!BOOKMARKS)
+include "bookmarks.fte";
+%endif
+
+
 # --- initialisation ---
-sub attempt   { tick execute }                      # execute macro, name given as string, if existing
+sub attempt   { tick qdup will execute }            # execute macro, name given as string, if existing
 sub OnBoot    {
    decimal
    insert on
-   InitBookmarks                                    # don't need to attempt - init it right above.
-   InitContext
-   "InitMySettings"  attempt
-   "InitSelftest"    attempt
-   "InitInterpreter" attempt
-   }
 
+%if(BOOKMARKS)
+    InitBookmarks
+%endif
+
+   "InitMySettings"   attempt
+   "InitLocalScripts" attempt
+
+%if(SELFTEST)
+    "InitSelftest"    attempt                       # (hasn't been loaded yet)
+%endif
+
+   "InitInterpreter"  attempt
+
+#  "OnUserBoot"       attempt                       # can replace the provided eFTE hook
+   }

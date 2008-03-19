@@ -1,0 +1,51 @@
+%define(FILENAMESTACK)
+%if(!STACKS)
+include "stacks.fte";
+%endif
+
+# ----------------------------------- file name stack --------------------------------------
+# random access stack of filenames. adding returns token. token converts to filename
+
+
+sub FileStack { stack1 new }         # single items (pointers to file names)
+
+
+sub AddFile {                        # ( -- n )    file name passed as string. add to filestack
+   filestack items
+   here comma$
+   filestack push }
+
+
+sub FileName {                       # ( token -- )    put filename on string stack
+   fileStack item fetch$  }
+
+
+sub FindFile {                       # ( -- -1 | token )  file name as string
+   -1
+   filestack items 0 do
+      dup$  i filename equals$
+      if
+         drop i
+         leave
+      endif
+   loop drop$ }
+
+
+sub File  {                          # ( -- n )  given filename as string, adds it to filestack if not already in it. returns file token
+   dup$ FindFile
+   dup negative if
+      drop
+      dup$ AddFile
+   endif
+   drop$ }
+
+
+# example of use:
+# obtain token for filename:   (creates new filestack entry if needed, i.e. if new file)
+#       filename$ file
+# obtain filename for token:
+#       filename
+
+
+
+
