@@ -1185,7 +1185,7 @@ int EGUI::FrameNext(GxView * View) {
         res = ExecMacro(View, "OnFrameNext");
     }
 
-    // SetBranchCondition(res); // why return fail (res=0) almost always?
+    // SetBranchCondition(res);
     return res;
 }
 
@@ -1198,7 +1198,7 @@ int EGUI::FramePrev(GxView *View) {
         res = ExecMacro(View, "OnFramePrev");
     }
 
-    // SetBranchCondition(res);   // why return fail (res=0) almost always?
+    // SetBranchCondition(res);
     return res;
 }
 
@@ -1492,7 +1492,7 @@ int EGUI::Start(int &argc, char **argv) {
     }
 
     ActiveView->ExecMacro("OnBoot");
-    ActiveView->ExecMacro("OnUserBoot");
+    //ActiveView->ExecMacro("OnUserBoot");  // OnBoot can provide this
     if (StartupMacroCommand != NULL)
         ActiveView->ExecMacro(StartupMacroCommand);
 

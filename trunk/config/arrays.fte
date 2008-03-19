@@ -1,3 +1,6 @@
+%if(!ARRAYS)
+%define(ARRAYS)
+
 
 # --- arrays ---
 
@@ -29,7 +32,6 @@ sub array3 {
      dup2 @ < not will fail
      + }
 
+# set array size at instantiation:    sub foo { array new }      { ... 5 foo ... }
 
-# set array size at instatntiation:    sub foo { array new }      { ... 5 foo ... }
-
-
+%endif

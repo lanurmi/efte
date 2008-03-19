@@ -1,7 +1,7 @@
+%if(!FILENAMESTACK)
 %define(FILENAMESTACK)
-%if(!STACKS)
+
 include "stacks.fte";
-%endif
 
 # ----------------------------------- file name stack --------------------------------------
 # random access stack of filenames. adding returns token. token converts to filename
@@ -48,4 +48,8 @@ sub File  {                          # ( -- n )  given filename as string, adds 
 
 
 
+sub InitFilenamestack  {
+   256 FileStack
+}
 
+%endif

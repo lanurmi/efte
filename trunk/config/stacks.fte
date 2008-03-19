@@ -1,4 +1,6 @@
+%if(!STACKS)
 %define(STACKS)
+
 
 # ---- user/app stacks ----
 
@@ -162,3 +164,4 @@ sub items { dup 5 + @ execute }         # returns number of items on stack.
 #      n foo item
 
 
+%endif
