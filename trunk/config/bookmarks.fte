@@ -1,0 +1,69 @@
+
+%define(BOOKMARKS)
+
+%if(!FILENAMESTACK)
+include "filenamestack.fte";
+%endif
+
+%if(!ARRAYS)
+include "arrays.fte";
+%endif
+
+
+# ----------------------------------- bookmarks --------------------------------------
+# TODO: local bookmarks: only pop if filename$ matches bookmark creator.
+# TODO: local bookmarks: 1 stack per file? use an aggregated stack?   aggregated may call for roll.
+#       advantage of aggregated: identical push operation for local and global. one stack for all.
+#       only difference is pop bookmark: local restore searches for own file, global uses top.
+
+
+
+
+# ----------- bookmarks, commone -----------
+# factored because want to add some scrolling logic
+sub to {            # ( x y file -- )
+    filename fileopen
+    at
+}
+
+# ----------- stacked bookmarks. push to save, pop to restore -----------
+
+# global bookmarks: bookmark stack. location 0  is stack pointer. 1 is max size.
+sub BookMarkStack { stack3 new }     # stack3 = 3 items per stack item.  cursor x, y and file handle
+
+sub PushBookmark {                              # ( -- )
+    at? filename$ file
+    bookmarkstack push
+}
+
+sub PopBookmark {                               # ( -- )
+    bookmarkstack pop to
+}
+
+# ----------- slotted bookmarks. store to save, fetch to restore. restore is non-destructive ------------
+
+sub BookmarkSlot  { array3 new }
+
+sub SaveBookmark  {                             # ( n -- )
+    >r at? filename$ file
+    r> BookmarkSlot !3
+}
+
+sub FetchBookmark  {                            # ( n -- )
+    BookmarkSlot @3
+    dup negative will fail
+    to
+}
+
+# ----------- initialize both type of bookmarks ------------
+
+sub InitBookmarks {                             # ( -- )
+   256 FileStack
+   512 BookmarkStack    # for push/pop bookmarks
+# for slotted bookmarks. instantiate and initialize to "unused" (so that fetch attempt will fail)
+# need more bookmarks? increase 10 to the number you need.
+   10 dup BookmarkSlot 0 do -1 -1 -1  i Bookmarkslot !3 loop
+ }
+
+
+
