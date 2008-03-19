@@ -1,14 +1,9 @@
-
+%if(!BOOKMARKS)
 %define(BOOKMARKS)
 
-%if(!FILENAMESTACK)
+
 include "filenamestack.fte";
-%endif
-
-%if(!ARRAYS)
 include "arrays.fte";
-%endif
-
 
 # ----------------------------------- bookmarks --------------------------------------
 # TODO: local bookmarks: only pop if filename$ matches bookmark creator.
@@ -58,7 +53,7 @@ sub FetchBookmark  {                            # ( n -- )
 # ----------- initialize both type of bookmarks ------------
 
 sub InitBookmarks {                             # ( -- )
-   256 FileStack
+   InitFilenamestack
    512 BookmarkStack    # for push/pop bookmarks
 # for slotted bookmarks. instantiate and initialize to "unused" (so that fetch attempt will fail)
 # need more bookmarks? increase 10 to the number you need.
@@ -66,4 +61,4 @@ sub InitBookmarks {                             # ( -- )
  }
 
 
-
+%endif

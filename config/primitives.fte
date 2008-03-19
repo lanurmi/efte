@@ -1,4 +1,3 @@
-# primitives.fte
 #
 # Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
 #
@@ -413,6 +412,8 @@ sub fetch$    {                                 # ( a -- ) transfers the string 
    count
    combine }
 
+sub @$ { fetch$ }
+sub !$ { store$ }
 
 sub comma$  {                                   # ( -- )     "comma" string to dp
    dup$ len$
@@ -504,8 +505,8 @@ sub |00  {
     decimal ':' hold
 }
 
-sub time$     {                                 # ( -- ) returns hh:mm:ss as string
-    seconds 86400 mod
+sub converttime$ {
+    86400 mod
     base @ >r
     <hash
        |00 |00 2:hash
@@ -513,9 +514,9 @@ sub time$     {                                 # ( -- ) returns hh:mm:ss as str
     r> base !
 }
 
+sub time$   { seconds converttime$ }                # ( -- ) returns hh:mm:ss as string
 sub .time   { time$ type$ }
-
-sub sleep  { winrefresh 1000 / ms }                 # ( n -- )   sleep for n seconds
+sub sleep   { winrefresh 1000 / ms }                 # ( n -- )   sleep for n seconds
 
 
 
@@ -539,29 +540,29 @@ sub ToggleInsert { insert toggle }
 
 # --- includes ---
 
-%if(!BOOKMARKS)
 include "bookmarks.fte";
-%endif
 
 
 # --- initialisation ---
+sub AlreadyInitialized { var new }                  # helper for workaround for OnLoad sequence bug
+                                                    # to protect against multiple execution.
 sub attempt   { tick qdup will execute }            # execute macro, name given as string, if existing
 sub OnBoot    {
+   AlreadyInitialized @ qdup if                     # rube goldberg scheme for swapping OnLoad and OnBoot sequence
+       dup true xor will execute                    # the OnLoad handler must support this too:
+       drop exit                                    # 0: never inited. -1: init complete. x: exec token of OnLoad init code
+   endif
+   AlreadyInitialized on
+
    decimal
    insert on
+    "InitBookmarks"    attempt
 
-%if(BOOKMARKS)
-    InitBookmarks
-%endif
+    # move to where they are included.
+    "InitMymain"       attempt
+    "InitSelftest"     attempt                      # (hasn't been loaded yet)
+    "InitInterpreter"  attempt
 
-   "InitMySettings"   attempt
-   "InitLocalScripts" attempt
+    "OnUserBoot"       attempt                      # replaces the eFTE internal hook
 
-%if(SELFTEST)
-    "InitSelftest"    attempt                       # (hasn't been loaded yet)
-%endif
-
-   "InitInterpreter"  attempt
-
-#  "OnUserBoot"       attempt                       # can replace the provided eFTE hook
    }

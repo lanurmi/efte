@@ -1,0 +1,26 @@
+# skip$ scan$ split$
+{ "11111111233333333"  '1' skip$  8 PASS }
+{ "444455"             '1' skip$  0 PASS }
+{ "6666666"            '6' skip$ -1 PASS }
+
+{ "11111111233333333"  '1' scan$  0 PASS }
+{ "11111111233333333"  '2' scan$  8 PASS }
+{ "444455"             '1' scan$ -1 PASS }
+{ "6666666"            '6' scan$  0 PASS }
+
+# this version of split$ does not remove delimiter from nos
+{ "aaaa bbb" bl split$   "aaaa" equals$  " bbb" equals$ and true PASS }
+{ "ccccddd " bl split$   "ccccddd" equals$  " " equals$ and true PASS }
+{ " eee fff" bl split$   "" equals$ " eee fff" equals$ and true PASS }
+
+{ "     " bl skip$     -1 PASS }
+{ "     " bl scan$      0 PASS }
+{ "     " bl split$   "" equals$  "     " equals$ and true PASS }
+
+{  ""   bl skip$    -1 PASS }
+{  ""   bl scan$    -1 PASS }
+{  ""   bl split$   "" equals$ "" equals$  and true PASS }
+
+
+{ TEST1 TEST2 TEST3 TEST4 TEST5 TEST6 TEST7 TEST8 TEST9 TEST10
+ TEST11 TEST12 TEST13  TEST14 TEST15 TEST16 }
