@@ -66,7 +66,7 @@ typedef enum {
 
     ExRandom,
     /// generate random number.
-    ExSeconds,
+    ExNow,
     /// seconds since epoche. for time/date calculation
     ExMilliseconds,
     /// time stamp, returning milliseconds
