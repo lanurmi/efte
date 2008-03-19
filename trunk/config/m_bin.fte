@@ -19,7 +19,7 @@ mode BIN: PLAIN { # Binary Mode
     BackSpKillTab       = 1;
     DeleteKillTab       = 1;
     BackSpUnindents     = 0;
-#    Trim                = 0;
+    Trim                = 0;
     ShowMarkers         = 1;
     WordWrap            = 0;
     MatchCase           = 1;
