@@ -122,7 +122,7 @@ EGUI::~EGUI() {
 
 struct timeval tv;
 
-int Seconds()  {         // wraps every 136y 144d 6h
+int Now()  {         // wraps every 136y 144d 6h
     gettimeofday(&tv, NULL);
     ParamStack.push(tv.tv_sec);
     return 1;
@@ -220,8 +220,8 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
         return Div();
     case ExRandom:
         return Random();
-    case ExSeconds:
-        return Seconds();
+    case ExNow:
+        return Now();
     case ExMilliseconds:
         return Milliseconds();
     case ExMicroseconds:

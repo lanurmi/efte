@@ -7,7 +7,8 @@
 # some tools and enhancements for macros.
 # this are currently used for testing and toying
 # with macros, as result many of the current macros
-# assume these to be present, as factored out functionality.
+# assume these to be present, using these factored out
+# functionality, akin to a run time library.
 #
 
 # can't use this chars in names (yet):   = , # :
@@ -213,7 +214,7 @@ sub cut$ {                                      # ( n -- )  s( $1 -- $2 $3 )  sp
 }
 
 
-sub slice     { 1 cut$ asc }                    # ( -- asc ) cut first char off string and return as ascii
+
 sub splice    { char$ prepend$ }                # ( asc -- ) prepend char to string
 sub ascn      { dup$ 1 mid$ asc }               # ( n -- c ) get ascii of nth char in top string
 
@@ -237,6 +238,9 @@ sub right$    {                                 # ( n -- )
   endif
   mid$ }
 
+# second solution may be faster. TODO: test
+#sub slice     { 1 cut$ asc }                    # ( -- asc ) cut first char off string and return as ascii
+sub slice     { 0 ascn -1 left$ }               # ( -- asc ) cut first char off string and return as ascii
 
 
 
@@ -291,12 +295,11 @@ sub embed$ {                                    # ( asc n -- ) store char at pos
 }
 
 sub capitalize$ {                               # ( -- )  capitalize all chars of top string
-   dup$ len$ 0 do                               # loop though all chars:
-      i ascn dup lowercase if
-         capitalize
-         dup i embed$                           #   replace char in string
-      endif drop
-   loop }
+   "" over$ len$ 0 do                           # loop though all source string chars:
+      swap$ i ascn                              # read next char
+      dup lowercase will capitalize             # convert if necessary
+      swap$ char$ append$                       # append to result string
+   loop nip$  }                                 # discard source string
 
 
 sub repeat$ {                                   # ( u c -- ) create a string of u times char
@@ -430,32 +433,34 @@ sub var$ {                                      # string variable class
 
 
 # --- file name decomposition ---
-# could factor out the searched.
+# could factor out the searches.
+
+
+sub removeincllastdelimiter {       # ( c idx -- )
+    begin
+       1 + negate left$
+       dup$  dup scan$
+    dup 0 < until
+    drop2  }
+
 
 sub directorydelimiter  { '/' }
 sub basename$ {                                 # ( -- )  s( filename -- basename
-    dup$  directorydelimiter  scan$
-    dup positive if
-       begin
-          1 + negate left$
-          dup$  directorydelimiter scan$
-       dup 0 < until
-    endif
-    drop
+    dup$ directorydelimiter
+    dup scan$
+    dup positive will removeincllastdelimiter
 }
+
 
 sub extension$ {                                # ( -- ) s( filename -- extension )
     basename$
-    dup$  '.' scan$
+    dup$  '.' dup scan$
     dup 0 < if
        drop$ ""
-    else
-       begin
-           1 + negate left$
-           dup$  '.' scan$
-       dup 0 < until
+       drop2 exit
     endif
-    drop  }
+    removeincllastdelimiter
+ }
 
 
 sub directory$ {                                # ( -- ) s( filename -- directory )
@@ -528,8 +533,9 @@ sub number    { number? not will fail }
 
 
 # ----- date & time -----
+
 sub time      {                                 # ( -- s m h )
-    seconds
+    now
     60 /mod
     60 /mod
     24 mod
@@ -541,7 +547,7 @@ sub |00  {
     decimal ':' hold
 }
 
-sub converttime$ {
+sub time$ {                                     # ( epoch -- )
     86400 mod
     base @ >r
     <hash
@@ -550,9 +556,8 @@ sub converttime$ {
     r> base !
 }
 
-sub time$   { seconds converttime$ }                # ( -- ) returns hh:mm:ss as string
-sub .time   { time$ type$ }
-sub sleep   { winrefresh 1000 / ms }                 # ( n -- )   sleep for n seconds
+sub now$    { now time$ }                       # ( -- ) returns hh:mm:ss as string   preferred name
+sub sleep   { winrefresh 1000 / ms }            # ( n -- )   sleep for n seconds
 
 
 
@@ -564,7 +569,6 @@ sub sleep   { winrefresh 1000 / ms }                 # ( n -- )   sleep for n se
 sub blockmove   { blockcut blockpaste }             # move block to cursor
 
 
-                                                    # winrefresh doesn't do what i hoped it would
 
 # --- migrated toggles ---
 sub ToggleTrim   { autotrim toggle }

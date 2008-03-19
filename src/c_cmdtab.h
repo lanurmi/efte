@@ -43,7 +43,7 @@ const struct {
     { ExMul, "*" },
     { ExDiv, "/" },
     TAB(Random),
-    TAB(Seconds),
+    TAB(Now),
     TAB(Milliseconds),
     TAB(Microseconds),
     TAB(Ms),
