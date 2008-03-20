@@ -101,7 +101,7 @@ sub cipher   {                                  # ( asc -- u -1 | 0 )  converts 
    dup 0 base @ dec between
    qdup nip  }
 
-sub numeric    { cipher dup will nip }              # ( asc -- flag )  flag if legal cipher.
+sub numeric    { cipher dup will nip }          # ( asc -- flag )  flag if legal cipher.
 
 
 
@@ -121,14 +121,14 @@ sub emptybuffer {
    ?blockkill
 }
 
-sub cls        { emptybuffer }                      # wipe current buffer
+sub cls        { emptybuffer }                  # wipe current buffer
 
-sub linecount  {                                    # ( -- u ) number of lines in file
+sub linecount  {                                # ( -- u ) number of lines in file
    at? movefileend
    cursorrow minrot
    at }
 
-sub linelen    { curline$ dup$ len$ drop$ }         # ( -- len )
+sub linelen    { curline$ dup$ len$ drop$ }     # ( -- len )
 
 
 
@@ -561,23 +561,23 @@ sub time$ {                                     # ( epoch -- )
 
 # convert unix epoch to julian, then julian to lilian date
 sub date {                                      # ( epoch -- y m d )
-   86400 /                           
-   2472632 +                         # julianize
-   146097 /mod >r                    # g = j div 146097
-                                     # dg = j mod 146097
-   dup 36524 / 1 + 3 4 */            # c = (dg div 36524 + 1) * 3 div 4
-   dup >r 36524 * -                  # dc = dg - c * 36524
-   1461 /mod                         # b = dc div 1461
-                                     # db = dc mod 1461
-   >r dup 365 / 1 + 3 4 */           # a = (db div 365 + 1) * 3 div 4
-   dup >r 365 * -                    # da = db - a * 365
-   dup 5 * 308 + 153 / 2 -           # m = (da * 5 + 308) div 153 - 2
-   dup >r 4 + 153 5 */ - 122 +       # d = da - (m + 4) * 153 div 5 + 122
-   r> dup 2 + 12 / 4800 +            # yt = 4800 + (m + 2) div 12
-   r> r> 4 * + r> 100 * + r> 400 * + # y = g * 400 + c * 100 + b * 4 + a
-   swap -                            # Y = y - yt
-   swap 2 + 12 mod 1 +               # M = (m + 2) mod 12 + 1
-   rot 1 +                           # d + 1
+   86400 /                          # secs>days
+   2472632 +                        # julianize
+   146097 /mod >r                               # g = j div 146097
+                                    # lilianize # dg = j mod 146097
+   dup 36524 / 1 + 3 4 */                       # c = (dg div 36524 + 1) * 3 div 4
+   dup >r 36524 * -                             # dc = dg - c * 36524
+   1461 /mod                                    # b = dc div 1461
+                                                # db = dc mod 1461
+   >r dup 365 / 1 + 3 4 */                      # a = (db div 365 + 1) * 3 div 4
+   dup >r 365 * -                               # da = db - a * 365
+   dup 5 * 308 + 153 /                          # m = (da * 5 + 308) div 153 - 2
+   dup >r 2 + 153 5 */ - 123 +                  # d = da - (m + 4) * 153 div 5 + 122
+   r> dup     12 / 4800 +                       # yt = 4800 + (m + 2) div 12
+   r> r> 4 * + r> 100 * + r> 400 * +            # y = g * 400 + c * 100 + b * 4 + a
+   swap -                                       # Y = y - yt
+   swap     12 mod 1 +                          # M = (m + 2) mod 12 + 1
+   rot                                          # d + 1
 }
 
 sub yyyy-mm-dd {                                # ( epoch -- )  s( -- date$ )
@@ -626,7 +626,7 @@ sub sleep   { winrefresh 1000 / ms }            # ( n -- )   sleep for n seconds
 # need:
 #  test block marked?
 
-sub blockmove   { blockcut blockpaste }             # move block to cursor
+sub blockmove   { blockcut blockpaste }         # move block to cursor
 
 
 
@@ -644,13 +644,13 @@ include "bookmarks.fte";
 
 
 # --- initialisation ---
-sub AlreadyInitialized { var new }                  # helper for workaround for OnLoad sequence bug
-                                                    # to protect against multiple execution.
-sub attempt   { tick qdup will execute }            # execute macro, name given as string, if existing
+sub AlreadyInitialized { var new }              # helper for workaround for OnLoad sequence bug
+                                                # to protect against multiple execution.
+sub attempt   { tick qdup will execute }        # execute macro, name given as string, if existing
 sub OnBoot    {
-   AlreadyInitialized @ qdup if                     # rube goldberg scheme for swapping OnLoad and OnBoot sequence
-       dup true xor will execute                    # the OnLoad handler must support this too:
-       drop exit                                    # 0: never inited. -1: init complete. x: exec token of OnLoad init code
+   AlreadyInitialized @ qdup if                 # rube goldberg scheme for swapping OnLoad and OnBoot sequence
+       dup true xor will execute                # the OnLoad handler must support this too:
+       drop exit                                # 0: never inited. -1: init complete. x: exec token of OnLoad init code
    endif
    AlreadyInitialized on
 
@@ -659,12 +659,8 @@ sub OnBoot    {
    autotrim on
 
     "InitBookmarks"    attempt
-
-    # move to where they are included.
+    "InitMain"         attempt
     "InitMymain"       attempt
-    "InitSelftest"     attempt                      # (hasn't been loaded yet)
-    "InitInterpreter"  attempt
-
-    "OnUserBoot"       attempt                      # replaces the eFTE internal hook
+    "OnUserBoot"       attempt                  # replaces the eFTE internal hook
 
    }
