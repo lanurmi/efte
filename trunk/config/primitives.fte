@@ -537,7 +537,20 @@ sub number    { number? not will fail }
 
 # ----- date & time -----
 
-sub time      {                                 # ( -- s m h )
+#   now     (  -- epoch )
+
+#   date     ( epoch -- y m d )
+#   time     ( epoch -- s m h )
+#   dow      ( epoch -- 0..6 )
+#
+#   date$    ( epoch -- )  s( -- date$ )
+#   time$    ( epoch -- )  s( -- time$ )
+#   dow3$    ( epoch -- )  s( -- dow$ )    abbreviated names
+#   dow$     ( epoch -- )  s( -- dow$ )    full names
+#
+
+#
+sub time      {                                 # ( epoch -- s m h )
     60 /mod
     60 /mod
     24 mod
@@ -580,6 +593,32 @@ sub date {                                      # ( epoch -- y m d )
    rot                                          # d + 1
 }
 
+
+sub dow     { 86400 / 4 + 7 mod }               # ( epoch -- dow )
+
+sub dow3$ {                                     # ( 0..6 -- )  s( -- $dow )
+    "SunMonTueWedThuFriSat"
+    dow 3 * 3 mid$
+}
+
+
+sub dow$ {                                      # ( 0..6 -- )  s( -- $dow )
+    "Saturday"
+    "Friday"
+    "Thursday"
+    "Wednesday"
+    "Tuesday"
+    "Monday"
+    "Sunday"
+    dow pick$ 7:nip$
+}
+
+
+sub month$ {                                    # ( m -- ) s( -- month$ )
+   dup 1 12 between not will fail
+   "JanFebMarAprMayJunJulAugSepOctNovDec"
+   1 - 3 * 3 mid$ }
+
 sub yyyy-mm-dd {                                # ( epoch -- )  s( -- date$ )
    date
    <hash  2:hash drop
@@ -610,8 +649,24 @@ sub dd.mm.yyyy {                                # ( epoch -- )  s( -- date$ )
    hash>
 }
 
+sub dow_mon_dd_yyyy {                           # ( epoch )  s( -- date$ )
+    dup dow3$
+    " " append$
+    date swap month$ append$
+    " " append$
+    number$ append$
+    " " append$
+    number$ append$  }
 
-sub date$   { yyyy-mm-dd }                      # ( epoch -- )  s( -- date )
+sub insertdatenew {                             # ( -- )  s( alt -- )  mimicks eFTE internal
+    dup$ len$
+    not if drop$ now dow_mon_dd_yyyy endif
+    type$
+}
+
+
+
+sub date$   { dow_mon_dd_yyyy }                      # ( epoch -- )  s( -- date )
 
 sub today   { now date }                        # ( -- y m d )
 sub today$  { now date$ }                       # ( -- )  s( -- date )
