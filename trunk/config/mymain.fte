@@ -7,5 +7,9 @@
 # include the system main config - usually in /usr/share/fte/localconfig.
 include "systemmain.fte";
 
+sub InitMyMain {                   # executed once when editor starts
+
+}
+
 # Personal settings go here.
 

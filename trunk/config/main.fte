@@ -9,7 +9,6 @@
 #
 
 include "primitives.fte";
-
 include "macros.fte";
 
 # to include use the -dSELFTEST parameter to efte
@@ -18,6 +17,11 @@ include "selftest.fte";
 %endif
 
 include "fireshell.fte";
+sub InitMain {
+    "InitSelftest"    attempt
+    "InitFireshell"   attempt
+}
+
 
 #%define(UI_KB)
 %define(UI_FTE)
