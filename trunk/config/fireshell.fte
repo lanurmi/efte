@@ -119,6 +119,17 @@ sub prompt  {
 
 sub query    {     # ( -- n )
    curline$
+
+# replace control chars (including tabs) against spaces
+   dup$ len$ 0 do
+      i ascn
+      dup bl <
+      if
+         bl i embed$
+      endif
+      drop
+   loop
+
    bl minleading$
    dup$ source$ store$
    len$
@@ -195,9 +206,8 @@ sub header {
 
 sub nextheader  {                   # ( cfa1 -- cfa2 | 0 )
    >link @
-   dup if
-      link>
-   endif }
+   dup will link>
+   }
 
 
 sub findheader  {                   # ( cfa -- xt headerflags | 0 )
@@ -228,9 +238,7 @@ sub locate {             # ( -- xt headers | 0 )   search for word name on strin
       drop$
    else
       tick
-      dup if
-        revealbit
-      endif
+      dup will revealbit
    endif
  }
 
@@ -267,7 +275,7 @@ sub endsub  {
 sub newtick {
    bl word$
    dup$ locate
-   not if notfound endif
+   not will notfound
    drop$
 }
 
@@ -356,7 +364,7 @@ sub interpret {                         # the interpreter/compiler
           endif
        else                             # word not in dictionary: test for alternatives, like:
           maybesomethingelse            #   "strings"  'A'sciis  $hex  #decimal  %binary numbers
-          not if notfound endif
+          not will notfound
        endif
     repeat
     drop$
@@ -369,7 +377,7 @@ sub load {                              # compile from file.  not nestable now.
    0 0 at
    1 loading !
    linecount 0 do
-      query if interpret endif
+      query will interpret
       ?cursordown
       1 loading +!
    loop
@@ -396,7 +404,7 @@ sub bye             { fireshellenable off }
 
 sub colondef        { header "donest" postpone }
 
-sub InitInterpreter {
+sub InitFireshell {
    bye
    0 shellindent !
    16 10 2 baseprefix 3 spread
@@ -411,6 +419,8 @@ sub InitInterpreter {
    ";"       colondef "endsub"    postpone endsub  immediate
    "execute" colondef "exec"      postpone endsub
    "'"       colondef "newtick"   postpone endsub
+   "["       colondef "state" postpone "off" postpone endsub immediate
+   "]"       colondef "state" postpone "on"  postpone endsub
    }
 
 
