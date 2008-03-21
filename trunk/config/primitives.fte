@@ -113,7 +113,8 @@ sub cursorhome { movelinestart }
 sub cursorend  { movelineend }
 sub at         { 1 + movetoline  1 + movetocolumn } # ( x y -- )
 sub cursorcolumn { at? drop 1 + }                   # ( -- x )
-sub cursorrow    { at? nip  1 + }                   # ( -- y )
+sub cursorline  { at? nip  1 + }                    # ( -- y )
+sub cursorrow   { at? nip  1 + }                    # ( -- y )   fade out
 
 sub emptybuffer {
    movefilestart blockbegin
@@ -160,6 +161,14 @@ sub spread    {                                 # ( x0 x1 x2 ... xn-1 a n -- )
 sub key        { winrefresh getchar }           # wait for key, place its ascii on stack
 sub read$      { curchar$ }                     # read char under cursor as string
 sub read       { curchar$ asc }                 # read char under cursor as asc
+
+sub line$  {                                    # ( line -- ) s( -- line$ )
+    dup 1 linecount between not will fail
+    cursorline
+    swap movetoline     # shouldnt it fail if moved to > lines?
+    curline$
+    movetoline
+}
 
 sub emit       { typechar }
 sub cr     {
@@ -686,6 +695,23 @@ sub block     {                                 # ( -- f )
 
 sub blockmove { blockcut blockpaste }           # move block to cursor
 
+
+# can only handle line blocks reliably atm
+sub withinblock  {                              # ( line -- )
+    block if
+        at?
+        moveblockstart cursorline
+        moveblockend cursorline 1 -
+        swap2 at between
+    else
+        drop false
+    endif
+}
+
+
+sub cursorwithinblock {                         # ( -- f )
+    cursorline withinblock
+}
 
 
 # --- migrated toggles ---
