@@ -684,7 +684,8 @@ sub sleep   { winrefresh 1000 / ms }            # ( n -- )   sleep for n seconds
 # need:
 #  test block marked?
 
-sub blockmove   { blockcut blockpaste }         # move block to cursor
+sub block     {  ?moveblockstart success undo } # ( -- f )
+sub blockmove { blockcut blockpaste }           # move block to cursor
 
 
 
