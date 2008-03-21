@@ -471,6 +471,12 @@ sub directory$ {                                # ( -- ) s( filename -- director
     1 - 0 max left$  }
 
 
+# --- status line ---
+
+sub statusline$ { var$ new }
+sub message$    { 10 char$ append$ statusline$ store$ }
+
+
 
 # --- debugging ---
 
@@ -650,12 +656,9 @@ sub dd.mm.yyyy {                                # ( epoch -- )  s( -- date$ )
 }
 
 sub dow_mon_dd_yyyy {                           # ( epoch )  s( -- date$ )
-    dup dow3$
-    " " append$
-    date swap month$ append$
-    " " append$
-    number$ append$
-    " " append$
+    dup dow3$                 " " append$
+    date swap month$ append$  " " append$
+    number$ append$           " " append$
     number$ append$  }
 
 sub insertdatenew {                             # ( -- )  s( alt -- )  mimicks eFTE internal
@@ -708,6 +711,9 @@ sub OnBoot    {
        drop exit                                # 0: never inited. -1: init complete. x: exec token of OnLoad init code
    endif
    AlreadyInitialized on
+
+   60 spaces$ statusline$ store$
+   statusline$ 2 + statusline !
 
    decimal
    insert on

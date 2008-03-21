@@ -37,6 +37,7 @@ const struct {
     TAB(Verbosity),
     TAB(AutoTrim),
     TAB(Insert),
+    TAB(Statusline),
     // ------------------------
     { ExPlus, "+" },
     { ExMinus, "-" },
