@@ -602,23 +602,21 @@ sub date {                                      # ( epoch -- y m d )
 
 sub dow     { 86400 / 4 + 7 mod }               # ( epoch -- dow )
 
-sub dow3$ {                                     # ( 0..6 -- )  s( -- $dow )
-    "SunMonTueWedThuFriSat"
-    dow 3 * 3 mid$
-}
 
-
-sub dow$ {                                      # ( 0..6 -- )  s( -- $dow )
-    "Saturday"
-    "Friday"
-    "Thursday"
-    "Wednesday"
-    "Tuesday"
-    "Monday"
+sub dow$ {                                      # ( epoch -- )  s( -- $dow )
     "Sunday"
-    dow pick$ 7:nip$
+    "Monday"
+    "Tuesday"
+    "Wednesday"
+    "Thursday"
+    "Friday"
+    "Saturday"
+    dow negate
+    6 + pick$
+    7:nip$
 }
 
+sub dow3$ { dow$ 3 left$ }                      # ( epoch -- )  s( -- $dow )
 
 sub month$ {                                    # ( m -- ) s( -- month$ )
    dup 1 12 between not will fail
@@ -627,31 +625,29 @@ sub month$ {                                    # ( m -- ) s( -- month$ )
 
 sub yyyy-mm-dd {                                # ( epoch -- )  s( -- date$ )
    date
-   <hash  2:hash drop
-      '-' hold
-      2:hash drop
-      '-' hold
+   <hash
+      2:hash drop  '-' hold
+      2:hash drop  '-' hold
       4:hash
    hash>
 }
 
 sub mm/dd/yyyy {                                # ( epoch -- )  s( -- date$ )
    date
-   <hash  rot 4:hash drop
-      '/' hold
-      2:hash drop
-      '/' hold
+   <hash rot
+      4:hash drop  '/' hold
+      2:hash drop  '/' hold
       2:hash
    hash>
 }
 
 sub dd.mm.yyyy {                                # ( epoch -- )  s( -- date$ )
    date
-   <hash  rot 4:hash drop
-      '.' hold
-      swap 2:hash drop
-      '.' hold
-      2:hash
+   <hash
+      >r swap
+         4:hash drop '.' hold
+         2:hash drop '.' hold
+      r> 2:hash
    hash>
 }
 
@@ -669,22 +665,25 @@ sub insertdatenew {                             # ( -- )  s( alt -- )  mimicks e
 
 
 
-sub date$   { dow_mon_dd_yyyy }                      # ( epoch -- )  s( -- date )
-
+sub date$   { dow_mon_dd_yyyy }                 # ( epoch -- )  s( -- date )
 sub today   { now date }                        # ( -- y m d )
 sub today$  { now date$ }                       # ( -- )  s( -- date )
 sub now$    { now time$ }                       # ( -- ) returns hh:mm:ss as string   preferred name
 
-sub sleep   { winrefresh 1000 / ms }            # ( n -- )   sleep for n seconds
+sub sleep   { winrefresh 1000 * ms }            # ( n -- )   sleep for n seconds
 
 
 
 
 # --- blocks ---
-# need:
-#  test block marked?
 
-sub block     {  ?moveblockstart success undo } # ( -- f )
+sub block     {                                 # ( -- f )
+    at?
+    ?moveblockstart
+    success >r
+    at r>
+    }
+
 sub blockmove { blockcut blockpaste }           # move block to cursor
 
 
