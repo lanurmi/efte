@@ -701,7 +701,8 @@ sub withinblock  {                              # ( line -- )
     block if
         at?
         moveblockstart cursorline
-        moveblockend cursorline 1 -
+        moveblockend cursorline
+        dup2 xor will dec
         swap2 at between
     else
         drop false
