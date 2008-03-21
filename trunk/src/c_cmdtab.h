@@ -74,6 +74,7 @@ const struct {
     TAB(J),
     TAB(Times),
     { ExWill, "Will"},          // flow control. execute next if true
+    { ExUnless, "Unless"},      // flow control. exit if true
     TAB(New),
     TAB(Does),
 

@@ -541,6 +541,13 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
             break;
 
 
+        case ExUnless:
+            tos = ParamStack.pop();
+            if (tos)
+                i = m->Count;
+            break;
+
+
 // ------------------------------------------------------------------------------------------------------
 
             // the next three, ExOld, ExNew and ExDoes, implement a very cheeky data structure applicator.

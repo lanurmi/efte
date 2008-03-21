@@ -497,7 +497,7 @@ sub hashes    { begin hash dup not until }      # ( n1 -- n2 )
 sub hash>     { drop }                          # ( n -- )  end pic num conv - should convert
                                                 # string stack to ( a n ) to comply with standard.
                                                 # this version leaves converted number on top of string stack
-sub sign      { 0 < if '-' hold endif }         # ( n -- }
+sub sign      { positive unless '-' hold }      # ( n -- }
 
 sub padded  {                                   # ( n c -- )
    >r dup$ len$ -                               # can't call it "pad" because pad is a
