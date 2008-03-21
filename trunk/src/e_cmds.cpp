@@ -381,23 +381,30 @@ int EBuffer::MoveFileEnd() {
     return 1;
 }
 
+
 int EBuffer::MoveBlockStart() {
-    if (BB.Col == -1 && BB.Row == -1)
-        return 0;
-    assert(BB.Col >= 0 && BB.Row >= 0 && BB.Row < RCount);
-    if (SetPosR(BB.Col, BB.Row))
-        return 1;
-    return 0;
+    int rc = 0;
+    if (BB.Col != -1 || BB.Row != -1) {
+        assert(BB.Col >= 0 && BB.Row >= 0 && BB.Row < RCount);
+        if (SetPosR(BB.Col, BB.Row))
+            rc++;
+    }
+    SetBranchCondition(rc);
+    return rc;
 }
 
 int EBuffer::MoveBlockEnd() {
-    if (BE.Col == -1 && BE.Row == -1)
-        return 0;
-    assert(BE.Col >= 0 && BE.Row >= 0 && BE.Row < RCount);
-    if (SetPosR(BE.Col, BE.Row))
-        return 1;
-    return 0;
+    int rc = 0;
+    if (BE.Col != -1 || BE.Row != -1)
+    {
+        assert(BE.Col >= 0 && BE.Row >= 0 && BE.Row < RCount);
+        if (SetPosR(BE.Col, BE.Row))
+            rc++;
+    }
+    SetBranchCondition(rc);
+    return rc;
 }
+
 
 int EBuffer::MoveFirstNonWhite() {
     int C = 0, P = 0;
