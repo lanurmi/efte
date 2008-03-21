@@ -257,6 +257,44 @@ void EBuffer::DrawLine(TDrawBuffer B, int VRow, int C, int W, int &HilitX) {
     }
 }
 
+
+
+
+#define statuslinelength 256
+char num[statuslinelength];
+
+
+unsigned int statusline = dp++;    // shared mem pointer to ...
+int Statusline()  {
+    ParamStack.push(statusline);
+    return 1;
+}
+
+
+
+void CustomStatusline(int mode)  {
+    if (mode == 2) {
+    //    ExecMacro("OnStatusline");
+    }
+    int statuslinechar = memory[statusline];
+    if (statuslinechar)  {
+        int i = 0;
+        for ( ; i < statuslinelength-1; i++) {
+            char c = memory[statuslinechar++];
+            if (c < 32) break;
+            num[i] = c;
+        }
+        for ( ; i < statuslinelength-1; i++)
+            num[i] = 0;
+    }
+}
+
+
+
+
+
+
+
 void EBuffer::Redraw() {
     int HilitX;
     EView *V;
@@ -457,11 +495,10 @@ void EBuffer::Redraw() {
                 int l = strlen(s);
                 int fw = W->Cols - l;
                 int fl = strlen(FileName);
-                char num[60];
 
                 MoveStr(B, 0, W->Cols, s, SColor, W->Cols);
                 if (DisplayCondition) {
-                    sprintf(num, "tos=%d nos=%d 3rd=%d cond=%08x %s %d", ParamStack.peek(0), ParamStack.peek(1), ParamStack.peek(2), BranchCondition, CCharStr, ModelNo);
+                    CustomStatusline(DisplayCondition);
                 } else {
                     sprintf(num, " %s %d", CCharStr, ModelNo);
                 }

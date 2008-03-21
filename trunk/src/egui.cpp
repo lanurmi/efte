@@ -142,6 +142,7 @@ int Microseconds()  {         // wraps every 1h 11m 34s
 
 
 
+
 // sleep for <tos> milliseconds
 int Ms()  {
 //    view->Repaint();
@@ -154,6 +155,8 @@ int Ms()  {
 //        nanosleep(nos*1000000);
     return 1;
 }
+
+
 
 
 
@@ -202,6 +205,8 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
         return AutoTrim();
     case ExInsert:
         return Insert();
+    case ExStatusline:
+        return Statusline();
 
         // command calls
     case ExTick:

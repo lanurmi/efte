@@ -362,11 +362,14 @@ EEventMap *EBuffer::GetEventMap() {
     return FindActiveMap(Mode);
 }
 
+
+
+
 /**
  * MACRO: Display condition code in status bar?
  */
 int EBuffer::ToggleConditionDisplay() {
-    DisplayCondition = !DisplayCondition;
+    DisplayCondition = (DisplayCondition+1) % 3;
     return 1;
 }
 

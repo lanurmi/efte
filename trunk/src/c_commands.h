@@ -170,6 +170,8 @@ typedef enum {
     /// migrating TrimToggle to shared vars, for AutoTrim on, off, toggle, @, !
     ExInsert,
     /// migrating Insert to shared vars, for insert on, off, toggle, @, !
+    ExStatusline,
+    /// pointer to statusline in shared mem
 
 
     //!Cursor Commands

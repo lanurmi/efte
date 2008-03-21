@@ -1,7 +1,5 @@
 : (                      ')' word$ drop$ ;  immediate
 : \    ( -- )            0   word$ drop$ ;  immediate
-: [    ( -- )            state off ; immediate
-: ]    ( -- )            state on ;
 : ,    ( x -- )          comma ;
 : postpone ( -- )        ' , ; immediate
 : compile ( -- )         r> count , >r ; 
@@ -18,9 +16,8 @@
 : recurse  ( -- )        latest >xt , ; immediate
 : execute  ( a -- )      exec ;
 : exit,    ( -- )        0, ;      immediate
-: ??       ( f -- )      ['] branch0 ,  1 ,       ; immediate
 : will     ( f -- )      ['] branch0 ,  1 ,       ; immediate
-: unless   ( f -- )      postpone ?? postpone exit, ; immediate
+: unless   ( f -- )      postpone will postpone exit, ; immediate
 : ?comp    ( -- )        state @ unless "compilation only" error ;
 : variable ( -- )        create 0, ;
 : me       ( -- )        ?comp latest >xt  postpone literal ; immediate
@@ -30,10 +27,10 @@
 
 : +indent  2 shellindent +! ;
 
-: -indent -2 shellindent +!    \ a bit unwieldy without loops yet.
+: -indent -2 shellindent +!
     cursorcolumn cursorhome
-    read bl = ?? killchar
-    read bl = ?? killchar
+    read bl = will killchar
+    read bl = will killchar
     movetocolumn    
 ;
 
