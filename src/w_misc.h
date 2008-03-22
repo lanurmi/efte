@@ -10,11 +10,13 @@
 #ifndef W_MISC_H
 #define W_MISC_H
 
+/*
 void StackTrace();
 void Dodent();
 void Redent();
 void Nodent();
 void Indent();
 void Undent();
+*/
 
 #endif // W_MISC_H

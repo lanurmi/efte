@@ -32,22 +32,3 @@ void StackTrace()  {
     }
 }
 
-#define INDENT 3
-unsigned int indent = 0;
-
-void Dodent()  {
-    fprintf(stderr, "\n");
-    int i = indent;
-    for ( ; i>1; i--) {
-        fprintf(stderr, "|");
-        int j = INDENT-1;
-        for ( ;j ;j--)
-            fprintf(stderr, " ");
-
-    }
-}
-
-void Redent(int change)  { indent += change; }
-void Nodent()            { indent=0; }
-void Indent()            { Redent(1);  }
-void Undent()            { Redent(-1); }
