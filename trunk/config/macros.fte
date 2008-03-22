@@ -36,7 +36,7 @@ sub eatwhitespaceback {
   begin
     bl iscursorchar
     dup if
-      killchar 
+      killchar
       ?cursorleft success and
     endif
   not until
@@ -98,7 +98,7 @@ sub alignchar {
     loop
   endif
   drop2
-  
+
 }
 
 # ( -- )
@@ -112,3 +112,78 @@ sub GreedyJoinLineNext {
     CursorUp MoveLineEnd KillChar
 }
 
+
+
+
+#********************************************************************************
+#
+#
+#                       bubble lines or blocks up/down
+#
+#   suggested key bindings:  (these keys are by default assigned to prev/next window)
+#        key [A+G-Up]        { bubbleup }
+#        key [A+G-Down]      { bubbledown }
+#
+#
+#*********************************************************************************
+
+
+
+sub bubbleblock {                               # ( direction -- )
+    >r  cursorcolumn cursorline
+    dup2 withinblock if r@ + endif              # trap cursor and move along if in block
+    moveblockstart
+    r> negative if                              # move up requested
+       ?cursorup
+    else
+       cursorcolumn
+       blocktype 3 xor will moveblockend
+       ?cursordown
+#       failure if ... deal with last line ... endif
+       movetocolumn
+    endif blockmove
+    movetoline movetocolumn
+}
+
+sub bubbleblockup     { -1 bubbleblock }
+sub bubbleblockdown   {  1 bubbleblock }
+
+sub dumbbubblelineup  {                         # can't deal with last line properly
+    cursorcolumn
+        cursorup cursorhome
+        blockselectline
+        ?bubbleblockup
+        blockunmark
+    movetocolumn   }
+
+
+# should make this work with blocks and call from bubbleblock instead.
+# that way, both lines and blocks take advantage of last line handling.
+sub bubbleuplast      {                         # last line needs special handing,
+    lineadd dumbbubblelineup                    # if not terminated by eol.
+    cursordown linejoin cursorup }
+
+sub bubblelineup {
+    ?cursordown failure
+    if      bubbleuplast
+    else    dumbbubblelineup
+    endif  }
+
+sub bubblelinedown {
+    cursordown
+    bubblelineup
+    cursordown }
+
+sub bubbleup {                                  # put this one on key.  Using [A+G-Up] here
+    block if bubbleblockup
+    else     bubblelineup
+    endif    }
+
+sub bubbledown {                                # put this one on key.  Using [A+G-Down] here
+    block if bubbleblockdown
+    else     bubblelinedown
+    endif    }
+
+
+
+#********************************************************************************
