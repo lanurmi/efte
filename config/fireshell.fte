@@ -4,7 +4,7 @@ sub state        { var new }                    # compilation/interpretation swi
 sub w            { var new }                    # VM word pointer
 sub ip           { var new }                    # VM instruction pointer
 sub loading      { var new }
-sub baseprefix   { var new 2 allot }            # associate number base prefix with number base
+sub baseprefix   { var new 35 allot }           # associate number base prefix with number base
 sub shellindent  { var new }
 sub compiling    { state @ }
 sub interpreting { compiling not }
@@ -48,7 +48,7 @@ sub branch0   { if ip @                         # runtime code for conditional b
                 else ip @ dup @ +
                 endif  1 + ip ! }
 
-sub dodo      { 
+sub dodo      {
    dup2 equals if
          drop2
          ip @
@@ -59,8 +59,8 @@ sub dodo      {
                 }
 
 sub doloop    {                                 # runtim code for simple count up loops
-   r> 1 + 
-   dup r@ xor if      
+   r> 1 +
+   dup r@ xor if
       >r  ip @ dup @ + ip ! exit
    endif
    r> drop2
@@ -134,9 +134,9 @@ sub query    {     # ( -- n )
    dup$ source$ store$
    len$
 }
-   
 
-sub endloading { 
+
+sub endloading {
    loading off
    fileclose
    }
@@ -296,6 +296,8 @@ sub sliteral  {
    endif }
 
 
+sub baseprefix$  { var$ new  }
+
 # --- compiler/interpreter ---
 
 # needs some serious factoring out here.
@@ -313,7 +315,8 @@ sub maybesomethingelse {         # ( -- f ) not a word in dictionary - try alter
       true exit
    endif
 
-   0 ascn "$#%" scan$            # $xxxx  #nnnn  %100101  style of number base designator?
+   0 ascn
+   baseprefix$ fetch$ scan$      # $xxxx  #nnnn  %100101  style of number base designator?
    dup 0< if
       drop
    else
@@ -398,6 +401,22 @@ sub ok {
 
 
 
+
+
+sub addbaseprefix {                                     # ( radix -- )  s( prefix -- )
+    baseprefix$ fetch$
+    dup$ len$ baseprefix + !
+    prepend$ baseprefix$ store$ }
+
+sub removebaseprefix {                                  # ( -- )  removes the most recently added prefix.
+    baseprefix$ fetch$
+    dup$ len$ not will fail
+    -1 right$
+    baseprefix$ store$ }
+
+
+
+
 sub fireshellenable { var new }
 sub Fireshell       { fireshellenable @ if ok else linenew endif }
 sub bye             { fireshellenable off }
@@ -407,13 +426,20 @@ sub colondef        { header "donest" postpone }
 sub InitFireshell {
    bye
    0 shellindent !
-   16 10 2 baseprefix 3 spread
    256 spaces$ source$ store$
+   35 spaces$ baseprefix$ store$
+   "" baseprefix$ store$
+
    0 state !
    0 last !
    0 ip !
    0 w !
    0 loading !
+
+   "$" 16 addbaseprefix
+   "#" 10 addbaseprefix
+   "%"  2 addbaseprefix
+
    65536 here - dup 0 > if dup allot endif drop
    ":"       colondef "sub"       postpone endsub
    ";"       colondef "endsub"    postpone endsub  immediate
@@ -451,9 +477,6 @@ sub words {
 
 
 # --------- hexdump, words, utilities ---------
-
-
-
 
 sub slashstring { over min tuck - >r + r> }             # ( a1 u1 u -- a2 u2 )
 
