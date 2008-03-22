@@ -403,10 +403,18 @@ sub ok {
 
 
 
-sub addbaseprefix {                                     # ( radix -- )  s( prefix -- )
-    baseprefix$ fetch$
+sub addbaseprefix {                                     # ( c n -- )
+    baseprefix$
+# -- high information hiding potential here:
+#      calculate how much string space of this string variable is left
+       dup @ over 1 + @ 2 + -
+    not will fail
+# --
+    fetch$
     dup$ len$ baseprefix + !
-    prepend$ baseprefix$ store$ }
+    char$ append$
+    baseprefix$ store$
+    }
 
 sub removebaseprefix {                                  # ( -- )  removes the most recently added prefix.
     baseprefix$ fetch$
@@ -436,9 +444,9 @@ sub InitFireshell {
    0 w !
    0 loading !
 
-   "$" 16 addbaseprefix
-   "#" 10 addbaseprefix
-   "%"  2 addbaseprefix
+   '$' 16 addbaseprefix
+   '#' 10 addbaseprefix
+   '%'  2 addbaseprefix
 
    65536 here - dup 0 > if dup allot endif drop
    ":"       colondef "sub"       postpone endsub
