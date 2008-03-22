@@ -35,6 +35,8 @@ typedef enum {
     /// macro run time code associate with MINLOOP
     ExLeaveRuntime,
     /// macro run time code for breaking out of a loop
+    ExVectorRuntime,
+    /// macro runtime code for Vector
     ExTimes,
     /// set repeat counter of next command to top of stack
     ExUnless,
@@ -45,12 +47,12 @@ typedef enum {
     /// excuted by "converted" data structure accessor, to publish data location
     ExNew,
     /// converts a sub to a data structure accessor
+    ExDoes,
+    /// seperates instance creation time code from instance run time code, signaling "new" where to find it. used in classes
     //    }
     // }
     //*** START
 
-    ExDoes,
-    /// seperates instance creation time code from instance run time code, signaling "new" where to find it. used in classes
 
     //!Stack Operations
     ExDepth,

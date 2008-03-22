@@ -419,7 +419,8 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
     Indent();
     STARTFUNC("EGUI::ExecMacro");
 
-    int i, j, tos, rtos, rnos, ResultOfCommandExecution;
+    int i, j, tos, nos, rtos, rnos, ResultOfCommandExecution;
+    unsigned int unos, utos;
     ExMacro *m;
     ExState State;
     if (Macro == -1)  {
@@ -526,6 +527,16 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
             break;
 
 
+        case ExVectorRuntime:
+            utos = ParamStack.pop();
+            nos = m->cmds[i++].repeat;
+            if (nos < utos)
+                utos = nos;
+            ExecCommand(view, m->cmds[i+utos].u.num, State);
+            i += nos;
+            break;
+
+
         case ExTimes:
             tos = ParamStack.pop();
             i++;
@@ -598,7 +609,7 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
 
         case ExDoes:                                                // class publishes method location
             doesindex = i;
-            i = m->Count;                                           
+            i = m->Count;
             break;
 
 // ------------------------------------------------------------------------------------------------------

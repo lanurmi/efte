@@ -389,7 +389,9 @@ enum {
     COND_LOOP,
     COND_PLUSLOOP,
     COND_MINLOOP,
-    COND_LEAVE
+    COND_LEAVE,
+    COND_VECTOR,
+    COND_ENDVECTOR
 };
 
 typedef char Word[64];
@@ -436,6 +438,8 @@ static const OrdLookup ConditionalKW[] = {
     { "+Loop",COND_PLUSLOOP },
     { "-Loop",COND_MINLOOP },
     { "Leave", COND_LEAVE },
+    { "Vector", COND_VECTOR },
+    { "EndVector", COND_ENDVECTOR },
     { 0, 0 },
 };
 
@@ -824,6 +828,8 @@ static int ParseCommands(CurPos &cp, char *Name) {
     PutNumber(cp, CF_INT, Cmd);
     GetOp(cp, P_OPENBRACE);
     cnt = 1;
+    int i;
+
     while (1) {
         p = Parse(cp);
         if (p == P_CLOSEBRACE) break;
@@ -975,7 +981,7 @@ static int ParseCommands(CurPos &cp, char *Name) {
 
 
                 case COND_LEAVE:
-                    int i = 0;
+                    i = 0;
                     while (i < CondStack.size()) {
                         if (CondStack.peek(i) == COND_DO) {
                             branchaddress=CondStack.peek(i+1);
@@ -983,12 +989,29 @@ static int ParseCommands(CurPos &cp, char *Name) {
                             i=-1;
                             break;
                         }
-                        i+=2;
+                        i += 2;
                     }
                     if (i >= 0)
                         Fail(cp, "Unstructured: Leave without Do");
                     break;
 
+
+
+                case COND_VECTOR:
+                    CondStack.push(cpos);
+                    CondStack.push(COND_VECTOR);
+                    CFteCompileCommand(cp,ExVectorRuntime,0,1);
+                    break;
+
+
+                case COND_ENDVECTOR:
+                    if (CondStackPairedWith(COND_VECTOR)) {
+                        branchaddress=CondStack.pop();
+                        UpdateNumber(branchaddress+1,BranchOffset(branchaddress,cpos)-2);
+                    } else {
+                        Fail(cp, "Unstructured: EndVector without Vector");
+                    }
+                    break;
 
                     // ----------------------------------------------------------------------------------------------------
                 }
