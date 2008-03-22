@@ -48,7 +48,7 @@ sub negate    { 0 swap - }                      # change sign
 sub not       { 0 equals }                      # logical inversion: 0->true,  x->0
 sub lshift    { 1 shift }                       # bit shift left by 1
 sub rshift    { -1 shift }                      # bit shift right by one
-sub <<        { shift }                         
+sub <<        { shift }
 sub >>        { negate shift }
 sub success   { flag }                          # push command return code
 sub failure   { flag not }                      # push inverted command return code
@@ -149,8 +149,8 @@ sub free      { memend here - }
 sub scrape    { range do i @ loop }             # ( a n -- x0 x1 ... xn-1 )
 sub spread    {                                 # ( x0 x1 x2 ... xn-1 a n -- )
    >r 1 - r>                                    # store xn at a+n
-   range swap do 
-      i ! 
+   range swap do
+      i !
    1 -loop }
 
 
@@ -215,12 +215,12 @@ sub prepend$  { swap$ append$ }
 sub cut$ {                                      # ( n -- )  s( $1 -- $2 $3 )  splits string at position n,
    dup if
       dup dup$ len$ + 0 >
-      if 
+      if
          dup$ dup -1 mid$
          swap$ 0 swap mid$
          exit
       endif
-   endif 
+   endif
    drop ""
 }
 
@@ -275,8 +275,8 @@ sub number? {                                   # ( -- n -1 | 0 )
    if
       -1 left$
       unumber?
-      >r 
-      r@ will negate 
+      >r
+      r@ will negate
       r>
    else
       unumber?
@@ -379,7 +379,7 @@ sub mintrailing$ {                              # ( asc -- ) remove trailing occ
       endif
    1 -loop
    left$                                        # keep left part except trailing asc
-   drop }                                       
+   drop }
 
 
 
@@ -611,19 +611,24 @@ sub date {                                      # ( epoch -- y m d )
 
 sub dow     { 86400 / 4 + 7 mod }               # ( epoch -- dow )
 
+sub Sunday$    { "Sunday" }
+sub Monday$    { "Monday" }
+sub Tuesday$   { "Tuesday" }
+sub Wednesday$ { "Wednesday" }
+sub Thursday$  { "Thursday" }
+sub Friday$    { "Friday" }
+sub Saturday$  { "Saturday" }
 
 sub dow$ {                                      # ( epoch -- )  s( -- $dow )
-    "Sunday"
-    "Monday"
-    "Tuesday"
-    "Wednesday"
-    "Thursday"
-    "Friday"
-    "Saturday"
-    dow negate
-    6 + pick$
-    7:nip$
-}
+   dow vector
+     Sunday$
+     Monday$
+     Tuesday$
+     Wednesday$
+     Thursday$
+     Friday$
+     Saturday$
+   endvector }
 
 sub dow3$ { dow$ 3 left$ }                      # ( epoch -- )  s( -- $dow )
 
@@ -696,22 +701,105 @@ sub block     {                                 # ( -- f )
 sub blockmove { blockcut blockpaste }           # move block to cursor
 
 
-# can only handle line blocks reliably atm
-sub withinblock  {                              # ( line -- )
-    block if
-        at?
-        moveblockstart cursorline
-        moveblockend cursorline
-        dup2 xor will dec
-        swap2 at between
-    else
-        drop false
-    endif
-}
+sub char@   {
+   at? >r >r
+   at read
+   r> r> at }
+
+sub char!   {
+   at? >r >r
+   at
+   false insert exchange >r
+   emit
+   r> insert !
+   r> r> at }
+
+
+sub blocktype {                                 # ( -- 0 | 1 | 2 | 3 ) for no/line/stream/column
+    block dup if
+        drop at?
+        moveblockend
+        cursorcolumn dup 1 xor                  # 0: line block (using 1 as type - already/still on stack)
+        if                                      # other:  stream or column block. further testing needed.
+            drop
+            false insert exchange
+            cursorleft read  'a' emit        blockcasetoggle
+            cursorleft read  'A' equals 3 +  blockcasetoggle
+            minrot
+            qdup not will bl emit
+            insert !
+        endif
+        minrot at
+    endif }
+
+
+
+
+
+
+sub abovelineblock    {                         # ( column line cline -- f )
+    < nip }
+
+sub abovestreamblock  {                         # ( column line cline -- f )
+    dup2 <
+    if  nip nip nip true exit endif
+    equals if cursorcolumn < exit endif
+    drop false  }
+
+sub abovecolumnblock  {                         # ( column line cline -- f )
+     <
+    swap cursorcolumn < or }
+
+sub aboveblock  {                               # ( column line -- f )
+    at? swap2
+    moveblockstart cursorline
+    blocktype vector
+        fail
+        abovelineblock
+        abovestreamblock
+        abovecolumnblock
+    endvector
+    minrot at  }
+
+
+
+sub belowlineblock    {                         # ( column line cline -- f )
+    < not nip }
+
+sub belowstreamblock  {                         # ( column line cine -- f )
+    dup2 >
+    if nip nip nip true exit endif
+    equals if cursorcolumn < not exit endif
+    drop false  }
+
+sub belowcolumnblock  {                         # ( column line cline -- f )
+    < not
+    swap cursorcolumn < not or }
+
+sub belowblock  {                               # ( column line -- f )
+    at? swap2
+    moveblockend cursorline
+    blocktype vector
+       fail
+       belowlineblock
+       belowstreamblock
+       belowcolumnblock
+    endvector
+    minrot at }
+
+
+
+
+
+sub withinblock  {                              # ( column line -- f )
+    block not if drop2 false exit endif
+    dup2 aboveblock
+    if  drop2 false exit endif
+    belowblock not  }
 
 
 sub cursorwithinblock {                         # ( -- f )
-    cursorline withinblock
+    cursorcolumn cursorline withinblock
 }
 
 
