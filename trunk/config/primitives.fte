@@ -701,18 +701,19 @@ sub block     {                                 # ( -- f )
 sub blockmove { blockcut blockpaste }           # move block to cursor
 
 
-sub char@   {
+sub char@   {                                   # ( x y -- c )  fetch char from file at x,y
    at? >r >r
    at read
    r> r> at }
 
-sub char!   {
+sub char!   {                                   # ( c x y -- )  store char in file at x,y
    at? >r >r
-   at
    false insert exchange >r
-   emit
+   at emit
    r> insert !
    r> r> at }
+
+
 
 
 sub blocktype {                                 # ( -- 0 | 1 | 2 | 3 ) for no/line/stream/column
@@ -725,8 +726,7 @@ sub blocktype {                                 # ( -- 0 | 1 | 2 | 3 ) for no/li
             false insert exchange
             cursorleft read  'a' emit        blockcasetoggle
             cursorleft read  'A' equals 3 +  blockcasetoggle
-            minrot
-            qdup not will bl emit
+            minrot  qdup not will bl emit
             insert !
         endif
         minrot at
@@ -736,66 +736,63 @@ sub blocktype {                                 # ( -- 0 | 1 | 2 | 3 ) for no/li
 
 
 
-
-sub abovelineblock    {                         # ( column line cline -- f )
+sub abovelineblock    {                         # ( column line cline -- f )  helper word for withinblock
     < nip }
 
-sub abovestreamblock  {                         # ( column line cline -- f )
+sub abovestreamblock  {                         # ( column line cline -- f )  helper word for withinblock
     dup2 <
-    if  nip nip nip true exit endif
+    if  3:drop true exit endif
     equals if cursorcolumn < exit endif
     drop false  }
 
-sub abovecolumnblock  {                         # ( column line cline -- f )
+sub abovecolumnblock  {                         # ( column line cline -- f )  helper word for withinblock
      <
     swap cursorcolumn < or }
 
-sub aboveblock  {                               # ( column line -- f )
-    at? swap2
+sub aboveblock  {                               # ( column line -- f )        helper word for withinblock
     moveblockstart cursorline
     blocktype vector
         fail
         abovelineblock
         abovestreamblock
         abovecolumnblock
-    endvector
-    minrot at  }
+    endvector  }
 
 
 
-sub belowlineblock    {                         # ( column line cline -- f )
+sub belowlineblock    {                         # ( column line cline -- f )  helper word for withinblock
     < not nip }
 
-sub belowstreamblock  {                         # ( column line cine -- f )
+sub belowstreamblock  {                         # ( column line cine -- f )   helper word for withinblock
     dup2 >
-    if nip nip nip true exit endif
+    if 3:drop true exit endif
     equals if cursorcolumn < not exit endif
     drop false  }
 
-sub belowcolumnblock  {                         # ( column line cline -- f )
+sub belowcolumnblock  {                         # ( column line cline -- f )  helper word for withinblock
     < not
     swap cursorcolumn < not or }
 
-sub belowblock  {                               # ( column line -- f )
-    at? swap2
+sub belowblock  {                               # ( column line -- f )        helper word for withinblock
     moveblockend cursorline
     blocktype vector
        fail
        belowlineblock
        belowstreamblock
        belowcolumnblock
-    endvector
-    minrot at }
-
+    endvector }
 
 
 
 
 sub withinblock  {                              # ( column line -- f )
     block not if drop2 false exit endif
+    at? swap2
     dup2 aboveblock
-    if  drop2 false exit endif
-    belowblock not  }
+    if    drop2 false
+    else  belowblock not
+    endif
+    minrot at  }
 
 
 sub cursorwithinblock {                         # ( -- f )
