@@ -158,6 +158,29 @@ int Ms()  {
 
 
 
+// moved these here because i couldn't get around multiple
+// definitions of xrayindent, when moving it to w_misc.h, to
+// be able to read it here, in spite of a #idndef supposedly
+// branching around it.
+#define XRAYINDENT 3
+unsigned int xrayindent = 0;
+void Dodent()  {
+    fprintf(stderr, "\n");
+    int i = xrayindent;
+    for ( ; i>1; i--) {
+        fprintf(stderr, "|");
+        int j = XRAYINDENT-1;
+        for ( ;j ;j--)
+            fprintf(stderr, " ");
+
+    }
+}
+
+void Redent(int change)  { xrayindent += change; }
+void Nodent()            { xrayindent=0; }
+void Indent()            { Redent(1);  }
+void Undent()            { Redent(-1); }
+
 
 
 // -----------------------------------------------------------------------------------------------------------
@@ -172,7 +195,7 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
     // looking for a place where to stick in stack dump after command has executed.
     // what i don't quite manage to do is to align stack display, after command name has been printed.
 
-    if (memory[verbosity] > 1) {
+    if (memory[verbosity] > xrayindent) {
         Dodent();
         fprintf(stderr, "%-15s ", GetCommandName(Command));
     }
