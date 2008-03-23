@@ -67,7 +67,7 @@ typedef enum {
     /// Multiply top two stack items.
     ExDiv,
     /// Divide top two stack items.
-    ExSlashMod,
+    ExStarSlash,
     /// Scaling operator. multiply first two items, giving a double size intermediate result. divide by third then.
 
     ExRandom,
