@@ -31,7 +31,7 @@ const struct {
     TAB(MemEnd),
     TAB(Here),
     TAB(Allot),
-    
+
     // --- shared variables ---
     TAB(Base),
     TAB(Verbosity),
@@ -43,6 +43,7 @@ const struct {
     { ExMinus, "-" },
     { ExMul, "*" },
     { ExDiv, "/" },
+    { ExSlashMod, "*/" },
     TAB(Random),
     TAB(Now),
     TAB(Milliseconds),

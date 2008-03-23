@@ -63,7 +63,6 @@ sub umin      { dup2 xor 0 < if max else min endif }  # ( u1 u2 -- u1|u2 ) unsig
 sub umax      { dup2 xor 0 < if min else max endif }  # ( u1 u2 -- u1|u2 ) unsigned max
 sub mod       { dup2 / * - }                    # modulo (remainder) function
 sub /mod      { dup2 / dup >r * - abs r> }      # ( n1 n2 -- r q )
-sub */        { >r * r> / }                     # should have that as efte fn, with double-len intermediate
 sub percent   { * 100 / }
 sub gcd       { begin tuck mod qdup not until } # greatest common denominator
 sub sqrt      { 0 tuck do inc dup lshift inc +loop }
@@ -814,10 +813,10 @@ sub statusupdatecounter { var new }
 sub statusupdatetimer   { var new }
 
 sub chars/second {
-    statusupdatecounter @ 10000
+    statusupdatecounter @ 100000
     milliseconds statusupdatetimer @ - */
     "keys/sec:"
-    <hash hash '.' hold hashes hash> append$
+    <hash 2:hash '.' hold hashes hash> append$
     }
 
 

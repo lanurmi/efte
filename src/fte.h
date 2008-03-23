@@ -80,6 +80,9 @@ extern unsigned int autotrim;
 extern unsigned int insert;
 extern int Statusline();
 //extern int ExecMacro(const char *name);
+#define SUCCESS SetBranchCondition(1); return 1;
+#define FAIL SetBranchCondition(0); return 0;
+
 
 #endif
 

@@ -64,20 +64,36 @@ int Mul() {
 }
 
 int Div() {
-    PSCHECK(2, "Div)");
+    PSCHECK(2, "Div");
     int tos=ParamStack.pop();
 
     if (!tos) {
-        ActiveView->Msg(S_ERROR, "Divide by zero, macro aborted");
+        ActiveView->Msg(S_ERROR, "Division by zero");
         exception = DIVZERO;
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     ParamStack.push(ParamStack.pop()/tos);
-    SetBranchCondition(1);
-    return 1;
+    SUCCESS
 }
+
+
+// marshmallows on #c suggested, for the double len intermediate:
+// if(a > b) { if(a < c) { r = (a*b)/c; } else { r = (a/c)*b; } } else { if(b < c) { r = (a*b)/c; } else { r = (b/c)*a; } }
+// not using this, becase not wanting to have to use floats for a pure integer operation.
+int SlashMod() {
+    PSCHECK(3, "*/");
+    int nos = ParamStack.pop();
+    if (nos) {
+        long long int ltos = (long long int)ParamStack.pop() * (long long int)ParamStack.pop();
+        ParamStack.push(ltos/nos) ;
+        SUCCESS
+    }
+    ActiveView->Msg(S_ERROR, "Division by zero");
+    exception = DIVZERO;
+    FAIL
+}
+
 
 int Random() {
     ParamStack.push(rand());
