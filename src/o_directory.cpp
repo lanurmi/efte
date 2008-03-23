@@ -427,27 +427,22 @@ int EDirectory::FmMvFile(const char *Name) {
 
     strcpy(Dir, Path);
     if (View->MView->Win->GetStr("New file name", sizeof(Dir), Dir, HIST_PATH) == 0) {
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     if (ExpandPath(Dir, Dir2, sizeof(Dir2)) == -1) {
         Msg(S_INFO, "Failed to expand destination %s", Name);
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     int status = rename(FullName, Dir2);
     if (status == 0) {
         RescanDir();
-        SetBranchCondition(1);
-        return 1;
+        SUCCESS
     }
     const char *msg = strerror(errno);
     Msg(S_INFO, "Failed to rename %s: %s", FullName, msg);
-
-    SetBranchCondition(0);
-    return 0;
+    FAIL
 }
 
 int EDirectory::FmRmFile(char const* Name) {
@@ -476,13 +471,11 @@ int EDirectory::FmRmFile(char const* Name) {
             return RescanDir();
         } else {
             Msg(S_INFO, "Failed to remove %s", Name);
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
     } else {
         Msg(S_INFO, "Cancelled");
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 }
 
@@ -492,14 +485,12 @@ int EDirectory::FmMkDir() {
 
     strcpy(Dir, Path);
     if (View->MView->Win->GetStr("New directory name", sizeof(Dir), Dir, HIST_PATH) == 0) {
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     if (ExpandPath(Dir, Dir2, sizeof(Dir2)) == -1) {
         Msg(S_INFO, "Failed to create directory, path did not expand");
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
 #if defined(MSVC) || defined(BCPP) || defined(WATCOM)
@@ -513,8 +504,7 @@ int EDirectory::FmMkDir() {
     }
 
     Msg(S_INFO, "Failed to create directory %s", Dir2);
-    SetBranchCondition(0);
-    return 0;
+    FAIL
 }
 
 int EDirectory::FmLoad(const char *Name, EView *XView) {
@@ -583,8 +573,7 @@ void EDirectory::GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen) 
 int EDirectory::ChangeDir(ExState &State) {
     if (sstack.size() == 0) {
         Msg(S_ERROR, "String stack underflow in ChangeDir");
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     char Dir[MAXPATH];
@@ -595,13 +584,11 @@ int EDirectory::ChangeDir(ExState &State) {
     if (strlen(Dir) == 0) {
         strcpy(Dir, Path);
         if (View->MView->Win->GetStr("Set directory", sizeof(Dir), Dir, HIST_PATH) == 0) {
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
     }
     if (ExpandPath(Dir, Dir2, sizeof(Dir2)) == -1) {
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 #if 0
     // is this needed for other systems as well ?

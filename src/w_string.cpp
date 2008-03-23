@@ -197,9 +197,7 @@ int PickStr() {
     idx = sstack.size() - 1 - idx;
 
     sstack.push_back(sstack[idx]);
-
-    SetBranchCondition(1);
-    return 1;
+    SUCCESS
 }
 
 
@@ -210,8 +208,7 @@ int SubSearchStr() {
     int searchForI = tos - ParamStack.pop();
 
     if (searchInI < 0 || searchForI < 0) {
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     std::string searchIn  = sstack[searchInI];
@@ -219,9 +216,7 @@ int SubSearchStr() {
 
     std::string::size_type foundAt = searchIn.find(searchFor, 0);
     ParamStack.push(foundAt == std::string::npos ? -1 : (int) foundAt);
-
-    SetBranchCondition(1);
-    return 1;
+    SUCCESS
 }
 
 int MidStr() {
@@ -240,9 +235,7 @@ int MidStr() {
         sstack[sstack.size()-1] = tos.substr(start, end);
     else
         sstack[sstack.size()-1] = "";
-
-    SetBranchCondition(1);
-    return 1;
+    SUCCESS
 }
 
 int GetString(GxView *view) {
@@ -251,8 +244,7 @@ int GetString(GxView *view) {
         ExModelView *V = (ExModelView *)view->Top;
         View = V->View;
     } else {
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     SSCHECK(1, "GetString");
@@ -261,12 +253,9 @@ int GetString(GxView *view) {
 
     char str[256] = "";
     if (View->MView->Win->GetStr(msg.c_str(), sizeof(str), str, HIST_DEFAULT) == 0) {
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     sstack.push_back(str);
-
-    SetBranchCondition(1);
-    return 1;
+    SUCCESS
 }

@@ -413,8 +413,7 @@ int EView::FileSaveAll() {
 int EView::FileOpen(ExState &State) {
     if (sstack.size() == 0) {
         Msg(S_ERROR, "String stack underflow in FileOpen");
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     std::string fname = sstack.back(); sstack.pop_back();
@@ -422,20 +421,17 @@ int EView::FileOpen(ExState &State) {
     if (fname.empty()) {
         char FName[MAXPATH];
         if (GetDefaultDirectory(Model, FName, sizeof(FName)) == 0) {
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
 
         if (MView->Win->GetFile("Open file", sizeof(FName), FName, HIST_PATH, GF_OPEN) == 0) {
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
 
         fname = FName;
 
         if (fname.empty()) {
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
     }
 
@@ -447,8 +443,7 @@ int EView::FileOpen(ExState &State) {
 int EView::FileOpenInMode(ExState &State) {
     if (sstack.size() < 2) {
         Msg(S_ERROR, "String stack underflow in FileOpenInMode");
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     std::string mode = sstack.back(); sstack.pop_back();
@@ -457,33 +452,28 @@ int EView::FileOpenInMode(ExState &State) {
     if (mode.empty()) {
         char Mode[32] = "";
         if (MView->Win->GetStr("Mode", sizeof(Mode), Mode, HIST_SETUP) != 1) {
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
         mode = Mode;
     }
 
     if (FindMode(mode.c_str()) == 0) {
         MView->Win->Choice(GPC_ERROR, "Error", 1, "O&K", "Invalid mode '%s'", mode.c_str());
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     if (fname.empty()) {
         char FName[MAXPATH];
         if (GetDefaultDirectory(Model, FName, sizeof(FName)) == 0) {
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
         if (MView->Win->GetFile("Open file", sizeof(FName), FName, HIST_PATH, GF_OPEN) == 0) {
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
         fname = FName;
 
         if (fname.empty()) {
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
     }
 
@@ -496,8 +486,7 @@ int EView::FileOpenInMode(ExState &State) {
 int EView::SetPrintDevice(ExState &State) {
     if (sstack.size() == 0) {
         Msg(S_ERROR, "String stack underflow in SetPrintDevice");
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     std::string dev = sstack.back(); sstack.pop_back();
@@ -506,8 +495,7 @@ int EView::SetPrintDevice(ExState &State) {
         char Dev[MAXPATH];
         strcpy(Dev, PrintDevice);
         if (MView->Win->GetStr("Print to", sizeof(Dev), Dev, HIST_SETUP) == 0) {
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
         dev = Dev;
     }
@@ -614,8 +602,7 @@ int EView::ViewRoutines(ExState &/*State*/) {
 int EView::DirOpen(ExState &State) {
     if (sstack.size() == 0) {
         Msg(S_ERROR, "String stack underflow in DirOpen");
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     std::string path = sstack.back(); sstack.pop_back();
@@ -623,8 +610,7 @@ int EView::DirOpen(ExState &State) {
     if (path.empty()) {
         char Path[MAXPATH];
         if (GetDefaultDirectory(Model, Path, sizeof(Path)) == 0) {
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
         path = Path;
     }
@@ -661,8 +647,7 @@ int EView::OpenDir(const char *Path) {
 int EView::AskCompiler(ExState &State) {
     if (sstack.size() == 0) {
         Msg(S_ERROR, "String stack underflow in Compile");
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     if (CompilerMsgs != 0 && CompilerMsgs->Running) {
@@ -685,15 +670,13 @@ int EView::AskCompiler(ExState &State) {
             strcpy(Cmd, CompileCommand);
 
         if (MView->Win->GetStr("Compile", sizeof(Cmd), Cmd, HIST_COMPILE) == 0) {
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
 
         strcpy(Command, Cmd);
     } else {
         if (MView->Win->GetStr("Compile", sizeof(Command), Command, HIST_COMPILE) == 0) {
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
     }
 
@@ -703,8 +686,7 @@ int EView::AskCompiler(ExState &State) {
 int EView::RunCompiler(ExState &State) {
     if (sstack.size() == 0) {
         Msg(S_ERROR, "String stack underflow in RunCompiler");
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     if (CompilerMsgs != 0 && CompilerMsgs->Running) {
@@ -738,17 +720,14 @@ int EView::Compile(char *Command) {
         msgs = CompilerMsgs;
     } else {
         if (GetDefaultDirectory(Model, Dir, sizeof(Dir)) == 0) {
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
 
         msgs = new EMessages(0, &ActiveModel, Dir, Command);
     }
 
     SwitchToModel(msgs);
-
-    SetBranchCondition(1);
-    return 1;
+    SUCCESS
 }
 
 int EView::ViewMessages(ExState &/*State*/) {
@@ -814,8 +793,7 @@ int EView::ClearMessages() {
 int EView::TagLoad(ExState &State) {
     if (sstack.size() == 0) {
         Msg(S_ERROR, "String stack underflow in TagLoad");
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     char Tag[MAXPATH];
@@ -826,28 +804,24 @@ int EView::TagLoad(ExState &State) {
         pTagFile = "tags";
     }
     if (ExpandPath(pTagFile, Tag, sizeof(Tag)) == -1) {
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     strcpy(Tag, sstack.back().c_str()); sstack.pop_back();
 
     if (strlen(Tag) == 0) {
         if (MView->Win->GetFile("Load tags", sizeof(Tag), Tag, HIST_TAGFILES, GF_OPEN) == 0) {
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
     }
 
     if (ExpandPath(Tag, FullTag, sizeof(FullTag)) == -1) {
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     if (!FileExists(FullTag)) {
         Msg(S_INFO, "Tag file '%s' not found.", FullTag);
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     return ::TagLoad(FullTag);
@@ -856,8 +830,7 @@ int EView::TagLoad(ExState &State) {
 int EView::RemoveGlobalBookmark(ExState &State) {
     if (sstack.size() == 0) {
         Msg(S_ERROR, "String stack underflow in RemoveGlobalBookmark");
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     char name[256] = "";
@@ -867,19 +840,15 @@ int EView::RemoveGlobalBookmark(ExState &State) {
         if (MView->Win->GetStr("Remove Global Bookmark", sizeof(name), name, HIST_BOOKMARK) == 0) return 0;
     if (markIndex.remove(name) == 0) {
         Msg(S_ERROR, "Error removing global bookmark %s.", name);
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
-
-    SetBranchCondition(1);
-    return 1;
+    SUCCESS
 }
 
 int EView::GotoGlobalBookmark(ExState &State) {
     if (sstack.size() == 0) {
         Msg(S_ERROR, "String stack underflow in GotoGlobalBookmark");
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     char name[256] = "";
@@ -889,12 +858,9 @@ int EView::GotoGlobalBookmark(ExState &State) {
         if (MView->Win->GetStr("Goto Global Bookmark", sizeof(name), name, HIST_BOOKMARK) == 0) return 0;
     if (markIndex.view(this, name) == 0) {
         Msg(S_ERROR, "Error locating global bookmark %s.", name);
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
-
-    SetBranchCondition(1);
-    return 1;
+    SUCCESS
 }
 
 int EView::PopGlobalBookmark() {
@@ -908,14 +874,12 @@ int EView::PopGlobalBookmark() {
 int EView::Cvs(ExState &State) {
     if (sstack.size() == 0) {
         Msg(S_ERROR, "String stack underflow in Cvs");
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     if (CvsView != 0 && CvsView->Running) {
         Msg(S_INFO, "Already running...");
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     static char Opts[128] = "";
@@ -925,14 +889,12 @@ int EView::Cvs(ExState &State) {
 
     if (strlen(Options) == 0) {
         if (MView->Win->GetStr("CVS options", sizeof(Opts), Opts, HIST_CVS) == 0) {
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
         strcpy(Options, Opts);
     } else {
         if (MView->Win->GetStr("CVS options", sizeof(Options), Options, HIST_CVS) == 0) {
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
     }
 
@@ -942,8 +904,7 @@ int EView::Cvs(ExState &State) {
 int EView::RunCvs(ExState &State) {
     if (sstack.size() == 0) {
         Msg(S_ERROR, "String stack underflow in RunCvs");
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     if (CvsView != 0 && CvsView->Running) {
@@ -1021,14 +982,12 @@ int EView::ViewCvs(ExState &/*State*/) {
 int EView::CvsDiff(ExState &State) {
     if (sstack.size() == 0) {
         Msg(S_ERROR, "String stack underflow in CvsDiff");
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     if (CvsDiffView != 0 && CvsDiffView->Running) {
         Msg(S_INFO, "Already running...");
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     static char Opts[128] = "";
@@ -1038,14 +997,12 @@ int EView::CvsDiff(ExState &State) {
 
     if (strlen(Options) == 0) {
         if (MView->Win->GetStr("CVS diff options", sizeof(Opts), Opts, HIST_CVSDIFF) == 0) {
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
         strcpy(Options, Opts);
     } else {
         if (MView->Win->GetStr("CVS diff options", sizeof(Options), Options, HIST_CVSDIFF) == 0) {
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
     }
 
@@ -1055,8 +1012,7 @@ int EView::CvsDiff(ExState &State) {
 int EView::RunCvsDiff(ExState &State) {
     if (sstack.size() == 0) {
         Msg(S_ERROR, "String stack underflow in RunCvsDiff");
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     if (CvsDiffView != 0 && CvsDiffView->Running) {
@@ -1121,14 +1077,12 @@ int EView::ViewCvsDiff(ExState &/*State*/) {
 int EView::CvsCommit(ExState &State) {
     if (sstack.size() == 0) {
         Msg(S_ERROR, "String stack underflow in CvsCommit");
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     if (CvsView != 0 && CvsView->Running) {
         Msg(S_INFO, "Already running...");
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     static char Opts[128] = "";
@@ -1138,14 +1092,12 @@ int EView::CvsCommit(ExState &State) {
 
     if (strlen(Options) == 0) {
         if (MView->Win->GetStr("CVS commit options", sizeof(Opts), Opts, HIST_CVSCOMMIT) == 0) {
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
         strcpy(Options, Opts);
     } else {
         if (MView->Win->GetStr("CVS commit options", sizeof(Options), Options, HIST_CVSCOMMIT) == 0) {
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
     }
     return CvsCommit(Options);
@@ -1154,14 +1106,12 @@ int EView::CvsCommit(ExState &State) {
 int EView::RunCvsCommit(ExState &State) {
     if (sstack.size() == 0) {
         Msg(S_ERROR, "String stack underflow in RunCvsCommit");
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     if (CvsView != 0 && CvsView->Running) {
         Msg(S_INFO, "Already running...");
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     char Options[128] = "";
@@ -1217,14 +1167,12 @@ int EView::ViewCvsLog(ExState &/*State*/) {
 int EView::Svn(ExState &State) {
     if (sstack.size() == 0) {
         Msg(S_ERROR, "String stack underflow in Svn");
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     if (SvnView != 0 && SvnView->Running) {
         Msg(S_INFO, "Already running...");
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     static char Opts[128] = "";
@@ -1234,14 +1182,12 @@ int EView::Svn(ExState &State) {
 
     if (strlen(Options) == 0) {
         if (MView->Win->GetStr("SVN options", sizeof(Opts), Opts, HIST_SVN) == 0) {
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
         strcpy(Options, Opts);
     } else {
         if (MView->Win->GetStr("SVN options", sizeof(Options), Options, HIST_SVN) == 0) {
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
     }
     return Svn(Options);
@@ -1250,14 +1196,12 @@ int EView::Svn(ExState &State) {
 int EView::RunSvn(ExState &State) {
     if (sstack.size() == 0) {
         Msg(S_ERROR, "String stack underflow in RunSvn");
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     if (SvnView != 0 && SvnView->Running) {
         Msg(S_INFO, "Already running...");
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     char Options[128] = "";
@@ -1330,14 +1274,12 @@ int EView::ViewSvn(ExState &/*State*/) {
 int EView::SvnDiff(ExState &State) {
     if (sstack.size() == 0) {
         Msg(S_ERROR, "String stack underflow in SvnDiff");
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     if (SvnDiffView != 0 && SvnDiffView->Running) {
         Msg(S_INFO, "Already running...");
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     static char Opts[128] = "";
@@ -1346,14 +1288,12 @@ int EView::SvnDiff(ExState &State) {
 
     if (strlen(Options) == 0) {
         if (MView->Win->GetStr("SVN diff options", sizeof(Opts), Opts, HIST_SVNDIFF) == 0) {
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
         strcpy(Options, Opts);
     } else {
         if (MView->Win->GetStr("SVN diff options", sizeof(Options), Options, HIST_SVNDIFF) == 0) {
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
     }
     return SvnDiff(Options);
@@ -1362,8 +1302,7 @@ int EView::SvnDiff(ExState &State) {
 int EView::RunSvnDiff(ExState &State) {
     if (sstack.size() == 0) {
         Msg(S_ERROR, "String stack underflow in RunSvnDiff");
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     if (SvnDiffView != 0 && SvnDiffView->Running) {
@@ -1427,8 +1366,7 @@ int EView::ViewSvnDiff(ExState &/*State*/) {
 int EView::SvnCommit(ExState &State) {
     if (sstack.size() == 0) {
         Msg(S_ERROR, "String stack underflow in SvnCommit");
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     if (SvnView != 0 && SvnView->Running) {
@@ -1443,14 +1381,12 @@ int EView::SvnCommit(ExState &State) {
 
     if (strlen(Options) == 0) {
         if (MView->Win->GetStr("SVN commit options", sizeof(Opts), Opts, HIST_SVNCOMMIT) == 0) {
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
         strcpy(Options, Opts);
     } else {
         if (MView->Win->GetStr("SVN commit options", sizeof(Options), Options, HIST_SVNCOMMIT) == 0) {
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
     }
     return SvnCommit(Options);
@@ -1459,8 +1395,7 @@ int EView::SvnCommit(ExState &State) {
 int EView::RunSvnCommit(ExState &State) {
     if (sstack.size() == 0) {
         Msg(S_ERROR, "String stack underflow in RunSvnCommit");
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     if (SvnView != 0 && SvnView->Running) {

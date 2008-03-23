@@ -76,6 +76,8 @@ sub pass   {    # ( got wants testnum -- )
 
 sub initselftest {
    timestarted off
+   passed off
+   failed off
    256 bl repeat$ testfilename store$
 }
 # -------------------------------------------------------------------------------------------------

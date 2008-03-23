@@ -30,8 +30,7 @@ int EBuffer::CursorLeft() {
 
 int EBuffer::CursorRight() {
     SetPos(CP.Col + 1, CP.Row, tmRight);
-    SetBranchCondition(1);
-    return 1;
+    SUCCESS
 }
 
 int EBuffer::CursorUp() {
@@ -58,14 +57,11 @@ int EBuffer::CursorDown() {
 
 int EBuffer::MoveLeft() {
     if (CP.Col) {
-        SetPos(CP.Col - 1, CP.Row, tmLeft);
-//        SetBranchCondition(1);
-        return 1;
+        return SetPos(CP.Col - 1, CP.Row, tmLeft);
     }
     if (CursorWithinEOL == 1 && MoveUp())
         return MoveLineEnd();
-    SetBranchCondition(0);
-    return 0;
+    FAIL
 }
 
 int EBuffer::MoveRight() {
@@ -73,22 +69,17 @@ int EBuffer::MoveRight() {
         if (MoveDown()) {
             return MoveLineStart();
         } else {
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
     }
-
-    SetPos(CP.Col + 1, CP.Row, tmRight);
-//    SetBranchCondition(1);
-    return 1;
+    return SetPos(CP.Col + 1, CP.Row, tmRight);
 }
 
 int EBuffer::MoveUp() {
     if (LastUpDownColumn == -1)
         LastUpDownColumn = CP.Col;
     if (CP.Row == 0) {
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     SetPos(CP.Col, CP.Row - 1, tmLeft);
@@ -98,17 +89,14 @@ int EBuffer::MoveUp() {
         if (CP.Col > LastUpDownColumn)
             SetPos(LastUpDownColumn, CP.Row);
     }
-
-//    SetBranchCondition(1);
-    return 1;
+    SUCCESS
 }
 
 int EBuffer::MoveDown() {
     if (LastUpDownColumn == -1)
         LastUpDownColumn = CP.Col;
     if (CP.Row == VCount - 1) {
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     SetPos(CP.Col, CP.Row + 1, tmLeft);
@@ -119,37 +107,29 @@ int EBuffer::MoveDown() {
             SetPos(LastUpDownColumn, CP.Row);
     }
 
-//    SetBranchCondition(1);
-    return 1;
+    SUCCESS
 }
 
 // any of the CursorLeft/Right/Up/Down set branch condition. no need
 // to set twice what would merely be a reflection of the Cursor... condition.
 int EBuffer::MovePrev() {
     if (MoveLeft() || (MoveUp() && MoveLineEnd())) {
-//        SetBranchCondition(1);
-        return 1;
+        SUCCESS
     }
-
-//    SetBranchCondition(0);
-    return 0;
+    FAIL
 }
 
 int EBuffer::MoveNext() {
     if (CP.Col < LineLen()) {
         if (MoveRight()) {
-//            SetBranchCondition(1);
-            return 1;
+            SUCCESS
         }
     }
 
     if (MoveDown() && MoveLineStart()) {
-//        SetBranchCondition(1);
-        return 1;
+        SUCCESS
     }
-
-    SetBranchCondition(0);
-    return 0;
+    FAIL
 }
 
 int EBuffer::MoveWordLeftX(int start) {
@@ -169,8 +149,7 @@ int EBuffer::MoveWordLeftX(int start) {
             return SetPos(C, CP.Row);
         }
     }
-    SetBranchCondition(0);
-    return 0;
+    FAIL
 }
 
 int EBuffer::MoveWordRightX(int start) {
@@ -182,8 +161,7 @@ int EBuffer::MoveWordRightX(int start) {
     P = CharOffset(L, C);
 
     if (P >= L->Count) {
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     while ((P < L->Count) && (WGETBIT(Flags.WordChars, L->Chars[P]) == wS)) P++;
@@ -333,14 +311,12 @@ int EBuffer::MoveWordOrCapEndNext() {
 
 int EBuffer::MoveLineStart() {
     SetPos(0, CP.Row);
-    SetBranchCondition(1);
-    return 1;
+    SUCCESS
 }
 
 int EBuffer::MoveLineEnd() {
     SetPos(LineLen(VToR(CP.Row)), CP.Row);
-    SetBranchCondition(1);
-    return 1;
+    SUCCESS
 }
 
 int EBuffer::MovePageUp() {
@@ -1038,8 +1014,7 @@ int EBuffer::InsertString(const char *aStr, int aCount) {
     if (BFI(this, BFI_InsertKillBlock) == 1) {
         if (CheckBlock() == 1) {
             if (BlockKill() == 0) {
-                SetBranchCondition(0);
-                return 0;
+                FAIL
             }
         }
     }
@@ -1048,15 +1023,13 @@ int EBuffer::InsertString(const char *aStr, int aCount) {
     if (memory[insert] == 0) {
         if (CP.Col < LineLen()) {
             if (KillChar() == 0) {
-                SetBranchCondition(0);
-                return 0;
+                FAIL
             }
         }
     }
 
     if (InsText(Y, CP.Col, aCount, aStr) == 0) {
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     C = CP.Col;
@@ -1065,22 +1038,19 @@ int EBuffer::InsertString(const char *aStr, int aCount) {
     P += aCount;
     C = ScreenPos(RLine(L), P);
     if (SetPos(C, CP.Row) == 0) {
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     // if (BFI(this, BFI_Trim) && *aStr != '\t') {
     if ((memory[autotrim]) && *aStr != '\t') {
         if (TrimLine(L) == 0) {
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
     }
 
     if (BFI(this, BFI_WordWrap) == 2) {
         if (DoWrap(0) == 0) {
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
     } else if (BFI(this, BFI_WordWrap) == 1) {
         int P, C = CP.Col;
@@ -1102,18 +1072,15 @@ int EBuffer::InsertString(const char *aStr, int aCount) {
             } else
                 C = ScreenPos(LP, P);
             if (SplitLine(L, C) == 0) {
-                SetBranchCondition(0);
-                return 0;
+                FAIL
             }
             IndentLine(L + 1, BFI(this, BFI_LeftMargin));
             if (SetPos(CP.Col - C - 1 + BFI(this, BFI_LeftMargin), CP.Row + 1) == 0) {
-                SetBranchCondition(0);
-                return 0;
+                FAIL
             }
         }
     }
-    SetBranchCondition(1);
-    return 1;
+    SUCCESS
 }
 
 int EBuffer::InsertSpacesToTab(int TSize) {

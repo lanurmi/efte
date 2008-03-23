@@ -23,16 +23,14 @@ int EView::SysShowHelp(ExState &State, const char *word) {
 
     if (strlen(file) == 0) {
         if (MView->Win->GetStr("Help file", sizeof(file) - 1, file, HIST_DEFAULT) == 0) {
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
     }
 
     if (word == 0) {
         if (strlen(wordAsk) == 0) {
             if (MView->Win->GetStr("Keyword", sizeof(wordAsk) - 1, wordAsk, HIST_DEFAULT) == 0) {
-                SetBranchCondition(0);
-                return 0;
+                FAIL
             }
         }
         word = wordAsk;

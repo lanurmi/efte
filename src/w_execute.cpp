@@ -41,8 +41,7 @@ int EGUI::ExecuteCommand(ExState &State, GxView *view)
     int command = CmdNum(name);
     if (command == 0) {
         View->Msg(S_INFO, "%s is an unknown command", name);
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     return ExecCommand(view, command, State);

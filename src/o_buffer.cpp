@@ -899,8 +899,7 @@ int EBuffer::MoveToLine(ExState &State) {
 
         sprintf(Num, "%d", VToR(CP.Row) + 1);
         if (View->MView->Win->GetStr("Goto Line", sizeof(Num), Num, HIST_POSITION) == 0) {
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
 
         No = atol(Num);
@@ -917,8 +916,7 @@ int EBuffer::MoveToColumn(ExState &State) {
 
         sprintf(Num, "%d", CP.Col + 1);
         if (View->MView->Win->GetStr("Goto Column", 8, Num, HIST_POSITION) == 0) {
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
 
         No = atol(Num);
@@ -930,16 +928,14 @@ int EBuffer::MoveToColumn(ExState &State) {
 int EBuffer::FoldCreateByRegexp(ExState &State) {
     if (sstack.size() == 0) {
         Msg(S_ERROR, "String stack underflow in FoldCreateByRegexp");
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     std::string reg = sstack.back(); sstack.pop_back();
     if (reg.empty()) {
         char strbuf[1024] = "";
         if (View->MView->Win->GetStr("Create Fold Regexp", sizeof(strbuf), strbuf, HIST_REGEXP) == 0) {
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
         reg = strbuf;
     }
@@ -1023,8 +1019,7 @@ int EBuffer::GetUserBookmarkForLine(int searchFrom, int searchForLine, char *&Na
 int EBuffer::PlaceBookmark(ExState &State) {
     if (sstack.size() == 0) {
         Msg(S_ERROR, "String stack underflow in PlaceBookmark");
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     EPoint P = CP;
@@ -1034,8 +1029,7 @@ int EBuffer::PlaceBookmark(ExState &State) {
     if (bm.empty()) {
         char name[256] = "";
         if (View->MView->Win->GetStr("Place Bookmark", sizeof(name), name, HIST_BOOKMARK) == 0) {
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
         bm = name;
     }
@@ -1046,8 +1040,7 @@ int EBuffer::PlaceBookmark(ExState &State) {
 int EBuffer::RemoveBookmark(ExState &State) {
     if (sstack.size() == 0) {
         Msg(S_ERROR, "String stack underflow in RemoveBookmark");
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     std::string bm = sstack.back(); sstack.pop_back();
@@ -1055,8 +1048,7 @@ int EBuffer::RemoveBookmark(ExState &State) {
     if (bm.empty()) {
         char name[256] = "";
         if (View->MView->Win->GetStr("Remove Bookmark", sizeof(name), name, HIST_BOOKMARK) == 0) {
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
         bm = name;
     }
@@ -1067,8 +1059,7 @@ int EBuffer::RemoveBookmark(ExState &State) {
 int EBuffer::GotoBookmark(ExState &State) {
     if (sstack.size() == 0) {
         Msg(S_ERROR, "String stack underflow in RemoveBookmark");
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     std::string bm = sstack.back(); sstack.pop_back();
@@ -1076,8 +1067,7 @@ int EBuffer::GotoBookmark(ExState &State) {
     if (bm.empty()) {
         char name[256] = "";
         if (View->MView->Win->GetStr("Goto Bookmark", sizeof(name), name, HIST_BOOKMARK) == 0) {
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
         bm = name;
     }
@@ -1088,8 +1078,7 @@ int EBuffer::GotoBookmark(ExState &State) {
 int EBuffer::PlaceGlobalBookmark(ExState &State) {
     if (sstack.size() == 0) {
         Msg(S_ERROR, "String stack underflow in RemoveBookmark");
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     EPoint P = CP;
@@ -1099,8 +1088,7 @@ int EBuffer::PlaceGlobalBookmark(ExState &State) {
     if (bm.empty()) {
         char name[256] = "";
         if (View->MView->Win->GetStr("Place Global Bookmark", sizeof(name), name, HIST_BOOKMARK) == 0) {
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
         bm = name;
     }
@@ -1139,21 +1127,17 @@ int EBuffer::GetChar(ExState &State) {
     E.What = evKeyDown;
     E.Key.Code = View->MView->Win->GetChar("Character:");
     if (!GetCharFromEvent(E, &Ch)) {
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
     No = Ch;
 
     if (No < 0 || No > 255) {
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     Ch = char(No);
     ParamStack.push((unsigned int) Ch);
-
-    SetBranchCondition(1);
-    return 1;
+    SUCCESS
 }
 
 /**
@@ -1162,15 +1146,12 @@ int EBuffer::GetChar(ExState &State) {
 int EBuffer::Message(ExState &State) {
     if (sstack.size() == 0) {
         Msg(S_ERROR, "String stack underflow in Message");
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     Msg(S_INFO, sstack.back().c_str());
     sstack.pop_back();
-
-    SetBranchCondition(1);
-    return 1;
+    SUCCESS
 }
 
 /**
@@ -1185,8 +1166,7 @@ int EBuffer::GetChoice(ExState &State) {
     // Count of choices + 2 (title and message)
     if (count + 2 > sstack.size()) {
         Msg(S_ERROR, "String stack underflow in GetChoice");
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     if (count >= 6) { c6 = sstack.back().c_str(); sstack.pop_back(); }
@@ -1222,14 +1202,11 @@ int EBuffer::GetChoice(ExState &State) {
     }
 
     if (result == -1) {
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     ParamStack.push(result);
-
-    SetBranchCondition(1);
-    return 1;
+    SUCCESS
 }
 
 int EBuffer::InsertChar(ExState &State) {
@@ -1241,14 +1218,12 @@ int EBuffer::InsertChar(ExState &State) {
         E.What = evKeyDown;
         E.Key.Code = View->MView->Win->GetChar("Quote Char:");
         if (!GetCharFromEvent(E, &Ch)) {
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
         No = Ch;
     }
     if (No < 0 || No > 255) {
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
     Ch = char(No);
     return InsertChar(Ch);
@@ -1273,8 +1248,7 @@ int EBuffer::TypeChar(ExState &State) {
 int EBuffer::InsertString(ExState &State) {
     if (sstack.size() == 0) {
         View->Msg(S_ERROR, "String stack underflow in InsertString");
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     std::string str = sstack.back(); sstack.pop_back();
@@ -1282,8 +1256,7 @@ int EBuffer::InsertString(ExState &State) {
     if (str.empty()) {
         char strbuf[1024] = "";
         if (View->MView->Win->GetStr("Insert String", sizeof(strbuf), strbuf, HIST_DEFAULT) == 0) {
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
 
         str = strbuf;
@@ -1297,8 +1270,7 @@ extern int LastEventChar;
 int EBuffer::SelfInsert(ExState &/*State*/) {
     if (LastEventChar != -1)
         return TypeChar(char(LastEventChar));
-    SetBranchCondition(0);
-    return 0;
+    FAIL
 }
 
 int EBuffer::FileReload(ExState &/*State*/) {
@@ -1314,8 +1286,7 @@ int EBuffer::FileReload(ExState &/*State*/) {
         case 1:
         case -1:
         default:
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
     }
 //    GetNewNumber();
@@ -1327,8 +1298,7 @@ int EBuffer::FileSaveAs(const char *FName) {
 
     if (ExpandPath(FName, Name, sizeof(Name)) == -1) {
         View->MView->Win->Choice(GPC_ERROR, "Error", 1, "O&K", "Invalid path: %s.", FName);
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
     if (FindFile(Name) == 0) {
         if (FileExists(Name)) {
@@ -1343,8 +1313,7 @@ int EBuffer::FileSaveAs(const char *FName) {
             case 1:
             case -1:
             default:
-                SetBranchCondition(0);
-                return 0;
+                FAIL
 
             }
         }
@@ -1354,24 +1323,21 @@ int EBuffer::FileSaveAs(const char *FName) {
         return Save();
     } else {
         View->MView->Win->Choice(GPC_ERROR, "Error", 1, "O&K", "Already editing '%s.'", Name);
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 }
 
 int EBuffer::FileSaveAs(ExState &State) {
     if (sstack.size() == 0) {
         Msg(S_ERROR, "String stack underflow in FileSaveAs");
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     std::string fname = sstack.back(); sstack.pop_back();
     if (fname.empty()) {
         char FName[MAXPATH] = "";
         if (View->MView->Win->GetFile("Save As", sizeof(FName), FName, HIST_PATH, GF_SAVEAS) == 0) {
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
         fname = FName;
     }
@@ -1384,8 +1350,7 @@ int EBuffer::FileWriteTo(const char *FName) {
 
     if (ExpandPath(FName, Name, sizeof(Name)) == -1) {
         View->MView->Win->Choice(GPC_ERROR, "Error", 1, "O&K", "Invalid path: %s.", FName);
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
     if (FindFile(Name) == 0) {
         if (FileExists(Name)) {
@@ -1400,31 +1365,27 @@ int EBuffer::FileWriteTo(const char *FName) {
             case 1:
             case -1:
             default:
-                SetBranchCondition(0);
-                return 0;
+                FAIL
             }
         }
         return SaveTo(Name);
     } else {
         View->MView->Win->Choice(GPC_ERROR, "Error", 1, "O&K", "Already editing '%s.'", Name);
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 }
 
 int EBuffer::FileWriteTo(ExState &State) {
     if (sstack.size() == 0) {
         Msg(S_ERROR, "String stack underflow in FileSaveAs");
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     std::string fname = sstack.back(); sstack.pop_back();
     if (fname.empty()) {
         char FName[MAXPATH] = "";
         if (View->MView->Win->GetFile("Write To", sizeof(FName), FName, HIST_PATH, GF_SAVEAS) == 0) {
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
         fname = FName;
     }
@@ -1435,8 +1396,7 @@ int EBuffer::FileWriteTo(ExState &State) {
 int EBuffer::BlockReadX(ExState &State, int blockMode) {
     if (sstack.size() == 0) {
         View->Msg(S_ERROR, "String stack underflow in BlockReadX");
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     char Name[MAXPATH];
@@ -1448,8 +1408,7 @@ int EBuffer::BlockReadX(ExState &State, int blockMode) {
         if (JustDirectory(FileName, FName, sizeof(FName)) == -1) return 0;
         SlashDir(FName);
         if (View->MView->Win->GetFile("Read block", sizeof(FName), FName, HIST_PATH, GF_OPEN) == 0) {
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
         fname = FName;
     }
@@ -1482,8 +1441,7 @@ int EBuffer::BlockReadColumn(ExState &State) {
 int EBuffer::BlockWrite(ExState &State) {
     if (sstack.size() == 0) {
         Msg(S_ERROR, "String stack underflow in BlockWrite");
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     char Name[MAXPATH];
@@ -1495,13 +1453,11 @@ int EBuffer::BlockWrite(ExState &State) {
         char FName[MAXPATH];
 
         if (JustDirectory(FileName, FName, sizeof(FName)) == -1) {
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
         SlashDir(FName);
         if (View->MView->Win->GetFile("Write block", sizeof(FName), FName, HIST_PATH, GF_SAVEAS) == 0) {
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
 
         fname = FName;
@@ -1509,8 +1465,7 @@ int EBuffer::BlockWrite(ExState &State) {
 
     if (ExpandPath(fname.c_str(), Name, sizeof(Name)) == -1) {
         View->MView->Win->Choice(GPC_ERROR, "Error", 1, "O&K", "Invalid path: %s.", fname.c_str());
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     if (FindFile(Name) == 0) {
@@ -1530,15 +1485,13 @@ int EBuffer::BlockWrite(ExState &State) {
             case 2:
             case -1:
             default:
-                SetBranchCondition(0);
-                return 0;
+                FAIL
 
             }
         }
     } else {
         View->MView->Win->Choice(GPC_ERROR, "Error", 1, "O&K", "Already editing '%s.'", Name);
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
     return BlockWriteTo(Name, Append);
 }
@@ -1546,8 +1499,7 @@ int EBuffer::BlockWrite(ExState &State) {
 int EBuffer::Find(ExState &State) {
     if (sstack.size() < 2) {
         Msg(S_ERROR, "String stack underflow in Find (%i)", sstack.size());
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
     char find[MAXSEARCH+1] = "";
     char options[32] = "";
@@ -1564,8 +1516,7 @@ int EBuffer::Find(ExState &State) {
         LSearch.strReplace[0] = 0;
         LSearch.Options = 0;
         if (ParseSearchOptions(0, options, LSearch.Options) == 0) {
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
         LSearch.ok = 1;
     } else if ((HaveGUIDialogs & GUIDLG_FIND) && GUIDialogs) {
@@ -1579,21 +1530,18 @@ int EBuffer::Find(ExState &State) {
             LSearch.Options = 0;
 
         if (DLGGetFind(View->MView->Win, LSearch) == 0) {
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
     } else {
         if (strlen(options) == 0 && BFS(this, BFS_DefFindOpt))
             strcpy(options, BFS(this, BFS_DefFindOpt));
         if (View->MView->Win->GetStr("Find", sizeof(find), find, HIST_SEARCH) == 0) {
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
         if (View->MView->Win->GetStr("Options (All/Block/Cur/Delln/Glob/Igncase/Joinln/Rev/Word/regX)",
                                      sizeof(options), options, HIST_SEARCHOPT) == 0)
         {
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
 
         LSearch.ok = 0;
@@ -1601,30 +1549,25 @@ int EBuffer::Find(ExState &State) {
         LSearch.strReplace[0] = 0;
         LSearch.Options = 0;
         if (ParseSearchOptions(0, options, LSearch.Options) == 0) {
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
         LSearch.ok = 1;
     }
     if (LSearch.ok == 0) {
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
     LSearch.Options |= SEARCH_CENTER;
     if (Find(LSearch) == 0) {
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
-    SetBranchCondition(1);
-    return 1;
+    SUCCESS
 }
 
 // TODO
 int EBuffer::FindReplace(ExState &State) {
     if (sstack.size() < 3) {
         Msg(S_ERROR, "String stack underflow in FindReplace (%i)", sstack.size());
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     char find[MAXSEARCH+1] = "";
@@ -1641,8 +1584,7 @@ int EBuffer::FindReplace(ExState &State) {
         strcpy(LSearch.strReplace, replace);
         LSearch.Options = 0;
         if (ParseSearchOptions(1, options, LSearch.Options) == 0) {
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
         LSearch.Options |= SEARCH_REPLACE;
         LSearch.ok = 1;
@@ -1660,15 +1602,13 @@ int EBuffer::FindReplace(ExState &State) {
     } else {
         if (strlen(find) == 0) {
             if (View->MView->Win->GetStr("Find", sizeof(find), find, HIST_SEARCH) == 0) {
-                SetBranchCondition(0);
-                return 0;
+                FAIL
             }
         }
 
         if (strlen(replace) == 0) {
             if (View->MView->Win->GetStr("Replace", sizeof(replace), replace, HIST_SEARCH) == 0) {
-                SetBranchCondition(0);
-                return 0;
+                FAIL
             }
         }
 
@@ -1678,8 +1618,7 @@ int EBuffer::FindReplace(ExState &State) {
             if (View->MView->Win->GetStr("Options (All/Block/Cur/Delln/Glob/Igncase/Joinln/Rev/Splitln/Noask/Word/regX)",
                                          sizeof(options), options, HIST_SEARCHOPT) == 0)
             {
-                SetBranchCondition(0);
-                return 0;
+                FAIL
             }
         }
 
@@ -1765,8 +1704,7 @@ int EBuffer::FindRepeatOnce(ExState &State) {
 int EBuffer::ChangeMode(ExState &State) {
     if (sstack.size() == 0) {
         Msg(S_ERROR, "String stack underflow in ChangeMode");
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     std::string mode = sstack.back(); sstack.pop_back();
@@ -1775,8 +1713,7 @@ int EBuffer::ChangeMode(ExState &State) {
     if (mode.empty()) {
         char Mode[32] = "";
         if (View->MView->Win->GetStr("Mode", sizeof(Mode), Mode, HIST_SETUP) == 0) {
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
 
         mode = Mode;
@@ -1791,8 +1728,7 @@ int EBuffer::ChangeMode(ExState &State) {
 int EBuffer::ChangeKeys(ExState &State) {
     if (sstack.size() == 0) {
         Msg(S_ERROR, "String stack underflow in ChangeKeys");
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     std::string keys = sstack.back(); sstack.pop_back();
@@ -1801,8 +1737,7 @@ int EBuffer::ChangeKeys(ExState &State) {
     if (keys.empty()) {
         char Keys[32] = "";
         if (View->MView->Win->GetStr("Keys", sizeof(Keys), Keys, HIST_SETUP) == 0) {
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
 
         keys = Keys;
@@ -1817,8 +1752,7 @@ int EBuffer::ChangeKeys(ExState &State) {
 int EBuffer::ChangeFlags(ExState &State) {
     if (sstack.size() == 0) {
         Msg(S_ERROR, "String stack underflow in ChangeFlags");
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     std::string flags = sstack.back(); sstack.pop_back();
@@ -1827,8 +1761,7 @@ int EBuffer::ChangeFlags(ExState &State) {
     if (flags.empty()) {
         char Flags[32] = "";
         if (View->MView->Win->GetStr("Flags", sizeof(Mode), Flags, HIST_SETUP) == 0) {
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
 
         flags = Flags;
@@ -2039,8 +1972,7 @@ int EBuffer::ScrollUp(ExState &State) {
 int EBuffer::FindTag(ExState &State) {
     if (sstack.size() == 0) {
         Msg(S_ERROR, "String stack underflow in FindTag");
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     std::string tag = sstack.back(); sstack.pop_back();
@@ -2049,8 +1981,7 @@ int EBuffer::FindTag(ExState &State) {
         char Tag[MAXSEARCH] = "";
 
         if (View->MView->Win->GetStr("Find tag", sizeof(Tag), Tag, HIST_SEARCH) == 0) {
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
 
         tag = Tag;
@@ -2062,8 +1993,7 @@ int EBuffer::FindTag(ExState &State) {
 
         i = TagFind(this, View, tag.c_str());
         if (i > 0) {
-            SetBranchCondition(1);
-            return 1;
+            SUCCESS
         } else if (j && (i < 0)) {
             /* Try autoload tags */
             if (View->ExecCommand(ExTagLoad, State) == 0)
@@ -2081,8 +2011,7 @@ int EBuffer::FindTag(ExState &State) {
 int EBuffer::InsertDate(ExState &State) {
     if (sstack.size() == 0) {
         Msg(S_ERROR, "String stack underflow in InsertDate");
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     std::string format = sstack.back(); sstack.pop_back();
@@ -2209,13 +2138,11 @@ int EBuffer::PushSelection() {
 
     AutoExtend = 0;
     if (CheckBlock() == 0) {
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     if (RCount == 0) {
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     std::string buf;
@@ -2277,9 +2204,7 @@ int EBuffer::PushSelection() {
     }
 
     sstack.push_back(buf);
-
-    SetBranchCondition(1);
-    return 1;
+    SUCCESS
 }
 
 int EBuffer::PushEfteVerNo() {

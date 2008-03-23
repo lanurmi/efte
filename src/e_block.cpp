@@ -654,12 +654,10 @@ int EBuffer::BlockWriteTo(const char *AFileName, int Append) {
 
     AutoExtend = 0;
     if (CheckBlock() == 0) {
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
     if (RCount == 0) {
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
     B = BB;
     E = BE;
@@ -730,16 +728,15 @@ int EBuffer::BlockWriteTo(const char *AFileName, int Append) {
     }
     fclose(fp);
     Msg(S_INFO, "Wrote %s, %d lines, %d bytes.", AFileName, lc, bc);
-    SetBranchCondition(1);
-    return 1;
+    SUCCESS
+
 error:
     if (fp != NULL) {
         fclose(fp);
         unlink(AFileName);
     }
     View->MView->Win->Choice(GPC_ERROR, "Error", 1, "O&K", "Failed to write block to %s", AFileName);
-    SetBranchCondition(0);
-    return 0;
+    FAIL
 }
 
 int EBuffer::BlockGet() {
@@ -753,13 +750,11 @@ int EBuffer::BlockGet() {
 
     AutoExtend = 0;
     if (CheckBlock() == 0) {
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     if (RCount == 0) {
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     std::string buf;
@@ -821,9 +816,7 @@ int EBuffer::BlockGet() {
     }
 
     sstack.push_back(buf);
-
-    SetBranchCondition(1);
-    return 1;
+    SUCCESS
 }
 
 int EBuffer::BlockReadFrom(const char *AFileName, int blockMode) {

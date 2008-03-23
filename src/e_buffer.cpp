@@ -431,18 +431,15 @@ int EBuffer::SetPos(int Col, int Row, int tabMode) {
     if (BFI(this, BFI_Undo) == 1 && BFI(this, BFI_UndoMoves) == 1) {
         if (PushULong(CP.Col) == 0)
         {
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
         if (PushULong(CP.Row) == 0)
         {
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
         if (PushUChar(ucPosition) == 0)
         {
-            SetBranchCondition(1);
-            return 0;
+            FAIL
         }
     }
     if (AutoExtend) {
@@ -477,8 +474,7 @@ int EBuffer::SetPos(int Col, int Row, int tabMode) {
                 return 0;                              // oarasitize on CheckBlock
             }
     }
-    SetBranchCondition(1);
-    return 1;
+    SUCCESS
 }
 
 
