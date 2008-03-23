@@ -780,6 +780,7 @@ public:
 
     int SetIndentWithTabs(ExState &State);
     int FoldCreateAtRoutines();
+    void CustomStatusline(int);
 };
 
 extern EBuffer *SSBuffer;

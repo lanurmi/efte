@@ -272,20 +272,21 @@ int Statusline()  {
 
 
 
-void CustomStatusline(int mode)  {
-    if (mode == 2) {
-    //    ExecMacro("OnStatusline");
-    }
-    int statuslinechar = memory[statusline];
-    if (statuslinechar)  {
-        int i = 0;
-        for ( ; i < statuslinelength-1; i++) {
-            char c = memory[statuslinechar++];
-            if (c < 32) break;
-            num[i] = c;
+void EBuffer::CustomStatusline(int mode)  {
+    ExecMacro("OnStatusline");
+    int statuslinestring = memory[statusline];
+    if (statuslinestring)  {                                                 // pointing to a string variable?
+        statuslinestring++;                                                  // yes: advance to actual string length (skip variable size)
+        unsigned int statuslinestringlength = memory[statuslinestring++];    // read size + advance to first character
+        if (statuslinestringlength > statuslinelength)                       // string longer than our buffer can take?
+            statuslinestringlength = statuslinelength;                       // yes: trim
+        int i;
+        for ( i=0; i<statuslinestringlength; i++) {                                // walk through string chars:
+            char c = memory[statuslinestring++];                             // read char
+            if (c < 32) break;                                               // any control char breaks
+            num[i] = c;                                                      // others store in buffer
         }
-        for ( ; i < statuslinelength-1; i++)
-            num[i] = 0;
+        num[i] = 0;                                                          // string terminator
     }
 }
 

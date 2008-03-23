@@ -480,12 +480,6 @@ sub directory$ {                                # ( -- ) s( filename -- director
     1 - 0 max left$  }
 
 
-# --- status line ---
-
-sub statusline$ { var$ new }
-sub message$    { 10 char$ append$ statusline$ store$ }
-
-
 
 # --- debugging ---
 
@@ -547,7 +541,12 @@ sub number$   { dup <hash hashes hash> sign }   # ( n -- )
 sub number    { number? not will fail }
 
 
-
+# --- numeric version ---
+sub version     {
+    eftever$ '.' dup split$
+    number >r
+    minleading$
+    number r> }
 
 
 # ----- date & time -----
@@ -587,12 +586,12 @@ sub time$ {                                     # ( epoch -- )
 }
 
 
-# convert unix epoch to julian, then julian to lilian date
+# convert unix epoch to julian, then to day month year
 sub date {                                      # ( epoch -- y m d )
    86400 /                          # secs>days
    2472632 +                        # julianize
    146097 /mod >r                               # g = j div 146097
-                                    # lilianize # dg = j mod 146097
+                                                # dg = j mod 146097
    dup 36524 / 1 + 3 4 */                       # c = (dg div 36524 + 1) * 3 div 4
    dup >r 36524 * -                             # dc = dg - c * 36524
    1461 /mod                                    # b = dc div 1461
@@ -808,6 +807,46 @@ sub ToggleInsert { insert toggle }
 
 
 
+
+# --- status line ---
+
+sub statusupdatecounter { var new }
+sub statusupdatetimer   { var new }
+
+sub chars/second {
+    statusupdatecounter @ 10000
+    milliseconds statusupdatetimer @ - */
+    "keys/sec:"
+    <hash hash '.' hold hashes hash> append$
+    }
+
+
+sub statusline$ { var$ new }
+sub message$    { statusline$ store$ }
+
+#sub OnStatusline {
+#   now date$
+#   " " append$
+#   now time$ append$
+#   message$ }
+
+
+sub OnStatusline {
+    1 statusupdatecounter +!
+    depth$ >r
+    "stacks:"
+    depth number$ append$  "/" append$
+    r> number$ append$     " " append$
+    chars/second append$
+    message$ }
+
+sub InitStatusline {
+    256  spaces$ statusline$ store$              # initialize statusline to 256 chars
+    statusupdatecounter off
+    milliseconds statusupdatetimer !
+    statusline$ statusline !                     # use
+}
+
 # --- includes ---
 
 include "bookmarks.fte";
@@ -818,19 +857,18 @@ sub AlreadyInitialized { var new }              # helper for workaround for OnLo
                                                 # to protect against multiple execution.
 sub attempt   { tick qdup will execute }        # execute macro, name given as string, if existing
 sub OnBoot    {
+
    AlreadyInitialized @ qdup if                 # rube goldberg scheme for swapping OnLoad and OnBoot sequence
        dup true xor will execute                # the OnLoad handler must support this too:
        drop exit                                # 0: never inited. -1: init complete. x: exec token of OnLoad init code
    endif
    AlreadyInitialized on
 
-   60 spaces$ statusline$ store$
-   statusline$ 2 + statusline !
-
    decimal
    insert on
    autotrim on
 
+   InitStatusline
     "InitBookmarks"    attempt
     "InitMain"         attempt
     "InitMymain"       attempt
