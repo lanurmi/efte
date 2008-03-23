@@ -241,15 +241,13 @@ int EBuffer::GetTrans(ExState &State, TransTable tab) {
 
     if (strlen(TrS) == 0) {
         if (View->MView->Win->GetStr("Trans From", sizeof(TrS), (char *)TrS, HIST_TRANS) == 0) {
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
     }
 
     if (strlen(TrD) == 0) {
         if (View->MView->Win->GetStr("Trans To", sizeof(TrS), (char *)TrD, HIST_TRANS) == 0) {
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
     }
 

@@ -51,28 +51,23 @@ int FileLoad(int createFlags, const char *FileName, const char *Mode, EView *Vie
 
     if (ExpandPath(FileName, Name, sizeof(Name)) == -1) {
         View->MView->Win->Choice(GPC_ERROR, "Error", 1, "O&K", "Invalid path: %s.", FileName);
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
     B = FindFile(Name);
     if (B) {
         if (Mode != 0)
             B->SetFileName(Name, Mode);
         View->SwitchToModel(B);
-        SetBranchCondition(1);
-        return 1;
+        SUCCESS
     }
     B = new EBuffer(createFlags, &ActiveModel, Name);
     B->SetFileName(Name, Mode);
     View->SwitchToModel(B);
 
     if (View->ExecMacro("OnFileLoad") == 0) {
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
-
-    SetBranchCondition(1);
-    return 1;
+    SUCCESS
 }
 
 int MultiFileLoad(int createFlags, const char *FileName, const char *Mode, EView *View) {

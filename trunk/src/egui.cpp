@@ -967,12 +967,9 @@ int EGUI::WinResize(ExState &State, GxView *View) {
     int Delta = ParamStack.pop();
 
     if (View->ExpandHeight(Delta) == 0) {
-        SetBranchCondition(1);
-        return 1;
+        SUCCESS
     }
-
-    SetBranchCondition(0);
-    return 0;
+    FAIL
 }
 
 int EGUI::ExitEditor(EView *View) {
@@ -1036,8 +1033,7 @@ int EGUI::RunProgram(ExState &State, GxView *view) {
     if (sstack.size() == 0) {
         if (ActiveView)
             ActiveView->Msg(S_ERROR, "String stack underflow in RunProgram");
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     std::string cmd = sstack.back(); sstack.pop_back();
@@ -1048,24 +1044,20 @@ int EGUI::RunProgram(ExState &State, GxView *view) {
     if (cmd.empty()) {
         char Cmd[MAXPATH];
         if (view->GetStr("Run", sizeof(Cmd), Cmd, HIST_COMPILE) == 0) {
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
         cmd = Cmd;
     }
 
     gui->RunProgram(RUN_WAIT, cmd.c_str());
-
-    SetBranchCondition(1);
-    return 1;
+    SUCCESS
 }
 
 int EGUI::RunProgramAsync(ExState &State, GxView *view) {
     if (sstack.size() == 0) {
         if (ActiveView)
             ActiveView->Msg(S_ERROR, "String stack underflow in RunProgram");
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     std::string cmd = sstack.back(); sstack.pop_back();
@@ -1076,16 +1068,13 @@ int EGUI::RunProgramAsync(ExState &State, GxView *view) {
     if (cmd.empty()) {
         char Cmd[MAXPATH];
         if (view->GetStr("Run", sizeof(Cmd), Cmd, HIST_COMPILE) == 0) {
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
         cmd = Cmd;
     }
 
     gui->RunProgram(RUN_ASYNC, cmd.c_str());
-
-    SetBranchCondition(1);
-    return 1;
+    SUCCESS
 }
 
 int EGUI::MainMenu(ExState &State, GxView *view) {
@@ -1094,8 +1083,7 @@ int EGUI::MainMenu(ExState &State, GxView *view) {
 
     if (sstack.size() == 0) {
         View->Msg(S_ERROR, "String stack underflow in MainMenu");
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     std::string mname = sstack.back(); sstack.pop_back();
@@ -1110,8 +1098,7 @@ int EGUI::ShowMenu(ExState &State, GxView *View) {
     if (sstack.size() == 0) {
         if (ActiveView)
             ActiveView->Msg(S_ERROR, "String stack underflow in ShowMenu");
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     std::string mname = sstack.back(); sstack.pop_back();
@@ -1120,8 +1107,7 @@ int EGUI::ShowMenu(ExState &State, GxView *View) {
 
     // SetBranchCondition(0); // TODO: Is this right? This is what it was to start, return 0
     // return 0;
-    SetBranchCondition(1); // TODO: as expected, showmenu fails. trying the opposite
-    return 1;
+    SUCCESS                   // TODO: as expected, showmenu fails. trying the opposite
 }
 
 int EGUI::LocalMenu(GxView *View) {
@@ -1141,16 +1127,14 @@ int EGUI::DesktopSaveAs(ExState &State, GxView *view) {
     if (sstack.size() == 0) {
         if (ActiveView)
             ActiveView->Msg(S_ERROR, "String stack underflow in DesktopSaveAs");
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     strcpy(DesktopFileName, sstack.back().c_str()); sstack.pop_back();
 
     if (strlen(DesktopFileName) == 0) {
         if (view->GetFile("Save Desktop", sizeof(DesktopFileName), DesktopFileName, HIST_PATH, GF_SAVEAS) == 0) {
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
     }
 
@@ -1161,16 +1145,14 @@ int EGUI::DesktopLoad(ExState &State, GxView *view) {
     if (sstack.size() == 0) {
         if (ActiveView)
             ActiveView->Msg(S_ERROR, "String stack underflow in DesktopLoad");
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     strcpy(DesktopFileName, sstack.back().c_str()); sstack.pop_back();
 
     if (strlen(DesktopFileName) == 0) {
         if (view->GetFile("Load Desktop", sizeof(DesktopFileName), DesktopFileName, HIST_PATH, GF_SAVEAS) == 0) {
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
     }
 
@@ -1213,8 +1195,7 @@ int EGUI::FrameClose(GxView *View) {
         deleteFrame(frames);
     } else {
         if (ExitEditor(ActiveView) == 0) {
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
         deleteFrame(frames);
     }

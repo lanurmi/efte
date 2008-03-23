@@ -18,8 +18,7 @@ int EBuffer::Reload() {
     int R = VToR(CP.Row), C = CP.Col;
 
     if (LoadFrom(FileName) == 0) {
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
     SetNearPosR(C, R);
 
@@ -31,8 +30,7 @@ int EBuffer::Reload() {
 int EBuffer::Save() {
     if (BFI(this, BFI_ReadOnly)) {
         Msg(S_ERROR, "File is read-only.");
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
     if (BFI(this, BFI_TrimOnSave))
         FileTrim();
@@ -64,8 +62,7 @@ int EBuffer::LoadFrom(const char *AFileName) {
             Msg(S_INFO, "New file %s.", AFileName);
         }
         Loaded = 1;
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
     Loading = 1;
     Clear();
@@ -400,8 +397,7 @@ int EBuffer::LoadFrom(const char *AFileName) {
         }
     }
     if (SetPosR(0, 0) == 0) {
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
     BFI(this, BFI_Undo) = SaveUndo;
     BFI(this, BFI_ReadOnly) = SaveReadOnly;
@@ -426,8 +422,7 @@ int EBuffer::LoadFrom(const char *AFileName) {
     Loaded = 1;
     Draw(0, -1);
     Msg(S_INFO, "Loaded %s.", AFileName);
-    SetBranchCondition(1);
-    return 1;
+    SUCCESS
 fail:
     BFI(this, BFI_Undo) = SaveUndo;
     BFI(this, BFI_ReadOnly) = SaveReadOnly;
@@ -435,8 +430,7 @@ fail:
     Loading = 0;
     Draw(0, -1);
     View->MView->Win->Choice(GPC_ERROR, "Error", 1, "O&K", "Error loading %s.", AFileName);
-    SetBranchCondition(0);
-    return 0;
+    FAIL
 }
 
 int EBuffer::SaveTo(char *AFileName) {
@@ -473,15 +467,13 @@ int EBuffer::SaveTo(char *AFileName) {
             case 1:
             case -1:
             default:
-                SetBranchCondition(0);
-                return 0;
+                FAIL
             }
         }
     }
 
     if (RCount <= 0) {
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     // make only backups when user have requested a one
@@ -489,8 +481,7 @@ int EBuffer::SaveTo(char *AFileName) {
         Msg(S_INFO, "Backing up %s...", AFileName);
         if (MakeBackup(AFileName, (char *)ABackupName) == 0) {
             View->MView->Win->Choice(GPC_ERROR, "Error", 1, "O&K", "Could not create backup file.");
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
     }
 
@@ -611,11 +602,9 @@ int EBuffer::SaveTo(char *AFileName) {
         }
     }
 
-    if (ExecMacro("OnFileSave") == 0)
-        goto fail;
-
-    SetBranchCondition(1);
-    return 1;
+    if (ExecMacro("OnFileSave")) {
+        SUCCESS
+    }
 fail:
     fclose(fp);
     unlink(AFileName);
@@ -624,10 +613,8 @@ fail:
     } else {
         View->MView->Win->Choice(GPC_ERROR, "Error", 1, "O&K", "Error writing file, backup restored.");
     }
-    SetBranchCondition(0);
-    return 0;
+    FAIL
 erroropen:
     View->MView->Win->Choice(GPC_ERROR, "Error", 1, "O&K", "Error writing %s (errno=%d).", AFileName, errno);
-    SetBranchCondition(0);
-    return 0;
+    FAIL
 }

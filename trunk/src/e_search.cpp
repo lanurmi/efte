@@ -911,13 +911,11 @@ int EBuffer::Search(ExState &State, char *aString, int Options, int /*CanResume*
 
         if (strlen(find) == 0) {
             if ((erc = View->MView->Win->GetStr("Find", sizeof(find), find, HIST_SEARCH)) == 0) {
-                SetBranchCondition(0);
-                return 0;
+                FAIL
             }
         }
         if (strlen(find) == 0) {
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
     }
 
@@ -958,15 +956,13 @@ int EBuffer::SearchReplace(ExState &State, char *aString, char *aReplaceString, 
 
         if (strlen(replace) == 0) {
             if (View->MView->Win->GetStr("Replace", sizeof(replace), replace, HIST_SEARCH) == 0) {
-                SetBranchCondition(0);
-                return 0;
+                FAIL
             }
         }
     }
 
     if (strlen(replace) == 0) {
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     if (aString)
@@ -974,23 +970,20 @@ int EBuffer::SearchReplace(ExState &State, char *aString, char *aReplaceString, 
     else {
         if (sstack.size() == 0) {
             Msg(S_ERROR, "String stack underfow error in SearchReplace");
-            SetBranchCondition(0);
-            return 0;
+            FAIL
         }
 
         strcpy(find, sstack.back().c_str()); sstack.pop_back();
 
         if (strlen(find) == 0) {
             if (View->MView->Win->GetStr("Find", sizeof(find), find, HIST_SEARCH) == 0) {
-                SetBranchCondition(0);
-                return 0;
+                FAIL
             }
         }
     }
 
     if (strlen(find) == 0) {
-        SetBranchCondition(0);
-        return 0;
+        FAIL
     }
 
     LSearch.ok = 0;
