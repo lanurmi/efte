@@ -81,7 +81,7 @@ int Div() {
 // marshmallows on #c suggested, for the double len intermediate:
 // if(a > b) { if(a < c) { r = (a*b)/c; } else { r = (a/c)*b; } } else { if(b < c) { r = (a*b)/c; } else { r = (b/c)*a; } }
 // not using this, becase not wanting to have to use floats for a pure integer operation.
-int SlashMod() {
+int StarSlash() {
     PSCHECK(3, "*/");
     int nos = ParamStack.pop();
     if (nos) {

@@ -246,8 +246,8 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
         return Mul();
     case ExDiv:
         return Div();
-    case ExSlashMod:
-        return SlashMod();
+    case ExStarSlash:
+        return StarSlash();
     case ExRandom:
         return Random();
     case ExNow:

@@ -272,9 +272,8 @@ int Statusline()  {
 
 
 
-void EBuffer::CustomStatusline(int mode)  {
+void EBuffer::CustomStatusline(int statuslinestring)  {
     ExecMacro("OnStatusline");
-    int statuslinestring = memory[statusline];
     if (statuslinestring)  {                                                 // pointing to a string variable?
         statuslinestring++;                                                  // yes: advance to actual string length (skip variable size)
         unsigned int statuslinestringlength = memory[statuslinestring++];    // read size + advance to first character
@@ -498,8 +497,8 @@ void EBuffer::Redraw() {
                 int fl = strlen(FileName);
 
                 MoveStr(B, 0, W->Cols, s, SColor, W->Cols);
-                if (DisplayCondition) {
-                    CustomStatusline(DisplayCondition);
+                if (memory[statusline]) {
+                    CustomStatusline(memory[statusline]);
                 } else {
                     sprintf(num, " %s %d", CCharStr, ModelNo);
                 }

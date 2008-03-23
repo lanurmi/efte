@@ -364,15 +364,6 @@ EEventMap *EBuffer::GetEventMap() {
 
 
 
-
-/**
- * MACRO: Display condition code in status bar?
- */
-int EBuffer::ToggleConditionDisplay() {
-    DisplayCondition = (DisplayCondition+1) % 3;
-    return 1;
-}
-
 int EBuffer::BeginMacro() {
     return NextCommand();
 }
@@ -875,8 +866,6 @@ int EBuffer::ExecCommand(int Command, ExState &State) {
         return Message(State);
     case ExGetChoice:
         return GetChoice(State);
-    case ExToggleConditionDisplay:
-        return ToggleConditionDisplay();
 
         // Stack based pushes
 

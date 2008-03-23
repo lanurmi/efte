@@ -812,11 +812,11 @@ sub ToggleInsert { insert toggle }
 sub statusupdatecounter { var new }
 sub statusupdatetimer   { var new }
 
-sub chars/second {
-    statusupdatecounter @ 100000
+sub chars/min {
+    statusupdatecounter @ 600000
     milliseconds statusupdatetimer @ - */
-    "keys/sec:"
-    <hash 2:hash '.' hold hashes hash> append$
+    "keys/min:"
+    <hash hash '.' hold hashes hash> append$
     }
 
 
@@ -836,7 +836,15 @@ sub OnStatusline {
     "stacks:"
     depth number$ append$  "/" append$
     r> number$ append$     " " append$
-    chars/second append$
+    chars/min append$      " " append$
+    base @
+    <hash
+       read dup
+       hex 2:hash drop
+        ',' hold
+        decimal 3:hash
+    hash> append$
+    base !
     message$ }
 
 sub InitStatusline {

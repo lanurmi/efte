@@ -43,7 +43,7 @@ const struct {
     { ExMinus, "-" },
     { ExMul, "*" },
     { ExDiv, "/" },
-    { ExSlashMod, "*/" },
+    { ExStarSlash, "*/" },
     TAB(Random),
     TAB(Now),
     TAB(Milliseconds),
@@ -95,8 +95,6 @@ const struct {
     TABS(Len),
     TABS(Mid),
     TAB(GetString),
-
-    TAB(ToggleConditionDisplay),
 
     TAB(CursorLeft),
     TAB(CursorRight),
