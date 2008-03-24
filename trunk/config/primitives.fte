@@ -121,14 +121,16 @@ sub emptybuffer {
    ?blockkill
 }
 
-sub cls        { emptybuffer }                  # wipe current buffer
+sub cls        { emptybuffer }                      # wipe current buffer
 
-sub linecount  {                                # ( -- u ) number of lines in file
+sub linecount  {                                    # ( -- u ) number of lines in file
    at? movefileend
    cursorrow minrot
    at }
 
-sub linelen    { curline$ len$ }     # ( -- len )
+sub cursorline$ { curline$ }
+sub linelength  { curline$ len$ }                   # ( -- len )
+sub linelen     { curline$ len$ }                   # ( -- len )
 
 
 
@@ -904,12 +906,6 @@ sub chars/min {
 
 sub statusline$ { var$ new }
 sub message$    { statusline$ store$ }
-
-#sub OnStatusline {
-#   now date$
-#   " " append$
-#   now time$ append$
-#   message$ }
 
 
 sub OnStatusline {

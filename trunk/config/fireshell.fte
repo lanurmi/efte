@@ -350,7 +350,8 @@ sub maybesomethingelse {         # ( -- f ) not a word in dictionary - try alter
 
 
 
-sub interpret {                         # the interpreter/compiler
+# the interpreter/compiler. source expected in variable source$
+sub interpret {                         # ( -- )
     begin
        bl word$
        dup$ len$                        # still input?
@@ -373,6 +374,10 @@ sub interpret {                         # the interpreter/compiler
     drop$
     }
 
+
+sub interpret$  {                       # ( -- ) s( sourceline -- )
+    source$ store$ interpret
+}
 
 
 sub load {                              # compile from file.  not nestable now.
