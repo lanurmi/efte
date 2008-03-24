@@ -818,12 +818,13 @@ sub cursorwithinblock {                         # ( -- f )
     cursorcolumn cursorline withinblock
 }
 
+
+# --- block stack ---
+
 sub lineblock { 1 }
 sub streamblock { 2 }
 sub columnblock { 3 }
 
-# pending a block stack, just keep block coords on param stack for now)
-sub saveblock      { block 1 + 4:blockcoordinate drop blocktype }
 
 sub restorelineblock {
     at? >r >r
@@ -848,7 +849,19 @@ sub restorecolumnblock {
 
 sub drop4 { 4:drop }
 
-sub restoreblock   {
+
+include "stacks.fte";
+
+sub BlockStack { stack5 new }        # blocktype, startcolumn, startline, endcolumn, endline
+
+sub pushblock  {
+    block count >r
+    4:blockcoordinate drop
+    r>  blockstack push
+}
+
+sub popblock   {
+    blockstack pop
     vector
        drop4
        restorelineblock
@@ -856,6 +869,33 @@ sub restoreblock   {
        restorecolumnblock
        fail
     endvector }
+
+
+# converts one block type to another.
+# converting line to column block doesn't work yet
+# factor!
+sub convertblock  {                             # ( blocktype -- )
+    >r pushblock
+    blockstack pop
+    drop r>
+    vector
+       drop4
+       restorelineblock
+       restorestreamblock
+       restorecolumnblock
+       fail
+    endvector }
+
+
+
+
+
+sub InitBlockstack  {
+   256 BlockStack
+}
+
+
+
 
 
 sub fillcolumnblock  {                          # ( c -- )
@@ -866,13 +906,13 @@ sub fillcolumnblock  {                          # ( c -- )
     3:drop }
 
 sub fillstreamblock  {                          # ( c -- )
-    >r saveblock r>
+    pushblock
     blockbottom >r blocktop 1 - >r 1 - r> r> swap
     do  dup2 do
        pluck i j char!
     loop loop
     3:drop
-    restoreblock }
+    popblock }
 
 
 sub fillblock {                                 # ( c -- )
@@ -882,6 +922,9 @@ sub fillblock {                                 # ( c -- )
        fillstreamblock
        fillcolumnblock
     endvector  }
+
+
+
 
 
 # --- migrated toggles ---
@@ -954,9 +997,10 @@ sub OnBoot    {
    autotrim on
 
    InitStatusline
+    "InitBlockstack"   attempt
     "InitBookmarks"    attempt
-    "InitMain"         attempt
     "InitMymain"       attempt
+    "InitMain"         attempt
     "OnUserBoot"       attempt                  # replaces the eFTE internal hook
 
    }
