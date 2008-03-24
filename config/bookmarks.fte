@@ -52,13 +52,16 @@ sub FetchBookmark  {                            # ( n -- )
 
 # ----------- initialize both type of bookmarks ------------
 
+
+sub InitBookmarksAlready { var new }
 sub InitBookmarks {                             # ( -- )
-   InitFilenamestack
-   512 BookmarkStack    # for push/pop bookmarks
+    InitBookmarksAlready @ unless
+        InitBookmarksAlready on
+        InitFilenamestack
+        512 BookmarkStack    # for push/pop bookmarks
 # for slotted bookmarks. instantiate and initialize to "unused" (so that fetch attempt will fail)
 # need more bookmarks? increase 10 to the number you need.
-   10 dup BookmarkSlot 0 do -1 -1 -1  i Bookmarkslot !3 loop
- }
-
+        10 dup BookmarkSlot 0 do -1 -1 -1  i Bookmarkslot !3 loop
+}
 
 %endif

@@ -1,3 +1,5 @@
+%if(!FIRESHELL)
+%define(FIRESHELL)
 
 sub last         { var new }                    # anchor of linked list through words
 sub state        { var new }                    # compilation/interpretation switch
@@ -434,34 +436,6 @@ sub fireshellenable { var new }
 sub Fireshell       { fireshellenable @ if ok else linenew endif }
 sub bye             { fireshellenable off }
 
-sub colondef        { header "donest" postpone }
-
-sub InitFireshell {
-   bye
-   0 shellindent !
-   256 spaces$ source$ store$
-   35 spaces$ baseprefix$ store$
-   "" baseprefix$ store$
-
-   0 state !
-   0 last !
-   0 ip !
-   0 w !
-   0 loading !
-
-   '$' 16 addbaseprefix
-   '#' 10 addbaseprefix
-   '%'  2 addbaseprefix
-
-   65536 here - dup 0 > if dup allot endif drop
-   ":"       colondef "sub"       postpone endsub
-   ";"       colondef "endsub"    postpone endsub  immediate
-   "execute" colondef "exec"      postpone endsub
-   "'"       colondef "newtick"   postpone endsub
-   "["       colondef "state" postpone "off" postpone endsub immediate
-   "]"       colondef "state" postpone "on"  postpone endsub
-   }
-
 
 # --------- fireshell utilities ---------
 
@@ -527,3 +501,41 @@ sub dump {                                              # ( a n -- )
       16 slashstring
    repeat drop2
 }
+
+
+
+# ---------------- initialise ---------------
+
+sub colondef        { header "donest" postpone }
+
+
+sub InitFireshellAlready  { var new }
+sub InitFireshell {
+    InitFireshellAlready @ unless
+        InitFireshellAlready on
+        bye
+        0 shellindent !
+        256 spaces$ source$ store$
+        35 spaces$ baseprefix$ store$
+        "" baseprefix$ store$
+
+        0 state !
+        0 last !
+        0 ip !
+        0 w !
+        0 loading !
+
+        '$' 16 addbaseprefix
+        '#' 10 addbaseprefix
+        '%'  2 addbaseprefix
+
+        65536 here - dup 0 > if dup allot endif drop
+        ":"       colondef "sub"       postpone endsub
+        ";"       colondef "endsub"    postpone endsub  immediate
+        "execute" colondef "exec"      postpone endsub
+        "'"       colondef "newtick"   postpone endsub
+        "["       colondef "state" postpone "off" postpone endsub immediate
+        "]"       colondef "state" postpone "on"  postpone endsub
+   }
+
+%endif
