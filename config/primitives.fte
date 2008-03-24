@@ -128,7 +128,7 @@ sub linecount  {                                # ( -- u ) number of lines in fi
    cursorrow minrot
    at }
 
-sub linelen    { curline$ dup$ len$ drop$ }     # ( -- len )
+sub linelen    { curline$ len$ }     # ( -- len )
 
 
 
@@ -713,8 +713,48 @@ sub blockmove { blockcut blockpaste }           # move block to cursor
 # latter 4 only contain meaningful values if block type is 1..3
 #
 #
+
+# TODO: fail handler must empty controlstack
+
 sub blocktype     { block @ }                   # ( -- f )
 
+# correct block bottom coordinate to be within block
+sub lineblockbottomcorrection {                 # ( column1 line1 -- column2 line2 )
+    1 - >r drop
+   r@ line$ len$ r>  }
+
+sub streamblockbottomcorrection {               # ( column1 line1 -- column2 line2 )
+    >r 1 - r>  }
+
+sub columnblockbottomcorrection {               # ( column1 line1 -- column2 line2 )
+    1 - >r 1 - r> }
+
+sub blockcoordinate  {                          # ( a1 -- u a2 )
+    dup @ 1 + swap 1 + }
+
+sub blockcoordinates {
+    block count dup >r
+    not will fail
+    4:blockcoordinate drop
+    r> vector
+       fail
+       lineblockbottomcorrection
+       streamblockbottomcorrection
+       columnblockbottomcorrection
+    endvector  }
+
+
+sub blocktop    {                               # ( -- column line )  one-based
+    blockcoordinates drop2  }
+
+sub blockbottom  {                              # ( -- column line )  one-based
+    blockcoordinates swap2 drop2  }
+
+
+
+
+# TODO: let these take advantage of the above words:
+#   replace the block n + @, and convert to one-based
 sub abovelineblock    {                         # ( column line first -- f )  helper word for withinblock
     < nip }
 
@@ -776,7 +816,17 @@ sub cursorwithinblock {                         # ( -- f )
     cursorcolumn cursorline withinblock
 }
 
+sub lineblock { 1 }
+sub streamblock { 2 }
+sub columnblock { 3 }
 
+sub blockfill {                                 # ( c -- )
+    blocktype columnblock xor will fail         # works on columnblock only atm
+    blockbottom >r blocktop 1 - >r 1 - r>
+    r> swap do  dup2 do
+       pluck i j char!
+    loop loop
+    3:drop }
 
 
 # --- migrated toggles ---
