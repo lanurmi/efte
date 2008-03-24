@@ -178,7 +178,8 @@ typedef enum {
     /// migrating Insert to shared vars, for insert on, off, toggle, @, !
     ExStatusline,
     /// pointer to statusline in shared mem
-
+    ExBlock,
+    /// return populated block information structure
 
     //!Cursor Commands
     ExCursorLeft,

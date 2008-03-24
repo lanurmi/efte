@@ -14,6 +14,8 @@
 // Block Commands                                                            //
 ///////////////////////////////////////////////////////////////////////////////
 
+
+
 int EBuffer::SetBB(EPoint M) {
     EPoint OldBB = BB;
     int MinL, MaxL;
@@ -73,6 +75,30 @@ int EBuffer::CheckBlock() {
     }
     return 1;
 }
+
+
+
+int blockstruct0  = dp++;
+int blockstruct1  = dp++;
+int blockstruct2  = dp++;
+int blockstruct3  = dp++;
+int blockstruct4  = dp++;
+
+int EBuffer::Block() {
+    if (CheckBlock())  {
+        memory[blockstruct0] = BlockMode+1;
+        memory[blockstruct1] = BB.Col;
+        memory[blockstruct2] = BB.Row;
+        memory[blockstruct3] = BE.Col;
+        memory[blockstruct4] = BE.Row;
+    } else {
+        memory[blockstruct0] = 0;
+    }
+    ParamStack.push(blockstruct0);
+    return 1;
+}
+
+
 
 int EBuffer::BlockRedraw() {
     if (BB.Row == -1 || BE.Row == -1) return 0;

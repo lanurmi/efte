@@ -343,6 +343,7 @@ public:
     int LoadFrom(const char *AFileName);
     int SaveTo(char *AFileName);
 
+    int Block();
     int IsBlockStart();
     int IsBlockEnd();
     int BlockType(int Mode);
