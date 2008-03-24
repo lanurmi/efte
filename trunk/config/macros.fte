@@ -5,8 +5,14 @@
 # You may distribute under the terms of either the GNU General Public
 # License or the Artistic License, as specified in the README file.
 #
-# Additional macros provided by eFTE
+# Additional macros provided for eFTE
+
+%if(!MACROS)
+%define(MACROS)
+
 #
+include "blocks.fte";           # bubble needs block support
+
 
 # ( -- LineLen CurCol )
 #
@@ -189,3 +195,12 @@ sub bubbledown {                                # put this one on key.  Using [A
 
 
 #********************************************************************************
+
+sub InitMacrosAlready  { var new }
+sub InitMacros  {
+    InitMacrosAlready @ unless
+        InitMacrosAlready on
+        "InitBlocks" attempt
+}
+
+%endif

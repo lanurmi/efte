@@ -7,7 +7,6 @@
 #
 # Main eFTE configuration file
 #
-
 include "primitives.fte";
 include "macros.fte";
 
@@ -17,9 +16,14 @@ include "selftest.fte";
 %endif
 
 include "fireshell.fte";
+
+sub InitMainAlready { var new }
 sub InitMain {
-    "InitSelftest"    attempt
-    "InitFireshell"   attempt
+    InitMainAlready @ unless
+        InitMainAlready on
+        "InitMacros"    attempt
+        "InitSelftest"  attempt
+        "InitFireshell" attempt
 }
 
 
@@ -66,7 +70,7 @@ include "pal_wht.fte";
 %if(COLORS_GRAY_BG)
 include "pal_gray.fte";
 %endif
-    
+
 %if(COLORS_BLUE_BG)
 include "pal_blue.fte";
 %endif
@@ -128,7 +132,7 @@ include "color.fte";
 
 # in this mode are declared all basic values
 # these are inherited in other modes - so basicaly
-# change only necessary values in submodes 
+# change only necessary values in submodes
 # must be here to be inherited by other modes
 include "m_plain.fte";
 
