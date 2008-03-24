@@ -175,12 +175,14 @@ sub bubblelinedown {
     cursordown }
 
 sub bubbleup {                                  # put this one on key.  Using [A+G-Up] here
-    block if bubbleblockup
+    blocktype
+    if bubbleblockup
     else     bubblelineup
     endif    }
 
 sub bubbledown {                                # put this one on key.  Using [A+G-Down] here
-    block if bubbleblockdown
+    blocktype
+    if bubbleblockdown
     else     bubblelinedown
     endif    }
 

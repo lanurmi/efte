@@ -38,6 +38,7 @@ const struct {
     TAB(AutoTrim),
     TAB(Insert),
     TAB(Statusline),
+    TAB(Block),
     // ------------------------
     { ExPlus, "+" },
     { ExMinus, "-" },

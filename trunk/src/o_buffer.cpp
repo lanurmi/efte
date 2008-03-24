@@ -869,6 +869,8 @@ int EBuffer::ExecCommand(int Command, ExState &State) {
 
         // Stack based pushes
 
+    case ExBlock:
+        return Block();
     case ExPushFileName:
         return PushFileName();
     case ExQuestionAt:
