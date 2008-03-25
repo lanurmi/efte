@@ -711,52 +711,10 @@ sub ToggleInsert { insert toggle }
 
 
 
-# --- status line ---
-
-sub statusupdatecounter { var new }
-sub statusupdatetimer   { var new }
-
-sub chars/min {
-    statusupdatecounter @ 600000
-    milliseconds statusupdatetimer @ - */
-    "keys/min:"
-    <hash hash '.' hold hashes hash> append$
-    }
-
-
-sub statusline$ { var$ new }
-sub message$    { statusline$ store$ }
-
-
-#sub OnStatusline {
-#    1 statusupdatecounter +!
-#    depth$ >r
-#    "stacks:"
-#    depth number$ append$  "/" append$
-#    r> number$ append$     " " append$
-#    chars/min append$      " " append$
-#    base @
-#    <hash
-#       read dup
-#       hex 2:hash drop
-#        ',' hold
-#        decimal 3:hash
-#    hash> append$
-#    base !
-#    message$ }
-
-
-
-sub InitStatusline {
-    255 spaces$ statusline$ store$              # initialize statusline to 256 chars
-    statusupdatecounter off
-    milliseconds statusupdatetimer !
-    "test" statusline$ store$
-#    statusline$ statusline !                     # use
-}
 
 # --- includes ---
 
+#include "statusline.fte";                      # currently the OnStatusline event is broken
 include "blocks.fte";
 include "bookmarks.fte";
 
