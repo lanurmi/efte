@@ -1,0 +1,55 @@
+%if(!STATUSLINE)
+%define(STATUSLINE)
+# the OnStatusline event has been disabled in eFTE for now, becaue
+# it seems to trigger a a problem with Replace.
+# that disables "life" statusbars. static statusbars, by letting
+# the contents of a string variables appear on the statusbar, is
+# unaffected
+
+
+
+sub statusupdatecounter { var new }
+sub statusupdatetimer   { var new }
+
+sub chars/min {
+    statusupdatecounter @ 600000
+    milliseconds statusupdatetimer @ - */
+    "keys/min:"
+    <hash hash '.' hold hashes hash> append$
+    }
+
+
+sub statusline$ { var$ new }
+sub message$    { statusline$ store$ }
+
+
+sub OnStatusline {
+    1 statusupdatecounter +!
+    depth$ >r
+    "stacks:"
+    depth number$ append$  "/" append$
+    r> number$ append$     " " append$
+    chars/min append$      " " append$
+    base @
+    <hash
+       read dup
+       hex 2:hash drop
+        ',' hold
+        decimal 3:hash
+    hash> append$
+    base !
+    message$ }
+
+
+sub InitStatusbarDone { var new }
+sub InitStatusline {
+    InitStatuslinedone @ unless
+        InitStatuslinedone on
+        255 spaces$ statusline$ store$              # initialize statusline to 256 chars
+        statusupdatecounter off
+        milliseconds statusupdatetimer !
+        statusline$ statusline !                   # use
+}
+
+%endif
+
