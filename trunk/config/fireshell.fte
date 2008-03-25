@@ -437,8 +437,7 @@ sub Fireshell       { fireshellenable @ if ok else linenew endif }
 sub bye             { fireshellenable off }
 
 
-# --------- fireshell utilities ---------
-
+# --- fireshell utilities: words ---
 
 sub words {
   base @ hex
@@ -461,9 +460,16 @@ sub words {
   base ! }
 
 
+# --- fireshell utilities: shell ---
+
+sub shell$ { runprogramasync }                  # shell to program in a terminal
+sub shell  { 0 word$ shell$ }                   # parse input line, shell to program in a terminal
+sub run$   { ";" prepend$ shell$ }              # run program without opening a terminal
+sub run    { 0 word$ run$ }                     # parse input line, run program without opening a terminal
 
 
-# --------- hexdump, words, utilities ---------
+
+# --- fireshell utilities: hexdump ---
 
 sub slashstring { over min tuck - >r + r> }             # ( a1 u1 u -- a2 u2 )
 
