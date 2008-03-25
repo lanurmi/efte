@@ -64,7 +64,8 @@ sub umax      { dup2 xor 0 < if min else max endif }  # ( u1 u2 -- u1|u2 ) unsig
 sub mod       { dup2 / * - }                    # modulo (remainder) function
 sub /mod      { dup2 / dup >r * - abs r> }      # ( n1 n2 -- r q )
 sub percent   { 100 */ }
-sub gcd       { begin tuck mod qdup not until } # greatest common denominator
+sub gcd       { begin tuck mod qdup not until } # ( u1 u2 -- u3 ) greatest common divisor
+sub lcm       { dup2 gcd */ }                   # ( u1 u2 -- u3 ) lowest common denominator
 sub sqrt      { 0 tuck do inc dup lshift inc +loop }
 sub range     { over + swap }                   # start n -> limit start conversion for DO LOOP
 sub +!        { dup >r @ +   r> ! }             # ( x a -- )  adds x to contents of address a
