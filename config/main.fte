@@ -175,6 +175,7 @@ include "m_catbs.fte";
 include "m_clario.fte";
 include "m_diff.fte";
 include "m_ebnf.fte";
+include "m_eiffel.fte";
 include "m_fort90.fte";
 include "m_falcon.fte";
 include "m_fte.fte";
