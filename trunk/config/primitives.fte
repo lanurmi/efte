@@ -728,29 +728,31 @@ sub statusline$ { var$ new }
 sub message$    { statusline$ store$ }
 
 
-sub OnStatusline {
-    1 statusupdatecounter +!
-    depth$ >r
-    "stacks:"
-    depth number$ append$  "/" append$
-    r> number$ append$     " " append$
-    chars/min append$      " " append$
-    base @
-    <hash
-       read dup
-       hex 2:hash drop
-        ',' hold
-        decimal 3:hash
-    hash> append$
-    base !
-    message$ }
+#sub OnStatusline {
+#    1 statusupdatecounter +!
+#    depth$ >r
+#    "stacks:"
+#    depth number$ append$  "/" append$
+#    r> number$ append$     " " append$
+#    chars/min append$      " " append$
+#    base @
+#    <hash
+#       read dup
+#       hex 2:hash drop
+#        ',' hold
+#        decimal 3:hash
+#    hash> append$
+#    base !
+#    message$ }
+
 
 
 sub InitStatusline {
-    256 spaces$ statusline$ store$              # initialize statusline to 256 chars
+    255 spaces$ statusline$ store$              # initialize statusline to 256 chars
     statusupdatecounter off
     milliseconds statusupdatetimer !
-    statusline$ statusline !                     # use
+    "test" statusline$ store$
+#    statusline$ statusline !                     # use
 }
 
 # --- includes ---

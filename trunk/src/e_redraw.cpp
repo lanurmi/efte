@@ -261,7 +261,7 @@ void EBuffer::DrawLine(TDrawBuffer B, int VRow, int C, int W, int &HilitX) {
 
 
 #define statuslinelength 256
-char num[statuslinelength];
+char num[statuslinelength+1];
 
 
 unsigned int statusline = dp++;    // shared mem pointer to ...
@@ -273,14 +273,14 @@ int Statusline()  {
 
 
 void EBuffer::CustomStatusline(int statuslinestring)  {
-    ExecMacro("OnStatusline");
+//    ExecMacro("OnStatusline"); // this breaks the replace function,
     if (statuslinestring)  {                                                 // pointing to a string variable?
         statuslinestring++;                                                  // yes: advance to actual string length (skip variable size)
         unsigned int statuslinestringlength = memory[statuslinestring++];    // read size + advance to first character
         if (statuslinestringlength > statuslinelength)                       // string longer than our buffer can take?
             statuslinestringlength = statuslinelength;                       // yes: trim
         int i;
-        for ( i=0; i<statuslinestringlength; i++) {                                // walk through string chars:
+        for ( i=0; i<statuslinestringlength; i++) {                          // walk through string chars:
             char c = memory[statuslinestring++];                             // read char
             if (c < 32) break;                                               // any control char breaks
             num[i] = c;                                                      // others store in buffer
