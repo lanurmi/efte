@@ -147,23 +147,22 @@ sub restorecolumnblock {
     movetoline movetocolumn blockmarkcolumn
     r> r> at }
 
-sub drop4 { 4:drop }
-
 
 include "stacks.fte";
 
 sub BlockStack { stack5 new }        # blocktype, startcolumn, startline, endcolumn, endline
 
 sub pushblock  {
-    block count >r
-    4:blockcoordinate drop
-    r>  blockstack push
+    blocktype not unless
+        block count
+        >r 4:blockcoordinate drop r>
+        blockstack push
 }
 
 sub popblock   {
     blockstack pop
     vector
-       drop4
+       fail
        restorelineblock
        restorestreamblock
        restorecolumnblock
@@ -179,7 +178,7 @@ sub convertblock  {                             # ( blocktype -- )
     blockstack pop
     drop r>
     vector
-       drop4
+       fail
        restorelineblock
        restorestreamblock
        restorecolumnblock
@@ -187,10 +186,19 @@ sub convertblock  {                             # ( blocktype -- )
     endvector }
 
 
-
-
-
-
+sub filllineblock {                             # ( c -- )
+    0
+    blockbottom nip
+    blocktop  nip 1 -
+    dup2 2:>r
+    do
+       i 1 + line$ len$ max
+    loop
+    2:r> do
+       dup 0 do
+          over i j char!
+       loop
+    loop 2:drop }
 
 sub fillcolumnblock  {                          # ( c -- )
     blockbottom >r blocktop 1 - >r 1 - r> r> swap
@@ -208,20 +216,19 @@ sub fillstreamblock  {                          # ( c -- )
     3:drop
     popblock }
 
-
 sub fillblock {                                 # ( c -- )
     blocktype vector
        fail
-       fail
+       filllineblock
        fillstreamblock
        fillcolumnblock
     endvector  }
 
 
-sub InitBlocksAlready  { var new }
+sub InitBlocksDone  { var new }
 sub InitBlocks {
-    InitBlocksAlready @ unless
-        InitBlocksAlready on
+    InitBlocksDone @ unless
+        InitBlocksDone on
         256 BlockStack
 }
 

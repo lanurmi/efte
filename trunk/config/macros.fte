@@ -196,10 +196,10 @@ sub bubbledown {                                # put this one on key.  Using [A
 
 #********************************************************************************
 
-sub InitMacrosAlready  { var new }
+sub InitMacrosDone  { var new }
 sub InitMacros  {
-    InitMacrosAlready @ unless
-        InitMacrosAlready on
+    InitMacrosDone @ unless
+        InitMacrosDone on
         "InitBlocks" attempt
 }
 

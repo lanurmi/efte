@@ -188,16 +188,16 @@ sub type$      { dup$ len$ if dup$ insertstring endif drop$  }
 
 
 sub char@   {                                   # ( x y -- c )  fetch char from file at x,y
-   at? >r >r
+   at? 2:>r
    at read
-   r> r> at }
+   2:r> at }
 
 sub char!   {                                   # ( c x y -- )  store char in file at x,y
-   at? >r >r
+   at? 2:>r
    false insert exchange >r
    at emit
    r> insert !
-   r> r> at }
+   2:r> at }
 
 
 
@@ -507,7 +507,7 @@ sub report  { verbosity @ if dup$ perr "\n" perr endif drop$ }
 
 
 # --- pictured number conversion ---
-sub digit     { dup 10 < 3 xor '4' + + }        # ( u -- asc )
+sub digit     { dup 10 < 3 xor '4' 2:+ }        # ( u -- asc )
 sub <hash     { "" } 	  		                # ( n -- n ) start pictured num conversion with empty string
 sub hold      { char$ prepend$ }                # ( n asc -- n )
 sub hash      { base @ /mod swap digit hold }   # ( n1 -- n2 )
@@ -595,7 +595,7 @@ sub time$ {                                     # ( epoch -- )
     86400 mod
     base @ >r
     <hash
-       |00 |00 2:hash
+       2:|00 2:hash
     hash>
     r> base !
 }
@@ -614,12 +614,12 @@ sub date {                                      # ( epoch -- y m d )
    >r dup 365 / 1 + 3 4 */                      # a = (db div 365 + 1) * 3 div 4
    dup >r 365 * -                               # da = db - a * 365
    dup 5 * 308 + 153 /                          # m = (da * 5 + 308) div 153 - 2
-   dup >r 2 + 153 5 */ - 123 +                  # d = da - (m + 4) * 153 div 5 + 122
-   r> dup     12 / 4800 +                       # yt = 4800 + (m + 2) div 12
-   r> r> 4 * + r> 100 * + r> 400 * +            # y = g * 400 + c * 100 + b * 4 + a
-   swap -                                       # Y = y - yt
-   swap     12 mod 1 +                          # M = (m + 2) mod 12 + 1
-   rot                                          # d + 1
+   dup >r 2 + 153 5 */ - 123 + r>               # d = da - (m + 4) * 153 div 5 + 122
+   dup  12 / 4800 +                             # yt = 4800 + (m + 2) div 12
+   2:r> 4 * + r> 100 * + r> 400 * +             # y = g * 400 + c * 100 + b * 4 + a
+   - negate                                     # Y = y - yt
+   swap  12 mod 1 +                             # M = (m + 2) mod 12 + 1
+   rot                                          # D = d + 1
 }
 
 
@@ -762,18 +762,29 @@ include "bookmarks.fte";
 # --- initialisation ---
 sub AlreadyInitialized { var new }              # helper for workaround for OnLoad sequence bug
                                                 # to protect against multiple execution.
+sub enclose$   {
+    dup$ len$ rshift
+    qdup if
+        cut$
+        rot$ append$ prepend$
+    else
+        drop$
+    endif }
+
 
 sub attemptlevel  { var new }
 sub attempt   {                                 # execute macro, name given as string, if existing
-    dup$ tick qdup
-    if  attemptlevel @ 3 * spaces$ over$ append$ report
+    dup$ tick
+    attemptlevel @ 3 * spaces$ swap$
+    dup if "" else "()" endif enclose$
+    append$ report
+    qdup not unless
         1 attemptlevel +!
         execute
         -1 attemptlevel +!
-    endif drop$  }
+  }
 
 sub OnBoot    {
-
    AlreadyInitialized @ qdup if                 # rube goldberg scheme for swapping OnLoad and OnBoot sequence
        dup true xor will execute                # the OnLoad handler must support this too:
        drop exit                                # 0: never inited. -1: init complete. x: exec token of OnLoad init code
