@@ -159,8 +159,7 @@ sub pushblock  {
         blockstack push
 }
 
-sub popblock   {
-    blockstack pop
+sub restoreblock {                  # ( x1 y1 x2 x2 blocktype -- )
     vector
        fail
        restorelineblock
@@ -168,6 +167,11 @@ sub popblock   {
        restorecolumnblock
        fail
     endvector }
+
+
+sub popblock    {
+    blockstack pop
+    restoreblock }
 
 
 # converts one block type to another.
@@ -176,14 +180,7 @@ sub popblock   {
 sub convertblock  {                             # ( blocktype -- )
     >r pushblock
     blockstack pop
-    drop r>
-    vector
-       fail
-       restorelineblock
-       restorestreamblock
-       restorecolumnblock
-       fail
-    endvector }
+    drop r> }
 
 
 sub filllineblock {                             # ( c -- )
