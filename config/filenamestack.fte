@@ -48,10 +48,10 @@ sub File  {                          # ( -- n )  given filename as string, adds 
 
 
 
-sub InitFilenamestackAlready  { var new }
+sub InitFilenamestackDone  { var new }
 sub InitFilenamestack  {
-    InitFilenamestackAlready @ unless
-        InitFilenamestackAlready on
+    InitFilenamestackDone @ unless
+        InitFilenamestackDone on
         256 FileStack
 }
 

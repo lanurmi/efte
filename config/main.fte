@@ -17,10 +17,10 @@ include "selftest.fte";
 
 include "fireshell.fte";
 
-sub InitMainAlready { var new }
+sub InitMainDone { var new }
 sub InitMain {
-    InitMainAlready @ unless
-        InitMainAlready on
+    InitMainDone @ unless
+        InitMainDone on
         "InitMacros"    attempt
         "InitSelftest"  attempt
         "InitFireshell" attempt

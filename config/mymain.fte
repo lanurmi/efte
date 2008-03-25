@@ -5,11 +5,33 @@
 # without adversely affecting other users.
 
 # include the system main config - usually in /usr/share/fte/localconfig.
+%if(!MYMAIN)
+%define(MYMAIN)
 include "systemmain.fte";
 
-sub InitMyMain {                   # executed once when editor starts
 
-}
-
+# ***************************************
 # Personal settings go here.
 
+
+
+
+
+
+# ***************************************
+
+# ---------------------------------------------------------------------
+sub InitMyMainDone { var new }
+sub InitMyMain {                   # executed once when editor starts
+    InitMyMainDone @ unless
+        InitMyMainDone on
+#       *********************************
+#       add your personal init needs here
+
+
+
+
+#       *********************************
+}
+
+%endif

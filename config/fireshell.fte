@@ -509,10 +509,10 @@ sub dump {                                              # ( a n -- )
 sub colondef        { header "donest" postpone }
 
 
-sub InitFireshellAlready  { var new }
+sub InitFireshellDone  { var new }
 sub InitFireshell {
-    InitFireshellAlready @ unless
-        InitFireshellAlready on
+    InitFireshellDone @ unless
+        InitFireshellDone on
         bye
         0 shellindent !
         256 spaces$ source$ store$
