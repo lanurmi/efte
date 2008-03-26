@@ -118,7 +118,9 @@ sub GreedyJoinLineNext {
     CursorUp MoveLineEnd KillChar
 }
 
-
+# probably the same as:
+#     { cursorend space space killchar
+#     cursorleft killword }
 
 
 #********************************************************************************

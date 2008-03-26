@@ -44,42 +44,41 @@ sub dovar     { w @ }                           # push data address
 # not factoring here for .. hmm .. "performance" :D
 sub branch    { ip @                            # runtime code for unconditional branch
                 dup @ +
-                1 + ip ! }
+                1 + ip !
+              }
 
 sub branch0   { if ip @                         # runtime code for conditional branch
                 else ip @ dup @ +
-                endif  1 + ip ! }
+                endif  1 + ip !
+              }
 
-sub dodo      {
-   dup2 equals if
-         drop2
-         ip @
-         dup @ + 3 +
-   else  swap >r >r
-         ip @ 1 +
-   endif ip !
-                }
+sub dodo      { 2:over equals if
+                    2:drop
+                    ip @
+                    dup @ + 3 +
+                else  swap >r >r
+                    ip @ 1 +
+                endif ip !
+              }
 
-sub doloop    {                                 # runtim code for simple count up loops
-   r> 1 +
-   dup r@ xor if
-      >r  ip @ dup @ + ip ! exit
-   endif
-   r> drop2
-   ip @  1 + ip !
-}
-
+sub doloop    { r> 1 +                          # runtime code for simple count up loops
+                dup r@ xor if
+                    >r  ip @ dup @ + ip ! exit
+                endif
+                r> 2:drop
+                ip @  1 + ip !
+              }
 
 sub lit       { ip @                            # runtime code for literal numbers
                 dup 1 + ip !
                 @
-               }
+              }
 
 sub slit      { ip @                            # runtime code for literal strings
                 count
-                dup2 + ip !
+                2:over + ip !
                 combine
-               }
+              }
 
 
 
@@ -131,7 +130,6 @@ sub query    {     # ( -- n )
       endif
       drop
    loop
-
    bl minleading$
    dup$ source$ store$
    len$
@@ -150,7 +148,7 @@ sub error    {
    false loading exchange
    qdup if
       " while loading from " append$ filename$ append$
-      ", line " append$ <hash hashes hash> append$
+      ", line " append$ number$ append$
       fileclose
    endif
    cr type$ cr
@@ -212,7 +210,8 @@ sub nextheader  {                   # ( cfa1 -- cfa2 | 0 )
    }
 
 
-sub findheader  {                   # ( cfa -- xt headerflags | 0 )
+sub findheader  {                   # ( -- xt headerflags | 0 )  s( name -- )
+   latest
    begin
       dup >name                     # cfa nfa
       dup headerflags               # cfa nfa headerfl
@@ -224,7 +223,7 @@ sub findheader  {                   # ( cfa -- xt headerflags | 0 )
             drop$
             >r drop >xt r>
             exit
-        endif
+         endif
       endif
       drop2
   nextheader
@@ -235,7 +234,7 @@ sub findheader  {                   # ( cfa -- xt headerflags | 0 )
 
 sub locate {             # ( -- xt headers | 0 )   search for word name on string stack
    dup$
-   latest findheader
+   findheader
    qdup if
       drop$
    else
@@ -381,9 +380,8 @@ sub interpret$  {                       # ( -- ) s( sourceline -- )
     source$ store$ interpret
 }
 
-
-sub load {                              # compile from file.  not nestable now.
-   bl word$ fileopen
+sub load$  {
+   fileopen
    0 0 at
    1 loading !
    linecount 0 do
@@ -392,7 +390,11 @@ sub load {                              # compile from file.  not nestable now.
       1 loading +!
    loop
    endloading
-#   cr
+}
+
+
+sub load {                              # compile from file.  not nestable now.
+   bl word$ load$
 }
 
 
