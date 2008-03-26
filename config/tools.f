@@ -2,7 +2,7 @@
 : \    ( -- )            0   word$ drop$ ;  immediate
 : ,    ( x -- )          comma ;
 : postpone ( -- )        ' , ; immediate
-: compile ( -- )         r> count , >r ; 
+: compile ( -- )         r> count , >r ;
 : literal                literal ;  immediate
 : [']   ( -- )           ' postpone literal ; immediate
 : =  ( x1 x2 -- f )      equals ;
@@ -31,7 +31,7 @@
     cursorcolumn cursorhome
     read bl = will killchar
     read bl = will killchar
-    movetocolumn    
+    movetocolumn
 ;
 
 
@@ -43,51 +43,51 @@
 \ --- flow control statements ---
 : if  ?comp +indent
    compile branch0 ahead
-   me 
+   me
 ; immediate
-   
+
 : else   ?comp -indent +indent
    ['] if pairedwith
    compile branch ahead
    swap resolve
-   me 
+   me
 ; immediate
-   
+
 : endif  ?comp -indent
    ['] if ['] else  pairedwitheither
-   resolve 
+   resolve
 ; immediate
-   
+
 : begin  ?comp +indent
-   here me 
+   here me
 ; immediate
-   
+
 : while  ?comp -indent +indent
    ['] begin pairedwith
    compile branch0 ahead
-   me 
+   me
 ; immediate
 
 : repeat ?comp -indent
    ['] while pairedwith
-   swap 
+   swap
    compile branch back
-   resolve 
+   resolve
 ; immediate
 
 : until  ?comp -indent
    ['] begin pairedwith
-   compile branch0 back 
+   compile branch0 back
 ; immediate
-   
+
 : again  ?comp -indent
    ['] begin pairedwith
    compile branch back
 ; immediate
-   
+
 : do     ?comp +indent
    compile dodo ahead
-   me 
+   me
 ; immediate
 
 : loop   ?comp -indent
@@ -96,3 +96,4 @@
    compile doloop 1 + back
 ; immediate
 
+: times    ( u -- )      r> dup 1 + >r @ >r 0 do j execute loop r> drop ;

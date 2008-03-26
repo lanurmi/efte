@@ -735,10 +735,9 @@ sub enclose$   {
 
 sub attemptlevel  { var new }
 sub attempt   {                                 # execute macro, name given as string, if existing
-    dup$ tick
     attemptlevel @ 3 * spaces$ swap$
-    dup if "" else "()" endif enclose$
-    append$ report
+    dup$ tick
+    dup not if "()" enclose$ endif append$ report
     qdup not unless
         1 attemptlevel +!
         execute
