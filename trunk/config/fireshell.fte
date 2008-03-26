@@ -289,66 +289,70 @@ sub literal   {            # compiling: ( x -- ),  interpreting: ( x -- x )
 
 sub sliteral  {
    compiling if
-      "slit" postpone         #     compile as string literal:
-      here                    #     .. goes string to
-      dup$ len$ 1 + allot     #     allocate string len + 1 (for leading count)
-      move$                   #     place string
+      "slit" postpone                           # compile as string literal:
+      here                                      # .. goes string to
+      dup$ len$ 1 + allot                       # allocate string len + 1 (for leading count)
+      move$                                     # place string
    endif }
 
 
 # --- compiler/interpreter ---
 
-# needs some serious factoring out here.
-sub maybesomethingelse {         # ( -- f ) not a word in dictionary - try alternatives
-   dup$
-   number? if
-      literal                    # yes, compile number (if compiling)
-      drop$                      # (kept for error case)
-      true exit
-   endif
+sub parsedelimited {
+    -1 left$                                    # strip leading delimiter
+    -1 ascn  over equals                        # last char delimiter too?
+    if
+        -1 right$                               # yes: discard too
+    else
+        " " dup word$ 2:append$                 # no: parse and append rest of string
+    endif drop
+}
 
-   0 ascn 39 equals if           # 'x'
-      1 ascn literal
-      drop$
-      true exit
-   endif
 
-   0 ascn '"' equals if          # unknown word starts with double quotes?
-      -1 left$                   # remove leading "
-      -1 ascn  '"' equals        # last char " ?
-      if                         # yes: string without spaces, completely parsed
-         -1 right$               # remove trailing "
-      else                       # no: need to parse rest of string
-         " " '"' word$ 2:append$ # parse rest of string
-      endif
-      sliteral                   # compile string to word, or leave on stack
-      true exit
 
-   endif
-   false
+sub maybesomethingelse {                        # ( -- f ) not a word in dictionary - try alternatives
+    dup$
+    number? if
+        literal                                 # yes, compile number (if compiling)
+        drop$                                   # (kept for error case)
+        true exit
+    endif
+
+    0 ascn 39 equals if                         # 'foo' type of string?
+        39 parsedelimited                       # parse remainder if it contains spaces
+        asc literal                             # compile ascii of first char
+        true exit
+    endif
+
+    0 ascn '"' equals if                        # "bar" type of string?
+        '"' parsedelimited                      # parse remainder if it contains spaces
+        sliteral                                # compile string to word, or leave on stack
+        true exit
+    endif
+    false
  }
 
 
 
 
 # the interpreter/compiler. source expected in variable source$
-sub interpret {                         # ( -- )
+sub interpret {                                 # ( -- )
     begin
        bl word$
-       dup$ len$                        # still input?
+       dup$ len$                                # still input?
     while
-       dup$ locate                      # look up in dictionary
-       qdup if                          # found:
-          drop$                         # (kept name for not-found case)
-          precedencebit and             # immediate words execute always
+       dup$ locate                              # look up in dictionary
+       qdup if                                  # found:
+          drop$                                 # (kept name for not-found case)
+          precedencebit and                     # immediate words execute always
           interpreting or
           if
-             exec                       # not compiling or immediate: execute straight away.
+             exec                               # not compiling or immediate: execute straight away.
           else
-             comma                      # compile execution token to mem
+             comma                              # compile execution token to mem
           endif
-       else                             # word not in dictionary: test for alternatives, like:
-          maybesomethingelse            #   "strings"  'A'sciis  $hex  #decimal  %binary numbers
+       else                                     # word not in dictionary: test for alternatives, like:
+          maybesomethingelse                    #   "strings"  'A'sciis  $hex  #decimal  %binary numbers
           not will notfound
        endif
     repeat
@@ -473,31 +477,28 @@ sub dump {                                              # ( a n -- )
 
 # ---------------- initialise ---------------
 
-sub colondef        { header "donest" postpone }
-
-
+sub colondef           { header "donest" postpone }
 sub InitFireshellDone  { var new }
 sub InitFireshell {
     InitFireshellDone @ unless
         InitFireshellDone on
         bye
-        0 shellindent !
         256 spaces$ source$ store$
 
-        0 state !
-        0 last !
-        0 ip !
-        0 w !
-        0 loading !
+        shellindent off
+        state off
+        last off
+        ip off
+        w off
+        loading off
 
-
-        65536 here - dup 0 > if dup allot endif drop
-        ":"       colondef "sub"       postpone endsub
-        ";"       colondef "endsub"    postpone endsub  immediate
-        "execute" colondef "exec"      postpone endsub
-        "'"       colondef "newtick"   postpone endsub
-        "["       colondef "state" postpone "off" postpone endsub immediate
-        "]"       colondef "state" postpone "on"  postpone endsub
+        65536 here - dup positive if dup allot endif drop
+        ":"       colondef "sub"      postpone endsub
+        ";"       colondef "endsub"   postpone endsub  immediate
+        "execute" colondef "exec"     postpone endsub
+        "'"       colondef "newtick"  postpone endsub
+        "["       colondef "state"    postpone "off" postpone endsub immediate
+        "]"       colondef "state"    postpone "on"  postpone endsub
    }
 
 %endif
