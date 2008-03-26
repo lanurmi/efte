@@ -270,33 +270,6 @@ sub slice     { 0 ascn -1 left$ }               # ( -- asc ) cut first char off 
 
 
 
-# unsigned number string to numeric
-sub unumber? {                                  # ( -- n -1 | 0 )
-   -1 0                                         # assume valid number, initial value 0
-   dup$ len$ 0 do                               # loop through chars
-      base @ *                                  #  accu*radix
-      i ascn cipher if +                        #  next char valid cipher? yes: accumulate
-      else
-         2:drop 0 0 leave                       #  no: signal "not a number" and leave
-      endif
-   loop
-   drop$
-   swap qdup drop                               # return result as specified in stack diagram.
-}
-
-
-sub number? {                                   # ( -- n -1 | 0 )
-   0 ascn '-' equals
-   if
-      -1 left$
-      unumber?
-      >r
-      r@ will negate
-      r>
-   else
-      unumber?
-   endif
-}
 
 
 
@@ -455,6 +428,86 @@ sub var$ {                                      # string variable class
     dup$ len$ inc
     dup inc comma
     allot }
+
+
+
+# --- input number conversion ---
+
+sub baseprefix   { var new 35 allot }           # associate number base prefix with number base
+sub baseprefix$  { var$ new  }
+
+# unsigned number string to numeric
+sub nakedunumber? {                             # ( -- n -1 | 0 )
+   -1 0                                         # assume valid number, initial value 0
+   dup$ len$ 0 do                               # loop through chars
+      base @ *                                  #  accu*radix
+      i ascn cipher if +                        #  next char valid cipher? yes: accumulate
+      else
+         2:drop 0 0 leave                       #  no: signal "not a number" and leave
+      endif
+   loop
+   drop$
+   swap qdup drop                               # return result as specified in stack diagram.
+}
+
+# deal with possible leading dash
+sub nakednumber? {                              # ( -- n -1 | 0 )
+   0 ascn '-' equals
+   if
+      -1 left$
+      nakedunumber?
+      >r
+      r@ will negate
+      r>
+   else
+      nakedunumber?
+   endif
+}
+
+
+# deal with possible leading base prefix
+sub number? {                                   # ( -- n -1 | 0 )  s( number -- )
+   0 ascn
+   baseprefix$ fetch$ scan$      # $xxxx  #nnnn  %100101  style of number base designator?
+   dup 0 < if
+      drop
+      nakednumber?
+   else
+      baseprefix + @             # read number base
+      base exchange >r           # use
+      dup$ -1 left$              # strip prefix from what could be a number
+      nakednumber?               # is it?
+      r> base !
+      if                         # yes, compile number, or leave on stack.
+         drop$
+         true exit
+      endif
+   endif  }
+
+
+
+# manipulate the base prefix table
+sub addbaseprefix {                                     # ( c n -- )
+    baseprefix$
+# -- high information hiding potential here:
+#      calculate how much string space of this string variable is left
+       dup @ over 1 + @ 2 + -
+    not will fail
+# --
+    fetch$
+    dup$ len$ baseprefix + !
+    char$ append$
+    baseprefix$ store$
+    }
+
+sub removebaseprefix {                                  # ( -- )  removes the most recently added prefix.
+    baseprefix$ fetch$
+    dup$ len$ not will fail
+    -1 right$
+    baseprefix$ store$ }
+
+
+
 
 
 # --- file name decomposition ---
@@ -744,6 +797,9 @@ sub attempt   {                                 # execute macro, name given as s
         -1 attemptlevel +!
   }
 
+
+
+
 sub OnBoot    {
    AlreadyInitialized @ qdup if                 # rube goldberg scheme for swapping OnLoad and OnBoot sequence
        dup true xor will execute                # the OnLoad handler must support this too:
@@ -754,6 +810,12 @@ sub OnBoot    {
    decimal
    insert on
    autotrim on
+
+   35 spaces$ baseprefix$ store$
+   "" baseprefix$ store$
+   '$' 16 addbaseprefix
+   '#' 10 addbaseprefix
+   '%'  2 addbaseprefix
 
    1 verbosity +!                               # show init reports by increasing verbosity
        "InitStatusline"  attempt

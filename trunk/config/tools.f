@@ -42,15 +42,13 @@
 
 \ --- flow control statements ---
 : if  ?comp +indent
-   compile branch0 ahead
-   me
+   compile branch0 ahead me
 ; immediate
 
 : else   ?comp -indent +indent
    ['] if pairedwith
    compile branch ahead
-   swap resolve
-   me
+   swap resolve me
 ; immediate
 
 : endif  ?comp -indent
@@ -64,8 +62,7 @@
 
 : while  ?comp -indent +indent
    ['] begin pairedwith
-   compile branch0 ahead
-   me
+   compile branch0 ahead me
 ; immediate
 
 : repeat ?comp -indent
@@ -86,8 +83,7 @@
 ; immediate
 
 : do     ?comp +indent
-   compile dodo ahead
-   me
+   compile dodo ahead me
 ; immediate
 
 : loop   ?comp -indent
