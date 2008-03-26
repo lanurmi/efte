@@ -6,7 +6,6 @@ sub state        { var new }                    # compilation/interpretation swi
 sub w            { var new }                    # VM word pointer
 sub ip           { var new }                    # VM instruction pointer
 sub loading      { var new }
-sub baseprefix   { var new 35 allot }           # associate number base prefix with number base
 sub shellindent  { var new }
 sub compiling    { state @ }
 sub interpreting { compiling not }
@@ -297,8 +296,6 @@ sub sliteral  {
    endif }
 
 
-sub baseprefix$  { var$ new  }
-
 # --- compiler/interpreter ---
 
 # needs some serious factoring out here.
@@ -314,23 +311,6 @@ sub maybesomethingelse {         # ( -- f ) not a word in dictionary - try alter
       1 ascn literal
       drop$
       true exit
-   endif
-
-   0 ascn
-   baseprefix$ fetch$ scan$      # $xxxx  #nnnn  %100101  style of number base designator?
-   dup 0< if
-      drop
-   else
-      baseprefix + @             # read number base
-      base exchange >r           # use
-      dup$ -1 left$              # strip prefix from what could be a number
-      number?                    # is it?
-      r> base !
-      if                         # yes, compile number, or leave on stack.
-         literal
-         drop$
-         true exit
-      endif
    endif
 
    0 ascn '"' equals if          # unknown word starts with double quotes?
@@ -409,27 +389,6 @@ sub ok {
     prompt }
 
 
-
-
-
-sub addbaseprefix {                                     # ( c n -- )
-    baseprefix$
-# -- high information hiding potential here:
-#      calculate how much string space of this string variable is left
-       dup @ over 1 + @ 2 + -
-    not will fail
-# --
-    fetch$
-    dup$ len$ baseprefix + !
-    char$ append$
-    baseprefix$ store$
-    }
-
-sub removebaseprefix {                                  # ( -- )  removes the most recently added prefix.
-    baseprefix$ fetch$
-    dup$ len$ not will fail
-    -1 right$
-    baseprefix$ store$ }
 
 
 
@@ -524,8 +483,6 @@ sub InitFireshell {
         bye
         0 shellindent !
         256 spaces$ source$ store$
-        35 spaces$ baseprefix$ store$
-        "" baseprefix$ store$
 
         0 state !
         0 last !
@@ -533,9 +490,6 @@ sub InitFireshell {
         0 w !
         0 loading !
 
-        '$' 16 addbaseprefix
-        '#' 10 addbaseprefix
-        '%'  2 addbaseprefix
 
         65536 here - dup 0 > if dup allot endif drop
         ":"       colondef "sub"       postpone endsub
