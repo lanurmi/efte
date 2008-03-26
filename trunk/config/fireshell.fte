@@ -98,7 +98,7 @@ sub word$   {                                   # ( c -- )  must clear input lin
 
 
 sub prompt  {
-   loading @ not if
+   loading @ unless
       interpreting if
          "[ok]" type$
          depth$ '$' repeat$ type$
@@ -107,7 +107,6 @@ sub prompt  {
       else
          shellindent @ spaces
       endif
-   endif
  }
 
 
@@ -118,7 +117,7 @@ sub prompt  {
 
 
 sub query    {     # ( -- n )
-   curline$
+   cursorline$
 
 # replace control chars (including tabs) against spaces
    dup$ len$ 0 do
@@ -301,15 +300,24 @@ sub sliteral  {
 sub parsedelimited {
     -1 left$                                    # strip leading delimiter
     -1 ascn  over equals                        # last char delimiter too?
-    if
-        -1 right$                               # yes: discard too
-    else
-        " " dup word$ 2:append$                 # no: parse and append rest of string
+    if    -1 right$                             # yes: discard too
+    else  " " dup word$ 2:append$               # no: parse and append rest of string
     endif drop
 }
 
 
 
+sub shellredirect {
+    ";" prepend$  " > /tmp/eftecmd" append$ runprogram
+    "/tmp/eftecmd" fileopen
+    movefilestart blockmarkline
+    movefileend blockmarkline
+    ?blockcopy  fileclose
+    cr blockpaste blockunmark
+    movefileend
+}
+
+sub autoshell { var new }
 sub maybesomethingelse {                        # ( -- f ) not a word in dictionary - try alternatives
     dup$
     number? if
@@ -329,9 +337,22 @@ sub maybesomethingelse {                        # ( -- f ) not a word in diction
         sliteral                                # compile string to word, or leave on stack
         true exit
     endif
-    false
- }
 
+    0 ascn '^' equals if
+        1 ascn  31 and literal
+        drop$
+        true exit
+    endif
+
+    0 ascn '>' equals  state @ not and
+    if -1 left$
+        " " append$
+        0 word$ append$
+        shellredirect
+        true exit
+    endif
+    drop$ false
+ }
 
 
 
