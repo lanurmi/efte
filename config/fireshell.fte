@@ -317,31 +317,29 @@ sub shellredirect {
     movefileend
 }
 
-sub autoshell { var new }
-sub maybesomethingelse {                        # ( -- f ) not a word in dictionary - try alternatives
+sub maybesomethingelse {                        # ( -- ) not a word in dictionary - try alternatives
     dup$
     number? if
         literal                                 # yes, compile number (if compiling)
         drop$                                   # (kept for error case)
-        true exit
+        exit
     endif
 
     0 ascn 39 equals if                         # 'foo' type of string?
         39 parsedelimited                       # parse remainder if it contains spaces
         asc literal                             # compile ascii of first char
-        true exit
+        exit
     endif
 
     0 ascn '"' equals if                        # "bar" type of string?
         '"' parsedelimited                      # parse remainder if it contains spaces
         sliteral                                # compile string to word, or leave on stack
-        true exit
+        exit
     endif
 
     0 ascn '^' equals if
-        1 ascn  31 and literal
-        drop$
-        true exit
+        -1 left$ asc 31 and literal
+        exit
     endif
 
     0 ascn '>' equals  state @ not and
@@ -349,9 +347,9 @@ sub maybesomethingelse {                        # ( -- f ) not a word in diction
         " " append$
         0 word$ append$
         shellredirect
-        true exit
+        exit
     endif
-    drop$ false
+    notfound
  }
 
 
@@ -373,15 +371,14 @@ sub interpret {                                 # ( -- )
              comma                              # compile execution token to mem
           endif
        else                                     # word not in dictionary: test for alternatives, like:
-          maybesomethingelse                    #   "strings"  'A'sciis  $hex  #decimal  %binary numbers
-          not will notfound
+          maybesomethingelse                    #   "strings"  'A'sciis  $hex  #decimal  %binary numbers ^C control chars,  >command OS commands.
        endif
     repeat
     drop$
     }
 
 
-sub interpret$  {                       # ( -- ) s( sourceline -- )
+sub interpret$  {                               # ( -- ) s( sourceline -- )
     source$ store$ interpret
 }
 
@@ -398,7 +395,7 @@ sub load$  {
 }
 
 
-sub load {                              # compile from file.  not nestable now.
+sub load {                                      # compile from file.  not nestable now.
    bl word$ load$
 }
 
