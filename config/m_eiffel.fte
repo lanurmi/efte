@@ -43,7 +43,7 @@ colorize Eiffel {
 
     h_state 2 { "String" }
     h_trans { 0, "", "\"", "String" }
-    h_trans { 2, "Qq", "\\", "String" }
+    h_trans { 2, "Qq", "%", "String" }
 
     h_state 3 { "Number" }
     h_trans { 0, "-S", "0-9", "Normal" }
@@ -58,13 +58,7 @@ mode Eiffel: SOURCE {
     FileNameRx          = `\.\c{e}$`;
     Colorizer           = "Eiffel";
     HilitOn             = 1;
-    AutoIndent          = 1;
     IndentMode          = "PLAIN";
-    TabSize             = 4;
-    SpaceTabs           = 0;
-    ExpandTabs          = 1;
-    BackSpKillTab       = 1;
-    #Trim                = 1;
     MatchCase           = 0;
     MultiLineHilit      = 1;
     AutoHilitParen      = 1;
@@ -72,6 +66,16 @@ mode Eiffel: SOURCE {
     CommentStart        = "--";
     CommentEnd          = "";
     #RoutineRegexp       = `^{mode}|{sub}|{menu}|{object}|{eventmap}|{colorize} `;
+
+    # Indenting
+    AutoIndent          = 1;
+    ExpandTabs          = 1;
+    TabSize             = 4;
+    SpaceTabs           = 0;
+    BackSpKillTab       = 1;
+    DeleteKillTab       = 1;
+    IndentWithTabs      = 1;
+    CursorThroughTabs   = 0;
 }
 
 oinclude "mym_eiffel.fte";
