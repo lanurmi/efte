@@ -204,13 +204,16 @@ sub fillcolumnblock  {                          # ( c -- )
     loop loop
     3:drop }
 
+# will file single-line stram blocks only
 sub fillstreamblock  {                          # ( c -- )
     pushblock
-    blockbottom >r blocktop 1 - >r 1 - r> r> swap
-    do  dup2 do
-       pluck i j char!
-    loop loop
-    3:drop
+    blockbottom >r
+    blocktop dup r> xor will fail
+    1 - minrot
+    1 - do
+        2:over i swap char!
+    loop
+    2:drop
     popblock }
 
 sub fillblock {                                 # ( c -- )
