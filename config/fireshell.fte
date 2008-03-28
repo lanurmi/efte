@@ -295,6 +295,35 @@ sub sliteral  {
    endif }
 
 
+# --- fireshell utilities: shell ---
+
+sub shell$ { runprogramasync }                  # shell to program in a terminal
+sub shell  { 0 word$ shell$ }                   # parse input line, shell to program in a terminal
+sub run$   { ";" prepend$ shell$ }              # run program without opening a terminal
+sub run    { 0 word$ run$ }                     # parse input line, run program without opening a terminal
+
+
+sub tmpdir  { "/tmp" }
+
+sub tempfilename$ {
+    tmpdir  "/eFTE_fireshell_" append$
+    now number$ append$
+    microseconds <hash 9:hash hash> append$
+}
+
+sub shellredirect {
+    tempfilename$ swap$
+    " > " append$
+    over$ append$
+    run$ cr
+    dup$ blockread
+    moveblockend blockunmark
+    "rm " swap$ append$ run$
+    winrefresh
+}
+
+
+
 # --- compiler/interpreter ---
 
 sub parsedelimited {
@@ -303,18 +332,6 @@ sub parsedelimited {
     if    -1 right$                             # yes: discard too
     else  " " dup word$ 2:append$               # no: parse and append rest of string
     endif drop
-}
-
-
-
-sub shellredirect {
-    ";" prepend$  " > /tmp/eftecmd" append$ runprogram
-    "/tmp/eftecmd" fileopen
-    movefilestart blockmarkline
-    movefileend blockmarkline
-    ?blockcopy  fileclose
-    cr blockpaste blockunmark
-    movefileend
 }
 
 sub maybesomethingelse {                        # ( -- ) not a word in dictionary - try alternatives
@@ -442,13 +459,6 @@ sub words {
   type$           # seperator
   base ! }
 
-
-# --- fireshell utilities: shell ---
-
-sub shell$ { runprogramasync }                  # shell to program in a terminal
-sub shell  { 0 word$ shell$ }                   # parse input line, shell to program in a terminal
-sub run$   { ";" prepend$ shell$ }              # run program without opening a terminal
-sub run    { 0 word$ run$ }                     # parse input line, run program without opening a terminal
 
 
 
