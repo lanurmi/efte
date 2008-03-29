@@ -1106,8 +1106,15 @@ int EBuffer::InsertSpacesToTab(int TSize) {
 }
 
 int EBuffer::InsertTab() {
-    return (BFI(this, BFI_SpaceTabs)) ?
-           InsertSpacesToTab(BFI(this, BFI_TabSize)) : InsertChar(9);
+    if (memory[insert]) {
+        return (BFI(this, BFI_SpaceTabs)) ?
+            InsertSpacesToTab(BFI(this, BFI_TabSize)) : InsertChar(9);
+    } else {
+        fprintf(stderr,"tab\n");
+        int P1 = NextTab(CP.Col, BFI_TabSize);
+        for ( ; P1 > CP.Col; CursorRight());
+    }
+
 }
 
 int EBuffer::InsertSpace() {
