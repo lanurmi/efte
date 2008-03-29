@@ -824,12 +824,8 @@ sub attempt   {                                 # execute macro, name given as s
 
 
 
-
 sub OnBoot    {
-   AlreadyInitialized @ qdup if                 # rube goldberg scheme for swapping OnLoad and OnBoot sequence
-       dup true xor will execute                # the OnLoad handler must support this too:
-       drop exit                                # 0: never inited. -1: init complete. x: exec token of OnLoad init code
-   endif
+   AlreadyInitialized @ will fail
    AlreadyInitialized on
 
    decimal
@@ -851,5 +847,4 @@ sub OnBoot    {
        "OnUserBoot"      attempt                # replaces the eFTE internal hook
        "Initialisation successful" report
    -1 verbosity +!                              # revert to former verbosity
-
    }

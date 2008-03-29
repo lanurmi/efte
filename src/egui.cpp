@@ -1488,6 +1488,11 @@ int EGUI::Start(int &argc, char **argv) {
 
     EditorInit();
 
+    ActiveView->ExecMacro("OnBoot");
+    //ActiveView->ExecMacro("OnUserBoot");  // OnBoot can provide this
+    if (StartupMacroCommand != NULL)
+        ActiveView->ExecMacro(StartupMacroCommand);
+
     DoLoadHistoryOnEntry(argc, argv);
     DoLoadDesktopOnEntry(argc, argv);
 
@@ -1519,11 +1524,6 @@ int EGUI::Start(int &argc, char **argv) {
         }
         fprintf(stderr, "Macro count: %i memory: %i\n", CMacros, mem);
     }
-
-    ActiveView->ExecMacro("OnBoot");
-    //ActiveView->ExecMacro("OnUserBoot");  // OnBoot can provide this
-    if (StartupMacroCommand != NULL)
-        ActiveView->ExecMacro(StartupMacroCommand);
 
     return 0;
 }
