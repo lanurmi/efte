@@ -1084,38 +1084,32 @@ int EBuffer::InsertString(const char *aStr, int aCount) {
 }
 
 int EBuffer::InsertSpacesToTab(int TSize) {
-    int P = CP.Col, P1;
+    int P1 = NextTab(CP.Col, TSize);
+    if (memory[insert]) {
+        if (BFI(this, BFI_InsertKillBlock))
+            if (CheckBlock())
+                if (!BlockKill())
+                    return 0;
 
-    if (BFI(this, BFI_InsertKillBlock) == 1)
-        if (CheckBlock() == 1)
-            if (BlockKill() == 0)
+        int Pdiff = P1 - CP.Col;
+
+        if (CP.Col < LineLen())
+            if (DelText(VToR(CP.Row), CP.Col, Pdiff) == 0)
                 return 0;
 
-    if (TSize <= 0)
-        TSize = BFI(this, BFI_TabSize);
-
-    P1 = NextTab(P, TSize);
-    // if (BFI(this, BFI_Insert) == 0) {
-    if (memory[insert] == 0) {
-        if (CP.Col < LineLen())
-            if (DelText(VToR(CP.Row), CP.Col, P1 - P) == 0) return 0;
+        if (InsText(VToR(CP.Row), CP.Col, Pdiff, 0) == 0)
+            return 0;
     }
-    if (InsText(VToR(CP.Row), CP.Col, P1 - P, 0) == 0) return 0;
-    if (SetPos(P1, CP.Row) == 0) return 0;
-    return 1;
+    return (SetPos(P1, CP.Row));
 }
+
 
 int EBuffer::InsertTab() {
-    if (memory[insert]) {
-        return (BFI(this, BFI_SpaceTabs)) ?
-            InsertSpacesToTab(BFI(this, BFI_TabSize)) : InsertChar(9);
-    } else {
-        fprintf(stderr,"tab\n");
-        int P1 = NextTab(CP.Col, BFI_TabSize);
-        for ( ; P1 > CP.Col; CursorRight());
-    }
-
+    if (BFI(this, BFI_SpaceTabs) || !memory[insert])
+        return InsertSpacesToTab(BFI(this, BFI_TabSize));
+    return InsertChar(9);
 }
+
 
 int EBuffer::InsertSpace() {
     return TypeChar(32);
