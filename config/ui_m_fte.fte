@@ -267,6 +267,8 @@ menu Edit {
     item "Paste Li&ne"		          { BlockPasteLine }
     item "Cl&ear\tCtrl+Del"           { BlockKill }
     item;
+    item "Wrap Paragraph"             { WrapPara }
+    item;
     submenu "&Line", Line;
     item;
     item "&Quote Literal...\tCtrl+Q"  { -1 InsertChar }
@@ -375,7 +377,7 @@ menu Toggle {
     item "&Keep backups"		        { ToggleKeepBackups }
     item "&Make backups"		        { ToggleMakeBackups }
     item "&Backspace Unindents"		    { ToggleBackSpUnindents }
-    item;                               
+    item;
     item "I&ndent with tabs"		    { ToggleIndentWithTabs }
     item "S&pace tabs"			        { ToggleSpaceTabs }
     item "Backspace k&ill tab"		    { ToggleBackSpKillTab }
