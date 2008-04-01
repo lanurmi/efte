@@ -149,7 +149,7 @@ sub cursorline$ { curline$ }
 sub linelength  { curline$ len$ }                   # ( -- len )
 sub linelen     { curline$ len$ }                   # ( -- len )
 
-
+sub scroll      { dup negative if abs scrolldown else scrollup endif }
 
 
 # =============================================================================
@@ -837,14 +837,11 @@ sub OnBoot    {
    '$' 16 addbaseprefix
    '#' 10 addbaseprefix
    '%'  2 addbaseprefix
-
-   1 verbosity +!                               # show init reports by increasing verbosity
-       "InitStatusline"  attempt
-       "InitBlocks"      attempt
-       "InitBookmarks"   attempt
-       "InitMymain"      attempt
-       "InitMain"        attempt
-       "OnUserBoot"      attempt                # replaces the eFTE internal hook
-       "Initialisation successful" report
-   -1 verbosity +!                              # revert to former verbosity
+    "InitStatusline"  attempt
+    "InitBlocks"      attempt
+    "InitBookmarks"   attempt
+    "InitMymain"      attempt
+    "InitMain"        attempt
+    "OnUserBoot"      attempt                # replaces the eFTE internal hook
+    "Initialisation successful" report
    }

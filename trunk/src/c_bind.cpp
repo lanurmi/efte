@@ -120,6 +120,7 @@ EKey *SetKey(EEventMap *aMap, const char *aKey) {
             else {
                 *d = 0;
                 d++;
+
             }
         }
 
@@ -127,34 +128,31 @@ EKey *SetKey(EEventMap *aMap, const char *aKey) {
 
         if (d == 0) {
             k = new EKey(p);
-            if (*map) {
-                (*map)->AddKey(k);
-            } else {
+            if (!(*map)) {
                 *map = new EKeyMap();
                 (*map)->fParent = parent;
-                (*map)->AddKey(k);
             }
+            (*map)->AddKey(k);
             return k;
 
         } else {
             // if introductory key
 
-            if (*map == 0) { // first key in mode, create map
-                //                printf("new map key = %s, parent %d\n", p, parent);
-                k = new EKey(p, 0);
-                *map = new EKeyMap();
-                (*map)->fParent = parent;
-                (*map)->AddKey(k);
-            } else {
+            if (*map) { // first key in mode, create map
                 KeySel ks;
-
                 ParseKey(p, ks);
                 if ((k = (*map)->FindKey(ks.Key)) == 0) { // check if key exists
                     // add it if not
                     k = new EKey(p, 0);
                     (*map)->AddKey(k);
                 }
+            } else {
+                k = new EKey(p, 0);
+                *map = new EKeyMap();
+                (*map)->fParent = parent;
+                (*map)->AddKey(k);
             }
+
             map = &k->fKeyMap; // set current map to key's map
 
             // get parent keymap
@@ -178,26 +176,47 @@ EKey *SetKey(EEventMap *aMap, const char *aKey) {
     return 0;
 }
 
+
+
+// this init logic strikes me as odd and unnecessary.
+//static void InitWordChars() {
+//    static int init = 0;
+//    if (init == 0) {
+//        for (int i = 0; i < 256; i++)
+//            // isalnum???
+//            //if (isdigit(i) || isalpha(i)
+//            //    || (i >= 'A' && i <= 'Z')
+//            //    || (i >= 'a' && i <= 'z') || (i == '_')) {
+//            if (isalnum(i) || (i == '_')) {
+//                WSETBIT(DefaultBufferFlags.WordChars, i, 1);
+//                // Can someone tell me why we check A through Z?
+//                // This won't work should someone port to EBCDIC (why, though?)
+//                // besides, isupper is usually a #define that will compile to something
+//                // even faster.
+//                // if (/*(i >= 'A' && i <= 'Z') || */ isupper(i))
+//                if ( isupper(i))
+//                    WSETBIT(DefaultBufferFlags.CapitalChars, i, 1);
+//            }
+//        init = 1;
+//    }
+//}
+
+
+// sets up a bit flag table, indexed by ascii, indicating {0..9,A..Z,a..z,_} and {A..Z}
+// i think this table must be swapped, if we want to allow strings like "this is /foo/bar/filenname.ext, try to select this"
+// to become word-selectable.
+// TODO: unicode victim
 static void InitWordChars() {
-    static int init = 0;
-    if (init == 0) {
-        for (int i = 0; i < 256; i++)
-            // isalnum???
-            //if (isdigit(i) || isalpha(i)
-            //    || (i >= 'A' && i <= 'Z')
-            //    || (i >= 'a' && i <= 'z') || (i == '_')) {
-            if (isalnum(i) || (i == '_')) {
-                WSETBIT(DefaultBufferFlags.WordChars, i, 1);
-                // Can someone tell me why we check A through Z?
-                // This won't work should someone port to EBCDIC (why, though?)
-                // besides, isupper is usually a #define that will compile to something
-                // even faster.
-                if (/*(i >= 'A' && i <= 'Z') || */ isupper(i))
-                    WSETBIT(DefaultBufferFlags.CapitalChars, i, 1);
-            }
-        init = 1;
-    }
+    for (int i = 0; i < 256; i++)
+        if (isalnum(i) || (i == '_')) {
+            WSETBIT(DefaultBufferFlags.WordChars, i, 1);
+            if (isupper(i))
+                WSETBIT(DefaultBufferFlags.CapitalChars, i, 1);
+        }
 }
+
+
+
 
 void SetWordChars(char *w, const char *s) {
     const char *p;
@@ -323,9 +342,7 @@ static int MatchKey(TKeyCode aKey, KeySel aSel) {
                 key = toupper(key);
     }
     aKey = key | flags;
-    if (aKey == aSel.Key)
-        return 1;
-    return 0;
+    return (aKey == aSel.Key);
 }
 
 EKey *EKeyMap::FindKey(TKeyCode aKey) {
