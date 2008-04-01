@@ -154,11 +154,10 @@ int EBuffer::MoveWordLeftX(int start) {
 
 int EBuffer::MoveWordRightX(int start) {
     PELine L = VLine(CP.Row);
-    int C, P;
-    int wS = start, wE = 1 - start;
-
-    C = CP.Col;
-    P = CharOffset(L, C);
+    int wS = start
+    int wE = 1 - start;
+    int C = CP.Col;
+    int P = CharOffset(L, C);
 
     if (P >= L->Count) {
         FAIL

@@ -90,6 +90,8 @@ sub prime  { dup factor equals }                # ( u -- f ) test number for pri
 
 
 
+
+
 # --- define a variables class
 sub var       { here dup cell allot }           # for the new construct:       sub foo { var new }
 
@@ -99,25 +101,6 @@ sub decimal   { 10 base ! }
 sub hex       { 16 base ! }
 sub octal     {  8 base ! }
 sub binary    {  2 base ! }
-
-
-
-# --- character test
-sub bl        { ' ' }
-sub capital   { 'A' 'Z' between }
-sub lowercase { 'a' 'z' between }
-sub capitalize { dup lowercase 32 and - }
-sub undercast  { dup capital   32 and + }
-sub printable  { bl 127 between }
-
-sub cipher   {                                  # ( asc -- u -1 | 0 )  converts ascii to numeric value, and flag if legal cipher.
-   capitalize '0' -                             #                      respects base, and reports only those chars valid which are
-   dup 10 16 between or                         #                      legal in the resp. base
-   dup 16 > 7 and -
-   dup 0 base @ dec between
-   qdup nip  }
-
-sub numeric    { cipher dup will nip }          # ( asc -- flag )  flag if legal cipher.
 
 
 
@@ -215,6 +198,69 @@ sub char!   {                                   # ( c x y -- )  store char in fi
    at emit
    r> insert !
    2:r> at }
+
+
+
+# -----------------------------------------------------
+# --- preparative for movewordleft/right migration ---
+# -----------------------------------------------------
+
+sub bl         { ' ' }
+
+# once in macros, will make it easier to swap char type lists, for different delimiters.
+# for example, by keeping more than one array, vectoring to the one to use.
+
+include "arrays.fte";
+
+sub charactertype     { array new }
+sub capitalbit        { 1 }
+sub lowercasebit      { 2 }
+sub numericbit        { 4 }
+sub printablebit      { 8 }
+sub wordcharbit       { 16 }
+
+sub setcharactertype  {
+    charactertype 1 + swap
+    charactertype do
+        dup i or!
+    loop
+    drop }
+
+# set same character type as hardcoded in efte now
+sub InitWordchars     {
+    256 charactertype
+    capitalbit   wordcharbit or 'A' 'Z' setcharactertype
+    lowercasebit wordcharbit or 'a' 'z' setcharactertype
+    numericbit   wordcharbit or '0' '9' setcharactertype
+                 wordcharbit    '_' '_' setcharactertype
+                 printablebit   bl 127  setcharactertype
+}
+
+# to test char for one specific characteristic:
+#  'X' numericbit charactertest
+
+
+
+# --- character test
+sub charactertest { swap charactertype @ and }
+
+sub capital    { capitalbit charactertest }
+sub lowercase  { lowercasebit charactertest }
+sub printable  { printablebit charactertest }
+sub capitalize { dup lowercase 32 and - }
+sub undercast  { dup capital   32 and + }
+
+sub cipher   {                                  # ( asc -- u -1 | 0 )  converts ascii to numeric value, and flag if legal cipher.
+   capitalize '0' -                             #                      respects base, and reports only those chars valid which are
+   dup 10 16 between or                         #                      legal in the resp. base
+   dup 16 > 7 and -
+   dup 0 base @ dec between
+   qdup nip  }
+
+sub numeric    { cipher dup will nip }          # ( asc -- flag )  flag if legal cipher.
+
+
+
 
 
 
@@ -783,6 +829,7 @@ sub sleep   { winrefresh 1000 * ms }            # ( n -- )   sleep for n seconds
 
 
 
+
 # --- migrated toggles ---
 sub ToggleTrim   { autotrim toggle }
 sub ToggleInsert { insert toggle }
@@ -824,6 +871,10 @@ sub attempt   {                                 # execute macro, name given as s
 
 
 
+
+
+
+
 sub OnBoot    {
    AlreadyInitialized @ will fail
    AlreadyInitialized on
@@ -831,6 +882,8 @@ sub OnBoot    {
    decimal
    insert on
    autotrim on
+    InitWordchars
+
 
    35 spaces$ baseprefix$ store$
    "" baseprefix$ store$
