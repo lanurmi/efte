@@ -236,9 +236,6 @@ sub InitWordchars     {
                  printablebit   bl 127  setcharactertype
 }
 
-# to test char for one specific characteristic:
-#  'X' numericbit charactertest
-
 
 
 # --- character test
@@ -248,7 +245,10 @@ sub capital    { capitalbit charactertest }
 sub lowercase  { lowercasebit charactertest }
 sub printable  { printablebit charactertest }
 sub capitalize { dup lowercase 32 and - }
-sub undercast  { dup capital   32 and + }
+sub lowercast  { dup capital   32 and + }
+
+
+
 
 sub cipher   {                                  # ( asc -- u -1 | 0 )  converts ascii to numeric value, and flag if legal cipher.
    capitalize '0' -                             #                      respects base, and reports only those chars valid which are
@@ -258,9 +258,6 @@ sub cipher   {                                  # ( asc -- u -1 | 0 )  converts 
    qdup nip  }
 
 sub numeric    { cipher dup will nip }          # ( asc -- flag )  flag if legal cipher.
-
-
-
 
 
 
@@ -492,7 +489,32 @@ sub var$ {                                      # string variable class
     allot }
 
 
+
+# --------------------------------------------------------
+#                  move cursor by word
+# --------------------------------------------------------
+
+sub iswordchar { wordcharbit charactertest }
+
+sub MovePrevWord {
+    ?cursorleft failure if cursorup cursorend exit endif
+    begin read iswordchar not while cursorleft repeat
+    begin read iswordchar     while cursorleft repeat
+    cursorright
+}
+
+sub MoveNextWord {
+    cursorright
+    read not if cursorhome cursordown exit endif
+    begin read dup not if drop fail endif   iswordchar       while cursorright repeat
+    begin read dup not if drop fail endif   iswordchar not   while cursorright repeat
+}
+
+
+
+# --------------------------------------------------------
 # --- debugging ---
+# --------------------------------------------------------
 
 sub println { print "\n" print }
 sub pout    { 1 print }
