@@ -180,6 +180,8 @@ typedef enum {
     /// pointer to statusline in shared mem
     ExBlock,
     /// return populated block information structure
+    ExMouseXY,
+    /// return mouse event x, y, type
 
     //!Cursor Commands
     ExCursorLeft,

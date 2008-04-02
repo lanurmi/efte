@@ -22,5 +22,6 @@ int Base();
 int AutoTrim();
 int Insert();
 void InitSharedVars();
+int MouseXY();
 
 #endif // W_MEMORY_H
