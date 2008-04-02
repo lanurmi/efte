@@ -154,7 +154,7 @@ int EBuffer::MoveWordLeftX(int start) {
 
 int EBuffer::MoveWordRightX(int start) {
     PELine L = VLine(CP.Row);
-    int wS = start
+    int wS = start;
     int wE = 1 - start;
     int C = CP.Col;
     int P = CharOffset(L, C);

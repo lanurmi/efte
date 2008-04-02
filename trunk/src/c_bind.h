@@ -87,7 +87,7 @@ public:
 
 typedef struct {
     int type;
-    short repeat;
+    int repeat;
     short ign;
     union {
         long num;
