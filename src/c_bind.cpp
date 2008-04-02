@@ -622,7 +622,7 @@ int AddCommand(int no, int Command, int count, int ign) {
     Macros[no].cmds = (CommandType *)realloc(Macros[no].cmds, sizeof(CommandType) * (Macros[no].Count + 1));
     Macros[no].cmds[Macros[no].Count].type = CT_COMMAND;
     Macros[no].cmds[Macros[no].Count].u.num = Command;
-    Macros[no].cmds[Macros[no].Count].repeat = short(count);
+    Macros[no].cmds[Macros[no].Count].repeat = int(count);
     Macros[no].cmds[Macros[no].Count].ign = short(ign);
     Macros[no].Count++;
     return 1;

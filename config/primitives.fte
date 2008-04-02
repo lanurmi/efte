@@ -249,7 +249,6 @@ sub lowercast  { dup capital   32 and + }
 
 
 
-
 sub cipher   {                                  # ( asc -- u -1 | 0 )  converts ascii to numeric value, and flag if legal cipher.
    capitalize '0' -                             #                      respects base, and reports only those chars valid which are
    dup 10 16 between or                         #                      legal in the resp. base
@@ -352,12 +351,12 @@ sub embed$ {                                    # ( asc n -- ) store char at pos
    splice append$                               # recombine, with char between
 }
 
-sub capitalize$ {                               # ( -- )  capitalize all chars of top string
-   "" over$ len$ 0 do                           # loop though all source string chars:
-      swap$ i ascn                              # read next char
-      dup lowercase will capitalize             # convert if necessary
-      swap$ char$ append$                       # append to result string
-   loop nip$  }                                 # discard source string
+#sub capitalize$ {                               # ( -- )  capitalize all chars of top string
+#   "" over$ len$ 0 do                           # loop though all source string chars:
+#      swap$ i ascn                              # read next char
+#      dup lowercase will capitalize             # convert if necessary
+#      swap$ char$ append$                       # append to result string
+#   loop nip$  }                                 # discard source string
 
 
 sub repeat$ {                                   # ( u c -- ) create a string of u times char
@@ -487,6 +486,44 @@ sub var$ {                                      # string variable class
     dup$ len$ inc
     dup inc comma
     allot }
+
+
+
+
+
+# --- character translation by table ---
+
+sub charactertranslationtable {                 # new class of char translation tables.
+    here dup                                    # first table address
+    256 0 do i comma loop }                     # initially set up as a 1:1 "transparent" translation table.
+
+sub setcharactertranslation {                   # ( from to count table -- )   manipulate translation table
+    swap >r
+    rot +                                       # first table address to modify
+    r> range do                                 # loop through modifyable range
+       dup i ! 1 +                              # store substitute in table
+    loop
+    drop }
+
+sub translate$  {                               # ( table -- )  s( string1 -- string2 )
+    ""                                          # translated result string
+    over$ len$ 0 do                             # for all chars in source:
+        over$ i 1 mid$                          #    get next char
+        dup asc + @                             #    convert to ascii, use as index into translation table, read ascii of substitute
+        char$ append$                           #    append substitute to result string
+    loop drop nip$ }                            # drop translation table and source string
+
+
+
+
+# example: build a translation table for capitalization
+sub lower>upper  {
+    charactertranslationtable new
+    'a' 'A' 26  lower>upper setcharactertranslation  }
+
+# use:
+sub capitalize$ { lower>upper translate$ }      # ( -- )  s( string1 -- string2 )
+
 
 
 
@@ -845,8 +882,7 @@ sub today   { now date }                        # ( -- y m d )
 sub today$  { now date$ }                       # ( -- )  s( -- date )
 sub now$    { now time$ }                       # ( -- ) returns hh:mm:ss as string   preferred name
 
-sub sleep   { winrefresh 1000 * ms }            # ( n -- )   sleep for n seconds
-
+sub sleep   { 1000 * ms }                       # ( n -- )   sleep for n seconds
 
 
 
@@ -904,14 +940,15 @@ sub OnBoot    {
    decimal
    insert on
    autotrim on
-    InitWordchars
-
+   InitWordchars
 
    35 spaces$ baseprefix$ store$
    "" baseprefix$ store$
    '$' 16 addbaseprefix
    '#' 10 addbaseprefix
+   '&'  8 addbaseprefix
    '%'  2 addbaseprefix
+
     "InitStatusline"  attempt
     "InitBlocks"      attempt
     "InitBookmarks"   attempt
