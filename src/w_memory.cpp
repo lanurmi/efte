@@ -127,4 +127,16 @@ int Insert() {
     return 1;
 }
 
+extern unsigned int mousex;
+extern unsigned int mousey;
+extern unsigned int mouseevent;
+
+
+// not really shared anymore - move to more suited place
+int MouseXY() {
+    ParamStack.push(mousex);
+    ParamStack.push(mousey);
+    ParamStack.push(mouseevent);
+    return 1;
+}
 

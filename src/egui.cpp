@@ -230,6 +230,8 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
         return Insert();
     case ExStatusline:
         return Statusline();
+    case ExMouseXY:
+        return MouseXY();
 
         // command calls
     case ExTick:
