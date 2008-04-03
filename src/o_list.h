@@ -57,6 +57,7 @@ public:
     virtual int GetContext();
     virtual int BeginMacro();
     void HandleEvent(TEvent &Event);
+    int Mouse();
 
 
     virtual void DrawLine(PCell B, int Line, int Col, ChColor color, int Width);

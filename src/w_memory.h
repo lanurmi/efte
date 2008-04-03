@@ -10,7 +10,6 @@
 #ifndef W_MEMORY_H
 #define W_MEMORY_H
 
-int MemoryDump();
 int MemoryStore();
 int MemoryFetch();
 int MemoryHere();
@@ -21,7 +20,7 @@ int Verbosity();
 int Base();
 int AutoTrim();
 int Insert();
+int Mouse();
 void InitSharedVars();
-int MouseXY();
 
 #endif // W_MEMORY_H

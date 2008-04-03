@@ -39,7 +39,7 @@ const struct {
     TAB(Insert),
     TAB(Statusline),
     TAB(Block),
-    TAB(MouseXY),
+    TAB(Mouse),
     // ------------------------
     { ExPlus, "+" },
     { ExMinus, "-" },
