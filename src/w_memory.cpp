@@ -124,7 +124,7 @@ unsigned int mousebutton       = dp++;
 unsigned int mousewinsizex     = dp++;
 unsigned int mousewinsizey     = dp++;
 unsigned int mouseeventcounter = dp++;
-unsigned int mouseevent        = dp++;
+unsigned int mouseeventtype    = dp++;
 
 int Mouse() {
     ParamStack.push(mouse);

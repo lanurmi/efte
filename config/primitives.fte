@@ -239,13 +239,17 @@ sub InitWordchars     {
 
 
 # --- character test
-sub charactertest { swap charactertype @ and }
+sub charactertest {
+    swap 255 and charactertype @ and
+    vector false true endvector
+}
 
 sub capital    { capitalbit charactertest }
 sub lowercase  { lowercasebit charactertest }
 sub printable  { printablebit charactertest }
-sub capitalize { dup lowercase 32 and - }
-sub lowercast  { dup capital   32 and + }
+sub capitalize { dup lowercase not unless 32 - }
+sub lowercast  { dup capital   not unless 32 + }
+# can't use with numbers in scripts - what is a valid numeric depends on number base. 0..9,a..f,A..F for hex, 0,1 for binary etc.
 
 
 
@@ -896,11 +900,17 @@ sub ToggleInsert { insert toggle }
 
 # --- mouse events, under test ---
 
+# these would normally be provided my eFTE, to make sure that offsets are correct in case of
+# a likely structure layout change.
 sub mousexy         { mouse     @2 }    # ( -- x y )    mouse pointer relative to begin of file
 sub mousexyrelative { mouse 2 + @2 }    # ( -- x y )    mouse pointer relative to buffer top left
 sub mousebutton     { mouse 4 + @  }    # ( -- u )      1, 4, 2  for 3-button mouse
 sub mousewinsize    { mouse 5 + @2 }    # ( -- x y )    eFTE window dimensions
-sub mouseevents     { mouse 7 + @  }    # ( -- u )      unused now
+sub mouseevents     { mouse 7 + @  }    # ( -- u )      mouse event counter
+sub mouseeventtype  { mouse 8 +    }    # ( -- a )      mouse event type. signal back to efte "done" to skip internal code
+                                        # 16:  button pushed
+                                        # 32:  button released
+                                        # 128: button held down, autorepeat
 
 sub mousestats {                        # ( -- )        statusline dump
     "mouse event "
@@ -919,25 +929,39 @@ sub mousestats {                        # ( -- )        statusline dump
         number$ append$
         "/" append$
         number$ append$
-        message }
+        message
+        }
 
+
+# -- nouse up ---
+sub OnMouse1Up { }
+
+# test mouse button 2 (local menu): whn clicked on top line, main menu instead
+sub OnMouse2Up {
+    mousexyrelative
+    if   localmenu
+    else "" mainmenu
+    endif drop
+    mousestats
+    mouseeventtype off                  # don't execute eFTE internal handler
+}
+
+sub OnMouse3Up { }
 
 sub OnMouseUp   {                       # ( -- )        executed when any button released, or scroll wheel turned
-    mousebutton 2 equals if             #               button 2 release -> alternate LocalMenu/MainMenu
-        localmenu
-    endif
-    mousestats                                          # dump tp statusline
- }
+    mousebutton vector
+        Fail   OnMouse1Up  OnMouse2Up    Fail  OnMouse3Up
+    endvector }
 
+# -- nouse down ---
+sub OnMouse1Down { }
+sub OnMouse2Down { }
+sub OnMouse3Down { }
 
-sub OnMouseDown {
-    mousebutton 1 equals if                             # main menu if button 1 pushed in upper left corner?
-        mousexyrelative or not if
-            "" mainmenu
-        endif
-    endif
-    mousestats
-    }
+sub OnMouseDown  {                       # ( -- )        executed when any button released, or scroll wheel turned
+    mousebutton vector
+        Fail   OnMouse1Down OnMouse2Down  Fail  OnMouse3Down
+    endvector }
 
 
 

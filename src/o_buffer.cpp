@@ -217,18 +217,16 @@ void EEditPort::HandleEvent(TEvent &Event) {
 // TODO: reuse common code. o_list and o_buffer duplicate a lot.
 void EEditPort::HandleMouse(TEvent &Event) {
     int x, y, xx, yy, W, H;
-
     View->MView->ConQuerySize(&W, &H);
 
     x = Event.Mouse.X;
     y = Event.Mouse.Y;
-
     xx = x + TP.Col;
     yy = y + TP.Row;
     if (yy < 0) yy = 0;
     if (xx < 0) xx = 0;
 
-
+    memory[mouseeventtype] = Event.What;
     int eventtype = Event.What & (evMouseUp|evMouseDown);
     if (eventtype) {
         memory[mousex] = xx;
@@ -246,125 +244,127 @@ void EEditPort::HandleMouse(TEvent &Event) {
         }
     }
 
+    if (memory[mouseeventtype]) {
 
-    if (Event.What != evMouseDown || y < H - 1) {
-        if (yy >= Buffer->VCount) yy = Buffer->VCount - 1;
-        switch (Event.What) {
+        if (Event.What != evMouseDown || y < H - 1) {
+            if (yy >= Buffer->VCount) yy = Buffer->VCount - 1;
+            switch (Event.What) {
 
-        case evMouseDown:
-            if (Event.Mouse.Y == H - 1)
-                break;
-            if (View->MView->Win->CaptureMouse(1))
-                View->MView->MouseCaptured = 1;
-            else
-                break;
+            case evMouseDown:
+                if (Event.Mouse.Y == H - 1)
+                    break;
+                if (View->MView->Win->CaptureMouse(1))
+                    View->MView->MouseCaptured = 1;
+                else
+                    break;
 
-            View->MView->MouseMoved = 0;
+                View->MView->MouseMoved = 0;
 
-            if (Event.Mouse.Buttons == 1) {
-                // left mouse button down
-                Buffer->SetNearPos(xx, yy);
-                switch (Event.Mouse.Count % 5) {
-                case 1:
-                    break;
-                case 2:
-                    Buffer->BlockSelectWord();
-                    break;
-                case 3:
-                    Buffer->BlockSelectLine();
-                    break;
-                case 4:
-                    Buffer->BlockSelectPara();
-                    break;
-                }
-                //            Window->Buffer->Redraw();
-                if (SystemClipboard) {
-                    // note: copy to second clipboard
-                    Buffer->NextCommand();
-                    Buffer->BlockCopy(0, 1);
-                }
-                Event.What = evNone;
-            } else if (Event.Mouse.Buttons == 2) {
-                // right mouse button down
-                Buffer->SetNearPos(xx, yy);
-            }
-            break;
-        case evMouseAuto:
-        case evMouseMove:
-            if (View->MView->MouseCaptured) {
                 if (Event.Mouse.Buttons == 1) {
-                    // left mouse button move
-                    if (!View->MView->MouseMoved) {
-                        if (Event.Mouse.KeyMask == kfCtrl) Buffer->BlockMarkColumn();
-                        else if (Event.Mouse.KeyMask == kfAlt) Buffer->BlockMarkLine();
-                        else Buffer->BlockMarkStream();
-                        Buffer->BlockUnmark();
-                        if (Event.What == evMouseMove)
-                            View->MView->MouseMoved = 1;
-                    }
-                    Buffer->BlockExtendBegin();
+                    // left mouse button down
                     Buffer->SetNearPos(xx, yy);
-                    Buffer->BlockExtendEnd();
-                } else if (Event.Mouse.Buttons == 2) {
-                    // right mouse button move
-                    if (Event.Mouse.KeyMask == kfAlt) {
-                    } else {
-                        Buffer->SetNearPos(xx, yy);
+                    switch (Event.Mouse.Count % 5) {
+                    case 1:
+                        break;
+                    case 2:
+                        Buffer->BlockSelectWord();
+                        break;
+                    case 3:
+                        Buffer->BlockSelectLine();
+                        break;
+                    case 4:
+                        Buffer->BlockSelectPara();
+                        break;
                     }
-                }
-
-                Event.What = evNone;
-            }
-            break;
-            /*        case evMouseAuto:
-                        if (View->MView->MouseCaptured) {
-                            Event.What = evNone;
-                        }
-                        break;*/
-        case evMouseUp:
-            if (View->MView->MouseCaptured)
-                View->MView->Win->CaptureMouse(0);
-            else
-                break;
-            View->MView->MouseCaptured = 0;
-
-            if (Event.Mouse.Buttons == 1) {
-                // left mouse button up
-                if (View->MView->MouseMoved)
+                    //            Window->Buffer->Redraw();
                     if (SystemClipboard) {
                         // note: copy to second clipboard
                         Buffer->NextCommand();
                         Buffer->BlockCopy(0, 1);
                     }
-            }
-            if (Event.Mouse.Buttons == 2) {
-                // right mouse button up
-                if (!View->MView->MouseMoved) {
-                    EEventMap *Map = View->MView->Win->GetEventMap();
-                    const char *MName = 0;
+                    Event.What = evNone;
+                } else if (Event.Mouse.Buttons == 2) {
+                    // right mouse button down
+                    Buffer->SetNearPos(xx, yy);
+                }
+                break;
+            case evMouseAuto:
+            case evMouseMove:
+                if (View->MView->MouseCaptured) {
+                    if (Event.Mouse.Buttons == 1) {
+                        // left mouse button move
+                        if (!View->MView->MouseMoved) {
+                            if (Event.Mouse.KeyMask == kfCtrl) Buffer->BlockMarkColumn();
+                            else if (Event.Mouse.KeyMask == kfAlt) Buffer->BlockMarkLine();
+                            else Buffer->BlockMarkStream();
+                            Buffer->BlockUnmark();
+                            if (Event.What == evMouseMove)
+                                View->MView->MouseMoved = 1;
+                        }
+                        Buffer->BlockExtendBegin();
+                        Buffer->SetNearPos(xx, yy);
+                        Buffer->BlockExtendEnd();
+                    } else if (Event.Mouse.Buttons == 2) {
+                        // right mouse button move
+                        if (Event.Mouse.KeyMask == kfAlt) {
+                        } else {
+                            Buffer->SetNearPos(xx, yy);
+                        }
+                    }
 
-                    if (Map)
-                        MName = Map->GetMenu(EM_LocalMenu);
-                    if (MName == 0)
-                        MName = "Local";
-                    View->MView->Win->Parent->PopupMenu(MName);
+                    Event.What = evNone;
                 }
-            }
-            if (Event.Mouse.Buttons == 4) {
-                // middle mouse button up
-                if (SystemClipboard) {
-                    // note: copy to second clipboard
-                    Buffer->NextCommand();
-                    if (Event.Mouse.KeyMask == 0)
-                        Buffer->BlockPasteStream(1);
-                    else if (Event.Mouse.KeyMask == kfCtrl)
-                        Buffer->BlockPasteColumn(1);
-                    else if (Event.Mouse.KeyMask == kfAlt)
-                        Buffer->BlockPasteLine(1);
+                break;
+                /*        case evMouseAuto:
+                 if (View->MView->MouseCaptured) {
+                 Event.What = evNone;
+                 }
+                 break;*/
+            case evMouseUp:
+                if (View->MView->MouseCaptured)
+                    View->MView->Win->CaptureMouse(0);
+                else
+                    break;
+                View->MView->MouseCaptured = 0;
+
+                if (Event.Mouse.Buttons == 1) {
+                    // left mouse button up
+                    if (View->MView->MouseMoved)
+                        if (SystemClipboard) {
+                            // note: copy to second clipboard
+                            Buffer->NextCommand();
+                            Buffer->BlockCopy(0, 1);
+                        }
                 }
+                if (Event.Mouse.Buttons == 2) {
+                    // right mouse button up
+                    if (!View->MView->MouseMoved) {
+                        EEventMap *Map = View->MView->Win->GetEventMap();
+                        const char *MName = 0;
+
+                        if (Map)
+                            MName = Map->GetMenu(EM_LocalMenu);
+                        if (MName == 0)
+                            MName = "Local";
+                        View->MView->Win->Parent->PopupMenu(MName);
+                    }
+                }
+                if (Event.Mouse.Buttons == 4) {
+                    // middle mouse button up
+                    if (SystemClipboard) {
+                        // note: copy to second clipboard
+                        Buffer->NextCommand();
+                        if (Event.Mouse.KeyMask == 0)
+                            Buffer->BlockPasteStream(1);
+                        else if (Event.Mouse.KeyMask == kfCtrl)
+                            Buffer->BlockPasteColumn(1);
+                        else if (Event.Mouse.KeyMask == kfAlt)
+                            Buffer->BlockPasteLine(1);
+                    }
+                }
+                Event.What = evNone;
+                break;
             }
-            Event.What = evNone;
-            break;
         }
     }
 }

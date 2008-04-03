@@ -46,6 +46,7 @@ extern unsigned int mousebutton;
 extern unsigned int mousewinsizex;
 extern unsigned int mousewinsizey;
 extern unsigned int mouseeventcounter;
+extern unsigned int mouseeventtype;
 
 
 // commands may flag branch conditions in here
