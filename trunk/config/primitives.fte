@@ -912,59 +912,89 @@ sub mouseeventtype  { mouse 8 +    }    # ( -- a )      mouse event type. signal
                                         # 32:  button released
                                         # 128: button held down, autorepeat
 
-sub mousestats {                        # ( -- )        statusline dump
-    "mouse event "
-        mouseevents
-        number$ append$
-    ", button " append$
-        mousebutton
-        number$ append$
-    " at x/y " append$
-        mousexy swap
-        number$ append$
-        "/" append$
-        number$ append$
-    ", relative " append$
-        mousexyrelative swap
-        number$ append$
-        "/" append$
-        number$ append$
-        message
-        }
+
+sub .mousebutton {                      # ( -- )  s( action - )
+    "mouse: " prepend$
+    " button " append$
+    mousebutton number$ append$
+    ", event: " append$
+    mouseeventtype @ number$ append$
+    "\n" append$
+    perr }
 
 
-# -- nouse up ---
-sub OnMouse1Up { }
 
-# test mouse button 2 (local menu): whn clicked on top line, main menu instead
+
+# -- button 1 ---
+
+sub equals2 {                           # ( x1 x2 x3 x4 -- f )
+    rot equals >r
+    equals r> and }
+
+sub oldmousexy   { var new cell allot }
+sub OnMouse1Down { mousexy oldmousexy !2 }
+sub OnMouse1Up   {
+    mousexy oldmousexy @2 equals2       # same pos as pushed?
+    block @  if
+        if                              # click without move
+        else                            # push, move (draw block)
+        endif
+    else
+        if                              # push, move, move back to org pos. or: push, hold, release
+        else                            # normally not possible
+        endif
+    endif
+}
+
+
+
+
+# -- button 2 ---
+sub OnMouse2Down { }
+
 sub OnMouse2Up {
-    mousexyrelative
-    if   localmenu
-    else "" mainmenu
-    endif drop
-    mousestats
+    mousexyrelative                     # interested in screen line number mouse is on
+    if   localmenu                      # not on top line: local menu
+    else "" mainmenu                    # top line: main menu
+    endif drop                          # not interested in mouse pointer column
     mouseeventtype off                  # don't execute eFTE internal handler
 }
 
-sub OnMouse3Up { }
-sub OnMouseOtherUp   { "mouse: button > 3 released" message }
 
-sub OnMouseUp   {                       # ( -- )        executed when any button released, or scroll wheel turned
-    mousebutton vector
-        Fail   OnMouse1Up  OnMouse2Up    Fail  OnMouse3Up OnMouseOtherUp
-    endvector }
-
-# -- nouse down ---
-sub OnMouse1Down { }
-sub OnMouse2Down { }
+# -- button 3 ---
 sub OnMouse3Down { }
-sub OnMouseOtherDown { "mouse: button > 3 pushed" message }
+sub OnMouse3Up { }
 
-sub OnMouseDown  {                       # ( -- )        executed when any button released, or scroll wheel turned
+
+# -- other buttons, and scroll wheel ---
+sub OnMouseOtherDown { }
+sub OnMouseOtherUp   { }
+
+
+# -- nouse up/down event entry points ---
+
+sub OnMouseUp   {                       # ( -- )  executed when any button released, or scroll wheel turned
+    "released" .mousebutton
     mousebutton vector
-        Fail   OnMouse1Down OnMouse2Down  Fail  OnMouse3Down OnMouseOtherDown
+        OnMouseOtherUp
+        OnMouse1Up
+        OnMouse2Up
+        OnmouseOtherUp
+        OnMouse3Up
+        OnMouseOtherUp
     endvector }
 
+
+sub OnMouseDown  {                      # ( -- )  executed when any button pushed
+    "pressed" .mousebutton
+    mousebutton vector
+        OnMouseOtherDown
+        OnMouse1Down
+        OnMouse2Down
+        OnMouseOtherDown
+        OnMouse3Down
+        OnMouseOtherDown
+    endvector }
 
 
 
