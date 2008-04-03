@@ -23,7 +23,7 @@ sub cell      {  1 }                            # memory increments per integer
 sub cell+     {  1 + }
 sub cell-     {  1 - }
 sub cells     { }
-
+sub noop      { }
 
 # -- stack --
 sub qdup      { dup will dup }                  # duplicate top of stack if <> 0
@@ -53,6 +53,7 @@ sub >>        { negate shift }
 sub success   { flag }                          # push command return code
 sub failure   { flag not }                      # push inverted command return code
 sub >         { swap < }                        # true if nos > tos
+sub equals2   { rot equals >r equals r> and }   # ( x1 x2 x3 x4 -- f ) compare two pairs of items for identity
 sub between   { rot tuck < minrot > or not }
 sub negative  {  0 < }                          # -n
 sub positive  { -1 > }                          # 0..n
@@ -898,7 +899,18 @@ sub ToggleInsert { insert toggle }
 
 
 
+# --- includes ---
+
+#include "statusline.fte";                      # currently the OnStatusline event is broken
+include "blocks.fte";
+include "bookmarks.fte";
+
+
+
 # --- mouse events, under test ---
+
+sub singleclicktime  { 500 }            # ( -- u )   in milliseconds
+
 
 # these would normally be provided my eFTE, to make sure that offsets are correct in case of
 # a likely structure layout change.
@@ -913,39 +925,22 @@ sub mouseeventtype  { mouse 8 +    }    # ( -- a )      mouse event type. signal
                                         # 128: button held down, autorepeat
 
 
-sub .mousebutton {                      # ( -- )  s( action - )
-    "mouse: " prepend$
-    " button " append$
-    mousebutton number$ append$
-    ", event: " append$
-    mouseeventtype @ number$ append$
-    "\n" append$
-    perr }
-
-
-
 
 # -- button 1 ---
 
-sub equals2 {                           # ( x1 x2 x3 x4 -- f )
-    rot equals >r
-    equals r> and }
+# thinking of adding a real messaging system, with same messages applicable to any number of classes.
+sub mouseevent   { here 3 cells allot } # class whose members store mousex, mousey, time.
 
-sub oldmousexy   { var new cell allot }
-sub OnMouse1Down { mousexy oldmousexy !2 }
-sub OnMouse1Up   {
-    mousexy oldmousexy @2 equals2       # same pos as pushed?
-    block @  if
-        if                              # click without move
-        else                            # push, move (draw block)
-        endif
-    else
-        if                              # push, move, move back to org pos. or: push, hold, release
-        else                            # normally not possible
-        endif
-    endif
-}
+sub singleclick  {                      # may become a method of mouseevent
+    @3 >r
+    mousexy equals2
+    milliseconds r> -
+    0 singleclicktime between and }
 
+sub oldmousexy   { mouseevent new }
+sub OnMouse1Down { mousexy milliseconds oldmousexy !3 }
+sub OnMouse1Up   { oldmousexy singleclick will noop }
+#sub OnMouse1Up   { oldmousexy singleclick will pushbookmark }
 
 
 
@@ -974,7 +969,6 @@ sub OnMouseOtherUp   { }
 # -- nouse up/down event entry points ---
 
 sub OnMouseUp   {                       # ( -- )  executed when any button released, or scroll wheel turned
-    "released" .mousebutton
     mousebutton vector
         OnMouseOtherUp
         OnMouse1Up
@@ -986,7 +980,6 @@ sub OnMouseUp   {                       # ( -- )  executed when any button relea
 
 
 sub OnMouseDown  {                      # ( -- )  executed when any button pushed
-    "pressed" .mousebutton
     mousebutton vector
         OnMouseOtherDown
         OnMouse1Down
@@ -996,13 +989,6 @@ sub OnMouseDown  {                      # ( -- )  executed when any button pushe
         OnMouseOtherDown
     endvector }
 
-
-
-# --- includes ---
-
-#include "statusline.fte";                      # currently the OnStatusline event is broken
-include "blocks.fte";
-include "bookmarks.fte";
 
 
 # --- initialisation ---
