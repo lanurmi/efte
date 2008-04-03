@@ -947,20 +947,22 @@ sub OnMouse2Up {
 }
 
 sub OnMouse3Up { }
+sub OnMouseOtherUp   { "mouse: button > 3 released" message }
 
 sub OnMouseUp   {                       # ( -- )        executed when any button released, or scroll wheel turned
     mousebutton vector
-        Fail   OnMouse1Up  OnMouse2Up    Fail  OnMouse3Up
+        Fail   OnMouse1Up  OnMouse2Up    Fail  OnMouse3Up OnMouseOtherUp
     endvector }
 
 # -- nouse down ---
 sub OnMouse1Down { }
 sub OnMouse2Down { }
 sub OnMouse3Down { }
+sub OnMouseOtherDown { "mouse: button > 3 pushed" message }
 
 sub OnMouseDown  {                       # ( -- )        executed when any button released, or scroll wheel turned
     mousebutton vector
-        Fail   OnMouse1Down OnMouse2Down  Fail  OnMouse3Down
+        Fail   OnMouse1Down OnMouse2Down  Fail  OnMouse3Down OnMouseOtherDown
     endvector }
 
 
