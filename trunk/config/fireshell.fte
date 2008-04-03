@@ -467,11 +467,9 @@ sub words {
 sub slashstring { over min tuck - >r + r> }             # ( a1 u1 u -- a2 u2 )
 
 sub safeemit    {                                       # ( asc -- )
-    count dup printable
-    not if
-      drop '.'
-    endif
-    emit
+    '.'
+    over printable will swap
+    emit drop
 }
 
 
@@ -479,8 +477,9 @@ sub hexdigits   { base @ >r hex   <hash bl hold times hash hash> type$  r> base 
 sub .addr       { 8 hexdigits }                         # ( a -- )
 sub .byte       { 2 hexdigits }                         # ( c -- )
 sub .nextbyte   { count .byte }                         # ( a1 -- a2 )
+sub .nextchar   { count safeemit }                      # ( a1 -- a2 }
 sub dumpbytes   { times .nextbyte drop }                # ( a n -- )
-sub dumpchars   { times safeemit drop }                 # ( a n -- )
+sub dumpchars   { times .nextchar drop }                # ( a n -- )
 
 sub dump1line  {                                        # ( a n -- )
    dup if
