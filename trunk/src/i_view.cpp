@@ -83,25 +83,15 @@ int GxView::GetContext() {
 }
 
 
-unsigned int mousex;
-unsigned int mousey;
-unsigned int mouseevent;
-
 void GxView::HandleEvent(TEvent &Event) {
     GView::HandleEvent(Event);
     Top->HandleEvent(Event);
 
     if (Event.What & evMouse) {
         int W, H;
-
         ConQuerySize(&W, &H);
 
         if (Event.What != evMouseDown || Event.Mouse.Y == H - 1) {
-
-            mousex = Event.Mouse.X;
-            mousey = Event.Mouse.Y;
-            mouseevent = Event.What;
-            ActiveView->ExecMacro("OnMouse");
 
             switch (Event.What) {
             case evMouseDown:

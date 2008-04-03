@@ -894,6 +894,52 @@ sub ToggleInsert { insert toggle }
 
 
 
+# --- mouse events, under test ---
+
+sub mousexy         { mouse     @2 }    # ( -- x y )    mouse pointer relative to begin of file
+sub mousexyrelative { mouse 2 + @2 }    # ( -- x y )    mouse pointer relative to buffer top left
+sub mousebutton     { mouse 4 + @  }    # ( -- u )      1, 4, 2  for 3-button mouse
+sub mousewinsize    { mouse 5 + @2 }    # ( -- x y )    eFTE window dimensions
+sub mouseevents     { mouse 7 + @  }    # ( -- u )      unused now
+
+sub mousestats {                        # ( -- )        statusline dump
+    "mouse event "
+        mouseevents
+        number$ append$
+    ", button " append$
+        mousebutton
+        number$ append$
+    " at x/y " append$
+        mousexy swap
+        number$ append$
+        "/" append$
+        number$ append$
+    ", relative " append$
+        mousexyrelative swap
+        number$ append$
+        "/" append$
+        number$ append$
+        message }
+
+
+sub OnMouseUp   {                       # ( -- )        executed when any button released, or scroll wheel turned
+    mousebutton 2 equals if             #               button 2 release -> alternate LocalMenu/MainMenu
+        localmenu
+    endif
+    mousestats                                          # dump tp statusline
+ }
+
+
+sub OnMouseDown {
+    mousebutton 1 equals if                             # main menu if button 1 pushed in upper left corner?
+        mousexyrelative or not if
+            "" mainmenu
+        endif
+    endif
+    mousestats
+    }
+
+
 
 
 # --- includes ---

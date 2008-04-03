@@ -12,19 +12,6 @@
 #define MEMORY_LIMIT 5242880
 std::vector<int> memory;
 
-/*
-int MemoryDump() {
-    for (std::vector<int>::size_type i=0; i < memory.size(); i++) {
-        if (i>0) fprintf(stderr, ", ");
-        fprintf(stderr, "%i=%i", (int)i, memory[i]);
-    }
-    fprintf(stderr, "\n");
-
-    return 1;
-}
-*/
-
-
 
 int MemoryStore() {
     PSCHECK(2, "!");
@@ -127,16 +114,19 @@ int Insert() {
     return 1;
 }
 
-extern unsigned int mousex;
-extern unsigned int mousey;
-extern unsigned int mouseevent;
 
+unsigned int mouse             = dp;      // refers to first shared mousevar
+unsigned int mousex            = dp++;
+unsigned int mousey            = dp++;
+unsigned int mousexrelative    = dp++;
+unsigned int mouseyrelative    = dp++;
+unsigned int mousebutton       = dp++;
+unsigned int mousewinsizex     = dp++;
+unsigned int mousewinsizey     = dp++;
+unsigned int mouseeventcounter = dp++;
+unsigned int mouseevent        = dp++;
 
-// not really shared anymore - move to more suited place
-int MouseXY() {
-    ParamStack.push(mousex);
-    ParamStack.push(mousey);
-    ParamStack.push(mouseevent);
+int Mouse() {
+    ParamStack.push(mouse);
     return 1;
 }
-

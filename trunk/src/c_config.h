@@ -35,7 +35,18 @@ typedef struct {
 #define CACHE_SIZE 512000
 extern CachedObject cache[CACHE_SIZE];
 extern unsigned int cpos;
+
+// these are indexes to shared variables
 extern unsigned int verbosity;
+extern unsigned int mousex;
+extern unsigned int mousey;
+extern unsigned int mousexrelative;
+extern unsigned int mouseyrelative;
+extern unsigned int mousebutton;
+extern unsigned int mousewinsizex;
+extern unsigned int mousewinsizey;
+extern unsigned int mouseeventcounter;
+
 
 // commands may flag branch conditions in here
 // by shifting left, and setting (or not) bit 0

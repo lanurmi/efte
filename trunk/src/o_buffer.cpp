@@ -210,6 +210,11 @@ void EEditPort::HandleEvent(TEvent &Event) {
     }
 }
 
+//    unsigned int mousex, mousey, mousexrelative, mouseyrelative;
+//    unsigned int mousebutton, mousewinsizex, mousewinsizey, mouseeventcounter;
+
+
+// TODO: reuse common code. o_list and o_buffer duplicate a lot.
 void EEditPort::HandleMouse(TEvent &Event) {
     int x, y, xx, yy, W, H;
 
@@ -218,14 +223,34 @@ void EEditPort::HandleMouse(TEvent &Event) {
     x = Event.Mouse.X;
     y = Event.Mouse.Y;
 
-    if (Event.What != evMouseDown || y < H - 1) {
-        xx = x + TP.Col;
-        yy = y + TP.Row;
-        if (yy >= Buffer->VCount) yy = Buffer->VCount - 1;
-        if (yy < 0) yy = 0;
-        if (xx < 0) xx = 0;
+    xx = x + TP.Col;
+    yy = y + TP.Row;
+    if (yy < 0) yy = 0;
+    if (xx < 0) xx = 0;
 
+
+    int eventtype = Event.What & (evMouseUp|evMouseDown);
+    if (eventtype) {
+        memory[mousex] = xx;
+        memory[mousey] = yy;
+        memory[mousexrelative] = x;
+        memory[mouseyrelative] = y;
+        memory[mousewinsizex] = W;
+        memory[mousewinsizey] = H;
+        memory[mouseeventcounter]++;
+        memory[mousebutton] = Event.Mouse.Buttons;
+        if (eventtype & evMouseDown) {
+            View->ExecMacro("OnMouseDown");
+        } else {
+            View->ExecMacro("OnMouseUp");
+        }
+    }
+
+
+    if (Event.What != evMouseDown || y < H - 1) {
+        if (yy >= Buffer->VCount) yy = Buffer->VCount - 1;
         switch (Event.What) {
+
         case evMouseDown:
             if (Event.Mouse.Y == H - 1)
                 break;
@@ -302,6 +327,7 @@ void EEditPort::HandleMouse(TEvent &Event) {
             else
                 break;
             View->MView->MouseCaptured = 0;
+
             if (Event.Mouse.Buttons == 1) {
                 // left mouse button up
                 if (View->MView->MouseMoved)
