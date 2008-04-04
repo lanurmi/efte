@@ -1075,71 +1075,96 @@ void GUI::ProcessEvent() {
     TEvent E;
 
     E = NextEvent;
+
     if (E.What != evNone) {
         NextEvent.What = evNone;
+    } else {
+        if (ConGetEvent(evMouse | evCommand | evKeyboard, &E, 0, 1, 0) == -1 || E.What == evNone) {
+            frames->Update();
+
+            while (ConGetEvent(evMouse | evCommand | evKeyboard, &E, -1, 1, 0) == -1 ||
+                   (E.What == evMouseMove && E.Mouse.Buttons == 0));
+        }
     }
-    if (E.What == evNone &&
-            (ConGetEvent(evMouse | evCommand | evKeyboard, &E, 0, 1, 0) == -1 ||
-             E.What == evNone)
-       ) {
-        frames->Update();
-        while (ConGetEvent(evMouse | evCommand | evKeyboard, &E, -1, 1, 0) == -1 ||
-                (E.What == evMouseMove && E.Mouse.Buttons == 0));
-    }
+
+
     if (E.What != evNone) {
         GView *view = frames->Active;
-
         if (E.What & evMouse) {
-            if (E.What == evMouseDown && E.Mouse.Y == 0 && ShowMenuBar &&
+            int x = E.Mouse.X;
+            int y = E.Mouse.Y;
+            //int xx = x + TP.Col;
+            //int yy = y + TP.Row;
+            //if (yy < 0) yy = 0;
+            //if (xx < 0) xx = 0;
+            int X, Y;
+            ConQuerySize(&X, &Y);
+
+            //memory[mouseeventtype] = E.What;
+            int eventtype = E.What;
+            if (eventtype) {
+                //memory[mousex] = xx;
+                //memory[mousey] = yy;
+                //memory[mousexrelative] = x;
+                //memory[mouseyrelative] = y;
+                //memory[mousewinsizex] = X;
+                //memory[mousewinsizey] = Y;
+                //memory[mouseeventcounter]++;
+                //memory[mousebutton] = E.Mouse.Buttons;
+                //view->ExecMacro("OnMouseScroll");
+            }
+
+            //if (memory[mouseeventtype]) {
+
+                if (E.What == evMouseDown && y == 0 && ShowMenuBar &&
                     MouseCapture == 0 && FocusCapture == 0) {
-                frames->Update(); // sync before menu
-                if (ExecMainMenu(E, 0) == -1) {
-                    if (E.What == evCommand && E.Msg.Command == cmResize) {
-                        int X, Y;
-
-                        ConQuerySize(&X, &Y);
-                        frames->Resize(X, Y);
+                    frames->Update(); // sync before menu
+                    if (ExecMainMenu(E, 0) == -1) {
+                        if (E.What == evCommand && E.Msg.Command == cmResize) {
+                            frames->Resize(X, Y);
+                        }
+                        E.What = evNone;
                     }
-                    E.What = evNone;
+                    //                fprintf(stderr, "Command got = %d\n", E.Msg.Command);
                 }
-//                fprintf(stderr, "Command got = %d\n", E.Msg.Command);
-            }
-            if (E.What == evMouseDown && MouseCapture == 0 && FocusCapture == 0) {
-                GView *V = frames->Active;
+                if (E.What == evMouseDown && MouseCapture == 0 && FocusCapture == 0) {
+                    GView *V = frames->Active;
 
-                while (V) {
-                    if (E.Mouse.Y >= V->Peer->wY &&
+                    while (V) {
+                        if (E.Mouse.Y >= V->Peer->wY &&
                             E.Mouse.Y <  V->Peer->wY + V->Peer->wH + (ShowHScroll ? 1 : 0)) {
-                        frames->SelectView(V);
-                        view = V;
-                        break;
+                            frames->SelectView(V);
+                            view = V;
+                            break;
+                        }
+                        V = V->Next;
+                        if (V == frames->Active)
+                            break;
                     }
-                    V = V->Next;
-                    if (V == frames->Active)
-                        break;
                 }
-            }
-            if (ShowVScroll && ShowHScroll && E.What == evMouseDown &&
+                if (ShowVScroll && ShowHScroll && E.What == evMouseDown &&
                     MouseCapture == 0 && FocusCapture == 0 &&
                     E.Mouse.Y == view->Peer->wY + view->Peer->wH &&
                     E.Mouse.X == view->Peer->wX + view->Peer->wW) {
-            } else {
-                if (ShowVScroll && E.What == evMouseDown && MouseCapture == 0 && FocusCapture == 0 &&
+                } else {
+                    if (ShowVScroll && E.What == evMouseDown && MouseCapture == 0 && FocusCapture == 0 &&
                         E.Mouse.X == view->Peer->wX + view->Peer->wW) {
-                    HandleVScroll(view, E);
-                    return ;
-                }
-                if (ShowHScroll && E.What == evMouseDown && MouseCapture == 0 && FocusCapture == 0 &&
+                        HandleVScroll(view, E);
+                        return ;
+                    }
+                    if (ShowHScroll && E.What == evMouseDown && MouseCapture == 0 && FocusCapture == 0 &&
                         E.Mouse.Y == view->Peer->wY + view->Peer->wH) {
-                    HandleHScroll(view, E);
-                    return ;
+                        HandleHScroll(view, E);
+                        return ;
+                    }
                 }
-            }
-            if (E.What & evMouse) {
-                E.Mouse.Y -= view->Peer->wY;
-                E.Mouse.X -= view->Peer->wX;
-            }
+                if (E.What & evMouse) {
+                    E.Mouse.Y -= view->Peer->wY;
+                    E.Mouse.X -= view->Peer->wX;
+                }
+            //}
         }
+
         if (E.What == evCommand) {
             switch (E.Msg.Command) {
             case cmResize: {

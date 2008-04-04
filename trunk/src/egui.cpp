@@ -585,6 +585,12 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
                 i = m->Count;
             break;
 
+        case ExLest:
+            tos = ParamStack.pop();
+            if (!tos)
+                i = m->Count;
+            break;
+
 
 // ------------------------------------------------------------------------------------------------------
 

@@ -25,9 +25,13 @@
 : pairedwith       ( x1 x2 -- )    = unless "unmatching conditionals" error ;
 : pairedwitheither ( x1 x2 x3 -- ) >r over = swap r> = or true pairedwith ;
 
-: +indent  2 shellindent +! ;
+: +indent
+    loading @ unless
+    2 shellindent +! ;
 
-: -indent -2 shellindent +!
+: -indent
+    loading @ unless
+    -2 shellindent +!
     cursorcolumn cursorhome
     read bl = will killchar
     read bl = will killchar
@@ -92,4 +96,18 @@
    compile doloop 1 + back
 ; immediate
 
-: times    ( u -- )      r> dup 1 + >r @ >r 0 do j execute loop r> drop ;
+: (times)  ( u -- )
+    r> dup 1 + >r @ >r
+    0 do
+       j execute
+    loop r> drop ;
+
+: times    ( u -- )
+    state @ if
+        ['] (times) ,
+    else
+       ' >r 0 do
+          j execute
+       loop
+       r> drop
+    endif ; immediate
