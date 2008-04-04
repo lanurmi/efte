@@ -1017,10 +1017,6 @@ sub attempt   {                                 # execute macro, name given as s
 
 
 
-
-
-
-
 sub OnBoot    {
    AlreadyInitialized @ will fail
    AlreadyInitialized on

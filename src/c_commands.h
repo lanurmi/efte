@@ -41,6 +41,8 @@ typedef enum {
     /// set repeat counter of next command to top of stack
     ExUnless,
     /// skip rest of macro if tos is true
+    ExLest,
+    /// skip rest of macro if tos is false
     ExWill,
     /// skip next command in macro if tos is false
     ExOld,

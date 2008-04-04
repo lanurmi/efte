@@ -237,7 +237,7 @@ sub locate {             # ( -- xt headers | 0 )   search for word name on strin
       drop$
    else
       tick
-      dup will revealbit
+      dup will revealbit                        # synthetic headers for eFTE provided primitives
    endif
  }
 
@@ -280,19 +280,18 @@ sub newtick {
 
 
 sub literal   {            # compiling: ( x -- ),  interpreting: ( x -- x )
-   compiling if
-      "lit" postpone
-      comma
-   endif }
+   interpreting unless
+      "lit" postpone comma
+   }
 
 
 sub sliteral  {
-   compiling if
+   compiling lest
       "slit" postpone                           # compile as string literal:
       here                                      # .. goes string to
       dup$ len$ 1 + allot                       # allocate string len + 1 (for leading count)
       move$                                     # place string
-   endif }
+    }
 
 
 # --- fireshell utilities: shell ---
@@ -399,14 +398,15 @@ sub interpret$  {                               # ( -- ) s( sourceline -- )
     source$ store$ interpret
 }
 
+sub home { 0 0 at }
+
 sub load$  {
    fileopen
-   0 0 at
-   1 loading !
+   home
    linecount 0 do
+      1 loading +!
       query will interpret
       ?cursordown
-      1 loading +!
    loop
    endloading
 }
