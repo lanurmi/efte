@@ -51,6 +51,11 @@ sub branch0   { if ip @                         # runtime code for conditional b
                 endif  1 + ip !
               }
 
+sub branch1   { if    ip @ dup @ +              # runtime code for conditional branch
+                else  ip @
+                endif 1 + ip !
+              }
+
 sub dodo      { 2:over equals if
                     2:drop
                     ip @
@@ -204,7 +209,7 @@ sub header {
 
 sub nextheader  {                   # ( cfa1 -- cfa2 | 0 )
    >link @
-   dup will link>
+   dup lest link>
    }
 
 
@@ -280,7 +285,7 @@ sub newtick {
 
 
 sub literal   {            # compiling: ( x -- ),  interpreting: ( x -- x )
-   interpreting unless
+   compiling lest
       "lit" postpone comma
    }
 

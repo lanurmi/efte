@@ -68,7 +68,7 @@ sub gotocharinline {
     cursorright
   loop
   nip
-  dup 0 < will cursorhome
+  dup 0 < lest cursorhome
 }
 
 # ( -- )

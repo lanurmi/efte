@@ -26,7 +26,7 @@ sub cells     { }
 sub noop      { }
 
 # -- stack --
-sub qdup      { dup will dup }                  # duplicate top of stack if <> 0
+sub qdup      { dup lest dup }                  # duplicate top of stack if <> 0
 sub nip       { swap drop }                     # drop second of stack
 sub tuck      { swap over }                     # copy top of stack below second of stack
 sub pluck     { >r over r> swap }               # copy 3rd item to top
@@ -46,6 +46,7 @@ sub dec       { 1 - }                           # decrement top of stack by one
 sub invert    { -1 xor }                        # complement all bits
 sub negate    { 0 swap - }                      # change sign
 sub not       { 0 equals }                      # logical inversion: 0->true,  x->0
+sub notzero   { dup lest drop -1 }
 sub lshift    { 1 shift }                       # bit shift left by 1
 sub rshift    { -1 shift }                      # bit shift right by one
 sub <<        { shift }
@@ -57,7 +58,7 @@ sub equals2   { rot equals >r equals r> and }   # ( x1 x2 x3 x4 -- f ) compare t
 sub between   { rot tuck < minrot > or not }
 sub negative  {  0 < }                          # -n
 sub positive  { -1 > }                          # 0..n
-sub abs       { dup 0 < will negate }           # remove sign
+sub abs       { dup 0 < lest negate }           # remove sign
 sub min       { dup2 > will swap drop }
 sub max       { dup2 < will swap drop }
 sub umin      { dup2 xor 0 < if max else min endif }  # ( u1 u2 -- u1|u2 ) unsigned min
@@ -241,15 +242,14 @@ sub InitWordchars     {
 
 # --- character test
 sub charactertest {
-    swap 255 and charactertype @ and
-    vector false true endvector
+    swap 255 and charactertype @ and notzero
 }
 
 sub capital    { capitalbit charactertest }
 sub lowercase  { lowercasebit charactertest }
 sub printable  { printablebit charactertest }
-sub capitalize { dup lowercase not unless 32 - }
-sub lowercast  { dup capital   not unless 32 + }
+sub capitalize { dup lowercase lest 32 - }
+sub lowercast  { dup capital   lest 32 + }
 # can't use with numbers in scripts - what is a valid numeric depends on number base. 0..9,a..f,A..F for hex, 0,1 for binary etc.
 
 
@@ -261,7 +261,7 @@ sub cipher   {                                  # ( asc -- u -1 | 0 )  converts 
    dup 0 base @ dec between
    qdup nip  }
 
-sub numeric    { cipher dup will nip }          # ( asc -- flag )  flag if legal cipher.
+sub numeric    { cipher dup lest nip }          # ( asc -- flag )  flag if legal cipher.
 
 
 
@@ -662,18 +662,21 @@ sub removeincllastdelimiter {       # ( c idx -- )
 
 sub directorydelimiter  { '/' }
 sub basename$ {                                 # ( -- )  s( filename -- basename
-    dup$ directorydelimiter
-    dup scan$
-    dup positive will removeincllastdelimiter
+    dup$ directorydelimiter dup scan$
+    dup 0 < if
+        2:drop
+        exit
+    endif
+    removeincllastdelimiter
 }
 
 
 sub extension$ {                                # ( -- ) s( filename -- extension )
     basename$
-    dup$  '.' dup scan$
+    dup$ '.' dup scan$
     dup 0 < if
        drop$ ""
-       drop2 exit
+       2:drop exit
     endif
     removeincllastdelimiter
  }
@@ -696,7 +699,7 @@ sub hashes    { begin hash dup not until }      # ( n1 -- n2 )
 sub hash>     { drop }                          # ( n -- )  end pic num conv - should convert
                                                 # string stack to ( a n ) to comply with standard.
                                                 # this version leaves converted number on top of string stack
-sub sign      { positive unless '-' hold }      # ( n -- }
+sub sign      { 0 < lest '-' hold }             # ( n -- }
 
 sub padded  {                                   # ( n c -- )
    >r dup$ len$ -                               # can't call it "pad" because pad is a
@@ -734,7 +737,7 @@ sub .00  {                                      # ( u n -- )  zero padded signed
 
 # ----- number conversion: integer to string, string to integer -----
 sub number$   { dup <hash hashes hash> sign }   # ( n -- )
-sub number    { number? not will fail }
+sub number    { number? unless fail }
 
 
 sub factors {                                   # ( u -- )  factorize a number, print factors
@@ -939,7 +942,7 @@ sub singleclick  {                      # may become a method of mouseevent
 
 sub oldmousexy   { mouseevent new }
 sub OnMouse1Down { mousexy milliseconds oldmousexy !3 }
-sub OnMouse1Up   { oldmousexy singleclick will noop }
+sub OnMouse1Up   { oldmousexy singleclick lest noop }
 #sub OnMouse1Up   { oldmousexy singleclick will pushbookmark }
 
 
@@ -1003,13 +1006,16 @@ sub enclose$   {
         drop$
     endif }
 
+sub quote$   { "\"\"" enclose$  }               # ( -- )  s( $1 -- $2 )
+
+
 
 sub attemptlevel  { var new }
 sub attempt   {                                 # execute macro, name given as string, if existing
     attemptlevel @ 3 * spaces$ swap$
     dup$ tick
     dup not if "()" enclose$ endif append$ report
-    qdup not unless
+    qdup lest
         1 attemptlevel +!
         execute
         -1 attemptlevel +!
