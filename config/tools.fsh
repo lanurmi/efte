@@ -17,12 +17,14 @@
 : execute  ( a -- )      exec ;
 : exit,    ( -- )        0, ;      immediate
 : will     ( f -- )      ['] branch0 ,  1 ,       ; immediate
-: unless   ( f -- )      postpone will postpone exit, ; immediate
-: ?comp    ( -- )        state @ unless "compilation only" error ;
+: won't    ( f -- )      ['] branch1 ,  1 ,       ; immediate
+: unless   ( f -- )      postpone will  postpone exit, ; immediate
+: lest     ( f -- )      postpone won't postpone exit, ; immediate
+: ?comp    ( -- )        compiling unless "compilation only" error ;
 : variable ( -- )        create 0, ;
 : me       ( -- )        ?comp latest >xt  postpone literal ; immediate
 
-: pairedwith       ( x1 x2 -- )    = unless "unmatching conditionals" error ;
+: pairedwith       ( x1 x2 -- )    xor lest "unmatching conditionals" error ;
 : pairedwitheither ( x1 x2 x3 -- ) >r over = swap r> = or true pairedwith ;
 
 : +indent
@@ -39,7 +41,7 @@
 ;
 
 
-\ --- flow control tool kit ---
+\ --- flow control common ---
 : back         ( a -- )        here - , ;
 : ahead        ( -- a )        here 0, ;
 : resolve      ( a -- )        here over - 1 - swap ! ;
