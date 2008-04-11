@@ -122,7 +122,7 @@ int CompareStr() {
         sstack.pop_back();
 
         compareTo = tos - 1;
-        ParamStack.push(-(what.compare(sstack[compareTo])));
+        ParamStack.push(-(strcmp(what.c_str(),sstack[compareTo].c_str())));
         sstack.pop_back();
         ret++;
     }
