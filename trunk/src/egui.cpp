@@ -1095,8 +1095,6 @@ int EGUI::MainMenu(ExState &State, GxView *view) {
     }
 
     std::string mname = sstack.back(); sstack.pop_back();
-    if (mname.empty())
-        std::string mname = "F";
 
     view->Parent->ExecMainMenu(mname[0]);
     return 1;
