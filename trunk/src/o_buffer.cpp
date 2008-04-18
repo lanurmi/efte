@@ -1553,7 +1553,7 @@ int EBuffer::Find(ExState &State) {
         LSearch.strReplace[0] = 0;
         LSearch.Options = 0;
         if (strlen(options) == 0 && BFS(this, BFS_DefFindOpt))
-            (options, BFS(this, BFS_DefFindOpt));
+            strcpy(options, BFS(this, BFS_DefFindOpt));
         if (ParseSearchOptions(0, options, LSearch.Options) == 0)
             LSearch.Options = 0;
 
