@@ -50,20 +50,13 @@ OEXT    = obj
 .cpp.obj: *.cpp
   $(CC) $(CFLAGS) $<
 
-all: cefte.exe efte.exe eftepm.exe efte.cnf
+all: efte.exe eftepm.exe
 
 cefte.exe: $(CFTE_OBJS) fte.def
   $(LD) NAME cefte SYS os2v2 $(LDFLAGS) FILE {$(CFTE_OBJS)}
 
-defcfg.cnf: defcfg.fte cefte.exe
-  cefte defcfg.fte defcfg.cnf
-
-defcfg.h: defcfg.cnf bin2c.exe
-  bin2c defcfg.cnf >defcfg.h
-
-efte.cnf: cefte.exe
-  cefte ..\config\main.fte efte.cnf
-  copy efte.cnf ftepm.cnf
+defcfg.h: bin2c.exe simple.fte
+  bin2c simple.fte >defcfg.h
 
 bin2c.exe: bin2c.obj
   $(LD) NAME bin2c SYS os2v2 $(LDFLAGS) FILE {bin2c.obj}
