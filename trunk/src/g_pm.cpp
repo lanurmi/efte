@@ -3502,13 +3502,16 @@ int GUI::RunProgram(int mode, const char *Command) {
 
     {
         STARTDATA sd;
+        char Command_copy[256];
+        if(Command)
+            strlcpy(Command_copy, Command, strlen(Command));
 
         memset((void *)&sd, 0, sizeof(sd));
         sd.Length = sizeof(sd);
         sd.Related = SSF_RELATED_INDEPENDENT;
         sd.FgBg = SSF_FGBG_FORE;
         sd.TraceOpt = SSF_TRACEOPT_NONE;
-        sd.PgmTitle = (Command && Command[0] != 0) ? Command : 0;
+        sd.PgmTitle = (Command && Command[0] != 0) ? Command_copy : 0;
         sd.PgmName = Prog;
         sd.PgmInputs = Args;
         sd.TermQ = 0;
