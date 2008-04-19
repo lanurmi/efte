@@ -264,6 +264,8 @@ struct timezone
   int  tz_dsttime;     /* type of dst correction */
 };
 
+#ifndef OS2
+
 int gettimeofday(struct timeval *tv, struct timezone *tz)
 {
   FILETIME ft;
@@ -299,4 +301,30 @@ int gettimeofday(struct timeval *tv, struct timezone *tz)
   return 0;
 }
 
+#else // Yes, OS/2
+#define INCL_DOSERRORS
+#define INCL_DOSMISC
+#include <os2.h>
+
+struct timeval {
+    time_t tv_sec;
+    long tv_usec;
+};
+
+int gettimeofday(struct timeval *tv, struct timezone *tz) {
+    ULONG aulSysInfo[QSV_MAX] = {0};
+    APIRET rc = DosQuerySysInfo(1L, QSV_MAX, (PVOID) aulSysInfo, sizeof(ULONG)*QSV_MAX);
+
+    if(rc != NO_ERROR)
+        return -1;
+
+    if (NULL != tv) {
+        tv->tv_sec = aulSysInfo[QSV_TIME_LOW];
+        tv->tv_usec = 1000 * aulSysInfo[QSV_MS_COUNT];
+    }
+
+    return 0;
+}
+
+#endif
 #endif
