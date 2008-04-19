@@ -28,7 +28,7 @@ LD = wlink
 RC = rc
 
 # Machine type -5r Pent -6r Pent Pro
-MACHINE= -6r
+MACHINE= -3r
 
 #Optimization None -od  - Fastest possible -otexan
 OPT= -ot
@@ -39,8 +39,8 @@ INCLUDE = $(%watcom)\h;$(%watcom)\h\os2;.\
 MISC    = -wcd555 -wcd013 -wcd726
 
 DEFS    = -dOS2 -dOS2OW -dINCL_32 -dWATCOM -dUSE_LOCALE
-CFLAGS  = -i=$(INCLUDE) $(MISC) $(DEFS) -d0 -w4 -e25 -zq $(OPT) $(MACHINE) -bm -bt=OS2 -mf -xs
-LDFLAGS = op m op maxe=25 op q op symf op el
+CFLAGS  = -i=$(INCLUDE) $(MISC) $(DEFS) -d3 -db -w4 -e25 -zq $(OPT) $(MACHINE) -bm -bt=OS2 -mf -xs
+LDFLAGS = op m op maxe=25 op q op symf op el op stack=128k
 OEXT    = obj
 
 .EXTENSIONS:.rc .res
