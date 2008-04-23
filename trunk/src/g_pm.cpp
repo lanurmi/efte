@@ -692,7 +692,7 @@ int DLGPickChoice(GView *View, const char *ATitle, int NSel, va_list ap, int Fla
     choice.Title = (char *)ATitle;
     choice.NSel = NSel;
 #if defined(__WATCOMC__)
-    memcpy(&choice.ap, &ap, sizeof(choice.ap));
+    choice.ap[0] = ap[0];
 #else
     choice.ap = ap;
 #endif
