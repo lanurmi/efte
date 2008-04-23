@@ -3,133 +3,133 @@
 # basic document
 
 sub SGML_Base {
-    "<!doctype debiandoc system>" InsertString; LineNew;
-    "<debiandoc>" InsertString; LineNew;
-    2:MoveRight; "<book>" InsertString; LineNew;
-    2:MoveRight; "<titlepag>" InsertString; LineNew;
-    2:MoveRight; "<title></title>" InsertString; LineNew;
-    2:MoveRight; "<author>" InsertString; LineNew;
-    2:MoveRight; "<name></name>" InsertString; LineNew;
-    "<email></email>" InsertString; LineNew;
-    2:MoveLeft; "</author>" InsertString; LineNew;
-    2:MoveLeft; "<version><date></version>" InsertString; LineNew;
-    "<abstract>" InsertString; LineNew;
-    "</abstract>" InsertString; LineNew;
-    "<copyright>" InsertString; LineNew;
-    2:MoveRight; "<copyrightsummary>" InsertString; LineNew;
-    "</copyrightsummary>" InsertString; LineNew;
-    2:MoveLeft; "</copyright>" InsertString; LineNew;
-    2:MoveLeft; "</titlepag>" InsertString; LineNew;
-    "<toc>" InsertString; LineNew;
-    "<chapt>" InsertString; LineNew;
-    "</chapt>" InsertString; LineNew;
-    2:MoveLeft; "</book>" InsertString; LineNew;
-    2:MoveLeft; "</debiandoc>" InsertString;
+    "<!doctype debiandoc system>" InsertString LineNew
+    "<debiandoc>" InsertString LineNew
+    2:MoveRight "<book>" InsertString LineNew
+    2:MoveRight "<titlepag>" InsertString LineNew
+    2:MoveRight "<title></title>" InsertString LineNew
+    2:MoveRight "<author>" InsertString LineNew
+    2:MoveRight "<name></name>" InsertString LineNew
+    "<email></email>" InsertString LineNew
+    2:MoveLeft "</author>" InsertString LineNew
+    2:MoveLeft "<version><date></version>" InsertString LineNew
+    "<abstract>" InsertString LineNew
+    "</abstract>" InsertString LineNew
+    "<copyright>" InsertString LineNew
+    2:MoveRight "<copyrightsummary>" InsertString LineNew
+    "</copyrightsummary>" InsertString LineNew
+    2:MoveLeft "</copyright>" InsertString LineNew
+    2:MoveLeft "</titlepag>" InsertString LineNew
+    "<toc>" InsertString LineNew
+    "<chapt>" InsertString LineNew
+    "</chapt>" InsertString LineNew
+    2:MoveLeft "</book>" InsertString LineNew
+    2:MoveLeft "</debiandoc>" InsertString
 }
 
 sub SGML_CH {
-    "<chapt id=\"\">" InsertString; LineNew;
-    "<heading></heading>" InsertString; LineNew;
-    "<p>" InsertString; SavePos; LineNew;
-    "</chapt>" InsertString; MoveSavedPos;
+    "<chapt id=\"\">" InsertString LineNew
+    "<heading></heading>" InsertString LineNew
+    "<p>" InsertString SavePos LineNew
+    "</chapt>" InsertString MoveSavedPos
 }
 
 sub SGML_SE {
-    "<sect>" InsertString;
+    "<sect>" InsertString
 }
 
 sub SGML_PA {
-    "<p>" InsertString;
+    "<p>" InsertString
 }
 
 sub SGML_MRF {
-    "<manref name=\"\" section=\"\">" InsertString;
+    "<manref name=\"\" section=\"\">" InsertString
 }
 
 sub SGML_EML {
-    "<email>" InsertString;
+    "<email>" InsertString
 }
 
 sub SGML_FTPS {
-    "<ftpsite>" InsertString;
+    "<ftpsite>" InsertString
 }
 
 sub SGML_FTPP {
-    "<ftppath>" InsertString;
+    "<ftppath>" InsertString
 }
 
 sub SGML_HTPS {
-    "<httpsite>" InsertString;
+    "<httpsite>" InsertString
 }
 
 sub SGML_HTPP {
-    "<httppath>" InsertString;
+    "<httppath>" InsertString
 }
 
 sub SGML_URL {
-    "<url id=\"\" name=\"\">" InsertString;
+    "<url id=\"\" name=\"\">" InsertString
 }
 
 sub SGML_EX {
-    MoveBlockStart; LineNew; "<example>" InsertString; LineNew;
-    MoveBlockEnd; LineNew; "</example>" InsertString; BlockUnmark;
+    MoveBlockStart LineNew "<example>" InsertString LineNew
+    MoveBlockEnd LineNew "</example>" InsertString BlockUnmark
 }
 
 sub SGML_REF {
-    MoveBlockStart; "<ref id=\"" InsertString;
-    MoveBlockEnd; "\">" InsertString; BlockUnmark;
+    MoveBlockStart "<ref id=\"" InsertString
+    MoveBlockEnd "\">" InsertString BlockUnmark
 }
 
 sub SGML_BO {
-    MoveBlockStart; "<strong>" InsertString;
-    MoveBlockEnd; "</strong>" InsertString;
-    4:MoveLeft; BlockUnmark;
+    MoveBlockStart "<strong>" InsertString
+    MoveBlockEnd "</strong>" InsertString
+    4:MoveLeft BlockUnmark
 }
 
 sub SGML_IT {
-    MoveBlockStart; "<em>" InsertString;
-    MoveBlockEnd; "</em>" InsertString;
-    4:MoveLeft; BlockUnmark;
+    MoveBlockStart "<em>" InsertString
+    MoveBlockEnd "</em>" InsertString
+    4:MoveLeft BlockUnmark
 }
 
 sub SGML_TT {
-    MoveBlockStart; "<tt>" InsertString;
-    MoveBlockEnd; "</tt>" InsertString;
-    4:MoveLeft; BlockUnmark;
+    MoveBlockStart "<tt>" InsertString
+    MoveBlockEnd "</tt>" InsertString
+    4:MoveLeft BlockUnmark
 }
 
 sub SGML_VAR {
-    "<var>" InsertString;
+    "<var>" InsertString
 }
 
 sub SGML_PAK {
-    "<package>" InsertString;
+    "<package>" InsertString
 }
 
 sub SGML_PGN {
-    "<program>" InsertString;
+    "<program>" InsertString
 }
 
 sub SGML_FIL {
-    "<file>" InsertString;
+    "<file>" InsertString
 }
 
 sub SGML_ORD {
-    "<list>" InsertString; LineNew;
-    "<item>" InsertString; SavePos; LineNew;
-    "</list>" InsertString; MoveSavedPos;
+    "<list>" InsertString LineNew
+    "<item>" InsertString SavePos LineNew
+    "</list>" InsertString MoveSavedPos
 }
 
 sub SGML_NUM {
-    "<enumlist>" InsertString; LineNew;
-    "<item>" InsertString; SavePos; LineNew;
-    "</enumlist>" InsertString; MoveSavedPos;
+    "<enumlist>" InsertString LineNew
+    "<item>" InsertString SavePos LineNew
+    "</enumlist>" InsertString MoveSavedPos
 }
 
 sub SGML_TAG {
-    "<taglist>" InsertString; LineNew;
-    "<item>" InsertString; SavePos; LineNew;
-    "</taglist>" InsertString; MoveSavedPos;
+    "<taglist>" InsertString LineNew
+    "<item>" InsertString SavePos LineNew
+    "</taglist>" InsertString MoveSavedPos
 }
 
 

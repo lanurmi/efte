@@ -10,73 +10,67 @@
 # "Purpose:". If it is not set, the macro will
 # fail after "Author:".
 sub REXX_Heading {
-    InsertString "/*";
-    LineNew; InsertString "* Filename: ";
-    filename$ InsertString;
-    LineNew; InsertString "*   Author: ";
-    LineNew; InsertString "*  Created: ";
-    InsertDate;
-    LineNew; InsertString "*  Purpose: ";
-    LineNew; InsertString "*  Changes: ";
-    LineNew; InsertString "*/";
-    4:MoveUp; MoveLineEnd; InsertUid;
-    2:MoveDown; MoveLineEnd;
+    "/*" InsertString
+    LineNew "* Filename: " InsertString filename$ InsertString
+    LineNew "*   Author: " InsertString InsertUid
+    LineNew "*  Created: " InsertString "%m/%d/%Y" InsertDate
+    LineNew "*  Purpose: " InsertString
+    LineNew "*  Changes: " InsertString
+    LineNew "*/" InsertString
+    2:MoveUp MoveLineEnd " " InsertString
 }
 
 #Comment a blocked string
 sub REXX_Comment {
-    ?MoveBlockStart; InsertString "/* ";
-    ?MoveBlockEnd; InsertString " */"; BlockUnmark;
+    ?MoveBlockStart  "/* " InsertString
+    ?MoveBlockEnd " */" InsertString BlockUnmark
 }
 
 # Load external functions
 sub REXX_RexxUtil {
-    InsertString "/* Load RexxUtil Library */";
-    LineNew; InsertString `If RxFuncQuery("SysLoadFuncs") Then`;
-    LineNew; InsertString "Do";
-    LineNew; InsertString `Call RxFuncAdd "SysLoadFuncs", "RexxUtil", "SysLoadFuncs"`;
-    LineNew; InsertString "Call SysLoadFuncs";
-    LineNew; InsertString "End";
-    2:LineNew;
+    "/* Load RexxUtil Library */" InsertString
+    LineNew; `If RxFuncQuery("SysLoadFuncs") Then` InsertString
+    LineNew; "Do" InsertString
+    LineNew; `Call RxFuncAdd "SysLoadFuncs", "RexxUtil", "SysLoadFuncs"` InsertString
+    LineNew; "Call SysLoadFuncs" InsertString
+    LineNew; "End" InsertString
+    2:LineNew
 }
 
 %if(OS_OS2)
 sub REXX_RxSock {
-    InsertString "/* Load RxSock Library */";
-    LineNew; InsertString `If RxFuncQuery("SockLoadFuncs") Then`;
-    LineNew; InsertString "Do";
-    LineNew; InsertString `Call RxFuncAdd "SockLoadFuncs","RxSock","SockLoadFuncs"`;
-    LineNew; InsertString "Call SockLoadFuncs";
-    LineNew; InsertString "End";
+    "/* Load RxSock Library */" InsertString
+    LineNew; `If RxFuncQuery("SockLoadFuncs") Then` InsertString
+    LineNew; "Do"  InsertString
+    LineNew; `Call RxFuncAdd "SockLoadFuncs","RxSock","SockLoadFuncs"`  InsertString
+    LineNew; "Call SockLoadFuncs"  InsertString
+    LineNew; "End" InsertString
     2:LineNew;
 }
 
 sub REXX_RxFTP {
-    InsertString "/* Load RxFTP Library */";
-    LineNew; InsertString `If RxFuncQuery("FTPLoadFuncs") Then`;
-    LineNew; InsertString "Do";
-    LineNew; InsertString `Call RxFuncAdd "FTPLoadFuncs","RxFTP","FTPLoadFuncs"`;
-    LineNew; InsertString "Call FTPLoadFuncs";
-    LineNew; InsertString "End";
-    2:LineNew;
+    "/* Load RxFTP Library */" InsertString
+    LineNew; `If RxFuncQuery("FTPLoadFuncs") Then` InsertString
+    LineNew; "Do" InsertString
+    LineNew; `Call RxFuncAdd "FTPLoadFuncs","RxFTP","FTPLoadFuncs"` InsertString
+    LineNew; "Call FTPLoadFuncs" InsertString
+    LineNew; "End" InsertString
+    2:LineNew
 }
 %endif
 
 # Constructs
 sub REXX_Do {
-    InsertString "DO   [TO]  [BY]  [FOR] ";
-    2:LineNew;
-    InsertString "END";
-    LineNew;
-    3:MoveUp;
-    MoveLineStart;
-    3:MoveRight;
+    "DO   [TO]  [BY]  [FOR] " InsertString
+    2:LineNew
+    InsertString "END" InsertString
+    LineNew 3:MoveUp MoveLineStart 3:MoveRight
 }
 
 sub REXX_DoUntil {
-    InsertString "DO   [TO]  [BY]  [FOR]   UNTIL ";
-    2:LineNew;
-    InsertString "END";
+    "DO   [TO]  [BY]  [FOR]   UNTIL " InsertString
+    2:LineNew
+    "END" InsertString
     LineNew;
     3:MoveUp;
     MoveLineStart;
@@ -84,9 +78,9 @@ sub REXX_DoUntil {
 }
 
 sub REXX_DoWhile {
-    InsertString "DO   [TO]  [BY]  [FOR]   WHILE ";
+    "DO   [TO]  [BY]  [FOR]   WHILE " InsertString
     2:LineNew;
-    InsertString "END";
+    "END" InsertString
     LineNew;
     3:MoveUp;
     MoveLineStart;
@@ -94,33 +88,33 @@ sub REXX_DoWhile {
 }
 
 sub REXX_DoForever {
-    InsertString "DO FOREVER";
+    "DO FOREVER" InsertString
     2:LineNew;
-    InsertString "END";
+    "END" InsertString
     LineNew;
     2:MoveUp;
     MoveLineEnd;
 }
 
 sub REXX_If {
-    InsertString "IF   THEN";
+    "IF   THEN" InsertString
     2:LineNew;
-    InsertString "ELSE";
+    "ELSE" InsertString
     LineNew;
     3:MoveUp; MoveLineStart; 3:MoveRight;
 }
         
 sub REXX_Select {
-    InsertString "SELECT";
-    LineNew; InsertString "WHEN   THEN";
-    LineNew; InsertString "/* instruction */";
-    LineNew; InsertString "WHEN   THEN";
-    LineNew; InsertString "/* instruction */";
-    LineNew; InsertString "WHEN   THEN";
-    LineNew; InsertString "/* instruction */";
-    LineNew; InsertString "OTHERWISE";
-    LineNew; InsertString "/* instruction */";
-    LineNew; InsertString "END"; LineNew;
+    "SELECT" InsertString
+    LineNew; "WHEN   THEN" InsertString
+    LineNew; "/* instruction */" InsertString
+    LineNew; "WHEN   THEN" InsertString
+    LineNew; "/* instruction */" InsertString
+    LineNew; "WHEN   THEN" InsertString
+    LineNew; "/* instruction */" InsertString
+    LineNew; "OTHERWISE" InsertString
+    LineNew; "/* instruction */" InsertString
+    LineNew; "END" InsertString LineNew;
     9:MoveUp; MoveLineStart; 9:MoveRight;
 }
 
