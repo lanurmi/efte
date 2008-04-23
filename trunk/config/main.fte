@@ -227,28 +227,8 @@ include "uicstyle.fte";
 # When doing large customizations of keyboard/menus
 # you should probably write your own version of these files.
 
-# to change a menu, predefine it before including the ui_*.fte file.
-# to add/override keybindings add them after including ui_*.fte file.
-
-# ui*.fte -files define all keyboard bindings and menus.
-# pick only one file.
-%if(UI_FTE)
 include "ui_fte.fte"; # fte CUA style bindings
-%endif
-%if(UI_WS)
-include "ui_ws.fte";  # wordstar like
-%endif
-%if(UI_NE)
-include "ui_ne.fte";  # norton classic editor - incomplete
-%endif
-%if(UI_MEW)
-include "ui_mew.fte"; # MultiEdit4Windows
-%endif
-%if(UI_BRIEF)
-include "ui_brief.fte"; # BRIEF/CRISP
-%endif
-##include "ui_vi.fte";  # VI - very incomplete
-# todo: brief, epm, emacs, VI
+
 
 # some templates and abbreviations
 include "ab_c.fte";

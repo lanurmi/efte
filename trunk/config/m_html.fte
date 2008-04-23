@@ -649,7 +649,7 @@ colorize HTML {
 
     h_state 1 { "Command" }
     h_trans { 0, ">", ">", "Command" }
-    h_trans { 3, "<", "\"", "String" }
+    h_trans { 3, "<", "'", "String" }
     h_trans { 4, "<", "\"", "String" }
     h_wtype { -1, -1, -1, "i", "a-zA-Z0-9_\-" }
 

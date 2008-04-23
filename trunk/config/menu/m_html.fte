@@ -184,13 +184,9 @@ menu HTMLTags {
 }
 
 menu HTMLTools {
-    item "&View in Browser\tF9" { FileSave; HTML_View }
+    item "&View in Browser\tF9" { FileSave HTML_View }
     item "Save and &Tidy" {
-        FileSave; HTML_Tidy; FileReload; }
-    item "Save and &ISpell" {
-        FileSave;
-        "E:\\ISPELL40\\ispell.exe " . $FilePath RunProgram;
-        FileReload; }
+        FileSave HTML_Tidy; FileReload }
     item;
     item "&Shell\tAlt+F9" { "sh" RunProgram}
     item "&Run...\tCtrl+F9" { "" RunProgram }
@@ -218,5 +214,5 @@ menu Main_HTML {
 eventmap HTML {
     MainMenu            = "Main_HTML";   # menu for menubar
     
-    key [A+M] { MainMenu "M" }
+    key [A+M] { "M" MainMenu }
 }

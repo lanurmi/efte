@@ -1,7 +1,7 @@
 
 sub JAVA_Base {
     MoveFileStart;
-    "package /* package name *`;" InsertString;
+    "package /* package name */" InsertString;
     2:LineNew;
     "import java.util.*;" InsertString; LineNew;
     "import javax.swing.*;" InsertString; 2:LineNew;

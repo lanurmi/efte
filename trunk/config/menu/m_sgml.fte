@@ -67,5 +67,5 @@ menu Main_SGML {
 eventmap SGML {
     MainMenu            = "Main_SGML";   # menu for menubar
 
-    key [A+M] { MainMenu 'M' }
+    key [A+M] { "M" MainMenu }
 }
