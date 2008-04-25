@@ -69,8 +69,32 @@ typedef enum {
     /// Multiply top two stack items.
     ExDiv,
     /// Divide top two stack items.
+    ExInvert,
+    /// one's complement.
+    ExNegate,
+    /// negate
+    ExNot,
+    /// bool complement
+    ExNotZero,
+    /// convert to bool
+    ExPlusStore,
+    /// add nos to tos
+    ExBetween,
+    /// range check
     ExStarSlash,
     /// Scaling operator. multiply first two items, giving a double size intermediate result. divide by third then.
+    ExSlashMod,
+    /// return quotient and remainder
+    ExEquals2,
+    /// compare two number pairs for identity
+    ExMinSigned,
+    /// select smaller of two numbers
+    ExMaxSigned,
+    /// select greater of two numbers
+    ExMinUnsigned,
+    /// select lower of two numbers
+    ExMaxUnsigned,
+    /// select higher of two numbers
 
     ExRandom,
     /// generate random number.
@@ -95,21 +119,30 @@ typedef enum {
     /// Compare top two stack items for equality.
     ExLess,
     /// Compare top two stack items for less than.
+    ExMore,
+    /// Compare top two stack items.
     ExFlag,
     /// Reflect condition register in [[Tos]].
     ExFail,
-    /// Return last condition from register, causing macro interpreter
-    /// to terminate macro execution if condition was a failure.
+    /// Return a fail return value
     ExDup,
     /// Duplicate top stack item.
+    ExQDup,
+    /// conditionally Duplicate top stack item.
     ExDrop,
     /// Remove top stack item.
     ExSwap,
     /// Swap top two stack items.
+    ExSwap2,
+    /// Swap topmost two pairs of stack items
     ExOver,
     /// Push second from top item to stack.
     ExRot,
-    /// Rotate third stack item to top.
+    /// ( a b c -- b c a )
+    ExMinRot,
+    /// ( a b c -- c a b )
+    ExPick,
+    /// copy stack item, indexed by tos, to tos
     // -------------------
     ExToR,
     /// Move one item from param stack to control stack
@@ -124,10 +157,14 @@ typedef enum {
     // -------------------
     ExDiag,
     /// Print stack top and conditions to stderr for debugging.
-    ExStore,
-    /// Store tos into into memory
     ExFetch,
-    /// Push specified location in memory onto the stack
+    /// read memory address at tos, replace against contents
+    ExStore,
+    /// Store nos into into memory at addr tos
+    ExFetch2,
+    /// read number pair from memory address at tos
+    ExStore2,
+    /// Store number pair in  memory at addr tos
     ExMemEnd,
     /// Push the memory end to the stack
     ExHere,

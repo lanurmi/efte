@@ -10,8 +10,10 @@
 #ifndef W_MEMORY_H
 #define W_MEMORY_H
 
-int MemoryStore();
 int MemoryFetch();
+int MemoryStore();
+int MemoryFetch2();
+int MemoryStore2();
 int MemoryHere();
 int MemoryAllot();
 int MemoryEnd();

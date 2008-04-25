@@ -13,12 +13,14 @@
 std::vector<int> memory;
 
 
+
 int MemoryStore() {
     PSCHECK(2, "!");
     int ret = 0;
     int loc = ParamStack.pop();
 
     if (loc < MEMORY_LIMIT) {
+
         int initialized = memory.size();
         while (loc >= initialized++ )
             memory.push_back(0);
@@ -46,6 +48,48 @@ int MemoryFetch() {
         ret++;
     }
 
+    SetBranchCondition(ret);
+    return ret;
+}
+
+
+
+int MemoryFetch2() {
+    PSCHECK(1, "@2");
+    int ret = 0;
+    int loc = ParamStack.pop();
+
+    if (loc+1 < MEMORY_LIMIT) {
+
+        int initialized = memory.size();
+        while (loc+1 >= initialized++ )
+            memory.push_back(0);
+
+        ParamStack.push(memory[loc]);
+        ParamStack.push(memory[loc+1]);
+        ret++;
+    }
+
+    SetBranchCondition(ret);
+    return ret;
+}
+
+
+int MemoryStore2() {
+    PSCHECK(3, "!2");
+    int ret = 0;
+    int loc = ParamStack.pop();
+
+    if (loc < MEMORY_LIMIT) {
+
+        int initialized = memory.size();
+        while (loc+1 >= initialized++ )
+            memory.push_back(0);
+
+        memory[loc+1] = ParamStack.pop();
+        memory[loc] = ParamStack.pop();
+        ret++;
+    }
     SetBranchCondition(ret);
     return ret;
 }
