@@ -63,19 +63,124 @@ int Mul() {
     return 1;
 }
 
+int DivZero() {
+    ActiveView->Msg(S_ERROR, "Division by zero");
+    exception = DIVZERO;
+    FAIL
+}
+
 int Div() {
     PSCHECK(2, "Div");
     int tos=ParamStack.pop();
-
     if (!tos) {
-        ActiveView->Msg(S_ERROR, "Division by zero");
-        exception = DIVZERO;
-        FAIL
+        return DivZero();
     }
-
     ParamStack.push(ParamStack.pop()/tos);
     SUCCESS
 }
+
+int Invert() {
+    PSCHECK(1, "Invert");
+    ParamStack.push(~ParamStack.pop());
+    SUCCESS
+}
+
+int Negate() {
+    PSCHECK(1, "Negate");
+    ParamStack.push(-ParamStack.pop());
+    SUCCESS
+}
+
+int Not() {
+    PSCHECK(1, "Not");
+    ParamStack.push(-!ParamStack.pop());
+    SUCCESS
+}
+
+int NotZero() {
+    PSCHECK(1, "NotZero");
+    ParamStack.push(-!!ParamStack.pop());
+    SUCCESS
+}
+
+int PlusStore() {
+    PSCHECK(2, "+!");
+    memory[ParamStack.pop()] += ParamStack.pop();
+    SUCCESS
+}
+
+int Between() {
+    PSCHECK(3, "Between");
+    int tos=ParamStack.pop();
+    int nos=ParamStack.pop();
+    int third=ParamStack.pop();
+    ParamStack.push(-((third >= nos) && (third <= tos)));
+    SUCCESS
+}
+
+int SlashMod() {
+    PSCHECK(2, "/mod");
+    int tos=ParamStack.pop();
+    if (!tos) {
+        return DivZero();
+    }
+    int nos=ParamStack.pop();
+    ParamStack.push(nos%tos);
+    ParamStack.push(nos/tos);
+    SUCCESS
+}
+
+int Equals2() {
+    PSCHECK(4, "Equals2");
+    int tos=ParamStack.pop();
+    int nos=ParamStack.pop();
+    int third=ParamStack.pop();
+    int fourth=ParamStack.pop();
+    ParamStack.push(-(tos==third && nos==fourth));
+    SUCCESS
+}
+
+int MinSigned() {
+    PSCHECK(2, "Min");
+    int tos=ParamStack.pop();
+    if (tos < ParamStack.peek(0)) {
+        ParamStack.pop();
+        ParamStack.push(tos);
+    }
+    SUCCESS
+}
+
+int MaxSigned() {
+    PSCHECK(2, "Max");
+    int tos=ParamStack.pop();
+    if (tos > ParamStack.peek(0)) {
+        ParamStack.pop();
+        ParamStack.push(tos);
+    }
+    SUCCESS
+}
+
+
+int MinUnsigned() {
+    PSCHECK(2, "UMin");
+    unsigned int tos=ParamStack.pop();
+    if (tos < (unsigned int) ParamStack.peek(0)) {
+        ParamStack.pop();
+        ParamStack.push(tos);
+    }
+    SUCCESS
+}
+
+int MaxUnsigned() {
+    PSCHECK(2, "UMax");
+    unsigned int tos=ParamStack.pop();
+    if (tos > (unsigned int) ParamStack.peek(0)) {
+        ParamStack.pop();
+        ParamStack.push(tos);
+    }
+    SUCCESS
+}
+
 
 
 // marshmallows on #c suggested, for the double len intermediate:
@@ -89,9 +194,10 @@ int StarSlash() {
         ParamStack.push(ltos/nos) ;
         SUCCESS
     }
-    ActiveView->Msg(S_ERROR, "Division by zero");
-    exception = DIVZERO;
-    FAIL
+    return DivZero();
+//    ActiveView->Msg(S_ERROR, "Division by zero");
+//    exception = DIVZERO;
+//    FAIL
 }
 
 
@@ -151,6 +257,12 @@ int Less() {
     return 1;
 }
 
+int More() {
+    PSCHECK(2, "More");
+    ParamStack.push(-(ParamStack.pop() < ParamStack.pop()));
+    return 1;
+}
+
 // interface condition, provided by old commands, to
 // condition reading of new commands (passed on stack)
 // old commands buffer their conditions, until read
@@ -180,6 +292,13 @@ int Dup() {
     return 1;
 }
 
+int QDup() {
+    PSCHECK(1, "QDup");
+    if (ParamStack.peek(0))
+        ParamStack.dup();
+    return 1;
+}
+
 int Drop() {
     PSCHECK(1, "Drop");
     ParamStack.pop();
@@ -206,6 +325,36 @@ int Rot() {
     ParamStack.swap();
     return 1;
 }
+
+int MinRot() {
+    PSCHECK(3, "MinRot");
+    ParamStack.swap();
+    int tos = ParamStack.pop();
+    ParamStack.swap();
+    ParamStack.push(tos);
+    return 1;
+}
+
+int Pick() {
+    int tos = ParamStack.pop();
+    PSCHECK(tos+1, "Pick");
+    ParamStack.push(ParamStack.peek(tos));
+    return 1;
+}
+
+
+int Swap2() {
+    int tos = ParamStack.pop();
+    int nos = ParamStack.pop();
+    int third = ParamStack.pop();
+    int fourth = ParamStack.pop();
+    ParamStack.push(nos);
+    ParamStack.push(tos);
+    ParamStack.push(fourth);
+    ParamStack.push(third);
+    return 1;
+}
+
 
 // --- stack2 ---
 int ToR() {

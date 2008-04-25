@@ -212,6 +212,10 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
         return MemoryStore();
     case ExFetch:
         return MemoryFetch();
+    case ExStore2:
+        return MemoryStore2();
+    case ExFetch2:
+        return MemoryFetch2();
     case ExMemEnd:
         return MemoryEnd();
     case ExHere:
@@ -250,6 +254,31 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
         return Div();
     case ExStarSlash:
         return StarSlash();
+    case ExInvert:
+        return Invert();
+    case ExNegate:
+        return Negate();
+    case ExNot:
+        return Not();
+    case ExNotZero:
+        return NotZero();
+    case ExPlusStore:
+        return PlusStore();
+    case ExBetween:
+        return Between();
+    case ExSlashMod:
+        return SlashMod();
+    case ExEquals2:
+        return Equals2();
+    case ExMinSigned:
+        return MinSigned();
+    case ExMaxSigned:
+        return MaxSigned();
+    case ExMinUnsigned:
+        return MinUnsigned();
+    case ExMaxUnsigned:
+        return MaxUnsigned();
+
     case ExRandom:
         return Random();
     case ExNow:
@@ -260,6 +289,7 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
         return Microseconds();
     case ExMs:
         return Ms();
+
 
         // Bool
     case ExAnd:
@@ -276,6 +306,8 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
         return Equals();
     case ExLess:
         return Less();
+    case ExMore:
+        return More();
     case ExFlag:
         return Flag();
     case ExFail:
@@ -284,14 +316,22 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
         // Stack
     case ExDup:
         return Dup();
+    case ExQDup:
+        return QDup();
     case ExDrop:
         return Drop();
     case ExSwap:
         return Swap();
+    case ExSwap2:
+        return Swap2();
     case ExOver:
         return Over();
     case ExRot:
         return Rot();
+    case ExMinRot:
+        return MinRot();
+    case ExPick:
+        return Pick();
 
         // Return stack
     case ExToR:

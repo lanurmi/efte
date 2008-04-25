@@ -26,48 +26,50 @@ sub cells     { }
 sub noop      { }
 
 # -- stack --
-sub qdup      { dup lest dup }                  # duplicate top of stack if <> 0
+#sub qdup      { dup lest dup }                  # duplicate top of stack if <> 0
 sub nip       { swap drop }                     # drop second of stack
 sub tuck      { swap over }                     # copy top of stack below second of stack
-sub pluck     { >r over r> swap }               # copy 3rd item to top
-sub minrot    { 2:rot }                         # rotate top item below second item
+sub pluck     { 2 pick }                        # copy 3rd item to top
 
 sub dup2      { 2:over }                        # duplicate top two items
 sub drop2     { 2:drop }                        # drop top two items
-sub swap2     { rot >r rot r> }                 # swap top two pairs of items
-sub @2        { dup @ swap 1 + @ }              # ( a -- x1 x2 ) double fetch, from 2 consecutive addresses
-sub !2        { tuck 1 + ! ! }                  # ( x1 x2 a -- ) double store, to 2 consecutive addresses
+#sub minrot    { 2:rot }                         # rotate top item below second item
+#sub swap2     { rot >r rot r> }                 # swap top two pairs of items
+#sub @2        { dup @ swap 1 + @ }              # ( a -- x1 x2 ) double fetch, from 2 consecutive addresses
+#sub !2        { tuck 1 + ! ! }                  # ( x1 x2 a -- ) double store, to 2 consecutive addresses
 
 
 
 # -- arithmetic, bool, bits, comparison  --
 sub inc       { 1 + }                           # increment top of stack by one
 sub dec       { 1 - }                           # decrement top of stack by one
-sub invert    { -1 xor }                        # complement all bits
-sub negate    { 0 swap - }                      # change sign
-sub not       { 0 equals }                      # logical inversion: 0->true,  x->0
-sub notzero   { dup lest drop -1 }
+#sub invert    { -1 xor }                        # complement all bits
+#sub negate    { 0 swap - }                      # change sign
+#sub not       { 0 equals }                      # logical inversion: 0->true,  x->0
+#sub notzero   { dup lest drop -1 }
 sub lshift    { 1 shift }                       # bit shift left by 1
 sub rshift    { -1 shift }                      # bit shift right by one
 sub <<        { shift }
 sub >>        { negate shift }
+sub ^         { 1 swap 0 do over * loop nip }   # ( n1 u -- n2 )  calculate n1 to the power of u
 sub success   { flag }                          # push command return code
 sub failure   { flag not }                      # push inverted command return code
-sub >         { swap < }                        # true if nos > tos
-sub equals2   { rot equals >r equals r> and }   # ( x1 x2 x3 x4 -- f ) compare two pairs of items for identity
-sub between   { rot tuck < minrot > or not }
+#sub >         { swap < }                        # true if nos > tos
+#sub equals2   { rot equals >r equals r> and }   # ( x1 x2 x3 x4 -- f ) compare two pairs of items for identity
+#sub between   { rot tuck < minrot > or not }
 sub negative  {  0 < }                          # -n
 sub positive  { -1 > }                          # 0..n
 sub abs       { dup 0 < lest negate }           # remove sign
-sub min       { dup2 > will swap drop }
-sub max       { dup2 < will swap drop }
-sub umin      { dup2 xor 0 < if max else min endif }  # ( u1 u2 -- u1|u2 ) unsigned min
-sub umax      { dup2 xor 0 < if min else max endif }  # ( u1 u2 -- u1|u2 ) unsigned max
-sub mod       { dup2 / * - }                    # modulo (remainder) function
-sub /mod      { dup2 / dup >r * - abs r> }      # ( n1 n2 -- r q )
+#sub min       { dup2 > will swap drop }
+#sub max       { dup2 < will swap drop }
+#sub umin      { dup2 xor 0 < if max else min endif }  # ( u1 u2 -- u1|u2 ) unsigned min
+#sub umax      { dup2 xor 0 < if min else max endif }  # ( u1 u2 -- u1|u2 ) unsigned max
+#sub /mod      { dup2 / dup >r * - abs r> }      # ( n1 n2 -- r q )
+#sub mod       { dup2 / * - }                    # modulo (remainder) function
+sub mod       { /mod drop }                     # modulo (remainder) function
 sub percent   { 100 */ }
 sub range     { over + swap }                   # start n -> limit start conversion for DO LOOP
-sub +!        { dup >r @ +   r> ! }             # ( x a -- )  adds x to contents of address a
+#sub +!        { dup >r @ +   r> ! }             # ( x a -- )  adds x to contents of address a
 sub or!       { dup >r @ or  r> ! }             # ( x a -- )  bitwise  or x into address a
 sub and!      { dup >r @ and r> ! }             # ( x a -- )  bitwise and x into address a
 sub xor!      { dup >r @ xor r> ! }             # ( x a -- )  bitwise xor x into address a
@@ -75,7 +77,17 @@ sub toggle    { true swap xor! }                # ( a -- )  bitwise invert of co
 
 sub gcd       { begin tuck mod qdup not until } # ( u1 u2 -- u3 ) greatest common divisor
 sub lcm       { dup2 gcd */ }                   # ( u1 u2 -- u3 ) lowest common denominator
-sub sqrt      { 0 tuck do inc dup lshift inc +loop }
+
+sub sqrt      {
+    dup lest
+	dup >r
+	begin
+	   r@ over /
+       over + 1 >>
+	   dup rot - abs
+    2 < until
+    r> drop }
+
 
 sub factor { 2                                  # ( u1 -- u2 ) returns smallest number of which u1 is a multiple
     begin  2:over /mod
@@ -91,10 +103,8 @@ sub prime  { dup factor equals }                # ( u -- f ) test number for pri
 
 
 
-
-
-
-# --- define a variables class
+# --- define a variables class. members of this class don't need instantiation at init time, because they
+# instantiate successfully upon first use, and initialize to 0.
 sub var       { here dup cell allot }           # for the new construct:       sub foo { var new }
 
 
@@ -356,13 +366,6 @@ sub embed$ {                                    # ( asc n -- ) store char at pos
    splice append$                               # recombine, with char between
 }
 
-#sub capitalize$ {                               # ( -- )  capitalize all chars of top string
-#   "" over$ len$ 0 do                           # loop though all source string chars:
-#      swap$ i ascn                              # read next char
-#      dup lowercase will capitalize             # convert if necessary
-#      swap$ char$ append$                       # append to result string
-#   loop nip$  }                                 # discard source string
-
 
 sub repeat$ {                                   # ( u c -- ) create a string of u times char
    swap ""
@@ -491,6 +494,7 @@ sub var$ {                                      # string variable class
     dup$ len$ inc
     dup inc comma
     allot }
+
 
 
 
@@ -692,7 +696,7 @@ sub directory$ {                                # ( -- ) s( filename -- director
 
 # --- pictured number conversion ---
 sub digit     { dup 10 < 3 xor '4' 2:+ }        # ( u -- asc )
-sub <hash     { "" } 	  		                # ( n -- n ) start pictured num conversion with empty string
+sub <hash     { "" abs } 	  		            # ( n -- n ) start pictured num conversion with empty string
 sub hold      { char$ prepend$ }                # ( n asc -- n )
 sub hash      { base @ /mod swap digit hold }   # ( n1 -- n2 )
 sub hashes    { begin hash dup not until }      # ( n1 -- n2 )
@@ -734,6 +738,17 @@ sub .00  {                                      # ( u n -- )  zero padded signed
     hash> type$
 }
 
+sub n.nnn {                                     # ( u n -- ) print unsigned number with n digits behind a period
+    <hash
+       bl hold
+       qdup if
+          times hash
+          '.' hold
+       endif
+       hashes
+    hash> type$
+}
+
 
 # ----- number conversion: integer to string, string to integer -----
 sub number$   { dup <hash hashes hash> sign }   # ( n -- )
@@ -753,6 +768,50 @@ sub version     {                               # ( -- subversion version )
     number >r
     minleading$
     number r> }
+
+
+
+
+
+# --- printf ---
+# subset. only handles %d %x %s now
+sub .base           { base exchange swap 0 .r base ! }
+sub percent_d       { drop rot  10 .base }
+sub percent_x       { drop rot  16 .base }
+sub percent_s       { drop swap$ type$ }
+sub percent_other   { '%' emit emit }
+
+sub printf_percent  {                           # ( len idx asc -- len idx2 )
+    drop 1 + dup ascn
+    dup "dxs" scan$
+    vector
+        percent_d
+        percent_x
+        percent_s
+        percent_other
+    endvector }
+
+sub printf_escape   { drop 1 + dup ascn emit }  # ( len idx asc -- len idx2 )
+sub printf_other    { emit }                    # ( len idx asc -- len idx )
+
+sub printf {
+    dup$ len$ 0
+    begin
+       2:over >
+    while
+       dup ascn
+       dup "%\\" scan$
+       vector
+          printf_percent
+          printf_escape
+          printf_other
+       endvector
+       1 +
+    repeat
+    drop$ 2:drop
+}
+
+
 
 
 
@@ -1009,7 +1068,6 @@ sub enclose$   {
 sub quote$   { "\"\"" enclose$  }               # ( -- )  s( $1 -- $2 )
 
 
-
 sub attemptlevel  { var new }
 sub attempt   {                                 # execute macro, name given as string, if existing
     attemptlevel @ 3 * spaces$ swap$
@@ -1024,6 +1082,7 @@ sub attempt   {                                 # execute macro, name given as s
 
 
 sub OnBoot    {
+microseconds >r
    AlreadyInitialized @ will fail
    AlreadyInitialized on
 
@@ -1031,6 +1090,7 @@ sub OnBoot    {
    insert on
    autotrim on
    InitWordchars
+   oldmousexy
 
    35 spaces$ baseprefix$ store$
    "" baseprefix$ store$
@@ -1046,4 +1106,5 @@ sub OnBoot    {
     "InitMain"        attempt
     "OnUserBoot"      attempt                # replaces the eFTE internal hook
     "Initialisation successful" report
+microseconds r> - <hash 6:hash '.' hold hashes hash> " seconds init time.\n" append$ perr
    }
