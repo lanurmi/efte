@@ -217,6 +217,9 @@ vefte: defcfg.h $(OBJS) $(VOBJS)
 .cpp.$(OEXT):
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 
+config.h:
+	sed s/\$$\{CMAKE_INSTALL_PREFIX\}/\\/usr\\/local/g < config.h.in > config.h
+
 .depend.mak: Makefile
 	which g++ 2>/dev/null >/dev/null && for f in $(addsuffix .cpp,$(basename $(OBJS) $(XOBJS) $(NOBJS) $(VOBJS) )) ; do \
 		g++ $(CXXFLAGS) -MM "$$f" >> "$@" 2>/dev/null ; done || touch "$@"
