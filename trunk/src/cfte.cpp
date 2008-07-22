@@ -129,11 +129,11 @@ int main(int argc, char **argv) {
 
     fprintf(stderr, PROG_CFTE " " VERSION "\n" COPYRIGHT "\n");
     if (argc < 2 || argc > 5) {
-        fprintf(stderr, "Usage: " PROG_CFTE " [-o<offset>] [-p[reprocess]] "
+        fprintf(stderr, "Usage: " PROG_CFTE " [-o<offset>] [-p[reprocess]] -D[word]"
 #ifndef UNIX
                 "config/"
 #endif
-                "main.fte [efte-new.cnf]\n");
+                "mymain.fte [efte-new.cnf]\n");
         exit(1);
     }
 
@@ -156,19 +156,24 @@ int main(int argc, char **argv) {
     // parse arguments
     for (int i = 1; i < argc; i++) {
         if (argv[i][0] == '-') {
-            if ((strcmp(argv[i], "-p") == 0) || (strcmp(argv[i], "-preprocess") == 0)) {
-                preprocess_only = true;
-            } else
-                if (strncmp(argv[i], "-o", 2) == 0) {
-                    char *p;
+            if (strncmp(argv[i], "-d", 2) == 0) {
+                char *p;
 
-                    p = argv[i];
-                    p += 2;
-                    offset = atol(p);
-                } else {
-                    fprintf(stderr, "Invalid option '%s'\n", argv[i]);
-                    exit(1);
-                }
+                p = argv[i];
+                p += 2;
+                DefineWord(p);
+            } else if ((strcmp(argv[i], "-p") == 0) || (strcmp(argv[i], "-preprocess") == 0)) {
+                preprocess_only = true;
+            } else if (strncmp(argv[i], "-o", 2) == 0) {
+                char *p;
+
+                p = argv[i];
+                p += 2;
+                offset = atol(p);
+            } else {
+                fprintf(stderr, "Invalid option '%s'\n", argv[i]);
+                exit(1);
+            }
         } else {
             switch (n) {
             case 0:
