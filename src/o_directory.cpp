@@ -493,7 +493,11 @@ int EDirectory::FmMkDir() {
         return 0;
     }
 
+#if defined(MSVC) || defined(BCPP) || defined(WATCOM)
+    int status = mkdir(Dir2);
+#else
     int status = mkdir(Dir2, 509);
+#endif
     if (status == 0) {
         return RescanDir();
     }
