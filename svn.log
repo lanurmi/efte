@@ -3961,11 +3961,11 @@ Changed paths:
    M /trunk/src/CMakeLists.txt
 
 Added -q flag to cefte for the defcnf generation
-************************************************************************
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 r664 | jeremy_c | 2008-02-15 12:44:51 -0500 (Fri, 15 Feb 2008) | 5 lines
 Changed paths:
-   M /trunk/HISTORY
-   M /trunk/src/cfte.cpp
+   M /trunk/HISTORY               XXX
+   M /trunk/src/cfte.cpp          XXX
 
 * Added -v (verbose) flag to cefte
 * Added -q (quiet) flag to cefte
