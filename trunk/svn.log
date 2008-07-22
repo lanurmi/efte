@@ -3760,7 +3760,7 @@ Changed paths:
    M /trunk/src/o_buffer.cpp
 
 Added Message macro command that prints a message to the statusbar
-************************************************************************
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 r689 | jeremy_c | 2008-02-17 01:39:00 -0500 (Sun, 17 Feb 2008) | 1 line
 Changed paths:
    M /trunk/src/e_undo.cpp
