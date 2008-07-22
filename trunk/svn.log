@@ -3790,7 +3790,7 @@ Push macro now accepts:
   * Push 'A'
   * Push $Char
 
-*************************************************************************
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 r685 | jeremy_c | 2008-02-16 17:49:49 -0500 (Sat, 16 Feb 2008) | 1 line
 Changed paths:
    M /trunk/src/cfte.cpp
