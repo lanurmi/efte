@@ -390,7 +390,11 @@ int EGUI::FileCloseX(EView *View, int CreateNew, int XClose) {
         if (ActiveModel == 0 && CreateNew) {
             EView *V = ActiveView;
             EModel *m = new EDirectory(0, &ActiveModel, Path);
-            assert(m != 0);
+            if (m == 0) {
+                View->MView->Win->Choice(GPC_ERROR, "Error", 1, "O&K",
+                                         "Could not create directory view");
+                return 0;
+            }
 
             do {
                 V = V->Next;
@@ -871,7 +875,9 @@ int EGUI::CmdLoadFiles(int &argc, char **argv) {
             QuoteNext = 0;
             if (ExpandPath(argv[Arg], Path, sizeof(Path)) == 0 && IsDirectory(Path)) {
                 EModel *m = new EDirectory(cfAppend, &ActiveModel, Path);
-                assert(ActiveModel != 0 && m != 0);
+                if (m == 0 || ActiveModel == 0) {
+                    DieError(2, "Could not open directory view of path: %s\n", Path);
+                }
             } else {
                 if (LCount != 0)
                     suspendLoads = 1;
@@ -941,7 +947,9 @@ int EGUI::Start(int &argc, char **argv) {
 
         GetDefaultDirectory(0, Path, sizeof(Path));
         EModel *m = new EDirectory(0, &ActiveModel, Path);
-        assert(ActiveModel != 0 && m != 0);
+        if (m == 0 || ActiveModel == 0) {
+            DieError(2, "Could not open a directory view of path: %s\n", Path);
+        }
         ActiveView->SwitchToModel(ActiveModel);
     }
     return 0;
