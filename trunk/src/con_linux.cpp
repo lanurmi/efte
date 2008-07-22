@@ -9,7 +9,6 @@
 
 // If you're searching for portability it is not here ;-)
 
-#define USE_GPM     //uncomment here to use GPM
 #define USE_SCRNMAP // use USER translation table instead of direct mapping
 // The translation table is assumed to be invertible (more or less).
 // How do we get other translation tables from kernel, the USER one

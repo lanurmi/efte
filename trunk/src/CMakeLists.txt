@@ -1,7 +1,10 @@
 #
 # Build system for eFTE
 #
-# Copyright (c) 2008, eFTE SF Group
+# Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
+#
+# You may distribute under the terms of either the GNU General Public
+# License or the Artistic License, as specified in the README file.
 #
 
 # =============================================================================
@@ -10,26 +13,22 @@
 #
 # =============================================================================
 
-OPTION( USE_DEFAULT_CONFIG
-  "Use a simple default configuration when system config cannot be found" ON)
-OPTION( USE_GPM        "Compile console versions with gpm support" ON )
-OPTION( USE_XMB        "Use libxmb to draw fonts with locale support" ON)
+# Build choices
+OPTION( BUILD_X        "Build X version of eFTE" ON )
+OPTION( BUILD_CONSOLE  "Build console version of eFTE" ON )
+
+# Optional use flags
+OPTION( USE_GPM        "Compile console versions with gpm support" UNKNOWN )
 OPTION( USE_LOCALE     "Use normal locale support" ON )
+OPTION( USE_XMB        "Use libxmb to draw fonts with locale support" ON)
 OPTION( USE_XLOCALE    "Use X11 compiled in support" OFF )
 OPTION( USE_XICON      "Use libxicon to supply icons for the X version" ON )
-OPTION( USE_HARD_REMAP "Keyboard remapping by XEFTE" OFF )
 OPTION( USE_XTINIT     "Use XtInitialize on init" OFF )
+OPTION( USE_HARD_REMAP "Keyboard remapping by XEFTE" OFF )
 OPTION( USE_LOGGING    "Enable trace logging within efte" ON )
 
 # Setup global options right now platform dependent options will appear later
 # more near thier actual use
-
-IF( USE_DEFAULT_CONFIG )
-  ADD_DEFINITIONS( -DDEFAULT_INTERNAL_CONFIG )
-  SET( DEFAULT_CONFIG_HEADER defcfg.h )
-ELSE( USE_DEFAULT_CONFIG )
-  SET( DEFAULT_CONFIG_HEADER "" )
-ENDIF( USE_DEFAULT_CONFIG )
 
 IF( USE_LOCALE )
   ADD_DEFINITIONS( -DUSE_LOCALE )
@@ -37,10 +36,12 @@ ENDIF( USE_LOCALE )
 IF( USE_XLOCALE )
   ADD_DEFINITIONS( -DX_LOCALE )
 ENDIF( USE_XLOCALE )
-
 IF( NOT USE_LOGGING )
   ADD_DEFINITIONS( -DFTE_NO_LOGGING )
 ENDIF( NOT USE_LOGGING )
+IF( USE_GPM )
+  ADD_DEFINITIONS( -DUSE_GPM )
+ENDIF( USE_GPM )
 
 # =============================================================================
 #
@@ -48,7 +49,7 @@ ENDIF( NOT USE_LOGGING )
 #
 # =============================================================================
 
-SET( CFTE_SOURCES s_string.cpp cfte.cpp s_files.cpp )
+SET( CFTE_SOURCES cfte.cpp s_files.cpp s_string.cpp )
 SET( BASE_FTE_SOURCES
   c_bind.cpp c_color.cpp c_config.cpp c_desktop.cpp c_hilit.cpp c_history.cpp
   c_mode.cpp commands.cpp e_block.cpp e_buffer.cpp e_cmds.cpp e_cvslog.cpp
@@ -62,7 +63,7 @@ SET( BASE_FTE_SOURCES
   o_buffer.cpp o_buflist.cpp o_cvs.cpp o_cvsbase.cpp o_cvsdiff.cpp o_directory.cpp
   o_list.cpp o_messages.cpp o_model.cpp o_modemap.cpp o_routine.cpp o_svn.cpp
   o_svnbase.cpp o_svndiff.cpp s_direct.cpp s_files.cpp s_string.cpp
-  s_util.cpp view.cpp ${DEFAULT_CONFIG_HEADER} )
+  s_util.cpp view.cpp ${CMAKE_CURRENT_BINARY_DIR}/defcfg.h )
 SET( UNIX_SOURCES e_unix.cpp memicmp.cpp )
 SET( XFTE_SOURCES clip_x11.cpp con_i18n.cpp con_x11.cpp g_nodlg.cpp g_text.cpp
   menu_text.cpp )
@@ -85,7 +86,7 @@ IF( UNIX AND ${CMAKE_SYSTEM_NAME} MATCHES "Darwin" )
 ENDIF( UNIX AND ${CMAKE_SYSTEM_NAME} MATCHES "Darwin" )
 
 IF( CMAKE_COMPILER_IS_GNUCC )
-  SET( CMAKE_CXX_FLAGS "-pedantic -Wall -Wpointer-arith -Wconversion -Wwrite-strings -Winline -fno-rtti -fno-exceptions" )
+  SET( CMAKE_CXX_FLAGS "-pedantic -Wall -Wno-long-long -Wpointer-arith -Wconversion -Wwrite-strings -Winline -fno-rtti -fno-exceptions" )
 ENDIF( CMAKE_COMPILER_IS_GNUCC )
 
 IF( CMAKE_SYSTEM_NAME MATCHES "HP/UX" )
@@ -131,80 +132,31 @@ IF( WIN32 )
   ENDIF( WATCOM )
 ENDIF( WIN32 )
 
-# =============================================================================
-#
-# PLATFORM SPECIFIC BUILDS
-#
-# =============================================================================
+CONFIGURE_FILE(config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 
-IF( UNIX )
-  IF( USE_XMB )
-    ADD_DEFINITIONS( -DUSE_XMB )
-  ENDIF( USE_XMB)
-
-  IF( USE_XICON )
-    ADD_DEFINITIONS( -DUSE_XICON )
-  ENDIF( USE_XICON )
-
-  ADD_DEFINITIONS( -DUNIX )
-  IF( ${CMAKE_SYSTEM_NAME} MATCHES "Linux" )
-    ADD_DEFINITIONS( -DLINUX )
-    SET( LINUX ON )
-  ENDIF( ${CMAKE_SYSTEM_NAME} MATCHES "Linux" )
-
-  INCLUDE(FindX11)
-  IF( X11_LIBRARIES )
-    MESSAGE( STATUS "X11 found on system, X11 enabled efte will be built" )
-    INCLUDE_DIRECTORIES( ${X11_INCLUDE_DIR} )
-    ADD_EXECUTABLE( efte ${BASE_FTE_SOURCES} ${UNIX_SOURCES} ${XFTE_SOURCES} )
-
-    FIND_LIBRARY( XPM_LIBRARY Xpm )
-    IF( NOT XPM_LIBRARY )
-      MESSAGE( SEND_ERROR "Could not find Xpm library which is required for X11 version" )
-    ENDIF( NOT XPM_LIBRARY )
-    TARGET_LINK_LIBRARIES( efte ${X11_LIBRARIES} ${XPM_LIBRARY} ${SYSTEM_LIBS} )
-  ELSE( X11_LIBRARIES )
-    MESSAGE( STATUS "X11 not found, X11 enabled efte will not be built" )
-  ENDIF( X11_LIBRARIES )
-
-  INCLUDE(FindCurses)
-  IF( CURSES_LIBRARY )
-    MESSAGE( STATUS "Curses found on system, nefte and vefte will be built" )
-
-    SET( EXTRA_NFTE_LIBS "" )
-    IF( USE_GPM )
-      FIND_LIBRARY( GPM_LIBRARY gpm )
-      IF( GPM_LIBRARY )
-        SET( SYSTEM_LIBS ${SYSTEM_LIBS} ${GPM_LIBRARY} )
-      ELSE( GPM_LIBRARY )
-        MESSAGE( SEND_ERROR "Could not find gpm library" )
-        MESSAGE( SEND_ERROR "Please install or disable the use of gpm:" )
-        MESSAGE( SEND_ERROR "Add: -DUSE_GPM=OFF to your cmake command line" )
-      ENDIF( GPM_LIBRARY )
-    ENDIF( USE_GPM )
-
-    ADD_EXECUTABLE( nefte ${BASE_FTE_SOURCES} ${UNIX_SOURCES} ${NFTE_SOURCES} )
-    TARGET_LINK_LIBRARIES( nefte ${CURSES_LIBRARY} ${EXTRA_NFTE_LIBS} ${SYSTEM_LIBS} )
-  ELSE( CURSES_LIBRARY )
-    MESSAGE( STATUS, "Curses not found, nefte nor vefte will be built" )
-  ENDIF( CURSES_LIBRARY )
-
-  IF( LINUX )
-    MESSAGE( STATUS "Using Linux, vefte will be build" )
-    ADD_EXECUTABLE( vefte ${BASE_FTE_SOURCES} ${UNIX_SOURCES} ${VFTE_SOURCES} )
-    TARGET_LINK_LIBRARIES( vefte ${CURSES_LIBRARY} ${SYSTEM_LIBS} )
-  ENDIF( LINUX )
-ELSEIF( WIN32 )
-  ADD_DEFINITIONS( -DNT -DNTCONSOLE -DWIN32 -D_CONSOLE )
-  ADD_EXECUTABLE( efte defcfg.h ${BASE_FTE_SOURCES} ${WFTE_SOURCES} )
-  TARGET_LINK_LIBRARIES( efte ${SYSTEM_LIBS} )
-ENDIF( UNIX )
+INCLUDE_DIRECTORIES("${CMAKE_CURRENT_BINARY_DIR}")
 
 # =============================================================================
 #
 # PLATFORM INDEPENDENT BUILDS
 #
 # =============================================================================
+
+ADD_LIBRARY( eftebase STATIC ${BASE_FTE_SOURCES} )
+
+ADD_EXECUTABLE( bin2c bin2c.cpp )
+GET_TARGET_PROPERTY( BIN2C_EXE bin2c LOCATION )
+
+#ADD_CUSTOM_COMMAND(
+#  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/defcfg.h
+#  COMMAND ${BIN2C_EXE} ${CMAKE_CURRENT_SOURCE_DIR}/simple.fte > ${CMAKE_CURRENT_BINARY_DIR}/defcfg.h
+#  DEPENDS bin2c simple.fte )
+
+# =====
+#
+# Binary config compiler that will soon disappear
+#
+# =====
 
 # Configuration compiler
 ADD_EXECUTABLE( cefte ${CFTE_SOURCES} )
@@ -227,3 +179,88 @@ IF( USE_DEFAULT_CONFIG )
     COMMAND ${BIN2C_EXE} ${CMAKE_CURRENT_SOURCE_DIR}/defcfg.cnf > ${CMAKE_BINARY_DIR}/src/defcfg.h
     DEPENDS bin2c defcfg.cnf )
 ENDIF( USE_DEFAULT_CONFIG )
+
+# =============================================================================
+#
+# PLATFORM SPECIFIC BUILDS
+#
+# =============================================================================
+
+IF( UNIX )
+  IF( USE_XMB )
+    ADD_DEFINITIONS( -DUSE_XMB )
+  ENDIF( USE_XMB)
+
+  IF( USE_XICON )
+    ADD_DEFINITIONS( -DUSE_XICON )
+  ENDIF( USE_XICON )
+
+  ADD_DEFINITIONS( -DUNIX )
+  IF( ${CMAKE_SYSTEM_NAME} MATCHES "Linux" )
+    ADD_DEFINITIONS( -DLINUX )
+    SET( LINUX ON )
+  ENDIF( ${CMAKE_SYSTEM_NAME} MATCHES "Linux" )
+
+  IF( BUILD_X )
+    INCLUDE(FindX11)
+    IF( X11_LIBRARIES )
+      MESSAGE( STATUS "X11 found on system, X11 enabled efte will be built" )
+      INCLUDE_DIRECTORIES( ${X11_INCLUDE_DIR} )
+      ADD_EXECUTABLE( efte ${UNIX_SOURCES} ${XFTE_SOURCES} )
+
+      FIND_LIBRARY( XPM_LIBRARY Xpm )
+      IF( NOT XPM_LIBRARY )
+        MESSAGE( SEND_ERROR "Could not find Xpm library which is required for X11 version" )
+      ENDIF( NOT XPM_LIBRARY )
+      TARGET_LINK_LIBRARIES( efte eftebase ${X11_LIBRARIES} ${XPM_LIBRARY} ${SYSTEM_LIBS} )
+      INSTALL( TARGETS efte RUNTIME DESTINATION bin )
+    ELSE( X11_LIBRARIES )
+      MESSAGE( STATUS "X11 not found, X11 enabled efte will not be built" )
+    ENDIF( X11_LIBRARIES )
+  ENDIF( BUILD_X )
+
+  IF( BUILD_CONSOLE )
+    IF( USE_GPM )
+      FIND_LIBRARY( FOUND_GPM_LIBRARY gpm )
+      IF( FOUND_GPM_LIBRARY )
+        SET( GPM_LIBRARY ${FOUND_GPM_LIBRARY} )
+      ELSE( FOUND_GPM_LIBRARY )
+        MESSAGE( SEND_ERROR "Could not find gpm library" )
+        MESSAGE( SEND_ERROR "Please install or disable the use of gpm:" )
+        MESSAGE( SEND_ERROR "Add: -DUSE_GPM=OFF to your cmake command line" )
+      ENDIF( FOUND_GPM_LIBRARY )
+    ELSE( USE_GPM )
+      SET( GPM_LIBRARY "" )
+    ENDIF( USE_GPM )
+
+    INCLUDE(FindCurses)
+    IF( CURSES_LIBRARY )
+      MESSAGE( STATUS "Curses found on system, nefte will be built" )
+
+      ADD_EXECUTABLE( nefte ${UNIX_SOURCES} ${NFTE_SOURCES} )
+      TARGET_LINK_LIBRARIES( nefte eftebase ${CURSES_LIBRARY} ${GPM_LIBRARY} ${SYSTEM_LIBS} )
+      INSTALL( TARGETS nefte RUNTIME DESTINATION bin )
+    ELSE( CURSES_LIBRARY )
+      MESSAGE( SEND_ERROR "Could not find curses library" )
+      MESSAGE( SEND_ERROR "Please install or disable building a console version:" )
+      MESSAGE( SEND_ERROR "Add: -DBUILD_CONSOLE=OFF to your cmake command line" )
+    ENDIF( CURSES_LIBRARY )
+
+    IF( LINUX )
+      MESSAGE( STATUS "Using Linux, vefte will be build" )
+      ADD_EXECUTABLE( vefte ${UNIX_SOURCES} ${VFTE_SOURCES} )
+      TARGET_LINK_LIBRARIES( vefte eftebase ${GPM_LIBRARY} ${SYSTEM_LIBS} )
+      INSTALL( TARGETS vefte RUNTIME DESTINATION bin )
+    ENDIF( LINUX )
+  ENDIF( BUILD_CONSOLE )
+ELSEIF( WIN32 )
+  ADD_DEFINITIONS( -DNT -DNTCONSOLE -DWIN32 -D_CONSOLE )
+  ADD_EXECUTABLE( efte ${CMAKE_CURRENT_BINARY_DIR}/defcfg.h ${WFTE_SOURCES} )
+  TARGET_LINK_LIBRARIES( efte eftebase ${SYSTEM_LIBS} )
+ENDIF( UNIX )
+
+# =============================================================================
+#
+# PLATFORM INDEPENDENT BUILDS
+#
+# =============================================================================
