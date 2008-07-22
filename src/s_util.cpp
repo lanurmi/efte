@@ -42,17 +42,24 @@ static int copyfile(char *f1, char *f2) { // from F1 to F2
 }
 
 char *MakeBackup(char *FileName, char *NewName) {
-//    static char NewName[260];
     int l = strlen(FileName);
     if (l <= 0)
         return NULL;
 
     /* try 1 */
     if (strlen(BackupDirectory) > 0) {
-        for (int idx=0; idx < strlen(FileName); idx++)
-            if (FileName[idx] == '/' || FileName[idx] == '\\')
-                FileName[idx] = '_';
-        snprintf(NewName, MAXPATH, "%s/%s", BackupDirectory, FileName);
+		char TmpFileName[MAXPATH];
+		char TmpBackupName[MAXPATH];
+
+		strcpy(TmpFileName, FileName);
+
+        for (int idx=0; idx < strlen(TmpFileName); idx++)
+            if (TmpFileName[idx] == '/' || TmpFileName[idx] == '\\' || TmpFileName[idx] == ':')
+                TmpFileName[idx] = '_';
+        snprintf(TmpBackupName, MAXPATH, "%s/%s", BackupDirectory, TmpFileName);
+		ExpandPath(TmpBackupName, NewName, MAXPATH);
+
+		printf("NewName = %s\n", NewName);
     } else
         snprintf(NewName, MAXPATH, "%s~", FileName);
 
