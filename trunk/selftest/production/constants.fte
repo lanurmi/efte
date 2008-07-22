@@ -1,9 +1,0 @@
-# tests:
-#    minus, plus, 
-#    primitives defined constants
-
-{ 20 15 - 5  PASS }
-{ 20 15 + 35 PASS }
-{ 0 false or   1 +  true + 0 PASS  }
-{ 0 false + 1 - true *  1 PASS  }
-{ TEST1 TEST2 TEST3 TEST4 }

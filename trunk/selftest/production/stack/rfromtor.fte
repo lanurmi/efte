@@ -1,3 +1,0 @@
-{ 5 7 9  >r swap r> 2:accumulate 957 PASS }
-{ 2 3  >r  5 r@ swap r> 3:accumulate 3532 PASS }
-{ TEST1 TEST2 }

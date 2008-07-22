@@ -1,10 +1,4 @@
 #
-#  fte-vag.mak
-#
-#  Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
-#
-#  You may distribute under the terms of either the GNU General Public
-#  License or the Artistic License, as specified in the README file.
 #
 #  Makefile for VisualAge C++ version 3.00
 #

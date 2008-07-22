@@ -8,40 +8,40 @@ eventmap PERL {
     # useful command here is <A+Enter> which adds 
     # a new line after the current one, and indents it properly.
     # in cmode defined as LineAdd; LineIndent;
-    abbrev "ifx" {
+    abbrev 'ifx' {
         KillWordPrev;
 %if(BSD_BRACE)
-        "if ()" InsertString; MoveLeft; SavePos; MoveRight; LineIndent; LineNew;
-        "{" InsertString; LineIndent; LineNew;
+        InsertString 'if ()'; MoveLeft; SavePos; MoveRight; LineIndent; LineNew;
+        InsertString '{'; LineIndent; LineNew;
 %endif
 %if(1TBS_BRACE)
-        "if () {" InsertString; 3:MoveLeft; SavePos; 3:MoveRight; LineIndent; LineNew; 
+        InsertString 'if () {'; 3:MoveLeft; SavePos; 3:MoveRight; LineIndent; LineNew; 
 %endif
-        "}" InsertString; LineIndent; 
+        InsertString '}'; LineIndent; 
         MoveSavedPos; Fail; # do not insert typed character
     }
-    abbrev "whx" { 
+    abbrev 'whx' { 
         KillWordPrev;
 %if(BSD_BRACE)
-        "while ()" InsertString; MoveLeft; SavePos; MoveRight; LineIndent; LineNew;
-        "{" InsertString; LineIndent; LineNew;
+        InsertString 'while ()'; MoveLeft; SavePos; MoveRight; LineIndent; LineNew;
+        InsertString '{'; LineIndent; LineNew;
 %endif
 %if(1TBS_BRACE)
-        "while () {" InsertString; 3:MoveLeft; SavePos; 3:MoveRight; LineIndent; LineNew; 
+        InsertString 'while () {'; 3:MoveLeft; SavePos; 3:MoveRight; LineIndent; LineNew; 
 %endif
-        "}" InsertString; LineIndent; 
+        InsertString '}'; LineIndent; 
         MoveSavedPos; Fail;
     }
-    abbrev "unx" { 
+    abbrev 'unx' { 
         KillWordPrev;
 %if(BSD_BRACE)
-        "unless ()" InsertString; MoveLeft; SavePos; MoveRight; LineIndent; LineNew;
-        "{" InsertString; LineIndent; LineNew;
+        InsertString 'unless ()'; MoveLeft; SavePos; MoveRight; LineIndent; LineNew;
+        InsertString '{'; LineIndent; LineNew;
 %endif
 %if(1TBS_BRACE)
-        "unless () {" InsertString; 3:MoveLeft; SavePos; 3:MoveRight; LineIndent; LineNew; 
+        InsertString 'unless () {'; 3:MoveLeft; SavePos; 3:MoveRight; LineIndent; LineNew; 
 %endif
-        "}" InsertString; LineIndent; 
+        InsertString '}'; LineIndent; 
         MoveSavedPos; Fail;
     }
 }

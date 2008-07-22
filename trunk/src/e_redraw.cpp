@@ -1,6 +1,5 @@
 /*    e_redraw.cpp
  *
- *    Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
  *    Copyright (c) 1994-1996, Marko Macek
  *
  *    You may distribute under the terms of either the GNU General Public
@@ -257,44 +256,6 @@ void EBuffer::DrawLine(TDrawBuffer B, int VRow, int C, int W, int &HilitX) {
     }
 }
 
-
-
-
-#define statuslinelength 256
-char num[statuslinelength+1];
-
-
-unsigned int statusline = dp++;    // shared mem pointer to ...
-int Statusline()  {
-    ParamStack.push(statusline);
-    return 1;
-}
-
-
-
-void EBuffer::CustomStatusline(int statuslinestring)  {
-//    ExecMacro("OnStatusline"); // this breaks the replace function,
-    if (statuslinestring)  {                                                 // pointing to a string variable?
-        statuslinestring++;                                                  // yes: advance to actual string length (skip variable size)
-        unsigned int statuslinestringlength = memory[statuslinestring++];    // read size + advance to first character
-        if (statuslinestringlength > statuslinelength)                       // string longer than our buffer can take?
-            statuslinestringlength = statuslinelength;                       // yes: trim
-        int i;
-        for ( i=0; i<statuslinestringlength; i++) {                          // walk through string chars:
-            char c = memory[statuslinestring++];                             // read char
-            if (c < 32) break;                                               // any control char breaks
-            num[i] = c;                                                      // others store in buffer
-        }
-        num[i] = 0;                                                          // string terminator
-    }
-}
-
-
-
-
-
-
-
 void EBuffer::Redraw() {
     int HilitX;
     EView *V;
@@ -468,8 +429,7 @@ void EBuffer::Redraw() {
                         ActLine + 1,
                         CurColumn + 1,
                         //                    CurPos + 1,
-                        //(BFI(this, BFI_Insert)) ? 'I' : ' ',
-                        (memory[insert]) ? 'I' : ' ',
+                        (BFI(this, BFI_Insert)) ? 'I' : ' ',
                         (BFI(this, BFI_AutoIndent)) ? 'A' : ' ',
                         //                    (BFI(this, BFI_ExpandTabs))?'T':' ',
                         (BFI(this, BFI_MatchCase)) ? 'C' : ' ',
@@ -495,13 +455,10 @@ void EBuffer::Redraw() {
                 int l = strlen(s);
                 int fw = W->Cols - l;
                 int fl = strlen(FileName);
+                char num[10];
 
                 MoveStr(B, 0, W->Cols, s, SColor, W->Cols);
-                if (memory[statusline]) {
-                    CustomStatusline(memory[statusline]);
-                } else {
-                    sprintf(num, " %s %d", CCharStr, ModelNo);
-                }
+                sprintf(num, " %s %d", CCharStr, ModelNo);
                 MoveStr(B, W->Cols - strlen(num), W->Cols, num, SColor, W->Cols);
 
                 fw -= strlen(num);
@@ -519,8 +476,7 @@ void EBuffer::Redraw() {
             V->MView->ConPutBox(0, W->Rows, W->Cols, 1, B);
             if (V->MView->IsActive()) {
                 V->MView->ConSetCursorPos(W->CP.Col - W->TP.Col, W->CP.Row - W->TP.Row);
-                //  V->MView->ConSetInsertState(BFI(this, BFI_Insert));
-                V->MView->ConSetInsertState(memory[insert]);
+                V->MView->ConSetInsertState(BFI(this, BFI_Insert));
                 V->MView->ConShowCursor();
             }
         }

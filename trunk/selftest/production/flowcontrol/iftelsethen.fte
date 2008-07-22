@@ -1,3 +1,0 @@
-{ 5 inc  true if  lshift  inc else  drop 0      endif lshift   26 PASS }
-{ 3 inc  false if drop 0       else  inc lshift endif inc      11 PASS }
-{ TEST1 TEST2 }

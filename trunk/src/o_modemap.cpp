@@ -1,6 +1,5 @@
 /*    o_modemap.cpp
  *
- *    Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
  *    Copyright (c) 1994-1996, Marko Macek
  *
  *    You may distribute under the terms of either the GNU General Public
@@ -45,6 +44,14 @@ void EventMapView::DumpKey(const char *aPrefix, EKey *Key) {
                 sprintf(p, "%d:%s ", Macros[id].cmds[i].repeat, GetCommandName(Macros[id].cmds[i].u.num));
             else
                 sprintf(p, "%s ", GetCommandName(Macros[id].cmds[i].u.num));
+        } else if (Macros[id].cmds[i].type == CT_NUMBER) {
+            sprintf(p, "%ld ", Macros[id].cmds[i].u.num);
+        } else if (Macros[id].cmds[i].type == CT_STRING) {
+            sprintf(p, "'%s' ", Macros[id].cmds[i].u.string);
+        } else if (Macros[id].cmds[i].type == CT_CONCAT) {
+            strcat(p, ". ");
+        } else if (Macros[id].cmds[i].type == CT_VARIABLE) {
+            sprintf(p, "$(%ld) ", Macros[id].cmds[i].u.num);
         }
         if (strlen(Entry) > 70) {
             if (i != Macros[id].Count - 1) {

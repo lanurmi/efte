@@ -1,6 +1,5 @@
 /*    s_files.cpp
  *
- *    Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
  *    Copyright (c) 1994-1996, Marko Macek
  *
  *    You may distribute under the terms of either the GNU General Public
@@ -267,59 +266,59 @@ int ExpandPath(const char *Path, char *Expand, int ExpandSize) {
     }
 #if defined(__EMX__)
     {
-        char *p = Expand;
+    char *p = Expand;
 
-        if (p && *p) do {
+    if (p && *p) do {
             if (ISSLASH(*p))
                 *p = SLASH;
         } while (*p++);
-    }
+}
 #endif
-    if (slashed)
-        SlashDir(Expand);
-    return 0;
+if (slashed)
+    SlashDir(Expand);
+return 0;
 #endif
 #if PATHTYPE == PT_UNIXISH
-    char Name2[MAXPATH];
-    char *path, *p;
+char Name2[MAXPATH];
+char *path, *p;
 
-    strlcpy(Name, Path, sizeof(Name));
-    switch (Name[0]) {
-    case SLASH:
-        break;
-    case '~':
-        if (Name[1] == SLASH || Name[1] == 0) {
-            path = Name + 1;
-            strlcpy(Name2, getenv("HOME"), sizeof(Name2));
+strlcpy(Name, Path, sizeof(Name));
+switch (Name[0]) {
+case SLASH:
+    break;
+case '~':
+    if (Name[1] == SLASH || Name[1] == 0) {
+        path = Name + 1;
+        strlcpy(Name2, getenv("HOME"), sizeof(Name2));
+    } else {
+        struct passwd *pwd;
+
+        p = Name;
+        p++;
+        while (*p && (*p != SLASH)) p++;
+        if (*p == SLASH) {
+            path = p + 1;
+            *p = 0;
         } else {
-            struct passwd *pwd;
-
-            p = Name;
-            p++;
-            while (*p && (*p != SLASH)) p++;
-            if (*p == SLASH) {
-                path = p + 1;
-                *p = 0;
-            } else {
-                path = p;
-            }
-            pwd = getpwnam(Name + 1);
-            if (pwd == NULL)
-                return -1;
-            strlcpy(Name2, pwd->pw_dir, sizeof(Name2));
+            path = p;
         }
-        if (path[0] != SLASH)
-            Slash(Name2, 1);
-        strlcat(Name2, path, sizeof(Name2));
-        strlcpy(Name, Name2, sizeof(Name));
-        break;
-    default:
-        if (getcwd(Name, MAXPATH) == NULL) return -1;
-        Slash(Name, 1);
-        strlcat(Name, Path, sizeof(Name));
-        break;
+        pwd = getpwnam(Name + 1);
+        if (pwd == NULL)
+            return -1;
+        strlcpy(Name2, pwd->pw_dir, sizeof(Name2));
     }
-    return RemoveDots(Name, Expand);
+    if (path[0] != SLASH)
+        Slash(Name2, 1);
+    strlcat(Name2, path, sizeof(Name2));
+    strlcpy(Name, Name2, sizeof(Name));
+    break;
+default:
+    if (getcwd(Name, MAXPATH) == NULL) return -1;
+    Slash(Name, 1);
+    strlcat(Name, Path, sizeof(Name));
+    break;
+}
+return RemoveDots(Name, Expand);
 #endif
 }
 

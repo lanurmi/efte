@@ -73,22 +73,22 @@ menu HTML_Table {
 }
 
 menu HTML_Colors {
-    item    "&Black  " { "#000000" InsertString }
-    item    "Bl&ue   " { "#0000ff" InsertString }
-    item    "&Cyan   " { "#00ffff" InsertString }
-    item    "&Gray   " { "#808080" InsertString }
-    item    "Gr&een  " { "#008000" InsertString }
-    item    "&Lime   " { "#00ff00" InsertString }
-    item    "&Magenta" { "#ff00ff" InsertString }
-    item    "M&aroon " { "#800000" InsertString }
-    item    "&Navy   " { "#000080" InsertString }
-    item    "&Olive  " { "#808000" InsertString }
-    item    "&Purple " { "#800080" InsertString }
-    item    "&Red    " { "#ff0000" InsertString }
-    item    "&Silver " { "#c0c0c0" InsertString }
-    item    "&Teal   " { "#008080" InsertString }
-    item    "&White  " { "#ffffff" InsertString }
-    item    "&Yellow " { "#ffff00" InsertString }
+    item    "&Black  " { InsertString "#000000" }
+    item    "Bl&ue   " { InsertString "#0000ff" }
+    item    "&Cyan   " { InsertString "#00ffff" }
+    item    "&Gray   " { InsertString "#808080" }
+    item    "Gr&een  " { InsertString "#008000" }
+    item    "&Lime   " { InsertString "#00ff00" }
+    item    "&Magenta" { InsertString "#ff00ff" }
+    item    "M&aroon " { InsertString "#800000" }
+    item    "&Navy   " { InsertString "#000080" }
+    item    "&Olive  " { InsertString "#808000" }
+    item    "&Purple " { InsertString "#800080" }
+    item    "&Red    " { InsertString "#ff0000" }
+    item    "&Silver " { InsertString "#c0c0c0" }
+    item    "&Teal   " { InsertString "#008080" }
+    item    "&White  " { InsertString "#ffffff" }
+    item    "&Yellow " { InsertString "#ffff00" }
 }
 
 menu HTML_Blocks {
@@ -184,12 +184,16 @@ menu HTMLTags {
 }
 
 menu HTMLTools {
-    item "&View in Browser\tF9" { FileSave HTML_View }
+    item "&View in Browser\tF9" { FileSave; HTML_View }
     item "Save and &Tidy" {
-        FileSave HTML_Tidy; FileReload }
+        FileSave; HTML_Tidy; FileReload; }
+    item "Save and &ISpell" {
+        FileSave;
+        RunProgram "E:\\ISPELL40\\ispell.exe " . $FilePath;
+        FileReload; }
     item;
-    item "&Shell\tAlt+F9" { "sh" RunProgram}
-    item "&Run...\tCtrl+F9" { "" RunProgram }
+    item "&Shell\tAlt+F9" { RunProgram "" }
+    item "&Run...\tCtrl+F9" { RunProgram }
     item;
     item "&Previous error\tF11" { CompilePrevError }
     item "&Next error\tF12" { CompileNextError }
@@ -214,5 +218,5 @@ menu Main_HTML {
 eventmap HTML {
     MainMenu            = "Main_HTML";   # menu for menubar
     
-    key [A+M] { "M" MainMenu }
+    key [A+M] { MainMenu 'M' }
 }

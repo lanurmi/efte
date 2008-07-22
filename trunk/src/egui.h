@@ -1,6 +1,5 @@
 /*    egui.h
  *
- *    Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
  *    Copyright (c) 1994-1996, Marko Macek
  *
  *    You may distribute under the terms of either the GNU General Public
@@ -13,15 +12,6 @@
 
 #include "gui.h"
 #include "c_bind.h"  // KeySel
-
-// Words for firescript
-#include "w_execute.h"
-#include "w_memory.h"
-#include "w_misc.h"
-#include "w_number.h"
-#include "w_string.h"
-
-void SetBranchCondition(int cond);
 
 class EEventMap;
 class EKeyMap;
@@ -52,7 +42,6 @@ public:
 
     virtual int ExecCommand(GxView *view, int Command, ExState &State);
     virtual int ExecMacro(GxView *view, int Macro);
-    virtual int ExecMacro(GxView *view, const char *name);
     virtual int BeginMacro(GxView *view);
 
     void SetMsg(char *Msg);
@@ -64,10 +53,6 @@ public:
     void DispatchCommand(GxView *view, TEvent &Event);
 
     virtual void DispatchEvent(GFrame *frame, GView *view, TEvent &Event);
-
-    int Diag(ExState &State);
-    int Execute(ExState &State, GxView *view);
-    int ExecuteCommand(ExState &State, GxView *view);
 
     int FileCloseX(EView *View, int CreateNew, int XClose = 0);
     int FileClose(EView *View, ExState &State);

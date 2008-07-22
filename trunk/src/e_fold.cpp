@@ -1,6 +1,5 @@
 /*    e_fold.cpp
  *
- *    Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
  *    Copyright (c) 1994-1996, Marko Macek
  *
  *    You may distribute under the terms of either the GNU General Public
@@ -198,7 +197,7 @@ int EBuffer::FoldCreate(int Line) { /*FOLD00*/
     return 1;
 }
 
-int EBuffer::FoldCreateByRegexp(const char *Regexp) {
+int EBuffer::FoldCreateByRegexp(char *Regexp) { /*FOLD00*/
     RxNode *R;
     int err = 1;
 

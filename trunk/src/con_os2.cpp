@@ -1,6 +1,5 @@
 /*    con_os2.cpp
  *
- *    Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
  *    Copyright (c) 1994-1998, Marko Macek
  *
  *    You may distribute under the terms of either the GNU General Public
@@ -1121,7 +1120,7 @@ int GUI::ClosePipe(int id) {
     return Pipes[id].RetCode;
 }
 
-int GUI::RunProgram(int mode, const char *Command) {
+int GUI::RunProgram(int mode, char *Command) {
     int rc, W, H, W1, H1;
 
     ConQuerySize(&W, &H);

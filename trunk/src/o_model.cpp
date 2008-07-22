@@ -1,6 +1,5 @@
 /*    o_model.cpp
  *
- *    Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
  *    Copyright (c) 1994-1996, Marko Macek
  *
  *    You may distribute under the terms of either the GNU General Public
@@ -195,4 +194,16 @@ void EModel::UpdateTitle() {
         V->MView->Win->UpdateTitle(Title, STitle);
         V = V->NextView;
     }
+}
+
+int EModel::GetStrVar(int var, char *str, int buflen) {
+    switch (var) {
+    case mvCurDirectory:
+        return GetDefaultDirectory(this, str, buflen);
+    }
+    return 0;
+}
+
+int EModel::GetIntVar(int /*var*/, int * /*value*/) {
+    return 0;
 }

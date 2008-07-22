@@ -1,18 +1,8 @@
-/*
- * e_mark.cpp
- *
- * Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
- *
- * You may distribute under the terms of either the GNU General Public
- * License or the Artistic License, as specified in the README file.
- *
- */
-
 #include "fte.h"
 
 EMarkIndex markIndex;
 
-EMark::EMark(const char *aName, char *aFileName, EPoint aPoint, EBuffer *aBuffer) {
+EMark::EMark(char *aName, char *aFileName, EPoint aPoint, EBuffer *aBuffer) {
     Name = new char[strlen(aName) + 1];
     FileName = new char[strlen(aFileName) + 1];
     Buffer = 0;
@@ -88,7 +78,7 @@ EMarkIndex::~EMarkIndex() {
     }
 }
 
-EMark *EMarkIndex::insert(const char *aName, char *aFileName, EPoint aPoint, EBuffer *aBuffer) {
+EMark *EMarkIndex::insert(char *aName, char *aFileName, EPoint aPoint, EBuffer *aBuffer) {
     int L = 0, R = markCount, M, cmp;
 
     assert(aName != 0 && aName[0] != 0);
@@ -121,7 +111,7 @@ EMark *EMarkIndex::insert(const char *aName, char *aFileName, EPoint aPoint, EBu
     return m;
 }
 
-EMark *EMarkIndex::insert(const char *aName, EBuffer *aBuffer, EPoint aPoint) {
+EMark *EMarkIndex::insert(char *aName, EBuffer *aBuffer, EPoint aPoint) {
     assert(aName != 0 && aName[0] != 0);
     assert(aBuffer != 0);
     assert(aBuffer->FileName != 0);

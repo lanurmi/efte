@@ -1,10 +1,9 @@
-OBJS = \
-w_execute.$(OEXT) \
-w_memory.$(OEXT) \
-w_misc.$(OEXT) \
-w_number.$(OEXT) \
-w_string.$(OEXT) \
+CFTE_OBJS = \
 cfte.$(OEXT) \
+s_files.$(OEXT) \
+s_string.$(OEXT)
+
+OBJS = \
 indent.$(OEXT) \
 e_mark.$(OEXT) \
 o_modemap.$(OEXT) \
@@ -36,6 +35,7 @@ g_menu.$(OEXT) \
 h_ada.$(OEXT) \
 h_c.$(OEXT) \
 h_falcon.$(OEXT) \
+h_fte.$(OEXT) \
 h_ipf.$(OEXT) \
 h_make.$(OEXT) \
 h_pascal.$(OEXT) \
@@ -71,7 +71,6 @@ o_svn.$(OEXT) \
 o_svndiff.$(OEXT) \
 s_files.$(OEXT) \
 s_direct.$(OEXT) \
-u_stack.$(OEXT) \
 s_util.$(OEXT) \
 s_string.$(OEXT) \
 view.$(OEXT) \

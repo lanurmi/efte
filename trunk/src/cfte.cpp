@@ -1,6 +1,5 @@
 /*    cfte.cpp
  *
- *    Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
  *    Copyright (c) 1994-1997, Marko Macek
  *
  *    You may distribute under the terms of either the GNU General Public
@@ -18,37 +17,49 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#include "fte.h"
-
-#include "config.h"
+#include "ftever.h"
+#include "sysdep.h"
+#include "c_fconfig.h"
+#include "s_files.h"
+#include "s_string.h"
+#include "c_mode.h"
+#include "console.h"
+#include "c_hilit.h"
 
 #define slen(s) ((s) ? (strlen(s) + 1) : 0)
-#define ACTION "[%-11s] "
-
-Stack CondStack;
 
 typedef struct {
     char *Name;
-    char *FileName;
-    int LineNo;
-} DefinedMacro;
+} ExMacro;
 
-// Cached objects
-CachedObject cache[CACHE_SIZE];
+static unsigned int CMacros = 0;
+static ExMacro *Macros = 0;
 
-// Cached index (also acts as count)
-unsigned int cpos = 0;
-
-static unsigned int CCFteMacros = 0;
-static DefinedMacro *CFteMacros = 0;
-
+static FILE *output = 0;
 static int lntotal = 0;
+static long offset = -1;
 static long pos = 0;
+static char XTarget[MAXPATH] = "";
+static char StartDir[MAXPATH] = "";
+static bool preprocess_only = false;
 
 #include "c_commands.h"
 #include "c_cmdtab.h"
 
+typedef struct _CurPos {
+    int sz;
+    char *a;
+    char *c;
+    char *z;
+    int line;
+    const char *name; // filename
+} CurPos;
+
 static void cleanup(int xerrno) {
+    if (output)
+        fclose(output);
+    if (XTarget[0] != 0)
+        unlink(XTarget);
     exit(xerrno);
 }
 
@@ -61,28 +72,32 @@ static void Fail(CurPos &cp, const char *s, ...) {
     va_end(ap);
 
     fprintf(stderr, "%s:%d: Error: %s\n", cp.name, cp.line, msgbuf);
-    fprintf(stderr, "Use: efte -! -l%i %s to repair error\n", cp.line, cp.name);
     cleanup(1);
 }
 
 static int LoadFile(const char *WhereName, const char *CfgName, int Level = 1, int optional = 0);
+static void DefineWord(const char *w);
 
 static void PutObject(CurPos &cp, int xtag, int xlen, void *obj) {
     unsigned char tag = (unsigned char)xtag;
     unsigned short len = (unsigned short)xlen;
+    unsigned char l[2];
 
-    cache[cpos].tag = tag;
-    cache[cpos].len = len;
-    cache[cpos].obj = 0;
-    if (obj != 0) {
-        cache[cpos].obj = malloc(len);
-        memcpy(cache[cpos].obj, obj, len);
+    if (preprocess_only == false) {
+
+        l[0] = len & 0xFF;
+        l[1] = (len >> 8) & 0xFF;
+
+        if (fwrite(&tag, 1, 1, output) != 1 ||
+                fwrite(l, 2, 1, output) != 1 ||
+                fwrite(obj, 1, len, output) != len) {
+            Fail(cp, "Disk full!");
+        }
     }
-    cpos++;
-
-    if (cpos >= CACHE_SIZE)
-        Fail(cp, "Cache exceeded");
     pos += 1 + 2 + len;
+    if (offset != -1 && pos >= offset) {
+        Fail(cp, "Error location found at %ld", pos);
+    }
 }
 
 static void PutNull(CurPos &cp, int xtag) {
@@ -104,7 +119,23 @@ static void PutNumber(CurPos &cp, int xtag, long num) {
     PutObject(cp, xtag, 4, b);
 }
 
-int CFteMain() {
+int main(int argc, char **argv) {
+    char Source[MAXPATH];
+    char Target[MAXPATH];
+    unsigned char b[4];
+    unsigned long l;
+    int n = 0;
+
+    fprintf(stderr, PROG_CFTE " " VERSION "\n" COPYRIGHT "\n");
+    if (argc < 2 || argc > 5) {
+        fprintf(stderr, "Usage: " PROG_CFTE " [-o<offset>] [-p[reprocess]] "
+#ifndef UNIX
+                "config/"
+#endif
+                "main.fte [efte-new.cnf]\n");
+        exit(1);
+    }
+
     DefineWord("OS_"
 #if defined(OS2)
                "OS2"
@@ -115,19 +146,150 @@ int CFteMain() {
 #endif
               );
 
-    CurPos cp;
-    cp.sz = 0;
-    cp.c = 0;
-    cp.a = cp.c = 0;
-    cp.z = cp.a + cp.sz;
-    cp.line = 0;
-    cp.name = "<cfte-start>";
+    // setup defaults
+    strcpy(Source, "");
+    strcpy(Target, "efte-new.cnf");
+    preprocess_only = false;
+    offset = -1;
 
-    if (LoadFile("", ConfigFileName, 0) != 0) {
+    // parse arguments
+    for (int i = 1; i < argc; i++) {
+        if (argv[i][0] == '-') {
+            if ((strcmp(argv[i], "-p") == 0) || (strcmp(argv[i], "-preprocess") == 0)) {
+                preprocess_only = true;
+            } else
+                if (strncmp(argv[i], "-o", 2) == 0) {
+                    char *p;
+
+                    p = argv[i];
+                    p += 2;
+                    offset = atol(p);
+                } else {
+                    fprintf(stderr, "Invalid option '%s'\n", argv[i]);
+                    exit(1);
+                }
+        } else {
+            switch (n) {
+            case 0:
+                strlcpy(Source, argv[i], sizeof(Source));
+                break;
+
+            case 1:
+                strlcpy(Target, argv[i], sizeof(Target));
+                break;
+
+            default:
+                fprintf(stderr, "Invalid option '%s'\n", argv[i]);
+                exit(1);
+            }
+            n++;
+        }
+    }
+
+    if (n == 0) {
+        fprintf(stderr, "No configuration file specified\n");
+        exit(1);
+    }
+
+    JustDirectory(Target, XTarget, sizeof(XTarget));
+    Slash(XTarget, 1);
+
+    if (preprocess_only == false) {
+        sprintf(XTarget + strlen(XTarget), "cefte%ld.tmp", (long)getpid());
+        output = fopen(XTarget, "wb");
+        if (output == 0) {
+            fprintf(stderr, "Cannot create '%s', errno=%d!\n", XTarget, errno);
+            cleanup(1);
+        }
+
+        b[0] = b[1] = b[2] = b[3] = 0;
+
+        if (fwrite(b, sizeof(b), 1, output) != 1) {
+            fprintf(stderr, "Disk full!");
+            cleanup(1);
+        }
+
+        l = VERNUM;
+
+        b[0] = (unsigned char)(l & 0xFF);
+        b[1] = (unsigned char)((l >> 8) & 0xFF);
+        b[2] = (unsigned char)((l >> 16) & 0xFF);
+        b[3] = (unsigned char)((l >> 24) & 0xFF);
+
+        if (fwrite(b, 4, 1, output) != 1) {
+            fprintf(stderr, "Disk full!");
+            cleanup(1);
+        }
+        pos = 2 * 4;
+
+        fprintf(stderr, "Compiling to '%s'\n", Target);
+    } else {
+        pos = 2 * 4;
+    }
+    /*{
+        char PrevDir[MAXPATH];
+        sprintf(PrevDir, "%s/..", Target);
+        ExpandPath(PrevDir, StartDir);
+        Slash(StartDir, 1);
+    }*/
+
+    ExpandPath("."
+#ifdef UNIX
+               "."
+#endif
+               , StartDir, sizeof(StartDir));
+    Slash(StartDir, 1);
+
+    if (preprocess_only == false) {
+        CurPos cp;
+        char FSource[MAXPATH];
+
+        if (ExpandPath(Source, FSource, sizeof(FSource)) != 0) {
+            fprintf(stderr, "Could not expand path %s\n", Source);
+            exit(1);
+        }
+
+        cp.sz = 0;
+        cp.c = 0;
+        cp.a = cp.c = 0;
+        cp.z = cp.a + cp.sz;
+        cp.line = 0;
+        cp.name = "<cfte-start>";
+
+        PutString(cp, CF_STRING, FSource);
+    }
+
+    if (LoadFile(StartDir, Source, 0) != 0) {
         fprintf(stderr, "\nCompile failed\n");
         cleanup(1);
     }
 
+    if (preprocess_only == true) {
+        return 0;
+    }
+
+    l = CONFIG_ID;
+    b[0] = (unsigned char)(l & 0xFF);
+    b[1] = (unsigned char)((l >> 8) & 0xFF);
+    b[2] = (unsigned char)((l >> 16) & 0xFF);
+    b[3] = (unsigned char)((l >> 24) & 0xFF);
+    fseek(output, 0, SEEK_SET);
+    fwrite(b, 4, 1, output);
+    fclose(output);
+
+    if (unlink(Target) != 0 && errno != ENOENT) {
+        fprintf(stderr, "Remove of '%s' failed, result left in %s, errno=%d\n",
+                Target, XTarget, errno);
+        exit(1);
+    }
+
+    if (rename(XTarget, Target) != 0) {
+        fprintf(stderr, "Rename of '%s' to '%s' failed, errno=%d\n",
+                XTarget, Target, errno);
+        exit(1);
+    }
+
+    fprintf(stderr, "\nDone.\n");
     return 0;
 }
 
@@ -329,9 +491,10 @@ static int Lookup(const OrdLookup *where, char *what) {
     int i;
 
     for (i = 0; where[i].Name != 0; i++) {
-        if (stricmp(what, where[i].Name) == 0)
+        if (strcmp(what, where[i].Name) == 0)
             return where[i].num;
     }
+//    fprintf(stderr, "\nBad name: %s (i = %d)\n", what, i);
     return -1;
 }
 
@@ -339,7 +502,7 @@ static int Lookup(const OrdLookup *where, char *what) {
 #define P_SYNTAX        1  // unknown
 #define P_WORD          2  // a-zA-Z_
 #define P_NUMBER        3  // 0-9
-#define P_STRING        4  // "`/
+#define P_STRING        4  // "'`
 #define P_ASSIGN        5  // =
 #define P_EOS           6  // ;
 #define P_KEYSPEC       7  // []
@@ -348,7 +511,8 @@ static int Lookup(const OrdLookup *where, char *what) {
 #define P_COLON        10  // :
 #define P_COMMA        11  // ,
 #define P_QUEST        12
-#define P_CHAR         13  // '
+#define P_VARIABLE     13  // $
+#define P_DOT          14  // . (concat)
 
 #define K_UNKNOWN       0
 #define K_MODE          1
@@ -375,24 +539,6 @@ static int Lookup(const OrdLookup *where, char *what) {
 #define K_CVSIGNRX     22
 #define K_SVNIGNRX     23
 #define K_OINCLUDE     24   // Optional include, i.e. do not fail if it does not exist.
-
-enum {
-    COND_IF = 1,
-    COND_ELSE,
-    COND_ENDIF,
-    COND_BEGIN,
-    COND_WHILE,
-    COND_REPEAT,
-    COND_UNTIL,
-    COND_AGAIN,
-    COND_DO,
-    COND_LOOP,
-    COND_PLUSLOOP,
-    COND_MINLOOP,
-    COND_LEAVE,
-    COND_VECTOR,
-    COND_ENDVECTOR
-};
 
 typedef char Word[64];
 
@@ -424,22 +570,19 @@ static const OrdLookup CfgKW[] = {
     { 0, 0 },
 };
 
-static const OrdLookup ConditionalKW[] = {
-    { "If", COND_IF },
-    { "Else", COND_ELSE },
-    { "EndIf", COND_ENDIF },
-    { "Begin",COND_BEGIN },
-    { "While",COND_WHILE },
-    { "Repeat",COND_REPEAT },
-    { "Until",COND_UNTIL },
-    { "Again",COND_AGAIN },
-    { "Do",COND_DO },
-    { "Loop",COND_LOOP },
-    { "+Loop",COND_PLUSLOOP },
-    { "-Loop",COND_MINLOOP },
-    { "Leave", COND_LEAVE },
-    { "Vector", COND_VECTOR },
-    { "EndVector", COND_ENDVECTOR },
+static const OrdLookup CfgVar[] = {
+    { "FilePath", mvFilePath },
+    { "FileName", mvFileName },
+    { "FileDirectory", mvFileDirectory },
+    { "FileBaseName", mvFileBaseName },
+    { "FileExtension", mvFileExtension },
+    { "CurDirectory", mvCurDirectory },
+    { "CurRow", mvCurRow, },
+    { "CurCol", mvCurCol },
+    { "Char", mvChar },
+    { "Word", mvWord },
+    { "Line", mvLine },
+    { "FTEVer", mvFTEVer },
     { 0, 0 },
 };
 
@@ -455,13 +598,10 @@ static int DefinedWord(const char *w) {
     return 0;
 }
 
-void DefineWord(const char *w) {
+static void DefineWord(const char *w) {
     if (!w || !w[0])
         return ;
     if (!DefinedWord(w)) {
-        if (memory[verbosity] > 0) {
-            fprintf(stderr, ACTION "%s\n", "define", w);
-        }
         words = (char **)realloc(words, sizeof(char *) * (wordCount + 1));
         assert(words != 0);
         words[wordCount] = strdup(w);
@@ -530,27 +670,23 @@ static char *GetColor(CurPos &cp, char *name) {
     return name;
 }
 
-// A-Za-z0-9!$%&*+,-./0-9<?@|~\^
-#define VALIDWORD(c) ((c >= '!' && c <= '~') && \
-    c != '(' && c != ')' && c != '{' && c != '}' && c != ';' && c != ':' )
-
 static int GetWord(CurPos &cp, char *w) {
     char *p = w;
     int len = 0;
 
-    while (len < int(sizeof(Word)) && cp.c < cp.z && VALIDWORD(*cp.c))
-    {
+    while (len < int(sizeof(Word)) && cp.c < cp.z &&
+            ((*cp.c >= 'a' && *cp.c <= 'z') ||
+             (*cp.c >= 'A' && *cp.c <= 'Z') ||
+             (*cp.c >= '0' && *cp.c <= '9') ||
+             (*cp.c == '_'))) {
         *p++ = *cp.c++;
         len++;
     }
-
-    if (len == sizeof(Word))
-        return -1;
-
+    if (len == sizeof(Word)) return -1;
     *p = 0;
-
     return 0;
 }
+
 
 static int Parse(CurPos &cp) {
     while (cp.c < cp.z) {
@@ -578,10 +714,12 @@ static int Parse(CurPos &cp) {
             return P_COMMA;
         case ':':
             return P_COLON;
+        case '.':
+            return P_DOT;
         case '\'':
-            return P_CHAR;
         case '"':
         case '`':
+        case '/':
             return P_STRING;
         case '[':
             return P_KEYSPEC;
@@ -591,6 +729,10 @@ static int Parse(CurPos &cp) {
             return P_CLOSEBRACE;
         case '?':
             return P_QUEST;
+        case '$':
+            return P_VARIABLE;
+        case '-':
+        case '+':
         case '0':
         case '1':
         case '2':
@@ -603,9 +745,9 @@ static int Parse(CurPos &cp) {
         case '9':
             return P_NUMBER;
         default:
-            if ((*cp.c == '-' || *cp.c == '+') && cp.c[1] >= '0' && cp.c[1] <= '9')
-                return P_NUMBER;
-            else if VALIDWORD(*cp.c)
+            if ((*cp.c >= 'a' && *cp.c <= 'z') ||
+                    (*cp.c >= 'A' && *cp.c <= 'Z') ||
+                    (*cp.c == '_'))
                 return P_WORD;
             else
                 return P_SYNTAX;
@@ -623,6 +765,8 @@ static void GetOp(CurPos &cp, int what) {
     case P_EOS:
     case P_COLON:
     case P_QUEST:
+    case P_VARIABLE:
+    case P_DOT:
         cp.c++;
         break;
     }
@@ -639,7 +783,7 @@ static char *GetString(CurPos &cp) {
     cp.c++; // skip '"`
     while (cp.c < cp.z) {
         if (*cp.c == '\\') {
-            if (c == '`')
+            if (c == '/')
                 *p++ = *cp.c;
             cp.c++;
             if (cp.c == cp.z) return 0;
@@ -714,128 +858,51 @@ static int GetNumber(CurPos &cp) {
     return neg ? -value : value;
 }
 
-static int CFteCmdNum(const char *Cmd) {
+static int CmdNum(const char *Cmd) {
     unsigned int i;
 
-    if (Cmd == NULL)
-        return 0;
-
-    for (i = 0; i < sizeof(Command_Table) / sizeof(Command_Table[0]); i++) {
-        if (stricmp(Cmd, Command_Table[i].Name) == 0)
+    for (i = 0;
+            i < sizeof(Command_Table) / sizeof(Command_Table[0]);
+            i++)
+        if (strcmp(Cmd, Command_Table[i].Name) == 0)
             return Command_Table[i].CmdId;
-    }
-
-    for (i = 0; i < CCFteMacros; i++) {
-        if (CFteMacros[i].Name && (stricmp(Cmd, CFteMacros[i].Name)) == 0)
+    for (i = 0; i < CMacros; i++)
+        if (Macros[i].Name && (strcmp(Cmd, Macros[i].Name)) == 0)
             return i | CMD_EXT;
-    }
-
     return 0; // Nop
 }
 
-int NewCommand(CurPos &cp, const char *Name) {
+int NewCommand(const char *Name) {
     if (Name == 0)
         Name = "";
-    CFteMacros = (DefinedMacro *) realloc(CFteMacros, sizeof(DefinedMacro) * (1 + CCFteMacros));
-    CFteMacros[CCFteMacros].Name = strdup(Name);
-    CFteMacros[CCFteMacros].FileName = strdup(cp.name);
-    CFteMacros[CCFteMacros].LineNo = cp.line;
-    CCFteMacros++;
-    return CCFteMacros - 1;
-}
-
-
-int CondStackPairedWith(int flowstatement) {
-    return (CondStack.pop() == flowstatement) ;
-}
-
-void CFteCompileCommand(CurPos cp, int Command, long cnt, int ign)  {
-    PutNumber(cp, CF_COMMAND, Command);
-    PutNumber(cp, CF_INT, cnt);
-    PutNumber(cp, CF_INT, ign);
-}
-
-
-int CompileConditionalBranch(CurPos &cp, int to) {
-    int where=cpos;
-    CFteCompileCommand(cp,ExConditionalBranch,to,1);
-    return where;
-}
-
-int CompileUnconditionalBranch(CurPos &cp, int to) {
-    int where=cpos;
-    CFteCompileCommand(cp,ExUnconditionalBranch,to,1);
-    return where;
-}
-
-static void UpdateNumber(int index, long num) {
-    unsigned long l = num;
-    unsigned char b[4];
-    b[0] = (unsigned char)(l & 0xFF);
-    b[1] = (unsigned char)((l >> 8) & 0xFF);
-    b[2] = (unsigned char)((l >> 16) & 0xFF);
-    b[3] = (unsigned char)((l >> 24) & 0xFF);
-    if (cache[index].obj != 0)
-        free(cache[index].obj);
-    cache[index].obj = malloc(4);
-    memcpy(cache[index].obj, b, 4);
-}
-
-// run through the currently compiled macro in cache, determine the branch offset by counting the (variable sized) macro element
-// returns branch offset, which can be negative. this is determined by the order of compilation position.
-long int BranchOffset(int pos1, int pos2) {
- //   fprintf(stderr,"cefte/Branchoffset: calculated offset between %d and %d: ",pos1, pos2);
-    int branchoffset=0;
-    int sign=1;
-    if (pos1 > pos2) {
-        pos1 ^= pos2;
-        pos2 ^= pos1;
-        pos1 ^= pos2;
-        sign=-1;
-    }
-    while (pos1 < pos2) {
-       if (cache[pos1].tag == CF_COMMAND) {
-          pos1 += 2; // Skip the next two items
-       }
-       pos1++;
-       branchoffset++;
-    }
- //   fprintf(stderr,"%d\n",branchoffset*sign);
-    return branchoffset*sign;
+    Macros = (ExMacro *) realloc(Macros, sizeof(ExMacro) * (1 + CMacros));
+    Macros[CMacros].Name = strdup(Name);
+    CMacros++;
+    return CMacros - 1;
 }
 
 static int ParseCommands(CurPos &cp, char *Name) {
+    //if (!Name)
+    //    return 0;
     Word cmd;
-    unsigned int branchaddress;
     int p;
+    long Cmd = NewCommand(Name) | CMD_EXT;
+
     long cnt;
     long ign = 0;
 
-    long Cmd = CFteCmdNum(Name);
-
-    if (Cmd != 0) {
-        if ((Cmd & CMD_EXT) == 0) {
-            Fail(cp, "%s is an internal command and cannot be redefined\n", Name);
-        } else {
-            Fail(cp, "%s has already been defined in: %s:%i", Name, CFteMacros[Cmd^CMD_EXT].FileName,
-                 CFteMacros[Cmd^CMD_EXT].LineNo);
-        }
-    }
-
-    Cmd = NewCommand(cp, Name) | CMD_EXT;
-
-    CondStack.init();
     PutNumber(cp, CF_INT, Cmd);
     GetOp(cp, P_OPENBRACE);
     cnt = 1;
-    int i;
-
     while (1) {
         p = Parse(cp);
         if (p == P_CLOSEBRACE) break;
         if (p == P_EOF) Fail(cp, "Unexpected EOF");
 
-        if (p == P_NUMBER) {
+        if (p == P_DOT) {
+            GetOp(cp, P_DOT);
+            PutNull(cp, CF_CONCAT);
+        } else if (p == P_NUMBER) {
             long num = GetNumber(cp);
             if (Parse(cp) != P_COLON) {
                 PutNumber(cp, CF_INT, num);
@@ -843,199 +910,37 @@ static int ParseCommands(CurPos &cp, char *Name) {
                 cnt = num;
                 GetOp(cp, P_COLON);
             }
-
         } else if (p == P_WORD) {
             long Command;
 
             if (GetWord(cp, cmd) == -1) Fail(cp, "Syntax error");
-            Command = CFteCmdNum(cmd);
-            if (Command != 0) {
-                CFteCompileCommand(cp, Command, cnt, ign);
-            } else {
-                Command = Lookup(ConditionalKW, cmd);
-                if (Command == -1) {
-                    CFteCompileCommand(cp, ExFail, 1, 0);
-                    fprintf(stderr,"Unrecognized command: %s at %s:%i\n", cmd, cp.name, cp.line);
-                    // Fail(cp, "Unrecognized command: %s", cmd);
-                }
-
-                // ---------------------------------- flow control compiling statements -------------------------------
-                int endif_paired;
-
-                switch(Command) {
-
-                case COND_IF:
-//                    EGUI::ExecCommand(view, ExDiag, State);
-//                   EGUI::ExecCommand(view, ExDiag, State);
-                    CondStack.push(CompileConditionalBranch(cp,0));
-                    CondStack.push(COND_IF);                                                // allow test for proper nesting
-                    break;
-
-                case COND_ELSE:
-                    if (CondStackPairedWith(COND_IF)) {
-                        branchaddress=CondStack.pop();
-                        UpdateNumber(branchaddress+1,BranchOffset(branchaddress,cpos));     // resolve the branch, compiled by IF
-                    } else {
-                        Fail(cp, "Unstructured: Else without If");
-                    }
-                    CondStack.push(CompileUnconditionalBranch(cp,0));                       // compile a branch to ENDIF (to be resolved by ENDIF)
-                    CondStack.push(COND_ELSE);                                              // allow test for proper nesting
-                    break;
-
-                case COND_ENDIF:
-                    CondStack.dup();
-                    endif_paired = (CondStackPairedWith(COND_IF) | CondStackPairedWith(COND_ELSE));
-                    if (endif_paired)  {
-                        branchaddress=CondStack.pop();
-                        UpdateNumber(branchaddress+1,BranchOffset(branchaddress,cpos)-1);   // resolve the branch, compiled by IF or ELSE
-                    } else {
-                        Fail(cp, "Unstructured: EndIf without If or Else");
-                    }
-                    break;
-
-
-                case COND_BEGIN:
-                    CondStack.push(cpos);
-                    CondStack.push(COND_BEGIN);                                             // allow test for proper nesting
-                    break;
-
-
-                case COND_UNTIL:
-                        if (CondStackPairedWith(COND_BEGIN)) {
-                            branchaddress=CondStack.pop();
-                            CompileConditionalBranch(cp,BranchOffset(cpos,branchaddress)-1);    // compile a branch to BEGIN
-                        } else {
-                            Fail(cp, "Unstructured: Until without Begin");
-                        }
-                        break;
-
-
-                case COND_AGAIN:
-                    if (CondStackPairedWith(COND_BEGIN)) {
-                        branchaddress=CondStack.pop();
-                        CompileUnconditionalBranch(cp,BranchOffset(cpos,branchaddress)-1);    // compile a branch to BEGIN
-                    } else {
-                        Fail(cp, "Unstructured: Again without Begin");
-                    }
-                    break;
-
-
-                case COND_WHILE:                                                            // while is almost identical to an IF
-                    if (!CondStackPairedWith(COND_BEGIN)) {
-                        Fail(cp, "Unstructured: While without Begin");
-                    }
-                    CondStack.push(CompileConditionalBranch(cp,0));                         // compile a branch to REPEAT (to be resolved by REPEAT)
-                    CondStack.push(COND_WHILE);                                             // allow test for proper nesting
-                    break;
-
-
-                case COND_REPEAT:
-                    if (CondStackPairedWith(COND_WHILE)) {
-                        branchaddress=CondStack.pop();
-                        UpdateNumber(branchaddress+1,BranchOffset(branchaddress,cpos));   // resolve the branch, compiled by WHILE:
-                        branchaddress=CondStack.pop();
-                        CompileUnconditionalBranch(cp,BranchOffset(cpos,branchaddress)-1);  // compile a branch back to BEGIN
-                    } else {
-                        Fail(cp, "Unstructured: Repeat without While");
-                    }
-                    break;
-
-
-                case COND_DO:
-                    CondStack.push(cpos);
-                    CondStack.push(COND_DO);                                              // allow test for proper nesting
-                    CFteCompileCommand(cp,ExDoRuntime,0,1);
-                    break;
-
-
-                case COND_LOOP:
-                    if (CondStackPairedWith(COND_DO)) {
-                        branchaddress=CondStack.pop();
-                        CFteCompileCommand(cp,ExLoopRuntime,BranchOffset(cpos,branchaddress),1);  // LOOP back to (behind) DO
-                        UpdateNumber(branchaddress+1,BranchOffset(branchaddress,cpos)-1);   // resolve DO forward ref
-                    } else {
-                        Fail(cp, "Unstructured: Loop without Do");
-                    }
-                    break;
-
-
-                case COND_PLUSLOOP:
-                    if (CondStackPairedWith(COND_DO)) {
-                        branchaddress=CondStack.pop();
-                        CFteCompileCommand(cp,ExPlusLoopRuntime,BranchOffset(cpos,branchaddress),1);  // LOOP back to (behind) DO
-                        UpdateNumber(branchaddress+1,BranchOffset(branchaddress,cpos)-1);   // resolve DO forward ref
-                    } else {
-                        Fail(cp, "Unstructured: PlusLoop without Do");
-                    }
-                    break;
-
-                case COND_MINLOOP:
-                    if (CondStackPairedWith(COND_DO)) {
-                        branchaddress=CondStack.pop();
-                        CFteCompileCommand(cp,ExMinLoopRuntime,BranchOffset(cpos,branchaddress),1);  // LOOP back to (behind) DO
-                        UpdateNumber(branchaddress+1,BranchOffset(branchaddress,cpos)-1);   // resolve DO forward ref
-                    } else {
-                        Fail(cp, "Unstructured: MinLoop without Do");
-                    }
-                    break;
-
-
-                case COND_LEAVE:
-                    i = 0;
-                    while (i < CondStack.size()) {
-                        if (CondStack.peek(i) == COND_DO) {
-                            branchaddress=CondStack.peek(i+1);
-                            CFteCompileCommand(cp,ExLeaveRuntime,BranchOffset(cpos,branchaddress),1);
-                            i=-1;
-                            break;
-                        }
-                        i += 2;
-                    }
-                    if (i >= 0)
-                        Fail(cp, "Unstructured: Leave without Do");
-                    break;
-
-
-
-                case COND_VECTOR:
-                    CondStack.push(cpos);
-                    CondStack.push(COND_VECTOR);
-                    CFteCompileCommand(cp,ExVectorRuntime,0,1);
-                    break;
-
-
-                case COND_ENDVECTOR:
-                    if (CondStackPairedWith(COND_VECTOR)) {
-                        branchaddress=CondStack.pop();
-                        UpdateNumber(branchaddress+1,BranchOffset(branchaddress,cpos)-2);
-                    } else {
-                        Fail(cp, "Unstructured: EndVector without Vector");
-                    }
-                    break;
-
-                    // ----------------------------------------------------------------------------------------------------
-                }
-
-                ign = 0;
-            }
+            Command = CmdNum(cmd);
+            if (Command == 0)
+                Fail(cp, "Unrecognised command: %s", cmd);
+            PutNumber(cp, CF_COMMAND, Command);
+            PutNumber(cp, CF_INT, cnt);
+            PutNumber(cp, CF_INT, ign);
+            ign = 0;
             cnt = 1;
         } else if (p == P_STRING) {
             char *s = GetString(cp);
             PutString(cp, CF_STRING, s);
-        } else if (p == P_CHAR) {
-            char *s = GetString(cp);
-            PutNumber(cp, CF_INT, s[0]);
         } else if (p == P_QUEST) {
             ign = 1;
             GetOp(cp, P_QUEST);
+        } else if (p == P_VARIABLE) {
+            GetOp(cp, P_VARIABLE);
+            if (Parse(cp) != P_WORD) Fail(cp, "Syntax error (variable name expected)");
+            Word w;
+            if (GetWord(cp, w) != 0) Fail(cp, "Syntax error (bad variable name)");
+            long var = Lookup(CfgVar, w);
+            if (var == -1) Fail(cp, "Unrecognised variable");
+            PutNumber(cp, CF_VARIABLE, var);
         } else if (p == P_EOS) {
             GetOp(cp, P_EOS);
             cnt = 1;
         } else
             Fail(cp, "Syntax error");
-    }
-    if (CondStack.size()) {
-        Fail(cp, "Unstructured: unfinished structure(s)");
     }
     GetOp(cp, P_CLOSEBRACE);
     return 0;
@@ -1594,7 +1499,6 @@ static int ParseConfigFile(CurPos &cp) {
                     case P_STRING: {
                         long var;
 
-
                         s = GetString(cp);
                         if (s == 0) Fail(cp, "Parse failed");
                         var = Lookup(mode_string, w);
@@ -1802,8 +1706,6 @@ static int ParseConfigFile(CurPos &cp) {
                 if (Parse(cp) != P_STRING) Fail(cp, "String expected");
                 fn = GetString(cp);
 
-                if (memory[verbosity] > 0)
-                    fprintf(stderr, ACTION "%s... ", "include", fn);
                 if (LoadFile(cp.name, fn) != 0) Fail(cp, "Include of file '%s' failed", fn);
                 if (Parse(cp) != P_EOS) Fail(cp, "';' expected");
                 GetOp(cp, P_EOS);
@@ -1815,16 +1717,10 @@ static int ParseConfigFile(CurPos &cp) {
                 if (Parse(cp) != P_STRING) Fail(cp, "String expected");
                 fn = GetString(cp);
 
-                if (memory[verbosity] > 1)
-                    fprintf(stderr, ACTION "%s... ", "opt include", fn);
                 if (LoadFile(cp.name, fn, 1, 1) != 0) {
-                    if (memory[verbosity] > 1)
-                        fprintf(stderr, "not found\n");
                     GetOp(cp, P_EOS);
                     continue; // This is an optional include
                 }
-                if (memory[verbosity] == 1)
-                    fprintf(stderr, ACTION "%s... found: %s\n", "opt include", fn, cp.name);
                 if (Parse(cp) != P_EOS)
                     Fail(cp, "';' expected");
                 GetOp(cp, P_EOS);
@@ -1883,11 +1779,19 @@ static int PreprocessConfigFile(CurPos &cp) {
                     //printf("define '%s'\n", w);
                     DefineWord(w);
                     if (cp.c < cp.z && *cp.c != ',' && *cp.c != ')')
-                        Fail(cp, "unexpected: '%c'", cp.c[0]);
+                        Fail(cp, "unexpected: %c", cp.c[0]);
                     if (cp.c < cp.z && *cp.c == ',')
                         cp.c++;
                 }
                 cp.c++;
+                /*            } else if (cp.c + 6 && strcmp(cp.c, "undef(", 6) == 0) {
+                                Word w;
+                                cp.c += 6;
+
+                                while (cp.c < cp.z && *cp.c != ')') {
+                                    GetWord(cp, w);
+                                    UndefWord(w);
+                                }*/
             } else if (cp.c + 4 < cp.z && strncmp(cp.c, "%if(", 4) == 0) {
                 Word w;
                 int wasWord = 0;
@@ -1904,9 +1808,13 @@ static int PreprocessConfigFile(CurPos &cp) {
                         wasWord = 1;
                     if (neg)
                         wasWord = wasWord ? 0 : 1;
+                    /*if (wasWord)
+                        printf("yes '%s'\n", w);
+                    else
+                        printf("not '%s'\n", w);*/
 
                     if (cp.c < cp.z && *cp.c != ',' && *cp.c != ')')
-                        Fail(cp, "unexpected: '%c'", cp.c[0]);
+                        Fail(cp, "unexpected: %c", cp.c[0]);
                     if (cp.c < cp.z && *cp.c == ',')
                         cp.c++;
                 }
@@ -1971,77 +1879,39 @@ static int PreprocessConfigFile(CurPos &cp) {
     return 0;
 }
 
-int ProcessConfigFile(char *filename, char *buffer, int Level) {
-    CurPos cp;
-
-    cp.sz = strlen(buffer);
-    cp.a = cp.c = buffer;
-    cp.z = cp.a + cp.sz;
-    cp.line = 1;
-    cp.name = filename;
-
-    // preprocess configuration file
-    int rc = PreprocessConfigFile(cp);
-    if (rc == -1) {
-        Fail(cp, "Preprocess failed");
-    }
-
-    // reset pointers
-    cp.a = cp.c = buffer;
-    cp.z = cp.a + cp.sz;
-    cp.line = 1;
-
-    rc = ParseConfigFile(cp);
-
-    // puts("End Loading file");
-    if (Level == 0)
-        PutNull(cp, CF_EOF);
-
-    if (rc == -1) {
-        Fail(cp, "Parse failed");
-    }
-
-    if (strcmp(filename, "built-in") != 0)
-        free(buffer);
-
-    return rc;
-}
-
 static int LoadFile(const char *WhereName, const char *CfgName, int Level, int optional) {
-    int fd;
+    int fd, rc;
     char *buffer = 0;
     struct stat statbuf;
+    CurPos cp;
     char last[MAXPATH];
     char Cfg[MAXPATH];
+
+    //fprintf(stderr, "Loading file %s %s\n", WhereName, CfgName);
 
     JustDirectory(WhereName, last, sizeof(last));
 
     if (IsFullPath(CfgName)) {
         strlcpy(Cfg, CfgName, sizeof(Cfg));
     } else {
-#if PATHTYPE == PT_UNIXISH
-#       define SEARCH_PATH_LEN 5
-        char dirs[SEARCH_PATH_LEN][MAXPATH];
-
-        snprintf(dirs[0],  MAXPATH, "~/.efte/%s", CfgName);
-        snprintf(dirs[1],  MAXPATH, "%s/share/efte/local/%s", EFTE_INSTALL_DIR, CfgName);
-        snprintf(dirs[2],  MAXPATH, "/etc/efte/local/%s", CfgName);
-        snprintf(dirs[3],  MAXPATH, "%s/share/efte/config/%s", EFTE_INSTALL_DIR, CfgName);
-        snprintf(dirs[4],  MAXPATH, "/etc/efte/config/%s", CfgName);
-#else // if PT_UNIXISH
-#       define SEARCH_PATH_LEN 8
-        char dirs[SEARCH_PATH_LEN][MAXPATH];
-        snprintf(dirs[0],  MAXPATH, "~/.efte/%s", CfgName);
-        snprintf(dirs[1],  MAXPATH, "~/efte/%s", CfgName);
-        snprintf(dirs[2],  MAXPATH, "/efte/local/%s", CfgName);
-        snprintf(dirs[3],  MAXPATH, "/efte/config/%s", CfgName);
-        snprintf(dirs[4],  MAXPATH, "/Program Files/efte/local/%s", CfgName);
-        snprintf(dirs[5],  MAXPATH, "/Program Files/efte/config/%s", CfgName);
-        snprintf(dirs[6],  MAXPATH, "/Program Files (x86)/efte/local/%s", CfgName);
-        snprintf(dirs[7],  MAXPATH, "/Program Files (x86)/efte/config/%s", CfgName);
-#endif // if PT_UNIXISH
-
+#ifdef UNIX
+#define SEARCH_PATH_LEN 13
         char tmp[MAXPATH];
+        char dirs[SEARCH_PATH_LEN][MAXPATH];
+        snprintf(dirs[0],  MAXPATH, "%s", CfgName);
+        snprintf(dirs[1],  MAXPATH, "./config/%s", CfgName);
+        snprintf(dirs[2],  MAXPATH, "~/.efte/%s", CfgName);
+        snprintf(dirs[3],  MAXPATH, "/etc/efte/local/%s", CfgName);
+        snprintf(dirs[4],  MAXPATH, "/usr/share/efte/local/%s", CfgName);
+        snprintf(dirs[5],  MAXPATH, "/opt/share/efte/local/%s", CfgName);
+        snprintf(dirs[6],  MAXPATH, "/usr/local/share/efte/local/%s", CfgName);
+        snprintf(dirs[7],  MAXPATH, "/opt/local/share/efte/local/%s", CfgName);
+        snprintf(dirs[8],  MAXPATH, "/etc/efte/config/%s", CfgName);
+        snprintf(dirs[9],  MAXPATH, "/usr/share/efte/config/%s", CfgName);
+        snprintf(dirs[10], MAXPATH, "/opt/share/efte/config/%s", CfgName);
+        snprintf(dirs[11], MAXPATH, "/usr/local/share/efte/config/%s", CfgName);
+        snprintf(dirs[12], MAXPATH, "/opt/local/share/efte/config/%s", CfgName);
+
         bool found = false;
 
         for (int idx=0; idx<SEARCH_PATH_LEN; idx++) {
@@ -2058,15 +1928,20 @@ static int LoadFile(const char *WhereName, const char *CfgName, int Level, int o
         else if (found == false) {
             fprintf(stderr, "Cannot find '%s' in any of the following locations:\n", CfgName);
             for (int idx=0; idx<SEARCH_PATH_LEN; idx++) {
-                ExpandPath(dirs[idx], tmp, sizeof(tmp));
+                snprintf(tmp, MAXPATH, dirs[idx], CfgName);
                 fprintf(stderr, "   %s\n", tmp);
             }
             return -1;
         }
+#else // UNIX
+        SlashDir(last);
+        strlcat(last, CfgName, sizeof(last));
+        ExpandPath(last, Cfg, sizeof(Cfg));
+#endif // UNIX
     }
-    if (memory[verbosity] > optional) // optional = 0/1
-        fprintf(stderr, "found: %s\n", Cfg);
+    // puts(Cfg);
 
+    //fprintf(stderr, "Loading file %s\n", Cfg);
     if ((fd = open(Cfg, O_RDONLY | O_BINARY)) == -1) {
         if (!optional)
             fprintf(stderr, "Cannot open '%s', errno=%d\n", Cfg, errno);
@@ -2093,5 +1968,35 @@ static int LoadFile(const char *WhereName, const char *CfgName, int Level, int o
     }
     close(fd);
 
-    return ProcessConfigFile(Cfg, buffer, Level);
+    cp.sz = statbuf.st_size;
+    cp.a = cp.c = buffer;
+    cp.z = cp.a + cp.sz;
+    cp.line = 1;
+    cp.name = Cfg;
+
+    // preprocess configuration file
+    rc = PreprocessConfigFile(cp);
+    if (rc == -1) {
+        Fail(cp, "Preprocess failed");
+    }
+
+    if (preprocess_only == true) {
+        printf("%s", cp.a);
+    }
+
+    // reset pointers
+    cp.a = cp.c = buffer;
+    cp.z = cp.a + cp.sz;
+    cp.line = 1;
+
+    rc = ParseConfigFile(cp);
+    // puts("End Loading file");
+    if (Level == 0)
+        PutNull(cp, CF_EOF);
+
+    if (rc == -1) {
+        Fail(cp, "Parse failed");
+    }
+    free(buffer);
+    return rc;
 }

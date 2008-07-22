@@ -1,6 +1,5 @@
 /*    e_undo.cpp
  *
- *    Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
  *    Copyright (c) 1994-1996, Marko Macek
  *
  *    You may distribute under the terms of either the GNU General Public
@@ -72,7 +71,7 @@ int EBuffer::PushUData(void *data, int len) {
     int N;
     int Order = 1;
 
-    //printf("UPUSH: %d %c\n", len, *(char *)data); fflush(stdout);
+//    printf("UPUSH: %d %c\n", len, *(char *)data); fflush(stdout);
 
     if (BFI(this, BFI_Undo) == 0) return 0;
     if (US.Record == 0) return 1;
@@ -98,9 +97,11 @@ int EBuffer::PushUData(void *data, int len) {
         US.Top[N] = 0;
         if (US.NextCmd == 1) {
             US.NextCmd = 0;
+//            puts("\x7");
             if (PushULong(CP.Col) == 0) return 0;
             if (PushULong(CP.Row) == 0) return 0;
             if (PushUChar(ucPosition) == 0) return 0;
+//            puts("\x7");
         }
         US.NextCmd = 0;
     }
@@ -136,25 +137,23 @@ int EBuffer::GetUData(int No, int pos, void **data, int len) {
 
     if (pos == 0)
         return 0;
-    //printf("N,pos = %d,%d len = %d\n", N, pos, len);
+//    printf("N,pos = %d,%d len = %d\n", N, pos, len);
 
     assert(pos >= len);
     *data = ((char *) US.Data[N]) + pos - len;
     return 1;
 }
 
-// TODO: void *d is dangerous, this needs fixed!
 #define UGETC(rc,no,pos,what) \
-    do { void *d = 0; \
-    if ((rc = GetUData(no, pos, &d, sizeof(unsigned char)))) \
+    do { void *d; \
+    rc = GetUData(no, pos, &d, sizeof(unsigned char)); \
     *(unsigned char *)&what = *(unsigned char *)d; \
     pos -= sizeof(unsigned char); \
     } while (0)
 
-// TODO: void *d is dangerous, this needs fixed!
 #define UGET(rc,no,pos,what) \
-    do { void *d = 0; \
-    if ((rc = GetUData(no, pos, &d, sizeof(what)))) \
+    do { void *d; \
+    rc = GetUData(no, pos, &d, sizeof(what)); \
     memcpy((void *)&what, d, sizeof(what)); \
     pos -= sizeof(what); \
     } while (0)
@@ -181,15 +180,28 @@ int EBuffer::Undo(int undo) {
 
     Pos = US.Top[No];
 
-    if (No == 0 && Pos == 0)
+    if (No == 0 && Pos == 0) {
+        //puts("bottom");
         return 0;
+    }
+//    for (int i = 0; i < Pos; i++) {
+//        printf("%d: %d\n", i, ((char *)US.Data[No])[i]);
+//    }
 
+//    printf("Undo %d %d,%d\n", undo, No, Pos); fflush(stdout);
+
+//    fprintf(stderr, "\nNo = %d, Num = %d\n", No, US.Num);
     UGETC(rc, No, Pos, UndoCmd);
     while (rc == 1) {
+//        printf("%d Undo %d %d,%d\n", UndoCmd, undo, No, Pos); fflush(stdout);
+        //  for (int i = 0; i < Pos; i++) {
+//        printf("%d: %d\n", i, ((char *)US.Data[No])[i]);
+//    }
         switch (UndoCmd) {
         case ucInsLine:
             UGET(rc, No, Pos, Line);
             if (rc == 0) return 0;
+//            printf("\tDelLine %d\n", Line);
             if (DelLine(Line) == 0) return 0;
             break;
 
@@ -199,7 +211,9 @@ int EBuffer::Undo(int undo) {
             UGET(rc, No, Pos, Len);
             if (rc == 0) return 0;
             if (GetUData(No, Pos, &data, Len) == 0) return 0;
+//            printf("\tInsLine %d\n", Line);
             if (InsLine(Line, 0) == 0) return 0;
+//            printf("\tInsText %d - %d\n", Line, Len);
             if (InsText(Line, 0, Len, (char *) data) == 0) return 0;
             Pos -= Len;
             break;
@@ -211,6 +225,7 @@ int EBuffer::Undo(int undo) {
             if (rc == 0) return 0;
             UGET(rc, No, Pos, Line);
             if (rc == 0) return 0;
+//            printf("\tDelChars %d %d %d\n", Line, Col, ACount);
             if (DelChars(Line, Col, ACount) == 0) return 0;
             break;
 
@@ -222,6 +237,7 @@ int EBuffer::Undo(int undo) {
             UGET(rc, No, Pos, ACount);
             if (rc == 0) return 0;
             if (GetUData(No, Pos, &data, ACount) == 0) return 0;
+//            printf("\tInsChars %d %d %d\n", Line, Col, ACount);
             if (InsChars(Line, Col, ACount, (char *) data) == 0) return 0;
             Pos -= ACount;
             break;
@@ -231,6 +247,7 @@ int EBuffer::Undo(int undo) {
             if (rc == 0) return 0;
             UGET(rc, No, Pos, Col);
             if (rc == 0) return 0;
+//            printf("\tSetPos %d %d\n", Line, Col);
             if (SetPos(Col, Line) == 0) return 0;
             break;
 
@@ -238,6 +255,7 @@ int EBuffer::Undo(int undo) {
             EPoint P;
             unsigned long l;
 
+//                printf("\tBlock\n");
             UGET(rc, No, Pos, l);
             if (rc == 0) return 0;
             if (BlockMode != (int)l) BlockRedraw();
@@ -260,12 +278,14 @@ int EBuffer::Undo(int undo) {
         break;
 
         case ucFoldCreate:
+            // puts("ucFoldCreate");
             UGET(rc, No, Pos, Line);
             if (rc == 0) return 0;
             if (FoldDestroy(Line) == 0) return 0;
             break;
 
         case ucFoldDestroy:
+            // puts("ucFoldDestroy");
         {
             unsigned long level;
             int ff;
@@ -282,34 +302,40 @@ int EBuffer::Undo(int undo) {
         }
         break;
         case ucFoldPromote:
+            // puts("ucFoldPromote");
             UGET(rc, No, Pos, Line);
             if (rc == 0) return 0;
             if (FoldDemote(Line) == 0) return 0;
             break;
 
         case ucFoldDemote:
+            // puts("ucFoldDemote");
             UGET(rc, No, Pos, Line);
             if (rc == 0) return 0;
             if (FoldPromote(Line) == 0) return 0;
             break;
 
         case ucFoldOpen:
+            // puts("ucFoldOpen");
             UGET(rc, No, Pos, Line);
             if (rc == 0) return 0;
             if (FoldClose(Line) == 0) return 0;
             break;
 
         case ucFoldClose:
+            // puts("ucFoldClose");
             UGET(rc, No, Pos, Line);
             if (rc == 0) return 0;
             if (FoldOpen(Line) == 0) return 0;
             break;
 
         case ucModified:
+//            printf("\tModified\n");
             Modified = 0;
             break;
 
         case ucPlaceUserBookmark:
+            //puts ("ucPlaceUserBookmark");
             UGET(rc, No, Pos, ACount);
             if (rc == 0) return 0;
             if (GetUData(No, Pos, &data, ACount) == 0) return 0;
@@ -326,6 +352,7 @@ int EBuffer::Undo(int undo) {
             break;
 
         case ucRemoveUserBookmark:
+            //puts("ucRemoveUserBookmark");
             UGET(rc, No, Pos, ACount);
             if (rc == 0) return 0;
             if (GetUData(No, Pos, &data, ACount) == 0) return 0;
@@ -340,6 +367,9 @@ int EBuffer::Undo(int undo) {
         default:
             assert(1 == "Oops: invalid undo command.\n"[0]);
         }
+//        puts("\tok");
+
+//        fprintf(stderr, "\nNo = %d, Num = %d\n", No, US.Num);
         UGETC(rc, No, Pos, UndoCmd);
     }
 

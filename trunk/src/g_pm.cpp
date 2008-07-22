@@ -1,6 +1,5 @@
 /*    g_pm.cpp
  *
- *    Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
  *    Copyright (c) 1994-1996, Marko Macek
  *
  *    You may distribute under the terms of either the GNU General Public
@@ -692,7 +691,7 @@ int DLGPickChoice(GView *View, const char *ATitle, int NSel, va_list ap, int Fla
     choice.Title = (char *)ATitle;
     choice.NSel = NSel;
 #if defined(__WATCOMC__)
-    choice.ap[0] = ap[0];
+    memcpy(&choice.ap, &ap, sizeof(choice.ap));
 #else
     choice.ap = ap;
 #endif
@@ -3475,7 +3474,7 @@ int GUI::ShowEntryScreen() {
     return 1;
 }
 
-int GUI::RunProgram(int mode, const char *Command) {
+int GUI::RunProgram(int mode, char *Command) {
     char FailBuf[256];
     char *Args;
     char *Prog;
@@ -3502,16 +3501,13 @@ int GUI::RunProgram(int mode, const char *Command) {
 
     {
         STARTDATA sd;
-        char Command_copy[256];
-        if(Command)
-            strlcpy(Command_copy, Command, strlen(Command));
 
         memset((void *)&sd, 0, sizeof(sd));
         sd.Length = sizeof(sd);
         sd.Related = SSF_RELATED_INDEPENDENT;
         sd.FgBg = SSF_FGBG_FORE;
         sd.TraceOpt = SSF_TRACEOPT_NONE;
-        sd.PgmTitle = (Command && Command[0] != 0) ? Command_copy : 0;
+        sd.PgmTitle = (Command && Command[0] != 0) ? Command : 0;
         sd.PgmName = Prog;
         sd.PgmInputs = Args;
         sd.TermQ = 0;

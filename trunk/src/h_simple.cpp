@@ -1,6 +1,5 @@
 /*    h_simple.cpp
  *
- *    Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
  *    Copyright (c) 1994-1996, Marko Macek
  *
  *    You may distribute under the terms of either the GNU General Public
@@ -23,8 +22,8 @@ int Hilit_SIMPLE(EBuffer *BF, int LN, PCell B, int Pos, int Width, ELine *Line, 
     int nextState;
     char *match;
     int lastPos = -1;
-    hlState entryState = 0;
-    int iterCount = 0;
+    hlState entryState;
+    int iterCount;
     bool reportError = true;
 
     if (hm == 0 || hm->stateCount == 0)

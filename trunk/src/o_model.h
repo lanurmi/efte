@@ -1,6 +1,5 @@
 /*    o_model.h
  *
- *    Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
  *    Copyright (c) 1994-1996, Marko Macek
  *
  *    You may distribute under the terms of either the GNU General Public
@@ -80,6 +79,9 @@ public:
     virtual int CanQuit();
     virtual int ConfQuit(GxView *V, int multiFile = 0);
 
+    virtual int GetStrVar(int var, char *str, int buflen);
+    virtual int GetIntVar(int var, int *value);
+
     virtual void NotifyPipe(int PipeId);
 
     virtual void NotifyDelete(EModel *Deleting);
@@ -111,7 +113,6 @@ public:
     virtual int GetContext();
     virtual EEventMap *GetEventMap();
     virtual int BeginMacro();
-    int ExecMacro(const char *name);
     virtual int ExecCommand(int Command, ExState &State);
 
     virtual void HandleEvent(TEvent &Event);
@@ -135,12 +136,13 @@ public:
     int ShowKey(ExState &State);
     int ViewBuffers(ExState &State);
     int ViewRoutines(ExState &State);
-    int AskCompiler(ExState &State);
+    int Compile(ExState &State);
     int RunCompiler(ExState &State);
     int Compile(char *Command);
     int ViewMessages(ExState &State);
     int CompilePrevError(ExState &State);
     int CompileNextError(ExState &State);
+    int ConfigRecompile(ExState &State);
     int Cvs(ExState &State);
     int RunCvs(ExState &State);
     int ViewCvs(ExState &State);
@@ -168,7 +170,7 @@ public:
     int SvnCommit(char *Options);
     int ViewSvnLog(ExState &State);
     int DirOpen(ExState &State);
-    int OpenDir(const char *Directory);
+    int OpenDir(char *Directory);
     int ShowVersion();
     int ViewModeMap(ExState &State);
     int ClearMessages();
@@ -181,6 +183,9 @@ public:
 
     void DeleteModel(EModel *M);
     int CanQuit();
+
+    int GetStrVar(int var, char *str, int buflen);
+    int GetIntVar(int var, int *value);
 };
 
 extern EModel *ActiveModel;

@@ -1,6 +1,5 @@
 /*    o_list.cpp
  *
- *    Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
  *    Copyright (c) 1994-1996, Marko Macek
  *
  *    You may distribute under the terms of either the GNU General Public
@@ -103,103 +102,80 @@ void EListPort::HandleEvent(TEvent &Event) {
     }
 }
 
-
-
-
 void EListPort::HandleMouse(TEvent &Event) {
-    int x, y, xx, yy, W, H;
+    int W, H;
+    int x, y, xx, yy;
+
     View->MView->ConQuerySize(&W, &H);
 
     x = Event.Mouse.X;
     y = Event.Mouse.Y;
-    xx = x + LeftCol;
     yy = y + TopRow;
+    xx = x + LeftCol;
+//    if (yy >= Selected) yy = Window->Buffer->VCount - 1;
     if (yy < 0) yy = 0;
     if (xx < 0) xx = 0;
 
-    memory[mouseeventtype] = Event.What;
-    int eventtype = Event.What & (evMouseUp|evMouseDown);
-    if (eventtype) {
-        memory[mousex] = xx;
-        memory[mousey] = yy;
-        memory[mousexrelative] = x;
-        memory[mouseyrelative] = y;
-        memory[mousewinsizex] = W;
-        memory[mousewinsizey] = H;
-        memory[mouseeventcounter]++;
-        memory[mousebutton] = Event.Mouse.Buttons;
-        if (eventtype & evMouseDown) {
-            View->ExecMacro("OnMouseDown");
-        } else {
-            View->ExecMacro("OnMouseUp");
-        }
-    }
+    switch (Event.What) {
+    case evMouseDown:
+        if (Event.Mouse.Y == H - 1)
+            break;
+        if (View->MView->Win->CaptureMouse(1))
+            View->MView->MouseCaptured = 1;
+        else
+            break;
 
-    if (memory[mouseeventtype]) {
-
-        switch (Event.What) {
-
-        case evMouseDown:
-            if (Event.Mouse.Y == H - 1)
-                break;
-            if (View->MView->Win->CaptureMouse(1))
-                View->MView->MouseCaptured = 1;
-            else
-                break;
-
-            if (Event.Mouse.Buttons == 1) {
-                if (yy < List->Count && yy >= 0) {
-                    List->SetPos(yy, LeftCol);
-                    if (Event.Mouse.Count == 2) {
-                        if (List->CanActivate(List->Row)) {
-                            View->MView->Win->CaptureMouse(0);
-                            if (List->Activate() == 1) {
-                                //View->MView->EndExec(1);
-                            }
+        if (Event.Mouse.Buttons == 1)
+            if (yy < List->Count && yy >= 0) {
+                List->SetPos(yy, LeftCol);
+                if (Event.Mouse.Count == 2) {
+                    if (List->CanActivate(List->Row)) {
+                        View->MView->Win->CaptureMouse(0);
+                        if (List->Activate() == 1) {
+                            //View->MView->EndExec(1);
                         }
                     }
                 }
             }
-
-            if (Event.Mouse.Buttons == 2)
-                if (yy < List->Count && yy >= 0)
-                    List->SetPos(yy, LeftCol);
-            Event.What = evNone;
-            break;
-
-
-        case evMouseUp:
-            if (View->MView->MouseCaptured) {
-                View->MView->Win->CaptureMouse(0);
-
-                EEventMap *Map = View->MView->Win->GetEventMap();
-                const char *MName = 0;
-
+        if (Event.Mouse.Buttons == 2)
+            if (yy < List->Count && yy >= 0)
+                List->SetPos(yy, LeftCol);
+        Event.What = evNone;
+        break;
+    case evMouseAuto:
+    case evMouseMove:
+        if (View->MView->MouseCaptured) {
+            if (Event.Mouse.Buttons == 1 || Event.Mouse.Buttons == 2)
                 if (yy < List->Count && yy >= 0) {
                     List->SetPos(yy, LeftCol);
                 }
-
-                View->MView->MouseCaptured = 0;
-                Event.What = evNone;
-            }
-            break;
-
-
-        case evMouseAuto:
-        case evMouseMove:
-            if (View->MView->MouseCaptured) {
-                if (Event.Mouse.Buttons == 1 || Event.Mouse.Buttons == 2)
-                    if (yy < List->Count && yy >= 0) {
-                        List->SetPos(yy, LeftCol);
-                    }
-                Event.What = evNone;
-            }
-            break;
+            Event.What = evNone;
         }
+        break;
+    case evMouseUp:
+        if (View->MView->MouseCaptured)
+            View->MView->Win->CaptureMouse(0);
+        else
+            break;
+        if (Event.Mouse.Buttons == 2) {
+            EEventMap *Map = View->MView->Win->GetEventMap();
+            const char *MName = 0;
+
+            if (yy < List->Count && yy >= 0) {
+                List->SetPos(yy, LeftCol);
+            }
+
+            if (Map)
+                MName = Map->GetMenu(EM_LocalMenu);
+            if (MName == 0)
+                MName = "Local";
+            View->MView->Win->Parent->PopupMenu(MName);
+        }
+        View->MView->MouseCaptured = 0;
+        Event.What = evNone;
+        break;
     }
 }
-
-
 
 void EListPort::UpdateView() {
     if (OldLeftCol != LeftCol || OldTopRow != TopRow || OldCount != List->Count)
@@ -365,7 +341,6 @@ int EList::ExecCommand(int Command, ExState &State) {
     }
     FixPos();
     switch (Command) {
-
     case ExMoveLeft:
         return MoveLeft();
     case ExMoveRight:
@@ -772,7 +747,3 @@ int EList::ToggleMarkAll() {
     }
     return ErOK;
 }
-
-// int Elist::Skip()  {
-//    NeedsRedraw = 0;
-// }

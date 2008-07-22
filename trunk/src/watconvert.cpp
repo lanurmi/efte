@@ -1,11 +1,6 @@
 /*
  * watconvert.cpp
  *
- * Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
- *
- * You may distribute under the terms of either the GNU General Public
- * License or the Artistic License, as specified in the README file.
- *
  * wmake uses '&' as a line continuation however objs.inc
  * uses '\' so this executable will read in objs.inc, convert
  * the file, and save as objs.mif for use by wmake

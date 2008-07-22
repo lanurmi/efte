@@ -1,6 +1,5 @@
 /*    o_directory.cpp
  *
- *    Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
  *    Copyright (c) 1994-1996, Marko Macek
  *
  *    You may distribute under the terms of either the GNU General Public
@@ -238,10 +237,11 @@ int EDirectory::ExecCommand(int Command, ExState &State) {
     case ExDirSearchNext:
         // Find next matching file, search is case in-sensitive while sorting is sensitive
         if (SearchLen) {
-            int found = GetMatchForward(Row + 1);
-            if (found != -1) {
-                Row = found;
-                break;
+            for (int i = Row + 1; i < FCount; i++) {
+                if (strnicmp(SearchName, Files[i]->Name(), SearchLen) == 0) {
+                    Row = i;
+                    break;
+                }
             }
         }
         return ErOK;
@@ -249,28 +249,19 @@ int EDirectory::ExecCommand(int Command, ExState &State) {
     case ExDirSearchPrev:
         // Find prev matching file, search is case in-sensitive while sorting is sensitive
         if (SearchLen) {
-            int found = GetMatchBackward(Row - 1);
-            if (found != -1) {
-                Row = found;
-                break;
+            for (int i = Row - 1; i >= 0; i--) {
+                if (strnicmp(SearchName, Files[i]->Name(), SearchLen) == 0) {
+                    Row = i;
+                    break;
+                }
             }
         }
         return ErOK;
 
-    case ExRenameFile:
-        SearchLen = 0;
-        Msg(S_INFO, "");
-        return FmMvFile(Files[Row]->Name());
-
     case ExDeleteFile:
         SearchLen = 0;
         Msg(S_INFO, "");
-        return FmRmFile(Files[Row]->Name());
-
-    case ExMakeDirectory:
-        SearchLen = 0;
-        Msg(S_INFO, "");
-        return FmMkDir();
+        return FmRmDir(Files[Row]->Name());
     }
     return EList::ExecCommand(Command, State);
 }
@@ -287,28 +278,6 @@ int EDirectory::Activate(int No) {
         }
     }
     return 1;
-}
-
-int EDirectory::GetMatchForward(int start) {
-    for (int i = start; i < FCount; i++) {
-        const char *fname = Files[i]->Name();
-        for (int j=0; fname[j]; j++) {
-            if (strnicmp(SearchName, fname + j, SearchLen) == 0)
-                return i;
-        }
-    }
-    return -1;
-}
-
-int EDirectory::GetMatchBackward(int start) {
-    for (int i = start; i > 0; i--) {
-        const char *fname = Files[i]->Name();
-        for (int j=0; fname[j]; j++) {
-            if (strnicmp(SearchName, fname + j, SearchLen) == 0)
-                return i;
-        }
-    }
-    return -1;
 }
 
 void EDirectory::HandleEvent(TEvent &Event) {
@@ -339,8 +308,7 @@ void EDirectory::HandleEvent(TEvent &Event) {
         default:
             resetSearch = 0; // moved here - its better for user
             // otherwice there is no way to find files like i_ascii
-            if (isAscii(Event.Key.Code)  && (SearchLen < MAXISEARCH))
-            {
+            if (isAscii(Event.Key.Code) && (SearchLen < MAXISEARCH)) {
                 char Ch = (char) Event.Key.Code;
                 int Found;
 
@@ -349,11 +317,17 @@ void EDirectory::HandleEvent(TEvent &Event) {
                 SearchPos[SearchLen] = Row;
                 SearchName[SearchLen] = Ch;
                 SearchName[++SearchLen] = 0;
+                Found = 0;
                 LOG << "Comparing " << SearchName << ENDLINE;
-                Found = GetMatchForward();
-                if (Found != -1)
-                    Row = Found;
-                else
+                for (int i = Row; i < FCount; i++) {
+                    LOG << "  to -> " << Files[i]->Name() << ENDLINE;
+                    if (strnicmp(SearchName, Files[i]->Name(), SearchLen) == 0) {
+                        Row = i;
+                        Found = 1;
+                        break;
+                    }
+                }
+                if (Found == 0)
                     SearchName[--SearchLen] = 0;
                 Msg(S_INFO, "Search: [%s]", SearchName);
             }
@@ -416,36 +390,7 @@ int EDirectory::FmChDir(const char *Name) {
     return 1;
 }
 
-int EDirectory::FmMvFile(const char *Name) {
-    char FullName[MAXPATH];
-    char Dir[MAXPATH];
-    char Dir2[MAXPATH];
-
-    strcpy(FullName, Path);
-    Slash(FullName, 1);
-    strcat(FullName, Name);
-
-    strcpy(Dir, Path);
-    if (View->MView->Win->GetStr("New file name", sizeof(Dir), Dir, HIST_PATH) == 0) {
-        FAIL
-    }
-
-    if (ExpandPath(Dir, Dir2, sizeof(Dir2)) == -1) {
-        Msg(S_INFO, "Failed to expand destination %s", Name);
-        FAIL
-    }
-
-    int status = rename(FullName, Dir2);
-    if (status == 0) {
-        RescanDir();
-        SUCCESS
-    }
-    const char *msg = strerror(errno);
-    Msg(S_INFO, "Failed to rename %s: %s", FullName, msg);
-    FAIL
-}
-
-int EDirectory::FmRmFile(char const* Name) {
+int EDirectory::FmRmDir(char const* Name) {
     char FilePath[256];
     strcpy(FilePath, Path);
     Slash(FilePath, 1);
@@ -462,49 +407,16 @@ int EDirectory::FmRmFile(char const* Name) {
             // put the cursor to the previous row
             --Row;
 
-            SetBranchCondition(1);
-
             // There has to be a more efficient way of doing this ...
-            return RescanDir();
-        } else if (rmdir(FilePath) == 0) {
-            --Row;
             return RescanDir();
         } else {
             Msg(S_INFO, "Failed to remove %s", Name);
-            FAIL
+            return 0;
         }
     } else {
         Msg(S_INFO, "Cancelled");
-        FAIL
+        return 0;
     }
-}
-
-int EDirectory::FmMkDir() {
-    char Dir[MAXPATH];
-    char Dir2[MAXPATH];
-
-    strcpy(Dir, Path);
-    if (View->MView->Win->GetStr("New directory name", sizeof(Dir), Dir, HIST_PATH) == 0) {
-        FAIL
-    }
-
-    if (ExpandPath(Dir, Dir2, sizeof(Dir2)) == -1) {
-        Msg(S_INFO, "Failed to create directory, path did not expand");
-        FAIL
-    }
-
-#if defined(MSVC) || defined(BCPP) || defined(WATCOM)
-    int status = mkdir(Dir2);
-#else
-    int status = mkdir(Dir2, 509);
-#endif
-    if (status == 0) {
-        SetBranchCondition(0);
-        return RescanDir();
-    }
-
-    Msg(S_INFO, "Failed to create directory %s", Dir2);
-    FAIL
 }
 
 int EDirectory::FmLoad(const char *Name, EView *XView) {
@@ -571,25 +483,16 @@ void EDirectory::GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen) 
 }
 
 int EDirectory::ChangeDir(ExState &State) {
-    if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow in ChangeDir");
-        FAIL
-    }
-
     char Dir[MAXPATH];
     char Dir2[MAXPATH];
 
-    strcpy(Dir, sstack.back().c_str()); sstack.pop_back();
-
-    if (strlen(Dir) == 0) {
+    if (State.GetStrParam(View, Dir, sizeof(Dir)) == 0) {
         strcpy(Dir, Path);
-        if (View->MView->Win->GetStr("Set directory", sizeof(Dir), Dir, HIST_PATH) == 0) {
-            FAIL
-        }
+        if (View->MView->Win->GetStr("Set directory", sizeof(Dir), Dir, HIST_PATH) == 0)
+            return 0;
     }
-    if (ExpandPath(Dir, Dir2, sizeof(Dir2)) == -1) {
-        FAIL
-    }
+    if (ExpandPath(Dir, Dir2, sizeof(Dir2)) == -1)
+        return 0;
 #if 0
     // is this needed for other systems as well ?
     Slash(Dir2, 1);
@@ -605,11 +508,9 @@ int EDirectory::ChangeDir(ExState &State) {
 int EDirectory::GetContext() {
     return CONTEXT_DIRECTORY;
 }
-
 char *EDirectory::FormatLine(int /*Line*/) {
     return 0;
 }
-
 int EDirectory::CanActivate(int /*Line*/) {
     return 1;
 }

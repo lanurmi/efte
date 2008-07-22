@@ -1,6 +1,5 @@
 /*    c_bind.cpp
  *
- *    Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
  *    Copyright (c) 1994-1996, Marko Macek
  *
  *    You may distribute under the terms of either the GNU General Public
@@ -41,18 +40,17 @@ const char *GetCommandName(int Command) {
     return "?invalid?";
 }
 
-int CmdNum(const char *Cmd) {
+int CmdNum(char *Cmd) {
     int i;
 
-    for (i = 0; i < int(sizeof(Command_Table) / sizeof(Command_Table[0])); i++) {
-        if (stricmp(Cmd, Command_Table[i].Name) == 0)
+    for (i = 0;
+            i < int(sizeof(Command_Table) / sizeof(Command_Table[0]));
+            i++)
+        if (strcmp(Cmd, Command_Table[i].Name) == 0)
             return Command_Table[i].CmdId;
-    }
-
-    for (i = 0; i < CMacros; i++) {
-        if (Macros[i].Name && (stricmp(Cmd, Macros[i].Name)) == 0)
+    for (i = 0; i < CMacros; i++)
+        if (Macros[i].Name && (strcmp(Cmd, Macros[i].Name)) == 0)
             return i | CMD_EXT;
-    }
     return 0; // Nop
 }
 
@@ -120,7 +118,6 @@ EKey *SetKey(EEventMap *aMap, const char *aKey) {
             else {
                 *d = 0;
                 d++;
-
             }
         }
 
@@ -128,31 +125,34 @@ EKey *SetKey(EEventMap *aMap, const char *aKey) {
 
         if (d == 0) {
             k = new EKey(p);
-            if (!(*map)) {
+            if (*map) {
+                (*map)->AddKey(k);
+            } else {
                 *map = new EKeyMap();
                 (*map)->fParent = parent;
+                (*map)->AddKey(k);
             }
-            (*map)->AddKey(k);
             return k;
 
         } else {
             // if introductory key
 
-            if (*map) { // first key in mode, create map
+            if (*map == 0) { // first key in mode, create map
+                //                printf("new map key = %s, parent %d\n", p, parent);
+                k = new EKey(p, 0);
+                *map = new EKeyMap();
+                (*map)->fParent = parent;
+                (*map)->AddKey(k);
+            } else {
                 KeySel ks;
+
                 ParseKey(p, ks);
                 if ((k = (*map)->FindKey(ks.Key)) == 0) { // check if key exists
                     // add it if not
                     k = new EKey(p, 0);
                     (*map)->AddKey(k);
                 }
-            } else {
-                k = new EKey(p, 0);
-                *map = new EKeyMap();
-                (*map)->fParent = parent;
-                (*map)->AddKey(k);
             }
-
             map = &k->fKeyMap; // set current map to key's map
 
             // get parent keymap
@@ -176,47 +176,26 @@ EKey *SetKey(EEventMap *aMap, const char *aKey) {
     return 0;
 }
 
-
-
-// this init logic strikes me as odd and unnecessary.
-//static void InitWordChars() {
-//    static int init = 0;
-//    if (init == 0) {
-//        for (int i = 0; i < 256; i++)
-//            // isalnum???
-//            //if (isdigit(i) || isalpha(i)
-//            //    || (i >= 'A' && i <= 'Z')
-//            //    || (i >= 'a' && i <= 'z') || (i == '_')) {
-//            if (isalnum(i) || (i == '_')) {
-//                WSETBIT(DefaultBufferFlags.WordChars, i, 1);
-//                // Can someone tell me why we check A through Z?
-//                // This won't work should someone port to EBCDIC (why, though?)
-//                // besides, isupper is usually a #define that will compile to something
-//                // even faster.
-//                // if (/*(i >= 'A' && i <= 'Z') || */ isupper(i))
-//                if ( isupper(i))
-//                    WSETBIT(DefaultBufferFlags.CapitalChars, i, 1);
-//            }
-//        init = 1;
-//    }
-//}
-
-
-// sets up a bit flag table, indexed by ascii, indicating {0..9,A..Z,a..z,_} and {A..Z}
-// i think this table must be swapped, if we want to allow strings like "this is /foo/bar/filenname.ext, try to select this"
-// to become word-selectable.
-// TODO: unicode victim
 static void InitWordChars() {
-    for (int i = 0; i < 256; i++)
-        if (isalnum(i) || (i == '_')) {
-            WSETBIT(DefaultBufferFlags.WordChars, i, 1);
-            if (isupper(i))
-                WSETBIT(DefaultBufferFlags.CapitalChars, i, 1);
-        }
+    static int init = 0;
+    if (init == 0) {
+        for (int i = 0; i < 256; i++)
+            // isalnum???
+            //if (isdigit(i) || isalpha(i)
+            //    || (i >= 'A' && i <= 'Z')
+            //    || (i >= 'a' && i <= 'z') || (i == '_')) {
+            if (isalnum(i) || (i == '_')) {
+                WSETBIT(DefaultBufferFlags.WordChars, i, 1);
+                // Can someone tell me why we check A through Z?
+                // This won't work should someone port to EBCDIC (why, though?)
+                // besides, isupper is usually a #define that will compile to something
+                // even faster.
+                if (/*(i >= 'A' && i <= 'Z') || */ isupper(i))
+                    WSETBIT(DefaultBufferFlags.CapitalChars, i, 1);
+            }
+        init = 1;
+    }
 }
-
-
-
 
 void SetWordChars(char *w, const char *s) {
     const char *p;
@@ -342,7 +321,9 @@ static int MatchKey(TKeyCode aKey, KeySel aSel) {
                 key = toupper(key);
     }
     aKey = key | flags;
-    return (aKey == aSel.Key);
+    if (aKey == aSel.Key)
+        return 1;
+    return 0;
 }
 
 EKey *EKeyMap::FindKey(TKeyCode aKey) {
@@ -618,11 +599,12 @@ EAbbrev::~EAbbrev() {
 }
 
 int AddCommand(int no, int Command, int count, int ign) {
+    if (count == 0) return 0;
     if (Command == 0) return 0;
     Macros[no].cmds = (CommandType *)realloc(Macros[no].cmds, sizeof(CommandType) * (Macros[no].Count + 1));
     Macros[no].cmds[Macros[no].Count].type = CT_COMMAND;
     Macros[no].cmds[Macros[no].Count].u.num = Command;
-    Macros[no].cmds[Macros[no].Count].repeat = int(count);
+    Macros[no].cmds[Macros[no].Count].repeat = short(count);
     Macros[no].cmds[Macros[no].Count].ign = short(ign);
     Macros[no].Count++;
     return 1;
@@ -648,6 +630,26 @@ int AddNumber(int no, long number) {
     return 1;
 }
 
+int AddConcat(int no) {
+    Macros[no].cmds = (CommandType *)realloc(Macros[no].cmds, sizeof(CommandType) * (Macros[no].Count + 1));
+    Macros[no].cmds[Macros[no].Count].type = CT_CONCAT;
+    Macros[no].cmds[Macros[no].Count].u.num = 0;
+    Macros[no].cmds[Macros[no].Count].repeat = 0;
+    Macros[no].cmds[Macros[no].Count].ign = 0;
+    Macros[no].Count++;
+    return 1;
+}
+
+int AddVariable(int no, int number) {
+    Macros[no].cmds = (CommandType *)realloc(Macros[no].cmds, sizeof(CommandType) * (Macros[no].Count + 1));
+    Macros[no].cmds[Macros[no].Count].type = CT_VARIABLE;
+    Macros[no].cmds[Macros[no].Count].u.num = number;
+    Macros[no].cmds[Macros[no].Count].repeat = 0;
+    Macros[no].cmds[Macros[no].Count].ign = 0;
+    Macros[no].Count++;
+    return 1;
+}
+
 int NewCommand(const char *Name) {
     Macros = (ExMacro *) realloc(Macros, sizeof(ExMacro) * (1 + CMacros));
     Macros[CMacros].Count = 0;
@@ -656,6 +658,59 @@ int NewCommand(const char *Name) {
     CMacros++;
     return CMacros - 1;
 }
+
+int ExState::GetStrParam(EView *view, char *str, int maxlen) {
+    assert(maxlen >= 0);
+    if (Macro == -1
+            || Pos == -1
+            || Pos >= Macros[Macro].Count)
+        return 0;
+    if (Macros[Macro].cmds[Pos].type == CT_STRING) {
+        if (maxlen > 0) {
+            strncpy(str, Macros[Macro].cmds[Pos].u.string, maxlen);
+            str[maxlen - 1] = 0;
+        }
+        Pos++;
+    } else if (view && Macros[Macro].cmds[Pos].type == CT_VARIABLE) {
+        //puts("variable\x7");
+        if (view->GetStrVar(Macros[Macro].cmds[Pos].u.num, str, maxlen) == 0)
+            return 0;
+        Pos++;
+    } else
+        return 0;
+    if (Pos < Macros[Macro].Count) {
+        if (Macros[Macro].cmds[Pos].type == CT_CONCAT) {
+            Pos++;
+            int len = strlen(str);
+            int left = maxlen - len;
+
+            assert(left >= 0);
+
+            //puts("concat\x7");
+            if (GetStrParam(view, str + len, left) == 0)
+                return 0;
+        }
+    }
+    return 1;
+}
+
+int ExState::GetIntParam(EView *view, int *value) {
+    if (Macro == -1
+            || Pos == -1
+            || Pos >= Macros[Macro].Count)
+        return 0;
+    if (Macros[Macro].cmds[Pos].type == CT_NUMBER) {
+        *value = Macros[Macro].cmds[Pos].u.num;
+        Pos++;
+    } else if (view && Macros[Macro].cmds[Pos].type == CT_VARIABLE) {
+        if (view->GetIntVar(Macros[Macro].cmds[Pos].u.num, value) == 0)
+            return 0;
+        Pos++;
+    } else
+        return 0;
+    return 1;
+}
+
 int HashStr(const char *p, int maxim) {
     unsigned int i = 1;
 

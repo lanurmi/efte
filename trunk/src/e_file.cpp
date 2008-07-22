@@ -1,6 +1,5 @@
 /*    e_file.cpp
  *
- *    Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
  *    Copyright (c) 1994-1996, Marko Macek
  *
  *    You may distribute under the terms of either the GNU General Public
@@ -51,23 +50,20 @@ int FileLoad(int createFlags, const char *FileName, const char *Mode, EView *Vie
 
     if (ExpandPath(FileName, Name, sizeof(Name)) == -1) {
         View->MView->Win->Choice(GPC_ERROR, "Error", 1, "O&K", "Invalid path: %s.", FileName);
-        FAIL
+        return 0;
     }
     B = FindFile(Name);
     if (B) {
         if (Mode != 0)
             B->SetFileName(Name, Mode);
         View->SwitchToModel(B);
-        SUCCESS
+        return 1;
     }
     B = new EBuffer(createFlags, &ActiveModel, Name);
     B->SetFileName(Name, Mode);
-    View->SwitchToModel(B);
 
-    if (View->ExecMacro("OnFileLoad") == 0) {
-        FAIL
-    }
-    SUCCESS
+    View->SwitchToModel(B);
+    return 1;
 }
 
 int MultiFileLoad(int createFlags, const char *FileName, const char *Mode, EView *View) {

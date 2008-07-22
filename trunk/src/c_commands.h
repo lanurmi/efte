@@ -1,6 +1,5 @@
 /*    c_commands.h
  *
- *    Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
  *    Copyright (c) 1994-1996, Marko Macek
  *
  *    You may distribute under the terms of either the GNU General Public
@@ -17,242 +16,27 @@ typedef enum {
 } ExResult;
 
 typedef enum {
-    //!Non macro commands
-    // { decoded in executor loop
     ExNop,
-    //    { accessing macro internals one way or another
-    ExUnconditionalBranch,
-    /// unconditional branch, offset from command repeat count
-    ExConditionalBranch,
-    /// conditional branch, offset from command repeat count
-    ExDoRuntime,
-    /// macro run time code associate with DO
-    ExLoopRuntime,
-    /// macro run time code associate with LOOP
-    ExPlusLoopRuntime,
-    /// macro run time code associate with PLUSLOOP
-    ExMinLoopRuntime,
-    /// macro run time code associate with MINLOOP
-    ExLeaveRuntime,
-    /// macro run time code for breaking out of a loop
-    ExVectorRuntime,
-    /// macro runtime code for Vector
-    ExTimes,
-    /// set repeat counter of next command to top of stack
-    ExUnless,
-    /// skip rest of macro if tos is true
-    ExLest,
-    /// skip rest of macro if tos is false
-    ExWill,
-    /// skip next command in macro if tos is false
-    ExOld,
-    /// excuted by "converted" data structure accessor, to publish data location
-    ExNew,
-    /// converts a sub to a data structure accessor
-    ExDoes,
-    /// seperates instance creation time code from instance run time code, signaling "new" where to find it. used in classes
-    //    }
-    // }
-    //*** START
-
-
-    //!Stack Operations
-    ExDepth,
-    /// Depth of param stack
-    ExExit,
-    /// Exit the macro.
-    ExPlus,
-    /// Add top two stack items.
-    ExMinus,
-    /// Subtract [[Tos]] from [[Nos]].
-    ExMul,
-    /// Multiply top two stack items.
-    ExDiv,
-    /// Divide top two stack items.
-    ExInvert,
-    /// one's complement.
-    ExNegate,
-    /// negate
-    ExNot,
-    /// bool complement
-    ExNotZero,
-    /// convert to bool
-    ExPlusStore,
-    /// add nos to tos
-    ExBetween,
-    /// range check
-    ExStarSlash,
-    /// Scaling operator. multiply first two items, giving a double size intermediate result. divide by third then.
-    ExSlashMod,
-    /// return quotient and remainder
-    ExEquals2,
-    /// compare two number pairs for identity
-    ExMinSigned,
-    /// select smaller of two numbers
-    ExMaxSigned,
-    /// select greater of two numbers
-    ExMinUnsigned,
-    /// select lower of two numbers
-    ExMaxUnsigned,
-    /// select higher of two numbers
-
-    ExRandom,
-    /// generate random number.
-    ExNow,
-    /// seconds since epoche. for time/date calculation
-    ExMilliseconds,
-    /// time stamp, returning milliseconds
-    ExMicroseconds,
-    /// time stamp, returning microseconds
-    ExMs,
-    /// refresh and sleep
-
-    ExAnd,
-    /// And
-    ExOr,
-    /// Or
-    ExXor,
-    /// Xor
-    ExShift,
-    /// logical shift either direction.
-    ExEquals,
-    /// Compare top two stack items for equality.
-    ExLess,
-    /// Compare top two stack items for less than.
-    ExMore,
-    /// Compare top two stack items.
-    ExFlag,
-    /// Reflect condition register in [[Tos]].
     ExFail,
-    /// Return a fail return value
-    ExDup,
-    /// Duplicate top stack item.
-    ExQDup,
-    /// conditionally Duplicate top stack item.
-    ExDrop,
-    /// Remove top stack item.
-    ExSwap,
-    /// Swap top two stack items.
-    ExSwap2,
-    /// Swap topmost two pairs of stack items
-    ExOver,
-    /// Push second from top item to stack.
-    ExRot,
-    /// ( a b c -- b c a )
-    ExMinRot,
-    /// ( a b c -- c a b )
-    ExPick,
-    /// copy stack item, indexed by tos, to tos
-    // -------------------
-    ExToR,
-    /// Move one item from param stack to control stack
-    ExRFrom,
-    /// Move one item from control stack to param stack
-    ExRFetch,
-    /// Duplicate top control stack item to param stack
-    ExI,
-    /// place loop index of innermost loop on stack
-    ExJ,
-    /// place loop index of 2nd loop on stack
-    // -------------------
-    ExDiag,
-    /// Print stack top and conditions to stderr for debugging.
-    ExFetch,
-    /// read memory address at tos, replace against contents
-    ExStore,
-    /// Store nos into into memory at addr tos
-    ExFetch2,
-    /// read number pair from memory address at tos
-    ExStore2,
-    /// Store number pair in  memory at addr tos
-    ExMemEnd,
-    /// Push the memory end to the stack
-    ExHere,
-    /// Push the dictonary pointer to stack (though we don't have a dictionary where the pointer points to...)
-    ExAllot,
-    /// Reserve an amount of memory, by bumping dictionary pointer
 
-    ExToggleConditionDisplay,
-    /// Toggle displaying the condition code in the status bar.
+    //<cmd_cursor> Cursor Movement
 
+    //& <A HREF="modes.html#ms.CursorTroughTabs">CursorTroughTabs</A>
 
-    //!String Stack Commands
-    ExDiagStr,
-    /// Print string stack info
-    ExDupStr,
-    /// Duplicate StrTos
-    ExDropStr,
-    /// Drop top from string stack
-    ExSwapStr,
-    /// Swap StrTos and StrNos
-    ExCompareStr,
-    /// Compare StrTos and StrNos
-    ExOverStr,
-    /// Push a copy of StrNos
-    ExPickStr,
-    /// Pick a copy of the string and push
-    ExDepthStr,
-    /// Push the number of strings on the stack
-    ExSubSearchStr,
-    /// Substring search through stringstack
-    ExAppendStr,
-    /// Appending StrTos onto StrNos
-    ExRotStr,
-    /// Rotate third stack item to top
-    ExLenStr,
-    /// Length of string
-    ExMidStr,
-    /// Get a substring of a string
-    ExGetString,
-    /// Get a string from the user and place onto the string stack
-
-    //!Shared Variables
-    ExVerbosity,
-    /// pushes shared memory address of verbosity variable
-    ExBase,
-    /// radix for number conversion, from and to binary
-    ExAutoTrim,
-    /// migrating TrimToggle to shared vars, for AutoTrim on, off, toggle, @, !
-    ExInsert,
-    /// migrating Insert to shared vars, for insert on, off, toggle, @, !
-    ExStatusline,
-    /// pointer to statusline in shared mem
-    ExBlock,
-    /// return populated block information structure
-    ExMouse,
-    /// return mouse event x, y, type
-
-    //!Cursor Commands
-    ExCursorLeft,
-    /// Move the cursor left.
-    ExCursorRight,
-    /// Move the cursor right.
-    ExCursorUp,
-    /// Simple move up.
-    ExCursorDown,
-    /// Simple move down.
     ExMoveDown,
     /// Move cursor to next line.
-    ///
-    /// See variable: CursorWithinEOL
     ExMoveUp,
     /// Move cursor to previous line
-    //
-    // See variable: CursorWithinEOL
     ExMoveLeft,
     /// Move cursor to previous column.
-    ///
-    /// See variable: CursorWithinEOL
     ExMoveRight,
     /// Move cursor to next column.
-    ///
-    /// See variable: CursorWithinEOL
     ExMovePrev,
-    /// Move cursor to previous character or if the cursor is at the beginning of the line,
-    /// move to the end of the previous line.
+    /// Move cursor to previous character. Moves to end of the previous
+    /// line if cursor is at the beginning of line.
     ExMoveNext,
-    /// Move cursor to next character or if the cursor is at the end of the line, move to
-    /// the beginning of the next line.
+    /// Move cursor to next character. Moves to the beginning of next
+    /// line if cursor is at the end of line.
     ExMoveWordLeft,
     /// Move cursor to the beginning of the word on the left.
     ExMoveWordRight,
@@ -349,31 +133,32 @@ typedef enum {
     ExMoveFoldNext,
     /// Move to the beginning of next fold.
     ExMoveBeginOrNonWhite,
-    /// Move to beginning of line, or to first non blank character.
+    /// Move to beginning of line, or to first non blank character
     ExMoveBeginLinePageFile,
-    /// Move to the beginning of line, if there already, move to the beginning
-    /// page, if there already, move to the beginning of file.
+    /// Move to the beginning of line. If there already, move to the beginning
+    /// page. If there already, move to the beginning of file.
     ExMoveEndLinePageFile,
-    /// Move to the end of line, if there already, move to the end
-    /// page, if there already, move to the end of file.
+    /// Move to the end of line. If there already, move to the end
+    /// page. If there already, move to the end of file.
     ExMoveToLine,
-    /// Move to line number given as argument.
+    /// Move to line number given as argument
     ExMoveToColumn,
-    /// Move to column given as argument.
+    /// Move to column given as argument
     ExMoveSavedPosCol,
-    /// Move to column from saved position.
+    /// Move to column from saved position
     ExMoveSavedPosRow,
-    /// Move to line from saved position.
+    /// Move to line from saved position
     ExMoveSavedPos,
-    /// Move to saved position.
+    /// Move to saved position
     ExSavePos,
-    /// Save current cursor position.
+    /// Save current cursor position
     ExMovePrevPos,
-    /// Move to last cursor position.
+    /// Move to last cursor position
     // ExCursorPush,
     // ExCursorPop,
 
-    //!Deleting Commands
+
+    //<cmd_delete> Deleting Text
     ExKillLine,
     /// Delete current line. If the line is the last line in the file,
     /// only the text is deleted.
@@ -401,20 +186,20 @@ typedef enum {
     /// If block is marked, delete it, otherwise delete character before cursor.
     ExDelete,
     /// Delete character under (after) cursor.
-    ///
-    /// See variable: DeleteKillTab and DeleteKillBlock
+    //& <A HREF="modes.html#ms.DeleteKillTab">DeleteKillTab</A>
+    //& <A HREF="modes.html#ms.DeleteKillBlock">DeleteKillBlock</A>
     ExBackSpace,
     /// Delete character before cursor.
-    ///
-    /// See variable: BackSpKillTab and BackSpKillBlock
+    //& <A HREF="modes.html#ms.BackSpKillTab">BackSpKillTab</A>
+    //& <A HREF="modes.html#ms.BackSpKillBlock">BackSpKillBlock</A>
 
-    //!Line Commands
+    //<cmd_line> Line Commands
     ExLineInsert,
     /// Insert a new line before the current one.
     ExLineAdd,
     /// Add a new line after the current one.
     ExLineSplit,
-    /// Split current line after cursor position.
+    /// Split current line after cursor position
     ExLineJoin,
     /// Join current line with next one. If cursor is positioned beyond
     /// the end of line, the current line is first padded with whitespace.
@@ -427,11 +212,9 @@ typedef enum {
     ExLineDuplicate,
     /// Duplicate the current line.
     ExLineCenter,
-    /// Center the current line.
+    /// Center the current line
 
-    //!Block Commands
-    ExSelectionStr,
-    /// Push the selection onto the string stack
+    //<cmd_block> Block Commands
     ExBlockBegin,
     /// Set block beginning to current position.
     ExBlockEnd,
@@ -447,7 +230,7 @@ typedef enum {
     ExBlockCopyAppend,
     /// Append selected block to clipboard.
     ExBlockClear,
-    /// Clear selected block.
+    /// Clear selected block
     ExBlockPaste,
     /// Paste clipboard to current position.
     ExBlockKill,
@@ -467,7 +250,7 @@ typedef enum {
     ExBlockExtendEnd,
     /// Stop extending selected block.
     ExBlockReIndent,
-    /// Reindent entire block, if SmartIndent is supported by the current mode.
+    /// Reindent entire block (C/REXX mode)
     ExBlockSelectWord,
     /// Select word under cursor as block.
     ExBlockSelectLine,
@@ -485,28 +268,28 @@ typedef enum {
     ExBlockRead,
     /// Read block from file.
     ExBlockReadStream,
-    /// Read block from file as stream block.
+    /// Read block from file as stream block
     ExBlockReadLine,
-    /// Read block from file as line block.
+    /// Read block from file as line block
     ExBlockReadColumn,
-    /// Read block from file as column block.
+    /// Read block from file as column block
     ExBlockWrite,
     /// Write marked block to file.
     ExBlockSort,
     /// Sorts the marked block in ascending order.
     ///
-    /// If mode setting MatchCase is set, characters will be compared case
-    /// sensitively.
+    //\ If mode setting MatchCase is set, characters will be compared case
+    //\ sensitively.
     ///
-    /// When block is marked in BlockMarkStream or BlockMarkLine mode,
-    /// the entire lines in marked block will be compared.
+    //\ When block is marked in <A HREF="modes.html#ec.BlockMarkStream">
+    //\ Stream</A> or <A HREF="#ec.BlockMarkLine">Line</A> mode,
+    //\ the entire lines in marked block will be compared.
     ///
-    /// When block is marked in BlockMarkColumn mode, only characters within marked
-    /// columns will be compared.
+    //\ When block is marked in <A HREF="#ec.BlockMarkColumn">Column</A>
+    //\ mode, only characters within marked columns will be compared.
     ExBlockSortReverse,
     /// Sorts the marked block in descending order.
-    ///
-    /// See also: BlockSort
+    //^ <A HREF="#ec.BlockSort">BlockSort</A>
     ExBlockUnTab,
     /// Remove tabs from marked lines.
     ExBlockEnTab,
@@ -514,43 +297,43 @@ typedef enum {
     ExBlockMarkFunction,
     /// Mark current function as block.
     ExBlockTrim,
-    /// Trim end-of-line whitespace.
+    /// Trim end-of-line whitespace
 
-    //!Text Editing Commands
+    //<cmd_edit> Text Editing and Insertion
     ExUndo,
-    /// Undo last operation.
+    /// Undo last operation
     ExRedo,
     /// Redo last undone operation.
 
-    //!Folding Commands
+    //<cmd_fold> Folding Text
     ExFoldCreate,
-    /// Create fold.
+    /// Create fold
     ExFoldCreateByRegexp,
-    /// Create folds at lines matching a regular expression.
+    /// Create folds at lines matching a regular expression
     ExFoldCreateAtRoutines,
-    /// Create folds at lines matching RoutineRx.
+    /// Create folds at lines matching RoutineRx
     ExFoldDestroy,
-    /// Destroy fold at current line.
+    /// Destroy fold at current line
     ExFoldDestroyAll,
-    /// Destroy all folds in the file.
+    /// Destroy all folds in the file
     ExFoldPromote,
-    /// Promote fold to outer level.
+    /// Promote fold to outer level
     ExFoldDemote,
-    /// Demote fold to inner level.
+    /// Demote fold to inner level
     ExFoldOpen,
-    /// Open fold at current line.
+    /// Open fold at current line
     ExFoldOpenNested,
-    /// Open fold and nested folds.
+    /// Open fold and nested folds
     ExFoldClose,
-    /// Close current fold.
+    /// Close current fold
     ExFoldOpenAll,
-    /// Open all folds in the file.
+    /// Open all folds in the file
     ExFoldCloseAll,
-    /// Close all folds in the file.
+    /// Close all folds in the file
     ExFoldToggleOpenClose,
     /// Toggle open/close current fold.
 
-    //!Bookmark Commands
+    //<cmd_bookmark>Bookmarks
     ExPlaceBookmark,
     /// Place a file-local bookmark.
     ExRemoveBookmark,
@@ -564,63 +347,60 @@ typedef enum {
     ExGotoGlobalBookmark,
     /// Go to global bookmark location.
     ExPushGlobalBookmark,
-    /// Push global bookmark (named as #<num>) to bookmark stack.
+    /// Push global bookmark (named as #<num>) to stack.
     ExPopGlobalBookmark,
-    /// Pop global bookmark from bookmark stack.
+    /// Pop global bookmark from stack.
 
-    //!Character Translation Commands
+    //<cmd_trans> Character Translation
     ExCharCaseUp,
-    /// Convert current character to uppercase.
+    /// Convert current character to uppercase
     ExCharCaseDown,
-    /// Convert current character to lowercase.
+    /// Convert current character to lowercase
     ExCharCaseToggle,
-    /// Toggle case of current character.
+    /// Toggle case of current character
     ExCharTrans,
-    /// Translate current character (like perl/sed).
+    /// Translate current character (like perl/sed)
     ExLineCaseUp,
-    /// Convert current line to uppercase.
+    /// Convert current line to uppercase
     ExLineCaseDown,
-    /// Convert current line to lowercase.
+    /// Convert current line to lowercase
     ExLineCaseToggle,
-    /// Toggle case of current line.
+    /// Toggle case of current line
     ExLineTrans,
-    /// Translate characters on current line.
+    /// Translate characters on current line
     ExBlockCaseUp,
-    /// Convert characters in selected block to uppercase.
+    /// Convert characters in selected block to uppercase
     ExBlockCaseDown,
-    /// Convert characters in selected block to lowercase.
+    /// Convert characters in selected block to lowercase
     ExBlockCaseToggle,
-    /// Toggle case of characters in selected block.
+    /// Toggle case of characters in selected block
     ExBlockTrans,
     /// Translate characters in selected block.
+
     ExInsertString,
-    /// Insert argument string at cursor position.
+    /// Insert argument string at cursor position
     ExInsertSpace,
     /// Insert space
     ExInsertChar,
-    /// Insert character argument at cursor position.
+    /// Insert character argument at cursor position
     ExTypeChar,
-    /// Insert character at cursor position (expanding any abbreviations).
+    /// Insert character at cursor position (expanding abbreviations)
     ExInsertTab,
-    /// Insert tab character at cursor position.
+    /// Insert tab character at cursor position
     ExInsertSpacesToTab,
     /// Insert appropriate number of spaces to simulate a tab.
     ExSelfInsert,
-    /// Insert typed character.
-    ExGetChar,
-    /// Get a character from the user and push it onto the stack.
+    /// Insert typed character
     ExWrapPara,
-    /// Wrap current paragraph.
+    /// Wrap current paragraph
     ExInsPrevLineChar,
-    /// Insert character in previous line above cursor.
+    /// Insert character in previous line above cursor
     ExInsPrevLineToEol,
-    /// Insert previous line from cursor to end of line.
+    /// Insert previous line from cursor to end of line
     ExCompleteWord,
     /// Complete current word to last word starting with the
     /// same prefix.
 
-
-    //!File Commands
     ExFilePrev,
     /// Switch to previous file in ring.
     ExFileNext,
@@ -628,53 +408,51 @@ typedef enum {
     ExFileLast,
     /// Exchange last two files in ring.
     ExSwitchTo,
-    /// Switch to numbered buffer given as argument.
+    /// Switch to numbered buffer given as argument
+
+    //<cmd_file> File Commands
     ExFileOpen,
-    /// Open a file.
+    /// Open file
     ExFileOpenInMode,
-    /// Open a file in specified mode.
+    /// Open file in specified mode
     ExFileReload,
-    /// Reload the current file.
+    /// Reload current file
     ExFileSave,
-    /// Save the current file.
+    /// Save current file
     ExFileSaveAll,
-    /// Save all modified files.
+    /// Save all modified files
     ExFileSaveAs,
-    /// Save the current file to a different name.
-    ///
-    /// See also: FileWriteTo
+    /// Rename Save current file
     ExFileWriteTo,
-    /// Write the current file into another file.
-    //
-    // See also: FileSaveAs
+    /// Write current file into another file
     ExFilePrint,
-    /// Print the current file.
+    /// Print current file
     ExFileClose,
-    /// Close the current file.
+    /// Close current file
     ExFileCloseAll,
-    /// Close all open files.
+    /// Close all open files
     ExFileTrim,
-    /// Trim all end-of-line whitespace.
+    /// Trim end-of-line whitespace
 
-    //!Directory Commands
+    //<cmd_directory> Directory Commands
     ExDirOpen,
-    /// Open the directory browser.
+    /// Open directory browser
     ExDirGoUp,
-    /// Change to the parent directory.
+    /// Change to parent directory
     ExDirGoDown,
-    /// Change to the currently selected directory.
+    /// Change to currently selected directory
     ExDirGoRoot,
-    /// Change to the root directory.
+    /// Change to root directory
     ExDirGoto,
-    /// Change to the directory given as argument.
+    /// Change to directory given as argument
     ExDirSearchCancel,
-    /// Cancel the search.
+    /// Cancel search
     ExDirSearchNext,
-    /// Find the next matching file.
+    /// Find next matching file
     ExDirSearchPrev,
-    /// Find the previous matching file.
+    /// Find previous matching file
 
-    //!Search And Replace Commands
+    //<cmd_search> Search and Replace
     ExIncrementalSearch,
     /// Incremental search
     ExFind,
@@ -682,161 +460,134 @@ typedef enum {
     ExFindReplace,
     /// Find and replace
     ExFindRepeat,
-    /// Repeat last find/replace operation.
+    /// Repeat last find/replace operation
     ExFindRepeatOnce,
-    /// Repeat last find/replace operation only once.
+    /// Repeat last find/replace operation only once
     ExFindRepeatReverse,
-    /// Repeat last find/replace operation in reverse.
+    /// Repeat last find/replace operation in reverse
     ExMatchBracket,
-    /// Find matching bracket ([{<>}]).
+    /// Find matching bracket ([{<>}])
     ExHilitWord,
-    /// Highlight current word everywhere in the file.
+    /// Highlight current word everywhere in the file
     ExSearchWordPrev,
-    /// Search for previous occurence of word under the cursor.
+    /// Search for previous occurence of word under cursor
     ExSearchWordNext,
-    /// Search for next occurence of the word under the cursor.
+    /// Search for next occurence of word under cursor
     ExHilitMatchBracket,
-    /// Highlight matching bracket.
+    /// Highlight matching bracket
     ExSearch,
-    ///
     ExSearchB,
-    ///
     ExSearchRx,
-    ///
     ExSearchAgain,
-    ///
     ExSearchAgainB,
-    ///
     ExSearchReplace,
-    ///
     ExSearchReplaceB,
-    ///
     ExSearchReplaceRx,
-    ///
 
-    //!Window Commands
+    //<cmd_window> Window Commands
     ExWinHSplit,
-    /// Split the window horizontally.
+    /// Split window horizontally
     ExWinNext,
-    /// Switch to the next (bottom) window.
+    /// Switch to next (bottom) window
     ExWinPrev,
-    /// Switcn to the previous (top) window.
+    /// Switcn to previous (top) window.
     ExWinClose,
-    /// Close the current window.
+    /// Close current window
     ExWinZoom,
-    /// Delete all windows except the current one.
+    /// Delete all windows except for current one
     ExWinResize,
-    /// Resize current window (+n,-n given as argument).
+    /// Resize current window (+n,-n given as argument)
     ExViewBuffers,
-    /// View all open buffers.
+    /// View currently open buffers
     ExListRoutines,
-    /// Display routines in the current source file.
+    /// Display routines in current source file
     ExExitEditor,
     /// Exit FTE.
     ExShowEntryScreen,
-    /// View external program output if available.
-    ExMessage,
-    /// Display a message in the status bar area
-    ExGetChoice,
-    /// Display a choice dialog and push selection index onto the parameter stack
+    /// View external program output if available
 
-    //!Compiler Commands
-    ExAskCompiler,
-    /// Ask for compile command and run compiler.
-    ///
-    /// See also: RunCompiler
+    //<cmd_compile> Compiler Support
+    ExCompile,
+    /// Ask for compile command and run compiler
     ExRunCompiler,
-    /// Run configured compile command.
-    ///
-    /// See also: [[Compile]]
+    /// Run configured compile command
     ExViewMessages,
-    /// View the compiler output.
+    /// View compiler output
     ExCompileNextError,
-    /// Switch to the next compiler error.
+    /// Switch to next compiler error
     ExCompilePrevError,
-    /// Switch to the previous compiler error.
+    /// Switch to previous compiler error
     ExRunProgram,
-    /// Run an external program.
+    /// Run external program
 
-    //!Cvs Commands
+    //<cmd_cvs> CVS Support
     ExCvs,
-    /// Ask for CVS options and run CVS.
+    /// Ask for CVS options and run CVS
     ExRunCvs,
-    /// Run configured CVS command.
+    /// Run configured CVS command
     ExViewCvs,
-    /// View CVS output.
+    /// View CVS output
     ExClearCvsMessages,
-    /// Clear CVS messages.
+    /// Clear CVS messages
     ExCvsDiff,
-    /// Ask for CVS diff options and run CVS.
-    ///
-    /// See also: RunCvsDiff
+    /// Ask for CVS diff options and run CVS
     ExRunCvsDiff,
-    /// Run configured CVS diff command.
-    ///
-    /// See also: CvsDiff
+    /// Run configured CVS diff command
     ExViewCvsDiff,
-    /// View CVS diff output.
+    /// View CVS diff output
     ExCvsCommit,
-    /// Ask for CVS commit options and run CVS.
-    ///
-    /// See also: RunCvsCommit
+    /// Ask for CVS commit options and run CVS
     ExRunCvsCommit,
-    /// Run configured CVS commit command.
-    ///
-    /// See also: CvsCommit
+    /// Run configured CVS commit command
     ExViewCvsLog,
-    /// View CVS log.
+    /// View CVS log
 
-    //!Svn Commands
+    //<cmd_svn> SVN Support
     ExSvn,
-    /// Ask for SVN options and run SVN.
+    /// Ask for SVN options and run SVN
     ExRunSvn,
-    /// Run configured SVN command.
+    /// Run configured SVN command
     ExViewSvn,
-    /// View SVN output.
+    /// View SVN output
     ExClearSvnMessages,
-    /// Clear SVN messages.
+    /// Clear SVN messages
     ExSvnDiff,
-    /// Ask for SVN diff options and run SVN.
-    ///
-    /// See also: RunSvnDiff
+    /// Ask for SVN diff options and run SVN
     ExRunSvnDiff,
-    /// Run configured SVN diff command.
-    ///
-    /// See also: SvnDiff
+    /// Run configured SVN diff command
     ExViewSvnDiff,
-    /// View SVN diff output.
+    /// View SVN diff output
     ExSvnCommit,
-    /// Ask for SVN commit options and run SVN.
+    /// Ask for SVN commit options and run SVN
     ExRunSvnCommit,
-    /// Run configured SVN commit command.
+    /// Run configured SVN commit command
     ExViewSvnLog,
-    /// View SVN log.
+    /// View SVN log
 
-    //!Tag Commands
+    //<cmd_tags> TAGS Commands
+    /// fte supports TAGS files generated by programs like ctags.
     ExTagFind,
     /// Find word argumen in tag files.
     ExTagFindWord,
     /// Find word under cursor in tag files.
     ExTagNext,
-    /// Switch to next occurance of tag.
+    /// Switch to next occurance of tag
     ExTagPrev,
-    /// Switch to previous occurance of tag.
+    /// Switch to previous occurance of tag
     ExTagPop,
-    /// Pop saved position from tag stack.
+    /// Pop saved position from tag stack
     ExTagLoad,
-    /// Load tag file and merge with current tags.
+    /// Load tag file and merge with current tags
     ExTagClear,
-    /// Clear loaded tags.
+    /// Clear loaded tags
     ExTagGoto,
     ///
 
-    //!Option Commands
+    //<cmd_option> Option commands
     ExToggleAutoIndent,
     ///
-    //    ExToggleInsert,
-    //    ///
+    ExToggleInsert,
+    ///
     ExToggleExpandTabs,
     ///
     ExToggleShowTabs,
@@ -860,6 +611,8 @@ typedef enum {
     ExToggleBackSpUnindents,
     ///
     ExToggleWordWrap,
+    ///
+    ExToggleTrim,
     ///
     ExToggleShowMarkers,
     ///
@@ -885,29 +638,30 @@ typedef enum {
     ///
 
 
-    //!Other Commands
+    //<cmd_other> Other commands
     ExShowPosition,
-    /// Show internal position information on status line.
+    /// Show internal position information on status line
     ExShowVersion,
-    /// Show eFTE version information.
+    /// Show editor version information
     ExShowKey,
-    /// Wait for a keypress and display modifiers+key pressed.
+    /// Wait for keypress and display modifiers+key pressed
     ExWinRefresh,
-    /// Refresh the display.
+    /// Refresh display
+
     ExMainMenu,
-    /// Activate the main menu.
+    /// Activate main menu
     ExShowMenu,
-    /// Popup the menu specified as the argument.
+    /// Popup menu specified as argument
     ExLocalMenu,
-    /// Popup the context menu.
-    ///
-    /// See variable: LocalMenu
+    /// Popup context menu
+
     ExChangeMode,
-    /// Change active mode for the current buffer.
+    /// Change active mode for current buffer
     ExChangeKeys,
-    /// Change the keybindings for current buffer.
+    /// Change keybindings for current buffer
     ExChangeFlags,
-    /// Change the option flags for current buffer.
+    /// Change option flags for current buffer
+
     ExCancel,
     ///
     ExActivate,
@@ -919,132 +673,106 @@ typedef enum {
     ExActivateInOtherWindow,
     ///
     ExDeleteFile,
-    /// Remove a file while in the directory browser
-    ExRenameFile,
-    /// Rename a file while in the directory browser
-    ExMakeDirectory,
-    /// Make a directory while in the directory browser
+    ///
+
     ExASCIITable,
     /// Display ASCII selector in status line.
     ExDesktopSave,
-    /// Save the desktop.
+    /// Save desktop
     ExClipClear,
-    /// Clear the clipboard.
+    /// Clear clipboard
     ExDesktopSaveAs,
-    /// Save the desktop under a new name.
+    /// Save desktop under a new name
     ExDesktopLoad,
-    /// Load the desktop from a file.
+    /// Load desktop from a file
     ExChildClose,
     ///
+
     ExBufListFileSave,
-    /// Save the currently selected file in the buffer list.
+    /// Save currently selected file in buffer list
     ExBufListFileClose,
-    /// Close the currently selected file in the buffer list.
+    /// Close currently selected file in buffer list
     ExBufListSearchCancel,
-    /// Cancel the search.
+    /// Cancel search
     ExBufListSearchNext,
-    /// Goto the next match in the search.
+    /// Next match in search
     ExBufListSearchPrev,
-    /// Goto the previous match in the search.
+    /// Previous match in search
+
     ExViewModeMap,
-    /// View the current mode's keybindings.
+    /// View current mode keybindings
     ExClearMessages,
-    /// Clear the compiler messages.
+    /// Clear compiler messages
+
+
     ExIndentFunction,
-    /// Indent current the function (if SmartIndent is available for the current mode).
+    /// Indent current function
     ExMoveFunctionPrev,
-    /// Move the cursor to the previous function.
+    /// Move cursor to previous function
     ExMoveFunctionNext,
-    /// Move the cursor to the next function.
+    /// Move cursor to next function
     ExInsertDate,
-    /// Insert date at the cursor.
+    /// Insert date at cursor
     ExInsertUid,
-    /// Insert user name at the cursor.
+    /// Insert user name at cursor
+
     ExFrameNew,
-    /// Create a new frame (only supported on certain platforms).
+    ///
     ExFrameClose,
-    /// Close the current frame (only supported on certain platforms).
+    ///
     ExFrameNext,
-    /// Goto the next frame (only supported on certain platforms).
+    ///
     ExFramePrev,
-    /// Goto the previous frame (only supported on certain platforms).
+    ///
+
     ExBufferViewNext,
-    /// Goto the next buffer.
+    ///
     ExBufferViewPrev,
-    /// Goto the previous buffer.
+    ///
+
     ExShowHelpWord,
     /// Show context help on keyword.
     ExShowHelp,
-    /// Show help for eFTE.
+    /// Show help for FTE.
+    ExConfigRecompile,
+    /// Recompile editor configuration
+
     ExSetCIndentStyle,
-    /// Set C indentation style parameters.
-    ///
+    /// Set C indentation style parameters
     /// Has the following parameters:
     ///
-    /// * [[C_Indent]] = 4;
-    /// * [[C_BraceOfs]] = 0;
-    /// * [[C_ParenDelta]] = -1;
-    /// * [[C_CaseOfs]] = 0;
-    /// * [[C_CaseDelta]] = 4;
-    /// * [[C_ClassOfs]] = 0;
-    /// * [[C_ClassDelta]] = 4;
-    /// * [[C_ColonOfs]] = -4;
-    /// * [[C_CommentOfs]] = 0;
-    /// * [[C_CommentDelta]] = 1;
-    /// * [[C_FirstLevelWidth]] = -1;
-    /// * [[C_FirstLevelIndent]] = 4;
-    /// * [[C_Continuation]] = 4;
+    /// C_Indent = 4;
+    /// C_BraceOfs = 0;
+    /// C_ParenDelta = -1;
+    /// C_CaseOfs = 0;
+    /// C_CaseDelta = 4;
+    /// C_ClassOfs = 0;
+    /// C_ClassDelta = 4;
+    /// C_ColonOfs = -4;
+    /// C_CommentOfs = 0;
+    /// C_CommentDelta = 1;
+    /// C_FirstLevelWidth = -1;
+    /// C_FirstLevelIndent = 4;
+    /// C_Continuation = 4;
     ExSetIndentWithTabs,
-    /// Set the value of the indent-with-tabs to the argument.
+    /// Set value of indent-with-tabs to argument
     ExRunProgramAsync,
-    ///
+
     ExListMark,
-    /// Mark a single line in the list.
+    /// Mark single line in list
     ExListUnmark,
-    /// Unmark the selected line line in the list.
+    /// Unmark single line in list
     ExListToggleMark,
-    /// Toggle the marking of the selected line in the list.
+    /// Toggle marking of single line in list
     ExListMarkAll,
-    /// Mark all the lines in the list.
+    /// Mark all lines in list
     ExListUnmarkAll,
-    /// Unmark all the lines in the list.
+    /// Unmark all lines in list
     ExListToggleMarkAll,
-    /// Toggle the marking of all lines in the list.
-    ExBlockPasteOver,
-    /// Delete the content's of selection and paste the clipboard contents to the
-    /// current position
-    ExPrint,
-    /// Print a string to the console
-    ExExecuteCommand,
-    /// Prompt user for a command to execute
-    ExExecute,
-    /// Execute the command on tos
-    ExTick,
-    /// Look up the command name on tos$
+    /// Toggle marking of all lines in list
 
-    //!Info To Stack Commands
-    ExPushFileName,
-    /// Full filename including path of current file
-    ExPushCurDir,
-    /// Current working directory
-    ExQuestionAt,
-    /// Where is the cursor?
-    ExPushCurChar,
-    /// Current character
-    ExPushCurWord,
-    /// Current word
-    ExPushCurLine,
-    /// Current line
-    ExPushSelection,
-    /// Selected text
-    ExPushEfteVersion,
-    /// eFTE version number
-    ExAsc,
-    /// Move a character from paramstack to string stack 65 -> "A"
-    ExChar
-    /// Move a character from string stack to paramstack  "A" -> 65
-
-    //*** END
+    ExBlockPasteOver
+    /// Delete content's of selection and paste clipboard to current position
 } ExCommands;
 
 #endif

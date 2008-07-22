@@ -1,7 +1,5 @@
-/*
- *    e_trans.cpp
+/*    e_trans.cpp
  *
- *    Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
  *    Copyright (c) 1994-1996, Marko Macek
  *
  *    You may distribute under the terms of either the GNU General Public
@@ -13,10 +11,10 @@
 #include <ctype.h>
 
 // FLAW: NULL characters can not be translated, need escaping
-int ParseTrans(char *S, char *D, TransTable tab) {
-    char Dest[512];
-    char A, B;
-    int i;
+int ParseTrans(unsigned char *S, unsigned char *D, TransTable tab) {
+    unsigned char Dest[512];
+    unsigned char A, B;
+    unsigned int i;
 
     if (S == 0 || D == 0)
         return 0;
@@ -231,31 +229,19 @@ int EBuffer::BlockCaseToggle() {
 }
 
 int EBuffer::GetTrans(ExState &State, TransTable tab) {
-    SSCHECK(2, "GetTrans");
+    unsigned char TrS[512] = "";
+    unsigned char TrD[512] = "";
 
-    char TrS[512] = "";
-    char TrD[512] = "";
-
-    strcpy(TrD, sstack.back().c_str()); sstack.pop_back();
-    strcpy(TrS, sstack.back().c_str()); sstack.pop_back();
-
-    if (strlen(TrS) == 0) {
-        if (View->MView->Win->GetStr("Trans From", sizeof(TrS), (char *)TrS, HIST_TRANS) == 0) {
-            FAIL
-        }
-    }
-
-    if (strlen(TrD) == 0) {
-        if (View->MView->Win->GetStr("Trans To", sizeof(TrS), (char *)TrD, HIST_TRANS) == 0) {
-            FAIL
-        }
-    }
-
+    if (State.GetStrParam(View, (char *)TrS, sizeof(TrS)) == 0)
+        if (View->MView->Win->GetStr("Trans From", sizeof(TrS), (char *)TrS, HIST_TRANS) == 0)
+            return 0;
+    if (State.GetStrParam(View, (char *)TrD, sizeof(TrD)) == 0)
+        if (View->MView->Win->GetStr("Trans To", sizeof(TrS), (char *)TrD, HIST_TRANS) == 0)
+            return 0;
     if (ParseTrans(TrS, TrD, tab) == 0) {
         Msg(S_ERROR, "Bad Trans Arguments %s %s.", TrS, TrD);
         return 0;
     }
-
     return 1;
 }
 

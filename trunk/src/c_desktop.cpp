@@ -1,6 +1,5 @@
 /*    c_desktop.cpp
  *
- *    Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
  *    Copyright (c) 1994-1996, Marko Macek
  *
  *    You may distribute under the terms of either the GNU General Public
@@ -96,10 +95,7 @@ int LoadDesktop(char *FileName) {
                 suspendLoads  = 0;
             } else if (line[0] == 'D') { // directory
                 EModel *m = new EDirectory(0, &ActiveModel, p);
-                if (m == 0 || ActiveModel == 0) {
-                    ActiveView->MView->Win->Choice(GPC_ERROR, "Error", 1, "O&K", "Could not create directory view");
-                    return 0;
-                }
+                assert(ActiveModel != 0 && m != 0);
             }
 
             if (ActiveModel) {

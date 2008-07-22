@@ -1,9 +1,0 @@
-{ 30 inc inc inc  33 PASS }
-{ -2 inc inc inc inc inc  3 PASS }
-{ 20 dec dec 18 PASS }
-{ 1 dec dec dec dec  -3 PASS }
-{ 12 negate  -12 PASS }
-{ -15 negate 15 PASS }
-{ -8 abs  8 PASS }
-{ 5 abs 5 PASS }
-{ TEST1 TEST2 TEST3 TEST4 TEST5 TEST6 TEST7 TEST8 }

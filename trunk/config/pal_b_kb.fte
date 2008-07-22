@@ -7,9 +7,9 @@
 # as only the first setting is used
 
 color_palette {
-    { "bg",			"gray:black" }, # background
+    { "bg",			'gray:black' }, # background
 
-    { "Lang_Punctuation",	"cyan:bg" },
-    { "Lang_Preprocessor",	"cyan:bg" },
-    { "Lang_Function",		"green:bg" },
+    { 'Lang_Punctuation',	'cyan:bg' },
+    { 'Lang_Preprocessor',	'cyan:bg' },
+    { 'Lang_Function',		'green:bg' },
 }

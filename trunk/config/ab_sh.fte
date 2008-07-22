@@ -1,34 +1,34 @@
 eventmap SH {
-    abbrev "ifx" {
-        KillWordPrev; "if [  ]" InsertString; LineIndent; LineNew; 
-        "then" InsertString; LineIndent; LineNew; 
-        "fi" InsertString; LineIndent; 
+    abbrev 'ifx' {
+        KillWordPrev; InsertString 'if [  ]'; LineIndent; LineNew; 
+        InsertString 'then'; LineIndent; LineNew; 
+        InsertString 'fi'; LineIndent; 
         2:MoveUp; MoveLineEnd; 2:MoveLeft; 
         Fail; # do not insert typed character
     }
-    abbrev "fox" {
-        KillWordPrev; "for  in" InsertString; LineIndent; LineNew; 
-        "do" InsertString; LineIndent; LineNew; 
-        "done" InsertString; LineIndent; 
+    abbrev 'fox' {
+        KillWordPrev; InsertString 'for  in'; LineIndent; LineNew; 
+        InsertString 'do'; LineIndent; LineNew; 
+        InsertString 'done'; LineIndent; 
         2:MoveUp; MoveLineEnd; 3:MoveLeft; 
         Fail; # do not insert typed character
     }
-    abbrev "whx" { 
-        KillWordPrev; "while [  ]" InsertString; LineIndent; LineNew;
-        "do" InsertString; LineIndent; LineNew; 
-        "done" InsertString; LineIndent; 
+    abbrev 'whx' { 
+        KillWordPrev; InsertString 'while [  ]'; LineIndent; LineNew;
+        InsertString 'do'; LineIndent; LineNew; 
+        InsertString 'done'; LineIndent; 
         2:MoveUp; MoveLineEnd; 2:MoveLeft; 
         Fail;
     }
-    abbrev "cax" { 
-        KillWordPrev; "case  of" InsertString; LineIndent; LineNew;
-        "esac" InsertString; LineIndent; 
+    abbrev 'cax' { 
+        KillWordPrev; InsertString 'case  of'; LineIndent; LineNew;
+        InsertString 'esac'; LineIndent; 
         MoveUp; MoveLineEnd; 3:MoveLeft; 
         Fail;
     }
-    abbrev "dox" {
-        KillWordPrev; "do" InsertString; LineIndent; 2:LineNew;
-        "done" InsertString; LineIndent; 
+    abbrev 'dox' {
+        KillWordPrev; InsertString 'do'; LineIndent; 2:LineNew;
+        InsertString 'done'; LineIndent; 
         MoveUp; LineIndent; MoveLineEnd;
         Fail;
     }

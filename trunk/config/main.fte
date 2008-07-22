@@ -1,31 +1,10 @@
-# main.fte
-#
-# Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
-#
-# You may distribute under the terms of either the GNU General Public
-# License or the Artistic License, as specified in the README file.
-#
-# Main eFTE configuration file
-#
-include "primitives.fte";
-include "macros.fte";
+# Main FTE Configuration File
 
-# to include use the -dSELFTEST parameter to efte
-%if(SELFTEST)
-include "selftest.fte";
-%endif
+# operating system is now defined by CFTE
 
-include "fireshell.fte";
+# OS_UNIX, OS_OS2, OS_DOS32, OS_NT
 
-sub InitMainDone { var new }
-sub InitMain {
-    InitMainDone @ unless
-        InitMainDone on
-        "InitMacros"    attempt
-        "InitSelftest"  attempt
-        "InitFireshell" attempt
-}
-
+# uncomment for appropriate keybindings and menus
 
 #%define(UI_KB)
 %define(UI_FTE)
@@ -53,34 +32,65 @@ sub InitMain {
 %define(GUI_X11)
 %endif
 
-include "global.fte";
-include "pal_base.fte";
+# to customize FTE to your preferences you should only need
+# to add stuff in this file.
+# Some examples are below. If you find something that cannot be
+# configured here, tell me about it.
+# If you wish to modify only a specific mode, add customizations
+# at the end of file. To also modify all of the descendants,
+# put customizations right after the include statement for mode.
+
+# The current hierarchy of modes is:
+# PLAIN
+#   TEXT
+#     MSG
+#   C
+#   ...
+#   BIN
+
+# The order of things in this file is important! If you change a setting
+# before the default is set in one of the included files, your
+# setting will have no effect.
+# The file is processed in one pass, so everything should be defined,
+# before it is used.
+
+# My ultimate goal is to have the default files unmodifiable and
+# have all customization done here, but this is not currently possible for
+# all things (menus come to mind).
+
+include 'global.fte';
+
+include 'pal_base.fte';
+
+#color_palette {
+#    { 'Comment', 'green:black' },
+#}
 
 %if(COLORS_BLACK_BG)
 %if(UI_KB)
-include "pal_b_kb.fte";
+include 'pal_b_kb.fte';
 %endif
-include "pal_blk.fte";
+include 'pal_blk.fte';
 %endif
 
 %if(COLORS_WHITE_BG)
-include "pal_wht.fte";
+include 'pal_wht.fte';
 %endif
 
 %if(COLORS_GRAY_BG)
-include "pal_gray.fte";
+include 'pal_gray.fte';
 %endif
-
+    
 %if(COLORS_BLUE_BG)
-include "pal_blue.fte";
+include 'pal_blue.fte';
 %endif
 
 %if(COLORS_BLUEZ_BG)
-include "pal_bluez.fte";
+include 'pal_bluez.fte'; # alternate blue from andyz @ sf.net
 %endif
 
 %if(COLORS_NCE_BG)
-include "pal_nce.fte";
+include 'pal_nce.fte';
 %endif
 
 object GLOBAL {
@@ -116,25 +126,25 @@ object GLOBAL {
 %if(UI_KB)
     WindowFont = "*-fixed-bold-*-15*,*-fixed-bold-*-16*";
 %endif
-# We need some font, which can be "LOCALIZED" - and this can't be done
+# We need some font, which can be 'LOCALIZED' - and this can't be done
 # with font names like 9x15 (actually we can, but this would need
 # highly skilled users :))
 #    WindowFont = "10x20";
 %endif
 }
 
-include "color.fte";
+include 'color.fte';
 
 # change background color
 # must be here to be inherited by other modes
-# object PLAIN { color { { "Background", "17" } }; }
+# object PLAIN { color { { 'Background', '17' } }; }
 
 
 # in this mode are declared all basic values
 # these are inherited in other modes - so basicaly
-# change only necessary values in submodes
+# change only necessary values in submodes 
 # must be here to be inherited by other modes
-include "m_plain.fte";
+include 'm_plain.fte';
 
 
 # In addition to just PLAIN, there are two other special modes
@@ -142,8 +152,8 @@ include "m_plain.fte";
 # SOURCE and all markup modes, such has HTML, LaTeX, etc, inherit
 # from MARKUP. Both SOURCE and MARKUP inherit from PLAIN.
 
-include "m_source.fte";
-include "m_markup.fte";
+include 'm_source.fte';
+include 'm_markup.fte';
 
 # UNIX files have no CR at the end of line
 
@@ -160,85 +170,99 @@ mode PLAIN {
 
 eventmap TEX: PLAIN {
     key [F9] {
-        "latex " filename$ append$ AskCompiler
+        Compile "latex " #. $FileName
     }
 }
 
-include "m_4gl.fte";
-include "m_a51.fte";
-include "m_ada.fte";
-include "m_asm.fte";
-include "m_asm370.fte";
-include "m_bin.fte";
-include "m_c.fte";
-include "m_catbs.fte";
-include "m_clario.fte";
-include "m_diff.fte";
-include "m_ebnf.fte";
-include "m_eiffel.fte";
-include "m_euphoria.fte";
-include "m_fort90.fte";
-include "m_falcon.fte";
-include "m_fte.fte";
-include "m_gawk.fte";
-include "m_html.fte";
-include "m_idl.fte";
-include "m_ipf.fte";
-include "m_java.fte";
-include "m_ldsgml.fte";
-include "m_lua.fte";
-include "m_make.fte";
-include "m_merge.fte";
-include "m_mod3.fte";
-include "m_msg.fte";
-include "m_pascal.fte";
-include "m_perl.fte";
-include "m_php.fte";
-include "m_py.fte";
-include "m_resdlg.fte";
-include "m_rexx.fte";
-include "m_rpm.fte";
-include "m_ruby.fte";
-%if(SELFTEST)
-include "m_selftest.fte";
-%endif
-include "m_sgml.fte";
-include "m_sh.fte";
-include "m_siod.fte";
-include "m_sl.fte";
-include "m_sml.fte";
-include "m_sql.fte";
-include "m_tcl.fte";
-include "m_tex.fte";
-include "m_texi.fte";
-include "m_text.fte";
-include "m_unrealscript.fte";
-include "m_xml.fte";
-include "m_xslt.fte";
-include "m_rst.fte";
+
+include 'm_4gl.fte';
+include 'm_a51.fte';
+include 'm_ada.fte';
+include 'm_asm.fte';
+include 'm_asm370.fte';
+include 'm_bin.fte';
+include 'm_c.fte';
+include 'm_catbs.fte';
+include 'm_clario.fte';
+include 'm_diff.fte';
+include 'm_ebnf.fte';
+include 'm_fort90.fte';
+include 'm_falcon.fte';
+include 'm_fte.fte';
+include 'm_gawk.fte';
+include 'm_html.fte';
+include 'm_idl.fte';
+include 'm_ipf.fte';
+include 'm_java.fte';
+include 'm_ldsgml.fte';
+include 'm_make.fte';
+include 'm_merge.fte';
+include 'm_mod3.fte';
+include 'm_msg.fte';
+include 'm_pascal.fte';
+include 'm_perl.fte';
+include 'm_php.fte';
+include 'm_py.fte';
+include 'm_resdlg.fte';
+include 'm_rexx.fte';
+include 'm_ruby.fte';
+include 'm_sgml.fte';
+include 'm_sh.fte';
+include 'm_siod.fte';
+include 'm_sl.fte';
+include 'm_sml.fte';
+include 'm_sql.fte';
+include 'm_tcl.fte';
+include 'm_tex.fte';
+include 'm_texi.fte';
+include 'm_text.fte';
+include 'm_unrealscript.fte';
+include 'm_xml.fte';
+include 'm_xslt.fte';
+include 'm_rst.fte';
 
 # Must be included AFTER m_text.fte in order for the filename regexp to
 # match correctly (i.e. CMakeLists.txt should match CMAKE mode, not TEXT mode)
-include "m_cmake.fte";
+include 'm_cmake.fte';
 
 # C indentation style menu
-include "uicstyle.fte";
+include 'uicstyle.fte';
 
 # When doing large customizations of keyboard/menus
 # you should probably write your own version of these files.
 
-include "ui_fte.fte"; # fte CUA style bindings
+# to change a menu, predefine it before including the ui_*.fte file.
+# to add/override keybindings add them after including ui_*.fte file.
 
+# ui*.fte -files define all keyboard bindings and menus.
+# pick only one file.
+%if(UI_FTE)
+include 'ui_fte.fte'; # fte CUA style bindings
+%endif
+%if(UI_WS)
+include 'ui_ws.fte';  # wordstar like
+%endif
+%if(UI_NE)
+include 'ui_ne.fte';  # norton classic editor - incomplete
+%endif
+%if(UI_MEW)
+include 'ui_mew.fte'; # MultiEdit4Windows
+%endif
+%if(UI_BRIEF)
+include 'ui_brief.fte'; # BRIEF/CRISP
+%endif
+##include 'ui_vi.fte';  # VI - very incomplete
+# todo: brief, epm, emacs, VI
 
 # some templates and abbreviations
-include "ab_c.fte";
+include 'ab_c.fte';
 %if(OS_OS2)
-include "ab_c_os2.fte";
+include 'ab_c_os2.fte';
 %endif
-include "ab_rexx.fte";
-include "ab_sh.fte";
-include "ab_java.fte";
-include "ab_perl.fte";
+include 'ab_rexx.fte';
+include 'ab_sh.fte';
+include 'ab_java.fte';
+include 'ab_perl.fte';
 
 # some customizations
 
@@ -252,11 +276,93 @@ object GLOBAL {
     # CursorWithinEOL = 1;
 }
 
+# some editors have a SmartPaste feature.  We can do that too.
+#eventmap C { key [S+G-Ins] { BlockPasteStream; BlockReIndent } }
 
+eventmap PLAIN {
+    key [A+S+-] { # select block between {}()[]<>
+        BlockUnmark; BlockMarkStream; MatchBracket; BlockMarkStream;
+        SavePos; MoveBlockEnd;
+        2:MoveNext; ?MoveLeft;  # do this to mark a newline after })>]
+        BlockEnd; MoveSavedPos;
+    }
 
-%if(SELFTEST)
-eventmap MODEL {
-    key [C+S+F12] { "~/results.selftest" FileOpen MoveFileStart selftest }
-}
+    key [A+C+F] { IndentFunction }
+    key [A+C+M] { BlockMarkFunction }
+    key [A+C+[] { MoveFunctionPrev }
+    key [A+C+\]] { MoveFunctionNext }
+
+    key [C+F1] { ShowHelpWord
+%if(OS_OS2)
+        # OS/2 - helpfile (can be contatenated)
+        "CPREF+PMWIN+PMMSG+PMGPI+PMREL+PMFUN+PMHOK"
+%endif
+%if(OS_UNIX)
+# UNIX - specify options to MAN
+        ""
+%endif
+%if(OS_NT)
+            # Win32 - helpfile
+            #        ""
+%endif
+    }
+%if(OS_OS2)
+    key [S+F1] { ShowHelpWord "EMXDEV+EMXGNU+EMXLIB+EMXRT+EMXBSD" }
+%if(!UI_BRIEF)
+    key [F1] { ShowHelp "FTE" "" }
+%endif
 %endif
 
+    #key [C+A+F1] {
+    #    InsertString $FileName
+    #    InsertString $FilePath
+    #    InsertString $CurDirectory
+    #}
+    key [C+A+U] {
+        MoveLineStart; ?FindReplace /^\/\/  / // "xnc"; MoveDown
+        #MoveLineStart; ?FindReplace /^(\s*)\/\// /\1/ "xnc"; MoveDown
+    }
+    key [C+A+C] {
+        MoveLineStart; ?FindReplace /^(\s*)/ /\/\/  \1/ "xnc"; MoveDown
+        #MoveLineStart; ?FindReplace /^(\s*)\/\// /\1/ "xnc";
+        #MoveLineStart; ?FindReplace /^(\s*)/ /\1\/\// "xnc"; MoveDown
+    }
+    key [G-Home] { MoveBeginOrNonWhite }
+    key [C+G-Up] { PopGlobalBookmark }
+    key [C+G-Down] { PushGlobalBookmark }
+    #key [C+A+S+F] {
+    #    LineNew;
+    #    InsertString "path:" . $FilePath; LineNew;
+    #    InsertString "name:" . $FileName; LineNew;
+    #    InsertString "dir:"  . $FileDirectory; LineNew;
+    #    InsertString "base:" . $FileBaseName; LineNew;.
+    #    InsertString "ext:"  . $FileExtension; LineNew;
+    #}
+}
+
+
+
+#and here is my function noumlaut:
+
+sub noumlaut {
+    PlaceBookmark "0";
+    ?FindReplace /ä/ /\"a/ "agn" ;
+    ?FindReplace /ö/ /\"o/ "agn" ;
+    ?FindReplace /ü/ /\"u/ "agn" ;
+    ?FindReplace /Ä/ /\"A/ "agn" ;
+    ?FindReplace /Ö/ /\"O/ "agn" ;
+    ?FindReplace /Ü/ /\"U/ "agn" ;
+    ?FindReplace /ß/ /{\ss}/ "agn" ;
+    GotoBookmark "0";
+}
+
+object GLOBAL {
+#    SevenBit = 1;  # seven bit characters only for user interface...
+}
+eventmap PLAIN {
+#left arrow at the beginning of line moves to previous line
+#   key [G-Left] { MovePrev }
+#right arrow at the end of line moves to next line
+#   key [G-Right] { MoveNext }
+    key [A+C+Enter] { noumlaut; RunProgram "latex " . $FileName; }
+}

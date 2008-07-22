@@ -1,6 +1,5 @@
 /*    e_block.cpp
  *
- *    Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
  *    Copyright (c) 1994-1996, Marko Macek
  *
  *    You may distribute under the terms of either the GNU General Public
@@ -13,8 +12,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Block Commands                                                            //
 ///////////////////////////////////////////////////////////////////////////////
-
-
 
 int EBuffer::SetBB(EPoint M) {
     EPoint OldBB = BB;
@@ -75,30 +72,6 @@ int EBuffer::CheckBlock() {
     }
     return 1;
 }
-
-
-
-int blockstruct0  = dp++;
-int blockstruct1  = dp++;
-int blockstruct2  = dp++;
-int blockstruct3  = dp++;
-int blockstruct4  = dp++;
-
-int EBuffer::Block() {
-    if (CheckBlock())  {
-        memory[blockstruct0] = BlockMode+1;
-        memory[blockstruct1] = BB.Col;
-        memory[blockstruct2] = BB.Row;
-        memory[blockstruct3] = BE.Col;
-        memory[blockstruct4] = BE.Row;
-    } else {
-        memory[blockstruct0] = 0;
-    }
-    ParamStack.push(blockstruct0);
-    return 1;
-}
-
-
 
 int EBuffer::BlockRedraw() {
     if (BB.Row == -1 || BE.Row == -1) return 0;
@@ -679,12 +652,8 @@ int EBuffer::BlockWriteTo(const char *AFileName, int Append) {
     int bc = 0, lc = 0, oldc = 0;
 
     AutoExtend = 0;
-    if (CheckBlock() == 0) {
-        FAIL
-    }
-    if (RCount == 0) {
-        FAIL
-    }
+    if (CheckBlock() == 0) return 0;
+    if (RCount == 0) return 0;
     B = BB;
     E = BE;
     Msg(S_INFO, "Writing %s...", AFileName);
@@ -754,95 +723,14 @@ int EBuffer::BlockWriteTo(const char *AFileName, int Append) {
     }
     fclose(fp);
     Msg(S_INFO, "Wrote %s, %d lines, %d bytes.", AFileName, lc, bc);
-    SUCCESS
-
+    return 1;
 error:
     if (fp != NULL) {
         fclose(fp);
         unlink(AFileName);
     }
     View->MView->Win->Choice(GPC_ERROR, "Error", 1, "O&K", "Failed to write block to %s", AFileName);
-    FAIL
-}
-
-int EBuffer::BlockGet() {
-    //int error = 0;
-    EPoint B, E;
-    int L;
-    PELine LL;
-    int A, Z;
-    int bc = 0, lc = 0;
-
-
-    AutoExtend = 0;
-    if (CheckBlock() == 0) {
-        FAIL
-    }
-
-    if (RCount == 0) {
-        FAIL
-    }
-
-    std::string buf;
-    B = BB;
-    E = BE;
-    for (L = B.Row; L <= E.Row; L++) {
-        A = -1;
-        Z = -1;
-        LL = RLine(L);
-        switch (BlockMode) {
-        case bmLine:
-            if (L < E.Row) {
-                A = 0;
-                Z = LL->Count;
-            }
-            break;
-        case bmColumn:
-            if (L < E.Row) {
-                A = CharOffset(LL, B.Col);
-                Z = CharOffset(LL, E.Col);
-            }
-            break;
-        case bmStream:
-            if (B.Row == E.Row) {
-                A = CharOffset(LL, B.Col);
-                Z = CharOffset(LL, E.Col);
-            } else if (L == B.Row) {
-                A = CharOffset(LL, B.Col);
-                Z = LL->Count;
-            } else if (L < E.Row) {
-                A = 0;
-                Z  = LL->Count;
-            } else if (L == E.Row) {
-                A = 0;
-                Z = CharOffset(LL, E.Col);
-            }
-            break;
-        }
-        if (A != -1 && Z != -1) {
-            if (A < LL->Count) {
-                if (Z > LL->Count)
-                    Z = LL->Count;
-                if (Z > A) {
-                    buf = buf.append(LL->Chars + A, Z-A);
-                    bc += Z - A;
-                }
-            }
-            if (BFI(this, BFI_AddCR) == 1) {
-                buf = buf.append("\n");
-                bc++;
-            }
-
-            if (BFI(this, BFI_AddLF) == 1) {
-                buf = buf.append("\r");
-                bc++;
-                lc++;
-            }
-        }
-    }
-
-    sstack.push_back(buf);
-    SUCCESS
+    return 0;
 }
 
 int EBuffer::BlockReadFrom(const char *AFileName, int blockMode) {

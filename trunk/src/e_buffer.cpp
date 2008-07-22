@@ -1,6 +1,5 @@
 /*    e_buffer.cpp
  *
- *    Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
  *    Copyright (c) 1994-1996, Marko Macek
  *
  *    You may distribute under the terms of either the GNU General Public
@@ -22,7 +21,6 @@ EBuffer::EBuffer(int createFlags, EModel **ARoot, const char * /*AName*/)
     Loaded = 0;
     Loading = 0;
     LastUpDownColumn = -1;
-    DisplayCondition = 0;
 
     FileName = 0;
     LL = 0;
@@ -54,12 +52,6 @@ EBuffer::EBuffer(int createFlags, EModel **ARoot, const char * /*AName*/)
     Allocate(0);
     AllocVis(0);
     Mode = GetModeForName("");
-
-    if (Mode == NULL) {
-        fprintf(stderr, "Configuration error: default mode does not exist.\n");
-        exit(1);
-    }
-
     Flags = (Mode->Flags);
     BFI(this, BFI_Undo) = 0;
     BFI(this, BFI_ReadOnly) = 0;
@@ -429,18 +421,9 @@ int EBuffer::SetPos(int Col, int Row, int tabMode) {
     assert(Col >= 0 && Row >= 0 && Row < VCount);
 
     if (BFI(this, BFI_Undo) == 1 && BFI(this, BFI_UndoMoves) == 1) {
-        if (PushULong(CP.Col) == 0)
-        {
-            FAIL
-        }
-        if (PushULong(CP.Row) == 0)
-        {
-            FAIL
-        }
-        if (PushUChar(ucPosition) == 0)
-        {
-            FAIL
-        }
+        if (PushULong(CP.Col) == 0) return 0;
+        if (PushULong(CP.Row) == 0) return 0;
+        if (PushUChar(ucPosition) == 0) return 0;
     }
     if (AutoExtend) {
         BlockExtendBegin();
@@ -449,7 +432,7 @@ int EBuffer::SetPos(int Col, int Row, int tabMode) {
     PrevPos = CP;
     PrevPos.Row = (CP.Row < VCount) ? VToR(CP.Row) : (CP.Row - VCount + RCount);
     CP.Row = Row;
-    if (CursorWithinEOL && Col > LineLen() + 1)
+    if (CursorWithinEOL && Col > LineLen())
         CP.Col = LineLen();
     else
         CP.Col = Col;
@@ -463,21 +446,18 @@ int EBuffer::SetPos(int Col, int Row, int tabMode) {
     //        }
     if (BFI(this, BFI_CursorThroughTabs) == 0) {
         if (tabMode == tmLeft) {
-            if (MoveTabStart() == 0) return 0;         // parasitize on MoveTabStart
+            if (MoveTabStart() == 0) return 0;
         } else if (tabMode == tmRight) {
-            if (MoveTabEnd() == 0) return 0;           // parasitize on MoveTabEnd
+            if (MoveTabEnd() == 0) return 0;
         }
     }
     if (ExtendGrab == 0 && AutoExtend == 0 && BFI(this, BFI_PersistentBlocks) == 0) {
         if (CheckBlock() == 1)
-            if (BlockUnmark() == 0) {
-                return 0;                              // oarasitize on CheckBlock
-            }
+            if (BlockUnmark() == 0)
+                return 0;
     }
-    SUCCESS
+    return 1;
 }
-
-
 
 int EBuffer::SetPosR(int Col, int Row, int tabMode) {
     assert(Row >= 0 && Row < RCount && Col >= 0);

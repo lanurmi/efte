@@ -1,6 +1,5 @@
 /*    e_search.cpp
  *
- *    Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
  *    Copyright (c) 1994-1996, Marko Macek
  *
  *    You may distribute under the terms of either the GNU General Public
@@ -36,9 +35,6 @@ int ParseSearchOption(int replace, char c, unsigned long &opt) {
     case 'r':
         opt |= SEARCH_BACK;
         break;     // search reverse
-    case 's':
-        opt |= SEARCH_SPLIT;
-        break;     // split found line
     case 'w':
         opt |= SEARCH_WORDBEG | SEARCH_WORDEND;
         break;
@@ -640,7 +636,6 @@ ok_rep:
             if (ask == 'O')
                 goto end;
         }
-
 try_join:
         if (Options & SEARCH_JOIN) {
             char ask = 'A';
@@ -699,7 +694,7 @@ try_join:
                     }
                 }
 ok_join:
-                if (ask == 'N') goto try_split;
+                if (ask == 'N') goto try_delete;
                 if (ask == 'Q') goto end;
                 if (ask == 'A') Options |= SEARCH_NASK;
             }
@@ -709,86 +704,9 @@ ok_join:
             if (ask == 'O')
                 goto end;
         }
-
-try_split:
-            if (Options & SEARCH_SPLIT) {
-                char ask = 'A';
-
-                if (!(Options & SEARCH_NASK)) {
-                    char ch;
-
-                    while (1) {
-                        Draw(VToR(CP.Row), 1);
-                        Redraw();
-                        switch(View->MView->Win->Choice(0, "Split Line",
-                                                        5,
-                                                        "&Yes",
-                                                        "&All",
-                                                        "&Once",
-                                                        "&Skip",
-                                                        "&Cancel",
-                                                        "Split line %d?", VToR(CP.Row)))
-                        {
-                        case 0:
-                            ch = 'Y';
-                            break;
-
-                        case 1:
-                            ch = 'A';
-                            break;
-
-                        case 2:
-                            ch = 'O';
-                            break;
-
-                        case 3:
-                            ch = 'S';
-                            break;
-
-                        case 4:
-                        case -1:
-                        default:
-                            ch = 'Q';
-                            break;
-                        }
-
-                        if (ch == 'Y') {
-                            ask = 'Y';
-                            goto ok_split;
-                        }
-                        else if (ch == 'N') {
-                            ask = 'N';
-                            goto ok_split;
-                        }
-                        else if (ch == 'Q') {
-                            ask = 'Q';
-                            goto ok_split;
-                        }
-                        else if (ch == 'A') {
-                            ask = 'A';
-                            goto ok_split;
-                        }
-                        else if (ch == 'O') {
-                            ask = 'O';
-                            goto ok_split;
-                        }
-                    }
-ok_split:
-                    if (ask == 'N') goto try_delete;
-                    if (ask == 'Q') goto end;
-                    if (ask == 'A') Options |= SEARCH_NASK;
-                }
-
-                if (SplitLine(Match.Row, Match.Col + strlen(opt.strReplace)) == 0)
-                    goto error;
-
-                if (ask == 'O')
-                    goto end;
-            }
-
 try_delete:
-            if (Options & SEARCH_DELETE) {
-                char ask = 'A';
+        if (Options & SEARCH_DELETE) {
+            char ask = 'A';
 
             if (!(Options & SEARCH_NASK)) {
                 char ch;
@@ -904,20 +822,10 @@ int EBuffer::Search(ExState &State, char *aString, int Options, int /*CanResume*
 
     if (aString)
         strcpy(find, aString);
-    else {
-        SSCHECK(1, "Search");
-
-        strcpy(find, sstack.back().c_str()); sstack.pop_back();
-
-        if (strlen(find) == 0) {
-            if ((erc = View->MView->Win->GetStr("Find", sizeof(find), find, HIST_SEARCH)) == 0) {
-                FAIL
-            }
-        }
-        if (strlen(find) == 0) {
-            FAIL
-        }
-    }
+    else
+        if (State.GetStrParam(View, find, sizeof(find)) == 0)
+            if ((erc = View->MView->Win->GetStr("Find", sizeof(find), find, HIST_SEARCH)) == 0) return 0;
+    if (strlen(find) == 0) return 0;
 
     if (erc == 2)
         Case ^= SEARCH_NCASE;
@@ -947,44 +855,17 @@ int EBuffer::SearchReplace(ExState &State, char *aString, char *aReplaceString, 
     char replace[MAXSEARCH+1] = "";
     int Case = BFI(this, BFI_MatchCase) ? 0 : SEARCH_NCASE;
 
-    if (aReplaceString)
-        strcpy(replace, aReplaceString);
-    else {
-        SSCHECK(1, "SearchReplace");
-
-        strcpy(replace, sstack.back().c_str()); sstack.pop_back();
-
-        if (strlen(replace) == 0) {
-            if (View->MView->Win->GetStr("Replace", sizeof(replace), replace, HIST_SEARCH) == 0) {
-                FAIL
-            }
-        }
-    }
-
-    if (strlen(replace) == 0) {
-        FAIL
-    }
-
     if (aString)
         strcpy(find, aString);
-    else {
-        if (sstack.size() == 0) {
-            Msg(S_ERROR, "String stack underfow error in SearchReplace");
-            FAIL
-        }
-
-        strcpy(find, sstack.back().c_str()); sstack.pop_back();
-
-        if (strlen(find) == 0) {
-            if (View->MView->Win->GetStr("Find", sizeof(find), find, HIST_SEARCH) == 0) {
-                FAIL
-            }
-        }
-    }
-
-    if (strlen(find) == 0) {
-        FAIL
-    }
+    else
+        if (State.GetStrParam(View, find, sizeof(find)) == 0)
+            if (View->MView->Win->GetStr("Find", sizeof(find), find, HIST_SEARCH) == 0) return 0;
+    if (strlen(find) == 0) return 0;
+    if (aReplaceString)
+        strcpy(replace, aReplaceString);
+    else
+        if (State.GetStrParam(View, replace, sizeof(replace)) == 0)
+            if (View->MView->Win->GetStr("Replace", sizeof(replace), replace, HIST_SEARCH) == 0) return 0;
 
     LSearch.ok = 0;
     strcpy(LSearch.strSearch, find);

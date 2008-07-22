@@ -1,6 +1,5 @@
 /*    c_bind.h
  *
- *    Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
  *    Copyright (c) 1994-1996, Marko Macek
  *
  *    You may distribute under the terms of either the GNU General Public
@@ -84,10 +83,12 @@ public:
 #define CT_COMMAND  0
 #define CT_NUMBER   1
 #define CT_STRING   2
+#define CT_VARIABLE 3
+#define CT_CONCAT   4 /* concatenate strings */
 
 typedef struct {
     int type;
-    int repeat;
+    short repeat;
     short ign;
     union {
         long num;
@@ -129,6 +130,9 @@ class ExState { // state of macro execution
 public:
     int Macro;
     int Pos;
+
+    int GetStrParam(EView *view, char *str, int buflen);
+    int GetIntParam(EView *view, int *value);
 };
 
 extern EMode *Modes;
@@ -159,7 +163,5 @@ int AddVariable(int no, int number);
 int AddConcat(int no);
 int HashStr(const char *str, int maxim);
 void SetWordChars(char *w, const char *s);
-
-void DefineWord(const char *w);
 
 #endif

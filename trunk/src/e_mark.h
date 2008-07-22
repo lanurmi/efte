@@ -1,12 +1,3 @@
-/*
- * e_mark.h
- *
- * Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
- *
- * You may distribute under the terms of either the GNU General Public
- * License or the Artistic License, as specified in the README file.
- *
- */
 #ifndef __EMARK_H
 #define __EMARK_H
 
@@ -16,7 +7,7 @@
 
 class EMark {
 public:
-    EMark(const char *aName, char *aFileName, EPoint aPoint, EBuffer *aBuffer = 0);
+    EMark(char *aName, char *aFileName, EPoint aPoint, EBuffer *aBuffer = 0);
     ~EMark();
 
     int setBuffer(EBuffer *aBuffer);
@@ -47,8 +38,8 @@ public:
     EMarkIndex();
     ~EMarkIndex();
 
-    EMark *insert(const char *aName, char *aFileName, EPoint aPoint, EBuffer *aBuffer = 0);
-    EMark *insert(const char *aName, EBuffer *aBuffer, EPoint aPoint);
+    EMark *insert(char *aName, char *aFileName, EPoint aPoint, EBuffer *aBuffer = 0);
+    EMark *insert(char *aName, EBuffer *aBuffer, EPoint aPoint);
     EMark *locate(char *aName);
     int remove(char *aName);
     int view(EView *aView, char *aName);
