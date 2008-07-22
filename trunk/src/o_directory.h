@@ -48,7 +48,9 @@ public:
     int isDir(int No);
     int FmChDir(const char* Name);
     int FmLoad(const char* Name, EView *View);
-    int FmRmDir(const char* Name);
+    int FmMvFile(const char* Name);
+    int FmRmFile(const char* Name);
+    int FmMkDir();
     int ChangeDir(ExState &State);
     int RescanDir();
 };
