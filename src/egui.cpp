@@ -195,6 +195,7 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
         }
         State.Pos = i;
     }
+
     return ErOK;
 }
 

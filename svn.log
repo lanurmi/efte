@@ -4240,13 +4240,13 @@ Changed paths:
    D /trunk/install
 
 Removed the install file. It is now deprecated
-************************************************************************
+------------------------------------------------------------------------
 r621 | jeremy_c | 2008-02-11 15:36:55 -0500 (Mon, 11 Feb 2008) | 1 line
 Changed paths:
    M /trunk/src/c_commands.h
 
 Final editing to the c_commands.h file. Comments made into sentences, formatting of topics change a bit for easier parsing, some commands are now documented that previously were not. All commands now on wiki.
-************************************************************************
+------------------------------------------------------------------------
 r620 | jeremy_c | 2008-02-11 10:14:50 -0500 (Mon, 11 Feb 2008) | 1 line
 Changed paths:
    M /trunk/src/c_commands.h
@@ -4333,7 +4333,7 @@ Changed paths:
 added non-wrapping stack, to be used as CondStack by the macro compiler
 
 
-************************************************************************
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 r611 | jeremy_c | 2008-02-07 11:37:15 -0500 (Thu, 07 Feb 2008) | 5 lines
 Changed paths:
    M /trunk/config/kbd/k_c.fte
@@ -4369,7 +4369,7 @@ BEGIN WHILE REPEAT
 have all been reasonably tested.
 
 
-************************************************************************
+------------------------------------------------------------------------
 r608 | jeremy_c | 2008-02-07 08:07:27 -0500 (Thu, 07 Feb 2008) | 3 lines
 Changed paths:
    M /trunk/src/egui.cpp

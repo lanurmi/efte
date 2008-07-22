@@ -5,7 +5,7 @@
 
 eventmap REXX {
     key      [Tab]      { LineIndent; LineTrim }
-    key      [G-Enter]  { LineIndent; LineNew }
+    key      [G-Enter]  { LineIndent; LineNew; LineIndent }
     key      [:]        { SelfInsert; LineIndent }
     key      [A+\\]     { BlockReIndent }
     key      [C+E_c]    { REXX_Comment }
