@@ -3418,7 +3418,7 @@ Changed paths:
    M /trunk/packaging/rpm/efte.spec
 
 Updated packaging for 0.97 (future release) and also new website efte.cowgar.com
-************************************************************************
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX 
 r731 | jeremy_c | 2008-02-19 12:12:15 -0500 (Tue, 19 Feb 2008) | 1 line
 Changed paths:
    M /trunk/src/e_buffer.cpp
@@ -3464,7 +3464,7 @@ Changed paths:
 Removed binary configuration file requirement. cefte is no longer required or included. 
 eFTE reads it's configuration files directly from the plain text .fte files. It searches 
 its predefined path for a mymain.fte file and starts from there.
-************************************************************************
+------------------------------------------------------------------------
 r727 | jeremy_c | 2008-02-19 00:28:12 -0500 (Tue, 19 Feb 2008) | 1 line
 Changed paths:
    M /trunk/src/o_directory.cpp
