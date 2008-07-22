@@ -102,6 +102,7 @@ menu Object {
     item    "&Previous\tAlt+Left"     { FilePrev }
     item;
     item    "&Close\tAlt+Q"	      { FileClose }
+    item    "Close All"               { FileCloseAll }
     item;
     item    "E&xit\tAlt+X"	      { ExitEditor }
 }
@@ -213,6 +214,7 @@ menu File {
     item    "&Previous\tAlt+Left"	{ FilePrev }
     item;
     item    "&Close\tAlt+Q"		{ FileClose }
+    item    "Close All"                 { FileCloseAll }
     item;
     item    "E&xit\tAlt+X"		{ ExitEditor }
 }
