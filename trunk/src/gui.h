@@ -176,6 +176,7 @@ int DLGGetFile(GView *View, const char *Prompt, unsigned int BufLen, char *FileN
 #define GPC_WARNING 0x0002
 #define GPC_ERROR   0x0004
 #define GPC_FATAL   0x0008
+#define GPC_ABOUT   0x00016
 int DLGPickChoice(GView *View, const char *ATitle, int NSel, va_list ap, int Flags);
 
 #define SEARCH_BACK    0x00000001   // reverse (TODO for regexps)
