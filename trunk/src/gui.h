@@ -189,6 +189,7 @@ int DLGPickChoice(GView *View, const char *ATitle, int NSel, va_list ap, int Fla
 #define SEARCH_ALL     0x00000080   // search all
 #define SEARCH_REPLACE 0x00000100   // do a replace operation
 #define SEARCH_JOIN    0x00000200   // join line
+#define SEARCH_SPLIT   0x00000800   // split the line
 #define SEARCH_DELETE  0x00000400   // delete line
 #define SEARCH_CENTER  0x00001000   // center finds
 #define SEARCH_NOPOS   0x00002000   // don't move the cursor
