@@ -3447,23 +3447,23 @@ Version bump to 0.97 (before I forget)
 ************************************************************************
 r728 | jeremy_c | 2008-02-19 04:22:00 -0500 (Tue, 19 Feb 2008) | 1 line
 Changed paths:
-   M /trunk/HISTORY                      XXXXXXXXX
-   M /trunk/config/ui_m_fte.fte          XXXXXXXXX
-   M /trunk/packaging/archlinux/PKGBUILD XXXXXXXXX
-   M /trunk/packaging/macports/Portfile  XXXXXXXXX
-   M /trunk/packaging/rpm/efte.spec XXXXXXXXXXXXXX
+   M /trunk/HISTORY
+   M /trunk/config/ui_m_fte.fte
+   M /trunk/packaging/archlinux/PKGBUILD
+   M /trunk/packaging/macports/Portfile
+   M /trunk/packaging/rpm/efte.spec
    M /trunk/src/CMakeLists.txt       XXXXXXXXXXXXXX
    M /trunk/src/c_config.cpp
    M /trunk/src/cfte.cpp
    M /trunk/src/egui.cpp
    M /trunk/src/fte.cpp
    M /trunk/src/fte.h
-   M /trunk/src/objs.inc            XXXXXXXXXXXXX
+   M /trunk/src/objs.inc
 
 Removed binary configuration file requirement. cefte is no longer required or included. 
 eFTE reads it's configuration files directly from the plain text .fte files. It searches 
 its predefined path for a mymain.fte file and starts from there.
-------------------------------------------------------------------------
+************************************************************************
 r727 | jeremy_c | 2008-02-19 00:28:12 -0500 (Tue, 19 Feb 2008) | 1 line
 Changed paths:
    M /trunk/src/o_directory.cpp

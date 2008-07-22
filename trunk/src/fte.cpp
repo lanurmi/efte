@@ -55,7 +55,6 @@ static void Usage() {
            "  -r                Open next file as read-only.\n"
            "  -T[<tagfile>]     Load tags file at startup.\n"
            "  -t<tag>           Locate specified tag.\n"
-           "  -v                Verbose output (debugging config files)\n"
 //           "       -p        Load files into already running eFTE.\n"
           );
 }
@@ -216,8 +215,6 @@ static int CmdLoadConfiguration(int &argc, char **argv) {
                 ign = 1;
             } else if (argv[Arg][1] == '+') {
                 QuoteNext = 1;
-            } else if (argv[Arg][1] == 'v') {
-                verbosity++;
             } else if (argv[Arg][1] == '?' || argv[Arg][1] == 'h') {
                 Usage();
                 return 0;
