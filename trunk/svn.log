@@ -4105,7 +4105,7 @@ Changed paths:
    M /trunk/CMakeLists.txt
 
 Fixed permission bug on install of config directory
-************************************************************************
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 r637 | jeremy_c | 2008-02-14 12:33:22 -0500 (Thu, 14 Feb 2008) | 1 line
 Changed paths:
    M /trunk/src/e_regex.cpp
@@ -4167,13 +4167,13 @@ using new offset calc and seem to work.
 
 
 
-************************************************************************
+------------------------------------------------------------------------
 r631 | jeremy_c | 2008-02-13 20:54:10 -0500 (Wed, 13 Feb 2008) | 1 line
 Changed paths:
    M /trunk/src/cfte.cpp
 
 Real fix to unknown commands and cefte
-************************************************************************
+------------------------------------------------------------------------
 r630 | jeremy_c | 2008-02-13 20:49:13 -0500 (Wed, 13 Feb 2008) | 1 line
 Changed paths:
    M /trunk/src/cfte.cpp
