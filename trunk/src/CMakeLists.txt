@@ -26,6 +26,7 @@ OPTION( USE_XICON      "Use libxicon to supply icons for the X version" ON )
 OPTION( USE_XTINIT     "Use XtInitialize on init" OFF )
 OPTION( USE_HARD_REMAP "Keyboard remapping by XEFTE" OFF )
 OPTION( USE_LOGGING    "Enable trace logging within efte" ON )
+OPTION( USE_DEFAULT_CONFIG "Use default config built into efte" ON )
 
 # Setup global options right now platform dependent options will appear later
 # more near thier actual use
@@ -147,11 +148,6 @@ ADD_LIBRARY( eftebase STATIC ${BASE_FTE_SOURCES} )
 ADD_EXECUTABLE( bin2c bin2c.cpp )
 GET_TARGET_PROPERTY( BIN2C_EXE bin2c LOCATION )
 
-#ADD_CUSTOM_COMMAND(
-#  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/defcfg.h
-#  COMMAND ${BIN2C_EXE} ${CMAKE_CURRENT_SOURCE_DIR}/simple.fte > ${CMAKE_CURRENT_BINARY_DIR}/defcfg.h
-#  DEPENDS bin2c simple.fte )
-
 # =====
 #
 # Binary config compiler that will soon disappear
@@ -163,6 +159,8 @@ ADD_EXECUTABLE( cefte ${CFTE_SOURCES} )
 GET_TARGET_PROPERTY( CEFTE_EXE cefte LOCATION )
 
 IF( USE_DEFAULT_CONFIG )
+  MESSAGE( STATUS "Building default config for inclusion into eFTE" )
+
   # Program to convert our default config into an includable .h
   ADD_EXECUTABLE( bin2c bin2c.cpp )
   GET_TARGET_PROPERTY( BIN2C_EXE bin2c LOCATION )
@@ -175,10 +173,16 @@ IF( USE_DEFAULT_CONFIG )
 
   # Convert our default config to ain includable .h
   ADD_CUSTOM_COMMAND(
-    OUTPUT defcfg.h
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/defcfg.h
     COMMAND ${BIN2C_EXE} ${CMAKE_CURRENT_SOURCE_DIR}/defcfg.cnf > ${CMAKE_BINARY_DIR}/src/defcfg.h
     DEPENDS bin2c defcfg.cnf )
 ENDIF( USE_DEFAULT_CONFIG )
+
+#ADD_CUSTOM_COMMAND(
+#  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/defcfg.h
+#  COMMAND ${BIN2C_EXE} ${CMAKE_CURRENT_SOURCE_DIR}/simple.fte > ${CMAKE_CURRENT_BINARY_DIR}/defcfg.h
+#  DEPENDS bin2c simple.fte )
+
 
 # =============================================================================
 #
