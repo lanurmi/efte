@@ -79,6 +79,16 @@ extern "C" int memicmp(const void *s1, const void *s2, size_t n);
 #    include <process.h>
 #    if defined(MSVC)
 #        include <direct.h>
+#        define snprintf _snprintf
+#        define isdigit(x) isdigit((int)(unsigned char)(x))
+#        define isalpha(x) isalpha((int)(unsigned char)(x))
+#        define isalnum(x) isalnum((int)(unsigned char)(x))
+#        define islower(x) islower((int)(unsigned char)(x))
+#        define isupper(x) isupper((int)(unsigned char)(x))
+#        define isprint(x) isprint((int)(unsigned char)(x))
+#        define ispunct(x) ispunct((int)(unsigned char)(x))
+#        define isspace(x) isspace((int)(unsigned char)(x))
+#        define isgraph(x) isgraph((int)(unsigned char)(x))
 #    endif
 #    if defined(WATCOM) || defined(__WATCOM_CPLUSPLUS__)
 #        define HAVE_STRLCPY

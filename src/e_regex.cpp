@@ -17,6 +17,7 @@
 #include <malloc.h>
 #endif
 #include "e_regex.h"
+#include "sysdep.h"
 
 //#define DEBUG
 
