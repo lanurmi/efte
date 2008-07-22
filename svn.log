@@ -4498,7 +4498,7 @@ Changed paths:
 some more processing words for extended macro/script language
 
 
-************************************************************************
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 r594 | lanurmi | 2008-02-02 21:59:31 -0500 (Sat, 02 Feb 2008) | 1 line
 Changed paths:
    M /trunk/src/cocoa.mm
@@ -4511,7 +4511,7 @@ Changed paths:
    M /trunk/src/CMakeLists.txt
 
 vefte no longer links against ncurses (which was unnecessary)
-************************************************************************
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 r592 | lanurmi | 2008-02-02 20:09:16 -0500 (Sat, 02 Feb 2008) | 4 lines
 Changed paths:
    M /trunk/eFTE.xcodeproj/project.pbxproj
