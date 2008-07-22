@@ -1,9 +1,10 @@
-/*        con_nt.cpp
+/*    con_nt.cpp
  *
- *        Copyright (c) 1994-1996, Marko Macek
+ *    Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
+ *    Copyright (c) 1994-1996, Marko Macek
  *
- *        You may distribute under the terms of either the GNU General Public
- *        License or the Artistic License, as specified in the README file.
+ *    You may distribute under the terms of either the GNU General Public
+ *    License or the Artistic License, as specified in the README file.
  *
  */
 

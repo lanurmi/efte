@@ -1,3 +1,12 @@
+# 
+# fte-bcc2.mak
+# 
+# Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
+#
+# You may distribute under the terms of either the GNU General Public
+# License or the Artistic License, as specified in the README file.
+#
+
 LIBDIR = \BCOS2\LIB
 INCDIR = \BCOS2\INCLUDE
 

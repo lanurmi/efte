@@ -1,3 +1,11 @@
+#
+# fte-cygwin-xf86.mak
+#
+# Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
+#
+# You may distribute under the terms of either the GNU General Public
+# License or the Artistic License, as specified in the README file.
+#
 # versions of FTE to build
 
 # Versions:
