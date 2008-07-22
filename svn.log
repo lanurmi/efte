@@ -3475,7 +3475,7 @@ Changed paths:
    M /trunk/src/o_directory.cpp
 
 Rename is now working in file manager. Didn't think it would be that easy
-************************************************************************
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 r725 | jeremy_c | 2008-02-18 23:41:28 -0500 (Mon, 18 Feb 2008) | 5 lines
 Changed paths:
    M /trunk/config/m_fte.fte
@@ -3543,7 +3543,7 @@ Changed paths:
    M /trunk/src/view.cpp
 
 Added HookCommands into the macro system: OnFileSave, OnFileTrim, OnFileReload, OnFileSave, OnFileWriteTo, OnSwitchTo, OnFilePrev, OnFileNext, OnFileLast, OnFileOpen, OnFileSaveAll, OnCompile, OnRunCompiler, OnTagNext, OnTagPrev, OnTagPop, OnTagClear, OnTagLoad, OnConfigRecompile
-************************************************************************
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 r719 | jeremy_c | 2008-02-18 12:03:57 -0500 (Mon, 18 Feb 2008) | 1 line
 Changed paths:
    M /trunk/src/e_search.cpp
