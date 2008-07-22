@@ -3378,7 +3378,7 @@ Changed paths:
    D /trunk/config/slang
 
 Removed leftover slang configs, bug: 1897187
-************************************************************************
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 r734 | jeremy_c | 2008-02-19 13:55:41 -0500 (Tue, 19 Feb 2008) | 1 line
 Changed paths:
    M /trunk/HISTORY
