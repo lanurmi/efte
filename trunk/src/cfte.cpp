@@ -980,7 +980,7 @@ static int ParseCommands(CurPos &cp, char *Name) {
             if (GetWord(cp, cmd) == -1) Fail(cp, "Syntax error");
             Command = CmdNum(cmd);
             if (Command == 0)
-                Fail(cp, "Unrecognised command: %s", cmd);
+                Fail(cp, "Unrecognized command: %s", cmd);
             PutNumber(cp, CF_COMMAND, Command);
             PutNumber(cp, CF_INT, cnt);
             PutNumber(cp, CF_INT, ign);
@@ -998,7 +998,7 @@ static int ParseCommands(CurPos &cp, char *Name) {
             Word w;
             if (GetWord(cp, w) != 0) Fail(cp, "Syntax error (bad variable name)");
             long var = Lookup(CfgVar, w);
-            if (var == -1) Fail(cp, "Unrecognised variable");
+            if (var == -1) Fail(cp, "Unrecognized variable: %s", w);
             PutNumber(cp, CF_VARIABLE, var);
         } else if (p == P_EOS) {
             GetOp(cp, P_EOS);

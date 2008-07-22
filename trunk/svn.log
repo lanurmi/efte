@@ -3683,13 +3683,13 @@ Changed paths:
 * Added TosStr and TosInt
 * Removed Tos
 
-************************************************************************
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 r697 | jeremy_c | 2008-02-17 04:38:47 -0500 (Sun, 17 Feb 2008) | 1 line
 Changed paths:
    M /trunk/src/cfte.cpp
 
 Made Unrecognized variable/command report in the same manner. One was Unrecognized command... the other was variable:
-*************************************************************************
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 r696 | jeremy_c | 2008-02-17 04:37:41 -0500 (Sun, 17 Feb 2008) | 1 line
 Changed paths:
    M /trunk/src/cfte.cpp
