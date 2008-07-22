@@ -1,0 +1,10 @@
+# cut$ append$
+
+{ "abcdefgh" 3 cut$  "abc" equals$ "defgh" equals$ and true PASS }
+{ "1234"     0 cut$  "" equals$  "1234" equals$ and true PASS }
+{ "ABCDE"   10 cut$  "ABCDE" equals$ "" equals$ and true PASS }
+{ ""         0 cut$  "" equals$  "" equals$  and true PASS }
+{ ""         5 cut$  "" equals$  "" equals$  and true PASS }
+{ ""        -2 cut$  "" equals$  "" equals$  and true PASS }
+
+{ TEST1 TEST2 TEST3 TEST4 TEST5 TEST6 }

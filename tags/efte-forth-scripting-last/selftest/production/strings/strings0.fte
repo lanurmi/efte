@@ -1,0 +1,35 @@
+# swap$ dup$ drop$ rot$ over$
+{ "xyz" "987" swap$ 
+   "xyz" equals$
+   "987" equals$ and
+   true PASS }
+
+{ "abc" "def" over$
+   depth$ 3 equals
+   "abc" equals$ and
+   "def" equals$ and
+   "abc" equals$ and
+   true PASS }
+
+{ "ABC" dup$
+   depth$ 2 equals
+   equals$ and
+   true PASS }
+
+{ "123" "789" "ABC"
+   drop$ drop$
+   "123" equals$ 
+   true PASS }
+
+{ "123" "789" "ABC"  "def" 
+   drop$ drop$ drop$  
+   "456" equals$ 
+   false PASS }
+
+{ "abc" "def" "ghi" rot$ 
+   "abc" equals$
+   "ghi" equals$ and
+   "def" equals$ and    true PASS }
+
+
+{ TEST1  TEST2  TEST3  TEST4  TEST5  TEST6 }

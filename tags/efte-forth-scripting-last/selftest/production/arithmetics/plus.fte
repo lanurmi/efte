@@ -1,0 +1,5 @@
+{   3  5 +    8 PASS }
+{  -2  9 +    7 PASS }
+{   6 -8 +   -2 PASS }
+{ -11 -7 +  -18 PASS }
+{ TEST1 TEST2 TEST3 TEST4 }

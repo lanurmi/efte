@@ -1,0 +1,262 @@
+# main.fte
+#
+# Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
+#
+# You may distribute under the terms of either the GNU General Public
+# License or the Artistic License, as specified in the README file.
+#
+# Main eFTE configuration file
+#
+include "primitives.fte";
+include "macros.fte";
+
+# to include use the -dSELFTEST parameter to efte
+%if(SELFTEST)
+include "selftest.fte";
+%endif
+
+include "fireshell.fte";
+
+sub InitMainDone { var new }
+sub InitMain {
+    InitMainDone @ unless
+        InitMainDone on
+        "InitMacros"    attempt
+        "InitSelftest"  attempt
+        "InitFireshell" attempt
+}
+
+
+#%define(UI_KB)
+%define(UI_FTE)
+#%define(UI_WS)
+#%define(UI_NE)
+#%define(UI_BRIEF)
+# experimental
+
+%if(!BSD_BRACE)
+%define(1TBS_BRACE)
+%endif
+
+#%define(COLORS_GRAY_BG)
+#%define(COLORS_WHITE_BG)
+%define(COLORS_BLACK_BG)
+#%define(COLORS_BLUE_BG)
+#%define(COLORS_BLUEZ_BG)
+#%define(COLORS_NCE_BG)
+
+%if(OS_OS2)
+%define(GUI_PM)
+%endif
+
+%if(OS_UNIX)
+%define(GUI_X11)
+%endif
+
+include "global.fte";
+include "pal_base.fte";
+
+%if(COLORS_BLACK_BG)
+%if(UI_KB)
+include "pal_b_kb.fte";
+%endif
+include "pal_blk.fte";
+%endif
+
+%if(COLORS_WHITE_BG)
+include "pal_wht.fte";
+%endif
+
+%if(COLORS_GRAY_BG)
+include "pal_gray.fte";
+%endif
+
+%if(COLORS_BLUE_BG)
+include "pal_blue.fte";
+%endif
+
+%if(COLORS_BLUEZ_BG)
+include "pal_bluez.fte";
+%endif
+
+%if(COLORS_NCE_BG)
+include "pal_nce.fte";
+%endif
+
+object GLOBAL {
+# fonts for GUI version
+
+%if(GUI_PM)
+# PM
+# Only System VIO fonts are used. Some listed below. XX*YY.
+#    WindowFont =  "8x8";
+#    WindowFont = "6x10";
+#    WindowFont = "8x10";
+#    WindowFont = "5x12";
+#    WindowFont = "8x12";
+#    WindowFont = "6x14";
+    WindowFont = "8x14";
+#    WindowFont = "5x16";
+#    WindowFont = "8x16";
+#    WindowFont = "8x18";
+
+%endif
+
+%if(GUI_X11)
+# X11
+# Any fixed-width font should do. Make sure it has all 256 characters
+# defined or weird things can happen.
+
+#    WindowFont = "fixed";
+#    WindowFont = "6x8";
+#    WindowFont = "7x13";
+#    WindowFont = "8x13";
+#    WindowFont = "9x15";
+    WindowFont = "9x15";
+%if(UI_KB)
+    WindowFont = "*-fixed-bold-*-15*,*-fixed-bold-*-16*";
+%endif
+# We need some font, which can be "LOCALIZED" - and this can't be done
+# with font names like 9x15 (actually we can, but this would need
+# highly skilled users :))
+#    WindowFont = "10x20";
+%endif
+}
+
+include "color.fte";
+
+# change background color
+# must be here to be inherited by other modes
+# object PLAIN { color { { "Background", "17" } }; }
+
+
+# in this mode are declared all basic values
+# these are inherited in other modes - so basicaly
+# change only necessary values in submodes
+# must be here to be inherited by other modes
+include "m_plain.fte";
+
+
+# In addition to just PLAIN, there are two other special modes
+# SOURCE and MARKUP. All programming language modes inherit from
+# SOURCE and all markup modes, such has HTML, LaTeX, etc, inherit
+# from MARKUP. Both SOURCE and MARKUP inherit from PLAIN.
+
+include "m_source.fte";
+include "m_markup.fte";
+
+# UNIX files have no CR at the end of line
+
+%if(OS_UNIX)
+mode PLAIN {
+    # Don't autodetect line separator
+    DetectLineSep = 0;
+    # Don't add CR at EOL when saving
+    AddCR      = 0;
+    # Don't remove CR if at EOL when loading
+    StripChar  = -1;
+}
+%endif
+
+eventmap TEX: PLAIN {
+    key [F9] {
+        "latex " filename$ append$ AskCompiler
+    }
+}
+
+include "m_4gl.fte";
+include "m_a51.fte";
+include "m_ada.fte";
+include "m_asm.fte";
+include "m_asm370.fte";
+include "m_bin.fte";
+include "m_c.fte";
+include "m_catbs.fte";
+include "m_clario.fte";
+include "m_diff.fte";
+include "m_ebnf.fte";
+include "m_eiffel.fte";
+include "m_euphoria.fte";
+include "m_fort90.fte";
+include "m_falcon.fte";
+include "m_fte.fte";
+include "m_gawk.fte";
+include "m_html.fte";
+include "m_idl.fte";
+include "m_ipf.fte";
+include "m_java.fte";
+include "m_ldsgml.fte";
+include "m_lua.fte";
+include "m_make.fte";
+include "m_merge.fte";
+include "m_mod3.fte";
+include "m_msg.fte";
+include "m_pascal.fte";
+include "m_perl.fte";
+include "m_php.fte";
+include "m_py.fte";
+include "m_resdlg.fte";
+include "m_rexx.fte";
+include "m_rpm.fte";
+include "m_ruby.fte";
+%if(SELFTEST)
+include "m_selftest.fte";
+%endif
+include "m_sgml.fte";
+include "m_sh.fte";
+include "m_siod.fte";
+include "m_sl.fte";
+include "m_sml.fte";
+include "m_sql.fte";
+include "m_tcl.fte";
+include "m_tex.fte";
+include "m_texi.fte";
+include "m_text.fte";
+include "m_unrealscript.fte";
+include "m_xml.fte";
+include "m_xslt.fte";
+include "m_rst.fte";
+
+# Must be included AFTER m_text.fte in order for the filename regexp to
+# match correctly (i.e. CMakeLists.txt should match CMAKE mode, not TEXT mode)
+include "m_cmake.fte";
+
+# C indentation style menu
+include "uicstyle.fte";
+
+# When doing large customizations of keyboard/menus
+# you should probably write your own version of these files.
+
+include "ui_fte.fte"; # fte CUA style bindings
+
+
+# some templates and abbreviations
+include "ab_c.fte";
+%if(OS_OS2)
+include "ab_c_os2.fte";
+%endif
+include "ab_rexx.fte";
+include "ab_sh.fte";
+include "ab_java.fte";
+include "ab_perl.fte";
+
+# some customizations
+
+object GLOBAL {
+    SelectPathname = 0;
+    ShowToolBar = 1;     # PM only
+    GUIDialogs = 1;      # PM only
+    SysClipboard = 1;    # use PM clipboard, or X11 selection for clipboard
+    #    PMDisableAccel      = 0;   # disable Alt+Fx PM accelerators
+    # enable common cursor movements (always staying within EOL)
+    # CursorWithinEOL = 1;
+}
+
+
+
+%if(SELFTEST)
+eventmap MODEL {
+    key [C+S+F12] { "~/results.selftest" FileOpen MoveFileStart selftest }
+}
+%endif
+

@@ -1,0 +1,105 @@
+# does not work at this time. needs fixing
+#
+# just an experiment, do not take this seriously :)
+# 
+
+mode VIMODE: MODEOPTS {                               # VI mode
+    key [i] { "VI_INS" ChangeKeys }
+    key [I] { MoveLineStart; "VI_INS" ChangeKeys }
+    key [o] { LineAdd; MoveDown; MoveLineStart; "VI_INS" ChangeKeys }
+    key [O] { LineInsert; MoveLineStart; "VI_INS" ChangeKeys }
+    key [a] { MoveRight; "VI_INS" ChangeKeys }
+    key [A] { MoveLineEnd; "VI_INS" ChangeKeys }
+    key [r] { ToggleInsert; InsertChar; ToggleInsert }
+    key [R] { "VI_OVER" ChangeKeys; ToggleInsert }
+    key [d] { "VI_DELETE" ChangeKeys }
+    key [D] { KillToLineEnd }
+    key [y] { "VI_YANK" ChangeKeys }
+    key [x] { KillChar }
+    key [X] { KillCharPrev }
+    key [h] { MoveLeft }
+    key [j] { MoveDown }
+    key [k] { MoveUp }
+    key [l] { MoveRight }
+    key [$] { MoveLineEnd }
+    key [0] { MoveLineStart }
+    key [^] { MoveFirstNonWhite }
+    key [:] { MainMenu }
+    key [/] { SearchRx }
+    key [n] { SearchAgain }
+    key [P] { BlockPaste }
+    key [p] { MoveRight; BlockPaste }
+    key [B] { MoveWordPrev }
+    key [b] { MoveWordPrev }
+    key [w] { MoveWordNext }
+    key [W] { MoveWordNext }
+    key [c] { "VI_CHANGE" ChangeKeys }
+    key [C+N] { MoveDown }
+    key [C+P] { MoveUp }
+    key [C+B] { MovePageUp }
+    key [%]   { MatchBracket }
+    key [u]   { Undo }
+    key [U]   { Redo }
+
+    key [BackSp] { MoveLeft }
+    key [Space] { MoveRight }
+
+    key [G-Enter] { MoveDown; MoveLineStart }
+    key [-] { MoveUp; MoveLineStart }
+    key [+] { MoveDown; MoveLineStart }
+    key [J] { LineJoin }
+    key [C] { KillToLineEnd; "VI_INS" ChangeKeys }
+
+    key       [G-Left]    { MoveLeft }
+    key     [C+G-Left]    { MoveWordPrev }
+    key       [G-Right]   { MoveRight }
+    key     [C+G-Right]   { MoveWordNext }
+    key       [G-Up]      { MoveUp }
+    key       [G-Down]    { MoveDown }
+    key       [G-Home]    { MoveLineStart }
+    key     [C+G-Home]    { MovePageStart }
+    key       [G-End]     { MoveLineEnd }
+    key     [C+G-End]     { MovePageEnd }
+    key       [G-PgUp]    { MovePageUp }
+    key     [C+G-PgUp]    { MoveFileStart }
+    key       [G-PgDn]    { MovePageDown }
+    key     [G-C+PgDn]    { MoveFileEnd }
+}
+
+mode VI_INS: MODEOPTS {
+    key [Esc] { "VIMODE" ChangeKeys; MoveLeft }
+    key [G-Enter] { Fireshell }
+    key [Space] { InsertSpace }
+    key [BackSp] { KillCharPrev }
+    key [Tab] { InsertTab }
+}
+
+mode VI_OVER: VI_INS {
+    Insert      = 0;
+    key [Esc] { "VIMODE" ChangeKeys; MoveLeft; ToggleInsert }
+}
+
+mode VI_DELETE: MODEOPTS {
+    key [Esc] { "VIMODE" ChangeKeys }
+    key [d]   { BlockSelectLine; BlockCut; "VIMODE" ChangeKeys }
+    key [$]   { BlockUnmark; BlockMarkStream; MoveLineEnd; BlockMarkStream; BlockCut; "VIMODE" ChangeKeys }
+    key [0]   { BlockUnmark; BlockMarkStream; MoveLineStart; BlockMarkStream; BlockCut; "VIMODE" ChangeKeys }
+    key [w]   { KillWord; "VIMODE" ChangeKeys }
+}
+
+mode VI_CHANGE: MODEOPTS {
+    key [Esc] { "VIMODE" ChangeKeys }
+    key [w] { KillWord; "VI_INS" ChangeKeys }
+    key [$] { KillToLineEnd; "VI_INS" ChangeKeys }
+    key [c] { MoveLineStart; KillToLineEnd; "VI_INS" ChangeKeys }
+}
+
+mode VI_YANK: MODEOPTS {
+    key [Esc] { "VIMODE" ChangeKeys }
+    key [d]   { BlockSelectLine; BlockCopy; "VIMODE" ChangeKeys }
+    key [$]   { BlockUnmark; BlockMarkStream; MoveLineEnd; BlockMarkStream; BlockCopy; MovePrevPos; "VIMODE" ChangeKeys }
+    key [0]   { BlockUnmark; BlockMarkStream; MoveLineStart; BlockMarkStream; BlockCopy; MovePrevPos; "VIMODE" ChangeKeys }
+    key [w]   { KillWord; "VIMODE" ChangeKeys }
+}
+
+oinclude "mym_vi.fte";

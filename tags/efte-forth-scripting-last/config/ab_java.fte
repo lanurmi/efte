@@ -1,0 +1,60 @@
+# Java language templates
+
+eventmap JAVA {
+    # these work well for default indentation settings
+    # changes may be necessary if you use different indentation
+    
+    # typical usage would be typing ifx and <space>.
+    # useful command here is <A+Enter> which adds 
+    # a new line after the current one, and indents it properly.
+    # in cmode defined as LineAdd; LineIndent;
+    abbrev "ifx" {
+        KillWordPrev;
+%if(BSD_BRACE)
+        "if ()" InsertString; MoveLeft; SavePos; MoveRight; LineIndent; LineNew;
+        "{" InsertString; LineIndent; LineNew;
+%endif
+%if(1TBS_BRACE)
+        "if () {" InsertString; 3:MoveLeft; SavePos; 3:MoveRight; LineIndent; LineNew; 
+%endif
+        "}" InsertString; LineIndent; 
+        MoveSavedPos; Fail; # do not insert typed character
+    }
+    abbrev "whx" { 
+        KillWordPrev;
+%if(BSD_BRACE)
+        "while ()" InsertString; MoveLeft; SavePos; MoveRight; LineIndent; LineNew;
+        "{" InsertString; LineIndent; LineNew;
+%endif
+%if(1TBS_BRACE)
+        "while () {" InsertString; 3:MoveLeft; SavePos; 3:MoveRight; LineIndent; LineNew; 
+%endif
+        "}" InsertString; LineIndent; 
+        MoveSavedPos; Fail;
+    }
+    abbrev "swx" { 
+        KillWordPrev;
+%if(BSD_BRACE)
+        "switch ()" InsertString; MoveLeft; SavePos; MoveRight; LineIndent; LineNew;
+        "{" InsertString; LineIndent; LineNew;
+%endif
+%if(1TBS_BRACE)
+        "switch () {" InsertString; 3:MoveLeft; SavePos; 3:MoveRight; LineIndent; LineNew; 
+%endif
+        "}" InsertString; LineIndent; 
+        MoveSavedPos; Fail;
+    }
+    abbrev "cax" {
+        KillWordPrev; "case :" InsertString; LineIndent; LineNew;
+        "break;" InsertString; LineIndent;
+        MoveUp; MoveLineEnd; MovePrev;
+        Fail;
+    }
+    abbrev "dex" {
+        KillWordPrev; "default:" InsertString; LineIndent; 2:LineNew;
+        "break;" InsertString; LineIndent;
+        MoveUp; LineIndent;
+        Fail;
+    }
+}
+

@@ -1,0 +1,536 @@
+%if(!FIRESHELL)
+%define(FIRESHELL)
+
+sub last         { var new }                    # anchor of linked list through words
+sub state        { var new }                    # compilation/interpretation switch
+sub w            { var new }                    # VM word pointer
+sub ip           { var new }                    # VM instruction pointer
+sub loading      { var new }
+sub shellindent  { var new }
+sub compiling    { state @ }
+sub interpreting { compiling not }
+
+
+
+# --- virtual machine ---
+sub exec      {
+   dup -65536 and
+   if
+      dup 1 + w ! @
+   endif
+   execute }
+
+
+sub donest    {
+   ip @ >r                                      # push return address
+   w @ ip !                                     # set instruction pointer to called macro
+   begin                                        # having an efte support command here would speed this up.
+      ip @
+      dup 1 +
+      ip !
+   @ qdup while
+      exec
+   repeat
+   r> ip !
+   }
+
+
+
+# --- run time words ---
+
+sub dovar     { w @ }                           # push data address
+
+# not factoring here for .. hmm .. "performance" :D
+sub branch    { ip @                            # runtime code for unconditional branch
+                dup @ +
+                1 + ip !
+              }
+
+sub branch0   { if ip @                         # runtime code for conditional branch
+                else ip @ dup @ +
+                endif  1 + ip !
+              }
+
+sub branch1   { if    ip @ dup @ +              # runtime code for conditional branch
+                else  ip @
+                endif 1 + ip !
+              }
+
+sub dodo      { 2:over equals if
+                    2:drop
+                    ip @
+                    dup @ + 3 +
+                else  swap >r >r
+                    ip @ 1 +
+                endif ip !
+              }
+
+sub doloop    { r> 1 +                          # runtime code for simple count up loops
+                dup r@ xor if
+                    >r  ip @ dup @ + ip ! exit
+                endif
+                r> 2:drop
+                ip @  1 + ip !
+              }
+
+sub lit       { ip @                            # runtime code for literal numbers
+                dup 1 + ip !
+                @
+              }
+
+sub slit      { ip @                            # runtime code for literal strings
+                count
+                2:over + ip !
+                combine
+              }
+
+
+
+# --- "buffered i/o", source line parsing ---
+
+sub source$ { var$ new }
+
+sub word$   {                                   # ( c -- )  must clear input line from string stack
+    source$ fetch$                              # this is a but cludgy and slow, but the easiest way for now/
+    dup bl equals if
+       dup minleading$
+    endif
+    split$
+    swap$ -1 left$
+    source$ store$
+    }
+
+
+
+sub prompt  {
+   loading @ unless
+      interpreting if
+         "[ok]" type$
+         depth$ '$' repeat$ type$
+         depth  '.' repeat$ type$
+         cr
+      else
+         shellindent @ spaces
+      endif
+ }
+
+
+
+
+# TODO: check split$ / word$ with leading spaces - there may be a stack imbalance.
+# TODO: repeated  1 + dup @ .  , printing last address after a while (non-alloc'd mem) stack error?
+
+
+sub query    {     # ( -- n )
+   cursorline$
+
+# replace control chars (including tabs) against spaces
+   dup$ len$ 0 do
+      i ascn
+      dup bl <
+      if
+         bl i embed$
+      endif
+      drop
+   loop
+   bl minleading$
+   dup$ source$ store$
+   len$
+}
+
+
+sub endloading {
+   loading off
+   fileclose
+   }
+
+
+sub error    {
+   shellindent off
+   state off
+   false loading exchange
+   qdup if
+      " while loading from " append$ filename$ append$
+      ", line " append$ number$ append$
+      fileclose
+   endif
+   cr type$ cr
+   fail }
+
+sub notfound { "Undefined word: " prepend$ error }
+
+
+# --- dictionary ---
+
+sub revealbit      { 1 }
+sub precedencebit  { 2 }
+
+
+# --- header structure ---
+#         --- lfa ---
+# link+0  pointer to prev word
+#         --- cfa ---
+# link+1  pointer to xt
+#         --- nfa ---
+# link+2  header flags
+# link+3  name len
+# link+4+ name
+#         ---
+#   xt    xt of word handler
+#         body
+#         ...
+
+
+sub >xt       { @ }                # ( cfa -- xt )
+sub >body     { >xt 1 +  }         # ( cfa -- body )
+sub link>     { 1 + }              # ( lfa -- cfa )
+sub >link     { 1 - }              # ( cfa -- lfa )
+sub >name     { 1 + }              # ( cfa -- nfa )
+sub name>     { 1 - }              # ( -- cfa )
+sub name$     { fetch$ }
+sub .name     { fetch$ type$ }
+sub headerflags { @  }             # ( nfa -- flags )
+sub latest    { last @ link> }
+sub immediate { precedencebit    latest >name   or! }   # ( -- )
+sub reveal    { revealbit        latest >name   or! }   # ( -- )
+sub hide      { revealbit invert latest >name  and! }   # ( -- )
+
+
+
+sub header {
+   last link                       # add new header to linked list of headers
+   here 0 comma                    # pointer to word body
+   0 comma                         # header flags
+   here
+   dup$ len$ 1 + allot
+   move$
+   here swap ! }
+
+
+sub nextheader  {                   # ( cfa1 -- cfa2 | 0 )
+   >link @
+   dup lest link>
+   }
+
+
+sub findheader  {                   # ( -- xt headerflags | 0 )  s( name -- )
+   latest
+   begin
+      dup >name                     # cfa nfa
+      dup headerflags               # cfa nfa headerfl
+      dup revealbit and
+      if
+         dup$
+         over name$ equals$
+         if
+            drop$
+            >r drop >xt r>
+            exit
+         endif
+      endif
+      drop2
+  nextheader
+  dup not until
+  drop$
+}
+
+
+sub locate {             # ( -- xt headers | 0 )   search for word name on string stack
+   dup$
+   findheader
+   qdup if
+      drop$
+   else
+      tick
+      dup will revealbit                        # synthetic headers for eFTE provided primitives
+   endif
+ }
+
+
+sub postpone   {
+   dup$ locate
+   if drop$ comma
+   else notfound
+   endif }
+
+
+sub create    {
+   bl word$ header
+   "dovar" postpone
+   reveal }
+
+
+sub sub {
+   bl word$ header
+   "donest" postpone
+   state on
+   5 shellindent !
+   }
+
+
+sub endsub  {
+   shellindent off
+   0 comma
+   state off
+   reveal }
+
+
+
+sub newtick {
+   bl word$
+   dup$ locate
+   not will notfound
+   drop$
+}
+
+
+sub literal   {            # compiling: ( x -- ),  interpreting: ( x -- x )
+   compiling lest
+      "lit" postpone comma
+   }
+
+
+sub sliteral  {
+   compiling lest
+      "slit" postpone                           # compile as string literal:
+      here                                      # .. goes string to
+      dup$ len$ 1 + allot                       # allocate string len + 1 (for leading count)
+      move$                                     # place string
+    }
+
+
+# --- fireshell utilities: shell ---
+
+sub shell$ { runprogramasync }                  # shell to program in a terminal
+sub shell  { 0 word$ shell$ }                   # parse input line, shell to program in a terminal
+sub run$   { ";" prepend$ shell$ }              # run program without opening a terminal
+sub run    { 0 word$ run$ }                     # parse input line, run program without opening a terminal
+
+
+sub tmpdir  { "/tmp" }
+
+sub tempfilename$ {
+    tmpdir  "/eFTE_fireshell_" append$
+    now number$ append$
+    microseconds <hash 9:hash hash> append$
+}
+
+sub shellredirect {
+    tempfilename$ swap$
+    " > " append$
+    over$ append$
+    run$ cr
+    dup$ blockread
+    moveblockend blockunmark
+    "rm " swap$ append$ run$
+    winrefresh
+}
+
+
+
+# --- compiler/interpreter ---
+
+sub parsedelimited {
+    -1 left$                                    # strip leading delimiter
+    -1 ascn  over equals                        # last char delimiter too?
+    if    -1 right$                             # yes: discard too
+    else  " " dup word$ 2:append$               # no: parse and append rest of string
+    endif drop
+}
+
+sub maybesomethingelse {                        # ( -- ) not a word in dictionary - try alternatives
+    dup$
+    number? if
+        literal                                 # yes, compile number (if compiling)
+        drop$                                   # (kept for error case)
+        exit
+    endif
+
+    0 ascn 39 equals if                         # 'foo' type of string?
+        39 parsedelimited                       # parse remainder if it contains spaces
+        asc literal                             # compile ascii of first char
+        exit
+    endif
+
+    0 ascn '"' equals if                        # "bar" type of string?
+        '"' parsedelimited                      # parse remainder if it contains spaces
+        sliteral                                # compile string to word, or leave on stack
+        exit
+    endif
+
+    0 ascn '^' equals if
+        -1 left$ asc 31 and literal
+        exit
+    endif
+
+    0 ascn '>' equals  state @ not and
+    if -1 left$
+        " " append$
+        0 word$ append$
+        shellredirect
+        exit
+    endif
+    notfound
+ }
+
+
+
+# the interpreter/compiler. source expected in variable source$
+sub interpret {                                 # ( -- )
+    begin
+       bl word$
+       dup$ len$                                # still input?
+    while
+       dup$ locate                              # look up in dictionary
+       qdup if                                  # found:
+          drop$                                 # (kept name for not-found case)
+          precedencebit and                     # immediate words execute always
+          interpreting or
+          if
+             exec                               # not compiling or immediate: execute straight away.
+          else
+             comma                              # compile execution token to mem
+          endif
+       else                                     # word not in dictionary: test for alternatives, like:
+          maybesomethingelse                    #   "strings"  'A'sciis  $hex  #decimal  %binary numbers ^C control chars,  >command OS commands.
+       endif
+    repeat
+    drop$
+    }
+
+
+sub interpret$  {                               # ( -- ) s( sourceline -- )
+    source$ store$ interpret
+}
+
+sub home { 0 0 at }
+
+sub load$  {
+   fileopen
+   home
+   linecount 0 do
+      1 loading +!
+      query will interpret
+      ?cursordown
+   loop
+   endloading
+}
+
+
+sub load {                                      # compile from file.  not nestable now.
+   bl word$ load$
+}
+
+
+sub ok {
+    query
+    loading @ not will cursorend
+    if
+       space
+       interpret
+       cr
+    endif
+    prompt }
+
+
+
+
+
+
+sub fireshellenable { var new }
+sub Fireshell       { fireshellenable @ if ok else linenew endif }
+sub bye             { fireshellenable off }
+
+
+# --- fireshell utilities: words ---
+
+sub words {
+  base @ hex
+  last
+  cr
+  30 '-' repeat$
+  dup$ type$ cr   # seperator
+  " addr f name" type$ cr
+  dup$ type$ cr   # seperator
+  begin @
+  qdup while
+     dup link>
+     dup .
+     >name  dup headerflags
+     revealbit precedencebit or and
+     "- -#" 1 mid$ type$ space
+     .name cr
+  repeat
+  type$           # seperator
+  base ! }
+
+
+
+
+# --- fireshell utilities: hexdump ---
+
+sub slashstring { over min tuck - >r + r> }             # ( a1 u1 u -- a2 u2 )
+
+sub safeemit    {                                       # ( asc -- )
+    '.'
+    over printable will swap
+    emit drop
+}
+
+
+sub hexdigits   { base @ >r hex   <hash bl hold times hash hash> type$  r> base ! }
+sub .addr       { 8 hexdigits }                         # ( a -- )
+sub .byte       { 2 hexdigits }                         # ( c -- )
+sub .nextbyte   { count .byte }                         # ( a1 -- a2 )
+sub .nextchar   { count safeemit }                      # ( a1 -- a2 }
+sub dumpbytes   { times .nextbyte drop }                # ( a n -- )
+sub dumpchars   { times .nextchar drop }                # ( a n -- )
+
+sub dump1line  {                                        # ( a n -- )
+   dup if
+      over .addr space
+      dup2 dumpbytes
+      16 over - 3 * 2 + spaces    # pad with spaces to ascii dump. a dumpline could be < 16 bytes.
+      dup2 dumpchars
+   endif drop2 }
+
+
+sub dump {                                              # ( a n -- )
+   cr
+   begin
+      dup
+   while
+      dup2 16 min dump1line cr
+      16 slashstring
+   repeat drop2
+}
+
+
+
+# ---------------- initialise ---------------
+
+sub colondef           { header "donest" postpone }
+sub InitFireshellDone  { var new }
+sub InitFireshell {
+    InitFireshellDone @ unless
+        InitFireshellDone on
+        bye
+        256 spaces$ source$ store$
+
+        shellindent off
+        state off
+        last off
+        ip off
+        w off
+        loading off
+
+        65536 here - dup positive if dup allot endif drop
+        ":"       colondef "sub"      postpone endsub
+        ";"       colondef "endsub"   postpone endsub  immediate
+        "execute" colondef "exec"     postpone endsub
+        "'"       colondef "newtick"  postpone endsub
+        "["       colondef "state"    postpone "off" postpone endsub immediate
+        "]"       colondef "state"    postpone "on"  postpone endsub
+   }
+
+%endif

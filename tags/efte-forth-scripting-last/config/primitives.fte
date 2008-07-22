@@ -1,0 +1,1110 @@
+#
+# Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
+#
+# You may distribute under the terms of either the GNU General Public
+# License or the Artistic License, as specified in the README file.
+#
+# some tools and enhancements for macros.
+# this are currently used for testing and toying
+# with macros, as result many of the current macros
+# assume these to be present, using these factored out
+# functionality, akin to a run time library.
+#
+
+# can't use this chars in names (yet):   = , # :
+# TODO: fix bugs. a few words in here exist to work around known bugs.
+#   insertstring:   prompts for string when trying to insert empty stringdd
+
+
+# -- constants --
+sub false     {  0 }
+sub true      { -1 }                            # "true" represented as all bits sets
+sub cell      {  1 }                            # memory increments per integer
+sub cell+     {  1 + }
+sub cell-     {  1 - }
+sub cells     { }
+sub noop      { }
+
+# -- stack --
+#sub qdup      { dup lest dup }                  # duplicate top of stack if <> 0
+sub nip       { swap drop }                     # drop second of stack
+sub tuck      { swap over }                     # copy top of stack below second of stack
+sub pluck     { 2 pick }                        # copy 3rd item to top
+
+sub dup2      { 2:over }                        # duplicate top two items
+sub drop2     { 2:drop }                        # drop top two items
+#sub minrot    { 2:rot }                         # rotate top item below second item
+#sub swap2     { rot >r rot r> }                 # swap top two pairs of items
+#sub @2        { dup @ swap 1 + @ }              # ( a -- x1 x2 ) double fetch, from 2 consecutive addresses
+#sub !2        { tuck 1 + ! ! }                  # ( x1 x2 a -- ) double store, to 2 consecutive addresses
+
+
+
+# -- arithmetic, bool, bits, comparison  --
+sub inc       { 1 + }                           # increment top of stack by one
+sub dec       { 1 - }                           # decrement top of stack by one
+#sub invert    { -1 xor }                        # complement all bits
+#sub negate    { 0 swap - }                      # change sign
+#sub not       { 0 equals }                      # logical inversion: 0->true,  x->0
+#sub notzero   { dup lest drop -1 }
+sub lshift    { 1 shift }                       # bit shift left by 1
+sub rshift    { -1 shift }                      # bit shift right by one
+sub <<        { shift }
+sub >>        { negate shift }
+sub ^         { 1 swap 0 do over * loop nip }   # ( n1 u -- n2 )  calculate n1 to the power of u
+sub success   { flag }                          # push command return code
+sub failure   { flag not }                      # push inverted command return code
+#sub >         { swap < }                        # true if nos > tos
+#sub equals2   { rot equals >r equals r> and }   # ( x1 x2 x3 x4 -- f ) compare two pairs of items for identity
+#sub between   { rot tuck < minrot > or not }
+sub negative  {  0 < }                          # -n
+sub positive  { -1 > }                          # 0..n
+sub abs       { dup 0 < lest negate }           # remove sign
+#sub min       { dup2 > will swap drop }
+#sub max       { dup2 < will swap drop }
+#sub umin      { dup2 xor 0 < if max else min endif }  # ( u1 u2 -- u1|u2 ) unsigned min
+#sub umax      { dup2 xor 0 < if min else max endif }  # ( u1 u2 -- u1|u2 ) unsigned max
+#sub /mod      { dup2 / dup >r * - abs r> }      # ( n1 n2 -- r q )
+#sub mod       { dup2 / * - }                    # modulo (remainder) function
+sub mod       { /mod drop }                     # modulo (remainder) function
+sub percent   { 100 */ }
+sub range     { over + swap }                   # start n -> limit start conversion for DO LOOP
+#sub +!        { dup >r @ +   r> ! }             # ( x a -- )  adds x to contents of address a
+sub or!       { dup >r @ or  r> ! }             # ( x a -- )  bitwise  or x into address a
+sub and!      { dup >r @ and r> ! }             # ( x a -- )  bitwise and x into address a
+sub xor!      { dup >r @ xor r> ! }             # ( x a -- )  bitwise xor x into address a
+sub toggle    { true swap xor! }                # ( a -- )  bitwise invert of contents of a
+
+sub gcd       { begin tuck mod qdup not until } # ( u1 u2 -- u3 ) greatest common divisor
+sub lcm       { dup2 gcd */ }                   # ( u1 u2 -- u3 ) lowest common denominator
+
+sub sqrt      {
+    dup lest
+	dup >r
+	begin
+	   r@ over /
+       over + 1 >>
+	   dup rot - abs
+    2 < until
+    r> drop }
+
+
+sub factor { 2                                  # ( u1 -- u2 ) returns smallest number of which u1 is a multiple
+    begin  2:over /mod
+    pluck < not
+    while
+        if  1 + 1 or
+        else nip exit
+        endif
+    repeat 2:drop
+    }
+
+sub prime  { dup factor equals }                # ( u -- f ) test number for prime
+
+
+
+# --- define a variables class. members of this class don't need instantiation at init time, because they
+# instantiate successfully upon first use, and initialize to 0.
+sub var       { here dup cell allot }           # for the new construct:       sub foo { var new }
+
+
+# --- number conversion words respect base, and convert accordingly
+sub decimal   { 10 base ! }
+sub hex       { 16 base ! }
+sub octal     {  8 base ! }
+sub binary    {  2 base ! }
+
+
+
+
+# =============================================================================
+# -- cursor, file buffer --
+# =============================================================================
+sub cursorhome { movelinestart }
+sub cursorend  { movelineend }
+sub at         { 1 + movetoline  1 + movetocolumn } # ( x y -- )
+sub cursorcolumn { at? drop 1 + }                   # ( -- x )
+sub cursorline  { at? nip  1 + }                    # ( -- y )
+sub cursorrow   { at? nip  1 + }                    # ( -- y )   fade out
+
+sub emptybuffer {
+   movefilestart blockbegin
+   movefileend    blockend
+   ?blockkill
+}
+
+sub cls        { emptybuffer }                      # wipe current buffer
+
+sub linecount  {                                    # ( -- u ) number of lines in file
+   at? movefileend
+   cursorrow minrot
+   at }
+
+sub cursorline$ { curline$ }
+sub linelength  { curline$ len$ }                   # ( -- len )
+sub linelen     { curline$ len$ }                   # ( -- len )
+
+sub scroll      { dup negative if abs scrolldown else scrollup endif }
+
+
+# =============================================================================
+#    memory
+# =============================================================================
+
+sub off       { false swap ! }                  # ( a -- )   sets contents of a to false
+sub on        { true swap ! }                   # ( a -- )   sets contents of a to true
+sub count     { 1 + dup 1 - @ }
+sub comma     { here cell allot ! }             # ( x -- )    allocate 1 location, initialized to x
+sub exchange  { dup @ >r ! r> }                 # ( x1 a -- x2 )
+sub link      { here swap exchange comma }      # ( a -- )
+sub free      { memend here - }
+
+sub scrape    { range do i @ loop }             # ( a n -- x0 x1 ... xn-1 )
+sub spread    {                                 # ( x0 x1 x2 ... xn-1 a n -- )
+   >r 1 - r>                                    # store xn at a+n
+   range swap do
+      i !
+   1 -loop }
+
+
+
+# =============================================================================
+# -- i/o --
+# =============================================================================
+sub key        { winrefresh getchar }           # wait for key, place its ascii on stack
+sub read$      { curchar$ }                     # read char under cursor as string
+sub read       { curchar$ asc }                 # read char under cursor as asc
+
+sub line$  {                                    # ( line -- ) s( -- line$ )
+    dup 1 linecount between not will fail
+    cursorline
+    swap movetoline     # shouldnt it fail if moved to > lines?
+    curline$
+    movetoline
+}
+
+sub emit       { typechar }
+sub cr     {
+    ?cursordown
+    failure will lineadd
+    cursorhome
+    ?killtolineend
+}
+
+sub type$      { dup$ len$ if dup$ insertstring endif drop$  }
+#TODO: insertstring bug when empty string. workaround here.
+#TODO: output words more clearly taking account of mode:
+#TODO:    insert insert$            always insert char or string
+#TODO:    overtype overtype$        always overtype char or string
+#TODO:    emit  type$               depends on overtype/insert mode
+
+
+sub char@   {                                   # ( x y -- c )  fetch char from file at x,y
+   at? 2:>r
+   at read
+   2:r> at }
+
+sub char!   {                                   # ( c x y -- )  store char in file at x,y
+   at? 2:>r
+   false insert exchange >r
+   at emit
+   r> insert !
+   2:r> at }
+
+
+
+# -----------------------------------------------------
+# --- preparative for movewordleft/right migration ---
+# -----------------------------------------------------
+
+sub bl         { ' ' }
+
+# once in macros, will make it easier to swap char type lists, for different delimiters.
+# for example, by keeping more than one array, vectoring to the one to use.
+
+include "arrays.fte";
+
+sub charactertype     { array new }
+sub capitalbit        { 1 }
+sub lowercasebit      { 2 }
+sub numericbit        { 4 }
+sub printablebit      { 8 }
+sub wordcharbit       { 16 }
+
+sub setcharactertype  {
+    charactertype 1 + swap
+    charactertype do
+        dup i or!
+    loop
+    drop }
+
+# set same character type as hardcoded in efte now
+sub InitWordchars     {
+    256 charactertype
+    capitalbit   wordcharbit or 'A' 'Z' setcharactertype
+    lowercasebit wordcharbit or 'a' 'z' setcharactertype
+    numericbit   wordcharbit or '0' '9' setcharactertype
+                 wordcharbit    '_' '_' setcharactertype
+                 printablebit   bl 127  setcharactertype
+}
+
+
+
+# --- character test
+sub charactertest {
+    swap 255 and charactertype @ and notzero
+}
+
+sub capital    { capitalbit charactertest }
+sub lowercase  { lowercasebit charactertest }
+sub printable  { printablebit charactertest }
+sub capitalize { dup lowercase lest 32 - }
+sub lowercast  { dup capital   lest 32 + }
+# can't use with numbers in scripts - what is a valid numeric depends on number base. 0..9,a..f,A..F for hex, 0,1 for binary etc.
+
+
+
+sub cipher   {                                  # ( asc -- u -1 | 0 )  converts ascii to numeric value, and flag if legal cipher.
+   capitalize '0' -                             #                      respects base, and reports only those chars valid which are
+   dup 10 16 between or                         #                      legal in the resp. base
+   dup 16 > 7 and -
+   dup 0 base @ dec between
+   qdup nip  }
+
+sub numeric    { cipher dup lest nip }          # ( asc -- flag )  flag if legal cipher.
+
+
+
+# =============================================================================
+#    strings
+# =============================================================================
+
+# thinking of
+#  or$:  copy chars from string two into spaces of string 1
+#  and$: replace chars in string one against space, if string2 has space on that pos
+# example:
+# string1:  "xxx    xxx"
+# string2:  "1 345678 0"
+# or$:      "xxx4567xxx"
+# and$:     "x x    x x"
+# xor$"     " x 4567 x "
+
+
+sub nip$      { swap$ drop$ }
+sub tuck$     { swap$ over$ }
+sub minrot$   { 2:rot$  }
+sub dup2$     { 2:over$ }
+sub drop2$    { 2:drop$ }
+sub equals$   { compare$ not }
+sub prepend$  { swap$ append$ }
+
+
+# TODO: can maybe simplify now after mid$ index fix.
+sub cut$ {                                      # ( n -- )  s( $1 -- $2 $3 )  splits string at position n,
+   dup if
+      dup dup$ len$ + 0 >
+      if
+         dup$ dup -1 mid$
+         swap$ 0 swap mid$
+         exit
+      endif
+   endif
+   drop ""
+}
+
+
+
+sub splice    { char$ prepend$ }                # ( asc -- ) prepend char to string
+sub ascn      { dup$ 1 mid$ asc }               # ( n -- c ) get ascii of nth char in top string
+
+
+
+sub left$      {                                # ( n -- )
+   dup 0 < if                                   # negative n: strip first n chars
+      negate dup$ len$ over -
+   else                                         # positive n: keep first n chars
+      0 swap
+   endif
+   mid$ }
+
+
+sub right$    {                                 # ( n -- )
+  dup 0 < if                                    # negative n: strip last n chars
+     0 swap
+     dup$ len$ +
+  else                                          # positive n: keep last n chars
+     dup negate swap
+  endif
+  mid$ }
+
+# second solution may be faster. TODO: test
+#sub slice     { 1 cut$ asc }                    # ( -- asc ) cut first char off string and return as ascii
+sub slice     { 0 ascn -1 left$ }               # ( -- asc ) cut first char off string and return as ascii
+
+
+
+
+
+
+
+
+
+sub search$   {                                 # ( n1 -- n2 )
+  true swap                                     # search though n1 string stack items,
+  0 do                                          # matching against top string. returns
+    i inc pick$                                 # item number of matching string as n2,
+    over$ equals$                               # or -1
+    if drop i leave endif
+  loop
+  drop$
+}
+
+
+sub embed$ {                                    # ( asc n -- ) store char at pos n of topmost string, overwriting
+   dup dup$ left$                               # cut and keep chars left of write pos
+   invert swap$ left$                           # cut and keep chars right of write pos (tricky)
+   splice append$                               # recombine, with char between
+}
+
+
+sub repeat$ {                                   # ( u c -- ) create a string of u times char
+   swap ""
+   qdup if
+      over char$
+      dup 1 do
+         append$ dup$
+      i +loop
+      swap$ dup$ len$ - left$ append$
+   endif
+   drop
+}
+
+sub spaces$   { bl repeat$ }                    # ( u -- ) create a string of u spaces
+sub spaces    { spaces$ type$ }
+sub space     { insertspace }                   # print a space character
+
+
+
+sub skip$ {                                     # ( asc -- idx )  search for first char which is not asc.
+   -1                                           #                 index or -1 as result (not other than asc)
+   dup$ len$ 0 do                               #                 drops string.
+      over i ascn xor
+      if drop i leave endif
+   loop
+   drop$ nip
+   }
+
+
+sub scan$ {                                     # ( asc -- idx )  search for first occurance of asc in string
+   -1                                           #                 index or -1 as result.
+   dup$ len$ 0 do                               #                 drops string.
+      over i ascn equals
+      if drop i leave endif
+   loop
+   drop$ nip }
+
+
+sub split$    {                                 # ( asc -- )      cut string at asc, leaving left part as tos, rest as nos
+   dup$ scan$                                   #                 if asc not found, leave whole string as tos, empty string as nos.
+   dup 0< if
+      drop dup$ len$
+   endif
+   cut$
+   }
+
+sub diags { diag diag$ }
+
+sub minleading$ {                               # ( asc -- ) remove leading occurances of string
+   dup$ skip$                                   # index, or -1 for no leading occurences of asc
+   dup 0 < if  drop$ "" else
+   dup     if  dup negate left$ endif
+   endif drop
+}
+
+
+
+sub mintrailing$ {                              # ( asc -- ) remove trailing occurences of asc
+   0                                            # assume no different chars
+   0 dup$ len$ do                               # loop through string chars
+      over i 1 - ascn                           # select chars, starting with last
+      xor if                                    # until different asc
+         drop i leave
+      endif
+   1 -loop
+   left$                                        # keep left part except trailing asc
+   drop }
+
+
+
+sub parse$ {                                    # ( asc -- )      search for asc in string, keep part left of asc.
+   dup minleading$                              #                 skip leading asc first
+   dup$ scan$
+   dup -1 > if  dup left$  endif                #                 asc not found: return whole string, otherwise cut at asc
+   drop }
+
+
+
+# TODO: test with empty string, and spaces only string
+sub trim$ {                                     # ( -- ) remove leading and trailing spaces
+   bl minleading$
+   bl mintrailing$ }
+
+
+
+sub brmovebr$  {                                # ( a n -- )  copy n chars of tos$ to a
+   swap dup2 ! inc
+   swap range do
+      slice i !
+   loop drop$ }
+
+sub move$    { dup$ len$  brmovebr$ }           # ( a -- ) transfers string on string stack to a
+
+
+sub store$   {                                  # ( a -- ) transfers string on string stack to a
+   count                                        # structure size
+   2 cells -                                    # subtract space for structure size and leading string count
+   dup$ len$ min                                # move smaller of this max and string size number of chars.
+   brmovebr$
+   }
+
+
+sub combine {
+   ""
+   0 do                                         # for all chars in string do ...
+      count char$ append$                       # get char and add to string
+   loop drop }
+
+sub fetch$    {                                 # ( a -- ) transfers the string at a to string stack.
+   cell +                                       # skip first cell (containing amount of allocated space to string var)
+   count
+   combine }
+
+sub @$ { fetch$ }
+sub !$ { store$ }
+
+sub comma$  {                                   # ( -- )     "comma" string to dp
+   dup$ len$
+   1 + dup comma
+   here swap allot
+   move$ }
+
+
+sub var$ {                                      # string variable class
+    here dup
+    dup$ len$ inc
+    dup inc comma
+    allot }
+
+
+
+
+
+
+# --- character translation by table ---
+
+sub charactertranslationtable {                 # new class of char translation tables.
+    here dup                                    # first table address
+    256 0 do i comma loop }                     # initially set up as a 1:1 "transparent" translation table.
+
+sub setcharactertranslation {                   # ( from to count table -- )   manipulate translation table
+    swap >r
+    rot +                                       # first table address to modify
+    r> range do                                 # loop through modifyable range
+       dup i ! 1 +                              # store substitute in table
+    loop
+    drop }
+
+sub translate$  {                               # ( table -- )  s( string1 -- string2 )
+    ""                                          # translated result string
+    over$ len$ 0 do                             # for all chars in source:
+        over$ i 1 mid$                          #    get next char
+        dup asc + @                             #    convert to ascii, use as index into translation table, read ascii of substitute
+        char$ append$                           #    append substitute to result string
+    loop drop nip$ }                            # drop translation table and source string
+
+
+
+
+# example: build a translation table for capitalization
+sub lower>upper  {
+    charactertranslationtable new
+    'a' 'A' 26  lower>upper setcharactertranslation  }
+
+# use:
+sub capitalize$ { lower>upper translate$ }      # ( -- )  s( string1 -- string2 )
+
+
+
+
+# --------------------------------------------------------
+#                  move cursor by word
+# --------------------------------------------------------
+
+sub iswordchar { wordcharbit charactertest }
+
+sub MovePrevWord {
+    ?cursorleft failure if cursorup cursorend exit endif
+    begin read iswordchar not while cursorleft repeat
+    begin read iswordchar     while cursorleft repeat
+    cursorright
+}
+
+sub MoveNextWord {
+    cursorright
+    read not if cursorhome cursordown exit endif
+    begin read dup not if drop fail endif   iswordchar       while cursorright repeat
+    begin read dup not if drop fail endif   iswordchar not   while cursorright repeat
+}
+
+
+
+# --------------------------------------------------------
+# --- debugging ---
+# --------------------------------------------------------
+
+sub println { print "\n" print }
+sub pout    { 1 print }
+sub perr    { 2 print }
+sub poutln  { 1 println }
+sub perrln  { 2 println }
+
+sub report  { verbosity @ if dup$ perr "\n" perr endif drop$ }
+
+
+
+# --- input number conversion ---
+
+sub baseprefix   { var new 35 allot }           # associate number base prefix with number base
+sub baseprefix$  { var$ new  }
+
+# unsigned number string to numeric
+sub nakedunumber? {                             # ( -- n -1 | 0 )
+   -1 0                                         # assume valid number, initial value 0
+   dup$ len$ 0 do                               # loop through chars
+      base @ *                                  #  accu*radix
+      i ascn cipher if +                        #  next char valid cipher? yes: accumulate
+      else
+         2:drop 0 0 leave                       #  no: signal "not a number" and leave
+      endif
+      dup negative if "input number overflow" report fail endif
+   loop
+   drop$
+   swap qdup drop                               # return result as specified in stack diagram.
+}
+
+# deal with possible leading dash
+sub nakednumber? {                              # ( -- n -1 | 0 )
+   0 ascn '-' equals
+   if
+      -1 left$
+      nakedunumber?
+      >r
+      r@ will negate
+      r>
+   else
+      nakedunumber?
+   endif
+}
+
+
+# deal with possible leading base prefix
+sub number? {                                   # ( -- n -1 | 0 )  s( number -- )
+   0 ascn
+   baseprefix$ fetch$ scan$      # $xxxx  #nnnn  %100101  style of number base designator?
+   dup 0 < if
+      drop
+      nakednumber?
+   else
+      baseprefix + @             # read number base
+      base exchange >r           # use
+      dup$ -1 left$              # strip prefix from what could be a number
+      nakednumber?               # is it?
+      r> base !
+      if                         # yes, compile number, or leave on stack.
+         drop$
+         true exit
+      endif
+   endif  }
+
+
+
+# manipulate the base prefix table
+sub addbaseprefix {                                     # ( c n -- )
+    baseprefix$
+# -- high information hiding potential here:
+#      calculate how much string space of this string variable is left
+       dup @ over 1 + @ 2 + -
+    not will fail
+# --
+    fetch$
+    dup$ len$ baseprefix + !
+    char$ append$
+    baseprefix$ store$
+    }
+
+sub removebaseprefix {                                  # ( -- )  removes the most recently added prefix.
+    baseprefix$ fetch$
+    dup$ len$ not will fail
+    -1 right$
+    baseprefix$ store$ }
+
+
+
+
+
+# --- file name decomposition ---
+# could factor out the searches.
+
+
+sub removeincllastdelimiter {       # ( c idx -- )
+    begin
+       1 + negate left$
+       dup$  dup scan$
+    dup 0 < until
+    drop2  }
+
+
+sub directorydelimiter  { '/' }
+sub basename$ {                                 # ( -- )  s( filename -- basename
+    dup$ directorydelimiter dup scan$
+    dup 0 < if
+        2:drop
+        exit
+    endif
+    removeincllastdelimiter
+}
+
+
+sub extension$ {                                # ( -- ) s( filename -- extension )
+    basename$
+    dup$ '.' dup scan$
+    dup 0 < if
+       drop$ ""
+       2:drop exit
+    endif
+    removeincllastdelimiter
+ }
+
+
+sub directory$ {                                # ( -- ) s( filename -- directory )
+    dup$ len$
+    dup$ basename$ len$ -
+    1 - 0 max left$  }
+
+
+
+
+# --- pictured number conversion ---
+sub digit     { dup 10 < 3 xor '4' 2:+ }        # ( u -- asc )
+sub <hash     { "" abs } 	  		            # ( n -- n ) start pictured num conversion with empty string
+sub hold      { char$ prepend$ }                # ( n asc -- n )
+sub hash      { base @ /mod swap digit hold }   # ( n1 -- n2 )
+sub hashes    { begin hash dup not until }      # ( n1 -- n2 )
+sub hash>     { drop }                          # ( n -- )  end pic num conv - should convert
+                                                # string stack to ( a n ) to comply with standard.
+                                                # this version leaves converted number on top of string stack
+sub sign      { 0 < lest '-' hold }             # ( n -- }
+
+sub padded  {                                   # ( n c -- )
+   >r dup$ len$ -                               # can't call it "pad" because pad is a
+   0 max qdup if                                # standard word which does something else
+      r@ repeat$ prepend$
+   endif r> drop }
+
+
+
+# ----- "app" level number output words -----
+sub .    {                                      # ( n -- ) signed number output with one trailing space
+    dup >r
+    <hash
+        bl hold
+        hashes
+        r> sign
+    hash> type$
+}
+
+sub .r {                                        # ( n u -- ) space padded signed number
+    >r dup >r
+    <hash
+        hashes
+        r> sign
+        r> bl padded
+    hash> type$
+}
+
+sub .00  {                                      # ( u n -- )  zero padded signed number, no trailing space
+    <hash
+        times hash
+    hash> type$
+}
+
+sub n.nnn {                                     # ( u n -- ) print unsigned number with n digits behind a period
+    <hash
+       bl hold
+       qdup if
+          times hash
+          '.' hold
+       endif
+       hashes
+    hash> type$
+}
+
+
+# ----- number conversion: integer to string, string to integer -----
+sub number$   { dup <hash hashes hash> sign }   # ( n -- )
+sub number    { number? unless fail }
+
+
+sub factors {                                   # ( u -- )  factorize a number, print factors
+    begin  dup factor
+           dup . /
+           dup 1 equals
+    until  drop }
+
+
+# --- numeric version ---
+sub version     {                               # ( -- subversion version )
+    eftever$ '.' dup split$
+    number >r
+    minleading$
+    number r> }
+
+
+
+
+
+# --- printf ---
+# subset. only handles %d %x %s now
+sub .base           { base exchange swap 0 .r base ! }
+sub percent_d       { drop rot  10 .base }
+sub percent_x       { drop rot  16 .base }
+sub percent_s       { drop swap$ type$ }
+sub percent_other   { '%' emit emit }
+
+sub printf_percent  {                           # ( len idx asc -- len idx2 )
+    drop 1 + dup ascn
+    dup "dxs" scan$
+    vector
+        percent_d
+        percent_x
+        percent_s
+        percent_other
+    endvector }
+
+sub printf_escape   { drop 1 + dup ascn emit }  # ( len idx asc -- len idx2 )
+sub printf_other    { emit }                    # ( len idx asc -- len idx )
+
+sub printf {
+    dup$ len$ 0
+    begin
+       2:over >
+    while
+       dup ascn
+       dup "%\\" scan$
+       vector
+          printf_percent
+          printf_escape
+          printf_other
+       endvector
+       1 +
+    repeat
+    drop$ 2:drop
+}
+
+
+
+
+
+# ----- date & time -----
+
+#   now     (  -- epoch )
+
+#   date     ( epoch -- y m d )
+#   time     ( epoch -- s m h )
+#   dow      ( epoch -- 0..6 )
+#
+#   date$    ( epoch -- )  s( -- date$ )
+#   time$    ( epoch -- )  s( -- time$ )
+#   dow3$    ( epoch -- )  s( -- dow$ )    abbreviated names
+#   dow$     ( epoch -- )  s( -- dow$ )    full names
+#
+
+#
+sub time      {                                 # ( epoch -- s m h )
+    60 /mod
+    60 /mod
+    24 mod
+}
+
+sub |00  {
+    decimal  hash
+    6 base ! hash
+    decimal ':' hold
+}
+
+sub time$ {                                     # ( epoch -- )
+    86400 mod
+    base @ >r
+    <hash
+       2:|00 2:hash
+    hash>
+    r> base !
+}
+
+
+# convert unix epoch to julian, then to day month year
+sub date {                                      # ( epoch -- y m d )
+   86400 /                          # secs>days
+   2472632 +                        # julianize
+   146097 /mod >r                               # g = j div 146097
+                                                # dg = j mod 146097
+   dup 36524 / 1 + 3 4 */                       # c = (dg div 36524 + 1) * 3 div 4
+   dup >r 36524 * -                             # dc = dg - c * 36524
+   1461 /mod                                    # b = dc div 1461
+                                                # db = dc mod 1461
+   >r dup 365 / 1 + 3 4 */                      # a = (db div 365 + 1) * 3 div 4
+   dup >r 365 * -                               # da = db - a * 365
+   dup 5 * 308 + 153 /                          # m = (da * 5 + 308) div 153 - 2
+   dup >r 2 + 153 5 */ - 123 + r>               # d = da - (m + 4) * 153 div 5 + 122
+   dup  12 / 4800 +                             # yt = 4800 + (m + 2) div 12
+   2:r> 4 * + r> 100 * + r> 400 * +             # y = g * 400 + c * 100 + b * 4 + a
+   - negate                                     # Y = y - yt
+   swap  12 mod 1 +                             # M = (m + 2) mod 12 + 1
+   rot                                          # D = d + 1
+}
+
+
+sub dow        { 86400 / 4 + 7 mod }            # ( epoch -- dow )
+
+sub Sunday$    { "Sunday" }
+sub Monday$    { "Monday" }
+sub Tuesday$   { "Tuesday" }
+sub Wednesday$ { "Wednesday" }
+sub Thursday$  { "Thursday" }
+sub Friday$    { "Friday" }
+sub Saturday$  { "Saturday" }
+
+sub dow$ {                                      # ( epoch -- )  s( -- $dow )
+   dow vector
+     Sunday$
+     Monday$
+     Tuesday$
+     Wednesday$
+     Thursday$
+     Friday$
+     Saturday$
+   endvector }
+
+sub dow3$ { dow$ 3 left$ }                      # ( epoch -- )  s( -- $dow )
+
+sub month$ {                                    # ( m -- ) s( -- month$ )
+   dup 1 12 between not will fail
+   "JanFebMarAprMayJunJulAugSepOctNovDec"
+   1 - 3 * 3 mid$ }
+
+sub yyyy-mm-dd {                                # ( epoch -- )  s( -- date$ )
+   date
+   <hash
+      2:hash drop  '-' hold
+      2:hash drop  '-' hold
+      4:hash
+   hash>
+}
+
+sub mm/dd/yyyy {                                # ( epoch -- )  s( -- date$ )
+   date
+   <hash rot
+      4:hash drop  '/' hold
+      2:hash drop  '/' hold
+      2:hash
+   hash>
+}
+
+sub dd.mm.yyyy {                                # ( epoch -- )  s( -- date$ )
+   date
+   <hash
+      >r swap
+         4:hash drop '.' hold
+         2:hash drop '.' hold
+      r> 2:hash
+   hash>
+}
+
+sub dow_mon_dd_yyyy {                           # ( epoch )  s( -- date$ )
+    dup dow3$                 " " append$
+    date swap month$ append$  " " append$
+    number$ append$           " " append$
+    number$ append$  }
+
+sub insertdatenew {                             # ( -- )  s( alt -- )  mimicks eFTE internal
+    dup$ len$
+    not if drop$ now dow_mon_dd_yyyy endif
+    type$
+}
+
+
+
+sub date$   { dow_mon_dd_yyyy }                 # ( epoch -- )  s( -- date )
+sub today   { now date }                        # ( -- y m d )
+sub today$  { now date$ }                       # ( -- )  s( -- date )
+sub now$    { now time$ }                       # ( -- ) returns hh:mm:ss as string   preferred name
+
+sub sleep   { 1000 * ms }                       # ( n -- )   sleep for n seconds
+
+
+
+
+
+# --- migrated toggles ---
+sub ToggleTrim   { autotrim toggle }
+sub ToggleInsert { insert toggle }
+
+
+
+# --- includes ---
+
+#include "statusline.fte";                      # currently the OnStatusline event is broken
+include "blocks.fte";
+include "bookmarks.fte";
+
+
+
+# --- mouse events, under test ---
+
+sub singleclicktime  { 500 }            # ( -- u )   in milliseconds
+
+
+# these would normally be provided my eFTE, to make sure that offsets are correct in case of
+# a likely structure layout change.
+sub mousexy         { mouse     @2 }    # ( -- x y )    mouse pointer relative to begin of file
+sub mousexyrelative { mouse 2 + @2 }    # ( -- x y )    mouse pointer relative to buffer top left
+sub mousebutton     { mouse 4 + @  }    # ( -- u )      1, 4, 2  for 3-button mouse
+sub mousewinsize    { mouse 5 + @2 }    # ( -- x y )    eFTE window dimensions
+sub mouseevents     { mouse 7 + @  }    # ( -- u )      mouse event counter
+sub mouseeventtype  { mouse 8 +    }    # ( -- a )      mouse event type. signal back to efte "done" to skip internal code
+                                        # 16:  button pushed
+                                        # 32:  button released
+                                        # 128: button held down, autorepeat
+
+
+
+# -- button 1 ---
+
+# thinking of adding a real messaging system, with same messages applicable to any number of classes.
+sub mouseevent   { here 3 cells allot } # class whose members store mousex, mousey, time.
+
+sub singleclick  {                      # may become a method of mouseevent
+    @3 >r
+    mousexy equals2
+    milliseconds r> -
+    0 singleclicktime between and }
+
+sub oldmousexy   { mouseevent new }
+sub OnMouse1Down { mousexy milliseconds oldmousexy !3 }
+sub OnMouse1Up   { oldmousexy singleclick lest noop }
+#sub OnMouse1Up   { oldmousexy singleclick will pushbookmark }
+
+
+
+# -- button 2 ---
+sub OnMouse2Down { }
+
+sub OnMouse2Up {
+    mousexyrelative                     # interested in screen line number mouse is on
+    if   localmenu                      # not on top line: local menu
+    else "" mainmenu                    # top line: main menu
+    endif drop                          # not interested in mouse pointer column
+    mouseeventtype off                  # don't execute eFTE internal handler
+}
+
+
+# -- button 3 ---
+sub OnMouse3Down { }
+sub OnMouse3Up { }
+
+
+# -- other buttons, and scroll wheel ---
+sub OnMouseOtherDown { }
+sub OnMouseOtherUp   { }
+
+
+# -- nouse up/down event entry points ---
+
+sub OnMouseUp   {                       # ( -- )  executed when any button released, or scroll wheel turned
+    mousebutton vector
+        OnMouseOtherUp
+        OnMouse1Up
+        OnMouse2Up
+        OnmouseOtherUp
+        OnMouse3Up
+        OnMouseOtherUp
+    endvector }
+
+
+sub OnMouseDown  {                      # ( -- )  executed when any button pushed
+    mousebutton vector
+        OnMouseOtherDown
+        OnMouse1Down
+        OnMouse2Down
+        OnMouseOtherDown
+        OnMouse3Down
+        OnMouseOtherDown
+    endvector }
+
+
+
+# --- initialisation ---
+sub AlreadyInitialized { var new }              # helper for workaround for OnLoad sequence bug
+                                                # to protect against multiple execution.
+sub enclose$   {
+    dup$ len$ rshift
+    qdup if
+        cut$
+        rot$ append$ prepend$
+    else
+        drop$
+    endif }
+
+sub quote$   { "\"\"" enclose$  }               # ( -- )  s( $1 -- $2 )
+
+
+sub attemptlevel  { var new }
+sub attempt   {                                 # execute macro, name given as string, if existing
+    attemptlevel @ 3 * spaces$ swap$
+    dup$ tick
+    dup not if "()" enclose$ endif append$ report
+    qdup lest
+        1 attemptlevel +!
+        execute
+        -1 attemptlevel +!
+  }
+
+
+
+sub OnBoot    {
+microseconds >r
+   AlreadyInitialized @ will fail
+   AlreadyInitialized on
+
+   decimal
+   insert on
+   autotrim on
+   InitWordchars
+   oldmousexy
+
+   35 spaces$ baseprefix$ store$
+   "" baseprefix$ store$
+   '$' 16 addbaseprefix
+   '#' 10 addbaseprefix
+   '&'  8 addbaseprefix
+   '%'  2 addbaseprefix
+
+    "InitStatusline"  attempt
+    "InitBlocks"      attempt
+    "InitBookmarks"   attempt
+    "InitMymain"      attempt
+    "InitMain"        attempt
+    "OnUserBoot"      attempt                # replaces the eFTE internal hook
+    "Initialisation successful" report
+microseconds r> - <hash 6:hash '.' hold hashes hash> " seconds init time.\n" append$ perr
+   }

@@ -1,0 +1,77 @@
+# m_falcon.fte
+#
+# Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
+#
+# You may distribute under the terms of either the GNU General Public
+# License or the Artistic License, as specified in the README file.
+#
+#
+# eFTE mode for editing Falcon files
+#
+
+colorize FALCON {
+   SyntaxParser = "FALCON";
+
+   color {
+      { "Normal",        "Editor_Default" },
+      { "Number",        "Lang_Number" },
+      { "Punctuation",   "Lang_Punctuation" },
+      { "String",        "Lang_String" },
+      { "Comment",       "Lang_Comment" },
+      { "Function",      "Lang_Function" },
+   };
+   
+   keyword "Editor_Keywords" {
+      "case", "catch", "class", 
+      "default", 
+      "elif", "else", "end", "export",
+      "for","function",
+      "if", "init",
+      "loop",
+      "object",
+      "switch", "select", 
+      "try",
+      "while"
+   };
+   
+   keyword "Editor_Keywords2" {
+      "and", "attributes", 
+      "break",
+      "const", "continue", 
+      "dropping",
+      "forall", "forfirst", "forlast", "from",
+      "global",
+      "in", "include", "int",
+      "launch", "let", "load",
+      "nil", "not", "notin",
+      "to",
+      "or", 
+      "provides",
+      "return",
+      "static", "step"
+   };
+}
+
+mode FALCON: SOURCE {      # Falcon Mode
+   FileNameRx          = "\\.{fal}|{ftd}$";
+   Colorizer           = "FALCON";
+   HilitOn             = 1;
+   AutoIndent          = 1;
+   IndentMode          = "FALCON";
+   TabSize             = 3;
+   RoutineRegexp       = `^[\s\t]*{class}|{function}\s`;
+   SaveFolds           = 2;      # save fold info at end of line
+   CommentStart        = "/*";
+   CommentEnd          = "*/";
+}
+
+eventmap FALCON {
+   key [Tab]           { LineIndent; LineTrim }
+   key [G-Enter]       { LineIndent; LineNew; LineIndent; }
+
+   # do some smart indents
+   key [A+G-Enter]     { LineAdd; LineIndent }
+   key [S+G-Enter]     { LineInsert; LineIndent }
+}
+
+oinclude "mym_falcon.fte";

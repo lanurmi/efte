@@ -1,0 +1,279 @@
+# SGML markup by Patrick L. McGillan
+# feel free to change and send changes to package maintainer
+# basic document
+
+sub SGML_Base {
+    "<!doctype debiandoc system>" InsertString LineNew
+    "<debiandoc>" InsertString LineNew
+    2:MoveRight "<book>" InsertString LineNew
+    2:MoveRight "<titlepag>" InsertString LineNew
+    2:MoveRight "<title></title>" InsertString LineNew
+    2:MoveRight "<author>" InsertString LineNew
+    2:MoveRight "<name></name>" InsertString LineNew
+    "<email></email>" InsertString LineNew
+    2:MoveLeft "</author>" InsertString LineNew
+    2:MoveLeft "<version><date></version>" InsertString LineNew
+    "<abstract>" InsertString LineNew
+    "</abstract>" InsertString LineNew
+    "<copyright>" InsertString LineNew
+    2:MoveRight "<copyrightsummary>" InsertString LineNew
+    "</copyrightsummary>" InsertString LineNew
+    2:MoveLeft "</copyright>" InsertString LineNew
+    2:MoveLeft "</titlepag>" InsertString LineNew
+    "<toc>" InsertString LineNew
+    "<chapt>" InsertString LineNew
+    "</chapt>" InsertString LineNew
+    2:MoveLeft "</book>" InsertString LineNew
+    2:MoveLeft "</debiandoc>" InsertString
+}
+
+sub SGML_CH {
+    "<chapt id=\"\">" InsertString LineNew
+    "<heading></heading>" InsertString LineNew
+    "<p>" InsertString SavePos LineNew
+    "</chapt>" InsertString MoveSavedPos
+}
+
+sub SGML_SE {
+    "<sect>" InsertString
+}
+
+sub SGML_PA {
+    "<p>" InsertString
+}
+
+sub SGML_MRF {
+    "<manref name=\"\" section=\"\">" InsertString
+}
+
+sub SGML_EML {
+    "<email>" InsertString
+}
+
+sub SGML_FTPS {
+    "<ftpsite>" InsertString
+}
+
+sub SGML_FTPP {
+    "<ftppath>" InsertString
+}
+
+sub SGML_HTPS {
+    "<httpsite>" InsertString
+}
+
+sub SGML_HTPP {
+    "<httppath>" InsertString
+}
+
+sub SGML_URL {
+    "<url id=\"\" name=\"\">" InsertString
+}
+
+sub SGML_EX {
+    MoveBlockStart LineNew "<example>" InsertString LineNew
+    MoveBlockEnd LineNew "</example>" InsertString BlockUnmark
+}
+
+sub SGML_REF {
+    MoveBlockStart "<ref id=\"" InsertString
+    MoveBlockEnd "\">" InsertString BlockUnmark
+}
+
+sub SGML_BO {
+    MoveBlockStart "<strong>" InsertString
+    MoveBlockEnd "</strong>" InsertString
+    4:MoveLeft BlockUnmark
+}
+
+sub SGML_IT {
+    MoveBlockStart "<em>" InsertString
+    MoveBlockEnd "</em>" InsertString
+    4:MoveLeft BlockUnmark
+}
+
+sub SGML_TT {
+    MoveBlockStart "<tt>" InsertString
+    MoveBlockEnd "</tt>" InsertString
+    4:MoveLeft BlockUnmark
+}
+
+sub SGML_VAR {
+    "<var>" InsertString
+}
+
+sub SGML_PAK {
+    "<package>" InsertString
+}
+
+sub SGML_PGN {
+    "<program>" InsertString
+}
+
+sub SGML_FIL {
+    "<file>" InsertString
+}
+
+sub SGML_ORD {
+    "<list>" InsertString LineNew
+    "<item>" InsertString SavePos LineNew
+    "</list>" InsertString MoveSavedPos
+}
+
+sub SGML_NUM {
+    "<enumlist>" InsertString LineNew
+    "<item>" InsertString SavePos LineNew
+    "</enumlist>" InsertString MoveSavedPos
+}
+
+sub SGML_TAG {
+    "<taglist>" InsertString LineNew
+    "<item>" InsertString SavePos LineNew
+    "</taglist>" InsertString MoveSavedPos
+}
+
+
+colorize SGML {
+    SyntaxParser = "SIMPLE";
+    
+    color {
+        { "Normal",     "Editor_Default" },
+        { "String",     "Lang_String" },
+        { "Comment",    "Lang_Comment" },
+        { "Command",    "Markup_Punctuation" },
+        { "Symbol",     "Markup_Symbol" },
+        { "Tag",        "Markup_Tag" },
+        { "Special",    "Markup_Special" },
+    };
+
+    keyword "Editor_Keywords" { # should be SGML 3.2 complete
+        "ABSTRACT",
+        "ARTICLE",
+        "AUTHOR",
+        "BF",
+        "BOOK",
+        "CHAPT",
+        "CODE",
+        "COPYRIGHT",
+        "DATE",
+        "DEBIANDOC",
+        "DESCRIP",
+        "DOCTYPE",
+        "EM",
+        "EMAIL",
+        "ENUM",
+        "ENUMLIST",
+        "EXAMPLE",
+        "FOOTNOTE",
+        "FTPSITE",
+        "FTPPATH",
+        "HEADING",
+        "HTMLURL",
+        "HTTPSITE",
+        "HTTPPATH",
+        "IT",
+        "ITEM",
+        "ITEMIZE",
+        "LABEL",
+        "LIST",
+        "MANREF",
+        "NAME",
+        "P",
+        "PRGN",
+        "PUBLIC",
+        "QREF",
+        "QUOTE",
+        "REF",
+        "SECT",
+        "SECT1",
+        "SECT2",
+        "SECT3",
+        "SECT4",
+        "STRONG",
+        "SYSTEM",
+        "TAG",
+        "TAGLIST",
+        "TITLE",
+        "TITLEPAG",
+        "TOC",
+        "TSCREEN",
+        "TT",
+        "URL",
+        "VAR",
+        "VERB",
+        "VERSION",
+    };
+    keyword "Editor_Keywords2" {
+        "COMPACT",
+        "ID",
+        "NAME",
+        "SECTION",
+    };
+
+    h_state 0 { "Normal" }
+    h_trans { 4, "<", "<!--", "Comment" }
+    h_trans { 8, "<", "</", "Command" }
+    h_trans { 1, "<", "<", "Command" }
+    h_trans { 2, "<", "&", "Symbol" }
+
+    h_state 1 { "Command" }
+    h_trans { 0, ">", ">", "Command" }
+    h_trans { 0, ">", "<", "Command" }
+    h_trans { 0, ">", "/>", "Command" }
+    h_trans { 6, "<", "/", "Command" }
+    h_trans { 3, "<", "\"", "String" }
+    h_wtype { -1, -1, -1, "i", "a-zA-Z0-9_\-" }
+
+    h_state 2 { "Symbol" }
+    h_trans { 0, ">", ";", "Symbol" }
+    h_trans { 0, "-S", "#a-zA-Z0-9", "Symbol" }
+
+    h_state 3 { "String" }
+    h_trans { 1, ">", "\"", "String" }
+
+    h_state 4 { "Comment" }
+    h_trans { 5, ">", "--", "Comment" }
+
+    h_state 5 { "Special" }
+    h_trans { 4, ">", "--", "Comment" }
+    h_trans { 0, ">", ">", "Comment" }
+
+    h_state 6 { "Symbol" }
+    h_trans { 7, "-", "//", "Command" }
+    h_trans { 0, ">", "/", "Command" }
+    h_trans { 0, ">", ">", "Symbol" }
+    h_trans { 7, ">", "</", "Command" }
+    h_trans { 1, ">", "<", "Command" }
+
+    h_state 7 { "Command" }
+    h_trans { 6, ">", "/", "Command" }
+
+    h_state 8 { "Command" }
+    h_trans { 0, ">", ">", "Command" }
+    h_trans { 3, "<", "\"", "String" }
+    h_wtype { -1, -1, -1, "i", "a-zA-Z0-9_\-" }
+
+}
+
+mode SGML: MARKUP {
+    FileNameRx          = `\.\c{SGML?}|{SGML?}$`;
+    HilitOn             = 1;
+    Colorizer           = "SGML";
+    MultiLineHilit      = 1;
+    AutoHilitParen      = 1;
+
+    RoutineRegexp       = `\<[Hh]\d\>`;
+
+    SaveFolds           = 2;      # save fold info at end of line
+    CommentStart        = "<!--";
+    CommentEnd          = "-->";
+    WordWrap            = 2;
+    RightMargin         = 85;
+    AutoIndent          = 1;
+    
+#    Insert              = 1;
+    IndentMode          = "Plain";
+    Trim                = 1;
+}
+
+oinclude "mym_sgml.fte";

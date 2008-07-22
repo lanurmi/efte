@@ -1,0 +1,104 @@
+#
+# eFTE mode for Euphoria (http://rapideuphoria.com)
+#
+
+colorize EUPHORIA {
+    SyntaxParser = "SIMPLE";
+
+    color {
+        { "Normal",      "Editor_Default" },
+        { "Function",    "Lang_Function" },
+        { "Number",      "Lang_DecimalNumber" },
+        { "Comment",     "Lang_Comment" },
+        { "String",      "Lang_String" },
+        { "Punctuation", "Lang_Punctuation" },
+    };
+
+    keyword "Editor_Keywords" {
+        "as", "and",
+        "by",
+        "constant",
+        "do",
+        "end", "else", "elsif", "exit",
+        "for", "function",
+        "global",
+        "include", "if",
+        "not",
+        "or",
+        "procedure",
+        "return",
+        "then", "type", "to",
+        "while", "with", "without",
+        "xor"
+    };
+
+    keyword "Editor_Keywords2" {
+        "append", "abort", "arctan", "and_bits",
+        "clear_screen", "compare", "command_line", "close",
+        "cos", "call", "c_proc", "c_func", "call_proc", "call_func",
+        "date",
+        "equal",
+        "floor", "find",
+        "getc", "gets", "get_key", "getenv",
+        "length", "log",
+        "match", "machine_func", "machine_proc", "mem_copy", "mem_set",
+        "not_bits",
+        "open", "or_bits",
+        "puts", "print", "printf", "power", "peek", "poke", "poke4", "peek4s", "peek4u", "profile",
+        "platform", "position", "prepend",
+        "repeat", "routine_id", "rand", "remainder",
+        "sqrt", "sin", "system", "system_exec", "sprintf",
+        "time", "trace", "tan",
+        "xor_bits"
+    };
+
+    keyword "Editor_Keywords3" {
+        "object", "sequence", "integer", "atom"
+    };
+
+    h_state 0 { "Normal" }
+    h_trans { 1, "-s", "a-zA-Z_", "Normal" }
+    h_trans { 2, "<", "--", "Comment" }
+    h_trans { 3, "", "\"", "String" }
+    h_trans { 4, "", "\'", "String" }
+    h_trans { 5, "<s", "0-9", "Number" }
+    h_trans { 0, "S", "_a-zA-Z0-9", "Punctuation" }
+
+    h_state 1 { "Normal" }
+    h_trans { 0, "$", "", "Normal" }
+    h_wtype { 1, 1, 0, "", "a-zA-Z0-9_" }
+
+    h_state 2 { "Comment" }
+    h_trans { 0, "$", "", "String" }
+
+    h_state 3 { "String" }
+    h_trans { 0, "", "\"", "String" }
+    h_trans { 0, "$", "", "String" }
+    h_trans { 3, "Qq", "\\", "String" }
+
+    h_state 4 { "String" }
+    h_trans { 0, "", "'", "String" }
+    h_trans { 0, "$", "", "String" }
+    h_trans { 4, "Qq", "\\", "String" }
+
+    h_state 5 { "Number" }
+    h_trans { 0, "-S", "0-9", "Normal" }
+    h_trans { 0, "$", "", "Normal" }
+}
+
+mode EUPHORIA: SOURCE {
+    FileNameRx         = `\.\c{EX}|{EXU}|{EXW}$`;
+    HilitOn            = 1;
+    Colorizer          = "EUPHORIA";
+    AutoIndent         = 1;
+    IndentMode         = "PLAIN";
+    MatchCase          = 1;
+    Trim               = 1;
+    MultiLineHilit     = 1;
+    AutoHilitParen     = 1;
+    SaveFolds          = 0;
+
+    RoutineRegexp       = `^{global procedure}|{global function}|{procedure}|{function} `;
+}
+
+oinclude "mym_euphoria.fte";
