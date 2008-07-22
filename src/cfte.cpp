@@ -917,6 +917,9 @@ static int GetNumber(CurPos &cp) {
 static int CmdNum(const char *Cmd) {
     unsigned int i;
 
+    if (Cmd == NULL)
+        return 0;
+
     for (i = 0; i < sizeof(Command_Table) / sizeof(Command_Table[0]); i++)
         if (stricmp(Cmd, Command_Table[i].Name) == 0)
             return Command_Table[i].CmdId;
