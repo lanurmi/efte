@@ -30,6 +30,10 @@ gid_t effgid;
 
 char ConfigFileName[MAXPATH] = "";
 
+static void Version() {
+    printf("eFTE version " VERSION " " COPYRIGHT "\n");
+}
+
 static void Usage() {
     printf("Usage: " PROGRAM " [-?] [-h] [--help] [-CDHTmlrt] files...\n"
            "Version: " VERSION " " COPYRIGHT "\n"
@@ -40,6 +44,7 @@ static void Usage() {
            "  --                End of options, only files remain.\n"
            "  -+                Next option is file.\n"
            "  -? -h --help      Display usage.\n"
+           "  --version         Display eFTE version.\n"
            "  -!                Ignore config file, use builtin defaults (also -c).\n"
            "  -C[<.cnf>]        Use specified configuration file (no arg=builtin).\n"
            "  -D[<.dsk>]        Load/Save desktop from <.dsk> file (no arg=disable desktop).\n"
@@ -178,7 +183,11 @@ static int CmdLoadConfiguration(int &argc, char **argv) {
                 if (strcmp(argv[Arg], "--help") == 0) {
                     Usage();
                     return 0;
+                } else if (strcmp(argv[Arg], "--version") == 0) {
+                    Version();
+                    return 0;
                 }
+
                 int debug_clean = strcmp(argv[Arg], "--debugclean") == 0;
                 if (debug_clean || strcmp(argv[Arg], "--debug") == 0) {
 #ifndef FTE_NO_LOGGING
