@@ -547,7 +547,7 @@ static int Lookup(const OrdLookup *where, char *what) {
     int i;
 
     for (i = 0; where[i].Name != 0; i++) {
-        if (strcmp(what, where[i].Name) == 0)
+        if (stricmp(what, where[i].Name) == 0)
             return where[i].num;
     }
 //    fprintf(stderr, "\nBad name: %s (i = %d)\n", what, i);
@@ -920,13 +920,11 @@ static int GetNumber(CurPos &cp) {
 static int CmdNum(const char *Cmd) {
     unsigned int i;
 
-    for (i = 0;
-            i < sizeof(Command_Table) / sizeof(Command_Table[0]);
-            i++)
-        if (strcmp(Cmd, Command_Table[i].Name) == 0)
+    for (i = 0; i < sizeof(Command_Table) / sizeof(Command_Table[0]); i++)
+        if (stricmp(Cmd, Command_Table[i].Name) == 0)
             return Command_Table[i].CmdId;
     for (i = 0; i < CMacros; i++)
-        if (Macros[i].Name && (strcmp(Cmd, Macros[i].Name)) == 0)
+        if (Macros[i].Name && (stricmp(Cmd, Macros[i].Name)) == 0)
             return i | CMD_EXT;
     return 0; // Nop
 }
