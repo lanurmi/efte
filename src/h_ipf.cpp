@@ -1,5 +1,6 @@
 /*    h_ipf.cpp
  *
+ *    Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
  *    Copyright (c) 1994-1996, Marko Macek
  *
  *    You may distribute under the terms of either the GNU General Public

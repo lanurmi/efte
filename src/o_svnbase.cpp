@@ -1,6 +1,11 @@
 /*
  * o_svnbase.cpp
  *
+ * Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
+ *
+ * You may distribute under the terms of either the GNU General Public
+ * License or the Artistic License, as specified in the README file.
+ *
  * S.Pinigin copy o_cvsbase.cpp and replace cvs/Cvs/CVS to svn/Svn/SVN.
  *
  * Base class for all other SVN-related classes. This is similar to EMessages

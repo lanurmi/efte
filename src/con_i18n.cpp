@@ -1,7 +1,11 @@
 /*
  *    con_i18n.cpp
  *
+ *    Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
  *    Copyright (c) 1998, Zdenek Kabelac
+ *
+ *    You may distribute under the terms of either the GNU General Public
+ *    License or the Artistic License, as specified in the README file.
  *
  *    I18N support by kabi@fi.muni.cz
  *

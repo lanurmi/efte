@@ -1,3 +1,8 @@
+/*
+ * bin2c - binary to C header compiler
+ *
+ */
+
 #include "sysdep.h"
 
 #define BUFLEN (64 * 1024)
