@@ -3872,25 +3872,25 @@ Changed paths:
    M /trunk/src/cfte.cpp
 
 Now displays normalized paths in error messages on DOS based machines
-************************************************************************
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 r676 | jeremy_c | 2008-02-15 21:10:55 -0500 (Fri, 15 Feb 2008) | 1 line
 Changed paths:
    M /trunk/src/e_undo.cpp
 
 Correct undo bug fix
-************************************************************************
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 r675 | jeremy_c | 2008-02-15 20:18:33 -0500 (Fri, 15 Feb 2008) | 1 line
 Changed paths:
    M /trunk/src/s_files.cpp
 
 Fixed indentation problem left over from astyle
-------------------------------------------------------------------------
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 r674 | jeremy_c | 2008-02-15 19:46:25 -0500 (Fri, 15 Feb 2008) | 1 line
 Changed paths:
    D /trunk/src/fte2.cpp
 
 Not used anywhere
-************************************************************************
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 r673 | jeremy_c | 2008-02-15 19:26:34 -0500 (Fri, 15 Feb 2008) | 1 line
 Changed paths:
    M /trunk/src/cfte.cpp
@@ -3903,7 +3903,7 @@ Changed paths:
    M /trunk/eFTE.xcodeproj/project.pbxproj
 
 Removed feature.h and h_fte.cpp from the project.
-************************************************************************
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 r671 | jeremy_c | 2008-02-15 17:09:03 -0500 (Fri, 15 Feb 2008) | 1 line
 Changed paths:
    M /trunk/src/e_undo.cpp

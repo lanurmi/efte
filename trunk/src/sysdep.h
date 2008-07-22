@@ -79,6 +79,7 @@ extern "C" int memicmp(const void *s1, const void *s2, size_t n);
 #    include <process.h>
 #    if defined(MSVC)
 #        include <direct.h>
+#        define HAVE_STRICMP
 #        define snprintf _snprintf
 #        define isdigit(x) isdigit((int)(unsigned char)(x))
 #        define isalpha(x) isalpha((int)(unsigned char)(x))
@@ -97,6 +98,7 @@ extern "C" int memicmp(const void *s1, const void *s2, size_t n);
 #    endif
 #    if defined(BCPP)
 #        include <dir.h>
+#        define HAVE_STRICMP
 #    endif
 #    if defined(MINGW)
 #        include <dir.h>
