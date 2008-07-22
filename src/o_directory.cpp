@@ -417,7 +417,33 @@ int EDirectory::FmChDir(const char *Name) {
 }
 
 int EDirectory::FmMvFile(const char *Name) {
-    Msg(S_INFO, "Rename file not yet implemented");
+    char FullName[MAXPATH];
+    char Dir[MAXPATH];
+    char Dir2[MAXPATH];
+
+    strcpy(FullName, Path);
+    Slash(FullName, 1);
+    strcat(FullName, Name);
+
+    strcpy(Dir, Path);
+    if (View->MView->Win->GetStr("New file name", sizeof(Dir), Dir, HIST_PATH) == 0) {
+        return 0;
+    }
+
+    if (ExpandPath(Dir, Dir2, sizeof(Dir2)) == -1) {
+        Msg(S_INFO, "Failed to expand destination %s", Name);
+        return 0;
+    }
+
+    int status = rename(Name, Dir2);
+    if (status == 0) {
+        RescanDir();
+        return 1;
+    }
+
+    const char *msg = strerror(errno);
+    Msg(S_INFO, "Failed to rename %s: %s", FullName, msg);
+
     return 0;
 }
 
@@ -458,15 +484,18 @@ int EDirectory::FmMkDir() {
     char Dir2[MAXPATH];
 
     strcpy(Dir, Path);
-    if (View->MView->Win->GetStr("New directory name", sizeof(Dir), Dir, HIST_PATH) == 0)
+    if (View->MView->Win->GetStr("New directory name", sizeof(Dir), Dir, HIST_PATH) == 0) {
         return 0;
-    if (ExpandPath(Dir, Dir2, sizeof(Dir2)) == -1)
+    }
+
+    if (ExpandPath(Dir, Dir2, sizeof(Dir2)) == -1) {
+        Msg(S_INFO, "Failed to create directory, path did not expand");
         return 0;
+    }
 
     int status = mkdir(Dir2, 509);
     if (status == 0) {
-        RescanDir();
-        return 1;
+        return RescanDir();
     }
 
     Msg(S_INFO, "Failed to create directory %s", Dir2);

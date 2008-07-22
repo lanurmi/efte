@@ -3469,7 +3469,7 @@ Changed paths:
    M /trunk/src/o_directory.cpp
 
 Provided an error code on the rename output. It seems I can rename most files, but some report error no 2???
-************************************************************************
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 r726 | jeremy_c | 2008-02-18 23:57:46 -0500 (Mon, 18 Feb 2008) | 1 line
 Changed paths:
    M /trunk/src/o_directory.cpp
