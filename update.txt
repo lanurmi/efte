@@ -1,0 +1,78 @@
+XX BackupPath, r579
+Copyrights, r587
+Parsing of conditionals?, r589
+Native Cocoa, r592
+vefte link ncurses fix, r593
+astyle formatting, r594
+...Applied astyle --style=kr --brackets=attach --unpad=paren --pad=oper
+...--convert-tabs.
+New constant for about dialog, r596
+Bug fixes, r607
+-dWORD, r608
+Mode updates, r611
+Install target for CMake on unix, r613
+c_command formatting, r620, r621
+XX Removed the install file, r622
+cefte unknown command fix, r630, r631
+MSVC assert bug fix, r637
+CMake dir permission fix, r638
+Source packaging tool and version 0.95 set, r639, r640
+no longer look in current dir for efte.cnf, r642
+HISTORY and CMake fixes, r646
+gentoo build, r650, r651
+archlinux build, r652
+release and debug building, r653
+sf.net auto uploaded, r657
+XX license update, r659
+cmake fix, r661
+final gentoo build file, r662
+portfile approved by macports, r663
+cefte upgrades, r664, r665
+case sensitive macro system, r668
+partial undo bug fixed, r671
+stricmp fix for windows, r673
+astyle indentation problem, r675
+undo bug fix, r676
+normalized dir paths, r677
+cursor positioning working again, r678
+added search paths for Windows, OS/2, r685
+better cefte error handling, r687
+fixed warning, r689
+variable name error, r679
+cefte bug fix, r707
+XX .spec fix, r712, r713, r714
+optional include display change, r715
+file search bug fix 1895722, r717
+split line function for searc/replace, r719
+enhanced directory browser, r725, r726, 727
+removed binary config requirement, r728
+empty config seg fault fix, r731
+packaging updates, r732
+config related fixes, r733
+better about screen, r734
+XX removed slang dir, r735
+-! loads default config, r736
+-Wno-long-long added, r737
+Fixed mkdir bug on windows, r738
+file browser rename workds, r739
+Added file close all to main menu, r740
+cmake fixes, r741
+better default build, r742
+-dWORD to efte, r750
+default config fixes, r761
+removed open watcom make file for windows, r778
+force tab usage on Makefile mode, r784
+file search browser case insensitive, r802
+backspace with space, r829
+added -version --version switches to binaries, r846
+line/col of error in config, r859
+alt+n fix, r901
+fix cvs and svn hot keys, r902
+input hint on X11, r906, r907, r908 
+unix mkdir bug fix, r918
+python mode patched by calvin???, r937
+C+M and CMake fixes, r940
+better CMake, r941, 942
+built-in config file working, r1014
+removed obsolete defcfg.cnf stuff, r1033
+config.h generation, r1044
