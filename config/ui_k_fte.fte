@@ -113,6 +113,8 @@ eventmap DIRECTORY: MLIST {
     key [\\]            { DirGoto }
     key [C+D]           { DeleteFile }
     key [Esc]           { FileClose 0 }
+    key [C+G]           { DirSearchNext }
+    key [C+H]           { DirSearchPrev }
     
     key     [A+N]       { MainMenu 'N' }
     key     [C+O_C+V]   { ShowMenu 'MCvs' }

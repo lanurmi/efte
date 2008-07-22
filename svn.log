@@ -3562,7 +3562,7 @@ Changed paths:
 * Added simple RPM highlighting mode
 * Made the .spec file build a type of Release
 
-************************************************************************
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 r717 | jeremy_c | 2008-02-17 22:39:45 -0500 (Sun, 17 Feb 2008) | 1 line
 Changed paths:
    M /trunk/config/ui_k_fte.fte
