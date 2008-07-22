@@ -4545,7 +4545,7 @@ Changed paths:
    M /trunk/src/objs.inc
 
 Added u_stack.
-************************************************************************
+------------------------------------------------------------------------
 r589 | jeremy_c | 2008-02-02 10:50:01 -0500 (Sat, 02 Feb 2008) | 1 line
 Changed paths:
    M /trunk/src/CMakeLists.txt  XXX
