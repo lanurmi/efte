@@ -7,8 +7,8 @@
  *    License or the Artistic License, as specified in the README file.
  *
  */
- 
- /* This file duplicates (way too much) code from con_x11.cpp. */
+
+/* This file duplicates (way too much) code from con_x11.cpp. */
 
 #include <string.h>
 #include <assert.h>
@@ -70,8 +70,10 @@ static const long MouseMultiClick = 300;
 
 static int setUserPosition = 0;
 static int initX = 0, initY = 0;
-/*static*/ unsigned int ScreenCols = 80;
-/*static*/ unsigned int ScreenRows = 25;
+/*static*/
+unsigned int ScreenCols = 80;
+/*static*/
+unsigned int ScreenRows = 25;
 static unsigned int CursorX = 0;
 static unsigned int CursorY = 0;
 static int CursorVisible = 1;
@@ -125,8 +127,7 @@ static int AllocBuffer() {
 
 static struct {
     int r, g, b;
-} dcolors[] =
-{
+} dcolors[] = {
     {   0,   0,   0 },  //     black
     {   0,   0, 160 },  // darkBlue
     {   0, 160,   0 },  // darkGreen
@@ -200,14 +201,14 @@ void DrawCursor(int Show) {
 }
 
 int ConPutBox(int X, int Y, int W, int H, PCell Cell) {
-	unsigned int i;
+    unsigned int i;
     unsigned char temp[256], attr;
     unsigned char *p, *ps, *c, *ops;
     unsigned int len, x, l, ox, olen, skip;
 
 
     if (X >= (int) ScreenCols || Y >= (int) ScreenRows ||
-        X + W > (int) ScreenCols || Y + H > (int) ScreenRows) {
+            X + W > (int) ScreenCols || Y + H > (int) ScreenRows) {
         //fprintf(stderr, "%d %d  %d %d %d %d\n", ScreenCols, ScreenRows, X, Y, W, H);
         return -1;
     }
@@ -218,7 +219,7 @@ int ConPutBox(int X, int Y, int W, int H, PCell Cell) {
         len = W;
         p = CursorXYPos(X, Y + i);
         ps = (unsigned char *) Cell;
-	x = X;
+        x = X;
         while (len > 0) {
             if (!Refresh) {
                 c = CursorXYPos(x, Y + i);
@@ -226,10 +227,9 @@ int ConPutBox(int X, int Y, int W, int H, PCell Cell) {
                 ops = ps;
                 ox = x;
                 olen = len;
-                while ((len > 0) && c[0] == ps[0] && c[1] == ps[1] )
-                {
-                    ps+=2;
-                    c+=2;
+                while ((len > 0) && c[0] == ps[0] && c[1] == ps[1]) {
+                    ps += 2;
+                    c += 2;
                     x++;
                     len--;
                     skip++;
@@ -243,22 +243,24 @@ int ConPutBox(int X, int Y, int W, int H, PCell Cell) {
             }
             p = ps;
             l = 1;
-            temp[0] = *ps++; attr = *ps++;
-            while ((l < len) && ((unsigned char) (ps[1]) == attr)) {
+            temp[0] = *ps++;
+            attr = *ps++;
+            while ((l < len) && ((unsigned char)(ps[1]) == attr)) {
                 temp[l++] = *ps++;
                 ps++;
-	    }
-	    //temp[l] = 0; printf("%s\n", temp);
+            }
+            //temp[l] = 0; printf("%s\n", temp);
             len -= l;
             x += l;
-	}
-/*	if (x < ScreenCols - 1) {
-	    printf("XX %d   %d   %d\n", X, x, W);
-	    XFillRectangle(display, win, GCs[15 * 16 + 7],
-			   x * FontCX, (Y + i) * FontCY,
-			   (ScreenCols - x - 1) * FontCX, FontCY);
-	}
-*/        p = CursorXYPos(X, Y + i);
+        }
+        /* if (x < ScreenCols - 1) {
+             printf("XX %d   %d   %d\n", X, x, W);
+             XFillRectangle(display, win, GCs[15 * 16 + 7],
+              x * FontCX, (Y + i) * FontCY,
+              (ScreenCols - x - 1) * FontCX, FontCY);
+         }
+        */
+        p = CursorXYPos(X, Y + i);
         memcpy(p, Cell, W * 2);
         if (i + Y == CursorY)
             DrawCursor(1);
@@ -290,17 +292,17 @@ int ConSetBox(int X, int Y, int W, int H, TCell Cell) {
     int i;
 
     for (i = 0; i < W; i++)
-	B[i] = Cell;
+        B[i] = Cell;
     ConPutLine(X, Y, W, H, B);
     return 0;
 }
 
 int ConScroll(int Way, int X, int Y, int W, int H, TAttr Fill, int Count) {
-	fprintf(stderr, "%s\n", __FUNCTION__);
+    fprintf(stderr, "%s\n", __FUNCTION__);
 }
 
 int ConSetSize(int X, int Y) {
-	fprintf(stderr, "ConSetSize from (%d, %d) to (%d, %d)\n", ScreenCols, ScreenRows, X, Y);
+    fprintf(stderr, "ConSetSize from (%d, %d) to (%d, %d)\n", ScreenCols, ScreenRows, X, Y);
     unsigned char *NewBuffer;
     unsigned char *p;
     int i;
@@ -314,10 +316,10 @@ int ConSetSize(int X, int Y) {
     }
     MX = ScreenCols;
     if (X < MX)
-	MX = X;
+        MX = X;
     MY = ScreenRows;
     if (Y < MY)
-	MY = Y;
+        MY = Y;
     p = NewBuffer;
     for (i = 0; i < MY; i++) {
         memcpy(p, CursorXYPos(0, i), MX * 2);
@@ -421,12 +423,13 @@ void UpdateWindow(int xx, int yy, int ww, int hh) {
     XFlush(display);
     i = XEventsQueued(display, QueuedAfterReading);
     while (i-- > 0) {
-	XEvent e;
-	XNextEvent(display, &e);
+    XEvent e;
+    XNextEvent(display, &e);
     }
     // sleep(1);*/
 
-    ww /= FontCX; ww += 2;
+    ww /= FontCX;
+    ww += 2;
     hh /= FontCY;
     xx /= FontCX;
     yy /= FontCY;
@@ -437,9 +440,11 @@ void UpdateWindow(int xx, int yy, int ww, int hh) {
      * of some basic behavior of FTE editor
      * THIS IS TEMPORAL FIX AND SHOULD BE SOLVED IN GENERAL WAY !
      */
-    hh *= 3; yy -= hh; hh += hh + 2;
+    hh *= 3;
+    yy -= hh;
+    hh += hh + 2;
     if (yy < 0)
-	yy = 0;
+        yy = 0;
     if (xx + ww > (int)ScreenCols) ww = ScreenCols - xx;
     if (yy + hh > (int)ScreenRows) hh = ScreenRows - yy;
     Refresh = 1;
@@ -458,8 +463,10 @@ void UpdateWindow(int xx, int yy, int ww, int hh) {
 void ResizeWindow(int ww, int hh) {
     int ox = ScreenCols;
     int oy = ScreenRows;
-    ww /= FontCX; if (ww <= 4) ww = 4;
-    hh /= FontCY; if (hh <= 2) hh = 2;
+    ww /= FontCX;
+    if (ww <= 4) ww = 4;
+    hh /= FontCY;
+    if (hh <= 2) hh = 2;
     if ((int)ScreenCols != ww || (int)ScreenRows != hh) {
         Refresh = 0;
         ConSetSize(ww, hh);
@@ -485,35 +492,34 @@ static TEvent LastMouseEvent = { evNone };
 void ConvertClickToEvent(int type, int xx, int yy, int button, int state, TEvent *Event, Time mtime) {
 }
 
-static void FlashCursor ()
-{
+static void FlashCursor() {
     struct timeval tv;
-    if (!CursorBlink || gettimeofday (&tv, NULL) != 0)
+    if (!CursorBlink || gettimeofday(&tv, NULL) != 0)
         return;
 
     unsigned long OldTime = CursorLastTime;
     CursorLastTime = tv.tv_sec * 1000 + tv.tv_usec / 1000;
     if (OldTime / CursorFlashInterval != CursorLastTime / CursorFlashInterval)
-	DrawCursor(CursorVisible);
+        DrawCursor(CursorVisible);
 }
 
 static TEvent Pending = { evNone };
 
 int ConGetEvent(TEventMask EventMask, TEvent *Event, int WaitTime, int Delete) {
-	fprintf(stderr, "%s\n", __FUNCTION__);
-	//Event->What = evCommand; Event->Msg.Command = cmResize;
-	
-	return 0;
+    fprintf(stderr, "%s\n", __FUNCTION__);
+    //Event->What = evCommand; Event->Msg.Command = cmResize;
+
+    return 0;
 }
 
 int ConPutEvent(TEvent Event) {
-	fprintf(stderr, "%s\n", __FUNCTION__);
+    fprintf(stderr, "%s\n", __FUNCTION__);
     Pending = Event;
     return 0;
 }
 
 int ConFlush(void) {
-	fprintf(stderr, "%s\n", __FUNCTION__);
+    fprintf(stderr, "%s\n", __FUNCTION__);
 }
 
 int ConGrabEvents(TEventMask /*EventMask*/) {
@@ -551,8 +557,8 @@ extern void *theGlobalGUI;
 int GUI::Run() {
     if (Start(fArgc, fArgv) == 0) {
         doLoop = 1;
-	theGlobalGUI = this;
-	cacao();
+        theGlobalGUI = this;
+        cacao();
         Stop();
         return 0;
     }
@@ -575,7 +581,7 @@ int GUI::OpenPipe(char *Command, EModel *notify) {
                 return -1;
 
             switch (Pipes[i].pid = fork()) {
-            case -1: /* fail */
+            case - 1: /* fail */
                 return -1;
             case 0: /* child */
                 signal(SIGPIPE, SIG_DFL);
@@ -672,7 +678,7 @@ int GUI::RunProgram(int mode, char *Command) {
         strlcat(Cmd, " -ls &", sizeof(Cmd));
     else {
         strlcat(Cmd, " -e ", sizeof(Cmd));
-	strlcat(Cmd, Command, sizeof(Cmd));
+        strlcat(Cmd, Command, sizeof(Cmd));
         if (mode == RUN_ASYNC)
             strlcat(Cmd, " &", sizeof(Cmd));
     }
@@ -680,10 +686,10 @@ int GUI::RunProgram(int mode, char *Command) {
 }
 
 char ConGetDrawChar(int idx) {
-    static const char *tab=NULL;
+    static const char *tab = NULL;
 
     if (!tab) {
-        tab=GetGUICharacters ("X11","\x0D\x0C\x0E\x0B\x12\x19____+>\x1F\x01\x12 ");
+        tab = GetGUICharacters("X11", "\x0D\x0C\x0E\x0B\x12\x19____+>\x1F\x01\x12 ");
     }
     assert(idx >= 0 && idx < (int) strlen(tab));
 
@@ -693,25 +699,25 @@ char ConGetDrawChar(int idx) {
 extern TEvent NextEvent;
 
 extern "C" void MyDispatchEvent() {
-	GUI *g = (GUI*)theGlobalGUI;
-	g->ProcessEvent();
+    GUI *g = (GUI*)theGlobalGUI;
+    g->ProcessEvent();
 
-/*	NextEvent.What = evKeyDown;
-	NextEvent.Msg.View = frames->Active;
-	NextEvent.Key.Code = '\n';
-	g->DispatchEvent(frames, NextEvent.Msg.View, NextEvent);*/
+    /* NextEvent.What = evKeyDown;
+     NextEvent.Msg.View = frames->Active;
+     NextEvent.Key.Code = '\n';
+     g->DispatchEvent(frames, NextEvent.Msg.View, NextEvent);*/
 }
 
 extern "C" void MyDispatchKeyEvent(char c) {
-	GUI *g = (GUI*)theGlobalGUI;
-	NextEvent.What = evKeyDown;
-	NextEvent.Msg.View = frames->Active;
-	NextEvent.Key.Code = c;
-	g->ProcessEvent();
+    GUI *g = (GUI*)theGlobalGUI;
+    NextEvent.What = evKeyDown;
+    NextEvent.Msg.View = frames->Active;
+    NextEvent.Key.Code = c;
+    g->ProcessEvent();
 
 }
 
 extern "C" void MyResizeWindow(int x, int y) {
-	ResizeWindow(x,y);
-	MyDispatchEvent();
+    ResizeWindow(x, y);
+    MyDispatchEvent();
 }

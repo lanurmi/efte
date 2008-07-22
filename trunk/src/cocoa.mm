@@ -8,10 +8,9 @@
 
 #import <Cocoa/Cocoa.h>
 
-int cacao()
-{
-	int argc = 1;
-	char *myarg = "";
-	char **argv = &myarg;
-    return NSApplicationMain(argc,  (const char **) argv);
+int cacao() {
+    int argc = 1;
+    char *myarg = "";
+    char **argv = &myarg;
+    return NSApplicationMain(argc, (const char **) argv);
 }
