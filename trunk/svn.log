@@ -1235,7 +1235,7 @@ construct eventually, to add initializers to OnBoot.
 shell binding to key now by single script:  fireshell.  Initializer in
 primitives.fte (in OnBoot) still needed, though.
 
-************************************************************************
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 r937 | jeremy_c | 2008-03-14 21:02:44 -0400 (Fri, 14 Mar 2008) | 1 line
 Changed paths:
    M /trunk/config/m_py.fte
@@ -1428,7 +1428,7 @@ Changed paths:
    M /trunk/config/ui_m_fte.fte
 
 Fixed User Specified line translation menu item
-************************************************************************
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 r918 | jeremy_c | 2008-03-10 02:16:49 -0400 (Mon, 10 Mar 2008) | 1 line
 Changed paths:
    M /trunk/src/o_directory.cpp
