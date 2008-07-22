@@ -3333,7 +3333,7 @@ Changed paths:
    M /trunk/src/CMakeLists.txt
 
 Made build fail if building CONSOLE and Curses is not found
-************************************************************************
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 r740 | jeremy_c | 2008-02-20 14:19:22 -0500 (Wed, 20 Feb 2008) | 1 line
 Changed paths:
    M /trunk/config/ui_m_fte.fte
