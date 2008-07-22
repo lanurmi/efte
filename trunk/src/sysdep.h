@@ -79,7 +79,9 @@ extern "C" int memicmp(const void *s1, const void *s2, size_t n);
 #    if defined(MSVC)
 #        include <direct.h>
 #    endif
-#    if defined(WATCOM)
+#    if defined(WATCOM) || defined(__WATCOM_CPLUSPLUS__)
+#        define HAVE_STRLCPY
+#        define HAVE_STRLCAT
 #        include <direct.h>
 #    endif
 #    if defined(BCPP)
@@ -158,7 +160,7 @@ extern "C" int memicmp(const void *s1, const void *s2, size_t n);
 #define ftruncate _ftruncate
 #endif
 
-#undef HAVE_STRLCPY
-#undef HAVE_STRLCAT
+//#undef HAVE_STRLCPY
+//#undef HAVE_STRLCAT
 
 #endif // __SYSDEP_H
