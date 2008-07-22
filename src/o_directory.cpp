@@ -293,7 +293,7 @@ int EDirectory::GetMatchForward(int start) {
     for (int i = start; i < FCount; i++) {
         const char *fname = Files[i]->Name();
         for (int j=0; fname[j]; j++) {
-            if (fname[j] == SearchName[0] && strnicmp(SearchName, fname + j, SearchLen) == 0)
+            if (strnicmp(SearchName, fname + j, SearchLen) == 0)
                 return i;
         }
     }
@@ -304,7 +304,7 @@ int EDirectory::GetMatchBackward(int start) {
     for (int i = start; i > 0; i--) {
         const char *fname = Files[i]->Name();
         for (int j=0; fname[j]; j++) {
-            if (fname[j] == SearchName[0] && strnicmp(SearchName, fname + j, SearchLen) == 0)
+            if (strnicmp(SearchName, fname + j, SearchLen) == 0)
                 return i;
         }
     }
