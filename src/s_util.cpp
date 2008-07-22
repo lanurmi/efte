@@ -58,8 +58,6 @@ char *MakeBackup(char *FileName, char *NewName) {
                 TmpFileName[idx] = '_';
         snprintf(TmpBackupName, MAXPATH, "%s/%s", BackupDirectory, TmpFileName);
 		ExpandPath(TmpBackupName, NewName, MAXPATH);
-
-		printf("NewName = %s\n", NewName);
     } else
         snprintf(NewName, MAXPATH, "%s~", FileName);
 
