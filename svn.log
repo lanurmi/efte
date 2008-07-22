@@ -4377,7 +4377,7 @@ Changed paths:
 * Corrected usage of ENDFUNCRC that caused flow control to cease functioning
 * Restore Logging to flow control functions from a previous commit
 
-************************************************************************
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 r607 | jeremy_c | 2008-02-06 20:24:43 -0500 (Wed, 06 Feb 2008) | 1 line
 Changed paths:
    M /trunk/src/cfte.cpp
