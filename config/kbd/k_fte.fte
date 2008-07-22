@@ -3,7 +3,7 @@
 
 eventmap FTE {
     key       [Tab]     { LineIndent; LineTrim }
-    key       [G-Enter] { LineIndent; LineNew; LineIndent }
+    key       [G-Enter] { LineIndent; LineNew }
     key       [{]       { SelfInsert; LineIndent }
     key       [}]       { SelfInsert; LineIndent }
 }

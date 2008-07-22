@@ -3,147 +3,147 @@
 # basic document
 
 sub SGML_Base {
-    "<!doctype debiandoc system>" InsertString LineNew
-    "<debiandoc>" InsertString LineNew
-    2:MoveRight "<book>" InsertString LineNew
-    2:MoveRight "<titlepag>" InsertString LineNew
-    2:MoveRight "<title></title>" InsertString LineNew
-    2:MoveRight "<author>" InsertString LineNew
-    2:MoveRight "<name></name>" InsertString LineNew
-    "<email></email>" InsertString LineNew
-    2:MoveLeft "</author>" InsertString LineNew
-    2:MoveLeft "<version><date></version>" InsertString LineNew
-    "<abstract>" InsertString LineNew
-    "</abstract>" InsertString LineNew
-    "<copyright>" InsertString LineNew
-    2:MoveRight "<copyrightsummary>" InsertString LineNew
-    "</copyrightsummary>" InsertString LineNew
-    2:MoveLeft "</copyright>" InsertString LineNew
-    2:MoveLeft "</titlepag>" InsertString LineNew
-    "<toc>" InsertString LineNew
-    "<chapt>" InsertString LineNew
-    "</chapt>" InsertString LineNew
-    2:MoveLeft "</book>" InsertString LineNew
-    2:MoveLeft "</debiandoc>" InsertString
+    InsertString "<!doctype debiandoc system>"; LineNew;
+    InsertString "<debiandoc>"; LineNew;
+    2:MoveRight; InsertString "<book>"; LineNew;
+    2:MoveRight; InsertString "<titlepag>"; LineNew;
+    2:MoveRight; InsertString "<title></title>"; LineNew;
+    2:MoveRight; InsertString "<author>"; LineNew;
+    2:MoveRight; InsertString "<name></name>"; LineNew;
+    InsertString "<email></email>"; LineNew;
+    2:MoveLeft; InsertString "</author>"; LineNew;
+    2:MoveLeft; InsertString "<version><date></version>"; LineNew;
+    InsertString "<abstract>"; LineNew;
+    InsertString "</abstract>"; LineNew;
+    InsertString "<copyright>"; LineNew;
+    2:MoveRight; InsertString "<copyrightsummary>"; LineNew;
+    InsertString "</copyrightsummary>"; LineNew;
+    2:MoveLeft; InsertString "</copyright>"; LineNew;
+    2:MoveLeft; InsertString "</titlepag>"; LineNew;
+    InsertString "<toc>"; LineNew;
+    InsertString "<chapt>"; LineNew;
+    InsertString "</chapt>"; LineNew;
+    2:MoveLeft; InsertString "</book>"; LineNew;
+    2:MoveLeft; InsertString "</debiandoc>";
 }
 
 sub SGML_CH {
-    "<chapt id=\"\">" InsertString LineNew
-    "<heading></heading>" InsertString LineNew
-    "<p>" InsertString SavePos LineNew
-    "</chapt>" InsertString MoveSavedPos
+    InsertString "<chapt id=\"\">"; LineNew;
+    InsertString "<heading></heading>"; LineNew;
+    InsertString "<p>"; SavePos; LineNew;
+    InsertString "</chapt>"; MoveSavedPos;
 }
 
 sub SGML_SE {
-    "<sect>" InsertString
+    InsertString "<sect>";
 }
 
 sub SGML_PA {
-    "<p>" InsertString
+    InsertString "<p>";
 }
 
 sub SGML_MRF {
-    "<manref name=\"\" section=\"\">" InsertString
+    InsertString "<manref name=\"\" section=\"\">";
 }
 
 sub SGML_EML {
-    "<email>" InsertString
+    InsertString "<email>";
 }
 
 sub SGML_FTPS {
-    "<ftpsite>" InsertString
+    InsertString "<ftpsite>";
 }
 
 sub SGML_FTPP {
-    "<ftppath>" InsertString
+    InsertString "<ftppath>";
 }
 
 sub SGML_HTPS {
-    "<httpsite>" InsertString
+    InsertString "<httpsite>";
 }
 
 sub SGML_HTPP {
-    "<httppath>" InsertString
+    InsertString "<httppath>";
 }
 
 sub SGML_URL {
-    "<url id=\"\" name=\"\">" InsertString
+    InsertString "<url id=\"\" name=\"\">";
 }
 
 sub SGML_EX {
-    MoveBlockStart LineNew "<example>" InsertString LineNew
-    MoveBlockEnd LineNew "</example>" InsertString BlockUnmark
+    MoveBlockStart; LineNew; InsertString "<example>"; LineNew;
+    MoveBlockEnd; LineNew; InsertString "</example>"; BlockUnmark;
 }
 
 sub SGML_REF {
-    MoveBlockStart "<ref id=\"" InsertString
-    MoveBlockEnd "\">" InsertString BlockUnmark
+    MoveBlockStart; InsertString "<ref id=\"";
+    MoveBlockEnd; InsertString "\">"; BlockUnmark;
 }
 
 sub SGML_BO {
-    MoveBlockStart "<strong>" InsertString
-    MoveBlockEnd "</strong>" InsertString
-    4:MoveLeft BlockUnmark
+    MoveBlockStart; InsertString "<strong>";
+    MoveBlockEnd; InsertString "</strong>";
+    4:MoveLeft; BlockUnmark;
 }
 
 sub SGML_IT {
-    MoveBlockStart "<em>" InsertString
-    MoveBlockEnd "</em>" InsertString
-    4:MoveLeft BlockUnmark
+    MoveBlockStart; InsertString "<em>";
+    MoveBlockEnd; InsertString "</em>";
+    4:MoveLeft; BlockUnmark;
 }
 
 sub SGML_TT {
-    MoveBlockStart "<tt>" InsertString
-    MoveBlockEnd "</tt>" InsertString
-    4:MoveLeft BlockUnmark
+    MoveBlockStart; InsertString "<tt>";
+    MoveBlockEnd; InsertString "</tt>";
+    4:MoveLeft; BlockUnmark;
 }
 
 sub SGML_VAR {
-    "<var>" InsertString
+    InsertString "<var>";
 }
 
 sub SGML_PAK {
-    "<package>" InsertString
+    InsertString "<package>";
 }
 
 sub SGML_PGN {
-    "<program>" InsertString
+    InsertString "<program>";
 }
 
 sub SGML_FIL {
-    "<file>" InsertString
+    InsertString "<file>";
 }
 
 sub SGML_ORD {
-    "<list>" InsertString LineNew
-    "<item>" InsertString SavePos LineNew
-    "</list>" InsertString MoveSavedPos
+    InsertString "<list>"; LineNew;
+    InsertString "<item>"; SavePos; LineNew;
+    InsertString "</list>"; MoveSavedPos;
 }
 
 sub SGML_NUM {
-    "<enumlist>" InsertString LineNew
-    "<item>" InsertString SavePos LineNew
-    "</enumlist>" InsertString MoveSavedPos
+    InsertString "<enumlist>"; LineNew;
+    InsertString "<item>"; SavePos; LineNew;
+    InsertString "</enumlist>"; MoveSavedPos;
 }
 
 sub SGML_TAG {
-    "<taglist>" InsertString LineNew
-    "<item>" InsertString SavePos LineNew
-    "</taglist>" InsertString MoveSavedPos
+    InsertString "<taglist>"; LineNew;
+    InsertString "<item>"; SavePos; LineNew;
+    InsertString "</taglist>"; MoveSavedPos;
 }
 
 
 colorize SGML {
-    SyntaxParser = "SIMPLE";
+    SyntaxParser = 'SIMPLE';
     
     color {
-        { "Normal",     "Editor_Default" },
-        { "String",     "Lang_String" },
-        { "Comment",    "Lang_Comment" },
-        { "Command",    "Markup_Punctuation" },
-        { "Symbol",     "Markup_Symbol" },
-        { "Tag",        "Markup_Tag" },
-        { "Special",    "Markup_Special" },
+        { 'Normal',     'Editor_Default' },
+        { 'String',     'Lang_String' },
+        { 'Comment',    'Lang_Comment' },
+        { 'Command',    'Markup_Punctuation' },
+        { 'Symbol',     'Markup_Symbol' },
+        { 'Tag',        'Markup_Tag' },
+        { 'Special',    'Markup_Special' },
     };
 
     keyword "Editor_Keywords" { # should be SGML 3.2 complete
@@ -210,59 +210,59 @@ colorize SGML {
         "SECTION",
     };
 
-    h_state 0 { "Normal" }
-    h_trans { 4, "<", "<!--", "Comment" }
-    h_trans { 8, "<", "</", "Command" }
-    h_trans { 1, "<", "<", "Command" }
-    h_trans { 2, "<", "&", "Symbol" }
+    h_state 0 { 'Normal' }
+    h_trans { 4, '<', '<!--', 'Comment' }
+    h_trans { 8, '<', '</', 'Command' }
+    h_trans { 1, '<', '<', 'Command' }
+    h_trans { 2, '<', '&', 'Symbol' }
 
-    h_state 1 { "Command" }
-    h_trans { 0, ">", ">", "Command" }
-    h_trans { 0, ">", "<", "Command" }
-    h_trans { 0, ">", "/>", "Command" }
-    h_trans { 6, "<", "/", "Command" }
-    h_trans { 3, "<", "\"", "String" }
-    h_wtype { -1, -1, -1, "i", "a-zA-Z0-9_\-" }
+    h_state 1 { 'Command' }
+    h_trans { 0, '>', '>', 'Command' }
+    h_trans { 0, '>', '<', 'Command' }
+    h_trans { 0, '>', '/>', 'Command' }
+    h_trans { 6, '<', '/', 'Command' }
+    h_trans { 3, '<', '"', 'String' }
+    h_wtype { -1, -1, -1, 'i', 'a-zA-Z0-9_\-' }
 
-    h_state 2 { "Symbol" }
-    h_trans { 0, ">", ";", "Symbol" }
-    h_trans { 0, "-S", "#a-zA-Z0-9", "Symbol" }
+    h_state 2 { 'Symbol' }
+    h_trans { 0, '>', ';', 'Symbol' }
+    h_trans { 0, '-S', '#a-zA-Z0-9', 'Symbol' }
 
-    h_state 3 { "String" }
-    h_trans { 1, ">", "\"", "String" }
+    h_state 3 { 'String' }
+    h_trans { 1, '>', '"', 'String' }
 
-    h_state 4 { "Comment" }
-    h_trans { 5, ">", "--", "Comment" }
+    h_state 4 { 'Comment' }
+    h_trans { 5, '>', '--', 'Comment' }
 
-    h_state 5 { "Special" }
-    h_trans { 4, ">", "--", "Comment" }
-    h_trans { 0, ">", ">", "Comment" }
+    h_state 5 { 'Special' }
+    h_trans { 4, '>', '--', 'Comment' }
+    h_trans { 0, '>', '>', 'Comment' }
 
-    h_state 6 { "Symbol" }
-    h_trans { 7, "-", "//", "Command" }
-    h_trans { 0, ">", "/", "Command" }
-    h_trans { 0, ">", ">", "Symbol" }
-    h_trans { 7, ">", "</", "Command" }
-    h_trans { 1, ">", "<", "Command" }
+    h_state 6 { 'Symbol' }
+    h_trans { 7, '-', '//', 'Command' }
+    h_trans { 0, '>', '/', 'Command' }
+    h_trans { 0, '>', '>', 'Symbol' }
+    h_trans { 7, '>', '</', 'Command' }
+    h_trans { 1, '>', '<', 'Command' }
 
-    h_state 7 { "Command" }
-    h_trans { 6, ">", "/", "Command" }
+    h_state 7 { 'Command' }
+    h_trans { 6, '>', '/', 'Command' }
 
-    h_state 8 { "Command" }
-    h_trans { 0, ">", ">", "Command" }
-    h_trans { 3, "<", "\"", "String" }
-    h_wtype { -1, -1, -1, "i", "a-zA-Z0-9_\-" }
+    h_state 8 { 'Command' }
+    h_trans { 0, '>', '>', 'Command' }
+    h_trans { 3, '<', '"', 'String' }
+    h_wtype { -1, -1, -1, 'i', 'a-zA-Z0-9_\-' }
 
 }
 
 mode SGML: MARKUP {
-    FileNameRx          = `\.\c{SGML?}|{SGML?}$`;
+    FileNameRx          = /\.\c{SGML?}|{SGML?}$/;
     HilitOn             = 1;
     Colorizer           = "SGML";
     MultiLineHilit      = 1;
     AutoHilitParen      = 1;
 
-    RoutineRegexp       = `\<[Hh]\d\>`;
+    RoutineRegexp       = /\<[Hh]\d\>/;
 
     SaveFolds           = 2;      # save fold info at end of line
     CommentStart        = "<!--";
@@ -271,9 +271,9 @@ mode SGML: MARKUP {
     RightMargin         = 85;
     AutoIndent          = 1;
     
-#    Insert              = 1;
+    Insert              = 1;
     IndentMode          = "Plain";
     Trim                = 1;
 }
 
-oinclude "mym_sgml.fte";
+oinclude 'mym_sgml.fte';

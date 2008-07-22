@@ -1,6 +1,5 @@
 /*    fte.cpp
  *
- *    Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
  *    Copyright (c) 1994-1997, Marko Macek
  *
  *    You may distribute under the terms of either the GNU General Public
@@ -15,22 +14,21 @@
 #endif
 
 #if defined(UNIX)
+/* default locations for the configuration files */
+const char *Unix_RCPaths[] = {
+    "/etc/efte/system.fterc",
+    "/usr/share/efte/system.fterc",
+    "/opt/share/efte/system.fterc",
+    "/usr/local/share/efte/system.fterc",
+    "/opt/local/share/efte/system.fterc",
+};
+
+// variables used by vfte
 uid_t effuid;
 gid_t effgid;
 #endif /* UNIX */
 
 char ConfigFileName[MAXPATH] = "";
-char *StartupMacroCommand = NULL;
-
-#include "build.h"
-static void Version() {
-#ifdef BUILD
-    printf("eFTE version " VERSION ", build " BUILD ", " COPYRIGHT "\n");
-#else
-    printf("eFTE version " VERSION ", " COPYRIGHT "\n");
-#endif
-
-}
 
 static void Usage() {
     printf("Usage: " PROGRAM " [-?] [-h] [--help] [-CDHTmlrt] files...\n"
@@ -42,9 +40,7 @@ static void Usage() {
            "  --                End of options, only files remain.\n"
            "  -+                Next option is file.\n"
            "  -? -h --help      Display usage.\n"
-           "  --version         Display eFTE version.\n"
            "  -!                Ignore config file, use builtin defaults (also -c).\n"
-           "  -dWORD            Define a preprocessor word for config file parsing\n"
            "  -C[<.cnf>]        Use specified configuration file (no arg=builtin).\n"
            "  -D[<.dsk>]        Load/Save desktop from <.dsk> file (no arg=disable desktop).\n"
            "  -H[<.his>]        Load/Save history from <.his> file (no arg=disable history).\n"
@@ -53,7 +49,6 @@ static void Usage() {
            "  -r                Open next file as read-only.\n"
            "  -T[<tagfile>]     Load tags file at startup.\n"
            "  -t<tag>           Locate specified tag.\n"
-           "  -v                Verbose output (debugging config files)\n"
 //           "       -p        Load files into already running eFTE.\n"
           );
 }
@@ -88,9 +83,12 @@ char *getProgramName(char *name) {
 #endif
 
 #if defined(OS2) && defined(__EMX__)
+
 // argv[0] on emx does not contain full path
+
 #define INCL_DOS
 #include <os2.h>
+
 char *getProgramName(char *name) {
     char ProgramName[MAXPATH];
     PTIB tib;
@@ -101,26 +99,86 @@ char *getProgramName(char *name) {
         return name;
     return strdup(ProgramName);
 }
+
 #endif
+
+static int GetConfigFileName(int /*argc*/, char **argv, char *ConfigFileName) {
+    // NOTE: function assumes that ConfigFileName's size is MAXPATH
+
+    char CfgName[MAXPATH] = "";
+
+
+    if (ConfigFileName[0] == 0) {
+        // Try for a efte.cnf in the current directory
+        strlcpy(CfgName, "efte.cnf", sizeof(CfgName));
+        if (access(CfgName, 0) == 0) {
+            strlcpy(ConfigFileName, CfgName, MAXPATH);
+            return 1;
+        }
+
+#if defined(UNIX)
+        // ? use ./.efterc if by current user ?
+        ExpandPath("~/.efterc", CfgName, sizeof(CfgName));
+#elif defined(OS2) || defined(NT)
+        char home[MAXPATH] = "";
+        char *ph;
+#if defined(OS2)
+        ph = getenv("HOME");
+        if (ph) strlcpy(home, ph, sizeof(home));
+#endif
+#if defined(NT)
+        ph = getenv("HOMEDRIVE");
+        if (ph) strlcpy(home, ph, sizeof(home));
+        ph = getenv("HOMEPATH");
+        if (ph) strlcat(home, ph, sizeof(home));
+#endif
+        if (home[0]) {
+            strlcpy(CfgName, home, sizeof(CfgName));
+            Slash(CfgName, 1);
+            strlcat(CfgName, "efte.cnf", sizeof(CfgName));
+        }
+
+        if (!home[0] || access(CfgName, 0) != 0) {
+            strlcpy(CfgName, argv[0], sizeof(CfgName));
+
+            char *extPtr;
+
+            if ((extPtr = findPathExt(CfgName)) != NULL) {
+                *extPtr = 0;
+                strlcat(CfgName, ".cnf", sizeof(CfgName));
+            }
+        }
+#endif
+
+        strlcpy(ConfigFileName, CfgName, MAXPATH);
+    }
+    if (access(ConfigFileName, 0) == 0)
+        return 1;
+
+#if defined(UNIX)
+    for (unsigned int i = 0; i < sizeof(Unix_RCPaths) / sizeof(Unix_RCPaths[0]); i++) {
+        if (access(Unix_RCPaths[i], 0) == 0) {
+            strlcpy(ConfigFileName, Unix_RCPaths[i], MAXPATH);
+            return 1;
+        }
+    }
+#endif
+    return 0;
+}
 
 static int CmdLoadConfiguration(int &argc, char **argv) {
     int ign = 0;
     int QuoteAll = 0, QuoteNext = 0;
     int haveConfig = 0;
     int Arg;
+
     for (Arg = 1; Arg < argc; Arg++) {
         if (!QuoteAll && !QuoteNext && (argv[Arg][0] == '-')) {
-            if (strcmp(argv[Arg], "--version") == 0 ||
-                strcmp(argv[Arg], "-version") == 0)
-            {
-                Version();
-                return 0;
-            } else if (argv[Arg][1] == '-') {
+            if (argv[Arg][1] == '-') {
                 if (strcmp(argv[Arg], "--help") == 0) {
                     Usage();
                     return 0;
                 }
-
                 int debug_clean = strcmp(argv[Arg], "--debugclean") == 0;
                 if (debug_clean || strcmp(argv[Arg], "--debug") == 0) {
 #ifndef FTE_NO_LOGGING
@@ -145,13 +203,9 @@ static int CmdLoadConfiguration(int &argc, char **argv) {
                 ign = 1;
             } else if (argv[Arg][1] == '+') {
                 QuoteNext = 1;
-            } else if (argv[Arg][1] == 'v') {
-                memory[verbosity]++;
             } else if (argv[Arg][1] == '?' || argv[Arg][1] == 'h') {
                 Usage();
                 return 0;
-            } else if (argv[Arg][1] == 'd') {
-                DefineWord(argv[Arg] + 2);
             } else if (argv[Arg][1] == 'c' || argv[Arg][1] == 'C') {
                 if (argv[Arg][2]) {
                     ExpandPath(argv[Arg] + 2, ConfigFileName, sizeof(ConfigFileName));
@@ -161,35 +215,28 @@ static int CmdLoadConfiguration(int &argc, char **argv) {
             }
         }
     }
-
-    if (haveConfig == 1) {
-        if (access(ConfigFileName, 0) != 0) {
-            DieError(1, "Could not access configuration file '%s'.\n"
-                     "Does it exist?", ConfigFileName);
-        }
-    } else
-        strcpy(ConfigFileName, "mymain.fte");
-
-    // Ignore system config?
-    if (ign == 1) {
-        if (LoadDefaultConfig() == -1) {
-            DieError(1, "Failed to load internal configuration\n"
-                     "Please specify an external configuration file\n"
-                     "via the command line option -C\n");
-        }
-    } else if (LoadConfig(argc, argv, ConfigFileName) == -1) {
-        DieError(1, "Failed to load configuration file '%s'.\n"
-                 "Use '-C' option.", ConfigFileName);
+    if (!haveConfig && GetConfigFileName(argc, argv, ConfigFileName) == 0) {
+        // should we default to internal
+#ifdef DEFAULT_INTERNAL_CONFIG
+        ign = 1;
+#endif
     }
 
+    if (ign) {
+        if (UseDefaultConfig() == -1)
+            DieError(1, "Error in internal configuration??? FATAL!");
+    } else {
+        if (LoadConfig(argc, argv, ConfigFileName) == -1)
+            DieError(1,
+                     "Failed to load configuration file '%s'.\n"
+                     "Use '-C' option.", ConfigFileName);
+    }
     for (Arg = 1; Arg < argc; Arg++) {
         if (!QuoteAll && !QuoteNext && (argv[Arg][0] == '-')) {
             if (argv[Arg][1] == '-' && argv[Arg][2] == '\0') {
                 QuoteAll = 1;
             } else if (argv[Arg][1] == '+') {
                 QuoteNext = 1;
-            } else if (argv[Arg][1] == 'e') {
-                StartupMacroCommand = argv[Arg] + 2;
             } else if (argv[Arg][1] == 'D') {
                 ExpandPath(argv[Arg] + 2, DesktopFileName, sizeof(DesktopFileName));
                 if (IsDirectory(DesktopFileName)) {
@@ -237,8 +284,6 @@ int main(int argc, char **argv) {
     argv[0] = getProgramName(argv[0]);
 #endif
 
-    srand(time(0));
-
 #if defined(UNIX) && defined(LINUX)
     // security fix - when we need to be suid to access vcsa
     effuid = geteuid();
@@ -254,7 +299,6 @@ int main(int argc, char **argv) {
     // setup locale from environment
     setlocale(LC_ALL, "");
 #endif
-    InitSharedVars();
 
     if (CmdLoadConfiguration(argc, argv) == 0)
         return 1;
@@ -265,8 +309,6 @@ int main(int argc, char **argv) {
     if (gui == 0 || g == 0)
         DieError(1, "Failed to initialize display\n");
 
-    //if (StartupMacroCommand != NULL)
-    //    gui->ExecMacro(StartupMacroCommand);
     gui->Run();
 
 #if defined(OS2) && !defined(DBMALLOC) && defined(CHECKHEAP)

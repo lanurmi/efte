@@ -1,6 +1,5 @@
 /*    h_c.cpp
  *
- *    Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
  *    Copyright (c) 1994-1996, Marko Macek
  *
  *    You may distribute under the terms of either the GNU General Public
@@ -10,6 +9,7 @@
 
 #include "fte.h"
 #include "log.h"
+
 
 #define PRINTF(x) //printf x
 
@@ -383,19 +383,32 @@ int FunctionUsesContinuation = 0;
 
 // this is global, unfortunately -- FIX !!!
 int EBuffer::SetCIndentStyle(ExState &State) {
-    C_Continuation = ParamStack.pop();
-    C_FirstLevelIndent = ParamStack.pop();
-    C_FirstLevelWidth = ParamStack.pop();
-    C_CommentDelta = ParamStack.pop();
-    C_CommentOfs = ParamStack.pop();
-    C_ColonOfs = ParamStack.pop();
-    C_ClassDelta = ParamStack.pop();
-    C_ClassOfs = ParamStack.pop();
-    C_CaseDelta = ParamStack.pop();
-    C_CaseOfs = ParamStack.pop();
-    C_ParenDelta = ParamStack.pop();
-    C_BraceOfs = ParamStack.pop();
-    C_Indent = ParamStack.pop();
+    if (State.GetIntParam(View, &C_Indent) == 0)
+        return 0;
+    if (State.GetIntParam(View, &C_BraceOfs) == 0)
+        return 0;
+    if (State.GetIntParam(View, &C_ParenDelta) == 0)
+        return 0;
+    if (State.GetIntParam(View, &C_CaseOfs) == 0)
+        return 0;
+    if (State.GetIntParam(View, &C_CaseDelta) == 0)
+        return 0;
+    if (State.GetIntParam(View, &C_ClassOfs) == 0)
+        return 0;
+    if (State.GetIntParam(View, &C_ClassDelta) == 0)
+        return 0;
+    if (State.GetIntParam(View, &C_ColonOfs) == 0)
+        return 0;
+    if (State.GetIntParam(View, &C_CommentOfs) == 0)
+        return 0;
+    if (State.GetIntParam(View, &C_CommentDelta) == 0)
+        return 0;
+    if (State.GetIntParam(View, &C_FirstLevelWidth) == 0)
+        return 0;
+    if (State.GetIntParam(View, &C_FirstLevelIndent) == 0)
+        return 0;
+    if (State.GetIntParam(View, &C_Continuation) == 0)
+        return 0;
     return 1;
 }
 
@@ -531,7 +544,7 @@ static int SearchBackMatch(int Count, EBuffer *B, int Row, hsState State, const 
 
 static int FindPrevIndent(EBuffer *B, int &RowP, int &ColP, char &CharP, int Flags) {
     STARTFUNC("FindPrevIndent{h_c.cpp}");
-    LOG << "Flags: " << std::hex << Flags << std::dec << ENDLINE;
+    LOG << "Flags: " << hex << Flags << dec << ENDLINE;
     int StateLen;
     hsState *StateMap = 0;
     char *P;
@@ -567,8 +580,8 @@ static int FindPrevIndent(EBuffer *B, int &RowP, int &ColP, char &CharP, int Fla
                 LOG << "ColP: " << ColP << " State: " << (int)StateMap[ColP] << ENDLINE;
                 if (StateMap[ColP] == hsC_Normal) {
                     LOG << "CharP: " << BinChar(P[ColP]) << " BolChar: " << BinChar(BolChar) <<
-                        " BolRow: " << BolRow <<
-                        " BolCol: " << BolCol <<
+                    " BolRow: " << BolRow <<
+                    " BolCol: " << BolCol <<
                     ENDLINE;
                     switch (CharP = P[ColP]) {
                     case '{':
@@ -960,7 +973,7 @@ static int IndentNormal(EBuffer *B, int Line, int /*StateLen*/, hsState * /*Stat
         // FirstCharP = CharP;
 
         LOG << "FirstRowP=" << FirstRowP << ", FirstColP=" << FirstColP <<
-            ", CharP=" << BinChar(CharP) << ENDLINE;
+        ", CharP=" << BinChar(CharP) << ENDLINE;
 
         switch (CharP) {
         case 'c':

@@ -1,7 +1,0 @@
-# append$
-
-{ "123" "abcd" append$  "123abcd"  equals$  true PASS }
-{ "456" ""     append$  "456"      equals$  true PASS }
-{ ""    "efg"  append$  "efg"      equals$  true PASS }
-
-{ TEST1 TEST2 TEST3 }

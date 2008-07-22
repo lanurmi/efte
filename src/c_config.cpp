@@ -1,6 +1,5 @@
 /*    c_config.cpp
  *
- *    Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
  *    Copyright (c) 1994-1996, Marko Macek
  *
  *    You may distribute under the terms of either the GNU General Public
@@ -12,13 +11,21 @@
 #include "o_cvsbase.h"
 #include "o_svnbase.h"
 #include "log.h"
-#include "defcfg.h"
 
 typedef struct _GUICharactersEntry {
     struct _GUICharactersEntry *next;
     char *name;
     char *chars;
 } GUICharactersEntry;
+
+typedef struct _CurPos {
+    int sz;
+    const char *a;
+    const char *c;
+    const char *z;
+    int line;
+    const char *name; // filename
+} CurPos;
 
 // C Indent
 extern int C_Indent;
@@ -92,10 +99,6 @@ int ReassignModelIds = 0;
 int RecheckReadOnly = 0;
 char XShellCommand[256] = "xterm";
 char BackupDirectory[MAXPATH] = "";
-
-/* Scripting Support */
-CircularStack ParamStack;
-CircularStack ControlStack;
 
 // Which characters to get. defaultCharacters if not set, rest filled
 // with defaultCharacters if too short
@@ -395,7 +398,7 @@ static int SetGlobalNumber(int what, int number) {
 }
 
 static void SetRGBColor(const char *string) {
-    unsigned int idx, r, g, b;
+    int idx, r, g, b;
     if (sscanf(string, "%x:%x,%x,%x", &idx, &r, &g, &b) != 4) {
         fprintf(stderr, "Invalid RGB Definition: %s\n", string);
         return;
@@ -499,14 +502,15 @@ static int SetColorizeString(EColorize *Colorize, long what, const char *string)
 
 static unsigned char GetObj(CurPos &cp, unsigned short &len) {
     len = 0;
-
-    if (cpos < cp.sz) {
-        //fprintf(stderr, "%i: GetObj type: %i\n", cpos, cache[cpos].tag);
-        unsigned char c = (unsigned char)cache[cpos].tag;
-        len = cache[cpos].len;
+    if (cp.c + 3 <= cp.z) {
+        unsigned char c;
+        unsigned char l[2];
+        c = *cp.c++;
+        memcpy(l, cp.c, 2);
+        len = (l[1] << 8) + l[0];
+        cp.c += 2;
         return c;
     }
-
     return 0xFF;
 }
 
@@ -514,26 +518,28 @@ static const char *GetCharStr(CurPos &cp, unsigned short len) {
     STARTFUNC("GetCharStr");
     LOG << "Length: " << len << ENDLINE;
 
-    char *p = (char *)malloc(cache[cpos].len);
-    memcpy(p, cache[cpos].obj, cache[cpos].len);
-    cpos++;
-
+    const char *p = cp.c;
+    if (cp.c + len > cp.z) {
+        LOG << "End of config file in GetCharStr" << ENDLINE;
+        ENDFUNCRC(0);
+    }
+    cp.c += len;
     ENDFUNCRC(p);
 }
 
 static int GetNum(CurPos &cp, long &num) {
-    //fprintf(stderr, "%i: Reading a number, type: %i, len: %i\n", cpos, cache[cpos].tag, cache[cpos].len);
-
     unsigned char n[4];
-    if (cpos > cp.sz) return 0;
-    memcpy(n, cache[cpos].obj, 4);
-    num = (n[3] << 24) +
+    if (cp.c + 4 > cp.z) return 0;
+    memcpy(n, cp.c, 4);
+    num =
+        (n[3] << 24) +
         (n[2] << 16) +
         (n[1] << 8) +
         n[0];
+
     if ((n[3] > 127) && sizeof(long) > 4)
         num = num | (~0xFFFFFFFFUL);
-    cpos++;
+    cp.c += 4;
     return 1;
 }
 
@@ -541,25 +547,17 @@ static int ReadCommands(CurPos &cp, const char *Name) {
     STARTFUNC("ReadCommands");
     LOG << "Name = " << (Name != NULL ? Name : "(null)") << ENDLINE;
 
-    //fprintf(stderr, "%i: ReadCommands(%s)\n", cpos, Name);
-
     unsigned char obj;
     unsigned short len;
     long Cmd = NewCommand(Name);
     long cmdno;
 
-    //cpos++;
-
-    //fprintf(stderr, "%i: Reading len\n", cpos);
     if (GetObj(cp, len) != CF_INT) ENDFUNCRC(-1);
-    //fprintf(stderr, "%i: Reading cmdno\n", cpos);
     if (GetNum(cp, cmdno) == 0) ENDFUNCRC(-1);
-    //fprintf(stderr, "%i: Read\n", cpos);
     if (cmdno != (Cmd | CMD_EXT)) {
-        //fprintf(stderr, "Bad Command map %s -> %ld != %ld\n", Name, Cmd, cmdno);
+        fprintf(stderr, "Bad Command map %s -> %ld != %ld\n", Name, Cmd, cmdno);
         ENDFUNCRC(-1);
     }
-    //fprintf(stderr, "%i: Passed Cmd | CMD_EXT test\n", cpos);
 
     while ((obj = GetObj(cp, len)) != 0xFF) {
         switch (obj) {
@@ -603,8 +601,17 @@ static int ReadCommands(CurPos &cp, const char *Name) {
             if (AddNumber(Cmd, num) == 0) ENDFUNCRC(-1);
         }
         break;
+        case CF_VARIABLE: {
+            long num;
+
+            if (GetNum(cp, num) == 0) ENDFUNCRC(-1);
+            if (AddVariable(Cmd, num) == 0) ENDFUNCRC(-1);
+        }
+        break;
+        case CF_CONCAT:
+            if (AddConcat(Cmd) == 0) ENDFUNCRC(-1);
+            break;
         case CF_END:
-            cpos++;
             ENDFUNCRC(Cmd);
         default:
             ENDFUNCRC(-1);
@@ -619,35 +626,20 @@ static int ReadMenu(CurPos &cp, const char *MenuName) {
 
     int menu = -1, item = -1;
 
-    //fprintf(stderr, "%i: Going to create a new menu\n", cpos);
-
     menu = NewMenu(MenuName);
-
-    //fprintf(stderr, "%i: Menu: %s\n", cpos, MenuName);
 
     while ((obj = GetObj(cp, len)) != 0xFF) {
         switch (obj) {
         case CF_ITEM: {
-            //fprintf(stderr, "%i: Parsing a CF_ITEM\n", cpos);
             if (len == 0) {
-                //fprintf(stderr, "%i: len = 0\n", cpos);
                 item = NewItem(menu, 0);
-                //fprintf(stderr, "%i: NewItem created\n", cpos);
-                cpos++;
             } else {
-                //fprintf(stderr, "%i: Going to read string\n", cpos);
                 const char *s = GetCharStr(cp, len);
-                //fprintf(stderr, "%i: Value: %s\n", cpos, s);
                 int Cmd;
                 if (s == 0) return -1;
-                //fprintf(stderr, "%i: Creating a NewItem(%s)\n", cpos, s);
                 item = NewItem(menu, s);
-                //fprintf(stderr, "%i: New item created\n", cpos);
                 if ((obj = GetObj(cp, len)) != CF_MENUSUB) return -1;
-                cpos++;
-                //fprintf(stderr, "%i: Item was a CF_MENUSUB\n", cpos);
                 if ((Cmd = ReadCommands(cp, 0)) == -1) return -1;
-                //fprintf(stderr, "%i: ReadCommands worked\n", cpos);
                 Menus[menu].Items[item].Cmd = Cmd + 65536;
             }
         }
@@ -655,8 +647,6 @@ static int ReadMenu(CurPos &cp, const char *MenuName) {
         case CF_SUBMENU: {
             const char *s = GetCharStr(cp, len);
             const char *w;
-
-            //fprintf(stderr, "%i: CF_SUBMENU: %s\n", cpos, s);
 
             if ((obj = GetObj(cp, len)) != CF_STRING) return -1;
             if ((w = GetCharStr(cp, len)) == 0) return -1;
@@ -675,7 +665,6 @@ static int ReadMenu(CurPos &cp, const char *MenuName) {
         break;
 
         case CF_END:
-            cpos++;
             return 0;
         default:
             return -1;
@@ -704,7 +693,6 @@ static int ReadColors(CurPos &cp, const char *ObjName) {
         }
         break;
         case CF_END:
-            cpos++;
             return 0;
         default:
             return -1;
@@ -716,8 +704,6 @@ static int ReadColors(CurPos &cp, const char *ObjName) {
 static int ReadHilitColors(CurPos &cp, EColorize *Colorize, const char * /*ObjName*/) {
     unsigned char obj;
     unsigned short len;
-
-    //fprintf(stderr, "%i: ReadHilitColors\n", cpos);
 
     while ((obj = GetObj(cp, len)) != 0xFF) {
         switch (obj) {
@@ -735,7 +721,6 @@ static int ReadHilitColors(CurPos &cp, EColorize *Colorize, const char * /*ObjNa
         }
         break;
         case CF_END:
-            cpos++;
             return 0;
         default:
             return -1;
@@ -757,7 +742,6 @@ static int ReadKeywords(CurPos &cp, ColorKeywords *keywords, int color) {
         }
         break;
         case CF_END:
-            cpos++;
             return 0;
         default:
             return -1;
@@ -780,7 +764,6 @@ static int ReadEventMap(CurPos &cp, EEventMap *Map, const char * /*MapName*/) {
             if ((s = GetCharStr(cp, len)) == 0) return -1;
             if ((Key = SetKey(Map, s)) == 0) return -1;
             if ((obj = GetObj(cp, len)) != CF_KEYSUB) return -1;
-            cpos++;
             if ((Cmd = ReadCommands(cp, 0)) == -1) return -1;
             Key->Cmd = Cmd;
         }
@@ -795,7 +778,6 @@ static int ReadEventMap(CurPos &cp, EEventMap *Map, const char * /*MapName*/) {
             if ((s = GetCharStr(cp, len)) == 0) return -1;
             obj = GetObj(cp, len);
             if (obj == CF_KEYSUB) {
-                cpos++;
                 if ((Cmd = ReadCommands(cp, 0)) == -1) return -1;
                 Ab = new EAbbrev(s, Cmd);
             } else if (obj == CF_STRING) {
@@ -834,7 +816,6 @@ static int ReadEventMap(CurPos &cp, EEventMap *Map, const char * /*MapName*/) {
         }
         break;
         case CF_END:
-            cpos++;
             return 0;
         default:
             return -1;
@@ -852,7 +833,6 @@ static int ReadColorize(CurPos &cp, EColorize *Colorize, const char *ModeName) {
     while ((obj = GetObj(cp, len)) != 0xFF) {
         switch (obj) {
         case CF_COLOR:
-            cpos++;
             if (ReadHilitColors(cp, Colorize, ModeName) == -1) return -1;
             break;
 
@@ -958,8 +938,6 @@ static int ReadColorize(CurPos &cp, EColorize *Colorize, const char *ModeName) {
             long options;
             const char *wordChars;
 
-            cpos++;
-
             obj = GetObj(cp, len);
             assert(obj == CF_INT);
             if (GetNum(cp, nextKwdMatchedState) == 0)
@@ -1008,7 +986,7 @@ static int ReadColorize(CurPos &cp, EColorize *Colorize, const char *ModeName) {
 
             if (strcmp(colorstr, "-") != 0) {
                 const char *Value = colorstr;
-                unsigned int Col;
+                int Col;
 
                 if (*Value == '-') {
                     Value++;
@@ -1057,7 +1035,6 @@ static int ReadColorize(CurPos &cp, EColorize *Colorize, const char *ModeName) {
         }
         break;
         case CF_END:
-            cpos++;
             return 0;
         default:
             return -1;
@@ -1096,7 +1073,6 @@ static int ReadMode(CurPos &cp, EMode *Mode, const char * /*ModeName*/) {
         }
         break;
         case CF_END:
-            cpos++;
             return 0;
         default:
             return -1;
@@ -1112,14 +1088,11 @@ static int ReadObject(CurPos &cp, const char *ObjName) {
     while ((obj = GetObj(cp, len)) != 0xFF) {
         switch (obj) {
         case CF_COLOR:
-            cpos++;
             if (ReadColors(cp, ObjName) == -1) return -1;
             break;
         case CF_COMPRX: {
             long file, line, msg;
             const char *regexp;
-
-            cpos++;
 
             if (GetObj(cp, len) != CF_INT) return -1;
             if (GetNum(cp, file) == 0) return -1;
@@ -1137,8 +1110,6 @@ static int ReadObject(CurPos &cp, const char *ObjName) {
         case CF_CVSIGNRX: {
             const char *regexp;
 
-            cpos++;
-
             if (GetObj(cp, len) != CF_REGEXP) return -1;
             if ((regexp = GetCharStr(cp, len)) == 0) return -1;
 
@@ -1148,8 +1119,6 @@ static int ReadObject(CurPos &cp, const char *ObjName) {
 
         case CF_SVNIGNRX: {
             const char *regexp;
-
-            cpos++;
 
             if (GetObj(cp, len) != CF_REGEXP) return -1;
             if ((regexp = GetCharStr(cp, len)) == 0) return -1;
@@ -1182,7 +1151,6 @@ static int ReadObject(CurPos &cp, const char *ObjName) {
         }
         break;
         case CF_END:
-            cpos++;
             return 0;
         default:
             return -1;
@@ -1191,9 +1159,23 @@ static int ReadObject(CurPos &cp, const char *ObjName) {
     return -1;
 }
 
-int ReadConfigFile(CurPos &cp) {
+static int ReadConfigFile(CurPos &cp) {
     unsigned char obj;
     unsigned short len;
+
+    {
+        const char *p;
+
+        obj = GetObj(cp, len);
+        assert(obj == CF_STRING);
+        if ((p = GetCharStr(cp, len)) == 0)
+            return -1;
+
+        if (ConfigSourcePath)
+            free(ConfigSourcePath);
+
+        ConfigSourcePath = strdup(p);
+    }
 
     while ((obj = GetObj(cp, len)) != 0xFF) {
         switch (obj) {
@@ -1204,9 +1186,7 @@ int ReadConfigFile(CurPos &cp) {
         }
         break;
         case CF_MENU: {
-            //fprintf(stderr, "%i: CF_MENU\n", cpos);
             const char *MenuName = GetCharStr(cp, len);
-            //fprintf(stderr, "%i: MenuName: %s\n", cpos, MenuName);
 
             if (ReadMenu(cp, MenuName) == -1) return -1;
         }
@@ -1309,50 +1289,97 @@ int ReadConfigFile(CurPos &cp) {
     return -1;
 }
 
-int LoadDefaultConfig() {
-    //char *buf = (char *)malloc(strlen(DefaultConfig) + 1);
-    //strncpy(buf, DefaultConfig, strlen(DefaultConfig));
-    //buf[strlen(DefaultConfig)+1] = 0;
-    ProcessConfigFile((char *)"built-in", DefaultConfig, 0);
-
-    CurPos cp;
-    cp.name = "built-in";
-    cp.sz = cpos;
-    cp.a = 0;//buffer;
-    cp.c = 0;//cp.a + 2 * 4;
-    cp.z = 0;//cp.a + cp.sz;
-    cp.line = 1;
-
-    cpos = 0;
-
-    int rc = ReadConfigFile(cp);
-    if (rc == -1) {
-        DieError(1, "Final Error %s offset %d\n", "built-in", cpos);
-    }
-    return rc;
-}
-
-int LoadConfig(int argc, char **argv, char *CfgFileName) {
+int LoadConfig(int /*argc*/, char ** /*argv*/, char *CfgFileName) {
     STARTFUNC("LoadConfig");
     LOG << "Config file: " << CfgFileName << ENDLINE;
 
-    int rc;
+    int fd, rc;
+    char *buffer = 0;
+    struct stat statbuf;
     CurPos cp;
 
-    CFteMain();
+    if ((fd = open(CfgFileName, O_RDONLY | O_BINARY)) == -1)
+        ENDFUNCRC(-1);
+    if (fstat(fd, &statbuf) != 0) {
+        close(fd);
+        ENDFUNCRC(-1);
+    }
+
+    // check that we have enough room for signature (CONFIG_ID + VERNUM)
+    if (statbuf.st_size < (4 + 4)) {
+        close(fd);
+        DieError(0, "Bad .CNF signature");
+        ENDFUNCRC(-1);
+    }
+
+    buffer = (char *) malloc(statbuf.st_size);
+    if (buffer == 0) {
+        close(fd);
+        ENDFUNCRC(-1);
+    }
+    if (read(fd, buffer, statbuf.st_size) != statbuf.st_size) {
+        close(fd);
+        free(buffer);
+        ENDFUNCRC(-1);
+    }
+    close(fd);
+
+    unsigned char l[4];
+    unsigned long ln;
+
+    memcpy(l, buffer, 4);
+    ln = (l[3] << 24) + (l[2] << 16) + (l[1] << 8) + l[0];
+
+    if (ln != CONFIG_ID) {
+        free(buffer);
+        DieError(0, "Bad .CNF signature");
+        ENDFUNCRC(-1);
+    }
+
+    memcpy(l, buffer + 4, 4);
+    ln = (l[3] << 24) + (l[2] << 16) + (l[1] << 8) + l[0];
+
+    if (ln != VERNUM) {
+        LOG << hex << ln << " != " << VERNUM << ENDLINE;
+        free(buffer);
+        DieError(0, "Bad .CNF version.");
+        ENDFUNCRC(-1);
+    }
 
     cp.name = CfgFileName;
-    cp.sz = cpos;
-    cp.a = 0;//buffer;
-    cp.c = 0;//cp.a + 2 * 4;
-    cp.z = 0;//cp.a + cp.sz;
+    cp.sz = statbuf.st_size;
+    cp.a = buffer;
+    cp.c = cp.a + 2 * 4;
+    cp.z = cp.a + cp.sz;
     cp.line = 1;
 
-    cpos = 0;
-
     rc = ReadConfigFile(cp);
+
+    free(buffer);
+
     if (rc == -1) {
-        DieError(1, "Final Error %s offset %d\n", CfgFileName, cpos);
+        DieError(1, "Error %s offset %d\n", CfgFileName, cp.c - cp.a);
     }
     ENDFUNCRC(rc);
+}
+
+static //const
+#include "defcfg.h"
+
+int UseDefaultConfig() {
+    CurPos cp;
+    int rc;
+
+    cp.name = "Internal Configuration";
+    cp.sz = sizeof(DefaultConfig);
+    cp.a = (char *)DefaultConfig;
+    cp.c = (char *)DefaultConfig + 2 * 4;
+    cp.z = cp.a + cp.sz;
+    cp.line = 1;
+
+    rc = ReadConfigFile(cp);
+
+    if (rc == -1)
+        DieError(1, "Error %s offset %d\n", cp.name, cp.c - cp.a);
+    return rc;
 }

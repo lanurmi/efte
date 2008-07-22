@@ -1,6 +1,5 @@
 /*    egui.cpp
  *
- *    Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
  *    Copyright (c) 1994-1996, Marko Macek
  *
  *    You may distribute under the terms of either the GNU General Public
@@ -8,16 +7,9 @@
  *
  */
 
-#include <vector>
-
 #include "fte.h"
-#include "log.h"
-#include "throw.h"
-#include <sys/time.h>
-#include <time.h>
 
 int LastEventChar = -1;
-int exception = 0;
 
 EFrame::EFrame(int XSize, int YSize): GFrame(XSize, YSize) {
     CMap = 0;
@@ -34,6 +26,7 @@ void EFrame::Update() {
         if (CModel != ActiveModel && ActiveModel) {
             char Title[256] = ""; //fte: ";
             char STitle[256] = ""; //"fte: ";
+
             ActiveModel->GetTitle(Title, sizeof(Title) - 1,
                                   STitle, sizeof(STitle) - 1);
             ConSetTitle(Title, STitle);
@@ -63,9 +56,15 @@ void EFrame::UpdateMenu() {
             NMenu = "Main";
         CMap = Map;
 
-        if ( !(OMenu) || strcmp(OMenu, NMenu))
+        if (OMenu && strcmp(OMenu, NMenu) == 0) {
+            // ok
+        } else {
             SetMenu(NMenu);
-    }
+        }
+    } /*else if (CMap == 0 && Map == 0) {
+        SetMenu("Main");
+    }*/
+
     GFrame::UpdateMenu();
 }
 
@@ -79,312 +78,13 @@ EGUI::EGUI(int &argc, char **argv, int XSize, int YSize)
 EGUI::~EGUI() {
 }
 
-// --- virtual machine ---
-/*       for a full blown user macros system, a bit of support here will greatly speed up things.
-          this implements a virtual machine for user code and data execution (yes, data executes):
-          *** this is how our macro executor had looked like, had it been implemented using a
-          technique to transfer control between commands using "threaded code". it would have eliminated
-          the need for decoding all the special types of things to execute, and made the long
-          lists of case statements, to find out what command needs to be executed, unnecessary.
-
-          the macro executur loop itself would have been something like:
-          for (ip = macro; ; next())
-
-          or, to speed up a bit,
-          for (ip = macro; ; next())
-          { next(); next(); next(); next(); next(); next(); next(); next(); }
-          ( unroll-loops compiler optimization option could have a similar effect )
-
-
- unsigned int ip, w;
-
- next {
-    w = memory[ip++];
-    ExecCommand[w++];
-}
-
- nest()  {
-    ControlStack.push(ip);
-    ip = w;
-    next();
-}
-
- unnest() {
-    ip = ControlStack.pop();
-    next();
- }
-
- dodata() {
-    ParamStack.push(w);
-    next();
-}
-*/
-
-struct timeval tv;
-
-int Now()  {         // wraps every 136y 144d 6h
-    gettimeofday(&tv, NULL);
-    ParamStack.push(tv.tv_sec);
-    return 1;
-}
-
-int Milliseconds()  {         // wraps every 49d 17h 2m 47s
-    gettimeofday(&tv, NULL);
-    ParamStack.push(tv.tv_sec * 1000 + tv.tv_usec/1000);
-    return 1;
-}
-
-int Microseconds()  {         // wraps every 1h 11m 34s
-    gettimeofday(&tv, NULL);
-    ParamStack.push((tv.tv_sec * 1000000 + tv.tv_usec));
-    return 1;
-}
-
-
-
-
-// sleep for <tos> milliseconds
-int Ms()  {
-//    view->Repaint();
-    int tos=ParamStack.pop();
-    int nos=tos % 1000;
-    tos /= 1000;
-    if (tos)
-        sleep(tos);
-//    if (nos)
-//        nanosleep(nos*1000000);
-    return 1;
-}
-
-
-
-// moved these here because i couldn't get around multiple
-// definitions of xrayindent, when moving it to w_misc.h, to
-// be able to read it here, in spite of a #idndef supposedly
-// branching around it.
-#define XRAYINDENT 3
-unsigned int xrayindent = 0;
-void Dodent()  {
-    fprintf(stderr, "\n");
-    int i = xrayindent;
-    for ( ; i>1; i--) {
-        fprintf(stderr, "|");
-        int j = XRAYINDENT-1;
-        for ( ;j ;j--)
-            fprintf(stderr, " ");
-
-    }
-}
-
-void Redent(int change)  { xrayindent += change; }
-void Nodent()            { xrayindent=0; }
-void Indent()            { Redent(1);  }
-void Undent()            { Redent(-1); }
-
-
-
-// -----------------------------------------------------------------------------------------------------------
-
 int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
-    // somehow stack display is behind the wrong command.
-    // more intuitive would be:
-    //     command        stack after command has been executed
-    // but it is:
-    //     command        stack before command execution
-    // i'll try to split this, and keep only execution trace here for now,
-    // looking for a place where to stick in stack dump after command has executed.
-    // what i don't quite manage to do is to align stack display, after command name has been printed.
-
-    if (memory[verbosity] > xrayindent) {
-        Dodent();
-        fprintf(stderr, "%-15s ", GetCommandName(Command));
-    }
-
-    if (Command & CMD_EXT) {
+    if (Command & CMD_EXT)
         return ExecMacro(view, Command & ~CMD_EXT);
-    }
 
-    // Commands that will run regardless of a View or Buffer
-    switch (Command) {
-    case ExDepth:
-        return ParamDepth();
-    case ExStore:
-        return MemoryStore();
-    case ExFetch:
-        return MemoryFetch();
-    case ExStore2:
-        return MemoryStore2();
-    case ExFetch2:
-        return MemoryFetch2();
-    case ExMemEnd:
-        return MemoryEnd();
-    case ExHere:
-        return MemoryHere();
-    case ExAllot:
-        return MemoryAllot();
+    if (Command == ExFail)
+        return ErFAIL;
 
-        // Shared Variables
-    case ExVerbosity:
-        return Verbosity();
-    case ExBase:
-        return Base();
-    case ExAutoTrim:
-        return AutoTrim();
-    case ExInsert:
-        return Insert();
-    case ExStatusline:
-        return Statusline();
-    case ExMouse:
-        return Mouse();
-
-        // command calls
-    case ExTick:
-        return Tick();
-    case ExExecute:
-        return Execute(State, view);
-
-        // Arithmetics
-    case ExPlus:
-        return Plus();
-    case ExMinus:
-        return Minus();
-    case ExMul:
-        return Mul();
-    case ExDiv:
-        return Div();
-    case ExStarSlash:
-        return StarSlash();
-    case ExInvert:
-        return Invert();
-    case ExNegate:
-        return Negate();
-    case ExNot:
-        return Not();
-    case ExNotZero:
-        return NotZero();
-    case ExPlusStore:
-        return PlusStore();
-    case ExBetween:
-        return Between();
-    case ExSlashMod:
-        return SlashMod();
-    case ExEquals2:
-        return Equals2();
-    case ExMinSigned:
-        return MinSigned();
-    case ExMaxSigned:
-        return MaxSigned();
-    case ExMinUnsigned:
-        return MinUnsigned();
-    case ExMaxUnsigned:
-        return MaxUnsigned();
-
-    case ExRandom:
-        return Random();
-    case ExNow:
-        return Now();
-    case ExMilliseconds:
-        return Milliseconds();
-    case ExMicroseconds:
-        return Microseconds();
-    case ExMs:
-        return Ms();
-
-
-        // Bool
-    case ExAnd:
-        return And();
-    case ExOr:
-        return Or();
-    case ExXor:
-        return Xor();
-    case ExShift:
-        return Shift();
-
-        // Compare
-    case ExEquals:
-        return Equals();
-    case ExLess:
-        return Less();
-    case ExMore:
-        return More();
-    case ExFlag:
-        return Flag();
-    case ExFail:
-        return Fail();
-
-        // Stack
-    case ExDup:
-        return Dup();
-    case ExQDup:
-        return QDup();
-    case ExDrop:
-        return Drop();
-    case ExSwap:
-        return Swap();
-    case ExSwap2:
-        return Swap2();
-    case ExOver:
-        return Over();
-    case ExRot:
-        return Rot();
-    case ExMinRot:
-        return MinRot();
-    case ExPick:
-        return Pick();
-
-        // Return stack
-    case ExToR:
-        return ToR();
-    case ExRFrom:
-        return RFrom();
-    case ExRFetch:
-        return RFetch();
-    case ExI:
-        return I();
-    case ExJ:
-        return J();
-
-        // Diagnostics
-    case ExPrint:
-        return Print(view, State);
-    case ExDiag:
-        return Diag(State);
-    case ExDiagStr:
-        return DiagStr();
-
-        // String stack
-    case ExDupStr:
-        return DupStr();
-    case ExDropStr:
-        return DropStr();
-    case ExSwapStr:
-        return SwapStr();
-    case ExRotStr:
-        return RotStr();
-    case ExCompareStr:
-        return CompareStr();
-    case ExOverStr:
-        return OverStr();
-    case ExPickStr:
-        return PickStr();
-    case ExDepthStr:
-        return DepthStr();
-    case ExSubSearchStr:
-        return SubSearchStr();
-    case ExAppendStr:
-        return AppendStr();
-    case ExLenStr:
-        return LenStr();
-    case ExMidStr:
-        return MidStr();
-    case ExGetString:
-        return GetString(view);
-    case ExAsc:
-        return SSAsc();
-    case ExChar:
-        return PSChar();
-    }
     if (view->IsModelView()) {
         ExModelView *V = (ExModelView *)view->Top;
         EView *View = V->View;
@@ -400,10 +100,7 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
             return View->MView->Win->IncrementalSearch(View);
         }
     }
-
     switch (Command) {
-    case ExExecuteCommand:
-        return ExecuteCommand(State, view);
     case ExWinRefresh:
         view->Repaint();
         return 1;
@@ -429,6 +126,7 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
         return FrameNext(view);
     case ExFramePrev:
         return FramePrev(view);
+
     case ExWinHSplit:
         return WinHSplit(view);
     case ExWinClose:
@@ -445,25 +143,20 @@ int EGUI::ExecCommand(GxView *view, int Command, ExState &State) {
         return 0;
     case ExDesktopLoad:
         return DesktopLoad(State, view);
-    case ExChangeKeys:
-        {
-            char kmaps[64] = "";
-            EEventMap *m;
+    case ExChangeKeys: {
+        char kmaps[64] = "";
+        EEventMap *m;
 
-            SSCHECK(1, "ChangeKeys");
-
-            strcpy(kmaps, sstack.back().c_str()); sstack.pop_back();
-
-            if (strlen(kmaps) == 0) {
-                SetOverrideMap(0, 0);
-                return 0;
-            }
-            m = FindEventMap(kmaps);
-            if (m == 0)
-                return 0;
-            SetOverrideMap(m->KeyMap, m->Name);
-            return 1;
+        if (State.GetStrParam(0, kmaps, sizeof(kmaps)) == 0) {
+            SetOverrideMap(0, 0);
+            return 0;
         }
+        m = FindEventMap(kmaps);
+        if (m == 0)
+            return 0;
+        SetOverrideMap(m->KeyMap, m->Name);
+        return 1;
+    }
     }
     return view->ExecCommand(Command, State);
 }
@@ -473,259 +166,35 @@ int EGUI::BeginMacro(GxView *view) {
     return 1;
 }
 
-int EGUI::ExecMacro(GxView *view, const char *name) {
-    int num = MacroNum(name);
-    if (num == 0) return 1;
-    return ExecMacro(view, num);
-}
-
-unsigned int doesindex = 0;
-int faillevel = 0;
-
 int EGUI::ExecMacro(GxView *view, int Macro) {
-    Indent();
-    STARTFUNC("EGUI::ExecMacro");
-
-    int i, j, tos, nos, rtos, rnos, ResultOfCommandExecution;
-    unsigned int unos, utos;
+    int i, j;
     ExMacro *m;
     ExState State;
-    if (Macro == -1)  {
-        ENDFUNCRC(ErFAIL);
-    }
-    if (BeginMacro(view) == -1) {
-        ENDFUNCRC(ErFAIL);
-    }
-    State.Pos = 0;
+
+    if (Macro == -1)
+        return ErFAIL;
+
+    if (BeginMacro(view) == -1)
+        return ErFAIL;
+
     State.Macro = Macro;
+    State.Pos = 0;
     m = &Macros[State.Macro];
-
-    for (i=State.Pos; i < m->Count; i++) {
-        switch (m->cmds[i].type) {
-        case CT_NUMBER:
-            ParamStack.push(m->cmds[i].u.num);
+    for (; State.Pos < m->Count; State.Pos++) {
+        i = State.Pos;
+        if (m->cmds[i].type != CT_COMMAND ||
+                m->cmds[i].u.num == ExNop)
             continue;
 
-        case CT_STRING:
-            sstack.push_back(m->cmds[i].u.string);
-            continue;
-        }
-        unsigned int macroclass;
-        switch (m->cmds[i].u.num) {
-
-        case ExNop:
-            break;
-
-
-        case ExExit:                                                // works now as exit: early terminate a macro
-            i = m->Count;
-            break;
-
-
-        case ExUnconditionalBranch:
-            i += m->cmds[i].repeat;
-            break;
-
-
-        case ExConditionalBranch:
-            if (ParamStack.pop() == 0)
-                i += m->cmds[i].repeat;
-            break;
-
-
-        case ExDoRuntime:                                           // do loop setup code: initialize loop
-            if (ParamStack.peek(0) == ParamStack.peek(1)) {         // limit and start identical? skip loop then:
-                ParamStack.pop();                                   //    drop start
-                ParamStack.pop();                                   //    drop limit
-                i += m->cmds[i].repeat;                             //    proceed at behind LOOP
-            } else {                                                // will have to loop:
-                tos = ParamStack.pop();                             //    pop start to temp
-                ControlStack.push(ParamStack.pop());                //    stack limit
-                ControlStack.push(tos);                             //    stack start
-            }                                                       //    proceed with loop body
-            break;
-
-
-        case ExLoopRuntime:                                         // executed once per loop iteration:
-            tos = ControlStack.pop()+1;                             //    increment loop index
-            if (ControlStack.peek(0) == tos)  {                     //    reached limit?
-                ControlStack.pop();                                 //    yes: clean up
-            } else {                                                //    no:
-                ControlStack.push(tos);                             //       keep loop index for next round
-                i += m->cmds[i].repeat;                             //       branch back to behind DO
-            }
-            break;
-
-
-        case ExPlusLoopRuntime:                                     // Executed once per loop iteration:
-            rtos = ControlStack.pop();                              // as loop increment can be either positive or negative, the
-            rnos = ControlStack.peek(0);                            // method to determine when index has passed limit is a bit
-            tos = rtos - rnos;                                      // complicated. simple =, < or > won't do. we need something like
-            rtos += ParamStack.pop();                               // "if it was < before adding, is it > now?" and "if it was >
-            if ( (( rtos - rnos ) ^ tos ) > 0 )  {                  // before, is it < now?" done by xoring diff before and after adding loop increment.
-                                                                    // result will be negative when limit has been passed.
-                ControlStack.push(rtos);                            //       keep loop index for next round
-                i += m->cmds[i].repeat;                             //       branch back to behind DO
-            } else {
-                ControlStack.pop();                                 // loop limit passed: clean up
-            }
-            break;
-
-
-        case ExMinLoopRuntime:                                      // Executed once per loop iteration:
-            rtos = ControlStack.pop();                              // almost identical to ExPlusLoopRuntime. Read up there.
-            rnos = ControlStack.peek(0)+1;                          // This one exists for better symmetry with plusloop for
-            tos = rtos - rnos;                                      // count down loops: I think the standard has messed up there.
-            rtos -= ParamStack.pop();                               // Providing MinLoop next to PlusLoop seems the only way
-            if ( (( rtos - rnos ) ^ tos ) > 0 )  {                  // to provide symmetricity without violating the standard
-                ControlStack.push(rtos);                            // (by changing plusloop to behave symmetrically). Thus, the
-                i += m->cmds[i].repeat;                             // deal is: for symmetric up/down loops, don't use negative
-            } else {                                                // increment with plusloop. Use positive increment with minloop
-                ControlStack.pop();                                 // instead. For standard-conform down loops, use (standard-
-            }                                                       // compliant) plusloop with negative increment.
-            break;
-
-
-        case ExLeaveRuntime:
-            ControlStack.pop();
-            ControlStack.pop();
-            i += m->cmds[i].repeat;
-            i += m->cmds[i].repeat;
-            break;
-
-
-        case ExVectorRuntime:
-            utos = ParamStack.pop();
-            nos = m->cmds[i++].repeat;
-            if (nos < utos)
-                utos = nos;
-            ExecCommand(view, m->cmds[i+utos].u.num, State);
-            i += nos;
-            break;
-
-
-        case ExTimes:
-            tos = ParamStack.pop();
-            i++;
-            if (tos)
-                m->cmds[i--].repeat = tos;
-            break;                                                  // would reintroduce conditional skip with  0/1 times command
-
-
-        case ExWill:
-            tos = ParamStack.pop();
-            if (tos == 0)
-                i++;
-            break;
-
-
-        case ExUnless:
-            tos = ParamStack.pop();
-            if (tos)
-                i = m->Count;
-            break;
-
-        case ExLest:
-            tos = ParamStack.pop();
-            if (!tos)
-                i = m->Count;
-            break;
-
-
-// ------------------------------------------------------------------------------------------------------
-
-            // the next three, ExOld, ExNew and ExDoes, implement a very cheeky data structure applicator.
-            // this is quite wild, relying on self-modifying macros, but it's the best extendable
-            // scheme conceived as far. its use, in terms of "syntax", is even quite satisfactory.
-            // these are made to mimick the Forth  "create ... does> ..." construct. Given the limitations
-            // of the underlying macro executor, these are only a crude approximation. Yet. :D
-
-            // Terminology in comments starts to get confusing, therefore definition of new terms here.
-            // Borrowing from object orientation, in the hope that this won't confuse matters more than necessary.
-            // But in fact, there are some similarities to OO. But we can't subclass, have no inheritance
-            // and no polymorphism. There is some concept of encapsulation, but not forced, and we don't
-            // require methods to access instance data, as instances share the address to their instance data freely.
-
-            // when we say:        we mean:                                            example:
-            // class               the macro, describing the data structure            sub var { here cell allot }
-            // instance            an object, based on class                           sub foo { var new }
-            // instantiation       first time execution of instance, finalizing it     { ... 123 foo store }
-            // method              run time code in class, after does                  sub const { here cell allot
-            //                     like an implied method                                          does fetch }
-
-        case ExOld:
-            ParamStack.push(m->cmds[0].repeat);                     // push address of instance data
-            i = m->cmds[1].repeat;                                  // yes: continue execution at class/index
-            if (i) {                                                // does class have a "does" runtime part?
-                State.Pos = i;
-                State.Macro = m->cmds[1].u.num;
-                m = &Macros[State.Macro];
-            } else {
-                i = m->Count;                                       // no: instance data is all we want. good bye.
-            }
-            break;
-
-
-        case ExNew:                                                 // instantiator
-            if (i) {                                                // prevent    "sub foo { new }" by skipping.
-                macroclass = m->cmds[i-1].u.num & ~CMD_EXT;
-                m->cmds[0].u.num = ExOld;                           // code to push address of instance data.
-                m->cmds[0].repeat = ParamStack.pop();               // instance data address
-                m->cmds[1].u.num = macroclass;                      // macro exec token
-                m->cmds[1].repeat = doesindex;                      // index to run time code in class. this code is sort
-                doesindex = 0;                                      // of an implied method, when instance is executed
-            } else {
-                i = m->Count;
-            }
-            break;
-
-
-        case ExDoes:                                                // class publishes method location
-            doesindex = i;
-            i = m->Count;
-            break;
-
-// ------------------------------------------------------------------------------------------------------
-
-        default:
-            State.Pos = i+1;
-            for (j=(m->cmds[i].repeat); j; --j) {
-                ResultOfCommandExecution=ExecCommand(view, m->cmds[i].u.num, State);
-
-                if (!(ResultOfCommandExecution || m->cmds[i].ign)) {
-                    // interesting ... executed twice on Fail .. does ExecCommand (two lines above) run
-                    // through this loop, execute fail, and then continue after return from ExecCommand,
-                    // falling through to this fail handler again?
-
-                    if (exception || memory[verbosity] > 1)
-                        fprintf(stderr,"\n*** exception %d ***", exception);
-
-                    faillevel++;
-                    if (faillevel > 1) {
-                        fprintf(stderr,"\nFail condition in OnFail macro - recursive exception handler execution, level %d", faillevel);
-                        fprintf(stderr,"\nOnDoubleFail hook catches this condition\n");
-                        ActiveView->ExecMacro("OnDoubleFail");
-                    } else {
-                        ActiveView->ExecMacro("OnFail");
-                        ParamStack.empty();
-                        ControlStack.empty();
-                        tos = sstack.size();
-                        while (tos--)
-                            sstack.pop_back();
-                    }
-                    Nodent();                      // reset indent level - fail can happen on any level.
-                    exception = 0;
-                    faillevel--;
-                    if (memory[verbosity])
-                        fprintf(stderr,"\nReturning from fail handler level %d with fail code: %d\n", faillevel, ErFAIL);
-                    return ErFAIL;
-                }
+        for (j = 0; j < m->cmds[i].repeat; j++) {
+            State.Pos = i + 1;
+            if (ExecCommand(view, m->cmds[i].u.num, State) == 0 && !m->cmds[i].ign) {
+                return ErFAIL;
             }
         }
-        State.Pos=i;
+        State.Pos = i;
     }
-    Undent();
-    ENDFUNCRC(ErOK);
+    return ErOK;
 }
 
 void EGUI::SetMsg(char *Msg) {
@@ -794,13 +263,12 @@ void EGUI::DispatchKey(GxView *view, TEvent &Event) {
                     return ;
                 } else {
                     SetMap(0, &key->fKey);
-                    if (ExecMacro(view, key->Cmd) == ErFAIL)
-                        if (memory[verbosity])
-                            fprintf(stderr,"continues after fail at DispatchKey 1 - fail condition is lost here");
+                    ExecMacro(view, key->Cmd);
                     Event.What = evNone;
-                    return;
+                    return ;
                 }
             }
+            //            printf("Going up\n");
             map = map->fParent;
         }
         if (!OverrideMap) {
@@ -817,11 +285,9 @@ void EGUI::DispatchKey(GxView *view, TEvent &Event) {
                     Event.What = evNone;
                     return ;
                 } else {
-                    if (ExecMacro(view, key->Cmd) == ErFAIL)
-                        if (memory[verbosity])
-                            fprintf(stderr,"continues after fail at DispatchKey 2 - fail conditions is lost here");
+                    ExecMacro(view, key->Cmd);
                     Event.What = evNone;
-                    return;
+                    return ;
                 }
             }
         }
@@ -829,8 +295,8 @@ void EGUI::DispatchKey(GxView *view, TEvent &Event) {
         if (EventMap == 0) break;
         map = EventMap->KeyMap;
     }
-    //if (GetCharFromEvent(Event, &Ch))
-    //    CharEvent(view, Event, Ch);
+//    if (GetCharFromEvent(Event, &Ch))
+//        CharEvent(view, Event, Ch);
     SetMap(0, 0);
 }
 
@@ -845,11 +311,8 @@ void EGUI::DispatchCommand(GxView *view, TEvent &Event) {
         Event.What = evNone;
     } else if (Event.Msg.Command >= 65536) {
         Event.Msg.Command -= 65536;
-        if (ExecMacro(view, Event.Msg.Command) == ErFAIL)
-            if (memory[verbosity])
-                fprintf(stderr,"continues after fail at DispatchCommand 1 - fail condition is lost here");
+        ExecMacro(view, Event.Msg.Command);
         Event.What = evNone;
-        return;
     }
 }
 
@@ -925,10 +388,7 @@ int EGUI::FileCloseX(EView *View, int CreateNew, int XClose) {
         if (ActiveModel == 0 && CreateNew) {
             EView *V = ActiveView;
             EModel *m = new EDirectory(0, &ActiveModel, Path);
-            if (m == 0) {
-                View->MView->Win->Choice(GPC_ERROR, "Error", 1, "O&K", "Could not create directory view");
-                return 0;
-            }
+            assert(m != 0);
 
             do {
                 V = V->Next;
@@ -945,15 +405,22 @@ int EGUI::FileCloseX(EView *View, int CreateNew, int XClose) {
     return 0;
 }
 
-// TODO: Find a way to set X
+
 int EGUI::FileClose(EView *View, ExState &State) {
-    int x = OpenAfterClose;
+    int x = 0;
+
+    if (State.GetIntParam(View, &x) == 0)
+        x = OpenAfterClose;
+
     return FileCloseX(View, x);
 }
 
-// TODO: Find a way to set X
 int EGUI::FileCloseAll(EView *View, ExState &State) {
-    int x = OpenAfterClose;
+    int x = 0;
+
+    if (State.GetIntParam(View, &x) == 0)
+        x = OpenAfterClose;
+
     while (ActiveModel)
         if (FileCloseX(View, x, 1) == 0) return 0;
     return 1;
@@ -1012,12 +479,13 @@ int EGUI::WinZoom(GxView *View) {
 }
 
 int EGUI::WinResize(ExState &State, GxView *View) {
-    int Delta = ParamStack.pop();
+    int Delta = 1;
 
-    if (View->ExpandHeight(Delta) == 0) {
-        SUCCESS
+    if (State.GetIntParam(0, &Delta)) {
+        if (View->ExpandHeight(Delta) == 0)
+            return 1;
     }
-    FAIL
+    return 0;
 }
 
 int EGUI::ExitEditor(EView *View) {
@@ -1078,82 +546,47 @@ int EGUI::ShowEntryScreen() {
 }
 
 int EGUI::RunProgram(ExState &State, GxView *view) {
-    if (sstack.size() == 0) {
-        if (ActiveView)
-            ActiveView->Msg(S_ERROR, "String stack underflow in RunProgram");
-        FAIL
-    }
-
-    std::string cmd = sstack.back(); sstack.pop_back();
+    static char Cmd[512] = "";
 
     if (ActiveModel)
         SetDefaultDirectory(ActiveModel);
 
-    if (cmd.empty()) {
-        char Cmd[MAXPATH];
-        if (view->GetStr("Run", sizeof(Cmd), Cmd, HIST_COMPILE) == 0) {
-            FAIL
-        }
-        cmd = Cmd;
-    }
-
-    gui->RunProgram(RUN_WAIT, cmd.c_str());
-    SUCCESS
+    if (State.GetStrParam(ActiveView, Cmd, sizeof(Cmd)) == 0)
+        if (view->GetStr("Run", sizeof(Cmd), Cmd, HIST_COMPILE) == 0) return 0;
+    gui->RunProgram(RUN_WAIT, Cmd);
+    return 1;
 }
 
 int EGUI::RunProgramAsync(ExState &State, GxView *view) {
-    if (sstack.size() == 0) {
-        if (ActiveView)
-            ActiveView->Msg(S_ERROR, "String stack underflow in RunProgram");
-        FAIL
-    }
-
-    std::string cmd = sstack.back(); sstack.pop_back();
+    static char Cmd[512] = "";
 
     if (ActiveModel)
         SetDefaultDirectory(ActiveModel);
 
-    if (cmd.empty()) {
-        char Cmd[MAXPATH];
-        if (view->GetStr("Run", sizeof(Cmd), Cmd, HIST_COMPILE) == 0) {
-            FAIL
-        }
-        cmd = Cmd;
-    }
-
-    gui->RunProgram(RUN_ASYNC, cmd.c_str());
-    SUCCESS
+    if (State.GetStrParam(ActiveView, Cmd, sizeof(Cmd)) == 0)
+        if (view->GetStr("Run", sizeof(Cmd), Cmd, HIST_COMPILE) == 0) return 0;
+    gui->RunProgram(RUN_ASYNC, Cmd);
+    return 1;
 }
 
-int EGUI::MainMenu(ExState &State, GxView *view) {
-    ExModelView *V = (ExModelView *)view->Top;
-    EView *View = V->View;
+int EGUI::MainMenu(ExState &State, GxView *View) {
+    char s[3];
 
-    if (sstack.size() == 0) {
-        View->Msg(S_ERROR, "String stack underflow in MainMenu");
-        FAIL
-    }
+    if (State.GetStrParam(0, s, sizeof(s)) == 0)
+        s[0] = 0;
 
-    std::string mname = sstack.back(); sstack.pop_back();
-
-    view->Parent->ExecMainMenu(mname[0]);
+    View->Parent->ExecMainMenu(s[0]);
     return 1;
 }
 
 int EGUI::ShowMenu(ExState &State, GxView *View) {
-    if (sstack.size() == 0) {
-        if (ActiveView)
-            ActiveView->Msg(S_ERROR, "String stack underflow in ShowMenu");
-        FAIL
-    }
+    char MName[32] = "";
 
-    std::string mname = sstack.back(); sstack.pop_back();
+    if (State.GetStrParam(0, MName, sizeof(MName)) == 0)
+        return 0;
 
-    View->Parent->PopupMenu(mname.c_str());
-
-    // SetBranchCondition(0); // TODO: Is this right? This is what it was to start, return 0
-    // return 0;
-    SUCCESS                   // TODO: as expected, showmenu fails. trying the opposite
+    View->Parent->PopupMenu(MName);
+    return 0;
 }
 
 int EGUI::LocalMenu(GxView *View) {
@@ -1165,44 +598,27 @@ int EGUI::LocalMenu(GxView *View) {
     if (MName == 0)
         MName = "Local";
     View->Parent->PopupMenu(MName);
-    // return 0;    // TODO: again, this aborts script. not sure what the intention of menus failing is.
-    return 1;
+    return 0;
 }
 
 int EGUI::DesktopSaveAs(ExState &State, GxView *view) {
-    if (sstack.size() == 0) {
-        if (ActiveView)
-            ActiveView->Msg(S_ERROR, "String stack underflow in DesktopSaveAs");
-        FAIL
-    }
+    if (State.GetStrParam(0, DesktopFileName, sizeof(DesktopFileName)) == 0)
+        if (view->GetFile("Save Desktop", sizeof(DesktopFileName), DesktopFileName, HIST_PATH, GF_SAVEAS) == 0)
+            return 0;
 
-    strcpy(DesktopFileName, sstack.back().c_str()); sstack.pop_back();
-
-    if (strlen(DesktopFileName) == 0) {
-        if (view->GetFile("Save Desktop", sizeof(DesktopFileName), DesktopFileName, HIST_PATH, GF_SAVEAS) == 0) {
-            FAIL
-        }
-    }
-
-    return SaveDesktop(DesktopFileName);
+    if (DesktopFileName[0] != 0)
+        return SaveDesktop(DesktopFileName);
+    return 0;
 }
 
 int EGUI::DesktopLoad(ExState &State, GxView *view) {
-    if (sstack.size() == 0) {
-        if (ActiveView)
-            ActiveView->Msg(S_ERROR, "String stack underflow in DesktopLoad");
-        FAIL
-    }
+    if (State.GetStrParam(0, DesktopFileName, sizeof(DesktopFileName)) == 0)
+        if (view->GetFile("Load Desktop", sizeof(DesktopFileName), DesktopFileName, HIST_PATH, GF_OPEN) == 0)
+            return 0;
 
-    strcpy(DesktopFileName, sstack.back().c_str()); sstack.pop_back();
-
-    if (strlen(DesktopFileName) == 0) {
-        if (view->GetFile("Load Desktop", sizeof(DesktopFileName), DesktopFileName, HIST_PATH, GF_SAVEAS) == 0) {
-            FAIL
-        }
-    }
-
-    return LoadDesktop(DesktopFileName);
+    if (DesktopFileName[0] != 0)
+        return LoadDesktop(DesktopFileName);
+    return 0;
 }
 
 int EGUI::FrameNew() {
@@ -1227,10 +643,7 @@ int EGUI::FrameNew() {
     assert(edit != 0);
     view->PushView(edit);
     frames->Show();
-
-    int res = ExecMacro(view, "OnFrameNew");
-     SetBranchCondition(res);
-    return res;
+    return 1;
 }
 
 int EGUI::FrameClose(GxView *View) {
@@ -1240,41 +653,27 @@ int EGUI::FrameClose(GxView *View) {
     if (!frames->isLastFrame()) {
         deleteFrame(frames);
     } else {
-        if (ExitEditor(ActiveView) == 0) {
-            FAIL
-        }
+        if (ExitEditor(ActiveView) == 0)
+            return 0;
         deleteFrame(frames);
     }
-
-    int res = ExecMacro(View, "OnFrameClose");
-    SetBranchCondition(res);
-    return res;
+    return 1;
 }
 
-int EGUI::FrameNext(GxView * View) {
-    int res = 0;
-
+int EGUI::FrameNext(GxView * /*View*/) {
     if (!frames->isLastFrame()) {
         frames->Next->Activate();
-
-        res = ExecMacro(View, "OnFrameNext");
+        return 1;
     }
-
-    // SetBranchCondition(res);
-    return res;
+    return 0;
 }
 
-int EGUI::FramePrev(GxView *View) {
-    int res = 0;
-
+int EGUI::FramePrev(GxView * /*View*/) {
     if (!frames->isLastFrame()) {
         frames->Prev->Activate();
-
-        res = ExecMacro(View, "OnFramePrev");
+        return 1;
     }
-
-    // SetBranchCondition(res);
-    return res;
+    return 0;
 }
 
 int EGUI::findDesktop(char *argv[]) {
@@ -1426,7 +825,6 @@ int EGUI::CmdLoadFiles(int &argc, char **argv) {
             case 'c':
             case 'D':
             case 'd':
-            case 'e':
             case 'H':
                 // handled before
                 break;
@@ -1461,8 +859,6 @@ int EGUI::CmdLoadFiles(int &argc, char **argv) {
             case 't':
                 TagGoto(ActiveView, argv[Arg] + 2);
                 break;
-            case 'v': // Verbosity, handled in fte.cpp
-                break;
             default:
                 DieError(2, "Invalid command line option %s", argv[Arg]);
                 return 0;
@@ -1473,9 +869,7 @@ int EGUI::CmdLoadFiles(int &argc, char **argv) {
             QuoteNext = 0;
             if (ExpandPath(argv[Arg], Path, sizeof(Path)) == 0 && IsDirectory(Path)) {
                 EModel *m = new EDirectory(cfAppend, &ActiveModel, Path);
-                if (m == 0 || ActiveModel == 0) {
-                    DieError(2, "Could not open a directory view of path: %s\n", Path);
-                }
+                assert(ActiveModel != 0 && m != 0);
             } else {
                 if (LCount != 0)
                     suspendLoads = 1;
@@ -1534,11 +928,6 @@ int EGUI::Start(int &argc, char **argv) {
 
     EditorInit();
 
-    ActiveView->ExecMacro("OnBoot");
-    //ActiveView->ExecMacro("OnUserBoot");  // OnBoot can provide this
-    if (StartupMacroCommand != NULL)
-        ActiveView->ExecMacro(StartupMacroCommand);
-
     DoLoadHistoryOnEntry(argc, argv);
     DoLoadDesktopOnEntry(argc, argv);
 
@@ -1550,27 +939,9 @@ int EGUI::Start(int &argc, char **argv) {
 
         GetDefaultDirectory(0, Path, sizeof(Path));
         EModel *m = new EDirectory(0, &ActiveModel, Path);
-        if (m == 0 || ActiveModel == 0) {
-            DieError(2, "Could not open a directory view of path: %s\n", Path);
-        }
-
+        assert(ActiveModel != 0 && m != 0);
         ActiveView->SwitchToModel(ActiveModel);
     }
-
-    if (memory[verbosity] > 1) {
-        unsigned mem=0;
-        int mc = CMacros;
-        while (mc--) {
-            if (Macros[mc].Name != NULL)
-                mem += strlen(Macros[mc].Name);
-            for (int i = 0; i < Macros[mc].Count; ++i)
-                if (Macros[mc].cmds[i].type == CT_STRING)
-                    mem += strlen(Macros[mc].cmds[i].u.string);
-            mem += sizeof(ExMacro);
-        }
-        fprintf(stderr, "Macro count: %i memory: %i\n", CMacros, mem);
-    }
-
     return 0;
 }
 
@@ -1619,6 +990,21 @@ void EGUI::Stop() {
     DoSaveHistoryOnExit();
 
     // free macros
+    if (Macros != 0) {
+        while (CMacros--) {
+            free(Macros[CMacros].Name);
+
+            for (int i = 0; i < Macros[CMacros].Count; ++i)
+                if (Macros[CMacros].cmds[i].type == CT_STRING)
+                    free(Macros[CMacros].cmds[i].u.string);
+
+            free(Macros[CMacros].cmds);
+        }
+
+        free(Macros);
+
+        Macros = 0;
+    }
 
     // free colorizers
     while (EColorize *p = Colorizers) {

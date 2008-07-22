@@ -1,6 +1,5 @@
 /*    o_directory.h
  *
- *    Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
  *    Copyright (c) 1994-1996, Marko Macek
  *
  *    You may distribute under the terms of either the GNU General Public
@@ -24,8 +23,6 @@ public:
     virtual ~EDirectory();
 
     virtual int GetContext();
-    virtual int GetMatchForward(int start=0);
-    virtual int GetMatchBackward(int start=0);
     virtual EEventMap *GetEventMap();
     virtual int ExecCommand(int Command, ExState &State);
     virtual void HandleEvent(TEvent &Event);
@@ -48,9 +45,7 @@ public:
     int isDir(int No);
     int FmChDir(const char* Name);
     int FmLoad(const char* Name, EView *View);
-    int FmMvFile(const char* Name);
-    int FmRmFile(const char* Name);
-    int FmMkDir();
+    int FmRmDir(const char* Name);
     int ChangeDir(ExState &State);
     int RescanDir();
 };

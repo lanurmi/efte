@@ -1,6 +1,5 @@
 /*    e_cmds.cpp
  *
- *    Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
  *    Copyright (c) 1994-1996, Marko Macek
  *
  *    You may distribute under the terms of either the GNU General Public
@@ -9,78 +8,34 @@
  */
 
 #include "fte.h"
-unsigned int BranchCondition = 0;
-
-// ------------------------------------------------------------------
-
-void SetBranchCondition(int cond)  {
-    BranchCondition = (BranchCondition << 1);
-    if (cond) BranchCondition++;
-}
-
-int EBuffer::CursorLeft() {
-    int result = 0;                              // assume failure
-    if (CP.Col) {                                // cursor can be moved to left
-        SetPos(CP.Col - 1, CP.Row, tmLeft);
-        result = 1;
-    }
-    SetBranchCondition(result);
-    return result;
-}
-
-int EBuffer::CursorRight() {
-    SetPos(CP.Col + 1, CP.Row, tmRight);
-    SUCCESS
-}
-
-int EBuffer::CursorUp() {
-    int result = 0;                              // assume failure
-    if (CP.Row) {
-        SetPos(CP.Col, CP.Row - 1, tmLeft);
-        result = 1;
-    }
-    SetBranchCondition(result);
-    return result;
-}
-
-int EBuffer::CursorDown() {
-    int result = 0;                              // assume failure
-    if (CP.Row < VCount - 1) {
-        SetPos(CP.Col, CP.Row + 1, tmLeft);
-        result = 1;
-    }
-    SetBranchCondition(result);
-    return result;
-}
-
-// ------------------------------------------------------------------
 
 int EBuffer::MoveLeft() {
-    if (CP.Col) {
-        return SetPos(CP.Col - 1, CP.Row, tmLeft);
+    if (CP.Col == 0) {
+        if (CursorWithinEOL == 1 && MoveUp())
+            return MoveLineEnd();
+        else
+            return 0;
     }
-    if (CursorWithinEOL == 1 && MoveUp())
-        return MoveLineEnd();
-    FAIL
+    SetPos(CP.Col - 1, CP.Row, tmLeft);
+    return 1;
 }
 
 int EBuffer::MoveRight() {
     if (CursorWithinEOL == 1 && CP.Col == LineLen()) {
-        if (MoveDown()) {
+        if (MoveDown())
             return MoveLineStart();
-        } else {
-            FAIL
-        }
+        else
+            return 0;
     }
-    return SetPos(CP.Col + 1, CP.Row, tmRight);
+    SetPos(CP.Col + 1, CP.Row, tmRight);
+    return 1;
 }
 
 int EBuffer::MoveUp() {
     if (LastUpDownColumn == -1)
         LastUpDownColumn = CP.Col;
-    if (CP.Row == 0) {
-        FAIL
-    }
+
+    if (CP.Row == 0) return 0;
 
     SetPos(CP.Col, CP.Row - 1, tmLeft);
 
@@ -89,15 +44,15 @@ int EBuffer::MoveUp() {
         if (CP.Col > LastUpDownColumn)
             SetPos(LastUpDownColumn, CP.Row);
     }
-    SUCCESS
+
+    return 1;
 }
 
 int EBuffer::MoveDown() {
     if (LastUpDownColumn == -1)
         LastUpDownColumn = CP.Col;
-    if (CP.Row == VCount - 1) {
-        FAIL
-    }
+
+    if (CP.Row == VCount - 1) return 0;
 
     SetPos(CP.Col, CP.Row + 1, tmLeft);
 
@@ -107,30 +62,22 @@ int EBuffer::MoveDown() {
             SetPos(LastUpDownColumn, CP.Row);
     }
 
-    SUCCESS
+    return 1;
 }
 
-// any of the CursorLeft/Right/Up/Down set branch condition. no need
-// to set twice what would merely be a reflection of the Cursor... condition.
 int EBuffer::MovePrev() {
-    if (MoveLeft() || (MoveUp() && MoveLineEnd())) {
-        SUCCESS
-    }
-    FAIL
+    if (MoveLeft()) return 1;
+    if (MoveUp() && MoveLineEnd()) return 1;
+    return 0;
 }
 
 int EBuffer::MoveNext() {
-    if (CP.Col < LineLen()) {
-        if (MoveRight()) {
-            SUCCESS
-        }
-    }
-
-    if (MoveDown() && MoveLineStart()) {
-        SUCCESS
-    }
-    FAIL
+    if (CP.Col < LineLen())
+        if (MoveRight()) return 1;
+    if (MoveDown() && MoveLineStart()) return 1;
+    return 0;
 }
+
 
 int EBuffer::MoveWordLeftX(int start) {
     if (CP.Col > 0) {
@@ -147,21 +94,20 @@ int EBuffer::MoveWordLeftX(int start) {
             while ((P > 0) && (WGETBIT(Flags.WordChars, L->Chars[P - 1]) == wS)) P--;
             C = ScreenPos(L, P);
             return SetPos(C, CP.Row);
-        }
-    }
-    FAIL
+        } else return 0;
+    } else return 0;
 }
+
 
 int EBuffer::MoveWordRightX(int start) {
     PELine L = VLine(CP.Row);
-    int wS = start;
-    int wE = 1 - start;
-    int C = CP.Col;
-    int P = CharOffset(L, C);
+    int C, P;
+    int wS = start, wE = 1 - start;
 
-    if (P >= L->Count) {
-        FAIL
-    }
+    C = CP.Col;
+    P = CharOffset(L, C);
+
+    if (P >= L->Count) return 0;
 
     while ((P < L->Count) && (WGETBIT(Flags.WordChars, L->Chars[P]) == wS)) P++;
     while ((P < L->Count) && (WGETBIT(Flags.WordChars, L->Chars[P]) == wE)) P++;
@@ -179,13 +125,13 @@ int EBuffer::MoveWordRight() {
 
 int EBuffer::MoveWordPrev() {
     if (MoveWordLeft()) return 1;
-    if (CursorUp() && MoveLineEnd()) return 1;
+    if (MoveUp() && MoveLineEnd()) return 1;
     return 0;
 }
 
 int EBuffer::MoveWordNext() {
     if (MoveWordRight()) return 1;
-    if (CursorDown() && MoveLineStart()) return 1;
+    if (MoveDown() && MoveLineStart()) return 1;
     return 0;
 }
 
@@ -199,20 +145,15 @@ int EBuffer::MoveWordEndRight() {
 
 int EBuffer::MoveWordEndPrev() {
     if (MoveWordEndLeft()) return 1;
-    if (CursorUp() && MoveLineEnd()) return 1;
+    if (MoveUp() && MoveLineEnd()) return 1;
     return 0;
 }
 
 int EBuffer::MoveWordEndNext() {
     if (MoveWordEndRight()) return 1;
-    if (CursorDown() && MoveLineStart()) return 1;
+    if (MoveDown() && MoveLineStart()) return 1;
     return 0;
 }
-
-
-
-// -------- stopped reviewing here -------
-
 
 int EBuffer::MoveWordOrCapLeft() {
     if (CP.Col > 0) {
@@ -310,12 +251,12 @@ int EBuffer::MoveWordOrCapEndNext() {
 
 int EBuffer::MoveLineStart() {
     SetPos(0, CP.Row);
-    SUCCESS
+    return 1;
 }
 
 int EBuffer::MoveLineEnd() {
     SetPos(LineLen(VToR(CP.Row)), CP.Row);
-    SUCCESS
+    return 1;
 }
 
 int EBuffer::MovePageUp() {
@@ -356,30 +297,23 @@ int EBuffer::MoveFileEnd() {
     return 1;
 }
 
-
 int EBuffer::MoveBlockStart() {
-    int rc = 0;
-    if (BB.Col != -1 || BB.Row != -1) {
-        assert(BB.Col >= 0 && BB.Row >= 0 && BB.Row < RCount);
-        if (SetPosR(BB.Col, BB.Row))
-            rc++;
-    }
-    SetBranchCondition(rc);
-    return rc;
+    if (BB.Col == -1 && BB.Row == -1)
+        return 0;
+    assert(BB.Col >= 0 && BB.Row >= 0 && BB.Row < RCount);
+    if (SetPosR(BB.Col, BB.Row))
+        return 1;
+    return 0;
 }
 
 int EBuffer::MoveBlockEnd() {
-    int rc = 0;
-    if (BE.Col != -1 || BE.Row != -1)
-    {
-        assert(BE.Col >= 0 && BE.Row >= 0 && BE.Row < RCount);
-        if (SetPosR(BE.Col, BE.Row))
-            rc++;
-    }
-    SetBranchCondition(rc);
-    return rc;
+    if (BE.Col == -1 && BE.Row == -1)
+        return 0;
+    assert(BE.Col >= 0 && BE.Row >= 0 && BE.Row < RCount);
+    if (SetPosR(BE.Col, BE.Row))
+        return 1;
+    return 0;
 }
-
 
 int EBuffer::MoveFirstNonWhite() {
     int C = 0, P = 0;
@@ -726,7 +660,6 @@ int EBuffer::KillBlockOrCharPrev() {
         return BlockKill();
 }
 
-
 int EBuffer::BackSpace() {
     int Y = VToR(CP.Row);
 
@@ -756,9 +689,6 @@ int EBuffer::BackSpace() {
             if (SetPos(C1, CP.Row) == 0) return 0;
             if (C > LineIndented(Y)) return 0;
             if (DelText(Y, C1, C - C1) == 0) return 0;
-            // if (BFI(this, BFI_Insert) == 0)
-            if (memory[insert] == 0)
-                if (InsText(Y, C1, 1, " ") == 0) return 0;
         } else if (BFI(this, BFI_BackSpKillTab)) {
             int P;
             int C = CP.Col, C1;
@@ -766,11 +696,7 @@ int EBuffer::BackSpace() {
             P = CharOffset(RLine(Y), C - 1);
             C1 = ScreenPos(RLine(Y), P);
             if (SetPos(C1, CP.Row) == 0) return 0;
-
             if (DelText(Y, C1, C - C1) == 0) return 0;
-            // if (BFI(this, BFI_Insert) == 0)
-            if (memory[insert] == 0)
-                if (InsText(Y, C1, 1, " ") == 0) return 0;
         } else {
             if (MovePrev() == 0) return 0;
 
@@ -785,21 +711,15 @@ int EBuffer::BackSpace() {
             }
 
             if (DelText(Y, ScreenPos(L, C), 1) == 0) return 0;
-            // if (BFI(this, BFI_Insert) == 0)
-            if (memory[insert] == 0)
-                if (InsText(Y, ScreenPos(L, C), 1, " ") == 0) return 0;
         }
     }
     if (BFI(this, BFI_WordWrap) == 2) {
         if (DoWrap(0) == 0) return 0;
     }
-
-//    if (BFI(this, BFI_Trim)) {
-    if (memory[autotrim]) {
+    if (BFI(this, BFI_Trim)) {
         Y = VToR(CP.Row);
         if (TrimLine(Y) == 0) return 0;
     }
-
     return 1;
 }
 
@@ -838,8 +758,7 @@ int EBuffer::Delete() {
                 if (SetPos(BFI(this, BFI_LeftMargin), CP.Row + 1) == 0) return 0;
             }
     }
-//    if (BFI(this, BFI_Trim))
-    if (memory[autotrim])
+    if (BFI(this, BFI_Trim))
         if (TrimLine(VToR(CP.Row)) == 0)
             return 0;
     return 1;
@@ -857,8 +776,7 @@ int EBuffer::LineAdd() {
 
 int EBuffer::LineSplit() {
     if (SplitLine(VToR(CP.Row), CP.Col) == 0) return 0;
-//    if (BFI(this, BFI_Trim))
-    if (memory[autotrim])
+    if (BFI(this, BFI_Trim))
         if (TrimLine(VToR(CP.Row)) == 0) return 0;
     return 1;
 }
@@ -889,8 +807,7 @@ int EBuffer::LineNew() {
         //  if (InsText(Row, C, Indent, 0) == 0)
         //    return 0;
 
-        // if (BFI(this, BFI_Trim))
-        if (memory[autotrim])
+        if (BFI(this, BFI_Trim))
             if (TrimLine(VToR(CP.Row - 1)) == 0)
                 return 0;
     }
@@ -922,8 +839,7 @@ int EBuffer::LineIndent() {
         }
     }
     if (rc == 0) return 0;
-    // if (BFI(this, BFI_Trim))
-    if (memory[autotrim])
+    if (BFI(this, BFI_Trim))
         if (TrimLine(VToR(CP.Row)) == 0) return 0;
     return 1;
 }
@@ -1010,47 +926,29 @@ int EBuffer::InsertString(const char *aStr, int aCount) {
     int C, L;
     int Y = VToR(CP.Row);
 
-    if (BFI(this, BFI_InsertKillBlock) == 1) {
-        if (CheckBlock() == 1) {
-            if (BlockKill() == 0) {
-                FAIL
-            }
-        }
-    }
+    if (BFI(this, BFI_InsertKillBlock) == 1)
+        if (CheckBlock() == 1)
+            if (BlockKill() == 0)
+                return 0;
 
-    // if (BFI(this, BFI_Insert) == 0) {
-    if (memory[insert] == 0) {
-        if (CP.Col < LineLen()) {
-            if (KillChar() == 0) {
-                FAIL
-            }
-        }
-    }
-
-    if (InsText(Y, CP.Col, aCount, aStr) == 0) {
-        FAIL
-    }
-
+    if (BFI(this, BFI_Insert) == 0)
+        if (CP.Col < LineLen())
+            if (KillChar() == 0)
+                return 0;
+    if (InsText(Y, CP.Col, aCount, aStr) == 0)
+        return 0;
     C = CP.Col;
     L = VToR(CP.Row);
     P = CharOffset(RLine(L), C);
     P += aCount;
     C = ScreenPos(RLine(L), P);
-    if (SetPos(C, CP.Row) == 0) {
-        FAIL
-    }
-
-    // if (BFI(this, BFI_Trim) && *aStr != '\t') {
-    if ((memory[autotrim]) && *aStr != '\t') {
-        if (TrimLine(L) == 0) {
-            FAIL
-        }
-    }
-
+    if (SetPos(C, CP.Row) == 0)
+        return 0;
+    if (BFI(this, BFI_Trim) && *aStr != '\t')
+        if (TrimLine(L) == 0)
+            return 0;
     if (BFI(this, BFI_WordWrap) == 2) {
-        if (DoWrap(0) == 0) {
-            FAIL
-        }
+        if (DoWrap(0) == 0) return 0;
     } else if (BFI(this, BFI_WordWrap) == 1) {
         int P, C = CP.Col;
         PELine LP;
@@ -1070,49 +968,39 @@ int EBuffer::InsertString(const char *aStr, int aCount) {
                 C = BFI(this, BFI_RightMargin);
             } else
                 C = ScreenPos(LP, P);
-            if (SplitLine(L, C) == 0) {
-                FAIL
-            }
+            if (SplitLine(L, C) == 0) return 0;
             IndentLine(L + 1, BFI(this, BFI_LeftMargin));
-            if (SetPos(CP.Col - C - 1 + BFI(this, BFI_LeftMargin), CP.Row + 1) == 0) {
-                FAIL
-            }
+            if (SetPos(CP.Col - C - 1 + BFI(this, BFI_LeftMargin), CP.Row + 1) == 0) return 0;
         }
     }
-    SUCCESS
+    return 1;
 }
 
 int EBuffer::InsertSpacesToTab(int TSize) {
-    int P_from = CP.Col;
-    int P_to = NextTab(P_from, TSize);
+    int P = CP.Col, P1;
 
-    if (BFI(this, BFI_InsertKillBlock))
-        if (CheckBlock())
-            if (!BlockKill())
+    if (BFI(this, BFI_InsertKillBlock) == 1)
+        if (CheckBlock() == 1)
+            if (BlockKill() == 0)
                 return 0;
 
-    int P_diff = P_to - P_from;
-    if (!(InsText(VToR(CP.Row), P_from, P_diff, 0)))
-        return 0;
+    if (TSize <= 0)
+        TSize = BFI(this, BFI_TabSize);
 
-    return (SetPos(P_to, CP.Row));
-
+    P1 = NextTab(P, TSize);
+    if (BFI(this, BFI_Insert) == 0) {
+        if (CP.Col < LineLen())
+            if (DelText(VToR(CP.Row), CP.Col, P1 - P) == 0) return 0;
+    }
+    if (InsText(VToR(CP.Row), CP.Col, P1 - P, 0) == 0) return 0;
+    if (SetPos(P1, CP.Row) == 0) return 0;
+    return 1;
 }
-
 
 int EBuffer::InsertTab() {
-    if (memory[insert])  {
-        if (BFI(this, BFI_SpaceTabs)) {
-            return InsertSpacesToTab(BFI(this, BFI_TabSize));
-        } else {
-            return InsertChar(9);
-        }
-    }
-    int P_from = CP.Col;
-    int P_to = NextTab(P_from, BFI_TabSize);
-    return (SetPos(P_to, CP.Row));
+    return (BFI(this, BFI_SpaceTabs)) ?
+           InsertSpacesToTab(BFI(this, BFI_TabSize)) : InsertChar(9);
 }
-
 
 int EBuffer::InsertSpace() {
     return TypeChar(32);
@@ -1432,9 +1320,9 @@ int EBuffer::BlockTrim() {
 int EBuffer::ToggleAutoIndent() {
     TOGGLE(AutoIndent);
 }
-//int EBuffer::ToggleInsert() {
-//    TOGGLE(Insert);
-//}
+int EBuffer::ToggleInsert() {
+    TOGGLE(Insert);
+}
 int EBuffer::ToggleExpandTabs() {
     TOGGLE_R(ExpandTabs);
 }
@@ -1469,11 +1357,9 @@ int EBuffer::ToggleIndentWithTabs() {
 int EBuffer::ToggleBackSpUnindents() {
     TOGGLE(BackSpUnindents);
 }
-
-// int EBuffer::ToggleTrim() {
-//     TOGGLE(Trim);
-// }
-
+int EBuffer::ToggleTrim() {
+    TOGGLE(Trim);
+}
 int EBuffer::ToggleShowMarkers() {
     TOGGLE_R(ShowMarkers);
 }
@@ -1508,7 +1394,7 @@ int EBuffer::SetRightMargin() {
     return 1;
 }
 
-int EBuffer::ChangeMode(const char *AMode) {
+int EBuffer::ChangeMode(char *AMode) {
     if (FindMode(AMode) != 0) {
         Mode = FindMode(AMode);
         Flags = Mode->Flags;
@@ -1522,7 +1408,7 @@ int EBuffer::ChangeMode(const char *AMode) {
     return 0;
 }
 
-int EBuffer::ChangeKeys(const char *AMode) {
+int EBuffer::ChangeKeys(char *AMode) {
     if (FindMode(AMode) != 0) {
         Mode = FindMode(AMode);
         HilitProc = 0;
@@ -1535,7 +1421,7 @@ int EBuffer::ChangeKeys(const char *AMode) {
     return 0;
 }
 
-int EBuffer::ChangeFlags(const char *AMode) {
+int EBuffer::ChangeFlags(char *AMode) {
     if (FindMode(AMode) != 0) {
         EMode *XMode;
         XMode = FindMode(AMode);

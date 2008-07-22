@@ -1,6 +1,5 @@
 /*    gui.h
  *
- *    Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
  *    Copyright (c) 1994-1996, Marko Macek
  *
  *    You may distribute under the terms of either the GNU General Public
@@ -136,7 +135,7 @@ public:
     int Run();
     void StopLoop();
 
-    int RunProgram(int mode, const char *Command);
+    int RunProgram(int mode, char *Command);
 
     int OpenPipe(char *Command, EModel *notify);
     int SetPipeView(int id, EModel *notify);
@@ -176,7 +175,6 @@ int DLGGetFile(GView *View, const char *Prompt, unsigned int BufLen, char *FileN
 #define GPC_WARNING 0x0002
 #define GPC_ERROR   0x0004
 #define GPC_FATAL   0x0008
-#define GPC_ABOUT   0x00016
 int DLGPickChoice(GView *View, const char *ATitle, int NSel, va_list ap, int Flags);
 
 #define SEARCH_BACK    0x00000001   // reverse (TODO for regexps)
@@ -189,7 +187,6 @@ int DLGPickChoice(GView *View, const char *ATitle, int NSel, va_list ap, int Fla
 #define SEARCH_ALL     0x00000080   // search all
 #define SEARCH_REPLACE 0x00000100   // do a replace operation
 #define SEARCH_JOIN    0x00000200   // join line
-#define SEARCH_SPLIT   0x00000800   // split the line
 #define SEARCH_DELETE  0x00000400   // delete line
 #define SEARCH_CENTER  0x00001000   // center finds
 #define SEARCH_NOPOS   0x00002000   // don't move the cursor

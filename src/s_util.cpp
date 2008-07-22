@@ -1,6 +1,6 @@
+
 /*    s_util.cpp
  *
- *    Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
  *    Copyright (c) 1994-1996, Marko Macek
  *
  *    You may distribute under the terms of either the GNU General Public
@@ -13,13 +13,6 @@
 #define BUF_SZ (sizeof(FileBuffer))
 
 extern RxNode *CompletionFilter;
-
-int MacroNum(const char *Name) {
-    for (int i = 0; i < CMacros; i++)
-        if (Macros[i].Name && (strcmp(Name, Macros[i].Name)) == 0)
-            return i;
-    return 0; // Nop
-}
 
 // should use DosCopy under OS/2...
 static int copyfile(char *f1, char *f2) { // from F1 to F2
@@ -56,16 +49,10 @@ char *MakeBackup(char *FileName, char *NewName) {
 
     /* try 1 */
     if (strlen(BackupDirectory) > 0) {
-        char TmpFileName[MAXPATH];
-        char TmpBackupName[MAXPATH];
-
-        strcpy(TmpFileName, FileName);
-
-        for (unsigned int idx=0; idx < strlen(TmpFileName); idx++)
-            if (TmpFileName[idx] == '/' || TmpFileName[idx] == '\\' || TmpFileName[idx] == ':')
-                TmpFileName[idx] = '_';
-        snprintf(TmpBackupName, MAXPATH, "%s/%s", BackupDirectory, TmpFileName);
-        ExpandPath(TmpBackupName, NewName, MAXPATH);
+        for (int idx=0; idx < strlen(FileName); idx++)
+            if (FileName[idx] == '/' || FileName[idx] == '\\')
+                FileName[idx] = '_';
+        snprintf(NewName, MAXPATH, "%s/%s", BackupDirectory, FileName);
     } else
         snprintf(NewName, MAXPATH, "%s~", FileName);
 
@@ -245,86 +232,3 @@ int CompletePath(const char *Base, char *Match, int Count) {
     }
     return count;
 }
-
-
-#ifndef HAVE_GETTIMEOFDAY
-#if defined(_MSC_VER) || defined(_MSC_EXTENSIONS) || defined(__BORLANDC__)
-  #define DELTA_EPOCH_IN_MICROSECS  11644473600000000Ui64
-#else
-  #define DELTA_EPOCH_IN_MICROSECS  11644473600000000ULL
-#endif
-
-#ifdef NT
-#include <windows.h>
-#endif
-
-struct timezone
-{
-  int  tz_minuteswest; /* minutes W of Greenwich */
-  int  tz_dsttime;     /* type of dst correction */
-};
-
-#ifndef OS2
-
-int gettimeofday(struct timeval *tv, struct timezone *tz)
-{
-  FILETIME ft;
-  unsigned __int64 tmpres = 0;
-  static int tzflag;
-
-  if (NULL != tv)
-  {
-    GetSystemTimeAsFileTime(&ft);
-
-    tmpres |= ft.dwHighDateTime;
-    tmpres <<= 32;
-    tmpres |= ft.dwLowDateTime;
-
-    /*converting file time to unix epoch*/
-    tmpres /= 10;  /*convert into microseconds*/
-    tmpres -= DELTA_EPOCH_IN_MICROSECS;
-    tv->tv_sec = (long)(tmpres / 1000000UL);
-    tv->tv_usec = (long)(tmpres % 1000000UL);
-  }
-
-  if (NULL != tz)
-  {
-    if (!tzflag)
-    {
-      _tzset();
-      tzflag++;
-    }
-    tz->tz_minuteswest = _timezone / 60;
-    tz->tz_dsttime = _daylight;
-  }
-
-  return 0;
-}
-
-#else // Yes, OS/2
-#define INCL_DOSERRORS
-#define INCL_DOSMISC
-#include <os2.h>
-
-struct timeval {
-    time_t tv_sec;
-    long tv_usec;
-};
-
-int gettimeofday(struct timeval *tv, struct timezone *tz) {
-    ULONG aulSysInfo[QSV_MAX] = {0};
-    APIRET rc = DosQuerySysInfo(1L, QSV_MAX, (PVOID) aulSysInfo, sizeof(ULONG)*QSV_MAX);
-
-    if(rc != NO_ERROR)
-        return -1;
-
-    if (NULL != tv) {
-        tv->tv_sec = aulSysInfo[QSV_TIME_LOW];
-        tv->tv_usec = 1000 * aulSysInfo[QSV_MS_COUNT];
-    }
-
-    return 0;
-}
-
-#endif
-#endif

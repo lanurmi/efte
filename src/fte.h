@@ -1,6 +1,5 @@
 /*    fte.h
  *
- *    Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
  *    Copyright (c) 1994-1996, Marko Macek
  *
  *    You may distribute under the terms of either the GNU General Public
@@ -13,8 +12,6 @@
 
 #include "ftever.h"
 #include "sysdep.h"
-
-#include "u_stack.h"
 
 #ifdef NEED_LOG_H
 #include "log.h"
@@ -72,17 +69,4 @@
 
 #endif //_DEBUG && MSVC && MSVCDEBUG
 
-extern char *StartupMacroCommand;
-extern int LastEventChar;
-extern int exception;
-extern unsigned int dp;           // index to next shared variable space
-extern unsigned int autotrim;
-extern unsigned int insert;
-extern int Statusline();
-//extern int ExecMacro(const char *name);
-#define SUCCESS SetBranchCondition(1); return 1;
-#define FAIL SetBranchCondition(0); return 0;
-
-
 #endif
-

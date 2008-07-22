@@ -2,8 +2,6 @@
  *
  *    Ncurses front-end to fte - Don Mahurin
  *
- *    Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
- *
  *    You may distribute under the terms of either the GNU General Public
  *    License or the Artistic License, as specified in the README file.
  *
@@ -827,7 +825,7 @@ int GUI::ShowEntryScreen() {
     return 1;
 }
 
-int GUI::RunProgram(int /*mode */ , const char *Command) {
+int GUI::RunProgram(int /*mode */ , char *Command) {
     int rc, W, H, W1, H1;
 
     ConQuerySize(&W, &H);

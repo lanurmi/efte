@@ -1,6 +1,5 @@
 /*    e_unix.cpp
  *
- *    Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
  *    Copyright (c) 1997, Marko Macek
  *
  *    You may distribute under the terms of either the GNU General Public
@@ -24,26 +23,17 @@ int EView::SysShowHelp(ExState &State, const char *word) {
     char command[1024];
     char file[MAXPATH];
 
+    if (State.GetStrParam(this, options, sizeof(options) - 1) == 0)
+        options[0] = 0;
+
     char wordAsk[64] = "";
     if (word == 0) {
-        SSCHECK(1, "SysShowHelp");
-
-        strcpy(wordAsk, sstack.back().c_str()); sstack.pop_back();
-
-        if (strlen(wordAsk) == 0) {
-            if (MView->Win->GetStr("Keyword", sizeof(wordAsk) - 1, wordAsk, HIST_DEFAULT) == 0) {
-                FAIL
-            }
-        }
-
+        if (State.GetStrParam(this, wordAsk, sizeof(wordAsk) - 1) == 0)
+            if (MView->Win->GetStr("Keyword",
+                                   sizeof(wordAsk) - 1, wordAsk, HIST_DEFAULT) == 0)
+                return 0;
         word = wordAsk;
     }
-
-    SSCHECK(1, "SysShowHelp");
-
-    strcpy(options, sstack.back().c_str()); sstack.pop_back();
-    if (strlen(options) == 0)
-        options[0] = 0;
 
     snprintf(file, sizeof(file) - 1, "/tmp/efte%d-man-%s", getpid(), word);
     snprintf(command, sizeof(command) - 1, "%s %s %s >'%s' 2>&1", HelpCommand, options, word, file);

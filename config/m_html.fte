@@ -4,588 +4,588 @@
 
 # Runs current file in browser
 sub HTML_View {
-    "netscape.exe -browser -l en_US file:///" filename$ append$ RunProgram;
+    RunProgram "netscape.exe -browser -l en_US file:///" . $FilePath;
 }
 
 # Runs Dave Ragget's HTML Tidy on current file
 sub HTML_Tidy {
-    "f:\\os2_apps\\tidy\\tidy.exe -m " filename$ append$ RunProgram;
+    RunProgram "f:\\os2_apps\\tidy\\tidy.exe -m " . $FilePath;
 }
 
 # Basic stuff
-sub HTML_BR   { "<br />" InsertString; }
-sub HTML_HR   { "<hr />" InsertString; }
+sub HTML_BR   { InsertString "<br />"; }
+sub HTML_HR   { InsertString "<hr />"; }
 
 sub HTML_HTM {
-    ?MoveBlockStart; "<html>" InsertString; 2:LineNew;
+    ?MoveBlockStart; InsertString "<html>"; 2:LineNew;
     ?MoveBlockEnd; SavePos; BlockUnmark; 2:LineNew;
-    "</html>" InsertString; MoveSavedPos;
+    InsertString "</html>"; MoveSavedPos;
 }
 
 sub HTML_HEAD {
-    ?MoveBlockStart; "<head>" InsertString; LineNew;
+    ?MoveBlockStart; InsertString "<head>"; LineNew;
     ?MoveBlockEnd; SavePos; BlockUnmark; LineNew;
-    "</head>" InsertString; MoveSavedPos;
+    InsertString "</head>"; MoveSavedPos;
 }
 sub HTML_TITLE {
-    ?MoveBlockStart; "<title>" InsertString;
-    ?MoveBlockEnd; "</title>" InsertString; 8:MoveLeft; BlockUnmark;
+    ?MoveBlockStart; InsertString "<title>";
+    ?MoveBlockEnd; InsertString "</title>"; 8:MoveLeft; BlockUnmark;
 }
 
 sub HTML_BODY {
-    ?MoveBlockStart; "<body>" InsertString; 2:LineNew;
-    ?MoveBlockEnd; SavePos; 2:LineNew; "</body>" InsertString;
+    ?MoveBlockStart; InsertString "<body>"; 2:LineNew;
+    ?MoveBlockEnd; SavePos; 2:LineNew; InsertString "</body>";
     BlockUnmark; MoveSavedPos;
 }
 
 sub HTML_META {
-    MoveFileStart; `<head>` "i" ?Find; MoveLineEnd; LineNew;
-    "<meta name=\"\" content=\"\" />" InsertString; 15:MoveLeft
+    MoveFileStart; ?Find /<head>/ "i"; MoveLineEnd; LineNew;
+    InsertString "<meta name=\"\" content=\"\" />"; 15:MoveLeft
 }
 
 sub HTML_BASEURL {
-    MoveFileStart; `<head>` "i" ?Find; MoveLineEnd; LineNew
-    "<base href=\"\" />" InsertString; 4:MoveLeft
+    MoveFileStart; ?Find /<head>/ "i"; MoveLineEnd; LineNew
+    InsertString "<base href=\"\" />"; 4:MoveLeft
 }
 
 sub HTML_P {
-    ?MoveBlockStart; "<p>" InsertString;
-    ?MoveBlockEnd; "</p>" InsertString; 4:MoveLeft; BlockUnmark;
+    ?MoveBlockStart; InsertString "<p>";
+    ?MoveBlockEnd; InsertString "</p>"; 4:MoveLeft; BlockUnmark;
 }
 
 sub HTML_CENTER {
     # shouldn't really do this, but it's convenient.
-    ?MoveBlockStart; "<span style=\"text-align: center\">" InsertString;
-    ?MoveBlockEnd; "</span>" InsertString; 7:MoveLeft;
+    ?MoveBlockStart; InsertString "<span style=\"text-align: center\">";
+    ?MoveBlockEnd; InsertString "</span>"; 7:MoveLeft;
 }
 
 # Comment
 sub HTML_COMMENT {
-    ?MoveBlockStart; "<!-- " InsertString;
-    ?MoveBlockEnd; " -->" InsertString; 4:MoveLeft; BlockUnmark;
+    ?MoveBlockStart; InsertString "<!-- ";
+    ?MoveBlockEnd; InsertString " -->"; 4:MoveLeft; BlockUnmark;
 }
 
 # DTDs
 sub HTML_DTD_X1S { # XHTML 1.0 Strict
     MoveFileStart; LineInsert;
-    "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">" InsertString;
+    InsertString "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">";
     MoveFileStart;
 }
 
 sub HTML_DTD_X1T { # XHTML 1.0 Transitional
     MoveFileStart; LineInsert;
-    "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">" InsertString;
+    InsertString "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">";
     MoveFileStart;
 }
 
 sub HTML_DTD_X1F { # XHTML 1.0 Frameset
     MoveFileStart; LineInsert;
-    "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Frameset//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd\">" InsertString;
+    InsertString "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Frameset//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd\">";
     MoveFileStart;
 }
 
 sub HTML_DTD_4S { # HTML 4.01 Strict
     MoveFileStart; LineInsert;
-    "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">" InsertString;
+    InsertString "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">";
     MoveFileStart;
 }
 
 sub HTML_DTD_4T { # HTML 4.01 Transitional
     MoveFileStart; LineInsert;
-    "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">" InsertString;
+    InsertString "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">";
     MoveFileStart;
 }
 
 sub HTML_DTD_4F { # HTML 4.01 Frameset
     MoveFileStart; LineInsert;
-    "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Frameset//EN\" \"http://www.w3.org/TR/html4/frameset.dtd\">" InsertString;
+    InsertString "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Frameset//EN\" \"http://www.w3.org/TR/html4/frameset.dtd\">";
     MoveFileStart;
 }
 
 sub HTML_DTD_32F { # HTML 3.2 Final
     MoveFileStart; LineInsert;
-    "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 3.2 Final//EN\">" InsertString;
+    InsertString "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 3.2 Final//EN\">";
     MoveFileStart;
 }
 
 sub HTML_DTD_2 { # HTML 2.0; Why not?
     MoveFileStart; LineInsert;
-    "<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">" InsertString;
+    InsertString "<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">";
     MoveFileStart;
 }
 
 # headers
 sub HTML_H1 {
-    ?MoveBlockStart; "<h1>" InsertString;
-    ?MoveBlockEnd; "</h1>" InsertString; 5:MoveLeft; BlockUnmark;
+    ?MoveBlockStart; InsertString "<h1>";
+    ?MoveBlockEnd; InsertString "</h1>"; 5:MoveLeft; BlockUnmark;
 }
 
 sub HTML_H2 {
-    ?MoveBlockStart; "<h2>" InsertString;
-    ?MoveBlockEnd; "</h2>" InsertString; 5:MoveLeft; BlockUnmark;
+    ?MoveBlockStart; InsertString "<h2>";
+    ?MoveBlockEnd; InsertString "</h2>"; 5:MoveLeft; BlockUnmark;
 }
 
 sub HTML_H3 {
-    ?MoveBlockStart; "<h3>" InsertString;
-    ?MoveBlockEnd; "</h3>" InsertString; 5:MoveLeft; BlockUnmark;
+    ?MoveBlockStart; InsertString "<h3>";
+    ?MoveBlockEnd; InsertString "</h3>"; 5:MoveLeft; BlockUnmark;
 }
 
 sub HTML_H4 {
-    ?MoveBlockStart; "<h4>" InsertString;
-    ?MoveBlockEnd; "</h4>" InsertString; 5:MoveLeft; BlockUnmark;
+    ?MoveBlockStart; InsertString "<h4>";
+    ?MoveBlockEnd; InsertString "</h4>"; 5:MoveLeft; BlockUnmark;
 }
 
 sub HTML_H5 {
-    ?MoveBlockStart; "<h5>" InsertString;
-    ?MoveBlockEnd; "</h5>" InsertString; 5:MoveLeft; BlockUnmark;
+    ?MoveBlockStart; InsertString "<h5>";
+    ?MoveBlockEnd; InsertString "</h5>"; 5:MoveLeft; BlockUnmark;
 }
 
 sub HTML_H6 {
-    ?MoveBlockStart; "<h6>" InsertString;
-    ?MoveBlockEnd; "</h6>" InsertString; 5:MoveLeft; BlockUnmark;
+    ?MoveBlockStart; InsertString "<h6>";
+    ?MoveBlockEnd; InsertString "</h6>"; 5:MoveLeft; BlockUnmark;
 }
 
 # Character Format
 sub HTML_B {
-    ?MoveBlockStart; "<b>" InsertString;
-    ?MoveBlockEnd; "</b>" InsertString; 4:MoveLeft; BlockUnmark;
+    ?MoveBlockStart; InsertString "<b>";
+    ?MoveBlockEnd; InsertString "</b>"; 4:MoveLeft; BlockUnmark;
 }
 
 sub HTML_STRONG {
-    ?MoveBlockStart; "<strong>" InsertString;
-    ?MoveBlockEnd; "</strong>" InsertString; 9:MoveLeft; BlockUnmark;
+    ?MoveBlockStart; InsertString "<strong>";
+    ?MoveBlockEnd; InsertString "</strong>"; 9:MoveLeft; BlockUnmark;
 }
 
 sub HTML_I {
-    ?MoveBlockStart; "<i>" InsertString;
-    ?MoveBlockEnd; "</i>" InsertString; 4:MoveLeft; BlockUnmark;
+    ?MoveBlockStart; InsertString "<i>";
+    ?MoveBlockEnd; InsertString "</i>"; 4:MoveLeft; BlockUnmark;
 }
 
 sub HTML_EM {
-    ?MoveBlockStart; "<em>" InsertString;
-    ?MoveBlockEnd; "</em>" InsertString; 5:MoveLeft; BlockUnmark;
+    ?MoveBlockStart; InsertString "<em>";
+    ?MoveBlockEnd; InsertString "</em>"; 5:MoveLeft; BlockUnmark;
 }
 
 sub HTML_BIG {
-    ?MoveBlockStart; "<big>" InsertString;
-    ?MoveBlockEnd; "</big>" InsertString; 6:MoveLeft; BlockUnmark;
+    ?MoveBlockStart; InsertString "<big>";
+    ?MoveBlockEnd; InsertString "</big>"; 6:MoveLeft; BlockUnmark;
 }
 
 sub HTML_SMALL {
-    ?MoveBlockStart; "<small>" InsertString;
-    ?MoveBlockEnd; "</small>" InsertString; 8:MoveLeft; BlockUnmark;
+    ?MoveBlockStart; InsertString "<small>";
+    ?MoveBlockEnd; InsertString "</small>"; 8:MoveLeft; BlockUnmark;
 }
 
 sub HTML_SUP {
-    ?MoveBlockStart; "<sup>" InsertString;
-    ?MoveBlockEnd; "</sup>" InsertString; 6:MoveLeft; BlockUnmark;
+    ?MoveBlockStart; InsertString "<sup>";
+    ?MoveBlockEnd; InsertString "</sup>"; 6:MoveLeft; BlockUnmark;
 }
 
 sub HTML_SUB {
-    ?MoveBlockStart; "<sub>" InsertString;
-    ?MoveBlockEnd; "</sub>" InsertString; 6:MoveLeft; BlockUnmark;
+    ?MoveBlockStart; InsertString "<sub>";
+    ?MoveBlockEnd; InsertString "</sub>"; 6:MoveLeft; BlockUnmark;
 }
 
 sub HTML_BDO {
-    ?MoveBlockStart; "<bdo dir=\"ltr|rtl\">" InsertString; 6:MoveLeft;
-    SavePos; 6:MoveRight; ?MoveBlockEnd; "</bdo>" InsertString;
+    ?MoveBlockStart; InsertString "<bdo dir=\"ltr|rtl\">"; 6:MoveLeft;
+    SavePos; 6:MoveRight; ?MoveBlockEnd; InsertString "</bdo>";
     BlockUnmark; MoveSavedPos;
 }
 
 # Output Format
 sub HTML_PRE {
-    ?MoveBlockStart; "<pre>" InsertString; LineNew;
+    ?MoveBlockStart; InsertString "<pre>"; LineNew;
     ?MoveBlockEnd; SavePos; BlockUnmark; LineNew;
-    "</pre>" InsertString; MoveSavedPos;
+    InsertString "</pre>"; MoveSavedPos;
 }
 
 sub HTML_CODE {
-    ?MoveBlockStart; "<code>" InsertString; #LineNew;
+    ?MoveBlockStart; InsertString "<code>"; #LineNew;
     ?MoveBlockEnd; #SavePos;
     BlockUnmark; #LineNew;
-    "</code>" InsertString; 7:MoveLeft; #MoveSavedPos;
+    InsertString "</code>"; 7:MoveLeft; #MoveSavedPos;
 }
 
 sub HTML_TT {
-    ?MoveBlockStart; "<tt>" InsertString; #LineNew;
+    ?MoveBlockStart; InsertString "<tt>"; #LineNew;
     ?MoveBlockEnd; #SavePos;
     BlockUnmark; #LineNew;
-    "</tt>" InsertString; 5:MoveLeft; #MoveSavedPos;
+    InsertString "</tt>"; 5:MoveLeft; #MoveSavedPos;
 }
 
 sub HTML_KBD {
-    ?MoveBlockStart; "<kbd>" InsertString; #LineNew;
+    ?MoveBlockStart; InsertString "<kbd>"; #LineNew;
     ?MoveBlockEnd; SavePos; BlockUnmark; #LineNew;
-    "</kbd>" InsertString; MoveSavedPos;
+    InsertString "</kbd>"; MoveSavedPos;
 }
 
 sub HTML_VAR {
-    ?MoveBlockStart; "<var>" InsertString; LineNew;
+    ?MoveBlockStart; InsertString "<var>"; LineNew;
     ?MoveBlockEnd; SavePos; BlockUnmark; LineNew;
-    "</var>" InsertString; MoveSavedPos;
+    InsertString "</var>"; MoveSavedPos;
 }
 
 sub HTML_SAMP {
-    ?MoveBlockStart; "<samp>" InsertString; LineNew;
+    ?MoveBlockStart; InsertString "<samp>"; LineNew;
     ?MoveBlockEnd; SavePos; BlockUnmark; LineNew;
-    "</samp>" InsertString; MoveSavedPos;
+    InsertString "</samp>"; MoveSavedPos;
 }
 
 # Blocks
 sub HTML_ACRONYM {
-    ?MoveBlockStart; "<acronym title=\"\">" InsertString; 2:MoveLeft;
-    SavePos; 2:MoveRight; ?MoveBlockEnd; "</acronym>" InsertString;
+    ?MoveBlockStart; InsertString "<acronym title=\"\">"; 2:MoveLeft;
+    SavePos; 2:MoveRight; ?MoveBlockEnd; InsertString "</acronym>";
     BlockUnmark; MoveSavedPos;
 }
 
 sub HTML_ABBR {
-    ?MoveBlockStart; "<abbr title=\"\">" InsertString; 2:MoveLeft;
-    SavePos; 2:MoveRight; ?MoveBlockEnd; "</abbr>" InsertString;
+    ?MoveBlockStart; InsertString "<abbr title=\"\">"; 2:MoveLeft;
+    SavePos; 2:MoveRight; ?MoveBlockEnd; InsertString "</abbr>";
     BlockUnmark; MoveSavedPos;
 }
 
 sub HTML_ADDRESS {
-    ?MoveBlockStart; "<address>" InsertString; LineNew;
+    ?MoveBlockStart; InsertString "<address>"; LineNew;
     ?MoveBlockEnd; SavePos; BlockUnmark; LineNew;
-    "</address>" InsertString; MoveSavedPos;
+    InsertString "</address>"; MoveSavedPos;
 }
 
 sub HTML_BLOCKQUOTE {
-    ?MoveBlockStart; "<blockquote>" InsertString; LineNew;
+    ?MoveBlockStart; InsertString "<blockquote>"; LineNew;
     ?MoveBlockEnd; SavePos; BlockUnmark; LineNew;
-    "</blockquote>" InsertString; MoveSavedPos;
+    InsertString "</blockquote>"; MoveSavedPos;
 }
 
 sub HTML_Q {
-    ?MoveBlockStart; "<q>" InsertString;
-    ?MoveBlockEnd; "</q>" InsertString; 4:MoveLeft; BlockUnmark;
+    ?MoveBlockStart; InsertString "<q>";
+    ?MoveBlockEnd; InsertString "</q>"; 4:MoveLeft; BlockUnmark;
 }
 
 sub HTML_CITE {
-    ?MoveBlockStart; "<cite>" InsertString;
-    ?MoveBlockEnd; "</cite>" InsertString; 7:MoveLeft; BlockUnmark;
+    ?MoveBlockStart; InsertString "<cite>";
+    ?MoveBlockEnd; InsertString "</cite>"; 7:MoveLeft; BlockUnmark;
 }
 
 sub HTML_INS {
-    ?MoveBlockStart; "<ins>" InsertString;
-    ?MoveBlockEnd; "</ins>" InsertString; 6:MoveLeft; BlockUnmark;
+    ?MoveBlockStart; InsertString "<ins>";
+    ?MoveBlockEnd; InsertString "</ins>"; 6:MoveLeft; BlockUnmark;
 }
 
 sub HTML_DEL {
-    ?MoveBlockStart; "<del>" InsertString;
-    ?MoveBlockEnd; "</del>" InsertString; 6:MoveLeft; BlockUnmark;
+    ?MoveBlockStart; InsertString "<del>";
+    ?MoveBlockEnd; InsertString "</del>"; 6:MoveLeft; BlockUnmark;
 }
 
 # forms
 sub HTML_INPUT {
-    "<input type=\"\" />" InsertString; 4:MoveLeft;
+    InsertString "<input type=\"\" />"; 4:MoveLeft;
 }
 
 sub HTML_FORM {
-    "<form>" InsertString; LineNew; HTML_INPUT; SavePos; 4:MoveRight;
-    LineNew; "</form>" InsertString; MoveSavedPos;
+    InsertString "<form>"; LineNew; HTML_INPUT; SavePos; 4:MoveRight;
+    LineNew; InsertString "</form>"; MoveSavedPos;
 }
 
 sub HTML_TEXTAREA {
-    ?MoveBlockStart; "<textarea rows=\"\" cols=\"\">" InsertString; 10:MoveLeft;
-    SavePos; 10:MoveRight; ?MoveBlockEnd; "</textarea>" InsertString;
+    ?MoveBlockStart; InsertString "<textarea rows=\"\" cols=\"\">"; 10:MoveLeft;
+    SavePos; 10:MoveRight; ?MoveBlockEnd; InsertString "</textarea>";
     MoveSavedPos;
 }
 
 sub HTML_BUTTON {
-    "<button></button>" InsertString; 9:MoveLeft;
+    InsertString "<button></button>"; 9:MoveLeft;
 }
 
 sub HTML_OPTION {
-    "<option value=\"\" />" InsertString; 4:MoveLeft;
+    InsertString "<option value=\"\" />"; 4:MoveLeft;
 }
 
 sub HTML_SELECT {
-    "<select>" InsertString; LineNew; HTML_OPTION; SavePos; 4:MoveRight;
-    LineNew; HTML_OPTION; 4:MoveRight; LineNew; "</select>" InsertString;
+    InsertString "<select>"; LineNew; HTML_OPTION; SavePos; 4:MoveRight;
+    LineNew; HTML_OPTION; 4:MoveRight; LineNew; InsertString "</select>";
     MoveSavedPos;
 }
 
 sub HTML_OPTGROUP {
-    "<optgroup label=\"\">" InsertString; LineNew; HTML_OPTION;
+    InsertString "<optgroup label=\"\">"; LineNew; HTML_OPTION;
     SavePos; 4:MoveRight; LineNew; HTML_OPTION; 4:MoveRight; LineNew;
-    "</optgroup>" InsertString; MoveSavedPos;
+    InsertString "</optgroup>"; MoveSavedPos;
 }
 
 sub HTML_LABEL {
-    ?MoveBlockStart; "<label for=\"\">" InsertString; 2:MoveLeft; SavePos;
-    2:MoveRight; ?MoveBlockEnd; "</label>" InsertString; MoveSavedPos;
+    ?MoveBlockStart; InsertString "<label for=\"\">"; 2:MoveLeft; SavePos;
+    2:MoveRight; ?MoveBlockEnd; InsertString "</label>"; MoveSavedPos;
 }
 
 sub HTML_FIELDSET {
-    "<fieldset>" InsertString; LineNew; HTML_INPUT; SavePos; 4:MoveRight;
-    LineNew; "</fieldset>" InsertString; MoveSavedPos;
+    InsertString "<fieldset>"; LineNew; HTML_INPUT; SavePos; 4:MoveRight;
+    LineNew; InsertString "</fieldset>"; MoveSavedPos;
 }
 
 sub HTML_LEGEND {
-    ?MoveBlockStart; "<legend>" InsertString; ?MoveBlockEnd;
-    "</legend>" InsertString; 9:MoveLeft; BlockUnmark;
+    ?MoveBlockStart; InsertString "<legend>"; ?MoveBlockEnd;
+    InsertString "</legend>"; 9:MoveLeft; BlockUnmark;
 }
 
 # lists
 sub HTML_DFN {
-    ?MoveBlockStart; "<dfn>" InsertString;
-    ?MoveBlockEnd; "</dfn>" InsertString; 6:MoveLeft; BlockUnmark;
+    ?MoveBlockStart; InsertString "<dfn>";
+    ?MoveBlockEnd; InsertString "</dfn>"; 6:MoveLeft; BlockUnmark;
 }
 
 sub HTML_LI {
-    ?MoveBlockStart; "<li>" InsertString;
-    ?MoveBlockEnd; "</li>" InsertString; 5:MoveLeft; BlockUnmark;
+    ?MoveBlockStart; InsertString "<li>";
+    ?MoveBlockEnd; InsertString "</li>"; 5:MoveLeft; BlockUnmark;
 }
 
 sub HTML_DT {
-    ?MoveBlockStart; "<dt>" InsertString;
-    ?MoveBlockEnd; "</dt>" InsertString; 5:MoveLeft; BlockUnmark;
+    ?MoveBlockStart; InsertString "<dt>";
+    ?MoveBlockEnd; InsertString "</dt>"; 5:MoveLeft; BlockUnmark;
 }
 
 sub HTML_DD {
-    ?MoveBlockStart; "<dd>" InsertString;
-    ?MoveBlockEnd; "</dd>" InsertString; 5:MoveLeft; BlockUnmark;
+    ?MoveBlockStart; InsertString "<dd>";
+    ?MoveBlockEnd; InsertString "</dd>"; 5:MoveLeft; BlockUnmark;
 }
 
 sub HTML_UL { 
-    ?MoveBlockStart; "<ul>" InsertString;
-    ?MoveBlockEnd; "</ul>" InsertString; 5:MoveLeft; BlockUnmark;
+    ?MoveBlockStart; InsertString "<ul>";
+    ?MoveBlockEnd; InsertString "</ul>"; 5:MoveLeft; BlockUnmark;
 }
 
 sub HTML_OL { 
-    ?MoveBlockStart; "<ol>" InsertString;
-    ?MoveBlockEnd; "</ol>" InsertString; 5:MoveLeft; BlockUnmark;
+    ?MoveBlockStart; InsertString "<ol>";
+    ?MoveBlockEnd; InsertString "</ol>"; 5:MoveLeft; BlockUnmark;
 }
 
 sub HTML_DL { 
-    ?MoveBlockStart; "<dl>" InsertString;
-    ?MoveBlockEnd; "</dl>" InsertString; 5:MoveLeft; BlockUnmark;
+    ?MoveBlockStart; InsertString "<dl>";
+    ?MoveBlockEnd; InsertString "</dl>"; 5:MoveLeft; BlockUnmark;
 }
 
 # Images
 sub HTML_IMG {
-    "<img src=\"\" height=\"\" width=\"\" alt=\"\" />" InsertString; 30:MoveLeft;
+    InsertString "<img src=\"\" height=\"\" width=\"\" alt=\"\" />"; 30:MoveLeft;
 }
 
 sub HTML_MAP {
-    "<img src=\"\" width=\"\" height=\"\" alt=\"\" usemap=\"#\" />" InsertString;
-    41:MoveLeft; SavePos; MoveLineEnd; LineNew; "<map id=\"\">" InsertString;
+    InsertString "<img src=\"\" width=\"\" height=\"\" alt=\"\" usemap=\"#\" />";
+    41:MoveLeft; SavePos; MoveLineEnd; LineNew; InsertString "<map id=\"\">";
     LineNew;
-    "<area shape=\"\" coords=\",,,\" href=\"\" alt=\"\" target=\"\" />" InsertString;
-    LineNew; "</map>" InsertString; MoveSavedPos;
+    InsertString "<area shape=\"\" coords=\",,,\" href=\"\" alt=\"\" target=\"\" />";
+    LineNew; InsertString "</map>"; MoveSavedPos;
 }
 
 sub HTML_AREA {
-    "<area shape =\"\" coords=\",,,\" href=\"\" alt=\"\" target=\"\" />" InsertString;
+    InsertString "<area shape =\"\" coords=\",,,\" href=\"\" alt=\"\" target=\"\" />";
     MoveLineStart;
 }
 
 # anchors
 sub HTML_ANAME {
-    ?MoveBlockStart; "<a name=\"\">" InsertString; 2:MoveLeft;
-    SavePos; 2:MoveRight; ?MoveBlockEnd; "</a>" InsertString;
+    ?MoveBlockStart; InsertString "<a name=\"\">"; 2:MoveLeft;
+    SavePos; 2:MoveRight; ?MoveBlockEnd; InsertString "</a>";
     BlockUnmark; MoveSavedPos;
 }
 
 sub HTML_AHREF {
-    ?MoveBlockStart; "<a href=\"\">" InsertString; 2:MoveLeft;
-    SavePos; 2:MoveRight; ?MoveBlockEnd; "</a>" InsertString;
+    ?MoveBlockStart; InsertString "<a href=\"\">"; 2:MoveLeft;
+    SavePos; 2:MoveRight; ?MoveBlockEnd; InsertString "</a>";
     BlockUnmark; MoveSavedPos;
 }
 
 sub HTML_LINK {
-    "<link rel=\"\" type=\"\" href=\"\" />" InsertString; 20:MoveLeft
+    InsertString "<link rel=\"\" type=\"\" href=\"\" />"; 20:MoveLeft
 }
 
 # tables
 sub HTML_TABLE {
-    ?MoveBlockStart; "<table summary=\"\">" InsertString; 2:MoveLeft;
+    ?MoveBlockStart; InsertString "<table summary=\"\">"; 2:MoveLeft;
     SavePos; 2:MoveRight; LineNew; ?MoveBlockEnd; LineNew;
-    "</table>" InsertString; BlockUnmark; MoveSavedPos;
+    InsertString "</table>"; BlockUnmark; MoveSavedPos;
 }
 
 sub HTML_CAPTION { 
-    ?MoveBlockStart; "<caption>" InsertString;
-    ?MoveBlockEnd; "</caption>" InsertString; 10:MoveLeft; BlockUnmark;
+    ?MoveBlockStart; InsertString "<caption>";
+    ?MoveBlockEnd; InsertString "</caption>"; 10:MoveLeft; BlockUnmark;
 }
 
 sub HTML_TH { 
-    ?MoveBlockStart; "<th>" InsertString;
-    ?MoveBlockEnd; "</th>" InsertString; 5:MoveLeft; BlockUnmark;
+    ?MoveBlockStart; InsertString "<th>";
+    ?MoveBlockEnd; InsertString "</th>"; 5:MoveLeft; BlockUnmark;
 }
 
 sub HTML_TR { 
-    ?MoveBlockStart; "<tr>" InsertString;
-    ?MoveBlockEnd; "</tr>" InsertString; 5:MoveLeft; BlockUnmark;
+    ?MoveBlockStart; InsertString "<tr>";
+    ?MoveBlockEnd; InsertString "</tr>"; 5:MoveLeft; BlockUnmark;
 }
 
 sub HTML_TD { 
-    ?MoveBlockStart; "<td>" InsertString;
-    ?MoveBlockEnd; "</td>" InsertString; 5:MoveLeft; BlockUnmark;
+    ?MoveBlockStart; InsertString "<td>";
+    ?MoveBlockEnd; InsertString "</td>"; 5:MoveLeft; BlockUnmark;
 }
 
 sub HTML_COL {
-    ?MoveBlockStart; "<col span=\"\" width=\"\">" InsertString; 11:MoveLeft;
-    SavePos; 11:MoveRight; ?MoveBlockEnd; "</col>" InsertString; BlockUnmark;
+    ?MoveBlockStart; InsertString "<col span=\"\" width=\"\">"; 11:MoveLeft;
+    SavePos; 11:MoveRight; ?MoveBlockEnd; InsertString "</col>"; BlockUnmark;
     MoveSavedPos;
 }
 
 sub HTML_COLGROUP {
-    ?MoveBlockStart; "<colgroup span=\"\" width=\"\">" InsertString; 11:MoveLeft;
-    SavePos; 11:MoveRight; ?MoveBlockEnd; "</colgroup>" InsertString; BlockUnmark;
+    ?MoveBlockStart; InsertString "<colgroup span=\"\" width=\"\">"; 11:MoveLeft;
+    SavePos; 11:MoveRight; ?MoveBlockEnd; InsertString "</colgroup>"; BlockUnmark;
     MoveSavedPos;
 }
 
 sub HTML_THEAD { 
-    ?MoveBlockStart; "<thead>" InsertString;
-    ?MoveBlockEnd; "</thead>" InsertString; 8:MoveLeft; BlockUnmark;
+    ?MoveBlockStart; InsertString "<thead>";
+    ?MoveBlockEnd; InsertString "</thead>"; 8:MoveLeft; BlockUnmark;
 }
 
 sub HTML_TFOOT { 
-    ?MoveBlockStart; "<tfoot>" InsertString;
-    ?MoveBlockEnd; "</tfoot>" InsertString; 8:MoveLeft; BlockUnmark;
+    ?MoveBlockStart; InsertString "<tfoot>";
+    ?MoveBlockEnd; InsertString "</tfoot>"; 8:MoveLeft; BlockUnmark;
 }
 
 sub HTML_TBODY { 
-    ?MoveBlockStart; "<tbody>" InsertString;
-    ?MoveBlockEnd; "</tbody>" InsertString; 8:MoveLeft; BlockUnmark;
+    ?MoveBlockStart; InsertString "<tbody>";
+    ?MoveBlockEnd; InsertString "</tbody>"; 8:MoveLeft; BlockUnmark;
 }
 
 # Frames
 sub HTML_FRAME {
-    ?MoveBlockStart; "<frame>" InsertString; 2:LineNew;
+    ?MoveBlockStart; InsertString "<frame>"; 2:LineNew;
     ?MoveBlockEnd; SavePos; BlockUnmark; 2:LineNew;
-    "</frame>" InsertString; MoveSavedPos;
+    InsertString "</frame>"; MoveSavedPos;
 }
 
 sub HTML_NOFRAMES {
-    ?MoveBlockStart; "<noframes>" InsertString;
-    ?MoveBlockEnd; "</noframes>" InsertString; 11:MoveLeft; BlockUnmark;
+    ?MoveBlockStart; InsertString "<noframes>";
+    ?MoveBlockEnd; InsertString "</noframes>"; 11:MoveLeft; BlockUnmark;
 }
 
 sub HTML_FRAMESET {
-    ?MoveBlockStart; "<frameset>" InsertString; 2:LineNew;
-    "<noframes></noframes>" InsertString; 11:MoveLeft;
+    ?MoveBlockStart; InsertString "<frameset>"; 2:LineNew;
+    InsertString "<noframes></noframes>"; 11:MoveLeft;
     SavePos; 11:MoveRight; 2:LineNew; ?MoveBlockEnd;
-    "</frameset>" InsertString; BlockUnmark; MoveSavedPos;
+    InsertString "</frameset>"; BlockUnmark; MoveSavedPos;
 }
 
 sub HTML_IFRAME {
     ?MoveBlockStart;
-    "<iframe src=\"\" height=\"\" width=\"\" scrolling=\"yes|no|auto\">" InsertString;
-    45:MoveLeft; SavePos; 45:MoveRight; ?MoveBlockEnd; "</iframe>" InsertString;
+    InsertString "<iframe src=\"\" height=\"\" width=\"\" scrolling=\"yes|no|auto\">";
+    45:MoveLeft; SavePos; 45:MoveRight; ?MoveBlockEnd; InsertString "</iframe>";
     BlockUnmark; MoveSavedPos;
 }
 
 # Styles
 sub HTML_STYLE {
-    "<style type=\"text/css|javascript\">" InsertString; 13:MoveLeft;
-    SavePos; 13:MoveRight; LineNew; "<!--" InsertString; 2:LineNew;
-    "-->"; LineNew; InsertString "</style>" InsertString; MoveSavedPos;
+    InsertString "<style type=\"text/css|javascript\">"; 13:MoveLeft;
+    SavePos; 13:MoveRight; LineNew; InsertString "<!--"; 2:LineNew;
+    InsertString "-->"; LineNew; InsertString "</style>"; MoveSavedPos;
 }
 
 sub HTML_DIV {
-    ?MoveBlockStart; "<div>" InsertString; MoveLeft; SavePos; MoveRight; LineNew;
+    ?MoveBlockStart; InsertString "<div>"; MoveLeft; SavePos; MoveRight; LineNew;
     ?MoveBlockEnd; BlockUnmark; LineNew;
-    "</div>" InsertString; MoveSavedPos; MoveRight;
+    InsertString "</div>"; MoveSavedPos; MoveRight;
 }
 
 sub HTML_SPAN {
-    ?MoveBlockStart; "<span>" InsertString; MoveLeft;
+    ?MoveBlockStart; InsertString "<span>"; MoveLeft;
     SavePos; MoveRight; ?MoveBlockEnd; BlockUnmark; 
-    "</span>" InsertString; 8:MoveLeft; MoveSavedPos; MoveRight;
+    InsertString "</span>"; 8:MoveLeft; MoveSavedPos; MoveRight;
 }
 
 # Programming
 sub HTML_SCRIPT {
-    "<script type=\"text/\"></script>" InsertString; 11:MoveLeft;
-    SavePos;  11:MoveRight; LineNew; "<!--" InsertString; 2:LineNew;
-    "-->"; LineNew; InsertString "<noscript></noscript>" InsertString;
+    InsertString "<script type=\"text/\"></script>"; 11:MoveLeft;
+    SavePos;  11:MoveRight; LineNew; InsertString "<!--"; 2:LineNew;
+    InsertString "-->"; LineNew; InsertString "<noscript></noscript>";
     MoveSavedPos;
 }
 
 sub HTML_NOSCRIPT {
-    ?MoveBlockStart; "<noscript>" InsertString; MoveBlockEnd;
-    "</noscript>" InsertString; 11:MoveLeft; BlockUnmark;
+    ?MoveBlockStart; InsertString "<noscript>"; MoveBlockEnd;
+    InsertString "</noscript>"; 11:MoveLeft; BlockUnmark;
 }
 
 sub HTML_OBJECT {
-    "<object></object>" InsertString; 9:MoveLeft;
+    InsertString "<object></object>"; 9:MoveLeft;
 }
 
 sub HTML_PARAM {
-    "<param name=\"\" value=\"\" valuetype=\"\" type \"\"></param>" InsertString; 8:MoveLeft;
+    InsertString "<param name=\"\" value=\"\" valuetype=\"\" type \"\"></param>"; 8:MoveLeft;
 }
 
 # basic document skeleton
 sub HTML_Base {
     MoveFileStart;
-    "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">" InsertString;
+    InsertString "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">";
     2:LineNew;
-    "<html>" InsertString; 2:LineNew;
-    "<head>" InsertString; LineNew;
-    "<!-- copyright (c)  -->" InsertString; 4:MoveLeft;
-    "%Y" InsertDate; " by " InsertString; InsertUid; MoveLineEnd; LineNew;
-    "<meta name=\"generator\" content=\"FTE " InsertString;
-    eftever$ InsertString;
-    "\" />" InsertString;
+    InsertString "<html>"; 2:LineNew;
+    InsertString "<head>"; LineNew;
+    InsertString "<!-- copyright (c)  -->"; 4:MoveLeft;
+    InsertDate "%Y"; InsertString " by "; InsertUid; MoveLineEnd; LineNew;
+    InsertString "<meta name=\"generator\" content=\"FTE ";
+    InsertString $FTEVer;
+    InsertString "\" />";
     LineNew;
-    "<meta name=\"revised\" content=\"\" />" InsertString; 4:MoveLeft;
-    InsertUid; ","; "%Y-%m-%d" InsertDate ; MoveLineEnd;
+    InsertString "<meta name=\"revised\" content=\"\" />"; 4:MoveLeft;
+    InsertUid; InsertString ","; InsertDate "%Y-%m-%d"; MoveLineEnd;
     LineNew;
-    "<meta name=\"keywords\" content=\"\" />" InsertString; LineNew;
-    "<meta name=\"description\" content=\"\" />" InsertString;
+    InsertString "<meta name=\"keywords\" content=\"\" />"; LineNew;
+    InsertString "<meta name=\"description\" content=\"\" />";
     LineNew;
-    "<meta name=\"author\" content=\"\" />" InsertString; 4:MoveLeft;
+    InsertString "<meta name=\"author\" content=\"\" />"; 4:MoveLeft;
     InsertUid; 4:MoveRight; LineNew;
-    "<meta http-equiv=\"content-type\" content=\"text/html; charset=ISO-8859-1\" />" InsertString;
+    InsertString "<meta http-equiv=\"content-type\" content=\"text/html; charset=ISO-8859-1\" />";
     LineNew;
-    "<title>" InsertString; filename$ InsertString; # TODO: Was FileBaseName
-    "</title>" InsertString; LineNew;
-    "</head>" InsertString; 2:LineNew;
-    "<body>" InsertString; 2:LineNew; MoveFileEnd; LineAdd;
-    MoveLineStart; "</body>" InsertString; 2:LineNew;
-    "</html>" InsertString; MoveFileStart; 8:MoveDown;
+    InsertString "<title>"; InsertString $FileBaseName;
+    InsertString "</title>"; LineNew;
+    InsertString "</head>"; 2:LineNew;
+    InsertString "<body>"; 2:LineNew; MoveFileEnd; LineAdd;
+    MoveLineStart; InsertString "</body>"; 2:LineNew;
+    InsertString "</html>"; MoveFileStart; 8:MoveDown;
     MoveLineEnd; 4:MoveLeft;
 }
 
 # Converts plain text to HTML
 sub HTML_TXT {
     MoveFileStart;
-    `&` `&amp;` "agn"    ?FindReplace ;
-    `<` `&lt;` "agn"     ?FindReplace ;
-    `>` `&gt;` "agn"     ?FindReplace ;
-    `<` `&lt;` "agn"     ?FindReplace ;
-    `"` `&quot;` "agn"   ?FindReplace ;
-    `(c)` `&copy;` "agn" ?FindReplace ;
-    `|` `&brvbar;` "agn" ?FindReplace ;
-    `` `&not;` "agn"    ?FindReplace ;
-    `(tm)` `<sup><small>tm<//small><//sup>` "agn" ?FindReplace;
+    ?FindReplace /&/ /&amp;/ "agn" ;
+    ?FindReplace /</ /&lt;/ "agn" ;
+    ?FindReplace />/ /&gt;/ "agn" ;
+    ?FindReplace /</ /&lt;/ "agn" ;
+    ?FindReplace /"/ /&quot;/ "agn" ;
+    ?FindReplace /(c)/ /&copy;/ "agn" ;
+    ?FindReplace /|/ /&brvbar;/ "agn";
+    ?FindReplace /ª/ /&not;/ "agn";
+    ?FindReplace /(tm)/ /<sup><small>tm<//small><//sup>/ "agn";
     MoveFileStart;
     LineInsert;
-    "<pre>" InsertString; MoveFileEnd;
-    LineNew; "</pre>" InsertString;
+    InsertString "<pre>"; MoveFileEnd;
+    LineNew; InsertString "</pre>";
     HTML_Base;
 }
 
 # basic frame skeleton
 sub HTML_BaseFrame {
     HTML_Base; SavePos; MoveFileStart; KillLine; HTML_DTD_X1F;
-    `body>` `frameset>` "agn" ?FindReplace; MoveSavedPos;
+    ?FindReplace /body>/ /frameset>/ "agn"; MoveSavedPos;
 }
 
 colorize HTML {
-    SyntaxParser = "SIMPLE";
+    SyntaxParser = 'SIMPLE';
     
     color {
-        { "Normal",     "Editor_Default" },
-        { "String",     "Lang_String" },
-        { "Comment",    "Lang_Comment" },
-        { "Command",    "Markup_Punctuation" },
-        { "Symbol",     "Markup_Symbol" },
-        { "Tag",        "Markup_Tag" },
-        { "Special",    "Markup_Special" },
+        { 'Normal',     'Editor_Default' },
+        { 'String',     'Lang_String' },
+        { 'Comment',    'Lang_Comment' },
+        { 'Command',    'Markup_Punctuation' },
+        { 'Symbol',     'Markup_Symbol' },
+        { 'Tag',        'Markup_Tag' },
+        { 'Special',    'Markup_Special' },
     };
     
     keyword "Editor_Keywords" { # XHTML 1.0 keywords
@@ -642,47 +642,47 @@ colorize HTML {
         "alink", "background", "bgcolor", "language", "link", "text", "vlink",
     };
 
-    h_state 0 { "Normal" }
-    h_trans { 5, "<", "<!--", "Comment" }
-    h_trans { 1, "<", "<", "Command" }
-    h_trans { 2, "<", "&", "Symbol" }
+    h_state 0 { 'Normal' }
+    h_trans { 5, '<', '<!--', 'Comment' }
+    h_trans { 1, '<', '<', 'Command' }
+    h_trans { 2, '<', '&', 'Symbol' }
 
-    h_state 1 { "Command" }
-    h_trans { 0, ">", ">", "Command" }
-    h_trans { 3, "<", "'", "String" }
-    h_trans { 4, "<", "\"", "String" }
-    h_wtype { -1, -1, -1, "i", "a-zA-Z0-9_\-" }
+    h_state 1 { 'Command' }
+    h_trans { 0, '>', '>', 'Command' }
+    h_trans { 3, '<', '\'', 'String' }
+    h_trans { 4, '<', '"', 'String' }
+    h_wtype { -1, -1, -1, 'i', 'a-zA-Z0-9_\-' }
 
-    h_state 2 { "Symbol" }
-    h_trans { 0, ">", ";", "Symbol" }
-    h_trans { 0, "-S", "#a-zA-Z0-9", "Symbol" }
+    h_state 2 { 'Symbol' }
+    h_trans { 0, '>', ';', 'Symbol' }
+    h_trans { 0, '-S', '#a-zA-Z0-9', 'Symbol' }
 
-    h_state 3 { "String" }
-    h_trans { 1, ">", "'", "String" }
+    h_state 3 { 'String' }
+    h_trans { 1, '>', '\'', 'String' }
 
-    h_state 4 { "String" }
-    h_trans { 1, ">", "\"", "String" }
+    h_state 4 { 'String' }
+    h_trans { 1, '>', '"', 'String' }
 
-    h_state 5 { "Comment" }
-    h_trans { 6, ">", "--", "Comment" }
+    h_state 5 { 'Comment' }
+    h_trans { 6, '>', '--', 'Comment' }
 
-    h_state 6 { "Special" }
-    h_trans { 5, ">", "--", "Comment" }
-    h_trans { 0, ">", ">", "Comment" }
+    h_state 6 { 'Special' }
+    h_trans { 5, '>', '--', 'Comment' }
+    h_trans { 0, '>', '>', 'Comment' }
 }
 
 mode HTML: MARKUP {
-    FileNameRx          = `\.\c{S?HTML?}$`;
+    FileNameRx          = /\.\c{S?HTML?}$/;
     HilitOn             = 1;
     Colorizer           = "HTML";
     MultiLineHilit      = 1;
     AutoHilitParen      = 1;
 
-    RoutineRegexp       = `\<[Hh]\d\>`;
+    RoutineRegexp       = /\<[Hh]\d\>/;
 
     SaveFolds           = 2;      # save fold info at end of line
     CommentStart        = " <!--";
     CommentEnd          = "-->";
 }
 
-oinclude "mym_html.fte";
+oinclude 'mym_html.fte';

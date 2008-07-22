@@ -1,6 +1,5 @@
 /*    e_buffer.h
  *
- *    Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
  *    Copyright (c) 1994-1996, Marko Macek
  *
  *    You may distribute under the terms of either the GNU General Public
@@ -220,7 +219,6 @@ public:
     int StartHilit, EndHilit;
 
     int LastUpDownColumn; // For CursorWithinEOL movement
-    int DisplayCondition;
 
     // constructors
     EBuffer(int createFlags, EModel **ARoot, const char *AName);
@@ -236,7 +234,6 @@ public:
     virtual int GetContext();
     virtual EEventMap *GetEventMap();
     virtual int BeginMacro();
-    virtual int ExecMacro(const char *name);
     virtual int ExecCommand(int Command, ExState &State);
     virtual void HandleEvent(TEvent &Event);
 
@@ -343,7 +340,6 @@ public:
     int LoadFrom(const char *AFileName);
     int SaveTo(char *AFileName);
 
-    int Block();
     int IsBlockStart();
     int IsBlockEnd();
     int BlockType(int Mode);
@@ -456,11 +452,6 @@ public:
 /////////////////////////////////////////////////////////////////////////////
 // Editing Routines
 /////////////////////////////////////////////////////////////////////////////
-
-    int     CursorLeft();
-    int     CursorRight();
-    int     CursorUp();
-    int     CursorDown();
 
     int     MoveLeft();
     int     MoveRight();
@@ -638,7 +629,7 @@ public:
     int     BlockEnTab();
 
     int     ToggleAutoIndent();
-//    int     ToggleInsert();
+    int     ToggleInsert();
     int     ToggleExpandTabs();
     int     ToggleShowTabs();
     int     ToggleUndo();
@@ -651,7 +642,7 @@ public:
     int     ToggleIndentWithTabs();
     int     ToggleBackSpUnindents();
     int     ToggleWordWrap();
-//    int     ToggleTrim();
+    int     ToggleTrim();
     int     ToggleShowMarkers();
     int     ToggleHilitTags();
     int     ToggleShowBookmarks();
@@ -682,7 +673,7 @@ public:
     int     FindFold(int Line);
     int     FindNearFold(int Line);
     int     FoldCreate(int Line);
-    int     FoldCreateByRegexp(const char *Regexp);
+    int     FoldCreateByRegexp(char *Regexp);
     int     FoldDestroy(int Line);
     int     FoldDestroyAll();
     int     FoldPromote(int Line);
@@ -694,9 +685,9 @@ public:
     int     FoldCloseAll();
     int     FoldToggleOpenClose();
 
-    int ChangeMode(const char *Mode);
-    int ChangeKeys(const char *Mode);
-    int ChangeFlags(const char *Mode);
+    int     ChangeMode(char *Mode);
+    int     ChangeKeys(char *Mode);
+    int     ChangeFlags(char *Mode);
 
     int ScrollLeft(ExState &State);
     int ScrollRight(ExState &State);
@@ -718,9 +709,9 @@ public:
     int InsertString(ExState &State);
     int SelfInsert(ExState &State);
     int FileReload(ExState &State);
-    int FileSaveAs(const char *FileName);
+    int FileSaveAs(char *FileName);
     int FileSaveAs(ExState &State);
-    int FileWriteTo(const char *FileName);
+    int FileWriteTo(char *FileName);
     int FileWriteTo(ExState &State);
     int BlockReadX(ExState &State, int BlockMode);
     int BlockRead(ExState &State);
@@ -728,14 +719,11 @@ public:
     int BlockReadLine(ExState &State);
     int BlockReadColumn(ExState &State);
     int BlockWrite(ExState &State);
-    int BlockGet();
     int Find(ExState &State);
     int FindReplace(ExState &State);
-    int FindWithModifier(ExState &State, int PlusFlags, int MinFlags, int ToggleFlags);
     int FindRepeat(ExState &State);
     int FindRepeatOnce(ExState &State);
     int FindRepeatReverse(ExState &State);
-    int GetChar(ExState &State);
     int InsertChar(ExState &State);
     int TypeChar(ExState &State);
     int ChangeMode(ExState &State);
@@ -760,26 +748,16 @@ public:
     int InsertDate(ExState& state);
     int InsertUid();
 
-    // Stack pushes
-    int PushFileName();
-    int PushCurDir();
-    int QuestionAt();
-    int PushCurChar();
-    int PushCurWord();
-    int PushCurLine();
-    int PushSelection();
-    int PushEfteVerNo();
-
     int ShowHelpWord(ExState &State);
-    int Message(ExState &State);
-    int GetChoice(ExState &State);
 
     int PlaceGlobalBookmark(ExState &State);
     int PushGlobalBookmark();
 
+    virtual int GetStrVar(int var, char *str, int buflen);
+    virtual int GetIntVar(int var, int *value);
+
     int SetIndentWithTabs(ExState &State);
     int FoldCreateAtRoutines();
-    void CustomStatusline(int);
 };
 
 extern EBuffer *SSBuffer;

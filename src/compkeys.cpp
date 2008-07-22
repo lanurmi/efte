@@ -1,8 +1,7 @@
 /*
  * compkeys.cpp
  *
- *    Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
- *    Copyright (c) 1998 by István Váradi
+ * Copyright (c) 1998 by István Váradi
  *
  *    You may distribute under the terms of either the GNU General Public
  *    License or the Artistic License, as specified in the README file.

@@ -1,6 +1,5 @@
 /*    c_config.h
  *
- *    Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
  *    Copyright (c) 1994-1996, Marko Macek
  *
  *    You may distribute under the terms of either the GNU General Public
@@ -12,48 +11,6 @@
 #define __CONFIG_H
 
 #include "sysdep.h"
-#include "u_stack.h"
-
-typedef struct _CurPos {
-    unsigned int sz;
-    char *a;
-    char *c;
-    char *z;
-    int line;
-    const char *name; // filename
-} CurPos;
-
-extern int CFteMain();
-
-typedef struct {
-    unsigned char tag;
-    unsigned short len;
-    void *obj;
-} CachedObject;
-
-// Cached objects
-#define CACHE_SIZE 512000
-extern CachedObject cache[CACHE_SIZE];
-extern unsigned int cpos;
-
-// these are indexes to shared variables
-extern unsigned int verbosity;
-extern unsigned int mousex;
-extern unsigned int mousey;
-extern unsigned int mousexrelative;
-extern unsigned int mouseyrelative;
-extern unsigned int mousebutton;
-extern unsigned int mousewinsizex;
-extern unsigned int mousewinsizey;
-extern unsigned int mouseeventcounter;
-extern unsigned int mouseeventtype;
-
-
-// commands may flag branch conditions in here
-// by shifting left, and setting (or not) bit 0
-extern unsigned int BranchCondition;
-extern CircularStack ParamStack;
-extern CircularStack ControlStack;
 
 extern int ScreenSizeX;
 extern int ScreenSizeY;
@@ -97,12 +54,10 @@ extern char BackupDirectory[MAXPATH];
 
 const char *GetGUICharacters(const char *which, const char *defChars);
 int LoadConfig(int argc, char **argv, char *CfgFileName);
-int LoadDefaultConfig();
 int GetIndentMode(const char *Str);
 int GetHilitMode(const char *Str);
+int UseDefaultConfig();
 int AddCRegexp(int file, int line, int msg, const char *regexp);
 int LoadFile(char *WhereName, char *CfgName);
-int ProcessConfigFile(char *filename, char *buffer, int Level);
-int ReadConfigFile(CurPos &cp);
 
 #endif

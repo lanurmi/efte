@@ -1,6 +1,5 @@
 /*    con_x11.cpp
  *
- *    Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
  *    Copyright (c) 1994-1996, Marko Macek
  *
  *    You may distribute under the terms of either the GNU General Public
@@ -44,8 +43,8 @@
 #ifdef HPUX
 #include </usr/include/X11R5/X11/HPkeysym.h>
 #endif
-
 #include "sysdep.h"
+#include "c_config.h"
 #include "console.h"
 #include "gui.h"
 
@@ -53,7 +52,6 @@
 #include "s_files.h"
 #include "s_util.h"
 #include "s_string.h"
-#include "c_config.h"
 
 i18n_context_t* i18n_ctx = NULL;
 
@@ -513,17 +511,13 @@ static int SetupXWindow(int argc, char **argv) {
 #ifdef USE_XICON
     // Set icon using WMHints
     Pixmap icon_pixmap, icon_shape;
-    XWMHints wm_hints;
-    wm_hints.flags = (InputHint|StateHint);
-    wm_hints.input = True;
-    wm_hints.initial_state = NormalState;
-
     if (XpmCreatePixmapFromData(display, win, const_cast<char**>(fte16x16_xpm), &icon_pixmap, &icon_shape, NULL) == XpmSuccess) {
-        wm_hints.flags |= IconPixmapHint | IconMaskHint;
+        XWMHints wm_hints;
+        wm_hints.flags = IconPixmapHint | IconMaskHint;
         wm_hints.icon_pixmap = icon_pixmap;
         wm_hints.icon_mask = icon_shape;
+        XSetWMHints(display, win, &wm_hints);
     }
-    XSetWMHints(display, win, &wm_hints);
 
     // Set icons using _NET_WM_ICON property
     static const char **xpmData[ICON_COUNT] = { fte16x16_xpm, ftepm, fte48x48_xpm, fte64x64_xpm };
@@ -599,12 +593,6 @@ static int SetupXWindow(int argc, char **argv) {
             XpmFreeXpmImage(xpmImage + i);
         }
     }
-#else
-    XWMHints wm_hints;
-    wm_hints.flags = (InputHint|StateHint);
-    wm_hints.input = True;
-    wm_hints.initial_state = NormalState;
-    XSetWMHints(display, win, &wm_hints);
 #endif
 
     XResizeWindow(display, win, ScreenCols * FontCX, ScreenRows * FontCY);
@@ -2167,7 +2155,7 @@ int GUI::ClosePipe(int id) {
 #endif
 }
 
-int GUI::RunProgram(int mode, const char *Command) {
+int GUI::RunProgram(int mode, char *Command) {
     char Cmd[1024];
 
     strlcpy(Cmd, XShellCommand, sizeof(Cmd));

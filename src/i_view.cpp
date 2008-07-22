@@ -1,6 +1,5 @@
 /*    i_view.cpp
  *
- *    Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
  *    Copyright (c) 1994-1996, Marko Macek
  *
  *    You may distribute under the terms of either the GNU General Public
@@ -82,17 +81,16 @@ int GxView::GetContext() {
     return (Top) ? Top->GetContext() : CONTEXT_NONE;
 }
 
-
 void GxView::HandleEvent(TEvent &Event) {
     GView::HandleEvent(Event);
     Top->HandleEvent(Event);
 
     if (Event.What & evMouse) {
         int W, H;
+
         ConQuerySize(&W, &H);
 
         if (Event.What != evMouseDown || Event.Mouse.Y == H - 1) {
-
             switch (Event.What) {
             case evMouseDown:
                 if (CaptureMouse(1))

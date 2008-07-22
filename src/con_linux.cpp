@@ -1,6 +1,5 @@
 /*    con_linux.cpp
  *
- *    Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
  *    Copyright (c) 1994-1996, Marko Macek
  *
  *    You may distribute under the terms of either the GNU General Public
@@ -10,6 +9,7 @@
 
 // If you're searching for portability it is not here ;-)
 
+#define USE_GPM     //uncomment here to use GPM
 #define USE_SCRNMAP // use USER translation table instead of direct mapping
 // The translation table is assumed to be invertible (more or less).
 // How do we get other translation tables from kernel, the USER one
@@ -1193,7 +1193,7 @@ int GUI::ClosePipe(int id) {
     return WEXITSTATUS(status);
 }
 
-int GUI::RunProgram(int /*mode*/, const char *Command) {
+int GUI::RunProgram(int /*mode*/, char *Command) {
     int rc, W, H, W1, H1;
 
     ConQuerySize(&W, &H);

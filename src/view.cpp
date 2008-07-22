@@ -1,25 +1,11 @@
 /*    view.cpp
  *
- *    Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
  *    Copyright (c) 1994-1996, Marko Macek
  *
  *    You may distribute under the terms of either the GNU General Public
  *    License or the Artistic License, as specified in the README file.
  *
  */
-
-
-// TODO:   Msg(S_ERROR, "String stack underflow in <function>");
-//  repeated throughout the file. that calls for factoring. like,
-//  pass function name as string, and call a common error handler?
-
-
-// TODO:  consider to replace CVS and SVN specifics completely, and
-// replace against a series of  OnVCS...  script calls. Now the actually
-// used VCS, and the respective commands,  can be set in scripts.
-
-
-
 
 #include "fte.h"
 
@@ -154,21 +140,16 @@ int EView::BeginMacro() {
     return Model ? Model->BeginMacro() : 0;
 }
 
-int EView::ExecMacro(const char *name) {
-    int result = ((EGUI *)gui)->ExecMacro(this->MView->Win, name);
-    return result;
-}
-
 int EView::ExecCommand(int Command, ExState &State) {
     switch (Command) {
     case ExSwitchTo:
-        return SwitchTo(State) && ExecMacro("OnSwitchTo");
+        return SwitchTo(State);
     case ExFilePrev:
-        return FilePrev() && ExecMacro("OnFilePrev");
+        return FilePrev();
     case ExFileNext:
-        return FileNext() && ExecMacro("OnFileNext");
+        return FileNext();
     case ExFileLast:
-        return FileLast() && ExecMacro("OnFileLast");
+        return FileLast();
     case ExFileOpen:
         return FileOpen(State);
     case ExFileOpenInMode:
@@ -178,13 +159,13 @@ int EView::ExecCommand(int Command, ExState &State) {
     case ExListRoutines:
         return ViewRoutines(State);
     case ExDirOpen:
-        return DirOpen(State) && ExecMacro("DirOpen");
+        return DirOpen(State);
     case ExViewMessages:
         return ViewMessages(State);
-    case ExAskCompiler:
-        return AskCompiler(State) && ExecMacro("OnCompile");
+    case ExCompile:
+        return Compile(State);
     case ExRunCompiler:
-        return RunCompiler(State) && ExecMacro("OnRunCompiler");
+        return RunCompiler(State);
     case ExCompilePrevError:
         return CompilePrevError(State);
     case ExCompileNextError:
@@ -244,19 +225,20 @@ int EView::ExecCommand(int Command, ExState &State) {
     case ExClearMessages:
         return ClearMessages();
     case ExTagNext:
-        return TagNext(this) && ExecMacro("OnTagNext");
+        return TagNext(this);
     case ExTagPrev:
-        return TagPrev(this) && ExecMacro("OnTagPrev");
+        return TagPrev(this);
     case ExTagPop:
-        return TagPop(this) && ExecMacro("OnTagPop");
+        return TagPop(this);
     case ExTagClear:
         TagClear();
-        ExecMacro("OnTagClear");
         return 1;
     case ExTagLoad:
-        return TagLoad(State) && ExecMacro("OnTagLoad");
+        return TagLoad(State);
     case ExShowHelp:
         return SysShowHelp(State, 0);
+    case ExConfigRecompile:
+        return ConfigRecompile(State);
     case ExRemoveGlobalBookmark:
         return RemoveGlobalBookmark(State);
     case ExGotoGlobalBookmark:
@@ -372,9 +354,7 @@ int EView::SwitchTo(ExState &State) {
     EModel *M;
     int No;
 
-    No = ParamStack.pop();
-
-    if (No == -1) {
+    if (State.GetIntParam(this, &No) == 0) {
         char str[10] = "";
 
         if (MView->Win->GetStr("Obj.Number", sizeof(str), (char *)str, 0) == 0) return 0;
@@ -411,96 +391,53 @@ int EView::FileSaveAll() {
 }
 
 int EView::FileOpen(ExState &State) {
-    if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow in FileOpen");
-        FAIL
+    char FName[MAXPATH];
+
+    if (State.GetStrParam(this, FName, sizeof(FName)) == 0) {
+        if (GetDefaultDirectory(Model, FName, sizeof(FName)) == 0)
+            return 0;
+        if (MView->Win->GetFile("Open file", sizeof(FName), FName, HIST_PATH, GF_OPEN) == 0) return 0;
     }
 
-    std::string fname = sstack.back(); sstack.pop_back();
+    if (strlen(FName) == 0) return 0;
 
-    if (fname.empty()) {
-        char FName[MAXPATH];
-        if (GetDefaultDirectory(Model, FName, sizeof(FName)) == 0) {
-            FAIL
-        }
-
-        if (MView->Win->GetFile("Open file", sizeof(FName), FName, HIST_PATH, GF_OPEN) == 0) {
-            FAIL
-        }
-
-        fname = FName;
-
-        if (fname.empty()) {
-            FAIL
-        }
-    }
-
-    if (IsDirectory(fname.c_str()))
-        return OpenDir(fname.c_str());
-    return MultiFileLoad(0, fname.c_str(), NULL, this);
+    if (IsDirectory(FName))
+        return OpenDir(FName);
+    return MultiFileLoad(0, FName, NULL, this);
 }
 
 int EView::FileOpenInMode(ExState &State) {
-    if (sstack.size() < 2) {
-        Msg(S_ERROR, "String stack underflow in FileOpenInMode");
-        FAIL
+    char Mode[32] = "";
+    char FName[MAXPATH];
+
+    if (State.GetStrParam(this, Mode, sizeof(Mode)) == 0)
+        if (MView->Win->GetStr("Mode", sizeof(Mode), Mode, HIST_SETUP) != 1) return 0;
+
+    if (FindMode(Mode) == 0) {
+        MView->Win->Choice(GPC_ERROR, "Error", 1, "O&K", "Invalid mode '%s'", Mode);
+        return 0;
     }
 
-    std::string mode = sstack.back(); sstack.pop_back();
-    std::string fname = sstack.back(); sstack.pop_back();
+    if (GetDefaultDirectory(Model, FName, sizeof(FName)) == 0)
+        return 0;
+    if (State.GetStrParam(this, FName, sizeof(FName)) == 0)
+        if (MView->Win->GetFile("Open file", sizeof(FName), FName, HIST_PATH, GF_OPEN) == 0) return 0;
+    if (IsDirectory(FName))
+        return OpenDir(FName);
 
-    if (mode.empty()) {
-        char Mode[32] = "";
-        if (MView->Win->GetStr("Mode", sizeof(Mode), Mode, HIST_SETUP) != 1) {
-            FAIL
-        }
-        mode = Mode;
-    }
+    if (strlen(FName) == 0) return 0;
 
-    if (FindMode(mode.c_str()) == 0) {
-        MView->Win->Choice(GPC_ERROR, "Error", 1, "O&K", "Invalid mode '%s'", mode.c_str());
-        FAIL
-    }
-
-    if (fname.empty()) {
-        char FName[MAXPATH];
-        if (GetDefaultDirectory(Model, FName, sizeof(FName)) == 0) {
-            FAIL
-        }
-        if (MView->Win->GetFile("Open file", sizeof(FName), FName, HIST_PATH, GF_OPEN) == 0) {
-            FAIL
-        }
-        fname = FName;
-
-        if (fname.empty()) {
-            FAIL
-        }
-    }
-
-    if (IsDirectory(fname.c_str()))
-        return OpenDir(fname.c_str());
-
-    return MultiFileLoad(0, fname.c_str(), mode.c_str(), this);
+    return MultiFileLoad(0, FName, Mode, this);
 }
 
 int EView::SetPrintDevice(ExState &State) {
-    if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow in SetPrintDevice");
-        FAIL
-    }
+    char Dev[MAXPATH];
 
-    std::string dev = sstack.back(); sstack.pop_back();
+    strcpy(Dev, PrintDevice);
+    if (State.GetStrParam(this, Dev, sizeof(Dev)) == 0)
+        if (MView->Win->GetStr("Print to", sizeof(Dev), Dev, HIST_SETUP) == 0) return 0;
 
-    if (dev.empty()) {
-        char Dev[MAXPATH];
-        strcpy(Dev, PrintDevice);
-        if (MView->Win->GetStr("Print to", sizeof(Dev), Dev, HIST_SETUP) == 0) {
-            FAIL
-        }
-        dev = Dev;
-    }
-
-    strcpy(PrintDevice, dev.c_str());
+    strcpy(PrintDevice, Dev);
     return 1;
 }
 
@@ -600,25 +537,15 @@ int EView::ViewRoutines(ExState &/*State*/) {
 }
 
 int EView::DirOpen(ExState &State) {
-    if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow in DirOpen");
-        FAIL
-    }
+    char Path[MAXPATH];
 
-    std::string path = sstack.back(); sstack.pop_back();
-
-    if (path.empty()) {
-        char Path[MAXPATH];
-        if (GetDefaultDirectory(Model, Path, sizeof(Path)) == 0) {
-            FAIL
-        }
-        path = Path;
-    }
-
-    return OpenDir(path.c_str());
+    if (State.GetStrParam(this, Path, sizeof(Path)) == 0)
+        if (GetDefaultDirectory(Model, Path, sizeof(Path)) == 0)
+            return 0;
+    return OpenDir(Path);
 }
 
-int EView::OpenDir(const char *Path) {
+int EView::OpenDir(char *Path) {
     char XPath[MAXPATH];
     EDirectory *dir = 0;
 
@@ -644,23 +571,16 @@ int EView::OpenDir(const char *Path) {
     return 1;
 }
 
-int EView::AskCompiler(ExState &State) {
-    if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow in Compile");
-        FAIL
-    }
+int EView::Compile(ExState &State) {
+    static char Cmd[256] = "";
+    char Command[256] = "";
 
     if (CompilerMsgs != 0 && CompilerMsgs->Running) {
         Msg(S_INFO, "Already running...");
         return 0;
     }
 
-    char Command[256] = "";
-    strcpy(Command, sstack.back().c_str()); sstack.pop_back();
-
-    if (strlen(Command) == 0) {
-        static char Cmd[256] = "";
-
+    if (State.GetStrParam(this, Command, sizeof(Command)) == 0) {
         if (Model->GetContext() == CONTEXT_FILE) {
             EBuffer *B = (EBuffer *)Model;
             if (BFS(B, BFS_CompileCommand) != 0)
@@ -669,35 +589,24 @@ int EView::AskCompiler(ExState &State) {
         if (Cmd[0] == 0)
             strcpy(Cmd, CompileCommand);
 
-        if (MView->Win->GetStr("Compile", sizeof(Cmd), Cmd, HIST_COMPILE) == 0) {
-            FAIL
-        }
+        if (MView->Win->GetStr("Compile", sizeof(Cmd), Cmd, HIST_COMPILE) == 0) return 0;
 
         strcpy(Command, Cmd);
     } else {
-        if (MView->Win->GetStr("Compile", sizeof(Command), Command, HIST_COMPILE) == 0) {
-            FAIL
-        }
+        if (MView->Win->GetStr("Compile", sizeof(Command), Command, HIST_COMPILE) == 0) return 0;
     }
-
     return Compile(Command);
 }
 
 int EView::RunCompiler(ExState &State) {
-    if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow in RunCompiler");
-        FAIL
-    }
+    char Command[256] = "";
 
     if (CompilerMsgs != 0 && CompilerMsgs->Running) {
         Msg(S_INFO, "Already running...");
         return 0;
     }
 
-    char Command[256] = "";
-    strcpy(Command, sstack.back().c_str()); sstack.pop_back();
-
-    if (strlen(Command) == 0) {
+    if (State.GetStrParam(this, Command, sizeof(Command)) == 0) {
         if (Model->GetContext() == CONTEXT_FILE) {
             EBuffer *B = (EBuffer *)Model;
             if (BFS(B, BFS_CompileCommand) != 0)
@@ -706,7 +615,6 @@ int EView::RunCompiler(ExState &State) {
         if (Command[0] == 0)
             strcpy(Command, CompileCommand);
     }
-
     return Compile(Command);
 }
 
@@ -719,15 +627,13 @@ int EView::Compile(char *Command) {
         CompilerMsgs->RunPipe(Dir, Command);
         msgs = CompilerMsgs;
     } else {
-        if (GetDefaultDirectory(Model, Dir, sizeof(Dir)) == 0) {
-            FAIL
-        }
+        if (GetDefaultDirectory(Model, Dir, sizeof(Dir)) == 0)
+            return 0;
 
         msgs = new EMessages(0, &ActiveModel, Dir, Command);
     }
-
     SwitchToModel(msgs);
-    SUCCESS
+    return 1;
 }
 
 int EView::ViewMessages(ExState &/*State*/) {
@@ -751,18 +657,7 @@ int EView::CompileNextError(ExState &/*State*/) {
 }
 
 int EView::ShowVersion() {
-    if (access("/usr/local/share/doc/efte/README", 0) == 0)
-        FileLoad(0, "/usr/local/share/doc/efte/README", 0, this);
-    else if (access("/usr/share/doc/efte/README", 0) == 0)
-        FileLoad(0, "/usr/share/doc/efte/README", 0, this);
-    else if (access("/efte/doc/README", 0) == 0)
-        FileLoad(0, "/efte/doc/README", 0, this);
-    else if (access("/Program Files/efte/doc/README", 0) == 0)
-        FileLoad(0, "/Program Files/efte/doc/README", 0, this);
-    else if (access("/Program Files (x86)/doc/README", 0) == 0)
-        FileLoad(0, "/Program Files (x86)/doc/README", 0, this);
-    else
-        MView->Win->Choice(0, "About", 1, "O&K", PROGRAM " " VERSION " " COPYRIGHT);
+    MView->Win->Choice(0, "About", 1, "O&K", PROGRAM " " VERSION " " COPYRIGHT);
     return 1;
 }
 
@@ -791,11 +686,6 @@ int EView::ClearMessages() {
 }
 
 int EView::TagLoad(ExState &State) {
-    if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow in TagLoad");
-        FAIL
-    }
-
     char Tag[MAXPATH];
     char FullTag[MAXPATH];
 
@@ -803,66 +693,67 @@ int EView::TagLoad(ExState &State) {
     if (pTagFile == NULL) {
         pTagFile = "tags";
     }
-    if (ExpandPath(pTagFile, Tag, sizeof(Tag)) == -1) {
-        FAIL
-    }
+    if (ExpandPath(pTagFile, Tag, sizeof(Tag)) == -1)
+        return 0;
+    if (State.GetStrParam(this, Tag, sizeof(Tag)) == 0)
+        if (MView->Win->GetFile("Load tags", sizeof(Tag), Tag, HIST_TAGFILES, GF_OPEN) == 0) return 0;
 
-    strcpy(Tag, sstack.back().c_str()); sstack.pop_back();
-
-    if (strlen(Tag) == 0) {
-        if (MView->Win->GetFile("Load tags", sizeof(Tag), Tag, HIST_TAGFILES, GF_OPEN) == 0) {
-            FAIL
-        }
-    }
-
-    if (ExpandPath(Tag, FullTag, sizeof(FullTag)) == -1) {
-        FAIL
-    }
+    if (ExpandPath(Tag, FullTag, sizeof(FullTag)) == -1)
+        return 0;
 
     if (!FileExists(FullTag)) {
         Msg(S_INFO, "Tag file '%s' not found.", FullTag);
-        FAIL
+        return 0;
     }
 
     return ::TagLoad(FullTag);
 }
 
-int EView::RemoveGlobalBookmark(ExState &State) {
-    if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow in RemoveGlobalBookmark");
-        FAIL
+int EView::ConfigRecompile(ExState &/*State*/) {
+    if (ConfigSourcePath == 0 || ConfigFileName[0] == 0) {
+        Msg(S_ERROR, "Cannot recompile (must use external configuration).");
+        return 0;
     }
 
-    char name[256] = "";
-    strcpy(name, sstack.back().c_str()); sstack.pop_back();
+    char command[1024];
 
-    if (strlen(name) == 0)
+    strlcpy(command, "cefte \"", sizeof(command));
+    strlcat(command, ConfigSourcePath, sizeof(command));
+    strlcat(command, "\" ", sizeof(command));
+#ifdef UNIX
+    if (ExpandPath("~/.efterc", command + strlen(command), sizeof(command) - strlen(command)) != 0)
+        return 0;
+#else
+    strlcat(command, "\"", sizeof(command));
+    strlcat(command, ConfigFileName, sizeof(command));
+    strlcat(command, "\"", sizeof(command));
+#endif
+    return Compile(command);
+}
+
+int EView::RemoveGlobalBookmark(ExState &State) {
+    char name[256] = "";
+
+    if (State.GetStrParam(this, name, sizeof(name)) == 0)
         if (MView->Win->GetStr("Remove Global Bookmark", sizeof(name), name, HIST_BOOKMARK) == 0) return 0;
     if (markIndex.remove(name) == 0) {
         Msg(S_ERROR, "Error removing global bookmark %s.", name);
-        FAIL
+        return 0;
     }
-    SUCCESS
+    return 1;
 }
 
 int EView::GotoGlobalBookmark(ExState &State) {
-    if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow in GotoGlobalBookmark");
-        FAIL
-    }
-
     char name[256] = "";
-    strcpy(name, sstack.back().c_str()); sstack.pop_back();
 
-    if (strlen(name) == 0)
+    if (State.GetStrParam(this, name, sizeof(name)) == 0)
         if (MView->Win->GetStr("Goto Global Bookmark", sizeof(name), name, HIST_BOOKMARK) == 0) return 0;
     if (markIndex.view(this, name) == 0) {
         Msg(S_ERROR, "Error locating global bookmark %s.", name);
-        FAIL
+        return 0;
     }
-    SUCCESS
+    return 1;
 }
-
 int EView::PopGlobalBookmark() {
     if (markIndex.popMark(this) == 0) {
         Msg(S_INFO, "Bookmark stack empty.");
@@ -871,49 +762,45 @@ int EView::PopGlobalBookmark() {
     return 1;
 }
 
-int EView::Cvs(ExState &State) {
-    if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow in Cvs");
-        FAIL
-    }
-
-    if (CvsView != 0 && CvsView->Running) {
-        Msg(S_INFO, "Already running...");
-        FAIL
-    }
-
-    static char Opts[128] = "";
-    char Options[128] = "";
-
-    strcpy(Options, sstack.back().c_str()); sstack.pop_back();
-
-    if (strlen(Options) == 0) {
-        if (MView->Win->GetStr("CVS options", sizeof(Opts), Opts, HIST_CVS) == 0) {
-            FAIL
-        }
-        strcpy(Options, Opts);
-    } else {
-        if (MView->Win->GetStr("CVS options", sizeof(Options), Options, HIST_CVS) == 0) {
-            FAIL
-        }
-    }
-
-    return Cvs(Options);
+int EView::GetStrVar(int var, char *str, int buflen) {
+    //switch (var) {
+    //}
+    return Model->GetStrVar(var, str, buflen);
 }
 
-int EView::RunCvs(ExState &State) {
-    if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow in RunCvs");
-        FAIL
-    }
+int EView::GetIntVar(int var, int *value) {
+    //switch (var) {
+    //}
+    return Model->GetIntVar(var, value);
+}
+
+int EView::Cvs(ExState &State) {
+    static char Opts[128] = "";
+    char Options[128] = "";
 
     if (CvsView != 0 && CvsView->Running) {
         Msg(S_INFO, "Already running...");
         return 0;
     }
 
+    if (State.GetStrParam(this, Options, sizeof(Options)) == 0) {
+        if (MView->Win->GetStr("CVS options", sizeof(Opts), Opts, HIST_CVS) == 0) return 0;
+        strcpy(Options, Opts);
+    } else {
+        if (MView->Win->GetStr("CVS options", sizeof(Options), Options, HIST_CVS) == 0) return 0;
+    }
+    return Cvs(Options);
+}
+
+int EView::RunCvs(ExState &State) {
     char Options[128] = "";
-    strcpy(Options, sstack.back().c_str()); sstack.pop_back();
+
+    if (CvsView != 0 && CvsView->Running) {
+        Msg(S_INFO, "Already running...");
+        return 0;
+    }
+
+    State.GetStrParam(this, Options, sizeof(Options));
     return Cvs(Options);
 }
 
@@ -980,49 +867,32 @@ int EView::ViewCvs(ExState &/*State*/) {
 }
 
 int EView::CvsDiff(ExState &State) {
-    if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow in CvsDiff");
-        FAIL
-    }
-
-    if (CvsDiffView != 0 && CvsDiffView->Running) {
-        Msg(S_INFO, "Already running...");
-        FAIL
-    }
-
     static char Opts[128] = "";
     char Options[128] = "";
-
-    strcpy(Options, sstack.back().c_str()); sstack.pop_back();
-
-    if (strlen(Options) == 0) {
-        if (MView->Win->GetStr("CVS diff options", sizeof(Opts), Opts, HIST_CVSDIFF) == 0) {
-            FAIL
-        }
-        strcpy(Options, Opts);
-    } else {
-        if (MView->Win->GetStr("CVS diff options", sizeof(Options), Options, HIST_CVSDIFF) == 0) {
-            FAIL
-        }
-    }
-
-    return CvsDiff(Options);
-}
-
-int EView::RunCvsDiff(ExState &State) {
-    if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow in RunCvsDiff");
-        FAIL
-    }
 
     if (CvsDiffView != 0 && CvsDiffView->Running) {
         Msg(S_INFO, "Already running...");
         return 0;
     }
 
-    char Options[128] = "";
-    strcpy(Options, sstack.back().c_str()); sstack.pop_back();
+    if (State.GetStrParam(this, Options, sizeof(Options)) == 0) {
+        if (MView->Win->GetStr("CVS diff options", sizeof(Opts), Opts, HIST_CVSDIFF) == 0) return 0;
+        strcpy(Options, Opts);
+    } else {
+        if (MView->Win->GetStr("CVS diff options", sizeof(Options), Options, HIST_CVSDIFF) == 0) return 0;
+    }
+    return CvsDiff(Options);
+}
 
+int EView::RunCvsDiff(ExState &State) {
+    char Options[128] = "";
+
+    if (CvsDiffView != 0 && CvsDiffView->Running) {
+        Msg(S_INFO, "Already running...");
+        return 0;
+    }
+
+    State.GetStrParam(this, Options, sizeof(Options));
     return CvsDiff(Options);
 }
 
@@ -1075,47 +945,32 @@ int EView::ViewCvsDiff(ExState &/*State*/) {
 }
 
 int EView::CvsCommit(ExState &State) {
-    if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow in CvsCommit");
-        FAIL
-    }
-
-    if (CvsView != 0 && CvsView->Running) {
-        Msg(S_INFO, "Already running...");
-        FAIL
-    }
-
     static char Opts[128] = "";
     char Options[128] = "";
 
-    strcpy(Options, sstack.back().c_str()); sstack.pop_back();
+    if (CvsView != 0 && CvsView->Running) {
+        Msg(S_INFO, "Already running...");
+        return 0;
+    }
 
-    if (strlen(Options) == 0) {
-        if (MView->Win->GetStr("CVS commit options", sizeof(Opts), Opts, HIST_CVSCOMMIT) == 0) {
-            FAIL
-        }
+    if (State.GetStrParam(this, Options, sizeof(Options)) == 0) {
+        if (MView->Win->GetStr("CVS commit options", sizeof(Opts), Opts, HIST_CVSCOMMIT) == 0) return 0;
         strcpy(Options, Opts);
     } else {
-        if (MView->Win->GetStr("CVS commit options", sizeof(Options), Options, HIST_CVSCOMMIT) == 0) {
-            FAIL
-        }
+        if (MView->Win->GetStr("CVS commit options", sizeof(Options), Options, HIST_CVSCOMMIT) == 0) return 0;
     }
     return CvsCommit(Options);
 }
 
 int EView::RunCvsCommit(ExState &State) {
-    if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow in RunCvsCommit");
-        FAIL
-    }
+    char Options[128] = "";
 
     if (CvsView != 0 && CvsView->Running) {
         Msg(S_INFO, "Already running...");
-        FAIL
+        return 0;
     }
 
-    char Options[128] = "";
-    strcpy(Options, sstack.back().c_str()); sstack.pop_back();
+    State.GetStrParam(this, Options, sizeof(Options));
     return CvsCommit(Options);
 }
 
@@ -1165,47 +1020,32 @@ int EView::ViewCvsLog(ExState &/*State*/) {
 }
 
 int EView::Svn(ExState &State) {
-    if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow in Svn");
-        FAIL
-    }
-
-    if (SvnView != 0 && SvnView->Running) {
-        Msg(S_INFO, "Already running...");
-        FAIL
-    }
-
     static char Opts[128] = "";
     char Options[128] = "";
 
-    strcpy(Options, sstack.back().c_str()); sstack.pop_back();
+    if (SvnView != 0 && SvnView->Running) {
+        Msg(S_INFO, "Already running...");
+        return 0;
+    }
 
-    if (strlen(Options) == 0) {
-        if (MView->Win->GetStr("SVN options", sizeof(Opts), Opts, HIST_SVN) == 0) {
-            FAIL
-        }
+    if (State.GetStrParam(this, Options, sizeof(Options)) == 0) {
+        if (MView->Win->GetStr("SVN options", sizeof(Opts), Opts, HIST_SVN) == 0) return 0;
         strcpy(Options, Opts);
     } else {
-        if (MView->Win->GetStr("SVN options", sizeof(Options), Options, HIST_SVN) == 0) {
-            FAIL
-        }
+        if (MView->Win->GetStr("SVN options", sizeof(Options), Options, HIST_SVN) == 0) return 0;
     }
     return Svn(Options);
 }
 
 int EView::RunSvn(ExState &State) {
-    if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow in RunSvn");
-        FAIL
-    }
+    char Options[128] = "";
 
     if (SvnView != 0 && SvnView->Running) {
         Msg(S_INFO, "Already running...");
-        FAIL
+        return 0;
     }
 
-    char Options[128] = "";
-    strcpy(Options, sstack.back().c_str()); sstack.pop_back();
+    State.GetStrParam(this, Options, sizeof(Options));
     return Svn(Options);
 }
 
@@ -1272,46 +1112,32 @@ int EView::ViewSvn(ExState &/*State*/) {
 }
 
 int EView::SvnDiff(ExState &State) {
-    if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow in SvnDiff");
-        FAIL
-    }
-
-    if (SvnDiffView != 0 && SvnDiffView->Running) {
-        Msg(S_INFO, "Already running...");
-        FAIL
-    }
-
     static char Opts[128] = "";
     char Options[128] = "";
-    strcpy(Options, sstack.back().c_str()); sstack.pop_back();
-
-    if (strlen(Options) == 0) {
-        if (MView->Win->GetStr("SVN diff options", sizeof(Opts), Opts, HIST_SVNDIFF) == 0) {
-            FAIL
-        }
-        strcpy(Options, Opts);
-    } else {
-        if (MView->Win->GetStr("SVN diff options", sizeof(Options), Options, HIST_SVNDIFF) == 0) {
-            FAIL
-        }
-    }
-    return SvnDiff(Options);
-}
-
-int EView::RunSvnDiff(ExState &State) {
-    if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow in RunSvnDiff");
-        FAIL
-    }
 
     if (SvnDiffView != 0 && SvnDiffView->Running) {
         Msg(S_INFO, "Already running...");
         return 0;
     }
 
+    if (State.GetStrParam(this, Options, sizeof(Options)) == 0) {
+        if (MView->Win->GetStr("SVN diff options", sizeof(Opts), Opts, HIST_SVNDIFF) == 0) return 0;
+        strcpy(Options, Opts);
+    } else {
+        if (MView->Win->GetStr("SVN diff options", sizeof(Options), Options, HIST_SVNDIFF) == 0) return 0;
+    }
+    return SvnDiff(Options);
+}
+
+int EView::RunSvnDiff(ExState &State) {
     char Options[128] = "";
-    strcpy(Options, sstack.back().c_str()); sstack.pop_back();
+
+    if (SvnDiffView != 0 && SvnDiffView->Running) {
+        Msg(S_INFO, "Already running...");
+        return 0;
+    }
+
+    State.GetStrParam(this, Options, sizeof(Options));
     return SvnDiff(Options);
 }
 
@@ -1364,47 +1190,32 @@ int EView::ViewSvnDiff(ExState &/*State*/) {
 }
 
 int EView::SvnCommit(ExState &State) {
-    if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow in SvnCommit");
-        FAIL
-    }
+    static char Opts[128] = "";
+    char Options[128] = "";
 
     if (SvnView != 0 && SvnView->Running) {
         Msg(S_INFO, "Already running...");
         return 0;
     }
 
-    static char Opts[128] = "";
-    char Options[128] = "";
-
-    strcpy(Options, sstack.back().c_str()); sstack.pop_back();
-
-    if (strlen(Options) == 0) {
-        if (MView->Win->GetStr("SVN commit options", sizeof(Opts), Opts, HIST_SVNCOMMIT) == 0) {
-            FAIL
-        }
+    if (State.GetStrParam(this, Options, sizeof(Options)) == 0) {
+        if (MView->Win->GetStr("SVN commit options", sizeof(Opts), Opts, HIST_SVNCOMMIT) == 0) return 0;
         strcpy(Options, Opts);
     } else {
-        if (MView->Win->GetStr("SVN commit options", sizeof(Options), Options, HIST_SVNCOMMIT) == 0) {
-            FAIL
-        }
+        if (MView->Win->GetStr("SVN commit options", sizeof(Options), Options, HIST_SVNCOMMIT) == 0) return 0;
     }
     return SvnCommit(Options);
 }
 
 int EView::RunSvnCommit(ExState &State) {
-    if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow in RunSvnCommit");
-        FAIL
-    }
+    char Options[128] = "";
 
     if (SvnView != 0 && SvnView->Running) {
         Msg(S_INFO, "Already running...");
         return 0;
     }
 
-    char Options[128] = "";
-    strcpy(Options, sstack.back().c_str()); sstack.pop_back();
+    State.GetStrParam(this, Options, sizeof(Options));
     return SvnCommit(Options);
 }
 

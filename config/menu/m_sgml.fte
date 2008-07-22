@@ -1,10 +1,10 @@
 # SGML
 
 menu SGML_Meta {
-    item    "Ampersand" { "&amp;" InsertString; }
-    item    "Less Than\tC-E <" { "&lt;" InsertString; }
-    item    "Greater Than\tC-E >" { "&gt;" InsertString; }
-    item    "CopyRight\tC-E @" { "&copy;" InsertString; }
+    item    "Ampersand" { InsertString "&amp;"; }
+    item    "Less Than\tC-E <" { InsertString "&lt;"; }
+    item    "Greater Than\tC-E >" { InsertString "&gt;"; }
+    item    "CopyRight\tC-E @" { InsertString "&copy;"; }
 }
 
 menu SGML_Ref {
@@ -24,8 +24,8 @@ menu SGML_List {
     item    "Ordinary List"   { SGML_ORD }
     item    "Numbered List"   { SGML_NUM }
     item    "Tagged List" { SGML_TAG }
-    item    "Compact Style" { " compact" InsertString; }
-    item    "List Item" { "<item> " InsertString; }
+    item    "Compact Style" { InsertString " compact"; }
+    item    "List Item" { InsertString "<item> "; }
 }
 
 menu SGML_Style {
@@ -67,5 +67,5 @@ menu Main_SGML {
 eventmap SGML {
     MainMenu            = "Main_SGML";   # menu for menubar
 
-    key [A+M] { "M" MainMenu }
+    key [A+M] { MainMenu 'M' }
 }

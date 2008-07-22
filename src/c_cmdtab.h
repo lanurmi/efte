@@ -1,6 +1,5 @@
 /*    c_cmdtab.h
  *
- *    Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
  *    Copyright (c) 1994-1996, Marko Macek
  *
  *    You may distribute under the terms of either the GNU General Public
@@ -15,113 +14,13 @@
 
 #define TAB(x) \
     { Ex##x, #x }
-#define TABS(x) \
-    { Ex##x##Str, #x "$" }
 
 const struct {
     unsigned short CmdId;
     const char *Name;
 } Command_Table[] = {
     TAB(Nop),
-
-    TAB(Exit),
-    { ExDepth, "depth" },
-    { ExFetch, "@" },
-    { ExStore, "!" },
-    { ExFetch2, "@2" },
-    { ExStore2, "!2" },
-    TAB(MemEnd),
-    TAB(Here),
-    TAB(Allot),
-
-    // --- shared variables ---
-    TAB(Base),
-    TAB(Verbosity),
-    TAB(AutoTrim),
-    TAB(Insert),
-    TAB(Statusline),
-    TAB(Block),
-    TAB(Mouse),
-    // ------------------------
-    { ExPlus, "+" },
-    { ExMinus, "-" },
-    { ExMul, "*" },
-    { ExDiv, "/" },
-    { ExStarSlash, "*/" },
-    { ExInvert,"Invert"},
-    { ExNegate,"Negate"},
-    { ExNot,"Not"},
-    { ExNotZero,"NotZero"},
-    { ExPlusStore,"+!"},
-    { ExBetween,"Between"},
-    { ExSlashMod,"/mod"},
-    { ExMinSigned,"Min"},
-    { ExMaxSigned,"Max"},
-    { ExMinUnsigned,"UMin"},
-    { ExMaxUnsigned,"UMax"},
-
-    TAB(Random),
-    TAB(Now),
-    TAB(Milliseconds),
-    TAB(Microseconds),
-    TAB(Ms),
-
-    TAB(And),
-    TAB(Or),
-    TAB(Xor),
-    TAB(Shift),
-
-    { ExEquals, "Equals"},
-    { ExEquals2,"Equals2"},
-    { ExLess, "<"},
-    { ExMore, ">"},
-    TAB(Flag),
     TAB(Fail),
-
-    TAB(Dup),
-    TAB(QDup),
-    TAB(Drop),
-    TAB(Swap),
-    { ExSwap2, "Swap2"},
-    TAB(Over),
-    TAB(Rot),
-    TAB(MinRot),
-    TAB(Pick),
-
-    { ExToR, ">r"},
-    { ExRFrom, "r>"},
-    { ExRFetch, "r@"},
-    TAB(I),
-    TAB(J),
-    TAB(Times),
-    { ExWill, "Will"},          // flow control. execute next if true
-    { ExUnless, "Unless"},      // flow control. exit if true
-    { ExLest, "Lest"},          // flow control. exit if false
-    TAB(New),
-    TAB(Does),
-
-    TAB(Diag),
-
-    TABS(Diag),
-    TABS(Dup),
-    TABS(Drop),
-    TABS(Swap),
-    TABS(Compare),
-    TABS(Over),
-    TABS(Pick),
-    TABS(Depth),
-    TABS(SubSearch),
-    TABS(Append),
-    TABS(Rot),
-    TABS(Len),
-    TABS(Mid),
-    TAB(GetString),
-
-    TAB(CursorLeft),
-    TAB(CursorRight),
-    TAB(CursorUp),
-    TAB(CursorDown),
-
     TAB(MoveLeft),
     TAB(MoveRight),
     TAB(MoveUp),
@@ -303,9 +202,6 @@ const struct {
     TAB(FindRepeatOnce),
     TAB(FindRepeatReverse),
 
-    TAB(Message),
-    TAB(GetChoice),
-    TAB(GetChar),
     TAB(InsertChar),
 
     TAB(FileClose),
@@ -326,7 +222,7 @@ const struct {
     TAB(ListRoutines),
     TAB(DirOpen),
 
-    TAB(AskCompiler),
+    TAB(Compile),
     TAB(CompilePrevError),
     TAB(CompileNextError),
     TAB(ViewMessages),
@@ -346,7 +242,7 @@ const struct {
     TAB(ChangeFlags),
 
     TAB(ToggleAutoIndent),
-//    TAB(ToggleInsert),
+    TAB(ToggleInsert),
     TAB(ToggleExpandTabs),
     TAB(ToggleShowTabs),
     TAB(ToggleUndo),
@@ -359,6 +255,7 @@ const struct {
     TAB(ToggleIndentWithTabs),
     TAB(ToggleBackSpUnindents),
     TAB(ToggleWordWrap),
+    TAB(ToggleTrim),
     TAB(ToggleShowMarkers),
     TAB(ToggleHilitTags),
     TAB(ToggleShowBookmarks),
@@ -383,8 +280,6 @@ const struct {
     TAB(DirSearchNext),
     TAB(DirSearchPrev),
     TAB(DeleteFile),
-    TAB(RenameFile),
-    TAB(MakeDirectory),
     TAB(ShowVersion),
     TAB(ASCIITable),
     TAB(TypeChar),
@@ -432,6 +327,7 @@ const struct {
     TAB(FramePrev),
     TAB(ShowHelpWord),
     TAB(ShowHelp),
+    TAB(ConfigRecompile),
     TAB(PlaceGlobalBookmark),
     TAB(RemoveGlobalBookmark),
     TAB(GotoGlobalBookmark),
@@ -474,24 +370,8 @@ const struct {
     TAB(ViewSvnDiff),
     TAB(SvnCommit),
     TAB(RunSvnCommit),
-    TAB(ViewSvnLog),
+    TAB(ViewSvnLog)
 
-    TAB(Print),
-    TAB(ExecuteCommand),
-    { ExTick, "tick" },
-    { ExExecute, "execute" },
-
-    // Stack vars
-    { ExPushFileName, "FileName$" },
-    { ExPushCurDir, "CurDir$" },
-    { ExQuestionAt, "at?" },
-    { ExPushCurChar, "curchar$" },
-    { ExPushCurWord, "curword$" },
-    { ExPushCurLine, "curline$" },
-    { ExPushSelection, "selection$" },
-    { ExPushEfteVersion, "eftever$" },
-    { ExAsc, "asc" },
-    { ExChar, "char$" }
 
 #if 0
 //TAB(ShowMsg),

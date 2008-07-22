@@ -1,6 +1,5 @@
 /*    h_sh.cpp
  *
- *    Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
  *    Copyright (c) 1994-1996, Marko Macek
  *
  *    You may distribute under the terms of either the GNU General Public
@@ -174,7 +173,9 @@ int Hilit_SH(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, 
                 break;
             case hsSH_SQuote:
                 Color = CLR_String;
-                if (*p == '\'')
+                if ((len >= 2) && (*p == '\\'))
+                    j++;
+                else if (*p == '\'')
                     State = hsSH_Normal;
                 break;
             case hsSH_DQuote:

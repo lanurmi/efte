@@ -8,51 +8,51 @@ eventmap JAVA {
     # useful command here is <A+Enter> which adds 
     # a new line after the current one, and indents it properly.
     # in cmode defined as LineAdd; LineIndent;
-    abbrev "ifx" {
+    abbrev 'ifx' {
         KillWordPrev;
 %if(BSD_BRACE)
-        "if ()" InsertString; MoveLeft; SavePos; MoveRight; LineIndent; LineNew;
-        "{" InsertString; LineIndent; LineNew;
+        InsertString 'if ()'; MoveLeft; SavePos; MoveRight; LineIndent; LineNew;
+        InsertString '{'; LineIndent; LineNew;
 %endif
 %if(1TBS_BRACE)
-        "if () {" InsertString; 3:MoveLeft; SavePos; 3:MoveRight; LineIndent; LineNew; 
+        InsertString 'if () {'; 3:MoveLeft; SavePos; 3:MoveRight; LineIndent; LineNew; 
 %endif
-        "}" InsertString; LineIndent; 
+        InsertString '}'; LineIndent; 
         MoveSavedPos; Fail; # do not insert typed character
     }
-    abbrev "whx" { 
+    abbrev 'whx' { 
         KillWordPrev;
 %if(BSD_BRACE)
-        "while ()" InsertString; MoveLeft; SavePos; MoveRight; LineIndent; LineNew;
-        "{" InsertString; LineIndent; LineNew;
+        InsertString 'while ()'; MoveLeft; SavePos; MoveRight; LineIndent; LineNew;
+        InsertString '{'; LineIndent; LineNew;
 %endif
 %if(1TBS_BRACE)
-        "while () {" InsertString; 3:MoveLeft; SavePos; 3:MoveRight; LineIndent; LineNew; 
+        InsertString 'while () {'; 3:MoveLeft; SavePos; 3:MoveRight; LineIndent; LineNew; 
 %endif
-        "}" InsertString; LineIndent; 
+        InsertString '}'; LineIndent; 
         MoveSavedPos; Fail;
     }
-    abbrev "swx" { 
+    abbrev 'swx' { 
         KillWordPrev;
 %if(BSD_BRACE)
-        "switch ()" InsertString; MoveLeft; SavePos; MoveRight; LineIndent; LineNew;
-        "{" InsertString; LineIndent; LineNew;
+        InsertString 'switch ()'; MoveLeft; SavePos; MoveRight; LineIndent; LineNew;
+        InsertString '{'; LineIndent; LineNew;
 %endif
 %if(1TBS_BRACE)
-        "switch () {" InsertString; 3:MoveLeft; SavePos; 3:MoveRight; LineIndent; LineNew; 
+        InsertString 'switch () {'; 3:MoveLeft; SavePos; 3:MoveRight; LineIndent; LineNew; 
 %endif
-        "}" InsertString; LineIndent; 
+        InsertString '}'; LineIndent; 
         MoveSavedPos; Fail;
     }
-    abbrev "cax" {
-        KillWordPrev; "case :" InsertString; LineIndent; LineNew;
-        "break;" InsertString; LineIndent;
+    abbrev 'cax' {
+        KillWordPrev; InsertString 'case :'; LineIndent; LineNew;
+        InsertString 'break;'; LineIndent;
         MoveUp; MoveLineEnd; MovePrev;
         Fail;
     }
-    abbrev "dex" {
-        KillWordPrev; "default:" InsertString; LineIndent; 2:LineNew;
-        "break;" InsertString; LineIndent;
+    abbrev 'dex' {
+        KillWordPrev; InsertString 'default:'; LineIndent; 2:LineNew;
+        InsertString 'break;'; LineIndent;
         MoveUp; LineIndent;
         Fail;
     }

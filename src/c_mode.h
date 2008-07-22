@@ -1,6 +1,5 @@
 /*    c_mode.h
  *
- *    Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
  *    Copyright (c) 1994-1996, Marko Macek
  *
  *    You may distribute under the terms of either the GNU General Public
@@ -132,13 +131,8 @@ typedef int ChColor;
 #define BFS_WordChars           (100 | 256) // ext
 #define BFS_CapitalChars        (101 | 256)
 
-#define SH(y,x) (memory[x])
-#define SH_SET(y,x,v) (memory[x]=(v))
-
 #define BFI(y,x) ((y)->Flags.num[(x) & 0xFF])
 #define BFI_SET(y,x,v) ((y)->Flags.num[(x) & 0xFF]=(v))
-
-#define BFS(y,x) ((y)->Flags.str[(x) & 0xFF])
 #define BFS(y,x) ((y)->Flags.str[(x) & 0xFF])
 
 #define WSETBIT(x,y,z) \
@@ -279,5 +273,20 @@ extern EBufferFlags DefaultBufferFlags;
 #define STATE_NOCASE       0x0001
 #define STATE_TAGASNEXT    0x0002
 #define STATE_NOGRAB       0x0004
+
+typedef enum {
+    mvFilePath = 1,  /* directory + name + extension */
+    mvFileName,      /* name + extension */
+    mvFileDirectory, /* directory + '/' */
+    mvFileBaseName,  /* without the last extension */
+    mvFileExtension, /* the last one */
+    mvCurDirectory,
+    mvCurRow,
+    mvCurCol,
+    mvChar,
+    mvWord,
+    mvLine,
+    mvFTEVer
+} MacroVariable;
 
 #endif

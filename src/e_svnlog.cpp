@@ -1,11 +1,6 @@
 /*
  * e_svnlog.cpp
  *
- * Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
- *
- * You may distribute under the terms of either the GNU General Public
- * License or the Artistic License, as specified in the README file.
- *
  * S.Pinigin copy o_cvslog.cpp and replace cvs/Cvs/CVS to svn/Svn/SVN.
  *
  * Subclass of EBuffer for writing log for SVN commit. Creates temporary file

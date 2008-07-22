@@ -1,3 +1,0 @@
-{  10 dup rshift dup + PASS }   # test rshift
-{ -10 dup rshift dup + PASS }
-{ TEST1 TEST2 }

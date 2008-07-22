@@ -1,6 +1,5 @@
 /*    o_buffer.cpp
  *
- *    Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
  *    Copyright (c) 1994-1996, Marko Macek
  *
  *    You may distribute under the terms of either the GNU General Public
@@ -210,161 +209,135 @@ void EEditPort::HandleEvent(TEvent &Event) {
     }
 }
 
-//    unsigned int mousex, mousey, mousexrelative, mouseyrelative;
-//    unsigned int mousebutton, mousewinsizex, mousewinsizey, mouseeventcounter;
-
-
-// TODO: reuse common code. o_list and o_buffer duplicate a lot.
 void EEditPort::HandleMouse(TEvent &Event) {
     int x, y, xx, yy, W, H;
+
     View->MView->ConQuerySize(&W, &H);
 
     x = Event.Mouse.X;
     y = Event.Mouse.Y;
-    xx = x + TP.Col;
-    yy = y + TP.Row;
-    if (yy < 0) yy = 0;
-    if (xx < 0) xx = 0;
 
-    memory[mouseeventtype] = Event.What;
-    int eventtype = Event.What & (evMouseUp|evMouseDown);
-    if (eventtype) {
-        memory[mousex] = xx;
-        memory[mousey] = yy;
-        memory[mousexrelative] = x;
-        memory[mouseyrelative] = y;
-        memory[mousewinsizex] = W;
-        memory[mousewinsizey] = H;
-        memory[mouseeventcounter]++;
-        memory[mousebutton] = Event.Mouse.Buttons;
-        if (eventtype & evMouseDown) {
-            View->ExecMacro("OnMouseDown");
-        } else {
-            View->ExecMacro("OnMouseUp");
-        }
-    }
+    if (Event.What != evMouseDown || y < H - 1) {
+        xx = x + TP.Col;
+        yy = y + TP.Row;
+        if (yy >= Buffer->VCount) yy = Buffer->VCount - 1;
+        if (yy < 0) yy = 0;
+        if (xx < 0) xx = 0;
 
-    if (memory[mouseeventtype]) {
+        switch (Event.What) {
+        case evMouseDown:
+            if (Event.Mouse.Y == H - 1)
+                break;
+            if (View->MView->Win->CaptureMouse(1))
+                View->MView->MouseCaptured = 1;
+            else
+                break;
 
-        if (Event.What != evMouseDown || y < H - 1) {
-            if (yy >= Buffer->VCount) yy = Buffer->VCount - 1;
-            switch (Event.What) {
+            View->MView->MouseMoved = 0;
 
-            case evMouseDown:
-                if (Event.Mouse.Y == H - 1)
+            if (Event.Mouse.Buttons == 1) {
+                // left mouse button down
+                Buffer->SetNearPos(xx, yy);
+                switch (Event.Mouse.Count % 5) {
+                case 1:
                     break;
-                if (View->MView->Win->CaptureMouse(1))
-                    View->MView->MouseCaptured = 1;
-                else
+                case 2:
+                    Buffer->BlockSelectWord();
                     break;
-
-                View->MView->MouseMoved = 0;
-
+                case 3:
+                    Buffer->BlockSelectLine();
+                    break;
+                case 4:
+                    Buffer->BlockSelectPara();
+                    break;
+                }
+                //            Window->Buffer->Redraw();
+                if (SystemClipboard) {
+                    // note: copy to second clipboard
+                    Buffer->NextCommand();
+                    Buffer->BlockCopy(0, 1);
+                }
+                Event.What = evNone;
+            } else if (Event.Mouse.Buttons == 2) {
+                // right mouse button down
+                Buffer->SetNearPos(xx, yy);
+            }
+            break;
+        case evMouseAuto:
+        case evMouseMove:
+            if (View->MView->MouseCaptured) {
                 if (Event.Mouse.Buttons == 1) {
-                    // left mouse button down
-                    Buffer->SetNearPos(xx, yy);
-                    switch (Event.Mouse.Count % 5) {
-                    case 1:
-                        break;
-                    case 2:
-                        Buffer->BlockSelectWord();
-                        break;
-                    case 3:
-                        Buffer->BlockSelectLine();
-                        break;
-                    case 4:
-                        Buffer->BlockSelectPara();
-                        break;
+                    // left mouse button move
+                    if (!View->MView->MouseMoved) {
+                        if (Event.Mouse.KeyMask == kfCtrl) Buffer->BlockMarkColumn();
+                        else if (Event.Mouse.KeyMask == kfAlt) Buffer->BlockMarkLine();
+                        else Buffer->BlockMarkStream();
+                        Buffer->BlockUnmark();
+                        if (Event.What == evMouseMove)
+                            View->MView->MouseMoved = 1;
                     }
-                    //            Window->Buffer->Redraw();
+                    Buffer->BlockExtendBegin();
+                    Buffer->SetNearPos(xx, yy);
+                    Buffer->BlockExtendEnd();
+                } else if (Event.Mouse.Buttons == 2) {
+                    // right mouse button move
+                    if (Event.Mouse.KeyMask == kfAlt) {
+                    } else {
+                        Buffer->SetNearPos(xx, yy);
+                    }
+                }
+
+                Event.What = evNone;
+            }
+            break;
+            /*        case evMouseAuto:
+                        if (View->MView->MouseCaptured) {
+                            Event.What = evNone;
+                        }
+                        break;*/
+        case evMouseUp:
+            if (View->MView->MouseCaptured)
+                View->MView->Win->CaptureMouse(0);
+            else
+                break;
+            View->MView->MouseCaptured = 0;
+            if (Event.Mouse.Buttons == 1) {
+                // left mouse button up
+                if (View->MView->MouseMoved)
                     if (SystemClipboard) {
                         // note: copy to second clipboard
                         Buffer->NextCommand();
                         Buffer->BlockCopy(0, 1);
                     }
-                    Event.What = evNone;
-                } else if (Event.Mouse.Buttons == 2) {
-                    // right mouse button down
-                    Buffer->SetNearPos(xx, yy);
-                }
-                break;
-            case evMouseAuto:
-            case evMouseMove:
-                if (View->MView->MouseCaptured) {
-                    if (Event.Mouse.Buttons == 1) {
-                        // left mouse button move
-                        if (!View->MView->MouseMoved) {
-                            if (Event.Mouse.KeyMask == kfCtrl) Buffer->BlockMarkColumn();
-                            else if (Event.Mouse.KeyMask == kfAlt) Buffer->BlockMarkLine();
-                            else Buffer->BlockMarkStream();
-                            Buffer->BlockUnmark();
-                            if (Event.What == evMouseMove)
-                                View->MView->MouseMoved = 1;
-                        }
-                        Buffer->BlockExtendBegin();
-                        Buffer->SetNearPos(xx, yy);
-                        Buffer->BlockExtendEnd();
-                    } else if (Event.Mouse.Buttons == 2) {
-                        // right mouse button move
-                        if (Event.Mouse.KeyMask == kfAlt) {
-                        } else {
-                            Buffer->SetNearPos(xx, yy);
-                        }
-                    }
-
-                    Event.What = evNone;
-                }
-                break;
-                /*        case evMouseAuto:
-                 if (View->MView->MouseCaptured) {
-                 Event.What = evNone;
-                 }
-                 break;*/
-            case evMouseUp:
-                if (View->MView->MouseCaptured)
-                    View->MView->Win->CaptureMouse(0);
-                else
-                    break;
-                View->MView->MouseCaptured = 0;
-
-                if (Event.Mouse.Buttons == 1) {
-                    // left mouse button up
-                    if (View->MView->MouseMoved)
-                        if (SystemClipboard) {
-                            // note: copy to second clipboard
-                            Buffer->NextCommand();
-                            Buffer->BlockCopy(0, 1);
-                        }
-                }
-                if (Event.Mouse.Buttons == 2) {
-                    // right mouse button up
-                    if (!View->MView->MouseMoved) {
-                        EEventMap *Map = View->MView->Win->GetEventMap();
-                        const char *MName = 0;
-
-                        if (Map)
-                            MName = Map->GetMenu(EM_LocalMenu);
-                        if (MName == 0)
-                            MName = "Local";
-                        View->MView->Win->Parent->PopupMenu(MName);
-                    }
-                }
-                if (Event.Mouse.Buttons == 4) {
-                    // middle mouse button up
-                    if (SystemClipboard) {
-                        // note: copy to second clipboard
-                        Buffer->NextCommand();
-                        if (Event.Mouse.KeyMask == 0)
-                            Buffer->BlockPasteStream(1);
-                        else if (Event.Mouse.KeyMask == kfCtrl)
-                            Buffer->BlockPasteColumn(1);
-                        else if (Event.Mouse.KeyMask == kfAlt)
-                            Buffer->BlockPasteLine(1);
-                    }
-                }
-                Event.What = evNone;
-                break;
             }
+            if (Event.Mouse.Buttons == 2) {
+                // right mouse button up
+                if (!View->MView->MouseMoved) {
+                    EEventMap *Map = View->MView->Win->GetEventMap();
+                    const char *MName = 0;
+
+                    if (Map)
+                        MName = Map->GetMenu(EM_LocalMenu);
+                    if (MName == 0)
+                        MName = "Local";
+                    View->MView->Win->Parent->PopupMenu(MName);
+                }
+            }
+            if (Event.Mouse.Buttons == 4) {
+                // middle mouse button up
+                if (SystemClipboard) {
+                    // note: copy to second clipboard
+                    Buffer->NextCommand();
+                    if (Event.Mouse.KeyMask == 0)
+                        Buffer->BlockPasteStream(1);
+                    else if (Event.Mouse.KeyMask == kfCtrl)
+                        Buffer->BlockPasteColumn(1);
+                    else if (Event.Mouse.KeyMask == kfAlt)
+                        Buffer->BlockPasteLine(1);
+                }
+            }
+            Event.What = evNone;
+            break;
         }
     }
 }
@@ -388,16 +361,8 @@ EEventMap *EBuffer::GetEventMap() {
     return FindActiveMap(Mode);
 }
 
-
-
 int EBuffer::BeginMacro() {
     return NextCommand();
-}
-
-int EBuffer::ExecMacro(const char *name) {
-    int mNum = MacroNum(name);
-    if (mNum == 0) return 1;
-    return ((EGUI *)gui)->ExecMacro(View->MView->Win, mNum);
 }
 
 int EBuffer::ExecCommand(int Command, ExState &State) {
@@ -406,16 +371,6 @@ int EBuffer::ExecCommand(int Command, ExState &State) {
     }
 
     switch (Command) {
-        // ---------- basic cursor movements ----------
-    case ExCursorLeft:
-        return CursorLeft();
-    case ExCursorRight:
-        return CursorRight();
-    case ExCursorUp:
-        return CursorUp();
-    case ExCursorDown:
-        return CursorDown();
-        // --------------------------------------------
     case ExMoveUp:
         return MoveUp();
     case ExMoveDown:
@@ -573,7 +528,11 @@ int EBuffer::ExecCommand(int Command, ExState &State) {
     case ExLineCenter:
         return LineCenter();
     case ExInsertSpacesToTab: {
-        return InsertSpacesToTab(ParamStack.pop());
+        int no;
+
+        if (State.GetIntParam(View, &no) == 0)
+            no = 0;
+        return InsertSpacesToTab(no);
     }
     case ExInsertTab:
         return InsertTab();
@@ -587,8 +546,6 @@ int EBuffer::ExecCommand(int Command, ExState &State) {
         return InsPrevLineToEol();
     case ExLineDuplicate:
         return LineDuplicate();
-    case ExSelectionStr:
-        return BlockGet();
     case ExBlockBegin:
         return BlockBegin();
     case ExBlockEnd:
@@ -735,8 +692,8 @@ int EBuffer::ExecCommand(int Command, ExState &State) {
         return HilitMatchBracket();
     case ExToggleAutoIndent:
         return ToggleAutoIndent();
-//    case ExToggleInsert:
-//        return ToggleInsert();
+    case ExToggleInsert:
+        return ToggleInsert();
     case ExToggleExpandTabs:
         return ToggleExpandTabs();
     case ExToggleShowTabs:
@@ -761,8 +718,8 @@ int EBuffer::ExecCommand(int Command, ExState &State) {
         return ToggleBackSpUnindents();
     case ExToggleWordWrap:
         return ToggleWordWrap();
-//    case ExToggleTrim:
-//        return ToggleTrim();
+    case ExToggleTrim:
+        return ToggleTrim();
     case ExToggleShowMarkers:
         return ToggleShowMarkers();
     case ExToggleHilitTags:
@@ -777,6 +734,8 @@ int EBuffer::ExecCommand(int Command, ExState &State) {
         return SetRightMargin();
     case ExSetIndentWithTabs:
         return SetIndentWithTabs(State);
+
+        // stuff with UI
     case ExMoveToLine:
         return MoveToLine(State);
     case ExMoveToColumn:
@@ -847,8 +806,6 @@ int EBuffer::ExecCommand(int Command, ExState &State) {
         return InsertChar(State);
     case ExTypeChar:
         return TypeChar(State);
-    case ExGetChar:
-        return GetChar(State);
     case ExChangeMode:
         return ChangeMode(State);
         //case ExChangeKeys:          return ChangeKeys(State);
@@ -888,29 +845,6 @@ int EBuffer::ExecCommand(int Command, ExState &State) {
         return InsertUid();
     case ExShowHelpWord:
         return ShowHelpWord(State);
-    case ExMessage:
-        return Message(State);
-    case ExGetChoice:
-        return GetChoice(State);
-
-        // Stack based pushes
-
-    case ExBlock:
-        return Block();
-    case ExPushFileName:
-        return PushFileName();
-    case ExQuestionAt:
-        return QuestionAt();
-    case ExPushCurChar:
-        return PushCurChar();
-    case ExPushCurWord:
-        return PushCurWord();
-    case ExPushCurLine:
-        return PushCurLine();
-    case ExPushSelection:
-        return PushSelection();
-    case ExPushEfteVersion:
-        return PushEfteVerNo();
     }
     return EModel::ExecCommand(Command, State);
 }
@@ -920,54 +854,39 @@ void EBuffer::HandleEvent(TEvent &Event) {
 }
 
 int EBuffer::MoveToLine(ExState &State) {
-    int No = ParamStack.pop();
+    int No = 0;
 
-    if (No == -1) {
+    if (State.GetIntParam(View, &No) == 0) {
         char Num[10];
 
         sprintf(Num, "%d", VToR(CP.Row) + 1);
-        if (View->MView->Win->GetStr("Goto Line", sizeof(Num), Num, HIST_POSITION) == 0) {
-            FAIL
-        }
-
+        if (View->MView->Win->GetStr("Goto Line", sizeof(Num), Num, HIST_POSITION) == 0)
+            return 0;
         No = atol(Num);
     }
-
     return SetNearPosR(CP.Col, No - 1);
 }
 
 int EBuffer::MoveToColumn(ExState &State) {
-    int No = ParamStack.pop();
+    int No = 0;
 
-    if (No == -1) {
+    if (State.GetIntParam(View, &No) == 0) {
         char Num[10];
 
         sprintf(Num, "%d", CP.Col + 1);
-        if (View->MView->Win->GetStr("Goto Column", 8, Num, HIST_POSITION) == 0) {
-            FAIL
-        }
-
+        if (View->MView->Win->GetStr("Goto Column", 8, Num, HIST_POSITION) == 0) return 0;
         No = atol(Num);
     }
-
     return SetNearPos(No - 1, CP.Row);
 }
 
 int EBuffer::FoldCreateByRegexp(ExState &State) {
-    if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow in FoldCreateByRegexp");
-        FAIL
-    }
+    char strbuf[1024] = "";
 
-    std::string reg = sstack.back(); sstack.pop_back();
-    if (reg.empty()) {
-        char strbuf[1024] = "";
-        if (View->MView->Win->GetStr("Create Fold Regexp", sizeof(strbuf), strbuf, HIST_REGEXP) == 0) {
-            FAIL
-        }
-        reg = strbuf;
+    if (State.GetStrParam(View, strbuf, sizeof(strbuf)) == 0) {
+        if (View->MView->Win->GetStr("Create Fold Regexp", sizeof(strbuf), strbuf, HIST_REGEXP) == 0) return 0;
     }
-    return FoldCreateByRegexp(reg.c_str());
+    return FoldCreateByRegexp(strbuf);
 }
 
 int EBuffer::PlaceUserBookmark(const char *n, EPoint P) {
@@ -1045,84 +964,42 @@ int EBuffer::GetUserBookmarkForLine(int searchFrom, int searchForLine, char *&Na
 }
 
 int EBuffer::PlaceBookmark(ExState &State) {
-    if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow in PlaceBookmark");
-        FAIL
-    }
-
+    char name[256] = "";
     EPoint P = CP;
+
     P.Row = VToR(P.Row);
-    std::string bm = sstack.back(); sstack.pop_back();
 
-    if (bm.empty()) {
-        char name[256] = "";
-        if (View->MView->Win->GetStr("Place Bookmark", sizeof(name), name, HIST_BOOKMARK) == 0) {
-            FAIL
-        }
-        bm = name;
-    }
-
-    return PlaceUserBookmark(bm.c_str(), P);
+    if (State.GetStrParam(View, name, sizeof(name)) == 0)
+        if (View->MView->Win->GetStr("Place Bookmark", sizeof(name), name, HIST_BOOKMARK) == 0) return 0;
+    return PlaceUserBookmark(name, P);
 }
 
 int EBuffer::RemoveBookmark(ExState &State) {
-    if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow in RemoveBookmark");
-        FAIL
-    }
+    char name[256] = "";
 
-    std::string bm = sstack.back(); sstack.pop_back();
-
-    if (bm.empty()) {
-        char name[256] = "";
-        if (View->MView->Win->GetStr("Remove Bookmark", sizeof(name), name, HIST_BOOKMARK) == 0) {
-            FAIL
-        }
-        bm = name;
-    }
-
-    return RemoveUserBookmark(bm.c_str());
+    if (State.GetStrParam(View, name, sizeof(name)) == 0)
+        if (View->MView->Win->GetStr("Remove Bookmark", sizeof(name), name, HIST_BOOKMARK) == 0) return 0;
+    return RemoveUserBookmark(name);
 }
 
 int EBuffer::GotoBookmark(ExState &State) {
-    if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow in RemoveBookmark");
-        FAIL
-    }
+    char name[256] = "";
 
-    std::string bm = sstack.back(); sstack.pop_back();
-
-    if (bm.empty()) {
-        char name[256] = "";
-        if (View->MView->Win->GetStr("Goto Bookmark", sizeof(name), name, HIST_BOOKMARK) == 0) {
-            FAIL
-        }
-        bm = name;
-    }
-
-    return GotoUserBookmark(bm.c_str());
+    if (State.GetStrParam(View, name, sizeof(name)) == 0)
+        if (View->MView->Win->GetStr("Goto Bookmark", sizeof(name), name, HIST_BOOKMARK) == 0) return 0;
+    return GotoUserBookmark(name);
 }
 
 int EBuffer::PlaceGlobalBookmark(ExState &State) {
-    if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow in RemoveBookmark");
-        FAIL
-    }
-
+    char name[256] = "";
     EPoint P = CP;
+
     P.Row = VToR(P.Row);
-    std::string bm = sstack.back(); sstack.pop_back();
 
-    if (bm.empty()) {
-        char name[256] = "";
-        if (View->MView->Win->GetStr("Place Global Bookmark", sizeof(name), name, HIST_BOOKMARK) == 0) {
-            FAIL
-        }
-        bm = name;
-    }
-
-    if (markIndex.insert(bm.c_str(), this, P) == 0) {
-        Msg(S_ERROR, "Error placing global bookmark %s.", bm.c_str());
+    if (State.GetStrParam(View, name, sizeof(name)) == 0)
+        if (View->MView->Win->GetStr("Place Global Bookmark", sizeof(name), name, HIST_BOOKMARK) == 0) return 0;
+    if (markIndex.insert(name, this, P) == 0) {
+        Msg(S_ERROR, "Error placing global bookmark %s.", name);
     }
     return 1;
 }
@@ -1137,131 +1014,27 @@ int EBuffer::PushGlobalBookmark() {
     return m ? 1 : 0;
 }
 
-/**
- * MACRO: Get a character from the user and push it onto the stack parameter
- */
-int EBuffer::GetChar(ExState &State) {
-// proably want to update buffer display herem when waiting for a key
-// some things aren't done now, like, updating visual cursor position,
-// when outputting to buffer in a loop, like:
-// { begin GetChar InsertString $TosChar again }
-// i *think* when waiting for a key, display should reflect the
-// current=actual state.
-
+int EBuffer::InsertChar(ExState &State) {
     char Ch;
     int No;
 
-    TEvent E;
-    E.What = evKeyDown;
-    E.Key.Code = View->MView->Win->GetChar("Character:");
-    if (!GetCharFromEvent(E, &Ch)) {
-        FAIL
-    }
-    No = Ch;
-
-    if (No < 0 || No > 255) {
-        FAIL
-    }
-
-    Ch = char(No);
-    ParamStack.push((unsigned int) Ch);
-    SUCCESS
-}
-
-/**
- * MACRO: Display a message on the status bar
- */
-int EBuffer::Message(ExState &State) {
-    if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow in Message");
-        FAIL
-    }
-
-    Msg(S_INFO, sstack.back().c_str());
-    sstack.pop_back();
-    SUCCESS
-}
-
-/**
- * MACRO: Display a choice to the user and push the result onto the stack
- */
-int EBuffer::GetChoice(ExState &State) {
-    const char *title, *msg, *c1=NULL, *c2=NULL, *c3=NULL, *c4=NULL, *c5=NULL, *c6=NULL;
-    unsigned int count = (unsigned int) ParamStack.pop();
-
-    fprintf(stderr, "Count: %i, Stack Size: %i\n", count, (int) sstack.size());
-
-    // Count of choices + 2 (title and message)
-    if (count + 2 > sstack.size()) {
-        Msg(S_ERROR, "String stack underflow in GetChoice");
-        FAIL
-    }
-
-    if (count >= 6) { c6 = sstack.back().c_str(); sstack.pop_back(); }
-    if (count >= 5) { c5 = sstack.back().c_str(); sstack.pop_back(); }
-    if (count >= 4) { c4 = sstack.back().c_str(); sstack.pop_back(); }
-    if (count >= 3) { c3 = sstack.back().c_str(); sstack.pop_back(); }
-    if (count >= 2) { c2 = sstack.back().c_str(); sstack.pop_back(); }
-
-    c1    = sstack.back().c_str(); sstack.pop_back();
-    msg   = sstack.back().c_str(); sstack.pop_back();
-    title = sstack.back().c_str(); sstack.pop_back();
-
-    int result = -1;
-    switch (count) {
-    case 1:
-        result = View->MView->Win->Choice(GPC_ERROR, title, count, c1, msg );
-        break;
-    case 2:
-        result = View->MView->Win->Choice(GPC_ERROR, title, count, c1, c2, msg );
-        break;
-    case 3:
-        result = View->MView->Win->Choice(GPC_ERROR, title, count, c1, c2, c3, msg );
-        break;
-    case 4:
-        result = View->MView->Win->Choice(GPC_ERROR, title, count, c1, c2, c3, c4, msg );
-        break;
-    case 5:
-        result = View->MView->Win->Choice(GPC_ERROR, title, count, c1, c2, c3, c4, c5, msg );
-        break;
-    case 6:
-        result = View->MView->Win->Choice(GPC_ERROR, title, count, c1, c2, c3, c4, c5, c6, msg );
-        break;
-    }
-
-    if (result == -1) {
-        FAIL
-    }
-
-    ParamStack.push(result);
-    SUCCESS
-}
-
-int EBuffer::InsertChar(ExState &State) {
-    int No = ParamStack.pop();
-    char Ch;
-
-    if (No == -1) {
+    if (State.GetIntParam(View, &No) == 0) {
         TEvent E;
         E.What = evKeyDown;
         E.Key.Code = View->MView->Win->GetChar("Quote Char:");
-        if (!GetCharFromEvent(E, &Ch)) {
-            FAIL
-        }
+        if (!GetCharFromEvent(E, &Ch)) return 0;
         No = Ch;
     }
-    if (No < 0 || No > 255) {
-        FAIL
-    }
+    if (No < 0 || No > 255) return 0;
     Ch = char(No);
     return InsertChar(Ch);
 }
 
 int EBuffer::TypeChar(ExState &State) {
-    int No = ParamStack.pop();
     char Ch;
+    int No;
 
-    if (No == -1) {
+    if (State.GetIntParam(View, &No) == 0) {
         TEvent E;
         E.What = evKeyDown;
         E.Key.Code = View->MView->Win->GetChar(0);
@@ -1274,23 +1047,13 @@ int EBuffer::TypeChar(ExState &State) {
 }
 
 int EBuffer::InsertString(ExState &State) {
-    if (sstack.size() == 0) {
-        View->Msg(S_ERROR, "String stack underflow in InsertString");
-        FAIL
+    char strbuf[1024] = "";
+
+    if (State.GetStrParam(View, strbuf, sizeof(strbuf)) == 0) {
+        if (View->MView->Win->GetStr("Insert String", sizeof(strbuf), strbuf, HIST_DEFAULT) == 0)
+            return 0;
     }
-
-    std::string str = sstack.back(); sstack.pop_back();
-
-    if (str.empty()) {
-        char strbuf[1024] = "";
-        if (View->MView->Win->GetStr("Insert String", sizeof(strbuf), strbuf, HIST_DEFAULT) == 0) {
-            FAIL
-        }
-
-        str = strbuf;
-    }
-
-    return InsertString(str.c_str(), str.size());
+    return InsertString(strbuf, strlen(strbuf));
 }
 
 extern int LastEventChar;
@@ -1298,7 +1061,7 @@ extern int LastEventChar;
 int EBuffer::SelfInsert(ExState &/*State*/) {
     if (LastEventChar != -1)
         return TypeChar(char(LastEventChar));
-    FAIL
+    return 0;
 }
 
 int EBuffer::FileReload(ExState &/*State*/) {
@@ -1307,26 +1070,25 @@ int EBuffer::FileReload(ExState &/*State*/) {
                                          2,
                                          "&Reload",
                                          "&Cancel",
-                                         "%s", FileName))
-        {
+                                         "%s", FileName)) {
         case 0:
             break;
         case 1:
         case -1:
         default:
-            FAIL
+            return 0;
         }
     }
 //    GetNewNumber();
     return Reload();
 }
 
-int EBuffer::FileSaveAs(const char *FName) {
+int EBuffer::FileSaveAs(char *FName) {
     char Name[MAXPATH];
 
     if (ExpandPath(FName, Name, sizeof(Name)) == -1) {
         View->MView->Win->Choice(GPC_ERROR, "Error", 1, "O&K", "Invalid path: %s.", FName);
-        FAIL
+        return 0;
     }
     if (FindFile(Name) == 0) {
         if (FileExists(Name)) {
@@ -1334,14 +1096,13 @@ int EBuffer::FileSaveAs(const char *FName) {
                                              2,
                                              "&Overwrite",
                                              "&Cancel",
-                                             "%s", Name))
-            {
+                                             "%s", Name)) {
             case 0:
                 break;
             case 1:
             case -1:
             default:
-                FAIL
+                return 0;
 
             }
         }
@@ -1351,34 +1112,26 @@ int EBuffer::FileSaveAs(const char *FName) {
         return Save();
     } else {
         View->MView->Win->Choice(GPC_ERROR, "Error", 1, "O&K", "Already editing '%s.'", Name);
-        FAIL
+        return 0;
     }
 }
 
 int EBuffer::FileSaveAs(ExState &State) {
-    if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow in FileSaveAs");
-        FAIL
-    }
+    char FName[MAXPATH];
 
-    std::string fname = sstack.back(); sstack.pop_back();
-    if (fname.empty()) {
-        char FName[MAXPATH] = "";
-        if (View->MView->Win->GetFile("Save As", sizeof(FName), FName, HIST_PATH, GF_SAVEAS) == 0) {
-            FAIL
-        }
-        fname = FName;
-    }
-
-    return FileSaveAs(fname.c_str());
+    strcpy(FName, FileName);
+    if (State.GetStrParam(View, FName, sizeof(FName)) == 0)
+        if (View->MView->Win->GetFile("Save As", sizeof(FName), FName, HIST_PATH, GF_SAVEAS) == 0)
+            return 0;
+    return FileSaveAs(FName);
 }
 
-int EBuffer::FileWriteTo(const char *FName) {
+int EBuffer::FileWriteTo(char *FName) {
     char Name[MAXPATH];
 
     if (ExpandPath(FName, Name, sizeof(Name)) == -1) {
         View->MView->Win->Choice(GPC_ERROR, "Error", 1, "O&K", "Invalid path: %s.", FName);
-        FAIL
+        return 0;
     }
     if (FindFile(Name) == 0) {
         if (FileExists(Name)) {
@@ -1386,65 +1139,42 @@ int EBuffer::FileWriteTo(const char *FName) {
                                              2,
                                              "&Overwrite",
                                              "&Cancel",
-                                             "%s", Name))
-            {
+                                             "%s", Name)) {
             case 0:
                 break;
             case 1:
             case -1:
             default:
-                FAIL
+                return 0;
             }
         }
         return SaveTo(Name);
     } else {
         View->MView->Win->Choice(GPC_ERROR, "Error", 1, "O&K", "Already editing '%s.'", Name);
-        FAIL
+        return 0;
     }
 }
 
 int EBuffer::FileWriteTo(ExState &State) {
-    if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow in FileSaveAs");
-        FAIL
-    }
+    char FName[MAXPATH];
 
-    std::string fname = sstack.back(); sstack.pop_back();
-    if (fname.empty()) {
-        char FName[MAXPATH] = "";
-        if (View->MView->Win->GetFile("Write To", sizeof(FName), FName, HIST_PATH, GF_SAVEAS) == 0) {
-            FAIL
-        }
-        fname = FName;
-    }
-
-    return FileWriteTo(fname.c_str());
+    strcpy(FName, FileName);
+    if (State.GetStrParam(View, FName, sizeof(FName)) == 0)
+        if (View->MView->Win->GetFile("Write To", sizeof(FName), FName, HIST_PATH, GF_SAVEAS) == 0) return 0;
+    return FileWriteTo(FName);
 }
 
 int EBuffer::BlockReadX(ExState &State, int blockMode) {
-    if (sstack.size() == 0) {
-        View->Msg(S_ERROR, "String stack underflow in BlockReadX");
-        FAIL
-    }
-
     char Name[MAXPATH];
-    std::string fname = sstack.back(); sstack.pop_back();
+    char FName[MAXPATH];
 
-    if (fname.empty()) {
-        char FName[MAXPATH];
+    if (JustDirectory(FileName, FName, sizeof(FName)) == -1) return 0;
+    SlashDir(FName);
+    if (State.GetStrParam(View, FName, sizeof(FName)) == 0)
+        if (View->MView->Win->GetFile("Read block", sizeof(FName), FName, HIST_PATH, GF_OPEN) == 0) return 0;
 
-        if (JustDirectory(FileName, FName, sizeof(FName)) == -1) return 0;
-        SlashDir(FName);
-        if (View->MView->Win->GetFile("Read block", sizeof(FName), FName, HIST_PATH, GF_OPEN) == 0) {
-            FAIL
-        }
-        fname = FName;
-    }
-
-    strcpy(Name, fname.c_str());
-
-    if (ExpandPath(fname.c_str(), Name, sizeof(Name)) == -1) {
-        View->MView->Win->Choice(GPC_ERROR, "Error", 1, "O&K", "Invalid path: %s.", fname.c_str());
+    if (ExpandPath(FName, Name, sizeof(Name)) == -1) {
+        View->MView->Win->Choice(GPC_ERROR, "Error", 1, "O&K", "Invalid path: %s.", FName);
         return 0;
     }
     return BlockReadFrom(Name, blockMode);
@@ -1467,35 +1197,20 @@ int EBuffer::BlockReadColumn(ExState &State) {
 }
 
 int EBuffer::BlockWrite(ExState &State) {
-    if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow in BlockWrite");
-        FAIL
-    }
-
     char Name[MAXPATH];
+    char FName[MAXPATH];
     int Append = 0;
 
-    std::string fname = sstack.back(); sstack.pop_back();
+    if (JustDirectory(FileName, FName, sizeof(FName)) == -1) return 0;
+    SlashDir(FName);
+    if (State.GetStrParam(View, FName, sizeof(FName)) == 0)
+        if (View->MView->Win->GetFile("Write block", sizeof(FName), FName, HIST_PATH, GF_SAVEAS) == 0)
+            return 0;
 
-    if (fname.empty()) {
-        char FName[MAXPATH];
-
-        if (JustDirectory(FileName, FName, sizeof(FName)) == -1) {
-            FAIL
-        }
-        SlashDir(FName);
-        if (View->MView->Win->GetFile("Write block", sizeof(FName), FName, HIST_PATH, GF_SAVEAS) == 0) {
-            FAIL
-        }
-
-        fname = FName;
+    if (ExpandPath(FName, Name, sizeof(Name)) == -1) {
+        View->MView->Win->Choice(GPC_ERROR, "Error", 1, "O&K", "Invalid path: %s.", FName);
+        return 0;
     }
-
-    if (ExpandPath(fname.c_str(), Name, sizeof(Name)) == -1) {
-        View->MView->Win->Choice(GPC_ERROR, "Error", 1, "O&K", "Invalid path: %s.", fname.c_str());
-        FAIL
-    }
-
     if (FindFile(Name) == 0) {
         if (FileExists(Name)) {
             switch (View->MView->Win->Choice(GPC_ERROR, "File Exists",
@@ -1503,8 +1218,7 @@ int EBuffer::BlockWrite(ExState &State) {
                                              "&Overwrite",
                                              "&Append",
                                              "&Cancel",
-                                             "%s", Name))
-            {
+                                             "%s", Name)) {
             case 0:
                 break;
             case 1:
@@ -1513,107 +1227,78 @@ int EBuffer::BlockWrite(ExState &State) {
             case 2:
             case -1:
             default:
-                FAIL
+                return 0;
 
             }
         }
     } else {
         View->MView->Win->Choice(GPC_ERROR, "Error", 1, "O&K", "Already editing '%s.'", Name);
-        FAIL
+        return 0;
     }
     return BlockWriteTo(Name, Append);
 }
 
 int EBuffer::Find(ExState &State) {
-    if (sstack.size() < 2) {
-        Msg(S_ERROR, "String stack underflow in Find (%i)", sstack.size());
-        FAIL
-    }
     char find[MAXSEARCH+1] = "";
     char options[32] = "";
 
-    strcpy(options, sstack.back().c_str()); sstack.pop_back();
-    strcpy(find, sstack.back().c_str()); sstack.pop_back();
-
-    if (strlen(find) > 0) {
-        if (strlen(options) == 0)
+    if (State.GetStrParam(View, find, sizeof(find)) != 0) {
+        if (State.GetStrParam(View, options, sizeof(options)) == 0)
             strcpy(options, BFS(this, BFS_DefFindOpt));
 
         LSearch.ok = 0;
         strcpy(LSearch.strSearch, find);
         LSearch.strReplace[0] = 0;
         LSearch.Options = 0;
-        if (ParseSearchOptions(0, options, LSearch.Options) == 0) {
-            FAIL
-        }
+        if (ParseSearchOptions(0, options, LSearch.Options) == 0) return 0;
         LSearch.ok = 1;
     } else if ((HaveGUIDialogs & GUIDLG_FIND) && GUIDialogs) {
         LSearch.ok = 0;
         LSearch.strSearch[0] = 0;
         LSearch.strReplace[0] = 0;
         LSearch.Options = 0;
-        if (strlen(options) == 0 && BFS(this, BFS_DefFindOpt))
+        if (BFS(this, BFS_DefFindOpt))
             strcpy(options, BFS(this, BFS_DefFindOpt));
         if (ParseSearchOptions(0, options, LSearch.Options) == 0)
             LSearch.Options = 0;
 
-        if (DLGGetFind(View->MView->Win, LSearch) == 0) {
-            FAIL
-        }
+        if (DLGGetFind(View->MView->Win, LSearch) == 0)
+            return 0;
     } else {
-        if (strlen(options) == 0 && BFS(this, BFS_DefFindOpt))
+        if (BFS(this, BFS_DefFindOpt))
             strcpy(options, BFS(this, BFS_DefFindOpt));
-        if (View->MView->Win->GetStr("Find", sizeof(find), find, HIST_SEARCH) == 0) {
-            FAIL
-        }
-        if (View->MView->Win->GetStr("Options (All/Block/Cur/Delln/Glob/Igncase/Joinln/Rev/Word/regX)",
-                                     sizeof(options), options, HIST_SEARCHOPT) == 0)
-        {
-            FAIL
-        }
+        if (View->MView->Win->GetStr("Find", sizeof(find), find, HIST_SEARCH) == 0) return 0;
+        if (View->MView->Win->GetStr("Options (All/Block/Cur/Delln/Glob/Igncase/Joinln/Rev/Word/regX)", sizeof(options), options, HIST_SEARCHOPT) == 0) return 0;
 
         LSearch.ok = 0;
         strcpy(LSearch.strSearch, find);
         LSearch.strReplace[0] = 0;
         LSearch.Options = 0;
-        if (ParseSearchOptions(0, options, LSearch.Options) == 0) {
-            FAIL
-        }
+        if (ParseSearchOptions(0, options, LSearch.Options) == 0) return 0;
         LSearch.ok = 1;
     }
-    if (LSearch.ok == 0) {
-        FAIL
-    }
+    if (LSearch.ok == 0) return 0;
     LSearch.Options |= SEARCH_CENTER;
-    if (Find(LSearch) == 0) {
-        FAIL
-    }
-    SUCCESS
+    if (Find(LSearch) == 0) return 0;
+    return 1;
 }
 
-// TODO
 int EBuffer::FindReplace(ExState &State) {
-    if (sstack.size() < 3) {
-        Msg(S_ERROR, "String stack underflow in FindReplace (%i)", sstack.size());
-        FAIL
-    }
-
     char find[MAXSEARCH+1] = "";
     char replace[MAXSEARCH+1] = "";
     char options[32] = "";
 
-    strcpy(options, sstack.back().c_str()); sstack.pop_back();
-    strcpy(replace, sstack.back().c_str()); sstack.pop_back();
-    strcpy(find,    sstack.back().c_str()); sstack.pop_back();
+    if (State.GetStrParam(View, find, sizeof(find)) != 0) {
+        if (State.GetStrParam(View, replace, sizeof(replace)) == 0)
+            return 0;
+        if (State.GetStrParam(View, options, sizeof(options)) == 0)
+            return 0;
 
-    if (strlen(find) > 0 && strlen(replace) > 0 && strlen(options) > 0) {
         LSearch.ok = 0;
         strcpy(LSearch.strSearch, find);
         strcpy(LSearch.strReplace, replace);
         LSearch.Options = 0;
-        if (ParseSearchOptions(1, options, LSearch.Options) == 0) {
-            FAIL
-        }
+        if (ParseSearchOptions(1, options, LSearch.Options) == 0) return 0;
         LSearch.Options |= SEARCH_REPLACE;
         LSearch.ok = 1;
     } else if ((HaveGUIDialogs & GUIDLG_FINDREPLACE) && GUIDialogs) {
@@ -1621,34 +1306,21 @@ int EBuffer::FindReplace(ExState &State) {
         LSearch.strSearch[0] = 0;
         LSearch.strReplace[0] = 0;
         LSearch.Options = 0;
-        if (strlen(options) == 0 && BFS(this, BFS_DefFindReplaceOpt))
+        if (BFS(this, BFS_DefFindReplaceOpt))
             strcpy(options, BFS(this, BFS_DefFindReplaceOpt));
         if (ParseSearchOptions(1, options, LSearch.Options) == 0)
             LSearch.Options = 0;
         if (DLGGetFindReplace(View->MView->Win, LSearch) == 0)
             return 0;
     } else {
-        if (strlen(find) == 0) {
-            if (View->MView->Win->GetStr("Find", sizeof(find), find, HIST_SEARCH) == 0) {
-                FAIL
-            }
-        }
-
-        if (strlen(replace) == 0) {
-            if (View->MView->Win->GetStr("Replace", sizeof(replace), replace, HIST_SEARCH) == 0) {
-                FAIL
-            }
-        }
-
-        if (strlen(options) == 0) {
-            if (BFS(this, BFS_DefFindReplaceOpt))
-                strcpy(options, BFS(this, BFS_DefFindReplaceOpt));
-            if (View->MView->Win->GetStr("Options (All/Block/Cur/Delln/Glob/Igncase/Joinln/Rev/Splitln/Noask/Word/regX)",
-                                         sizeof(options), options, HIST_SEARCHOPT) == 0)
-            {
-                FAIL
-            }
-        }
+        if (BFS(this, BFS_DefFindReplaceOpt))
+            strcpy(options, BFS(this, BFS_DefFindReplaceOpt));
+        if (State.GetStrParam(View, find, sizeof(find)) == 0)
+            if (View->MView->Win->GetStr("Find", sizeof(find), find, HIST_SEARCH) == 0) return 0;
+        if (State.GetStrParam(View, replace, sizeof(replace)) == 0)
+            if (View->MView->Win->GetStr("Replace", sizeof(replace), replace, HIST_SEARCH) == 0) return 0;
+        if (State.GetStrParam(View, options, sizeof(options)) == 0)
+            if (View->MView->Win->GetStr("Options (All/Block/Cur/Delln/Glob/Igncase/Joinln/Rev/Noask/Word/regX)", sizeof(options), options, HIST_SEARCHOPT) == 0) return 0;
 
         LSearch.ok = 0;
         strcpy(LSearch.strSearch, find);
@@ -1664,147 +1336,75 @@ int EBuffer::FindReplace(ExState &State) {
     return 1;
 }
 
-
-
-
-
-
-/* TODO sorry i don't understand the Find string stack effect.
-   sometimes it returns items, sometimes it doesn't and i can't really
-   see a clear line of when it does and when it doesn't.
-   now these functions sometimes get their empty strings which they
-   need to pass to find to avoid underflow back, it seems to have
-   to do something with finding or not finding the string. but at least
-   they don't abort or refuse to run because of stack underflows anymore/
-*/
-
-
-
-int EBuffer::FindWithModifier(ExState &State, int PlusFlags, int MinFlags, int ToggleFlags) {
-    int rc = 1;
-    int prevstack = sstack.size();
-    sstack.push_back("");
-    sstack.push_back("");
-
-    if (LSearch.ok == 0)  {
-        rc = Find(State);
-    } else {
-        LSearch.Options |= PlusFlags;
-        LSearch.Options &= ~MinFlags;
-        LSearch.Options ^= ToggleFlags;
-        rc = Find(LSearch);
-        LSearch.Options ^= ToggleFlags;
-    }
-    // fix stack
-
-    int nowstack = sstack.size();
-//    nowstack = prevstack: ok
-//    nowstack < prevstac: bad but can't help it.
-//    nowstack > prevstack: bad too, but can drop
-    while (nowstack-- > prevstack)
-        sstack.pop_back();
-
-    return rc;
-}
-
-
 int EBuffer::FindRepeat(ExState &State) {
-    return FindWithModifier(State, SEARCH_NEXT, SEARCH_GLOBAL, 0);
+    if (LSearch.ok == 0) return Find(State);
+    LSearch.Options |= SEARCH_NEXT;
+    LSearch.Options &= ~SEARCH_GLOBAL;
+    if (Find(LSearch) == 0) return 0;
+    return 1;
 }
 
 int EBuffer::FindRepeatReverse(ExState &State) {
-    return FindWithModifier(State, SEARCH_NEXT, SEARCH_GLOBAL, SEARCH_BACK);
+    int rc;
+
+    if (LSearch.ok == 0) return Find(State);
+    LSearch.Options |= SEARCH_NEXT;
+    LSearch.Options &= ~SEARCH_GLOBAL;
+    LSearch.Options ^= SEARCH_BACK;
+    rc = Find(LSearch);
+    LSearch.Options ^= SEARCH_BACK;
+    return rc;
 }
 
 int EBuffer::FindRepeatOnce(ExState &State) {
-    return FindWithModifier(State, SEARCH_NEXT, SEARCH_GLOBAL|SEARCH_ALL, 0);
+    if (LSearch.ok == 0) return Find(State);
+    LSearch.Options |= SEARCH_NEXT;
+    LSearch.Options &= ~SEARCH_GLOBAL;
+    LSearch.Options &= ~SEARCH_ALL;
+    if (Find(LSearch) == 0) return 0;
+    return 1;
 }
 
-
-
-
-
-
-
-
-
-
 int EBuffer::ChangeMode(ExState &State) {
-    if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow in ChangeMode");
-        FAIL
-    }
-
-    std::string mode = sstack.back(); sstack.pop_back();
-
+    char Mode[32] = "";
     int rc;
-    if (mode.empty()) {
-        char Mode[32] = "";
-        if (View->MView->Win->GetStr("Mode", sizeof(Mode), Mode, HIST_SETUP) == 0) {
-            FAIL
-        }
 
-        mode = Mode;
-    }
+    if (State.GetStrParam(View, Mode, sizeof(Mode)) == 0)
+        if (View->MView->Win->GetStr("Mode", sizeof(Mode), Mode, HIST_SETUP) == 0) return 0;
 
-    rc = ChangeMode(mode.c_str());
+    rc = ChangeMode(Mode);
     FullRedraw();
-
     return rc;
 }
 
 int EBuffer::ChangeKeys(ExState &State) {
-    if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow in ChangeKeys");
-        FAIL
-    }
-
-    std::string keys = sstack.back(); sstack.pop_back();
-
     int rc;
-    if (keys.empty()) {
-        char Keys[32] = "";
-        if (View->MView->Win->GetStr("Keys", sizeof(Keys), Keys, HIST_SETUP) == 0) {
-            FAIL
-        }
+    char Mode[32] = "";
 
-        keys = Keys;
-    }
+    if (State.GetStrParam(View, Mode, sizeof(Mode)) == 0)
+        if (View->MView->Win->GetStr("Mode", sizeof(Mode), Mode, HIST_SETUP) == 0) return 0;
 
-    rc = ChangeKeys(keys.c_str());
+    rc = ChangeKeys(Mode);
     FullRedraw();
-
     return rc;
 }
 
 int EBuffer::ChangeFlags(ExState &State) {
-    if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow in ChangeFlags");
-        FAIL
-    }
-
-    std::string flags = sstack.back(); sstack.pop_back();
-
     int rc;
-    if (flags.empty()) {
-        char Flags[32] = "";
-        if (View->MView->Win->GetStr("Flags", sizeof(Mode), Flags, HIST_SETUP) == 0) {
-            FAIL
-        }
+    char Mode[32] = "";
 
-        flags = Flags;
-    }
+    if (State.GetStrParam(View, Mode, sizeof(Mode)) == 0)
+        if (View->MView->Win->GetStr("Mode", sizeof(Mode), Mode, HIST_SETUP) == 0) return 0;
 
-    rc = ChangeFlags(flags.c_str());
+    rc = ChangeFlags(Mode);
     FullRedraw();
-
     return rc;
 }
 
 int EBuffer::ChangeTabSize(ExState &State) {
-    int No = ParamStack.pop();
+    int No;
 
-    if (No == -1) {
+    if (State.GetIntParam(View, &No) == 0) {
         char Num[10];
 
         sprintf(Num, "%d", BFI(this, BFI_TabSize));
@@ -1819,16 +1419,18 @@ int EBuffer::ChangeTabSize(ExState &State) {
 }
 
 int EBuffer::SetIndentWithTabs(ExState &State) {
-    int No = ParamStack.pop();
+    int No;
+
+    if (State.GetIntParam(View, &No) == 0) return 0;
     Flags.num[BFI_IndentWithTabs] = No ? 1 : 0;
     return 1;
 }
 
 int EBuffer::ChangeRightMargin(ExState &State) {
-    int No = ParamStack.pop();
+    char Num[10];
+    int No;
 
-    if (No == -1) {
-        char Num[10];
+    if (State.GetIntParam(View, &No) == 0) {
         sprintf(Num, "%d", BFI(this, BFI_RightMargin) + 1);
         if (View->MView->Win->GetStr("RightMargin", sizeof(Num), Num, HIST_SETUP) == 0) return 0;
         No = atol(Num) - 1;
@@ -1840,10 +1442,10 @@ int EBuffer::ChangeRightMargin(ExState &State) {
 }
 
 int EBuffer::ChangeLeftMargin(ExState &State) {
-    int No = ParamStack.pop();;
+    char Num[10];
+    int No;
 
-    if (No == -1) {
-        char Num[10];
+    if (State.GetIntParam(View, &No) == 0) {
         sprintf(Num, "%d", BFI(this, BFI_LeftMargin) + 1);
         if (View->MView->Win->GetStr("LeftMargin", sizeof(Num), Num, HIST_SETUP) == 0) return 0;
         No = atol(Num) - 1;
@@ -1982,52 +1584,56 @@ int EBuffer::ASCIITable(ExState &/*State*/) {
 }
 
 int EBuffer::ScrollLeft(ExState &State) {
-    return ScrollLeft(ParamStack.pop());
+    int Cols;
+
+    if (State.GetIntParam(View, &Cols) == 0)
+        Cols = 8;
+    return ScrollLeft(Cols);
 }
 
 int EBuffer::ScrollRight(ExState &State) {
-    return ScrollRight(ParamStack.pop());
+    int Cols;
+
+    if (State.GetIntParam(View, &Cols) == 0)
+        Cols = 8;
+    return ScrollRight(Cols);
 }
 
 int EBuffer::ScrollDown(ExState &State) {
-    return ScrollDown(ParamStack.pop());
+    int Rows;
+
+    if (State.GetIntParam(View, &Rows) == 0)
+        Rows = 1;
+    return ScrollDown(Rows);
 }
 
 int EBuffer::ScrollUp(ExState &State) {
-    return ScrollUp(ParamStack.pop());
+    int Rows;
+
+    if (State.GetIntParam(View, &Rows) == 0)
+        Rows = 1;
+    return ScrollUp(Rows);
 }
 
 int EBuffer::FindTag(ExState &State) {
-    if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow in FindTag");
-        FAIL
-    }
+    char Tag[MAXSEARCH] = "";
 
-    std::string tag = sstack.back(); sstack.pop_back();
-
-    if (tag.empty()) {
-        char Tag[MAXSEARCH] = "";
-
-        if (View->MView->Win->GetStr("Find tag", sizeof(Tag), Tag, HIST_SEARCH) == 0) {
-            FAIL
-        }
-
-        tag = Tag;
-    }
+    if (State.GetStrParam(View, Tag, sizeof(Tag)) == 0)
+        if (View->MView->Win->GetStr("Find tag", sizeof(Tag), Tag, HIST_SEARCH) == 0) return 0;
 
     int j = 2;
     while (j--) {
         int i;
 
-        i = TagFind(this, View, tag.c_str());
-        if (i > 0) {
-            SUCCESS
-        } else if (j && (i < 0)) {
+        i = TagFind(this, View, Tag);
+        if (i > 0)
+            return 1;
+        else if (j && (i < 0)) {
             /* Try autoload tags */
             if (View->ExecCommand(ExTagLoad, State) == 0)
                 break;
         } else {
-            Msg(S_INFO, "Tag '%s' not found.", tag.c_str());
+            Msg(S_INFO, "Tag '%s' not found.", Tag);
             break;
         }
     }
@@ -2037,26 +1643,24 @@ int EBuffer::FindTag(ExState &State) {
 
 // these two will probably be replaced in the future
 int EBuffer::InsertDate(ExState &State) {
-    if (sstack.size() == 0) {
-        Msg(S_ERROR, "String stack underflow in InsertDate");
-        FAIL
-    }
-
-    std::string format = sstack.back(); sstack.pop_back();
-    time_t t;
-    time(&t);
+    char strArg[128] = "";
     char buf[128], *p;
 
-    if (format.empty()) {
+    time_t t;
+
+    time(&t);
+
+    if (State.GetStrParam(View, strArg, sizeof(strArg))) {
+        struct tm *tt = localtime(&t);
+        strftime(buf, sizeof(buf), strArg, tt);
+        buf[sizeof(buf) - 1] = 0;
+    } else {
         //** 012345678901234567890123
         //** Wed Jan 02 02:23:54 1991
         p = ctime(&t);
         sprintf(buf, "%.10s %.4s", p, p + 20);
-    } else {
-        struct tm *tt = localtime(&t);
-        strftime(buf, sizeof(buf), format.c_str(), tt);
-        buf[sizeof(buf) - 1] = 0;
     }
+    //puts(buf);
 
     return InsertString(buf, strlen(buf));
 }
@@ -2074,170 +1678,6 @@ int EBuffer::InsertUid() {
         p = "UNKNOWN USER";
     }
     return InsertString(p, strlen(p));
-}
-
-int EBuffer::PushFileName() {
-    sstack.push_back(FileName);
-    return 1;
-}
-
-int EBuffer::PushCurDir() {
-    return 0;
-}
-
-int EBuffer::QuestionAt() {
-    ParamStack.push(CP.Col);
-    ParamStack.push(VToR(CP.Row));
-    return 1;
-}
-
-int EBuffer::PushCurChar() {
-    PELine L;
-    int P;
-
-    L = RLine(CP.Row);
-    P = CharOffset(L, CP.Col);
-
-    if (CP.Col < LineLen()) {
-        char tmp[2];
-        tmp[0] = L->Chars[P];
-        tmp[1] = 0;
-
-        sstack.push_back(tmp);
-    } else
-        sstack.push_back("");
-
-    return 1;
-}
-
-int EBuffer::PushCurWord() {
-    PELine L;
-    int P, C;
-    int wordBegin, wordEnd;
-
-    L = RLine(CP.Row);
-    P = CharOffset(L, CP.Col);
-
-    std::string word;
-
-    if (ChClass(L->Chars[P])) {
-        C = ChClassK(L->Chars[P]);
-
-        // search start of word
-        while ((P > 0) && (C == ChClassK(L->Chars[P-1]))) P--;
-        wordBegin = P;
-
-        // search end of word
-        while ((P < L->Count) && (C == ChClassK(L->Chars[P]))) P++;
-        wordEnd = P;
-
-        // copy word to buffer
-        word.append(L->Chars, wordBegin, wordEnd - wordBegin);
-        sstack.push_back(word);
-    } else {
-        sstack.push_back("");
-    }
-    return 1;
-}
-
-int EBuffer::PushCurLine() {
-    PELine L = RLine(CP.Row);
-
-    if (L->Count > 0) {
-        std::string line;
-        line.append(L->Chars, 0, L->Count);
-
-        sstack.push_back(line);
-    } else {
-        sstack.push_back("");
-    }
-
-    return 1;
-}
-
-int EBuffer::PushSelection() {
-    //int error = 0;
-    EPoint B, E;
-    int L;
-    PELine LL;
-    int A, Z;
-    int bc = 0, lc = 0;
-
-
-    AutoExtend = 0;
-    if (CheckBlock() == 0) {
-        FAIL
-    }
-
-    if (RCount == 0) {
-        FAIL
-    }
-
-    std::string buf;
-    B = BB;
-    E = BE;
-    for (L = B.Row; L <= E.Row; L++) {
-        A = -1;
-        Z = -1;
-        LL = RLine(L);
-        switch (BlockMode) {
-        case bmLine:
-            if (L < E.Row) {
-                A = 0;
-                Z = LL->Count;
-            }
-            break;
-        case bmColumn:
-            if (L < E.Row) {
-                A = CharOffset(LL, B.Col);
-                Z = CharOffset(LL, E.Col);
-            }
-            break;
-        case bmStream:
-            if (B.Row == E.Row) {
-                A = CharOffset(LL, B.Col);
-                Z = CharOffset(LL, E.Col);
-            } else if (L == B.Row) {
-                A = CharOffset(LL, B.Col);
-                Z = LL->Count;
-            } else if (L < E.Row) {
-                A = 0;
-                Z  = LL->Count;
-            } else if (L == E.Row) {
-                A = 0;
-                Z = CharOffset(LL, E.Col);
-            }
-            break;
-        }
-        if (A != -1 && Z != -1) {
-            if (A < LL->Count) {
-                if (Z > LL->Count)
-                    Z = LL->Count;
-                if (Z > A) {
-                    buf.append(LL->Chars, A, Z-A);
-                    bc += Z - A;
-                }
-            }
-            if (BFI(this, BFI_AddCR) == 1) {
-                buf.append("\n");
-                bc++;
-            }
-
-            if (BFI(this, BFI_AddLF) == 1) {
-                buf.append("\r");
-                bc++;
-                lc++;
-            }
-        }
-    }
-
-    sstack.push_back(buf);
-    SUCCESS
-}
-
-int EBuffer::PushEfteVerNo() {
-    sstack.push_back(VERSION);
-    return 1;
 }
 
 int EBuffer::ShowHelpWord(ExState &State) {
@@ -2284,4 +1724,156 @@ int EBuffer::ShowHelpWord(ExState &State) {
     //    return 0;
     //}
     return View->SysShowHelp(State, buf[0] ? buf : 0);
+}
+
+int EBuffer::GetStrVar(int var, char *str, int buflen) {
+    assert(buflen >= 0);
+    if (buflen == 0)
+        return 0;
+    //puts("variable EBuffer\x7");
+    switch (var) {
+    case mvFilePath:
+        //puts("variable FilePath\x7");
+        strncpy(str, FileName, buflen);
+        str[buflen - 1] = 0;
+        return 1;
+
+    case mvFileName:
+        JustFileName(FileName, str, buflen);
+        return 1;
+
+    case mvFileDirectory:
+        JustDirectory(FileName, str, buflen);
+        return 1;
+    case mvFileBaseName: {
+        char buf[MAXPATH];
+        char *dot, *dot2;
+
+        JustFileName(FileName, buf, sizeof(buf));
+
+        dot = strchr(buf, '.');
+        while ((dot2 = strchr(dot + 1, '.')) != NULL)
+            dot = dot2;
+        if (dot)
+            *dot = 0;
+        strlcpy(str, buf, buflen);
+    }
+    return 1;
+
+    case mvFileExtension: {
+        char buf[MAXPATH];
+        char *dot, *dot2;
+
+        JustFileName(FileName, buf, sizeof(buf));
+
+        dot = strchr(buf, '.');
+        while ((dot2 = strchr(dot + 1, '.')) != NULL)
+            dot = dot2;
+        if (dot)
+            strlcpy(str, dot, buflen);
+        else
+            str[0] = 0;
+    }
+    return 1;
+
+    case mvChar: {
+        PELine L;
+        int P;
+
+        L = RLine(CP.Row);
+        P = CharOffset(L, CP.Col);
+
+        strlcpy(str, "", buflen);
+
+        if (ChClass(L->Chars[P])) {
+            char tmp[2];
+
+            // make copy of character
+            tmp[0] = L->Chars[P];
+            tmp[1] = 0;
+
+            strlcat(str, tmp, buflen);
+        }
+    }
+    return 1;
+
+    case mvWord: {
+        PELine L;
+        int P, C;
+        int wordBegin, wordEnd;
+
+        L = RLine(CP.Row);
+        P = CharOffset(L, CP.Col);
+
+        strlcpy(str, "", buflen);
+
+        if (ChClass(L->Chars[P])) {
+            C = ChClassK(L->Chars[P]);
+
+            // search start of word
+            while ((P > 0) && (C == ChClassK(L->Chars[P-1]))) P--;
+
+            wordBegin = P;
+
+            // search end of word
+            while ((P < L->Count) && (C == ChClassK(L->Chars[P]))) P++;
+
+            wordEnd = P;
+
+            // calculate total length for buffer copy
+            int length = wordEnd - wordBegin;
+
+            if ((length + 1) < buflen) {
+                length++;
+            } else {
+                length = buflen;
+            }
+
+            // copy word to buffer
+            strlcpy(str, &L->Chars[wordBegin], length);
+        }
+    }
+    return 1;
+
+    case mvLine: {
+        PELine L;
+
+        L = RLine(CP.Row);
+
+        strlcpy(str, "", buflen);
+
+        if (L->Count > 0) {
+            // calculate total length for buffer copy
+            int length = L->Count;
+
+            if ((length + 1) < buflen) {
+                length++;
+            } else {
+                length = buflen;
+            }
+
+            // copy word to buffer
+            strlcpy(str, L->Chars, length);
+        }
+    }
+    return 1;
+
+    case mvFTEVer:
+        strlcpy(str, VERSION, buflen);
+        return 1;
+    }
+
+    return EModel::GetStrVar(var, str, buflen);
+}
+
+int EBuffer::GetIntVar(int var, int *value) {
+    switch (var) {
+    case mvCurRow:
+        *value = VToR(CP.Row) + 1;
+        return 1;
+    case mvCurCol:
+        *value = CP.Col;
+        return 1;
+    }
+    return EModel::GetIntVar(var, value);
 }

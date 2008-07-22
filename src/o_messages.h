@@ -1,6 +1,5 @@
 /*    o_messages.h
  *
- *    Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
  *    Copyright (c) 1994-1996, Marko Macek
  *
  *    You may distribute under the terms of either the GNU General Public
@@ -64,7 +63,7 @@ public:
     void FreeErrors();
     int GetLine(char *Line, int maxim);
     void GetErrors();
-    int AskCompiler(char *Command);
+    int Compile(char *Command);
     void ShowError(EView *V, int err);
     void DrawLine(PCell B, int Line, int Col, ChColor color, int Width);
     char* FormatLine(int Line);
