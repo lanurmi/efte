@@ -96,7 +96,11 @@ int LoadDesktop(char *FileName) {
                 suspendLoads  = 0;
             } else if (line[0] == 'D') { // directory
                 EModel *m = new EDirectory(0, &ActiveModel, p);
-                assert(ActiveModel != 0 && m != 0);
+                if (m == 0 || ActiveModel == 0) {
+                    ActiveView->MView->Win->Choice(GPC_ERROR, "Error", 1, "O&K",
+                                                   "Could not create directory view");
+                    return 0;
+                }
             }
 
             if (ActiveModel) {
