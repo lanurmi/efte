@@ -1969,8 +1969,8 @@ static int LoadFile(const char *WhereName, const char *CfgName, int Level, int o
         snprintf(dirs[2],  MAXPATH, "./config/%s", CfgName);
         snprintf(dirs[3],  MAXPATH, "~/.efte/%s", CfgName);
         snprintf(dirs[4],  MAXPATH, "~/efte/%s", CfgName);
-        snprintf(dirs[5],  MAXPATH, "%s/local/%s", BinaryDir, CfgName);
-        snprintf(dirs[6],  MAXPATH, "%s/config/%s", BinaryDir, CfgName);
+        snprintf(dirs[5],  MAXPATH, "%slocal/%s", BinaryDir, CfgName);
+        snprintf(dirs[6],  MAXPATH, "%sconfig/%s", BinaryDir, CfgName);
 #endif // if PT_UNIXISH
 
         char tmp[MAXPATH];
@@ -1990,7 +1990,7 @@ static int LoadFile(const char *WhereName, const char *CfgName, int Level, int o
         else if (found == false) {
             fprintf(stderr, "Cannot find '%s' in any of the following locations:\n", CfgName);
             for (int idx=0; idx<SEARCH_PATH_LEN; idx++) {
-                snprintf(tmp, MAXPATH, dirs[idx], CfgName);
+                ExpandPath(dirs[idx], tmp, sizeof(tmp));
                 fprintf(stderr, "   %s\n", tmp);
             }
             return -1;

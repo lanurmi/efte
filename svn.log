@@ -3866,7 +3866,7 @@ Changed paths:
    M /trunk/src/e_cmds.cpp
 
 Cursor positioning beyond the EOL is now working again
-************************************************************************
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 r677 | jeremy_c | 2008-02-15 21:11:43 -0500 (Fri, 15 Feb 2008) | 1 line
 Changed paths:
    M /trunk/src/cfte.cpp
