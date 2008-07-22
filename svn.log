@@ -4076,19 +4076,19 @@ Changed paths:
    A /trunk/packaging/rpm/efte.spec
 
 An RPM .spec file for eFTE.
-************************************************************************
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 r642 | jeremy_c | 2008-02-14 15:52:40 -0500 (Thu, 14 Feb 2008) | 1 line
 Changed paths:
    M /trunk/src/fte.cpp
 
 efte no longer looks in current directory for a efte.cnf file due to a security threat.
-************************************************************************
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 r640 | jeremy_c | 2008-02-14 15:43:14 -0500 (Thu, 14 Feb 2008) | 1 line
 Changed paths:
    M /trunk/packaging/source/build.sh
 
 Made source packaging read tag names of 'efte-VERNUM' instead of just 'VERNUM'
-************************************************************************
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 r639 | jeremy_c | 2008-02-14 15:35:12 -0500 (Thu, 14 Feb 2008) | 3 lines
 Changed paths:
    M /trunk/CMakeLists.txt                XXX
