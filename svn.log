@@ -1175,13 +1175,13 @@ Changed paths:
 
 better factoring of flow control
 
-************************************************************************
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 r942 | jeremy_c | 2008-03-15 19:16:36 -0400 (Sat, 15 Mar 2008) | 1 line
 Changed paths:
    M /trunk/src/CMakeLists.txt
 
 Rearranged CMake build to make dependencies much clearer when reading top to bottom
-------------------------------------------------------------------------
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 r941 | jeremy_c | 2008-03-15 19:06:32 -0400 (Sat, 15 Mar 2008) | 1 line
 Changed paths:
    M /trunk/src/CMakeLists.txt
@@ -1191,7 +1191,7 @@ BASE_FTE_SOURCES now gets compiled only once to a library named eftebase, which 
 r940 | jeremy_c | 2008-03-15 18:53:03 -0400 (Sat, 15 Mar 2008) | 7 lines
 Changed paths:
    M /trunk/config/ui_k_fte.fte
-   M /trunk/src/CMakeLists.txt
+   M /trunk/src/CMakeLists.txt XXXXXXXXXXXXXXXXX
    M /trunk/src/cfte.cpp
    A /trunk/src/config.h.in
 
@@ -3141,7 +3141,7 @@ Added desktop file (1899165). Created *very* generic Icon (1897958). CMake build
 r761 | jeremy_c | 2008-02-21 23:16:10 -0500 (Thu, 21 Feb 2008) | 1 line
 Changed paths:
    M /trunk/packaging/archlinux/PKGBUILD
-   M /trunk/src/CMakeLists.txt
+   M /trunk/src/CMakeLists.txt               XXXXXXXXXXXXXX
    M /trunk/src/bin2c.cpp
    M /trunk/src/c_config.cpp
    M /trunk/src/c_config.h
@@ -3327,7 +3327,7 @@ Changed paths:
    M /trunk/src/simple.fte
 
 Slightly better built in config, but still needs much work
-************************************************************************
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 r741 | jeremy_c | 2008-02-20 14:54:18 -0500 (Wed, 20 Feb 2008) | 1 line
 Changed paths:
    M /trunk/src/CMakeLists.txt
@@ -3352,7 +3352,7 @@ Changed paths:
    M /trunk/src/o_directory.cpp
 
 Fixed mkdir on windows (1897905). Also fixed config file search path bug on windows. 1897... is attached to the mkdir bug. there was not a bug filed for search path
-************************************************************************
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 r737 | jeremy_c | 2008-02-20 00:55:04 -0500 (Wed, 20 Feb 2008) | 1 line
 Changed paths:
    M /trunk/src/CMakeLists.txt
@@ -3452,7 +3452,7 @@ Changed paths:
    M /trunk/packaging/archlinux/PKGBUILD
    M /trunk/packaging/macports/Portfile
    M /trunk/packaging/rpm/efte.spec
-   M /trunk/src/CMakeLists.txt
+   M /trunk/src/CMakeLists.txt       XXXXXXXXXXXXXX
    M /trunk/src/c_config.cpp
    M /trunk/src/cfte.cpp
    M /trunk/src/egui.cpp
@@ -3460,7 +3460,9 @@ Changed paths:
    M /trunk/src/fte.h
    M /trunk/src/objs.inc
 
-Removed binary configuration file requirement. cefte is no longer required or included. eFTE reads it's configuration files directly from the plain text .fte files. It searches its predefined path for a mymain.fte file and starts from there.
+Removed binary configuration file requirement. cefte is no longer required or included. 
+eFTE reads it's configuration files directly from the plain text .fte files. It searches 
+its predefined path for a mymain.fte file and starts from there.
 ************************************************************************
 r727 | jeremy_c | 2008-02-19 00:28:12 -0500 (Tue, 19 Feb 2008) | 1 line
 Changed paths:
@@ -3924,7 +3926,7 @@ r668 | jeremy_c | 2008-02-15 15:41:56 -0500 (Fri, 15 Feb 2008) | 7 lines
 Changed paths:
    M /trunk/config/m_fte.fte
    M /trunk/config/pal_blk.fte  ***
-   M /trunk/src/CMakeLists.txt  ***
+   M /trunk/src/CMakeLists.txt  XXX
    M /trunk/src/c_hilit.cpp
    M /trunk/src/c_hilit.h
    M /trunk/src/cfte.cpp
@@ -3953,7 +3955,7 @@ Changed paths:
    M /trunk/config/m_fte.fte
 
 Added a few missing vars to m_fte.fte as well as the flow control commands
-************************************************************************
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 r665 | jeremy_c | 2008-02-15 12:49:51 -0500 (Fri, 15 Feb 2008) | 1 line
 Changed paths:
    M /trunk/src/CMakeLists.txt
@@ -3983,7 +3985,7 @@ Changed paths:
    M /trunk/packaging/gentoo/efte-0.95.ebuild
 
 Final gentoo ebuild after work done by gentoo developer and acceptance into portage
-************************************************************************
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 r661 | jeremy_c | 2008-02-15 02:02:20 -0500 (Fri, 15 Feb 2008) | 1 line
 Changed paths:
    M /trunk/src/CMakeLists.txt
@@ -4057,12 +4059,12 @@ Changed paths:
    M /trunk/packaging/rpm/efte.spec
 
 Adjusted the License field, and changed Source into a URL, although rpmbuild apparently doesn't use that to download the tarball.
-************************************************************************
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 r646 | jeremy_c | 2008-02-14 17:59:43 -0500 (Thu, 14 Feb 2008) | 4 lines
 Changed paths:
-   M /trunk/HISTORY
-   M /trunk/src/CMakeLists.txt
-   M /trunk/src/con_linux.cpp
+   M /trunk/HISTORY              XXX
+   M /trunk/src/CMakeLists.txt   XXX
+   M /trunk/src/con_linux.cpp    XXX
 
 * Updated HISTORY
 * Added BUILD_X and BUILD_CONSOLE flags to CMake
@@ -4089,7 +4091,7 @@ Made source packaging read tag names of 'efte-VERNUM' instead of just 'VERNUM'
 ************************************************************************
 r639 | jeremy_c | 2008-02-14 15:35:12 -0500 (Thu, 14 Feb 2008) | 3 lines
 Changed paths:
-   M /trunk/CMakeLists.txt
+   M /trunk/CMakeLists.txt                XXX
    A /trunk/packaging/source
    A /trunk/packaging/source/build.sh
    M /trunk/src/ftever.h
@@ -4097,7 +4099,7 @@ Changed paths:
 * Added source packaging tool
 * Set version number to 0.95
 
-************************************************************************
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 r638 | jeremy_c | 2008-02-14 13:57:49 -0500 (Thu, 14 Feb 2008) | 1 line
 Changed paths:
    M /trunk/CMakeLists.txt
@@ -4314,7 +4316,7 @@ checking at end of each macro for unresolved control flow clauses.
 (resulting in a message to stderr).
 
 
-************************************************************************
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 r613 | jeremy_c | 2008-02-07 13:51:28 -0500 (Thu, 07 Feb 2008) | 1 line
 Changed paths:
    M /trunk/CMakeLists.txt
@@ -4503,7 +4505,7 @@ Changed paths:
    M /trunk/src/con_cocoa.cpp
 
 Applied astyle --style=kr --brackets=attach --unpad=paren --pad=oper --convert-tabs.
-************************************************************************
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 r593 | jeremy_c | 2008-02-02 20:42:56 -0500 (Sat, 02 Feb 2008) | 1 line
 Changed paths:
    M /trunk/src/CMakeLists.txt
@@ -4546,7 +4548,7 @@ Added u_stack.
 ************************************************************************
 r589 | jeremy_c | 2008-02-02 10:50:01 -0500 (Sat, 02 Feb 2008) | 1 line
 Changed paths:
-   M /trunk/src/CMakeLists.txt
+   M /trunk/src/CMakeLists.txt  XXX
    M /trunk/src/cfte.cpp
 
 Added parsing of conditionals to cfte
@@ -4569,8 +4571,8 @@ added basic arithmetic basic operations Plus Minus Mul Div
 r587 | jeremy_c | 2008-02-01 23:51:43 -0500 (Fri, 01 Feb 2008) | 1 line
 Changed paths:
    M /trunk/AUTHORS
-   M /trunk/CMakeLists.txt
-   M /trunk/src/CMakeLists.txt
+   M /trunk/CMakeLists.txt          XXX
+   M /trunk/src/CMakeLists.txt      XXX
    M /trunk/src/bin2c.cpp
    M /trunk/src/c_bind.cpp
    M /trunk/src/c_bind.h
