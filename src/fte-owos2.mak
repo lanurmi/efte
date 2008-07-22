@@ -1,3 +1,12 @@
+#
+# fte-owos2.mak
+#
+# Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
+#
+# You may distribute under the terms of either the GNU General Public
+# License or the Artistic License, as specified in the README file.
+#
+#
 #----------------------------------------------------------------------------
 #
 # Makefile for ECS-OS2 version of eFTE using OpenWatcom 1.4
@@ -19,7 +28,7 @@ LD = wlink
 RC = rc
 
 # Machine type -5r Pent -6r Pent Pro
-MACHINE= -6r
+MACHINE= -3r
 
 #Optimization None -od  - Fastest possible -otexan
 OPT= -ot
@@ -30,8 +39,8 @@ INCLUDE = $(%watcom)\h;$(%watcom)\h\os2;.\
 MISC    = -wcd555 -wcd013 -wcd726
 
 DEFS    = -dOS2 -dOS2OW -dINCL_32 -dWATCOM -dUSE_LOCALE
-CFLAGS  = -i=$(INCLUDE) $(MISC) $(DEFS) -d0 -w4 -e25 -zq $(OPT) $(MACHINE) -bm -bt=OS2 -mf
-LDFLAGS = op m op maxe=25 op q op symf op el
+CFLAGS  = -i=$(INCLUDE) $(MISC) $(DEFS) -d3 -db -w4 -e25 -zq $(OPT) $(MACHINE) -bm -bt=OS2 -mf -xs
+LDFLAGS = op m op maxe=25 op q op symf op el op stack=128k
 OEXT    = obj
 
 .EXTENSIONS:.rc .res
@@ -41,20 +50,13 @@ OEXT    = obj
 .cpp.obj: *.cpp
   $(CC) $(CFLAGS) $<
 
-all: cefte.exe efte.exe eftepm.exe efte.cnf
+all: efte.exe eftepm.exe
 
 cefte.exe: $(CFTE_OBJS) fte.def
   $(LD) NAME cefte SYS os2v2 $(LDFLAGS) FILE {$(CFTE_OBJS)}
 
-defcfg.cnf: defcfg.fte cefte.exe
-  cefte defcfg.fte defcfg.cnf
-
-defcfg.h: defcfg.cnf bin2c.exe
-  bin2c defcfg.cnf >defcfg.h
-
-efte.cnf: cefte.exe
-  cefte ..\config\main.fte efte.cnf
-  copy efte.cnf ftepm.cnf
+defcfg.h: bin2c.exe simple.fte
+  bin2c simple.fte >defcfg.h
 
 bin2c.exe: bin2c.obj
   $(LD) NAME bin2c SYS os2v2 $(LDFLAGS) FILE {bin2c.obj}

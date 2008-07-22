@@ -93,7 +93,7 @@ Changed paths:
    M /trunk/src/g_pm.cpp
 
 Compilation fix: Do not try to assign a const-pointer to a non-const; instead make a copy.
-************************************************************************
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 r1033 | lanurmi | 2008-04-18 17:15:12 -0400 (Fri, 18 Apr 2008) | 1 line
 Changed paths:
    M /trunk/src/fte-owos2.mak
@@ -1193,7 +1193,7 @@ Changed paths:
    M /trunk/config/ui_k_fte.fte
    M /trunk/src/CMakeLists.txt XXXXXXXXXXXXXXXXX
    M /trunk/src/cfte.cpp
-   A /trunk/src/config.h.in
+   A /trunk/src/config.h.in    XXXXXXXXXXXXXXXXX
 
 * Fixed C+M for Open Directory
 * Applied patch from Alexander Neundorf that:
@@ -1558,7 +1558,7 @@ Changed paths:
    M /trunk/eFTE.xcodeproj/project.pbxproj
 
 Added new files (mainly w_*) to the project.
-*************************************************************************
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 r902 | jeremy_c | 2008-03-05 23:00:48 -0500 (Wed, 05 Mar 2008) | 1 line
 Changed paths:
    M /trunk/config/ui_k_fte.fte
@@ -2200,10 +2200,10 @@ Changed paths:
 
 each test component will also make sure stringstack isn't victim of droppings.
 
-************************************************************************
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 r846 | jeremy_c | 2008-02-28 16:44:50 -0500 (Thu, 28 Feb 2008) | 1 line
 Changed paths:
-   M /trunk/HISTORY
+   M /trunk/HISTORY        XXX
    M /trunk/src/fte.cpp
 
 Added --version/-version options to binaries
@@ -2373,7 +2373,7 @@ Changed paths:
    M /trunk/src/u_stack.cpp
 
 Added decincrement cound on param stack during pop
-************************************************************************
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 r829 | jeremy_c | 2008-02-27 20:59:10 -0500 (Wed, 27 Feb 2008) | 1 line
 Changed paths:
    M /trunk/src/e_cmds.cpp
