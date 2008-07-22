@@ -1,9 +1,5 @@
-CFTE_OBJS = \
-cfte.$(OEXT) \
-s_files.$(OEXT) \
-s_string.$(OEXT)
-
 OBJS = \
+cfte.$(OEXT) \
 indent.$(OEXT) \
 e_mark.$(OEXT) \
 o_modemap.$(OEXT) \

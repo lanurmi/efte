@@ -399,8 +399,6 @@ menu Options {
     item "File Trim &EOL"		{ FileTrim; WinRefresh }
     item "I&ndent block\tAlt+\\"	{ BlockReIndent; FileTrim; WinRefresh }
     item "&Print to..."			{ SetPrintDevice }
-    item;
-    item "Rec&ompile Configuration" { ConfigRecompile }
 }
 
 menu Main {
