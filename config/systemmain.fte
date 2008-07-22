@@ -7,7 +7,7 @@
 # be made available with new versions of FTE.  New versions of FTE will not
 # overwrite customizations this way.
 
-# include the main config - usually in /usr/local/fte/config.
+# include the main config - usually in /usr/local/efte/config.
 include 'main.fte';
 
 # Local settings go here.
