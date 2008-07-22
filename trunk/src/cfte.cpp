@@ -32,6 +32,8 @@
 
 typedef struct {
     char *Name;
+    char *FileName;
+    int LineNo;
 } ExMacro;
 
 static unsigned int CMacros = 0;
@@ -924,11 +926,13 @@ static int CmdNum(const char *Cmd) {
     return 0; // Nop
 }
 
-int NewCommand(const char *Name) {
+int NewCommand(CurPos &cp, const char *Name) {
     if (Name == 0)
         Name = "";
     Macros = (ExMacro *) realloc(Macros, sizeof(ExMacro) * (1 + CMacros));
     Macros[CMacros].Name = strdup(Name);
+    Macros[CMacros].FileName = strdup(cp.name);
+    Macros[CMacros].LineNo = cp.line;
     CMacros++;
     return CMacros - 1;
 }
@@ -938,10 +942,18 @@ static int ParseCommands(CurPos &cp, char *Name) {
     //    return 0;
     Word cmd;
     int p;
-    long Cmd = NewCommand(Name) | CMD_EXT;
+    long Cmd = CmdNum(Name);
 
     long cnt;
     long ign = 0;
+
+
+    if (Cmd != 0) {
+        Fail(cp, "%s has already been defined in %s:%i", Name,
+             Macros[Cmd^CMD_EXT].FileName, Macros[Cmd^CMD_EXT].LineNo);
+    }
+
+    Cmd = NewCommand(cp, Name) | CMD_EXT;
 
     PutNumber(cp, CF_INT, Cmd);
     GetOp(cp, P_OPENBRACE);
