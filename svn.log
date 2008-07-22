@@ -4474,7 +4474,7 @@ and offset calculation, branch resolving as in real.
 Output goes to stderr, for verification.
 
 
-************************************************************************
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 r596 | lanurmi | 2008-02-03 20:01:31 -0500 (Sun, 03 Feb 2008) | 1 line
 Changed paths:
    M /trunk/src/gui.h
