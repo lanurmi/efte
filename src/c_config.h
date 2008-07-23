@@ -13,6 +13,29 @@
 
 #include "sysdep.h"
 
+typedef struct _CurPos {
+    unsigned int sz;
+    char *a;
+    char *c;
+    char *z;
+    int line;
+    const char *name; // filename
+} CurPos;
+
+extern int CFteMain();
+
+typedef struct {
+    unsigned char tag;
+    unsigned short len;
+    void *obj;
+} CachedObject;
+
+// Cached objects
+#define CACHE_SIZE 512000
+extern CachedObject cache[CACHE_SIZE];
+extern unsigned int cpos;
+extern int verbosity;
+
 extern int ScreenSizeX;
 extern int ScreenSizeY;
 extern bool CursorBlink;
@@ -55,6 +78,7 @@ extern char BackupDirectory[MAXPATH];
 
 const char *GetGUICharacters(const char *which, const char *defChars);
 int LoadConfig(int argc, char **argv, char *CfgFileName);
+int LoadDefaultConfig();
 int GetIndentMode(const char *Str);
 int GetHilitMode(const char *Str);
 int UseDefaultConfig();
