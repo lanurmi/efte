@@ -94,19 +94,18 @@ mode EUPHORIA: SOURCE {
 
     RoutineRegexp      = /^{{global}|{export}}*\s*{{function}|{procedure}|{type}}\s+/;
     
-    # LL = Look at line -- 0 is current, -1 is previous, -2 is 2 lines back, 1 is next line, etc...
     # AL = Affect line  -- 0 is current, -1 is previous, -2 is 2 lines back, 1 is next line, etc...
     # IC = Indent Count -- number of indents to apply (multiplied by TabSize)
     #
-    #                      LL, AL, IC, Regular Expression
-    IndentRx           = { -1,  0,  1, /^{{global}|{export}}*\s*{{function}|{procedure}|{type}}/ };
-    IndentRx           = { -1,  0,  1, /^\s*{{if}|{for}|{while}}/ };
-    IndentRx           = { -1,  0,  2, /^\s*switch/ };
-    IndentRx           = { -1,  0,  1, /^{{global}|{export}}*\s*{{constant}|{enum}}.*,$/ };
-    IndentRx           = { -1,  0, -2, /^\s*end switch/ };
-    IndentRx           = { -1, -1, -1, /^\s*end/ };
-    IndentRx           = { -1, -1, -1, /^\s*{{else}|{elsif}|{case}|{entry}}/ };
-    IndentRx           = { -1,  0,  1, /^\s*{{else}|{elsif}|{case}|{entry}}/ };
+    #                      AL, IC, Regular Expression
+    IndentRx           = {  0,  1, /^{{global}|{export}}*\s*{{function}|{procedure}|{type}}/ };
+    IndentRx           = {  0,  1, /^\s*{{if}|{for}|{while}}/ };
+    IndentRx           = {  0,  2, /^\s*switch/ };
+    IndentRx           = {  0,  1, /^{{global}|{export}}*\s*{{constant}|{enum}}.*,$/ };
+    IndentRx           = { -1, -1, /^\s*end switch/ }; # next end will also outdent
+    IndentRx           = { -1, -1, /^\s*end/ };
+    IndentRx           = { -1, -1, /^\s*{{else}|{elsif}|{case}|{entry}}/ };
+    IndentRx           = {  0,  1, /^\s*{{else}|{elsif}|{case}|{entry}}/ };
 }
 
 oinclude "mym_euphoria.fte";

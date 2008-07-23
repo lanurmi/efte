@@ -78,39 +78,45 @@ int Hilit_Plain(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine* Lin
     return 0;
 }
 
+int FindPrevNonEmptyLine(EBuffer *B, int Line) {
+    while (Line > 0) {
+        if (B->RLine(Line)->Count > 0)
+            return Line;
+        Line--;
+    }
+
+    return 0;
+}
 
 int Indent_Plain(EBuffer *B, int Line, int PosCursor) {
+    int PLine = FindPrevNonEmptyLine(B, Line);
     int OI = B->LineIndented(Line);
-    int PI = B->LineIndented(Line-1);
-    int handled = 0;
 
     if (B->Mode->indent_count) {
         RxMatchRes b;
-        int indent;
+        int indent, handled = 0;
 
-        for (int i = 0; i < B->Mode->indent_count; i++)
-        {
-            int look_line = Line + B->Mode->indents[i].look_line;
+        for (int i=0; i < B->Mode->indent_count; i++) {
             int affect_line = Line + B->Mode->indents[i].affect_line;
-
-            char *ll = B->RLine(look_line)->Chars;
-            int llcount = B->RLine(look_line)->Count;
+            char *ll = B->RLine(PLine)->Chars;
+            int llcount = B->RLine(PLine)->Count;
 
             if (RxExecMatch(B->Mode->indents[i].regex, ll, llcount, ll, &b, 0)) {
-                indent = B->LineIndented(affect_line-1) + B->Mode->indents[i].indent * 4;
+                indent = B->LineIndented(PLine) + B->Mode->indents[i].indent * 4;
                 B->IndentLine(affect_line, indent);
 
-                if (affect_line == Line) {
+                if (affect_line == Line)
                     handled = 1;
-                }
             }
         }
+
+        if (handled == 0)
+            B->IndentLine(Line, B->LineIndented(PLine));
+    } else {
+        B->IndentLine(Line, B->LineIndented(PLine));
     }
 
-    if (handled == 0) {
-        B->IndentLine(Line, B->LineIndented(Line - 1));
-    }
-
+    // Fix cursor position
     if (PosCursor) {
         int I = B->LineIndented(Line);
         int X = B->CP.Col;
@@ -118,7 +124,9 @@ int Indent_Plain(EBuffer *B, int Line, int PosCursor) {
         X = X - OI + I;
         if (X < I) X = I;
         if (X < 0) X = 0;
-        B->SetPosR(X, Line);
+        B->SetPos(X, Line);
     }
+
     return 1;
 }
+
