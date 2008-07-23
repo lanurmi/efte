@@ -381,34 +381,36 @@ static int Lookup(const OrdLookup *where, char *what) {
 #define K_CVSIGNRX     22
 #define K_SVNIGNRX     23
 #define K_OINCLUDE     24   // Optional include, i.e. do not fail if it does not exist.
+#define K_INDENTRX     25
 
 typedef char Word[64];
 
 static const OrdLookup CfgKW[] = {
-    { "mode", K_MODE },
-    { "eventmap", K_EVENTMAP },
-    { "key", K_KEY },
-    { "color", K_COLOR },
+    { "mode",          K_MODE },
+    { "eventmap",      K_EVENTMAP },
+    { "key",           K_KEY },
+    { "color",         K_COLOR },
     { "color_palette", K_COLPALETTE },
-    { "keyword", K_KEYWORD },
-    { "object", K_OBJECT },
-    { "menu", K_MENU },
-    { "item", K_ITEM },
-    { "submenu", K_SUBMENU },
-    { "CompileRx", K_COMPILERX },
-    { "extern", K_EXTERN },
-    { "oinclude", K_OINCLUDE },
-    { "include", K_INCLUDE },
-    { "sub", K_SUB },
-    { "colorize", K_COLORIZE },
-    { "abbrev", K_ABBREV },
-    { "h_state", K_HSTATE },
-    { "h_trans", K_HTRANS },
-    { "h_words", K_HWORDS },
-    { "h_wtype", K_HWTYPE },
-    { "submenucond", K_SUBMENUCOND },
-    { "CvsIgnoreRx", K_CVSIGNRX },
-    { "SvnIgnoreRx", K_SVNIGNRX },
+    { "keyword",       K_KEYWORD },
+    { "object",        K_OBJECT },
+    { "menu",          K_MENU },
+    { "item",          K_ITEM },
+    { "submenu",       K_SUBMENU },
+    { "CompileRx",     K_COMPILERX },
+    { "extern",        K_EXTERN },
+    { "oinclude",      K_OINCLUDE },
+    { "include",       K_INCLUDE },
+    { "sub",           K_SUB },
+    { "colorize",      K_COLORIZE },
+    { "abbrev",        K_ABBREV },
+    { "h_state",       K_HSTATE },
+    { "h_trans",       K_HTRANS },
+    { "h_words",       K_HWORDS },
+    { "h_wtype",       K_HWTYPE },
+    { "submenucond",   K_SUBMENUCOND },
+    { "CvsIgnoreRx",   K_CVSIGNRX },
+    { "SvnIgnoreRx",   K_SVNIGNRX },
+    { "IndentRx",      K_INDENTRX },
     { 0, 0 },
 };
 
@@ -1315,14 +1317,14 @@ static int ParseConfigFile(CurPos &cp) {
 
             case K_MODE: { // mode::
                 if (Parse(cp) != P_WORD) Fail(cp, "Syntax error");
-                if (GetWord(cp, ObjName) != 0) Fail(cp, "Parse failed");
+                if (GetWord(cp, ObjName) != 0) Fail(cp, "Parse failed, expecting a word");
                 PutString(cp, CF_MODE, ObjName);
 
                 UpMode[0] = 0;
                 if (Parse(cp) == P_COLON) {
                     GetOp(cp, P_COLON);
                     if (Parse(cp) != P_WORD) Fail(cp, "Syntax error");
-                    if (GetWord(cp, UpMode) != 0) Fail(cp, "Parse failed");
+                    if (GetWord(cp, UpMode) != 0) Fail(cp, "Parse failed, expecting a mode name");
                 }
                 PutString(cp, CF_PARENT, UpMode);
                 if (Parse(cp) != P_OPENBRACE) Fail(cp, "'{' expected");
@@ -1333,44 +1335,73 @@ static int ParseConfigFile(CurPos &cp) {
                     if (p == P_CLOSEBRACE) break;
                     if (p == P_EOF) Fail(cp, "Unexpected EOF");
                     if (p != P_WORD) Fail(cp, "Syntax error");
-
-                    if (GetWord(cp, w) != 0) Fail(cp, "Parse failed");
-                    //switch (Lookup(CfgKW, w)) {
-                    //default:  // mode::
+                    if (GetWord(cp, w) != 0) Fail(cp, "Parse failed, expecting a variable name");
                     if (Parse(cp) != P_ASSIGN) Fail(cp, "'=' expected");
                     GetOp(cp, P_ASSIGN);
-                    switch (Parse(cp)) {
-                    case P_NUMBER: {
-                        long var;
-                        long num;
 
-                        num = GetNumber(cp);
-                        var = Lookup(mode_num, w);
-                        if (var == -1)
-                            Fail(cp, "Lookup of '%s' failed", w);
-                        PutNumber(cp, CF_SETVAR, var);
-                        PutNumber(cp, CF_INT, num);
-                    }
-                    break;
-                    case P_STRING: {
-                        long var;
+                    if (strcmp(w, "IndentRx") == 0) {
+                        long look_line, affect_line, indent_cnt;
+                        char *regexp;
 
-                        s = GetString(cp);
-                        if (s == 0) Fail(cp, "Parse failed");
-                        var = Lookup(mode_string, w);
-                        if (var == -1)
-                            Fail(cp, "Lookup of '%s' filed", w);
-                        PutNumber(cp, CF_SETVAR, var);
-                        PutString(cp, CF_STRING, s);
+                        if (Parse(cp) != P_OPENBRACE) Fail(cp, "'{' expected");
+                        GetOp(cp, P_OPENBRACE);
+                        if (Parse(cp) != P_NUMBER) Fail(cp, "Number expected");
+                        look_line = GetNumber(cp);
+                        if (Parse(cp) != P_COMMA) Fail(cp, "',' expected");
+                        GetOp(cp, P_COMMA);
+                        if (Parse(cp) != P_NUMBER) Fail(cp, "Number expected");
+                        affect_line = GetNumber(cp);
+                        if (Parse(cp) != P_COMMA) Fail(cp, "',' expected");
+                        GetOp(cp, P_COMMA);
+                        if (Parse(cp) != P_NUMBER) Fail(cp, "Number expected");
+                        indent_cnt = GetNumber(cp);
+                        if (Parse(cp) != P_COMMA) Fail(cp, "',' expected");
+                        GetOp(cp, P_COMMA);
+                        if (Parse(cp) != P_STRING) Fail(cp, "String expected");
+                        regexp = GetString(cp);
+                        if (Parse(cp) != P_CLOSEBRACE) Fail(cp, "'}' expected");
+                        GetOp(cp, P_CLOSEBRACE);
+                        PutNull(cp, CF_INDENTRX);
+                        PutNumber(cp, CF_INT, look_line);
+                        PutNumber(cp, CF_INT, affect_line);
+                        PutNumber(cp, CF_INT, indent_cnt);
+                        PutString(cp, CF_REGEXP, regexp);
+                        if (Parse(cp) != P_EOS) Fail(cp, "';' expected");
+                        GetOp(cp, P_EOS);
+                    } else {
+                        switch (Parse(cp)) {
+                        case P_NUMBER: {
+                            long var;
+                            long num;
+
+                            num = GetNumber(cp);
+                            var = Lookup(mode_num, w);
+                            if (var == -1)
+                                Fail(cp, "Lookup of '%s' failed", w);
+                            PutNumber(cp, CF_SETVAR, var);
+                            PutNumber(cp, CF_INT, num);
+                        }
+                        break;
+
+                        case P_STRING: {
+                            long var;
+
+                            s = GetString(cp);
+                            if (s == 0) Fail(cp, "Parse failed, expected a string");
+                            var = Lookup(mode_string, w);
+                            if (var == -1)
+                                Fail(cp, "Lookup of '%s' failed", w);
+                            PutNumber(cp, CF_SETVAR, var);
+                            PutString(cp, CF_STRING, s);
+                        }
+                        break;
+
+                        default:
+                            return -1;
+                        }
+                        if (Parse(cp) != P_EOS) Fail(cp, "';' expected");
+                        GetOp(cp, P_EOS);
                     }
-                    break;
-                    default:
-                        return -1;
-                    }
-                    if (Parse(cp) != P_EOS) Fail(cp, "';' expected");
-                    GetOp(cp, P_EOS);
-                    //    break;
-                    //}
                 }
                 GetOp(cp, P_CLOSEBRACE);
                 PutNull(cp, CF_END);
@@ -1459,6 +1490,7 @@ static int ParseConfigFile(CurPos &cp) {
                         GetOp(cp, P_EOS);
                     }
                     break;
+
                     case K_CVSIGNRX: {
                         char *regexp;
 
@@ -1472,6 +1504,7 @@ static int ParseConfigFile(CurPos &cp) {
                         GetOp(cp, P_EOS);
                     }
                     break;
+
                     case K_SVNIGNRX: {
                         char *regexp;
 
