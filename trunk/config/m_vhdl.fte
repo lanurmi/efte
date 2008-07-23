@@ -27,15 +27,25 @@ colorize VHDL {
         "sll", "sra", "srl", "subtype", "then", "to", "transport", "type", "unaffected", "units", 
         "until", "variable", "wait", "when", "while", "with", "xnor", "xor"
     };
-    
+
     keyword "Editor_Keywords2" {
         "library", "use"
     };
-    
+
     keyword "Editor_Keywords3" {
-        "integer", "unsigned"
+        "boolean",
+        "bit", "bit_vector",
+        "std_ulogic", "std_ulogic_vector",
+        "std_logic", "std_logic_vector",
+        "integer", "natural",
+        "real",
+        "complex", "complex_vector", "complex_polar",
+        "signed", "unsigned",
+        "line", "text", "side", "width",
+        "character", "string",
+        "time"
     };
-    
+
     h_state 0 { "Normal" }
     h_trans { 1, "-s", "a-zA-Z_", "Normal" }
     h_trans { 2, "<", "--", "Comment" }
@@ -60,12 +70,12 @@ colorize VHDL {
     h_trans { 0, "", "", "String" }
 
     h_state 5 { "Number" }
-    h_trans { 0, "-S", "0-9", "Normal" }
+    h_trans { 0, "-S", "0-9_", "Normal" }
     h_trans { 0, "$", "", "Normal" }
 }
 
 mode VHDL: SOURCE {
-    FileNameRx         = '\\.{vhdl}|{vhd}$';
+    FileNameRx         = '\\.{vhdl}|{vhd}|{v93}|{v87}$';
     Colorizer          = "VHDL";
     IndentMode         = "PLAIN";
     AutoIndent         = 1;
