@@ -1,7 +1,7 @@
 # FTE mode for editing Falcon files
 
 colorize FALCON {
-   SyntaxParser = 'FALCON';
+   SyntaxParser = 'SIMPLE';
 
    color {
       { 'Normal',        'Editor_Default' },
@@ -48,21 +48,12 @@ mode FALCON: SOURCE {      # Falcon Mode
    Colorizer           = 'FALCON';
    HilitOn             = 1;
    AutoIndent          = 1;
-   IndentMode          = 'FALCON';
+   IndentMode          = 'PLAIN';
    TabSize             = 3;
    RoutineRegexp       = /^[\s\t]*{class}|{function}\s/;
    SaveFolds           = 2;      # save fold info at end of line
    CommentStart        = '/*';
    CommentEnd          = '*/';
-}
-
-eventmap FALCON {
-   key [Tab]           { LineIndent; LineTrim }
-   key [G-Enter]       { LineIndent; LineNew; LineIndent; }
-
-   # do some smart indents
-   key [A+G-Enter]     { LineAdd; LineIndent }
-   key [S+G-Enter]     { LineInsert; LineIndent }
 }
 
 oinclude 'mym_falcon.fte';
