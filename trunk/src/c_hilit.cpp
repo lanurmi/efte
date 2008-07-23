@@ -18,7 +18,6 @@ static const struct {
     { "PLAIN", HILIT_PLAIN, Hilit_Plain },
     { "C", HILIT_C, Hilit_C },
     { "REXX", HILIT_REXX, Hilit_REXX },
-    { "FALCON", HILIT_FALCON, Hilit_FALCON },
     { "PERL", HILIT_PERL, Hilit_PERL },
     { "MAKE", HILIT_MAKE, Hilit_MAKE },
     { "IPF", HILIT_IPF, Hilit_IPF },
@@ -38,7 +37,6 @@ static const struct {
 } IndentModes[] = {
     { "C", INDENT_C },
     { "REXX", INDENT_REXX },
-    { "FALCON", INDENT_FALCON },
     { "SIMPLE", INDENT_REXX },
     { "PLAIN", INDENT_PLAIN },
 };

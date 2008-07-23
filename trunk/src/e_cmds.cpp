@@ -831,23 +831,26 @@ int EBuffer::LineIndent() {
         case INDENT_C:
             rc = Indent_C(this, L, 1);
             break;
+
         case INDENT_REXX:
             rc = Indent_REXX(this, L, 1);
             break;
-        case INDENT_FALCON:
-            rc = Indent_FALCON(this, L, 1);
-            break;
+
         case INDENT_SIMPLE:
             rc = Indent_SIMPLE(this, L, 1);
             break;
+
         default:
             rc = Indent_Plain(this, L, 1);
             break;
         }
     }
+
     if (rc == 0) return 0;
+
     if (BFI(this, BFI_Trim))
         if (TrimLine(VToR(CP.Row)) == 0) return 0;
+
     return 1;
 }
 

@@ -39,11 +39,6 @@ extern int FunctionUsesContinuation;
 extern int REXX_Base_Indent;
 extern int REXX_Do_Offset;
 
-// Falcon Indent
-extern int Falcon_Base_Indent;
-extern int Falcon_Paren_Delta;
-extern int Falcon_Max_Paren;
-
 extern int ShowVScroll;
 extern int ShowHScroll;
 extern int ShowMenuBar;
@@ -282,15 +277,6 @@ static int SetGlobalNumber(int what, int number) {
         break;
     case FLAG_REXX_Do_Offset:
         REXX_Do_Offset = number;
-        break;
-    case FLAG_Falcon_Indent:
-        Falcon_Base_Indent = number;
-        break;
-    case FLAG_Falcon_Paren_Delta:
-        Falcon_Paren_Delta = number;
-        break;
-    case FLAG_Falcon_Max_Paren:
-        Falcon_Max_Paren = number;
         break;
     case FLAG_ScreenSizeX:
         ScreenSizeX = number;
