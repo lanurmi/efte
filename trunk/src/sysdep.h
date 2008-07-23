@@ -94,6 +94,7 @@ extern "C" int memicmp(const void *s1, const void *s2, size_t n);
 #    if defined(WATCOM) || defined(__WATCOM_CPLUSPLUS__)
 #        define HAVE_STRLCPY
 #        define HAVE_STRLCAT
+#        define HAVE_STRICMP
 #        include <direct.h>
 #    endif
 #    if defined(BCPP)
