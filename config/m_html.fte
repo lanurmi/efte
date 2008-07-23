@@ -646,6 +646,7 @@ colorize HTML {
     h_trans { 5, '<', '<!--', 'Comment' }
     h_trans { 1, '<', '<', 'Command' }
     h_trans { 2, '<', '&', 'Symbol' }
+    h_trans { 7, '<', '{', 'Special' }
 
     h_state 1 { 'Command' }
     h_trans { 0, '>', '>', 'Command' }
@@ -662,6 +663,7 @@ colorize HTML {
 
     h_state 4 { 'String' }
     h_trans { 1, '>', '"', 'String' }
+    h_trans { 8, '<', '{', 'Symbol' }
 
     h_state 5 { 'Comment' }
     h_trans { 6, '>', '--', 'Comment' }
@@ -669,6 +671,12 @@ colorize HTML {
     h_state 6 { 'Special' }
     h_trans { 5, '>', '--', 'Comment' }
     h_trans { 0, '>', '>', 'Comment' }
+    
+    h_state 7 { 'Special' }
+    h_trans { 0, '>', '}', 'Special' }
+    
+    h_state 8 { 'Symbol' }
+    h_trans { 4, '>', '}', 'Symbol' }
 }
 
 mode HTML: MARKUP {

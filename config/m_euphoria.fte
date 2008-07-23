@@ -17,43 +17,31 @@ colorize EUPHORIA {
     keyword "Editor_Keywords" {
         "as", "and",
         "by",
-        "constant",
+        "case", "constant",
         "do",
-        "end", "else", "elsif", "exit",
+        "end", "else", "enum", "export",
         "for", "function",
         "global",
         "include", "if",
         "not",
         "or",
         "procedure",
-        "return",
+        "switch",
         "then", "type", "to",
-        "while", "with", "without",
+        "while",
         "xor"
     };
 
     keyword "Editor_Keywords2" {
-        "append", "abort", "arctan", "and_bits",
-        "clear_screen", "compare", "command_line", "close",
-        "cos", "call", "c_proc", "c_func", "call_proc", "call_func",
-        "date",
-        "equal",
-        "floor", "find",
-        "getc", "gets", "get_key", "getenv",
-        "length", "log",
-        "match", "machine_func", "machine_proc", "mem_copy", "mem_set",
-        "not_bits",
-        "open", "or_bits",
-        "puts", "print", "printf", "power", "peek", "poke", "poke4", "peek4s", "peek4u", "profile",
-        "platform", "position", "prepend",
-        "repeat", "routine_id", "rand", "remainder",
-        "sqrt", "sin", "system", "system_exec", "sprintf",
-        "time", "trace", "tan",
-        "xor_bits"
-    };
-
-    keyword "Editor_Keywords3" {
         "object", "sequence", "integer", "atom"
+    };
+    
+    keyword "Editor_Keywords3" {
+        "break", "continue", "entry", "exit", "goto", "glabel", "retry", "return"
+    };
+    
+    keyword "Editor_Keywords4" {
+        "ifdef", "elsifdef", "trace", "with", "without"
     };
 
     h_state 0 { "Normal" }
@@ -62,6 +50,7 @@ colorize EUPHORIA {
     h_trans { 3, "", "\"", "String" }
     h_trans { 4, "", "\'", "String" }
     h_trans { 5, "<s", "0-9", "Number" }
+    h_trans { 6, "", "#", "Number" }
     h_trans { 0, "S", "_a-zA-Z0-9", "Punctuation" }
 
     h_state 1 { "Normal" }
@@ -75,15 +64,20 @@ colorize EUPHORIA {
     h_trans { 0, "", "\"", "String" }
     h_trans { 0, "$", "", "String" }
     h_trans { 3, "Qq", "\\", "String" }
-
+    
     h_state 4 { "String" }
     h_trans { 0, "", "'", "String" }
     h_trans { 0, "$", "", "String" }
     h_trans { 4, "Qq", "\\", "String" }
-
+    
+    # Normal Number
     h_state 5 { "Number" }
     h_trans { 0, "-S", "0-9", "Normal" }
     h_trans { 0, "$", "", "Normal" }
+    
+    # Hex Number
+    h_state 6 { "Number" }
+    h_trans { 0, "-S", "0-9A-F", "Normal" }
 }
 
 mode EUPHORIA: SOURCE {
@@ -98,7 +92,7 @@ mode EUPHORIA: SOURCE {
     AutoHilitParen     = 1;
     SaveFolds          = 0;
 
-    RoutineRegexp       = `^{global procedure}|{global function}|{procedure}|{function} `;
+    RoutineRegexp       = `^{{global}|{export}}*[ \t]*{{function}|{procedure}|{type}} `;
 }
 
 oinclude "mym_euphoria.fte";
