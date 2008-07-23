@@ -148,7 +148,7 @@ clean:
 	rm -f *.o .depend.mak
 
 cleanall:
-	rm -f efte nefte vefte bin2c defcfg.h
+	rm -f efte nefte vefte bin2c defcfg.h config.h .depend.mak
 
 help:
 	@echo ""
@@ -205,13 +205,16 @@ bin2c: bin2c.cpp
 defcfg.h: bin2c simple.fte
 	./bin2c simple.fte > defcfg.h
 
-efte: defcfg.h $(OBJS) $(XOBJS)
+config.h:
+	sed s/\$$\{CMAKE_INSTALL_PREFIX\}/\\/usr\\/local/g < config.h.in > config.h
+
+efte: config.h defcfg.h $(OBJS) $(XOBJS)
 	$(CXX) -o efte $(OBJS) $(XOBJS) $(EFTE_LIBS)
 
-nefte: defcfg.h $(OBJS) $(NOBJS)
+nefte: config.h defcfg.h $(OBJS) $(NOBJS)
 	$(CXX) -o nefte $(OBJS) $(NOBJS) $(NEFTE_LIBS)
 
-vefte: defcfg.h $(OBJS) $(VOBJS)
+vefte: config.h defcfg.h $(OBJS) $(VOBJS)
 	$(CXX) -o vefte $(OBJS) $(VOBJS) $(VEFTE_LIBS)
 
 .cpp.$(OEXT):
