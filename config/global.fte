@@ -80,39 +80,47 @@ object GLOBAL {
     REXX_Indent         = 4;
 #    REXX_Do_Offset      = 0;
 
-# grep -n
+    # grep -n
     CompileRx = { 1, 2, 3, /^([\w:._\-\+\/\\]#):(\d+):/ };
-# GCC
+    
+    # GCC
     CompileRx = { 1, 2, 3, /^([\w:._\-\+\/\\]+):(\d+):\s(.*)$/ };
-# Borland C++              
+    
+    # Borland C++
     CompileRx = { 1, 2, 3, /^{Error}|{Warning}\s(\S+)\s(\d+):\s(.*)$/ };
-# Borland C++ 5.5 command line <wirawan0>
+    
+    # Borland C++ 5.5 command line <wirawan0>
     CompileRx = { 1, 2, 3, /^{Error E}|{Warning W}\d+\s(\S+)\s(\d+):\s(.*)$/ };
-# CSet++
+    
+    # CSet++
     CompileRx = { 1, 2, 3, /^([\w:._\-\+\/\\]+)\((\d+):\d+\)(.*)$/ };
-# Watcom C++
+    
+    # Watcom C++
     CompileRx = { 1, 2, 3, /^([\w:._\-\+\/\\]+)\((\d+)\):\x20{Error!}|{Warning!}(.*)$/ };
-# xlC (AIX)
+    
+    # xlC (AIX)
     CompileRx = { 1, 2, 3, /^"([\w:._\-\+\/\\]+)", line (\d+){.\d+}?: (.*)$/ };
-# IPF compiler
+    
+    # IPF compiler
     CompileRx = { 1, 2, 3, /^\<([^:]+):(\d+)\> (.*)$/ };
-
+    
     CompileRx = { 1, 2, 3, /^([\w:._\-\+\/\\]+)\((\d+)\)\s*:\s*(.*)$/ };
     CompileRx = { 2, 3, 1, /^([^\t]+)\t([^\t]+)\t(\d+)$/ };
     CompileRx = { 2, 3, 1, /^\s*at\s*([^\(]+)\(([^\:]+)\:(\d+)\)$/ };  # PAF@design.ru
 
-# jikes +E (tested with version 1.18)
+    # jikes +E (tested with version 1.18)
     CompileRx = { 1, 2, 3, /^.*\s([\w._\-\+\/\\]+):(\d+):\d+:\d+:\d+:\s(.*)$/ };
 
-# Ant (javac)
+    # Ant (javac)
     CompileRx = { 1, 2, 3, /^.*\s([\w:._\-\+\/\\]+):(\d+):\s(.*)$/ };
 
-# Python interpreter tracebacks
+    # Python interpreter tracebacks
     CompileRx = { 1, 2, 3, /^\s*File\s+"([\w:._\-\+\/\\]+)",\s+line\s+(\d+)(.*)$/ };
     
-# bash: <wirawan0>
+    # bash: <wirawan0>
     CompileRx = { 1, 2, 3, /^([\w:._\-\/\\]+): line (\d+):\s(.*)$/ };
-# perl: <wirawan0>
+    
+    # perl: <wirawan0>
     CompileRx = { 2, 3, 1, /^(.*) at ([^ ]+) line ([0-9]+)/ };
     
     CvsIgnoreRx = /^cvs update: Updating /;

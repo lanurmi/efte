@@ -9,6 +9,7 @@
  */
 
 #include "fte.h"
+#include "e_regex.h"
 
 #define hsPLAIN_Normal 0
 
@@ -77,9 +78,39 @@ int Hilit_Plain(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine* Lin
     return 0;
 }
 
+
 int Indent_Plain(EBuffer *B, int Line, int PosCursor) {
     int OI = B->LineIndented(Line);
-    B->IndentLine(Line, B->LineIndented(Line - 1));
+    int PI = B->LineIndented(Line-1);
+    int handled = 0;
+
+    if (B->Mode->indent_count) {
+        RxMatchRes b;
+        int indent;
+
+        for (int i = 0; i < B->Mode->indent_count; i++)
+        {
+            int look_line = Line + B->Mode->indents[i].look_line;
+            int affect_line = Line + B->Mode->indents[i].affect_line;
+
+            char *ll = B->RLine(look_line)->Chars;
+            int llcount = B->RLine(look_line)->Count;
+
+            if (RxExecMatch(B->Mode->indents[i].regex, ll, llcount, ll, &b, 0)) {
+                indent = B->LineIndented(affect_line-1) + B->Mode->indents[i].indent * 4;
+                B->IndentLine(affect_line, indent);
+
+                if (affect_line == Line) {
+                    handled = 1;
+                }
+            }
+        }
+    }
+
+    if (handled == 0) {
+        B->IndentLine(Line, B->LineIndented(Line - 1));
+    }
+
     if (PosCursor) {
         int I = B->LineIndented(Line);
         int X = B->CP.Col;

@@ -32,6 +32,13 @@ typedef struct {
     TKeyCode Key;
 } KeySel;
 
+typedef struct {
+    RxNode *regex;
+    int look_line;
+    int affect_line;
+    int indent;
+} IndentRx;
+
 class EMode {
 public:
     EMode *fNext;
@@ -44,11 +51,14 @@ public:
     EEventMap *fEventMap;
     EMode *fParent;
     EColorize *fColorize;
+    IndentRx indents[25];
+    int indent_count;
     char filename[256];
 
     EMode(EMode *aMode, EEventMap *Map, const char *aName);
     ~EMode();
     EAbbrev *FindAbbrev(const char *string);
+    void AddIndentRx(int look_line, int affect_line, int indent, const char *regex);
 };
 
 class EKeyMap {
