@@ -50,9 +50,8 @@ ENDIF( USE_GPM )
 #
 # =============================================================================
 
-SET( CFTE_SOURCES cfte.cpp s_files.cpp s_string.cpp )
 SET( BASE_FTE_SOURCES
-  c_bind.cpp c_color.cpp c_config.cpp c_desktop.cpp c_hilit.cpp c_history.cpp
+  cfte.cpp c_bind.cpp c_color.cpp c_config.cpp c_desktop.cpp c_hilit.cpp c_history.cpp
   c_mode.cpp commands.cpp e_block.cpp e_buffer.cpp e_cmds.cpp e_cvslog.cpp
   e_file.cpp e_fold.cpp e_line.cpp e_loadsave.cpp e_mark.cpp e_print.cpp
   e_redraw.cpp e_regex.cpp e_search.cpp e_svnlog.cpp e_tags.cpp e_trans.cpp
@@ -154,35 +153,10 @@ GET_TARGET_PROPERTY( BIN2C_EXE bin2c LOCATION )
 #
 # =====
 
-# Configuration compiler
-ADD_EXECUTABLE( cefte ${CFTE_SOURCES} )
-GET_TARGET_PROPERTY( CEFTE_EXE cefte LOCATION )
-
-IF( USE_DEFAULT_CONFIG )
-  MESSAGE( STATUS "Building default config for inclusion into eFTE" )
-
-  # Program to convert our default config into an includable .h
-  ADD_EXECUTABLE( bin2c bin2c.cpp )
-  GET_TARGET_PROPERTY( BIN2C_EXE bin2c LOCATION )
-
-  # Builds our default config
-  ADD_CUSTOM_COMMAND(
-    OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/defcfg.cnf
-    COMMAND ${CEFTE_EXE} ${CMAKE_CURRENT_SOURCE_DIR}/defcfg.fte ${CMAKE_CURRENT_SOURCE_DIR}/defcfg.cnf
-    DEPENDS cefte )
-
-  # Convert our default config to ain includable .h
-  ADD_CUSTOM_COMMAND(
-    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/defcfg.h
-    COMMAND ${BIN2C_EXE} ${CMAKE_CURRENT_SOURCE_DIR}/defcfg.cnf > ${CMAKE_BINARY_DIR}/src/defcfg.h
-    DEPENDS bin2c defcfg.cnf )
-ENDIF( USE_DEFAULT_CONFIG )
-
-#ADD_CUSTOM_COMMAND(
-#  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/defcfg.h
-#  COMMAND ${BIN2C_EXE} ${CMAKE_CURRENT_SOURCE_DIR}/simple.fte > ${CMAKE_CURRENT_BINARY_DIR}/defcfg.h
-#  DEPENDS bin2c simple.fte )
-
+ADD_CUSTOM_COMMAND(
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/defcfg.h
+  COMMAND ${BIN2C_EXE} ${CMAKE_CURRENT_SOURCE_DIR}/simple.fte > ${CMAKE_CURRENT_BINARY_DIR}/defcfg.h
+  DEPENDS bin2c simple.fte )
 
 # =============================================================================
 #

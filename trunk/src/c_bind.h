@@ -155,6 +155,7 @@ EKey *SetKey(EEventMap *aMap, const char *Key);
 int ParseKey(const char *Key, KeySel &ks);
 int GetKeyName(char *Key, int KeySize, KeySel &ks);
 
+void DefineWord(const char *s);
 int NewCommand(const char *Name);
 int RunCommand(int Command);
 int AddCommand(int no, int cmd, int count, int ign);
