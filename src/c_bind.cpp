@@ -279,11 +279,10 @@ EMode::~EMode() {
         free(Flags.str[i]);
 }
 
-void EMode::AddIndentRx(int look_line, int affect_line, int indent, const char *regex) {
+void EMode::AddIndentRx(int affect_line, int indent, const char *regex) {
     if (indent_count > 20)
         return;
 
-    indents[indent_count].look_line = look_line;
     indents[indent_count].affect_line = affect_line;
     indents[indent_count].indent = indent;
     indents[indent_count].regex = RxCompile(regex);

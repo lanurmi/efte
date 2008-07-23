@@ -378,7 +378,6 @@ static int Lookup(const OrdLookup *where, char *what) {
 #define K_CVSIGNRX     22
 #define K_SVNIGNRX     23
 #define K_OINCLUDE     24   // Optional include, i.e. do not fail if it does not exist.
-#define K_INDENTRX     25
 
 typedef char Word[64];
 
@@ -407,7 +406,6 @@ static const OrdLookup CfgKW[] = {
     { "submenucond",   K_SUBMENUCOND },
     { "CvsIgnoreRx",   K_CVSIGNRX },
     { "SvnIgnoreRx",   K_SVNIGNRX },
-    { "IndentRx",      K_INDENTRX },
     { 0, 0 },
 };
 
@@ -1337,15 +1335,11 @@ static int ParseConfigFile(CurPos &cp) {
                     GetOp(cp, P_ASSIGN);
 
                     if (strcmp(w, "IndentRx") == 0) {
-                        long look_line, affect_line, indent_cnt;
+                        long affect_line, indent_cnt;
                         char *regexp;
 
                         if (Parse(cp) != P_OPENBRACE) Fail(cp, "'{' expected");
                         GetOp(cp, P_OPENBRACE);
-                        if (Parse(cp) != P_NUMBER) Fail(cp, "Number expected");
-                        look_line = GetNumber(cp);
-                        if (Parse(cp) != P_COMMA) Fail(cp, "',' expected");
-                        GetOp(cp, P_COMMA);
                         if (Parse(cp) != P_NUMBER) Fail(cp, "Number expected");
                         affect_line = GetNumber(cp);
                         if (Parse(cp) != P_COMMA) Fail(cp, "',' expected");
@@ -1359,7 +1353,6 @@ static int ParseConfigFile(CurPos &cp) {
                         if (Parse(cp) != P_CLOSEBRACE) Fail(cp, "'}' expected");
                         GetOp(cp, P_CLOSEBRACE);
                         PutNull(cp, CF_INDENTRX);
-                        PutNumber(cp, CF_INT, look_line);
                         PutNumber(cp, CF_INT, affect_line);
                         PutNumber(cp, CF_INT, indent_cnt);
                         PutString(cp, CF_REGEXP, regexp);
