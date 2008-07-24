@@ -646,7 +646,9 @@ colorize HTML {
     h_trans { 5, '<', '<!--', 'Comment' }
     h_trans { 1, '<', '<', 'Command' }
     h_trans { 2, '<', '&', 'Symbol' }
+    %if(HTML_KANARIE)
     h_trans { 7, '<', '{', 'Special' }
+    %endif
 
     h_state 1 { 'Command' }
     h_trans { 0, '>', '>', 'Command' }
@@ -671,12 +673,14 @@ colorize HTML {
     h_state 6 { 'Special' }
     h_trans { 5, '>', '--', 'Comment' }
     h_trans { 0, '>', '>', 'Comment' }
-    
+
+    %if(HTML_KANARIE)
     h_state 7 { 'Special' }
     h_trans { 0, '>', '}', 'Special' }
     
     h_state 8 { 'Symbol' }
     h_trans { 4, '>', '}', 'Symbol' }
+    %endif
 }
 
 mode HTML: MARKUP {
