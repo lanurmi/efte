@@ -865,6 +865,8 @@ int EGUI::CmdLoadFiles(int &argc, char **argv) {
             case 't':
                 TagGoto(ActiveView, argv[Arg] + 2);
                 break;
+            case 'v':
+                break; // fte.cpp handles this.
             default:
                 DieError(2, "Invalid command line option %s", argv[Arg]);
                 return 0;
