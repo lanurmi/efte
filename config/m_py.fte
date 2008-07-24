@@ -1,10 +1,12 @@
-# This Config is mostly just for colour syntax highlighting, there is
-# no auto-indent support in this mode.
 #
 # My python miscellany page is: http://www.vex.net/~x/python_stuff.html
 # Edited by Bastian Kleineidam <calvin@users.sourceforge.net>
 #
 # Small changes/fixes by Jon Svendsen (jsvendsen@bergen.frisurf.no)
+#
+# problems...
+#     is block comment/uncomment possible via macro?
+#
 
 colorize PYTHON {
     SyntaxParser = "SIMPLE";
@@ -261,7 +263,7 @@ colorize PYTHON {
 }
 
 mode PYTHON: SOURCE {
-    FileNameRx          = `\.\cPY$`;
+    FileNameRx          = /\.\cPY$/;
     HilitOn             = 1;
     Colorizer           = "PYTHON";
     IndentMode          = "PLAIN";
@@ -271,8 +273,6 @@ mode PYTHON: SOURCE {
     Trim                = 1;
     SpaceTabs           = 1;
     MatchCase           = 1;
-#    WordWrap            = 0;
-#    ToggleAutoIndent    = 1;
 
     FirstLineRx         = `^\#\!.*python`;
     RoutineRegexp       = `def[ ]+[^ ]`;
@@ -281,11 +281,11 @@ mode PYTHON: SOURCE {
 
     CommentStart        = " #";
     CommentEnd          = "";
+
+    %if(INDENT)
+    IndentRx  = { -1, -1, /^\s*{{elif}|{else}}.*:/ };
+    IndentRx  = {  0,  1, /^\s*{{if}|{elif}|{else}|{for}|{while}|{def}}.*:/ };
+    %endif
 }
 
 oinclude "mym_py.fte";
-
-# problems...
-#     we have no indent support at all )-:
-#     is block comment/uncomment possible via macro?
-

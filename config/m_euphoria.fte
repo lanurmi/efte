@@ -81,7 +81,7 @@ colorize EUPHORIA {
 }
 
 mode EUPHORIA: SOURCE {
-    FileNameRx         = '\\.{e}|{ew}|{eu}|{ed}|{ex}|{exu}|{exw}|{exd}$';
+    FileNameRx         = /\c\.{e}|{ew}|{eu}|{ed}|{ex}|{exu}|{exw}|{exd}$/;
     HilitOn            = 1;
     Colorizer          = "EUPHORIA";
     AutoIndent         = 1;
@@ -93,7 +93,8 @@ mode EUPHORIA: SOURCE {
     SaveFolds          = 0;
 
     RoutineRegexp      = /^{{global}|{export}}*\s*{{function}|{procedure}|{type}}\s+/;
-    
+
+    %if(INDENT)
     # AL = Affect line  -- 0 is current, -1 is previous, -2 is 2 lines back, 1 is next line, etc...
     # IC = Indent Count -- number of indents to apply (multiplied by TabSize)
     #
@@ -106,6 +107,7 @@ mode EUPHORIA: SOURCE {
     IndentRx           = { -1, -1, /^\s*end/ };
     IndentRx           = { -1, -1, /^\s*{{else}|{elsif}|{case}|{entry}}/ };
     IndentRx           = {  0,  1, /^\s*{{else}|{elsif}|{case}|{entry}}/ };
+    %endif
 }
 
 oinclude "mym_euphoria.fte";
