@@ -1,5 +1,5 @@
 /* XPM */
-static char * eFTE2_64x64_xpm[] = {
+static const char * efte64x64_xpm[] = {
 "64 64 4 1",
 " 	c None",
 ".	c #000000",

@@ -64,10 +64,10 @@ i18n_context_t* i18n_ctx = NULL;
 #include <X11/xpm.h>
 
 #define ICON_COUNT 4
-#include "icons/fte16x16.xpm"
-#include "icons/fte32x32.xpm"
-#include "icons/fte48x48.xpm"
-#include "icons/fte64x64.xpm"
+#include "../packaging/shared/efte16x16.xpm"
+#include "../packaging/shared/efte32x32.xpm"
+#include "../packaging/shared/efte48x48.xpm"
+#include "../packaging/shared/efte64x64.xpm"
 #endif
 
 #ifdef CAST_FD_SET_INT
@@ -517,7 +517,7 @@ static int SetupXWindow(int argc, char **argv) {
     wm_hints.input = True;
     wm_hints.initial_state = NormalState;
 
-    if (XpmCreatePixmapFromData(display, win, const_cast<char**>(fte16x16_xpm), &icon_pixmap, &icon_shape, NULL) == XpmSuccess) {
+    if (XpmCreatePixmapFromData(display, win, const_cast<char**>(efte16x16_xpm), &icon_pixmap, &icon_shape, NULL) == XpmSuccess) {
         wm_hints.flags |= IconPixmapHint | IconMaskHint;
         wm_hints.icon_pixmap = icon_pixmap;
         wm_hints.icon_mask = icon_shape;
@@ -525,7 +525,7 @@ static int SetupXWindow(int argc, char **argv) {
     XSetWMHints(display, win, &wm_hints);
 
     // Set icons using _NET_WM_ICON property
-    static const char **xpmData[ICON_COUNT] = { fte16x16_xpm, ftepm, fte48x48_xpm, fte64x64_xpm };
+    static const char **xpmData[ICON_COUNT] = { efte16x16_xpm, efte32x32_xpm, efte48x48_xpm, efte64x64_xpm };
     XpmImage xpmImage[ICON_COUNT];
     CARD32 *xpmColors[ICON_COUNT] = { NULL, NULL, NULL, NULL };
     int i, iconBufferSize = 0;
