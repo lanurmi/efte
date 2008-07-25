@@ -373,8 +373,9 @@ const struct {
     TAB(ViewSvnDiff),
     TAB(SvnCommit),
     TAB(RunSvnCommit),
-    TAB(ViewSvnLog)
+    TAB(ViewSvnLog),
 
+    TAB(GetString)
 
 #if 0
 //TAB(ShowMsg),

@@ -282,7 +282,17 @@ typedef enum {
     mvChar,
     mvWord,
     mvLine,
-    mvFTEVer
+    mvFTEVer,
+    mvGet0,
+    mvGet1,
+    mvGet2,
+    mvGet3,
+    mvGet4,
+    mvGet5,
+    mvGet6,
+    mvGet7,
+    mvGet8,
+    mvGet9
 } MacroVariable;
 
 #endif

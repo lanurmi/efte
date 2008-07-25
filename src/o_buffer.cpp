@@ -846,12 +846,30 @@ int EBuffer::ExecCommand(int Command, ExState &State) {
         return InsertUid();
     case ExShowHelpWord:
         return ShowHelpWord(State);
+    case ExGetString:
+        return GetString(State);
     }
     return EModel::ExecCommand(Command, State);
 }
 
 void EBuffer::HandleEvent(TEvent &Event) {
     EModel::HandleEvent(Event);
+}
+
+int EBuffer::GetString(ExState &State) {
+    int No = 0;
+    char Prompt[80] = "";
+
+    State.GetIntParam(View, &No);
+    State.GetStrParam(View, Prompt, sizeof(Prompt));
+    if (State.GetStrParam(View, GetStrVars[No], sizeof(GetStrVars[No])) == 0) {
+        strcpy(GetStrVars[No], "");
+    }
+
+    if (View->MView->Win->GetStr(Prompt, sizeof(GetStrVars[No]), GetStrVars[No], HIST_POSITION) == 0)
+        return 0;
+
+    return 1;
 }
 
 int EBuffer::MoveToLine(ExState &State) {
@@ -1862,7 +1880,49 @@ int EBuffer::GetStrVar(int var, char *str, int buflen) {
     case mvFTEVer:
         strlcpy(str, VERSION, buflen);
         return 1;
+
+    case mvGet0:
+        strlcpy(str, GetStrVars[0], buflen);
+        return 1;
+
+    case mvGet1:
+        strlcpy(str, GetStrVars[1], buflen);
+        return 1;
+
+    case mvGet2:
+        strlcpy(str, GetStrVars[2], buflen);
+        return 1;
+
+    case mvGet3:
+        strlcpy(str, GetStrVars[3], buflen);
+        return 1;
+
+    case mvGet4:
+        strlcpy(str, GetStrVars[4], buflen);
+        return 1;
+
+    case mvGet5:
+        strlcpy(str, GetStrVars[5], buflen);
+        return 1;
+
+    case mvGet6:
+        strlcpy(str, GetStrVars[6], buflen);
+        return 1;
+
+    case mvGet7:
+        strlcpy(str, GetStrVars[7], buflen);
+        return 1;
+
+    case mvGet8:
+        strlcpy(str, GetStrVars[8], buflen);
+        return 1;
+
+    case mvGet9:
+        strlcpy(str, GetStrVars[9], buflen);
+        return 1;
+
     }
+
 
     return EModel::GetStrVar(var, str, buflen);
 }

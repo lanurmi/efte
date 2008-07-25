@@ -163,6 +163,7 @@ public:
 
 class EBuffer: public EModel {
 public:
+    char GetStrVars[10][50];
     //char *Name;
     char *FileName;
     int Modified;
@@ -759,6 +760,8 @@ public:
 
     int SetIndentWithTabs(ExState &State);
     int FoldCreateAtRoutines();
+
+    int GetString(ExState &State);
 };
 
 extern EBuffer *SSBuffer;

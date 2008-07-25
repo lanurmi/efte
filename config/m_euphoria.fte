@@ -111,3 +111,17 @@ mode EUPHORIA: SOURCE {
 }
 
 oinclude "mym_euphoria.fte";
+
+eventmap EUPHORIA {
+    abbrev 'fore' {
+        GetString 0 "Index" "idx";
+        GetString 1 "Source";
+        GetString 2 "Value";
+        KillWordPrev;
+        InsertString "for " . $Str0 . " = 1 to length(" . $Str1 . ") do"; LineNew;
+        InsertString "object " . $Str2 . " = " . $Str1 . "[" . $Str0 . "]"; LineNew;
+        LineNew;
+        InsertString "end for";
+        LineNew; 2:MoveUp; InsertString "\t";
+    }
+}

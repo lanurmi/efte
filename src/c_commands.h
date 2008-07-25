@@ -776,8 +776,10 @@ typedef enum {
     ExListToggleMarkAll,
     /// Toggle marking of all lines in list
 
-    ExBlockPasteOver
+    ExBlockPasteOver,
     /// Delete content's of selection and paste clipboard to current position
+    ExGetString
+    /// Get a string from the user
 } ExCommands;
 
 #endif
