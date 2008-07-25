@@ -1187,7 +1187,7 @@ Changed paths:
    M /trunk/src/CMakeLists.txt
 
 BASE_FTE_SOURCES now gets compiled only once to a library named eftebase, which is then linked to each binary, saving a great amount of time during compile
-************************************************************************
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 r940 | jeremy_c | 2008-03-15 18:53:03 -0400 (Sat, 15 Mar 2008) | 7 lines
 Changed paths:
    M /trunk/config/ui_k_fte.fte
@@ -2081,7 +2081,7 @@ Changed paths:
 
 commented out a test which makes efte terminate
 
-************************************************************************
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 r859 | jeremy_c | 2008-02-29 15:15:34 -0500 (Fri, 29 Feb 2008) | 1 line
 Changed paths:
    M /trunk/src/cfte.cpp
@@ -3229,7 +3229,7 @@ Changed paths:
    M /trunk/config/systemmain.fte
 
 Added AlignChar and supporting macros to macros.fte
-************************************************************************
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 r750 | jeremy_c | 2008-02-20 21:49:33 -0500 (Wed, 20 Feb 2008) | 1 line
 Changed paths:
    M /trunk/src/c_bind.h
@@ -3321,7 +3321,7 @@ Changed paths:
    M /trunk/src/egui.h
 
 Added new command: ExecuteCommand
-************************************************************************
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 r742 | jeremy_c | 2008-02-20 14:55:02 -0500 (Wed, 20 Feb 2008) | 1 line
 Changed paths:
    M /trunk/src/simple.fte
@@ -3396,14 +3396,14 @@ Changed paths:
    M /trunk/src/fte.h
 
 * Removed all references to system.fterc
-* Simplified CFteMain making it read ConfigFileName
-* ConfigFileName now defaulting to mymain.fte
+* Simplified CFteMain making it read ConfigFileName  XXXXXXXXXXXXXXX
+* ConfigFileName now defaulting to mymain.fte       XXXXXXXXXXXXXXX
 * -C (alternate config file) works again (-Cother.fte)
-* GetConfigFileName no longer needed, removed
+* GetConfigFileName no longer needed, removed       XXXXXXXXXXXXXXX
 * References to the preprocessor only options are removed
-* All local paths removed from config search (see wiki for
-  new config search paths, or cfte.cpp line ~1980)
-* Removed fprintf debug statements
+* All local paths removed from config search (see wiki for XXXXXXXXX
+  new config search paths, or cfte.cpp line ~1980)  XXXXXXXXXXXXXXX
+* Removed fprintf debug statements                  XXXXXXXXXXXXXXX
 
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 r732 | jeremy_c | 2008-02-19 12:25:12 -0500 (Tue, 19 Feb 2008) | 1 line
@@ -3445,7 +3445,7 @@ Changed paths:
    M /trunk/src/ftever.h
 
 Version bump to 0.97 (before I forget)
-************************************************************************
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 r728 | jeremy_c | 2008-02-19 04:22:00 -0500 (Tue, 19 Feb 2008) | 1 line
 Changed paths:
    M /trunk/HISTORY
