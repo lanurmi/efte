@@ -101,7 +101,7 @@ EMode *GetModeForName(const char *FileName) {
         if (m->MatchNameRx)
             if (RxExec(m->MatchNameRx,
                        FileName, strlen(FileName), FileName,
-                       &RM) == 1)
+                       &RM, RX_CASE) == 1)
                 return m;
         if (m->fNext == 0) break;
         m = m->fNext;
@@ -123,7 +123,7 @@ EMode *GetModeForName(const char *FileName) {
             m = Modes;
             while (m) {
                 if (m->MatchLineRx)
-                    if (RxExec(m->MatchLineRx, buf, l, buf, &RM) == 1)
+                    if (RxExec(m->MatchLineRx, buf, l, buf, &RM, RX_CASE) == 1)
                         return m;
                 if (m->fNext == 0) break;
                 m = m->fNext;

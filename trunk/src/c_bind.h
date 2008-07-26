@@ -34,8 +34,10 @@ typedef struct {
 
 typedef struct {
     RxNode *regex;
+    int look_line;
     int affect_line;
     int indent;
+    int flags;
 } IndentRx;
 
 class EMode {
@@ -57,7 +59,7 @@ public:
     EMode(EMode *aMode, EEventMap *Map, const char *aName);
     ~EMode();
     EAbbrev *FindAbbrev(const char *string);
-    void AddIndentRx(int affect_line, int indent, const char *regex);
+    void AddIndentRx(int look_line, int affect_line, int indent, const char *regex, int flags);
 };
 
 class EKeyMap {

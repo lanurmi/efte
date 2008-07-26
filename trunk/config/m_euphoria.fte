@@ -19,7 +19,7 @@ colorize EUPHORIA {
         "by",
         "case", "constant",
         "do",
-        "end", "else", "enum", "export",
+        "end", "else", "elsif", "enum", "export",
         "for", "function",
         "global",
         "include", "if",
@@ -95,24 +95,35 @@ mode EUPHORIA: SOURCE {
     RoutineRegexp      = /^{{global}|{export}}*\s*{{function}|{procedure}|{type}}\s+/;
 
     %if(INDENT)
+    # LL = Look Line -- Which line to look at?
     # AL = Affect line  -- 0 is current, -1 is previous, -2 is 2 lines back, 1 is next line, etc...
     # IC = Indent Count -- number of indents to apply (multiplied by TabSize)
+    # RegExp -- Regular expression to match agains
+    # Flags = Flags
     #
-    #                      AL, IC, Regular Expression
-    IndentRx           = {  0,  1, /^{{global}|{export}}*\s*{{function}|{procedure}|{type}}/ };
-    IndentRx           = {  0,  1, /^\s*{{if}|{for}|{while}}/ };
-    IndentRx           = {  0,  2, /^\s*switch/ };
-    IndentRx           = {  0,  1, /^{{global}|{export}}*\s*{{constant}|{enum}}.*,$/ };
-    IndentRx           = { -1, -1, /^\s*end switch/ }; # next end will also outdent
-    IndentRx           = { -1, -1, /^\s*end/ };
-    IndentRx           = { -1, -1, /^\s*{{else}|{elsif}|{case}|{entry}}/ };
-    IndentRx           = {  0,  1, /^\s*{{else}|{elsif}|{case}|{entry}}/ };
+    #                      LL, AL, IC, Regular Expression, Flags
+    IndentRx = { -1,  0,  1, /^{{global}|{export}}*\s*{{function}|{procedure}|{type}}/, 0 };
+    IndentRx = { -1,  0,  1, /^\s*{{if}|{for}|{while}}/, 0 };
+    IndentRx = { -1,  0,  2, /^\s*switch/, 0 };
+    IndentRx = { -1,  0,  1, /^{{enum}|{constant}|{.*[{,]}}\s*$/, 1 };
+    IndentRx = { -1,  0,  0, /^\s*\-\-/, 2 }; # Ignore the next if match
+    IndentRx = { -1,  0,  1, /^.*[\+\-\*&]\s*$/, 1 };
+    IndentRx = {  0,  0, -1, /^\s*end switch/, 0 }; # next end will also outdent
+    IndentRx = {  0,  0, -1, /^\s*end/, 0 };
+    IndentRx = {  0,  0, -1, /^\s*{{else}|{elsif}|{case}|{entry}}/, 0 };
+    IndentRx = { -1,  0,  1, /^\s*{{else}|{elsif}|{case}|{entry}}/, 0 };
     %endif
 }
 
 oinclude "mym_euphoria.fte";
 
 eventmap EUPHORIA {
+    key [Tab]   { LineIndent; LineTrim; }
+    key [A+\\] { BlockReIndent; FileTrim; WinRefresh; }
+    key [G-Enter] { LineIndent; LineAdd; LineIndent; }
+    key [A+G-Enter] { LineIndent; LineNew; LineIndent; }
+    key [S+G-Enter] { LineIndent; LineInsert; LineIndent; }
+
     abbrev 'fore' {
         GetString 0 "Index" "idx";
         GetString 1 "Source";
@@ -121,7 +132,7 @@ eventmap EUPHORIA {
         InsertString "for " . $Str0 . " = 1 to length(" . $Str1 . ") do"; LineNew;
         InsertString "object " . $Str2 . " = " . $Str1 . "[" . $Str0 . "]"; LineNew;
         LineNew;
-        InsertString "end for";
+        InsertString "end for"; LineIndent;
         LineNew; 2:MoveUp; InsertString "\t";
     }
 }
