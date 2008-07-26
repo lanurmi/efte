@@ -85,7 +85,7 @@ mode EUPHORIA: SOURCE {
     HilitOn            = 1;
     Colorizer          = "EUPHORIA";
     AutoIndent         = 1;
-    IndentMode         = "PLAIN";
+    IndentMode         = "REGEX";
     MatchCase          = 1;
     Trim               = 1;
     MultiLineHilit     = 1;

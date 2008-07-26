@@ -57,6 +57,7 @@ typedef int ChColor;
 #define INDENT_C      1
 #define INDENT_REXX   2
 #define INDENT_SIMPLE 3
+#define INDENT_REGEX  4
 
 #define BFI_AutoIndent          0
 #define BFI_Insert              1
