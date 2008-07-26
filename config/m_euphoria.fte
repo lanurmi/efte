@@ -101,26 +101,42 @@ mode EUPHORIA: SOURCE {
     # RegExp -- Regular expression to match agains
     # Flags = Flags
     #
-    #                      LL, AL, IC, Regular Expression, Flags
-    IndentRx = { -1,  0,  1, /^{{global}|{export}}*\s*{{function}|{procedure}|{type}}/, 0 };
-    IndentRx = { -1,  0,  1, /^\s*{{if}|{for}|{while}}/, 0 };
-    IndentRx = { -1,  0,  2, /^\s*switch/, 0 };
-    IndentRx = { -1,  0,  1, /^{{enum}|{constant}|{.*[{,]}}\s*$/, 1 };
-    IndentRx = { -1,  0,  0, /^\s*\-\-/, 2 }; # Ignore the next if match
-    IndentRx = { -1,  0,  1, /^.*[\+\-\*&]\s*$/, 1 };
-    IndentRx = {  0,  0, -1, /^\s*end switch/, 0 }; # next end will also outdent
-    IndentRx = {  0,  0, -1, /^\s*end/, 0 };
-    IndentRx = {  0,  0, -1, /^\s*{{else}|{elsif}|{case}|{entry}}/, 0 };
-    IndentRx = { -1,  0,  1, /^\s*{{else}|{elsif}|{case}|{entry}}/, 0 };
+    #            LL, AL, IC, Regular Expression, Flags
+
+    # Indent functions, proecdures and types
+    IndentRx = { -1,  0,  1, /^{{global}|{export}}*\s*{{function}|{procedure}|{type}}\s+/, 0 };
+
+    # if, for, while loop indentations, ignore if end exists on the line as well
+    IndentRx = { -1,  0,  0, /^.*\send.*$/, 2 };
+    IndentRx = { -1,  0,  1, /^\s*{{if}|{for}|{while}}\s+/, 0 };
+
+    # Switch statement indents 2, case statements outdent 1
+    IndentRx = { -1,  0,  2, /^\s*switch\s+/, 0 };
+    IndentRx = {  0,  0, -2, /^\s*end\s+switch\s*{--.*}*$/, 0 };
+
+    # Indents/single outdents that are at the end of a line
+    IndentRx = {  0,  0, -1, /^\s*{{do}|{else}|{entry}|{then}}\s*{--.*}*$/, 0 };
+    IndentRx = { -1,  0,  1, /^\s*{{do}|{else}|{entry}|{then}}\s*{--.*}*$/, 0 };
+
+    # Indents that are in the middle of a line
+    IndentRx = {  0,  0, -1, /^\s*{{elsif}|{case}}\s+/, 0 };
+    IndentRx = { -1,  0,  1, /^\s*{{elsif}|{case}}\s+/, 0 };
+
+    # Outdents
+    IndentRx = {  0,  0, -1, /^\s*end\s+{{if}|{for}|{while}|{procedure}|{function}|{type}}/, 0 };
+
+    # Indent common types that appear on their own line and ending continuation characters
+    IndentRx = { -1,  0,  0, /^\s*\-\-/, 2 }; # Ignore the next regex
+    IndentRx = { -1,  0,  1, /^{{enum}|{constant}|{atom}|{integer}|{sequence}|{object}|{.*[{,]}}\s*{--.*}*$/, 1 };
+    IndentRx = { -1,  0,  0, /^\s*\-\-/, 2 }; # Ignore the next regex
+    IndentRx = { -1,  0,  1, /^.*[\+\-\*&]\s*{--.*}*$/, 1 };
     %endif
 }
 
-oinclude "mym_euphoria.fte";
-
 eventmap EUPHORIA {
-    key [Tab]   { LineIndent; LineTrim; }
-    key [A+\\] { BlockReIndent; FileTrim; WinRefresh; }
-    key [G-Enter] { LineIndent; LineAdd; LineIndent; }
+    key [Tab]       { LineIndent; LineTrim; }
+    key [A+\\]      { BlockReIndent; FileTrim; WinRefresh; }
+    key [G-Enter]   { LineIndent; LineTrim; LineAdd; LineIndent; }
     key [A+G-Enter] { LineIndent; LineNew; LineIndent; }
     key [S+G-Enter] { LineIndent; LineInsert; LineIndent; }
 
@@ -136,3 +152,5 @@ eventmap EUPHORIA {
         LineNew; 2:MoveUp; InsertString "\t";
     }
 }
+
+oinclude "mym_euphoria.fte";
