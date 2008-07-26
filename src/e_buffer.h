@@ -86,6 +86,7 @@ public:
     int Count;
     char *Chars;
     hlState StateE;
+    int IndentContinuation;
 
     ELine(int ACount, const char *AChars);
     ELine(char *AChars, int ACount);

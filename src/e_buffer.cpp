@@ -972,6 +972,10 @@ int EBuffer::JoinLine(int Row, int Col) {
     if (BFI(this, BFI_ReadOnly) == 1) return 0;
     if (Row < 0 || Row >= RCount - 1) return 0;
     if (Col < 0) return 0;
+
+    MoveFirstNonWhite();
+    KillToLineStart();
+
     Len = LineLen(Row);
     if (Col < Len) Col = Len;
     VLine = RToV(Row);

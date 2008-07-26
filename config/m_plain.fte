@@ -54,6 +54,16 @@ mode PLAIN {
     UndoLimit           = 1023;      # num of changes to save
     UndoMoves           = 0;         # undo cursor movement commands
     WordWrap            = 0;         # word wrap (off = 0, line = 1, paragraph=2)
+
+    # UNIX files have no CR at the end of line
+    %if(OS_UNIX)
+    # Don't autodetect line separator
+    DetectLineSep = 0;
+    # Don't add CR at EOL when saving
+    AddCR      = 0;
+    # Don't remove CR if at EOL when loading
+    StripChar  = -1;
+    %endif
 }
 
 oinclude 'mym_plain.fte';

@@ -1064,19 +1064,23 @@ static int ReadMode(CurPos &cp, EMode *Mode, const char * /*ModeName*/) {
         break;
 
         case CF_INDENTRX: {
-            long affect_line, indent_count;
+            long look_line, affect_line, indent_count, flags;
             const char *regexp;
 
             cpos++;
 
+            if (GetObj(cp, len) != CF_INT) return -1;
+            if (GetNum(cp, look_line) == 0) return -1;
             if (GetObj(cp, len) != CF_INT) return -1;
             if (GetNum(cp, affect_line) == 0) return -1;
             if (GetObj(cp, len) != CF_INT) return -1;
             if (GetNum(cp, indent_count) == 0) return -1;
             if (GetObj(cp, len) != CF_REGEXP) return -1;
             if ((regexp = GetCharStr(cp, len)) == 0) return -1;
+            if (GetObj(cp, len) != CF_INT) return -1;
+            if (GetNum(cp, flags) == 0) return -1;
 
-            Mode->AddIndentRx(affect_line, indent_count, regexp);
+            Mode->AddIndentRx(look_line, affect_line, indent_count, regexp, flags);
         }
         break;
 

@@ -1345,27 +1345,38 @@ static int ParseConfigFile(CurPos &cp) {
                     GetOp(cp, P_ASSIGN);
 
                     if (strcmp(w, "IndentRx") == 0) {
-                        long affect_line, indent_cnt;
+                        long look_line, affect_line, indent_cnt, flags;
                         char *regexp;
 
                         if (Parse(cp) != P_OPENBRACE) Fail(cp, "'{' expected");
                         GetOp(cp, P_OPENBRACE);
-                        if (Parse(cp) != P_NUMBER) Fail(cp, "Number expected");
+                        if (Parse(cp) != P_NUMBER) Fail(cp, "Number expected while parsing Look Line");
+                        look_line = GetNumber(cp);
+                        if (Parse(cp) != P_COMMA) Fail(cp, "',' expected");
+                        GetOp(cp, P_COMMA);
+                        if (Parse(cp) != P_NUMBER) Fail(cp, "Number expected while parsing Affect Line");
                         affect_line = GetNumber(cp);
                         if (Parse(cp) != P_COMMA) Fail(cp, "',' expected");
                         GetOp(cp, P_COMMA);
-                        if (Parse(cp) != P_NUMBER) Fail(cp, "Number expected");
+                        if (Parse(cp) != P_NUMBER) Fail(cp, "Number expected while parsing Indent Count");
                         indent_cnt = GetNumber(cp);
                         if (Parse(cp) != P_COMMA) Fail(cp, "',' expected");
                         GetOp(cp, P_COMMA);
                         if (Parse(cp) != P_STRING) Fail(cp, "String expected");
                         regexp = GetString(cp);
+                        if (Parse(cp) != P_COMMA) Fail(cp, "',' expected");
+                        GetOp(cp, P_COMMA);
+                        if (Parse(cp) != P_NUMBER) Fail(cp, "Number expected");
+                        flags = GetNumber(cp);
                         if (Parse(cp) != P_CLOSEBRACE) Fail(cp, "'}' expected");
                         GetOp(cp, P_CLOSEBRACE);
                         PutNull(cp, CF_INDENTRX);
+
+                        PutNumber(cp, CF_INT, look_line);
                         PutNumber(cp, CF_INT, affect_line);
                         PutNumber(cp, CF_INT, indent_cnt);
                         PutString(cp, CF_REGEXP, regexp);
+                        PutNumber(cp, CF_INT, flags);
                         if (Parse(cp) != P_EOS) Fail(cp, "';' expected");
                         GetOp(cp, P_EOS);
                     } else {
