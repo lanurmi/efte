@@ -3,16 +3,16 @@
 
 [Setup]
 AppName=eFTE
-AppVerName=eFTE 1.0
+AppVerName=eFTE 0.97
 AppPublisher=eFTE SF Group
-AppPublisherURL=http://efte.sourceforge.net
-AppSupportURL=http://efte.sourceforge.net
-AppUpdatesURL=http://efte.sourceforge.net
+AppPublisherURL=http://efte.cowgar.com
+AppSupportURL=http://efte.cowgar.com
+AppUpdatesURL=http://efte.cowgar.com
 DefaultDirName={pf}\eFTE
 DefaultGroupName=eFTE
-LicenseFile=C:\Users\Jeremy\Projects\efte\COPYING
-OutputDir=C:\Users\Jeremy\Projects\efte\packaging\windows\x86
-OutputBaseFilename=setup
+LicenseFile=C:\efte\COPYING
+OutputDir=C:\efte\packaging\windows\x86
+OutputBaseFilename=efte-0.97
 Compression=lzma
 SolidCompression=yes
 
@@ -24,19 +24,18 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "C:\Users\Jeremy\Projects\efte\build\src\efte.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\Jeremy\Projects\efte\build\src\cefte.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\Jeremy\Projects\efte\config\*"; DestDir: "{app}\config"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "C:\Users\Jeremy\Projects\efte\AUTHORS"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\Jeremy\Projects\efte\Artistic"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\Jeremy\Projects\efte\COPYING"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\Jeremy\Projects\efte\HISTORY"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\Jeremy\Projects\efte\README"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\efte\build\src\efte.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\efte\config\*"; DestDir: "{app}\config"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "C:\efte\AUTHORS"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\efte\Artistic"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\efte\COPYING"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\efte\HISTORY"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\efte\README"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
 Name: "{group}\eFTE"; Filename: "{app}\efte.exe"
-Name: "{group}\{cm:ProgramOnTheWeb,eFTE}"; Filename: "http://efte.sourceforge.net"
+Name: "{group}\{cm:ProgramOnTheWeb,eFTE}"; Filename: "http://efte.cowgar.com"
 Name: "{group}\{cm:UninstallProgram,eFTE}"; Filename: "{uninstallexe}"
 Name: "{commondesktop}\eFTE"; Filename: "{app}\efte.exe"; Tasks: desktopicon
 Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\eFTE"; Filename: "{app}\efte.exe"; Tasks: quicklaunchicon
