@@ -99,7 +99,6 @@ int Indent_Plain(EBuffer *B, int Line, int PosCursor) {
 
         for (int i=0; i < B->Mode->indent_count; i++) {
             if (skip) {
-                fprintf(stderr, "%i was skipped\n", i);
                 skip = 0;
                 continue;
             }
@@ -110,34 +109,25 @@ int Indent_Plain(EBuffer *B, int Line, int PosCursor) {
             char *ll = B->RLine(look_line)->Chars;
             int llcount = B->RLine(look_line)->Count;
 
-            fprintf(stderr, "Line=%i, PLine=%i, i=%i, LLine=%i\n",
-                    Line, PLine, i, look_line);
-
             if (RxExecMatch(B->Mode->indents[i].regex, ll, llcount, ll, &b, RX_CASE)) {
-                fprintf(stderr, "...Matched\n");
                 switch (B->Mode->indents[i].flags) {
                 case 1:
-                    fprintf(stderr, "...Continuation\n");
                     B->RLine(Line)->IndentContinuation = i;
                     if (B->RLine(PLine)->IndentContinuation != i) {
-                        fprintf(stderr, "...Line not indented yet\n");
                         indent_offset += B->Mode->indents[i].indent * 4;
                     }
                     break;
 
                 case 2:
-                    fprintf(stderr, "...Skip Next\n");
                     skip = 1;
                     break;
 
                 default:
-                    fprintf(stderr, "...Normal\n");
                     indent_offset += B->Mode->indents[i].indent * 4;
                 }
             } else if (B->Mode->indents[i].flags == 1 &&
                        B->RLine(look_line)->IndentContinuation == i)
             {
-                fprintf(stderr, "...Unindenting indent\n");
                 indent_offset -= B->Mode->indents[i].indent * 4;
             }
         }
