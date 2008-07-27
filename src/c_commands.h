@@ -780,8 +780,10 @@ typedef enum {
     /// Delete content's of selection and paste clipboard to current position
     ExGetString,
     /// Get a string from the user
-    ExRegExp
+    ExRegExp,
     /// Perform a Regular Expression conversion into a user variable
+    ExExpandTemplate
+    /// Expand a user based template
 } ExCommands;
 
 #endif

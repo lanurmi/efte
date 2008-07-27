@@ -850,6 +850,8 @@ int EBuffer::ExecCommand(int Command, ExState &State) {
         return GetString(State);
     case ExRegExp:
         return RegExp(State);
+    case ExExpandTemplate:
+        return ExpandTemplate(State);
     }
     return EModel::ExecCommand(Command, State);
 }
@@ -875,7 +877,7 @@ int EBuffer::GetString(ExState &State) {
 }
 
 int EBuffer::RegExp(ExState &State) {
-    int No = 0, result;
+    int No = 0;
     char Haystack[1024], Search[128], Replace[128];
     RxNode *re;
     RxMatchRes match;
@@ -906,6 +908,108 @@ int EBuffer::RegExp(ExState &State) {
     GetStrVars[No][dest_len] = 0;
 
     RxFree(re);
+
+    return 1;
+}
+
+int EBuffer::ExpandTemplate(ExState &State) {
+    char FileName[MAXPATH+1] = "", ExpandedFileName[MAXPATH+1];
+
+    if (State.GetStrParam(View, FileName, MAXPATH) == 0) {
+        if (View->MView->Win->GetStr("Filename", MAXPATH, FileName, HIST_PATH) == 0)
+            return 0;
+    }
+
+    ExpandPath(FileName, ExpandedFileName, MAXPATH);
+
+    FILE *fp;
+    char buf[8192];
+
+    fp = fopen(ExpandedFileName, "rb");
+    if (fp == NULL) {
+        Msg(S_ERROR, "Could not open template file %s.", FileName);
+        return 0;
+    }
+
+    int len = fread(buf, 1, 8192, fp);
+    buf[len] = 0;
+    fclose(fp);
+
+    char values[20][128];
+    char prompts[20][64];
+    const char *repl = "\\1\\{\\2\\4";
+
+    RxNode *re = RxCompile("(.#)\\{([0-9]+):([^\\}]+)(.*)");
+    RxMatchRes match;
+    char *r = 0;
+    int r_len = 0;
+
+    while (RxExec(re, buf, len, buf, &match) && match.Open[2] != -1) {
+        int num = atoi(buf + match.Open[2]);
+        strncpy(prompts[num], buf + match.Open[3], match.Close[3] - match.Open[3]);
+        prompts[num][match.Close[3] - match.Open[3]] = 0;
+
+        strcpy(values[num], "");
+        if (View->MView->Win->GetStr(prompts[num], sizeof(values[num]), values[num], HIST_DEFAULT) == 0) {
+            RxFree(re);
+            return 0;
+        }
+
+        RxReplace(repl, buf, strlen(buf), match, &r, &r_len);
+        r[r_len] = 0;
+        strncpy(buf, r, r_len);
+        buf[r_len] = 0;
+        free(r);
+
+        len = r_len;
+    }
+
+    RxFree(re);
+
+    char rw[256];
+    re = RxCompile("(.#)(\\{([0-9]+)\\})(.*)");
+    while (RxExec(re, buf, len, buf, &match) && match.Open[3] != -1) {
+        int num = atoi(buf + match.Open[3]);
+        snprintf(rw, 256, "\\1%s\\4", values[num]);
+
+        RxReplace(rw, buf, strlen(buf), match, &r, &r_len);
+        r[r_len] = 0;
+        strncpy(buf, r, r_len);
+        buf[r_len] = 0;
+        free(r);
+
+        len = r_len;
+    }
+
+    int nl = 0, goto_row = -1, goto_col = -1, at = 0;
+    for (int a = 0; a < len; a++) {
+        if (buf[a] == 10 || buf[a] == 13) {
+            LineIndent();
+            LineNew();
+            LineIndent();
+            nl = 1;
+        } else if (nl && (buf[a] == ' ' || buf[a] == '\t')) {
+            // ignore
+        } else {
+            InsertChar(buf[a]);
+            if (buf[a] == '@')
+                at++;
+            if (at == 2) {
+                KillCharPrev();
+                KillCharPrev();
+
+                goto_row = CP.Row;
+                goto_col = CP.Col;
+                at = 0;
+            }
+
+            nl = 0;
+        }
+    }
+
+    if (goto_row != -1) {
+        SetPos(goto_col, goto_row);
+    }
 
     return 1;
 }

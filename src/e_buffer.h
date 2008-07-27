@@ -764,6 +764,7 @@ public:
 
     int GetString(ExState &State);
     int RegExp(ExState &State);
+    int ExpandTemplate(ExState &State);
 };
 
 extern EBuffer *SSBuffer;
