@@ -763,6 +763,7 @@ public:
     int FoldCreateAtRoutines();
 
     int GetString(ExState &State);
+    int RegExp(ExState &State);
 };
 
 extern EBuffer *SSBuffer;

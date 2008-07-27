@@ -778,8 +778,10 @@ typedef enum {
 
     ExBlockPasteOver,
     /// Delete content's of selection and paste clipboard to current position
-    ExGetString
+    ExGetString,
     /// Get a string from the user
+    ExRegExp
+    /// Perform a Regular Expression conversion into a user variable
 } ExCommands;
 
 #endif

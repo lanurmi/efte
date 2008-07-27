@@ -318,8 +318,8 @@ eventmap PLAIN: MODEL {
     key     [C+O_A+\]]  { ChangeRightMargin }
     key     [C+O_Tab]   { ToggleShowTabs ; WinRefresh }
     key     [C+O_C+Tab] { ToggleExpandTabs ; WinRefresh }
-    key     [C+O_G-Del]   { ToggleDeleteKillTab }
-    key     [C+O_G-Ins]   { ToggleInsert }
+    key     [C+O_G-Del] { ToggleDeleteKillTab }
+    key     [C+O_G-Ins] { ToggleInsert }
     key    [C+O_BackSp] { ToggleBackSpKillTab }
     key     [C+O_Space] { ToggleIndentWithTabs }
     key  [C+O_C+BackSp] { ToggleBackSpUnindents }
@@ -359,4 +359,6 @@ eventmap PLAIN: MODEL {
     key     [A+\]]    { TagNext }
     key     [A+[]     { TagPrev }
     key     [S+Tab]   { InsertTab; LineTrim }
+
+    key     [A+\\]    { BlockReIndent; }
 }

@@ -848,6 +848,8 @@ int EBuffer::ExecCommand(int Command, ExState &State) {
         return ShowHelpWord(State);
     case ExGetString:
         return GetString(State);
+    case ExRegExp:
+        return RegExp(State);
     }
     return EModel::ExecCommand(Command, State);
 }
@@ -868,6 +870,42 @@ int EBuffer::GetString(ExState &State) {
 
     if (View->MView->Win->GetStr(Prompt, sizeof(GetStrVars[No]), GetStrVars[No], HIST_POSITION) == 0)
         return 0;
+
+    return 1;
+}
+
+int EBuffer::RegExp(ExState &State) {
+    int No = 0, result;
+    char Haystack[1024], Search[128], Replace[128];
+    RxNode *re;
+    RxMatchRes match;
+    char *dest = 0;
+    int dest_len = 0;
+
+    State.GetIntParam(View, &No);
+    State.GetStrParam(View, Haystack, sizeof(Haystack));
+    State.GetStrParam(View, Search, sizeof(Search));
+    State.GetStrParam(View, Replace, sizeof(Replace));
+
+    re = RxCompile(Search);
+    /*
+    if (RxExec(re, Haystack, strlen(Haystack), Haystack, &match) == 0) {
+        RxFree(re);
+        return 0;
+    }
+
+    if (RxReplace(Replace, Haystack, strlen(Haystack), match, &dest, &dest_len) == 0) {
+        RxFree(re);
+        return 0;
+    }
+    */
+
+    RxExec(re, Haystack, strlen(Haystack), Haystack, &match);
+    RxReplace(Replace, Haystack, strlen(Haystack), match, &dest, &dest_len);
+    strncpy(GetStrVars[No], dest, sizeof(GetStrVars[No]));
+    GetStrVars[No][dest_len] = 0;
+
+    RxFree(re);
 
     return 1;
 }

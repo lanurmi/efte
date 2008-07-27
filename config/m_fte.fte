@@ -58,7 +58,7 @@ colorize FTE {
         'KillWordPrev', 'LineAdd', 'LineCaseDown', 'LineCaseToggle',
         'LineCaseUp', 'LineCenter', 'LineDuplicate', 'LineIndent',
         'LineInsert', 'LineJoin', 'LineNew', 'LineSplit', 'LineTrans',
-        'LineTrim', 'ListRoutines', 'LocalMenu', 
+        'LineTrim', 'ListRoutines', 'LocalMenu',
         'MakeDirectory', 'MainMenu', 'MatchBracket',
         'MoveBeginLinePageFile', 'MoveBeginOrNonWhite', 'MoveBlockEnd',
         'MoveBlockStart', 'MoveDown', 'MoveEndLinePageFile', 'MoveFileEnd',
@@ -74,8 +74,9 @@ colorize FTE {
         'MoveWordEndLeft', 'MoveWordEndNext', 'MoveWordEndPrev',
         'MoveWordEndRight', 'MoveWordLeft', 'MoveWordNext', 'MoveWordPrev',
         'MoveWordRight', 'PlaceBookmark', 'PlaceGlobalBookmark',
-        'PopGlobalBookmark', 'PushGlobalBookmark', 
-        'Redo', 'RemoveBookmark', 'RemoveGlobalBookmark', 'RenameFile', 'Rescan', 'RunCompiler', 'RunProgram',
+        'PopGlobalBookmark', 'PushGlobalBookmark',
+        'Redo', 'RegExp', 'RemoveBookmark', 'RemoveGlobalBookmark', 'RenameFile',
+        'Rescan', 'RunCompiler', 'RunProgram',
         'SavePos', 'ScrollDown', 'ScrollLeft', 'ScrollRight', 'ScrollUp',
         'SearchWordPrev', 'SearchWordNext',
         'SelfInsert', 'SetCIndentStyle', 'SetLeftMargin', 'SetPrintDevice',
@@ -100,7 +101,7 @@ colorize FTE {
         'C_CommentDelta', 'C_CommentOfs', 'C_Continuation',
         'C_FirstLevelIndent', 'C_FirstLevelWidth', 'C_Indent', 'C_ParenDelta',
         'Colorizer', 'CommentEnd', 'CommentStart', 'CompileCommand',
-        'CompileRx', 'CompletionFilter', 'CursorBlink', 'CursorInsertMask', 'CursorOverMask', 
+        'CompileRx', 'CompletionFilter', 'CursorBlink', 'CursorInsertMask', 'CursorOverMask',
         'CursorThroughTabs', 'CursorWithinEOL', 'CvsCommand', 'CvsIgnoreRx',
         'DefaultModeName', 'DefFindOpt', 'DefFindReplaceOpt', 'DeleteKillBlock',
         'DeleteKillTab', 'DetectLineSep',
@@ -118,7 +119,7 @@ colorize FTE {
         'ScrollBorderY', 'ScrollJumpX', 'ScrollJumpY', 'SeeThruSel',
         'SelectPathname', 'ShowHScroll', 'ShowMarkers', 'ShowMenuBar',
         'ShowTabs', 'ShowToolBar', 'ShowVScroll', 'SpaceTabs', 'StripChar',
-        'SvnCommand', 'SvnIgnoreRx','SyntaxParser', 'SysClipboard', 
+        'SvnCommand', 'SvnIgnoreRx','SyntaxParser', 'SysClipboard',
         'TabSize', 'Trim', 'TrimOnSave',
         'UndoLimit', 'UndoMoves', 'WeirdScroll', 'WordChars', 'WordWrap',
         'XShellCommand'
@@ -137,7 +138,10 @@ mode FTE: SOURCE {
     CommentStart        = ' #';
     CommentEnd          = '';
 
-    RoutineRegexp       = /^{mode}|{sub}|{menu}|{object}|{eventmap}|{colorize} /;
+    RoutineRegexp       = /^{mode}|{sub}|{menu}|{object}|{eventmap}|{colorize}\s+/;
+
+    IndentRx = { -1, 0,  1, /\{\s*{\#.*}*$/, 0 };
+    IndentRx = {  0, 0, -1, /\}\s*{\;}*\s*{\#.*}*$/, 0 };
 }
 
 oinclude 'mym_fte.fte';
