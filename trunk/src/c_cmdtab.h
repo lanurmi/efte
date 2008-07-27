@@ -375,14 +375,8 @@ const struct {
     TAB(RunSvnCommit),
     TAB(ViewSvnLog),
 
-    TAB(GetString)
-
-#if 0
-//TAB(ShowMsg),
-    TAB(BlockReadPipe),
-    TAB(BlockWritePipe),
-    TAB(BlockPipe),
-#endif
+    TAB(GetString),
+    TAB(RegExp)
 };
 
 #endif // CMDTAB_H
