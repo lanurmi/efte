@@ -136,20 +136,12 @@ mode EUPHORIA: SOURCE {
 eventmap EUPHORIA {
     key [Tab]       { LineIndent; LineTrim; }
     key [A+\\]      { BlockReIndent; FileTrim; WinRefresh; }
-    key [G-Enter]   { LineIndent; LineTrim; LineAdd; LineIndent; }
+    key [G-Enter]   { LineIndent; LineNew; }
     key [A+G-Enter] { LineIndent; LineNew; LineIndent; }
     key [S+G-Enter] { LineIndent; LineInsert; LineIndent; }
 
     abbrev 'fore' {
-        GetString 0 "Index" "idx";
-        GetString 1 "Source";
-        GetString 2 "Value";
-        KillWordPrev;
-        InsertString "for " . $Str0 . " = 1 to length(" . $Str1 . ") do"; LineNew;
-        InsertString "object " . $Str2 . " = " . $Str1 . "[" . $Str0 . "]"; LineNew;
-        LineNew;
-        InsertString "end for"; LineIndent;
-        LineNew; 2:MoveUp; InsertString "\t";
+        KillWordPrev; ExpandTemplate "~/.efte/templates/eu_fore.e";
     }
 }
 

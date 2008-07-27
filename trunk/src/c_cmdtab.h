@@ -376,7 +376,8 @@ const struct {
     TAB(ViewSvnLog),
 
     TAB(GetString),
-    TAB(RegExp)
+    TAB(RegExp),
+    TAB(ExpandTemplate)
 };
 
 #endif // CMDTAB_H
