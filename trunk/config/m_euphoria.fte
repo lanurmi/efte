@@ -81,7 +81,7 @@ colorize EUPHORIA {
 }
 
 mode EUPHORIA: SOURCE {
-    FileNameRx         = /\c\.{e}|{ew}|{eu}|{ed}|{ex}|{exu}|{exw}|{exd}$/;
+    FileNameRx         = /\c{{\.{e}|{ew}|{eu}|{ed}|{ex}|{exu}|{exw}|{exd}$}|{ex.err}}/;
     HilitOn            = 1;
     Colorizer          = "EUPHORIA";
     AutoIndent         = 1;
