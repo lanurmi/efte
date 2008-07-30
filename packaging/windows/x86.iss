@@ -3,7 +3,7 @@
 
 [Setup]
 AppName=eFTE
-AppVerName=eFTE 0.97
+AppVerName=eFTE 0.98
 AppPublisher=eFTE SF Group
 AppPublisherURL=http://efte.cowgar.com
 AppSupportURL=http://efte.cowgar.com
@@ -12,7 +12,7 @@ DefaultDirName={pf}\eFTE
 DefaultGroupName=eFTE
 LicenseFile=C:\efte\COPYING
 OutputDir=C:\efte\packaging\windows\x86
-OutputBaseFilename=efte-0.97
+OutputBaseFilename=efte-0.98
 Compression=lzma
 SolidCompression=yes
 
@@ -31,6 +31,8 @@ Source: "C:\efte\Artistic"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\efte\COPYING"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\efte\HISTORY"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\efte\README"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\WATCOM\binnt\clbr17.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\WATCOM\binnt\plbr17.dll"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]

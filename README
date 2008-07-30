@@ -1,9 +1,9 @@
 
-                          eFTE, Version 1.0 Alpha 1
+                          eFTE, Version 0.98
 
-                      Copyright 2008 by eFTE SF Group.
-                     Copyright 1994-1998 by Marko Macek.
-                            All rights reserved.
+                   Copyright 2008 by eFTE SF Group.
+                  Copyright 1994-1998 by Marko Macek.
+                         All rights reserved.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of either:
@@ -33,12 +33,12 @@ WWW: http://efte.sourceforge.net
 Current Authors (alphabetical order):
     Jeremy Cowgar..... jeremy_c@users.sourceforge.net
     Lauri Nurmi....... lanurmi@users.sourceforge.net
-    Timo Sirainen..... cras@users.sourceforge.net
 
 Original Author: Marko Macek
 Original URL:    http://fte.sourceforge.net
 
 FTE Contributors:
+  - Timo Sirainen
   - F.Jalvingh
     NT/Win95/DOS port.
   - Markus F.X.J. Oberhumer <markus.oberhumer@jk.uni-linz.ac.at>

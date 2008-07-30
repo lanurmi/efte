@@ -12,6 +12,7 @@ Revision history
   - First release of eFTE
   - Branded FTE to be eFTE
   - Removed DJGPP support
+  - Migrated to SVN for revision control
   + Added CursorWithinEOL
   + Added searching in the Routine List
   + Added new mode for CMake files
@@ -20,17 +21,15 @@ Revision history
   ! BlockRead command was not expanding any file
   ! WM_COMMAND now set in X11 binary
   - Removed partially implemented block cursor sizing
-  + Added FalconMode for the falcon programming language
   + Added DesktopLoad command
   + Added oinclude command which optionally includes a configuration file
   + Modes are now user configurable w/o need to edit actual mode file
   - Cleaned up code a bit with manual and automatic formatting (astyle)
   - Converted from Makefiles to CMake on Win32, Unixes and OS/X
   ! assert bug fixed when compiling with newer Microsoft compilers
-  + Configuration compiler and loading is now much smarter
+  + Configuration compiler loading is now much smarter
   - Moved all documentation to the wiki where it is now user editable
     as well as developer editable.
-  + Added flow control to the macro system
   ! Many minor bug fixes
   - Began native Mac OS X GUI interface
   + Added configuration variable BackupDirectory to allow storing backups
@@ -44,8 +43,14 @@ Revision history
   + Removed binary configuration dependency. eFTE now reads the
     plain text configuration files
   + Added a nicer help screen
-  + GetString and $Get0-$Get9
+  ! WM_HINTS are set properly in X11
+  + GetString and $Str0-$Str9
   + User defined mode based generic indentation system
+  + RegExp macro to perform regular expression replacements on user variables
+  + ExpandTemplate macro for advanced user templates
+  + Added user defined regular expression based indentation engine for any mode
+  + Added new modes for Euphoria, Lua, VHDL
+  ! Many bugs fixed in the bash syntax parser
 
 0.50.1 -- January 17, 2008
   - Forked from FTE (http://fte.sourceforge.net)

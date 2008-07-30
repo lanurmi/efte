@@ -7,7 +7,7 @@ eventmap C {
     key [:]         { SelfInsert; ?LineIndent }
     key [#]         { SelfInsert; ?LineIndent }
     #key [A+\\]      { BlockReIndent; FileTrim; WinRefresh }
-    key [G-Enter]   { LineIndent; LineNew; LineIndent }
+    key [G-Enter]   { LineIndent; LineNew; }
     key [A+G-Enter] { LineIndent; LineAdd; LineIndent }
     key [S+G-Enter] { LineIndent; LineInsert; LineIndent }
 }

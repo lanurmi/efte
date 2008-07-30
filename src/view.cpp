@@ -664,6 +664,8 @@ int EView::ShowVersion() {
         FileLoad(0, "/usr/share/doc/efte/README", 0, this);
     else if (access("/efte/doc/README", 0) == 0)
         FileLoad(0, "/efte/doc/README", 0, this);
+    else if (access("/efte/README", 0) == 0)
+        FileLoad(0, "/efte/README", 0, this);
     else if (access("/Program Files/efte/doc/README", 0) == 0)
         FileLoad(0, "/Program Files/efte/doc/README", 0, this);
     else if (access("/Program Files (x86)/doc/README", 0) == 0)
