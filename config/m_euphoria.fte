@@ -24,7 +24,7 @@ colorize EUPHORIA {
         "global",
         "include", "if",
         "not",
-        "or",
+        "or", "override",
         "procedure",
         "switch",
         "then", "type", "to",
@@ -92,7 +92,7 @@ mode EUPHORIA: SOURCE {
     AutoHilitParen     = 1;
     SaveFolds          = 0;
 
-    RoutineRegexp      = /^{{global}|{export}}*\s*{{function}|{procedure}|{type}}\s+/;
+    RoutineRegexp      = /^{{override}|{global}|{export}}*\s*{{function}|{procedure}|{type}}\s+/;
 
     %if(INDENT)
     # LL = Look Line -- Which line to look at?
@@ -104,7 +104,7 @@ mode EUPHORIA: SOURCE {
     #            LL, AL, IC, Regular Expression, Flags
 
     # Indent functions, proecdures and types
-    IndentRx = { -1,  0,  1, /^{{global}|{export}}*\s*{{function}|{procedure}|{type}}\s+/, 0 };
+    IndentRx = { -1,  0,  1, /^{{override}|{global}|{export}}*\s*{{function}|{procedure}|{type}}\s+/, 0 };
 
     # if, for, while loop indentations, ignore if end exists on the line as well
     IndentRx = { -1,  0,  0, /^.*\send.*$/, 2 };
@@ -127,7 +127,7 @@ mode EUPHORIA: SOURCE {
 
     # Indent common types that appear on their own line and ending continuation characters
     IndentRx = { -1,  0,  0, /^\s*\-\-/, 2 }; # Ignore the next regex
-    IndentRx = { -1,  0,  1, /^{{enum}|{constant}|{atom}|{integer}|{sequence}|{object}|{.*[{,]}}\s*{--.*}*$/, 1 };
+    IndentRx = { -1,  0,  1, /^{{global}|{export}}*\s*{{enum}|{constant}|{atom}|{integer}|{sequence}|{object}|{.*[\{,]}}\s*{--.*}*$/, 1 };
     IndentRx = { -1,  0,  0, /^\s*\-\-/, 2 }; # Ignore the next regex
     IndentRx = { -1,  0,  1, /^.*[\+\-\*&]\s*{--.*}*$/, 1 };
     %endif
@@ -135,14 +135,9 @@ mode EUPHORIA: SOURCE {
 
 eventmap EUPHORIA {
     key [Tab]       { LineIndent; LineTrim; }
-    key [A+\\]      { BlockReIndent; FileTrim; WinRefresh; }
     key [G-Enter]   { LineIndent; LineNew; }
     key [A+G-Enter] { LineIndent; LineNew; LineIndent; }
     key [S+G-Enter] { LineIndent; LineInsert; LineIndent; }
-
-    abbrev 'fore' {
-        KillWordPrev; ExpandTemplate "~/.efte/templates/eu_fore.e";
-    }
 }
 
 oinclude "mym_euphoria.fte";
