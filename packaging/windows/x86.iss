@@ -31,9 +31,7 @@ Source: "C:\efte\Artistic"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\efte\COPYING"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\efte\HISTORY"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\efte\README"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\WATCOM\binnt\clbr17.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\WATCOM\binnt\plbr17.dll"; DestDir: "{app}"; Flags: ignoreversion
-; NOTE: Don't use "Flags: ignoreversion" on any shared system files
+Source: "C:\Program Files\Microsoft Visual Studio 9.0\VC\redist\x86\Microsoft.VC90.CRT\*.dll"; DestDir: "{app}"
 
 [Icons]
 Name: "{group}\eFTE"; Filename: "{app}\efte.exe"
