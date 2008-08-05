@@ -390,8 +390,9 @@ int FileExists(const char *Path) {
 int IsFullPath(const char *Path) {
     if (ISSLASH(Path[0])
 #if PATHTYPE == PT_DOSISH
-            || (Path[0] != 0 && Path[1] == ':')
+        || (Path[0] != 0 && Path[1] == ':')
 #endif
+        || (Path[0] != 0 && Path[1] != 0 && Path[0] == '.' && ISSLASH(Path[1]) )
        )
         return 1;
     else
