@@ -19,10 +19,10 @@
 
 #%define(COLORS_GRAY_BG)
 #%define(COLORS_WHITE_BG)
-#%define(COLORS_BLACK_BG)
+%define(COLORS_BLACK_BG)
 #%define(COLORS_BLUE_BG)
 #%define(COLORS_BLUEZ_BG)
-%define(COLORS_NCE_BG)
+#%define(COLORS_NCE_BG)
 
 %if(OS_OS2)
 %define(GUI_PM)
