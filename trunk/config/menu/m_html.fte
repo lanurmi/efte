@@ -1,6 +1,6 @@
-# FTE menus for editing HTML files
-# maintained by m_debusk@sourceforge.com
-# Revision 2001-11-18
+# eFTE menus for editing HTML files
+# contributed by m_debusk@sourceforge.com
+# Revision 2008-08-01
 
 # HTML
 
@@ -181,9 +181,7 @@ menu HTMLTags {
     submenu "Ima&ges", HTML_Images;
     submenu "St&yles", HTML_Styles;
     submenu "P&rogramming", HTML_Prog;
-}
-
-menu HTMLTools {
+    item;
     item "&View in Browser\tF9" { FileSave; HTML_View }
     item "Save and &Tidy" {
         FileSave; HTML_Tidy; FileReload; }
@@ -191,15 +189,6 @@ menu HTMLTools {
         FileSave;
         RunProgram "E:\\ISPELL40\\ispell.exe " . $FilePath;
         FileReload; }
-    item;
-    item "&Shell\tAlt+F9" { RunProgram "" }
-    item "&Run...\tCtrl+F9" { RunProgram }
-    item;
-    item "&Previous error\tF11" { CompilePrevError }
-    item "&Next error\tF12" { CompileNextError }
-    item;
-    item "&Messages\tS+F9" { ViewMessages }
-    item "C&lear Messages" { ClearMessages }
 }
 
 menu Main_HTML {
@@ -208,7 +197,7 @@ menu Main_HTML {
     submenu "&Block",   Block;
     submenu "&Search",  Search;
     submenu "Fol&d",    Fold;
-    submenu "&Tools",   HTMLTools;
+    submenu "&Tools",   Tools;
     submenu "HT&ML",    HTMLTags;
     submenu "&Window",  Window;
     submenu "&Options", Options;

@@ -132,6 +132,8 @@ menu MSvn {
     item "SVN &Add"    { RunSvn "add" }
     item "SVN &Remove" { RunSvn "remove" }
     item "SVN Lo&g"    { RunSvn "log" }
+    item "SVN Re&vert" { RunSvn "revert" }
+    item "SVN &Blame"  { RunSvn "blame" }
     item "SV&N"        { Svn }
     item;
     item "&View SVN"	  { ViewSvn }

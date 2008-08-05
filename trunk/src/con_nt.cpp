@@ -54,7 +54,8 @@
 
 static int Initialized = 0;
 static int MousePresent = 0;
-static int CursorVisible = 1; /* 1 means visible */
+static int CursorVisible = 0; /* 1 means visible */
+static int CursorInsert = 1; /* 1 means insert */
 static int MouseVisible = 0; /* 0 means hidden */
 static TEvent MouseEv = { evNone };
 static TEvent EventBuf = { evNone };
@@ -96,7 +97,11 @@ void dbg(const char* s, ...) {
 CONSOLE_CURSOR_INFO cci;
 
 static void DrawCursor(int Show) {
-	cci.bVisible = TRUE;
+	if (cci.bVisible == CursorVisible &&
+		((cci.dwSize == 100 && CursorInsert) || (cci.dwSize == 10 && CursorInsert == 0)))
+		return;
+	cci.bVisible = CursorVisible ? TRUE : FALSE;
+	cci.dwSize = CursorInsert ? 100 : 10;
     SetConsoleCursorInfo(OurConOut, &cci);
 }
 
@@ -246,7 +251,7 @@ int ReadConsoleEvent(TEvent *E) {
     if (nread != 1) return False;                           // Nothing read after signal??
 
     switch (inp.EventType) {
-    case WINDOW_BUFFER_SIZE_EVENT:
+	case WINDOW_BUFFER_SIZE_EVENT:
         //** Resized the window. Make FTE use the new size..
         frames->Resize(inp.Event.WindowBufferSizeEvent.dwSize.X, inp.Event.WindowBufferSizeEvent.dwSize.Y);
         frames->Repaint();
@@ -467,7 +472,7 @@ int ConInit(int /*XSize*/, int /*YSize*/) {
     GetConsoleCursorInfo(OurConOut, &cci);
     cci.bVisible = TRUE;
     cci.dwSize=100;
-	DrawCursor(0);
+    SetConsoleCursorInfo(OurConOut, &cci);
 
     Initialized = 1;
     return 0;
@@ -487,7 +492,7 @@ int ConSuspend(void) {
 }
 
 int ConContinue(void) {
-    SetConsoleActiveScreenBuffer(OurConOut);
+	SetConsoleActiveScreenBuffer(OurConOut);
     GetConsoleMode(ConIn, &OldConsoleMode);
     SetConsoleMode(ConIn, ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT);
     {
@@ -499,7 +504,7 @@ int ConContinue(void) {
 
 int ConClear(void) {
     int W, H;
-    TDrawBuffer B;
+	TDrawBuffer B;
 
     MoveChar(B, 0, ConMaxCols, ' ', 0x07, 1);
     if ((ConQuerySize(&W, &H) == 0) &&
@@ -673,23 +678,37 @@ int ConSetSize(int X, int Y) {
     return -1;
 }
 
+// JNC: Trying to fix cursor problem.
+CONSOLE_SCREEN_BUFFER_INFO csbi;
+int queried = 0;
 int ConQuerySize(int *X, int *Y) {
-    CONSOLE_SCREEN_BUFFER_INFO csbi;
 
-    GetConsoleScreenBufferInfo(OurConOut, &csbi);
-    *X = csbi.dwSize.X;
-    *Y = csbi.dwSize.Y;
+	if (queried == 0) {
+		GetConsoleScreenBufferInfo(OurConOut, &csbi);
+	}
+	*X = csbi.dwSize.X;
+	*Y = csbi.dwSize.Y;
 
     dbg("Console size (%u,%u)\n", *X, *Y);
     return 0;
 }
 
+// JNC: Trying to fix cursor problem
+COORD xy;
+int set_cursor_pos = 0;
 int ConSetCursorPos(int X, int Y) {
-    COORD xy;
+	if (set_cursor_pos == 0) {
+		xy.X = 0;
+		xy.Y = 0;
+		set_cursor_pos = 1;
+	}
 
-    xy.X = X;
-    xy.Y = Y;
-    SetConsoleCursorPosition(OurConOut, xy);
+	if (xy.X != X || xy.Y != Y) {
+		xy.X = X;
+		xy.Y = Y;
+		SetConsoleCursorPosition(OurConOut, xy);
+	}
+
     return 0;
 }
 
@@ -703,14 +722,22 @@ int ConQueryCursorPos(int *X, int *Y) {
 }
 
 int ConShowCursor(void) {
+	// Do not draw the cursor if nothing has changed
+	if (CursorVisible == 1)
+		return 0;
+
     CursorVisible = 1;
-    //DrawCursor(1);
+    DrawCursor(1);
     return 0;
 }
 
 int ConHideCursor(void) {
+	// Do not draw the cursor if nothing has changed
+	if (CursorVisible == 0)
+		return 0;
+
     CursorVisible = 0;
-    //DrawCursor(0);
+    DrawCursor(0);
     return 0;
 }
 
@@ -719,7 +746,7 @@ int ConCursorVisible() {
 }
 
 void ConSetInsertState(bool insert) {
-	cci.dwSize = insert ? 100 : 10;
+	CursorInsert = insert;
 	DrawCursor(0);
 }
 
@@ -781,13 +808,13 @@ int SaveScreen() {
     SavedScreen = (PCell) malloc(SavedX * SavedY * sizeof(TCell));
 
     if (SavedScreen)
-        ConGetBox(0, 0, SavedX, SavedY, SavedScreen);
+		ConGetBox(0, 0, SavedX, SavedY, SavedScreen);
     ConQueryCursorPos(&SaveCursorPosX, &SaveCursorPosY);
     return 0;
 }
 
 int RestoreScreen() {
-    if (SavedScreen) {
+	if (SavedScreen) {
         ConPutBox(0, 0, SavedX, SavedY, SavedScreen);
         ConSetCursorPos(SaveCursorPosX, SaveCursorPosY);
     }
