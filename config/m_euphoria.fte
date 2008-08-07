@@ -23,11 +23,13 @@ colorize EUPHORIA {
         "for", "function",
         "global",
         "include", "if",
+        "loop",
         "not",
         "or", "override",
         "procedure",
         "switch",
         "then", "type", "to",
+        "until",
         "while",
         "xor"
     };
@@ -108,7 +110,7 @@ mode EUPHORIA: SOURCE {
 
     # if, for, while loop indentations, ignore if end exists on the line as well
     IndentRx = { -1,  0,  0, /^.*\send.*$/, 2 };
-    IndentRx = { -1,  0,  1, /^\s*{{if}|{for}|{while}}\s+/, 0 };
+    IndentRx = { -1,  0,  1, /^\s*{{if}|{ifdef}|{for}|{while}|{loop}}\s+/, 0 };
 
     # Switch statement indents 2, case statements outdent 1
     IndentRx = { -1,  0,  2, /^\s*switch\s+/, 0 };
@@ -119,11 +121,11 @@ mode EUPHORIA: SOURCE {
     IndentRx = { -1,  0,  1, /^\s*{{do}|{else}|{entry}|{then}}\s*{--.*}*$/, 0 };
 
     # Indents that are in the middle of a line
-    IndentRx = {  0,  0, -1, /^\s*{{elsif}|{case}}\s+/, 0 };
-    IndentRx = { -1,  0,  1, /^\s*{{elsif}|{case}}\s+/, 0 };
+    IndentRx = {  0,  0, -1, /^\s*{{elsifdef}|{elsif}|{case}}\s+/, 0 };
+    IndentRx = { -1,  0,  1, /^\s*{{elsifdef}|{elsif}|{case}}\s+/, 0 };
 
     # Outdents
-    IndentRx = {  0,  0, -1, /^\s*end\s+{{if}|{for}|{while}|{procedure}|{function}|{type}}/, 0 };
+    IndentRx = {  0,  0, -1, /^\s*{{until}|{end}}\s+{{if}|{for}|{while}|{loop}|{procedure}|{function}|{type}}/, 0 };
 
     # Indent common types that appear on their own line and ending continuation characters
     IndentRx = { -1,  0,  0, /^\s*\-\-/, 2 }; # Ignore the next regex

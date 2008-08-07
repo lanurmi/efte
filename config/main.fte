@@ -194,6 +194,7 @@ include 'm_falcon.fte';
 include 'm_fte.fte';
 include 'm_gawk.fte';
 include 'm_html.fte';
+include 'm_icon.fte';
 include 'm_idl.fte';
 include 'm_ipf.fte';
 include 'm_java.fte';
