@@ -425,10 +425,12 @@ void EBuffer::Redraw() {
                     else strcpy(CCharStr, "   EOF");
                 }
 
-                sprintf(s, "%04d:%02d %c%c%c%c%c %.6s %c",
+				sprintf(s, "%04d:%02d (%04d:%02d) %c%c%c%c%c %.6s %c",
                         //                    CurLine + 1,
                         ActLine + 1,
-                        CurColumn + 1,
+						CurColumn + 1,
+						NumLines + 1,
+						NumChars + 1,
                         //                    CurPos + 1,
                         (BFI(this, BFI_Insert)) ? 'I' : ' ',
                         (BFI(this, BFI_AutoIndent)) ? 'A' : ' ',
