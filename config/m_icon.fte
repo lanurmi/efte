@@ -99,14 +99,42 @@ mode ICON: SOURCE {
     HilitOn            = 1;
     Colorizer          = "ICON";
     AutoIndent         = 1;
-    IndentMode         = "PLAIN";
+    IndentMode         = "REGEX";
     MatchCase          = 1;
     Trim               = 1;
     MultiLineHilit     = 1;
     AutoHilitParen     = 1;
     SaveFolds          = 0;
-
+    
     RoutineRegexp      = /^\s*{{procedure}}\s+/;
+
+    %if(INDENT)
+    IndentRx = { -1, 0,  1, /^\s*procedure/, 0 };
+    IndentRx = { -1, 0,  1, /^.*{{do}|{then}}\s*{\#.*}*$/, 1 };
+
+    IndentRx = { -1, 0,  0, /^\s*else\s*if/, 2 }; # Ignore next indent if this is an else if
+    IndentRx = { -1, 0,  1, /^\s*else/, 1 };
+
+    # { ... } indents
+    IndentRx = { -1, 0,  1, /^.*\{\s*{\#.*}*$/, 0 };
+    IndentRx = { -1, 0,  1, /^\s*\{/, 0 };
+    IndentRx = {  0, 0, -1, /^.*\}\s*{\#.*}*$/, 0 };
+
+    IndentRx = {  0, 0, -1, /^\s*end/, 0 };
+
+    IndentRx = { -1,  0,  0, /^\s*#/, 2 }; # Ignore the next regex
+    IndentRx = { -1,  0,  1, /.*,\s*{\#.*}*$/, 1 };
+
+    IndentRx = { -1,  0,  0, /^\s*#/, 2 }; # Ignore the next regex
+    IndentRx = { -1,  0,  1, /^.*[\+\-\*&]\s*{#.*}*$/, 1 };
+    %endif
+}
+
+eventmap ICON {
+    key [Tab]       { LineIndent; LineTrim; }
+    key [G-Enter]   { LineIndent; LineNew; }
+    key [A+G-Enter] { LineIndent; LineNew; LineIndent; }
+    key [S+G-Enter] { LineIndent; LineInsert; LineIndent; }
 }
 
 oinclude 'mym_icon.fte';
