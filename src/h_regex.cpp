@@ -48,7 +48,7 @@ int Indent_REGEX(EBuffer *B, int Line, int PosCursor) {
                 case 1:
                     B->RLine(Line)->IndentContinuation = i;
                     if (B->RLine(PLine)->IndentContinuation != i) {
-                        indent_offset += B->Mode->indents[i].indent * 4;
+                        indent_offset += B->Mode->indents[i].indent * BFI(B->Mode, BFI_TabSize);
                     }
                     break;
 
@@ -57,12 +57,12 @@ int Indent_REGEX(EBuffer *B, int Line, int PosCursor) {
                     break;
 
                 default:
-                    indent_offset += B->Mode->indents[i].indent * 4;
+                    indent_offset += B->Mode->indents[i].indent * BFI(B->Mode, BFI_TabSize);
                 }
             } else if (B->Mode->indents[i].flags == 1 &&
                        B->RLine(look_line)->IndentContinuation == i)
             {
-                indent_offset -= B->Mode->indents[i].indent * 4;
+                indent_offset -= B->Mode->indents[i].indent * BFI(B->Mode, BFI_TabSize);
             }
         }
 
