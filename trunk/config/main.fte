@@ -199,6 +199,7 @@ include 'm_idl.fte';
 include 'm_ipf.fte';
 include 'm_java.fte';
 include 'm_ldsgml.fte';
+include 'm_lisaac.fte';
 include 'm_lua.fte';
 include 'm_make.fte';
 include 'm_merge.fte';
