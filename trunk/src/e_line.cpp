@@ -15,7 +15,7 @@ ELine::ELine(int ACount, const char *AChars) {
     Count = ACount;
     Allocate(Count);
     StateE = 0;
-    IndentContinuation = 0;
+    IndentContinuation = -1;
     if (AChars)
         memcpy(Chars, AChars, Count);
     else
@@ -26,7 +26,7 @@ ELine::ELine(char *AChars, int ACount) {
     Chars = AChars;
     Count = ACount;
     StateE = 0;
-    IndentContinuation = 0;
+    IndentContinuation = -1;
 }
 
 ELine::~ELine() {
