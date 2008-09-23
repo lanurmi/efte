@@ -27,7 +27,7 @@ colorize GROOVY {
     };
     
     keyword 'Editor_Keywords' {
-        'abstract',  'default',  'goto',       'null',      'synchronized',
+        'abstract',  'def',      'default',    'goto',      'null',      'synchronized',
         'boolean',   'do',       'if',         'package',   'this',
         'break',     'double',   'implements', 'private',   'threadsafe', 
         'byte',      'else',     'import',     'protected', 'throw', 
@@ -56,6 +56,23 @@ mode GROOVY: SOURCE {      # GROOVY Mode
     SaveFolds           = 2;      # save fold info at end of line
     CommentStart        = ' /*';
     CommentEnd          = '*/';
+
+    %if(INDENT)
+    IndentMode = 'REGEX';
+    # Indent on { or [
+    IndentRx = { -1,  0,  1, /[\}\]]/, 2 }; # Ignore next if it has a trailing } or ]
+    IndentRx = { -1,  0,  1, /[\{\[]/, 0 };
+
+    # Outdent on } or ]
+    IndentRx = {  0,  0,  0, /[\{\[]/, 2 }; # Ignore next if has leading { or [
+    IndentRx = {  0,  0, -1, /[\}\]]/, 0 };
+
+    # Function ending in a comma
+    IndentRx = { -1, 0, 2, /\w+\(.*[,]/, 1 };
+
+    # if, while w/o { }
+    IndentRx = { -1, 0, 1, /{{if}|{while}}[^\{]+$/, 1 };
+    %endif
 }
 
 oinclude 'mym_groovy.fte';
