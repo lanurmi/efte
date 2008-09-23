@@ -80,6 +80,17 @@ object GLOBAL {
     REXX_Indent         = 4;
 #    REXX_Do_Offset      = 0;
 
+    # Compiler Regular Expressions
+    # 1 = Filename
+    # 2 = Line number
+    # 3 = Message
+
+    # Ant (groovy)
+    CompileRx = { 2, 4, 3, /^([\w:._\-\+\/\\]+):\d+:\s[^\/\\]*([\w:._\-\+\/\\]+):\s(.#)\s\@\sline\s(\d+),\scolumn\s\d+.$/ };
+
+    # Ant (javac)
+    CompileRx = { 1, 2, 3, /^.*\s([\w:._\-\+\/\\]+):(\d+):\s(.*)$/ };
+
     # grep -n
     CompileRx = { 1, 2, 3, /^([\w:._\-\+\/\\]#):(\d+):/ };
     
@@ -110,9 +121,6 @@ object GLOBAL {
 
     # jikes +E (tested with version 1.18)
     CompileRx = { 1, 2, 3, /^.*\s([\w._\-\+\/\\]+):(\d+):\d+:\d+:\d+:\s(.*)$/ };
-
-    # Ant (javac)
-    CompileRx = { 1, 2, 3, /^.*\s([\w:._\-\+\/\\]+):(\d+):\s(.*)$/ };
 
     # Python interpreter tracebacks
     CompileRx = { 1, 2, 3, /^\s*File\s+"([\w:._\-\+\/\\]+)",\s+line\s+(\d+)(.*)$/ };
