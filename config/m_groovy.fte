@@ -59,19 +59,12 @@ mode GROOVY: SOURCE {      # GROOVY Mode
 
     %if(INDENT)
     IndentMode = 'REGEX';
-    # Indent on { or [
-    IndentRx = { -1,  0,  1, /[\}\]]/, 2 }; # Ignore next if it has a trailing } or ]
-    IndentRx = { -1,  0,  1, /[\{\[]/, 0 };
-
-    # Outdent on } or ]
-    IndentRx = {  0,  0,  0, /[\{\[]/, 2 }; # Ignore next if has leading { or [
-    IndentRx = {  0,  0, -1, /[\}\]]/, 0 };
 
     # Function ending in a comma
-    IndentRx = { -1, 0, 2, /\w+\(.*[,]/, 1 };
+    IndentRx = { -1, 0, 1, /\w+\(.*[,]/, 1 };
 
     # if, while w/o { }
-    IndentRx = { -1, 0, 1, /{{if}|{while}}[^\{]+$/, 1 };
+    IndentRx = { -1, 0, 1, /^\s*{{if}|{while}}[^\{]+$/, 1 };
     %endif
 }
 

@@ -7,6 +7,23 @@
  *
  */
 
+/*
+ * TODO:
+ * A means of indenting balanced characters, i.e. ( ), { }, [ ]
+ * Introduce a new command???
+ *   IndentBalanced = { '{', '}' };
+ *   IndentBalanced = { '[', ']' };
+ *
+ * TODO:
+ * String tracking, i.e. currently something like this may be indented
+ * if ( line == '{' ) return 20
+ *
+ * The regex will see a { and indent. There are ways around this in the actual
+ * regular expression, but none are pretty. Maybe introduce a new command???
+ *   StringCharacter = '"';
+ *   StringCharacter = "'";
+ */
+
 #include "fte.h"
 #include "e_regex.h"
 
@@ -30,6 +47,35 @@ int Indent_REGEX(EBuffer *B, int Line, int PosCursor) {
     } else if (B->Mode->indent_count) {
         int indent_offset = B->LineIndented(PLine), skip = 0;
         RxMatchRes b;
+
+		// Look for hanging indent characters on previous line
+		int begin_io = indent_offset, other = 0;
+		char *line;
+
+		line = B->RLine(Line)->Chars;
+		for (int i=0; i <= B->RLine(Line)->Count; i++) {
+			if      (line[i] == '(') indent_offset += BFI(B->Mode, BFI_TabSize);
+			else if (line[i] == ')') indent_offset -= BFI(B->Mode, BFI_TabSize);
+			else if (line[i] == '[') indent_offset += BFI(B->Mode, BFI_TabSize);
+			else if (line[i] == ']') indent_offset -= BFI(B->Mode, BFI_TabSize);
+			else if (line[i] == '{') indent_offset += BFI(B->Mode, BFI_TabSize);
+			else if (line[i] == '}') indent_offset -= BFI(B->Mode, BFI_TabSize);
+			else if (line[i] != ' ' && line[i] != '\t' && line[i] != 10 && line[i] != 13 && line[i] != 0)
+				other = 1;
+		}
+		if (begin_io < indent_offset) indent_offset = begin_io;
+		else if (indent_offset < begin_io && other == 1) indent_offset = begin_io;
+
+		begin_io = indent_offset;
+		line = B->RLine(Line-1)->Chars;
+		for (int i=0; i <= B->RLine(Line-1)->Count; i++) {
+			if      (line[i] == '(') indent_offset += BFI(B->Mode, BFI_TabSize);
+			else if (line[i] == ')') indent_offset -= BFI(B->Mode, BFI_TabSize);
+			else if (line[i] == '[') indent_offset += BFI(B->Mode, BFI_TabSize);
+			else if (line[i] == ']') indent_offset -= BFI(B->Mode, BFI_TabSize);
+			else if (line[i] == '{') indent_offset += BFI(B->Mode, BFI_TabSize);
+			else if (line[i] == '}') indent_offset -= BFI(B->Mode, BFI_TabSize);
+		}
 
         for (int i=0; i < B->Mode->indent_count; i++) {
             if (skip) {
