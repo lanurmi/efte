@@ -525,7 +525,7 @@ static int SetupXWindow(int argc, char **argv) {
     XSetWMHints(display, win, &wm_hints);
 
     // Set icons using _NET_WM_ICON property
-    static const char **xpmData[ICON_COUNT] = { efte16x16_xpm, efte32x32_xpm, efte48x48_xpm, efte64x64_xpm };
+    static const char **xpmData[ICON_COUNT] = { (const char **)efte16x16_xpm, (const char **)efte32x32_xpm, (const char **)efte48x48_xpm, (const char **) efte64x64_xpm };
     XpmImage xpmImage[ICON_COUNT];
     CARD32 *xpmColors[ICON_COUNT] = { NULL, NULL, NULL, NULL };
     int i, iconBufferSize = 0;
