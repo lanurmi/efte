@@ -110,6 +110,7 @@ mode ICON: SOURCE {
 
     %if(INDENT)
     IndentRx = { -1, 0,  1, /^\s*procedure/, 0 };
+    IndentRx = { -1, 0,  1, /^\.*\{\s*$/, 2 }; # Ignore if also has {
     IndentRx = { -1, 0,  1, /^.*{{do}|{then}}\s*{\#.*}*$/, 1 };
 
     IndentRx = { -1, 0,  0, /^\s*else\s*if/, 2 }; # Ignore next indent if this is an else if
@@ -117,16 +118,15 @@ mode ICON: SOURCE {
 
     # { ... } indents
     IndentRx = { -1, 0,  1, /^.*\{\s*{\#.*}*$/, 0 };
-    IndentRx = { -1, 0,  1, /^\s*\{/, 0 };
     IndentRx = {  0, 0, -1, /^.*\}\s*{\#.*}*$/, 0 };
 
     IndentRx = {  0, 0, -1, /^\s*end/, 0 };
 
-    IndentRx = { -1,  0,  0, /^\s*#/, 2 }; # Ignore the next regex
-    IndentRx = { -1,  0,  1, /.*,\s*{\#.*}*$/, 1 };
+    #IndentRx = { -1,  0,  0, /^\s*#/, 2 }; # Ignore the next regex
+    #IndentRx = { -1,  0,  1, /.*,\s*{\#.*}*$/, 1 };
 
-    IndentRx = { -1,  0,  0, /^\s*#/, 2 }; # Ignore the next regex
-    IndentRx = { -1,  0,  1, /^.*[\+\-\*&]\s*{#.*}*$/, 1 };
+    #IndentRx = { -1,  0,  0, /^\s*#/, 2 }; # Ignore the next regex
+    #IndentRx = { -1,  0,  1, /^.*[\+\-\*&]\s*{#.*}*$/, 1 };
     %endif
 }
 
