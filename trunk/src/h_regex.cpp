@@ -53,6 +53,7 @@ int Indent_REGEX(EBuffer *B, int Line, int PosCursor) {
 		char *line;
 
 		line = B->RLine(Line)->Chars;
+		/*
 		for (int i=0; i <= B->RLine(Line)->Count; i++) {
 			if      (line[i] == '(') indent_offset += BFI(B->Mode, BFI_TabSize);
 			else if (line[i] == ')') indent_offset -= BFI(B->Mode, BFI_TabSize);
@@ -63,11 +64,13 @@ int Indent_REGEX(EBuffer *B, int Line, int PosCursor) {
 			else if (line[i] != ' ' && line[i] != '\t' && line[i] != 10 && line[i] != 13 && line[i] != 0)
 				other = 1;
 		}
+		*/
 		if (begin_io < indent_offset) indent_offset = begin_io;
 		else if (indent_offset < begin_io && other == 1) indent_offset = begin_io;
 
 		begin_io = indent_offset;
 		line = B->RLine(Line-1)->Chars;
+		/*
 		for (int i=0; i <= B->RLine(Line-1)->Count; i++) {
 			if      (line[i] == '(') indent_offset += BFI(B->Mode, BFI_TabSize);
 			else if (line[i] == ')') indent_offset -= BFI(B->Mode, BFI_TabSize);
@@ -76,7 +79,7 @@ int Indent_REGEX(EBuffer *B, int Line, int PosCursor) {
 			else if (line[i] == '{') indent_offset += BFI(B->Mode, BFI_TabSize);
 			else if (line[i] == '}') indent_offset -= BFI(B->Mode, BFI_TabSize);
 		}
-
+		*/
         for (int i=0; i < B->Mode->indent_count; i++) {
             if (skip) {
                 skip = 0;
