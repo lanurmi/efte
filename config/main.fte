@@ -180,6 +180,7 @@ include 'm_a51.fte';
 include 'm_ada.fte';
 include 'm_asm.fte';
 include 'm_asm370.fte';
+include 'm_basic.fte';
 include 'm_bin.fte';
 include 'm_c.fte';
 include 'm_catbs.fte';
