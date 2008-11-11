@@ -158,7 +158,7 @@ colorize C {
 }
 
 mode C: SOURCE {      # C/C++ Mode
-    FileNameRx		= /\.\c{c|h|{cpp}|{cxx}|{hpp}|{cc}|m|{mm}|{xs}}$/;
+    FileNameRx		= /\.\c{c|h|{cpp}|{cxx}|{hpp}|{cc}|{cu}|m|{mm}|{xs}}$/;
     HilitOn		= 1;
     Colorizer		= 'C';
     AutoIndent		= 1;
