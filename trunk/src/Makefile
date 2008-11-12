@@ -27,7 +27,7 @@ ifndef $(X11_PATH)
 endif
 
 DEFINES=-DUNIX -DHAVE_STRICMP
-CXXFLAGS=$(DEBUG) -I$(X11_PATH)/include
+CXXFLAGS=$(DEBUG) -Wall -Wno-long-long -pedantic -I$(X11_PATH)/include
 SYSTEM_LIBS=
 BASE_LIBS=-lstdc++
 EFTE_LIBS=-L$(X11_PATH)/lib -lX11 -lXpm
