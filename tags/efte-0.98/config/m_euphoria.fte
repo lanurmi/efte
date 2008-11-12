@@ -1,0 +1,145 @@
+#
+# eFTE mode for Euphoria (http://rapideuphoria.com)
+#
+
+colorize EUPHORIA {
+    SyntaxParser = "SIMPLE";
+
+    color {
+        { "Normal",      "Editor_Default" },
+        { "Function",    "Lang_Function" },
+        { "Number",      "Lang_DecimalNumber" },
+        { "Comment",     "Lang_Comment" },
+        { "String",      "Lang_String" },
+        { "Punctuation", "Lang_Punctuation" },
+    };
+
+    keyword "Editor_Keywords" {
+        "as", "and",
+        "by",
+        "case", "constant",
+        "do",
+        "end", "else", "elsif", "enum", "export",
+        "for", "function",
+        "global",
+        "include", "if",
+        "loop",
+        "not",
+        "or", "override",
+        "procedure",
+        "switch",
+        "then", "type", "to",
+        "until",
+        "while",
+        "xor"
+    };
+
+    keyword "Editor_Keywords2" {
+        "object", "sequence", "integer", "atom"
+    };
+    
+    keyword "Editor_Keywords3" {
+        "break", "continue", "entry", "exit", "goto", "glabel", "retry", "return"
+    };
+    
+    keyword "Editor_Keywords4" {
+        "ifdef", "elsifdef", "trace", "with", "without"
+    };
+
+    h_state 0 { "Normal" }
+    h_trans { 1, "-s", "a-zA-Z_", "Normal" }
+    h_trans { 2, "<", "--", "Comment" }
+    h_trans { 3, "", "\"", "String" }
+    h_trans { 4, "", "\'", "String" }
+    h_trans { 5, "<s", "0-9", "Number" }
+    h_trans { 6, "", "#", "Number" }
+    h_trans { 0, "S", "_a-zA-Z0-9", "Punctuation" }
+
+    h_state 1 { "Normal" }
+    h_trans { 0, "$", "", "Normal" }
+    h_wtype { 1, 1, 0, "", "a-zA-Z0-9_" }
+
+    h_state 2 { "Comment" }
+    h_trans { 0, "$", "", "String" }
+
+    h_state 3 { "String" }
+    h_trans { 0, "", "\"", "String" }
+    h_trans { 0, "$", "", "String" }
+    h_trans { 3, "Qq", "\\", "String" }
+    
+    h_state 4 { "String" }
+    h_trans { 0, "", "'", "String" }
+    h_trans { 0, "$", "", "String" }
+    h_trans { 4, "Qq", "\\", "String" }
+    
+    # Normal Number
+    h_state 5 { "Number" }
+    h_trans { 0, "-S", "0-9", "Normal" }
+    h_trans { 0, "$", "", "Normal" }
+    
+    # Hex Number
+    h_state 6 { "Number" }
+    h_trans { 0, "-S", "0-9A-F", "Normal" }
+}
+
+mode EUPHORIA: SOURCE {
+    FileNameRx         = /\c{{\.{e}|{ew}|{eu}|{ed}|{ex}|{exu}|{exw}|{exd}$}|{ex.err}}/;
+    HilitOn            = 1;
+    Colorizer          = "EUPHORIA";
+    AutoIndent         = 1;
+    IndentMode         = "REGEX";
+    MatchCase          = 1;
+    Trim               = 1;
+    MultiLineHilit     = 1;
+    AutoHilitParen     = 1;
+    SaveFolds          = 0;
+
+    RoutineRegexp      = /^{{override}|{global}|{export}}*\s*{{function}|{procedure}|{type}}\s+/;
+
+    %if(INDENT)
+    # LL = Look Line -- Which line to look at?
+    # AL = Affect line  -- 0 is current, -1 is previous, -2 is 2 lines back, 1 is next line, etc...
+    # IC = Indent Count -- number of indents to apply (multiplied by TabSize)
+    # RegExp -- Regular expression to match agains
+    # Flags = Flags
+    #
+    #            LL, AL, IC, Regular Expression, Flags
+
+    # Indent functions, proecdures and types
+    IndentRx = { -1,  0,  1, /^{{override}|{global}|{export}}*\s*{{function}|{procedure}|{type}}\s+/, 0 };
+
+    # if, for, while loop indentations, ignore if end exists on the line as well
+    IndentRx = { -1,  0,  0, /^.*\send.*$/, 2 };
+    IndentRx = { -1,  0,  1, /^\s*{{if}|{ifdef}|{for}|{while}|{loop}}\s+/, 0 };
+
+    # Switch statement indents 2, case statements outdent 1
+    IndentRx = { -1,  0,  2, /^\s*switch\s+/, 0 };
+    IndentRx = {  0,  0, -2, /^\s*end\s+switch\s*{--.*}*$/, 0 };
+
+    # Indents/single outdents that are at the end of a line
+    IndentRx = {  0,  0, -1, /^\s*{{do}|{else}|{entry}|{then}}\s*{--.*}*$/, 0 };
+    IndentRx = { -1,  0,  1, /^\s*{{do}|{else}|{entry}|{then}}\s*{--.*}*$/, 0 };
+
+    # Indents that are in the middle of a line
+    IndentRx = {  0,  0, -1, /^\s*{{elsifdef}|{elsif}|{case}}\s+/, 0 };
+    IndentRx = { -1,  0,  1, /^\s*{{elsifdef}|{elsif}|{case}}\s+/, 0 };
+
+    # Outdents
+    IndentRx = {  0,  0, -1, /^\s*{{until}|{end}}\s+{{if}|{for}|{while}|{loop}|{procedure}|{function}|{type}}/, 0 };
+
+    # Indent common types that appear on their own line and ending continuation characters
+    IndentRx = { -1,  0,  0, /^\s*\-\-/, 2 }; # Ignore the next regex
+    IndentRx = { -1,  0,  1, /^{{global}|{export}}*\s*{{enum}|{constant}|{atom}|{integer}|{sequence}|{object}|{.*[\{,]}}\s*{--.*}*$/, 1 };
+    IndentRx = { -1,  0,  0, /^\s*\-\-/, 2 }; # Ignore the next regex
+    IndentRx = { -1,  0,  1, /^.*[\+\-\*&]\s*{--.*}*$/, 1 };
+    %endif
+}
+
+eventmap EUPHORIA {
+    key [Tab]       { LineIndent; LineTrim; }
+    key [G-Enter]   { LineIndent; LineNew; }
+    key [A+G-Enter] { LineIndent; LineNew; LineIndent; }
+    key [S+G-Enter] { LineIndent; LineInsert; LineIndent; }
+}
+
+oinclude "mym_euphoria.fte";

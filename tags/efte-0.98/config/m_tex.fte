@@ -1,0 +1,268 @@
+colorize TEX {
+    SyntaxParser        = 'SIMPLE';
+
+    color {
+        { 'Normal',      'Editor_Default' },
+        { 'Comment',     'Lang_Comment' },
+        { 'Tag',         'Markup_Tag' },
+        { 'Special',     'Markup_Special' },
+        { 'Symbol',      'Markup_Symbol' },
+        { 'Quotes',      'Markup_Quotes' },
+        { 'Function',    'Markup_Math' },
+    };
+
+    keyword 'Editor_Keywords' {
+        'documentstyle', 'document', 'documentclass',
+        'pagestyle', 'pagenumbering', 'thispagestyle',
+        'title', 'author', 'date', 'maketitle',
+        'begin', 'end',
+        'part', 'chapter',
+        'section', 'subsection', 'subsubsection',
+        'paragraph', 'subparagraph',
+        'appendix', 'tableofcontents', 'listoffigures', 'listoftables',
+        'rm', 'em', 'bf', 'sc', 'it', 'sl', 'sf', 'tt',
+        'tiny', 'scriptsize', 'footnotesize', 'small',
+        'normalsize', 'large', 'Large', 'LARGE', 'huge', 'HUGE',
+        'bibitem', 'cite',
+        'label', 'ref', 'pageref', 'footnote',
+        'item',
+        'caption',
+        'kill',
+        'hline', 'cline', 'multicolumn',
+        'def',
+        'hspace', 'vspace',
+        'linebreak', 'nolinebreak',
+        'newpage', 'clearpage', 'pagebreak', 'nopagebreak', 'samepage',
+        'newcommand', 'renewcommand', 'newenvironment', 'newtheorem',
+        'newcounter', 'setcounter', 'addtocounter', 'value',
+        'stepcounter', # \the*
+        'newlength', 'setlength', 'addtolength', 'settowidth',
+        'textheight', 'textwidth', 'topmargin', 'hoffset', 'voffset',
+        'oddsidemargin', 'evensidemargin',
+        'mbox', 'makebox', 'fbos', 'framebox', 'newsavebox', 'sbox',
+        'savebox', 'usebox', 'raisebox',
+        'put', 'framebox', 'dashbox', 'line', 'vector', 'circle', 'oval',
+        'frame', 'shortstack', 'multiput', 'thinlines', 'thicklines',
+        'linethickness',
+        'font', 'magnification', 'magstephalf', 'magstep',
+        'hsize', 'vsize', 'voffset', 'hoffset', 'topskip', 'leftskip', 'rightskip',
+        'eject', 'vfill', 'eject', 'goodbreak', 'nobreak', 'nopagenumbers',
+        'headline', 'headheight', 'headsep', 'footnote', 'pageno', 'folio',
+        'par', 'parindent', 'noindent', 'break', 'hfill', 'break', 'line',
+        'rightline', 'centerline', 
+
+        'includegraphics',
+
+        'enskip', 'hskip', 'hfil', 'hfill', 'hss', 'smallskip',
+        'vskip', 'vglue', 'vfil' ,'vfill', 'vss', 'baselineskip', 'parskip',
+        'topinsert', 'midinsert', 'handindent',
+        'footnote', 'hrule', 'vrule', 'leaders', 'hrulefill',
+        'settabs', 'haling', 'hbox', 'vbox', 'newbox', 'setbox',
+
+        'arccos', 'cos', 'csc', 'exp', 'ker', 'limsup', 'min', 'sinh',
+        'arcsin', 'cosh', 'deg', 'gcd', 'lg', 'ln', 'Pr', 'sup',
+        'arctan', 'cot', 'det', 'hom', 'lim', 'log', 'sec', 'tan',
+        'arg', 'coth', 'dim', 'inf', 'liminfo', 'max', 'sin', 'tanh',
+
+        'displaystyle', 'textstyle',
+        'alpha', 'beta', 'gamma', 'delta', 'epsilon', 'varepsilon', 'zeta',
+        'eta', 'theta', 'vartheta', 'iota', 'kappa', 'lambda', 'mu', 'nu',
+        'xi', 'o', 'pi', 'varpi', 'rho', 'varrho', 'sigma', 'varsigma',
+        'tau', 'upsilon', 'phi', 'varphi', 'chi', 'psi', 'omega',
+        'Gamma', 'Delta', 'Theta', 'Lambda', 'Xi', 'Pi', 'Sigma', 'Upsilon',
+        'Phi', 'Psi', 'Omega',
+
+        'aleph', 'hbar', 'imath', 'jmath', 'ell', 'wp', 'Re', 'Im',
+        'partial', 'infty', 'backslash', 'prime', 'emptyset', 'nabla',
+        'surd', 'triangle', 'angle', 'bot', 'top', 'forall', 'exists',
+        'neg', 'lnot', 'flat', 'natural', 'sharp', 'clubsuit',
+        'diamondsuit', 'heartsuit', 'spadesuit',
+
+        'pm', 'mp', 'setminus', 'cdot', 'times', 'ast', 'star', 'diamond',
+        'circ', 'bullet', 'triangleleft', 'cap', 'cup', 'uplus', 'sqcap',
+        'sqcup', 'amalg', 'div', 'wr', 'bigcirc', 'vee', 'lor', 'wedge', 'land',
+        'oplus', 'ominus', 'otimes', 'oslash', 'odot', 'dagger', 'ddagger',
+        'bigtriangleleft', 'bigtriangledown',
+        'sum', 'prod', 'coprod', 'int', 'oint', 'bigcap', 'bigcup', 'bigsqcup',
+        'bigvee', 'bigwedge', 'bigodot', 'bigotimes', 'bigoplus',
+        'biguplus', 'hat', 'acute', 'ddot', 'vec', 'check', 'grave', 'breve',
+        'tilde', 'dot', 'bar',
+        'widehat', 'widetilde',
+
+        'ldots', 'vdots', 'cdots', 'ddots',
+        'leq', 'le', 'prec', 'preceq', 'll', 'subset', 'subsetqe',
+        'supsetqe', 'in', 'vdash', 'smile', 'frown', 'geq', 'ge',
+        'succ', 'succeq', 'gg', 'supset', 'sqsubseteq', 'sqsupsetqe',
+        'ni', 'owns', 'dashv', 'mid', 'parallel', 'equiv', 'sim', 'simeq',
+        'asymp', 'approx', 'cong', 'bowtie', 'propto', 'models',
+        'doteq', 'perp', 'not',
+
+        'leftarrow', 'Leftarrow', 'gets', 'longleftarrow', 'Longleftarrow',
+        'rightarrow', 'Rightarrow', 'to', 'longrightarrow', 'Longrightarrow',
+        'leftrightarrow', 'Leftrightarrow', 'longleftrightarrow', 'Longleftrightarrow',
+        'mapsto', 'longmapsto', 'hookleftarrow', 'hookrightarrow',
+        'leftharpoonup', 'rightharpoonup',
+        'leftharpoondown', 'rightharpoondown',
+        'uparrow', 'Uparrow', 'downarrow', 'Downarrow',
+        'updownarrow', 'Updownarrow',
+        'nearrow', 'searrow', 'swarrow', 'nwarrow',
+        'lbrack', 'lfloor', 'rbrack', 'rfloor',
+        'lceil', 'lbrace', 'langle',
+        'rceil', 'rbrace', 'rangle',
+        'quad', 'qquad',
+
+        'Biggl', 'biggl', 'Bigl', 'bigl',
+        'bigr', 'Bigr', 'biggr', 'Biggr',
+        'lgroup', 'rgroup', 'langle', 'rangle',
+        'vert', 'Vert', 'uparrow',
+        'left', 'right',
+        'overline', 'overrightarrow', 'overleftarrow', 'overbrace',
+        'underbrace', 'atop', 'choose', 'brack', 'above', 'brace',
+        'pmatrix', 'matrix', 'bordermatrix',
+        'eqalign', 'eqno', 'eqalignno', 'quad',
+
+        'def', 'gdef', 'edef',
+        'newcount', 'advance', 'multiply', 'divide', 'number',
+        'romannumeral', 'newdimen', 'newread',
+        'openin', 'closein', 'input', 'endinput',
+        'newwrite', 'openouput', 'closeout', 'write', 'jobname',
+        'if', 'else', 'fi', 'ifx', 'ifeof',
+        'ifhmode', 'ifvmode', 'ifmmode',
+        'ifcat', 'ifnum', 'ifdim', 'ifodd', 'ifcase', 'or',
+        'loop', 'repeat',
+
+        'beginpicture', 'setcoordinatesystem',
+        'endpicture',
+        'plotheading', 'lines', 'putrule', 'linethickness',
+        'setlinear', 'setquadratic', 'sethistograms', 'setsolid', 'setdashes',
+        'setdots', 'setdashpattern', 'setplotsymbol', 'plot', 'arrow',
+        'put', 'multiput', 'circulararc', 'ellipticarc',
+        'startrotation', 'stoprotation', 'setshadegrid', 'setshadesymbol',
+        'shaderectangleson', 'sharerectanglesoff',
+        'vshade', 'setquadratic', 'hshade', 'setplotarea',
+        'inboundscheckon', 'inboundscheckoff',
+        'axis', 'setbox', 'endpicturesave', 'newdimen',
+
+        'Alph', 'AtBeginDocument', 'AtBeginDvi', 'AtEndDocument',
+        'AtEndOfPackage', 'Big', 'Bigg', 'Box', 'CheckCommand',
+        'ClassError', 'ClassInfo', 'ClassWarning', 'ClassWarningNoLine',
+        'DeclareErrorFont', 'DeclareFixedFont', 'DeclareFontEncoding',
+        'DeclareFontEncodingDefaults', 'DeclareFontFamily',
+        'DeclareFontShape', 'DeclareFontSubstitution',
+        'DeclareMathAccent', 'DeclareMathAlphabet',
+        'DeclareMathDelimiter', 'DeclareMathRadical',
+        'DeclareMathSizes', 'DeclareMathSymbol',
+        'DeclareMathVersion', 'DeclareOldFontCommand',
+        'DeclareOption', 'DeclarePreloadSizes',
+        'DeclareRobustCommand', 'DeclareSizeFunction',
+        'DeclareSymbolFont', 'DeclareSymbolFontAlphabet',
+        'DeclareTextAccent', 'DeclareTextAccentDefault',
+        'DeclareTextCommand', 'DeclareTextCommandDefault',
+        'DeclareTextComposite', 'DeclareTextCompositeCommand',
+        'DeclareTextFontCommand', 'DeclareTextSymbol',
+        'DeclareTextSymbolDefault', 'ExecuteOptions',
+        'IfFileExists', 'InputIfFileExists',
+        'Join', 'LoadClass', 'LoadClassWithOptions',
+        'MessageBreak', 'NeedsTeXFormat', 'OptionNotUsed',
+        'PackageError', 'PackageInfo', 'PackageWarning',
+        'PackageWarningNoLine', 'PassOptionsToClass',
+        'PassOptionsToPackage', 'ProcessOptions',
+        'ProvideTextCommand', 'ProvideTextCommandDefault',
+        'ProvidesFile', 'ProvidesPackage',
+        'RequirePackage', 'RequirePackageWithOptions',
+        'Roman', 'SetMathAlphabet', 'SetSymbolFont', 'TeX',
+        'TextSymbolUnavailable', 'UseTextAccent',
+        'UseTextSymbol', 'addcontentsline',
+        'addpenalty', 'addtocontents', 'addtoversion', 'addvspace',
+        'afterassignment', 'allocationnumber', 'allowbreak',
+        'alph', 'arrayrulewidth', 'arraystretch', 'baselinestretch',
+        'bezier', 'bfdefault', 'bfseries', 'bibcite', 'bibliography',
+        'bibliographystyle', 'big', 'bigbreak', 'bigg', 'bigskip',
+        'bigskipamount', 'bigskipamount', 'bmod', 'boldmath',
+        'buildrel', 'cases', 'catcode', 'center', 'centering',
+        'chardef', 'cleardoublepage', 'contentsline', 'countdef',
+        'cr', 'csname', 'depth', 'discretionary', 'displaymath',
+        'dospecials', 'dotfill', 'encodingdefault', 'endcsname',
+        'everycr', 'expandafter', 'expandafter', 'extracolsep',
+        'familydefault', 'familydefault', 'fbox', 'filbreak',
+        'flushleft', 'flushright', 'fmtname', 'fmtversion',
+        'fontencoding', 'fontfamily', 'fontseries', 'fontshape',
+        'footnotemark', 'footnoterule', 'footnotetext', 'frac',
+        'frenchspacing', 'fussy', 'futurelet', 'global', 'glossary',
+        'halign', 'height', 'hphantom', 'ifinner', 'immediate',
+        'include', 'includeonly', 'itdefault', 'iterate', 'kern',
+        'lastskip', 'leadsto', 'leavevmode', 'lefteqn', 'leftline',
+        'leftmark', 'let', 'lhd', 'liminf', 'lineskip', 'lower',
+        'lowercase', 'makeatletter', 'makeatother', 'makeglossary',
+        'makeindex', 'marginpar', 'markboth', 'markright', 'mathclose',
+        'mathop', 'mathopen', 'mathrel', 'mathstrut', 'mddefault',
+        'medbreak', 'medmuskip', 'medskip', 'mho', 'minipage', 'mskip',
+        'multispan', 'narrower', 'negthinspace', 'newfont', 'newhelp',
+        'newif', 'newinsert', 'newlabel', 'newlanguage', 'newline',
+        'newmathalphabet', 'newmuskip', 'newskip', 'newtoks', 'nocite',
+        'nocorrlist', 'noexpand', 'nointerlineskip', 'nolimits',
+        'nonfrenchspacing', 'nonumber', 'normalbaselines', 'normallineskip',
+        'normalmarginpar', 'null', 'numberline', 'obeylines',
+        'obeyspaces', 'offinterlineskip', 'onecolumn', 'openup',
+        'pagenumberin', 'parbox', 'penalty', 'phantom',
+        'pmod', 'protect', 'providecommand', 'raggedbottom',
+        'raggedleft', 'raggedright', 'refstepcounter', 'relax',
+        'removelastskip', 'renewenvironment', 'reversemarginpar', 'rhd',
+        'rightmark', 'rlap', 'rmdefault', 'roman', 'root', 'rq', 'rule',
+        'scdefault', 'secdef', 'selectfont', 'seriesdefault', 'settodepth',
+        'settoheight', 'sfdefault', 'shapedefault', 'showhyphens', 'showoutput',
+        'showoverfull', 'sldefault', 'sloppy', 'sloppypar', 'smallbreak',
+        'space', 'spacefactor', 'sqsubset', 'stackrel', 'stretch',
+        'strut', 'suppressfloats', 'symbol', 'tabskip', 'thanks',
+        'thefootnote', 'thickmuskip', 'thinmuskip', 'thinspace', 'today',
+        'tracingfonts', 'tracingoutput', 'trivlist', 'ttdefault',
+        'twocolumn', 'typein', 'typeout', 'unboldmath', 'undefinedpagestyle',
+        'underbar', 'underline', 'unlhd', 'unrhd', 'updefault',
+        'usecounter', 'usefont', 'usepackage', 'vcenter', 'verb',
+        'verbatim', 'vline', 'vphantom', 'width', 'wlog', 'xdef',
+    };
+
+    h_state 0 { 'Normal' }
+    h_trans { 1, '', '\\begin{verbatim}', 'Quotes' }
+    h_trans { 2, '', '\\', 'Special' }
+    h_trans { 0, 's', '{}', 'Special' }
+    h_trans { 4, '', '$', 'Function' }
+    h_trans { 5, '', '$$', 'Function' }
+    h_trans { 3, '', '%', 'Comment' }
+
+    h_state 1 { 'Quotes' }
+    h_trans { 0, '', '\\end{verbatim}', 'Quotes' }
+
+    h_state 2 { 'Tag' }
+    h_trans { 0, 'S', 'a-zA-Z0-9_', 'Symbol' }
+    h_wtype { 0, 0, 0, '', 'a-zA-Z0-9_' }
+
+    h_state 3 { 'Comment' }
+    h_trans { 0, '$', '', 'Comment' }
+
+    h_state 4 { 'Function' }
+    h_trans { 0, '', '$', 'Function' }
+
+    h_state 5 { 'Function' }
+    h_trans { 0, '', '$$', 'Function' }
+
+
+    #h_state 5 { 0, 'i', 'a-zA-Z', 'Keyword' }
+    #h_trans { 0, 'S', 'a-zA-Z', 'Normal' }
+    #h_trans { 0, '$', '', 'Normal' }
+}
+
+mode TEX: MARKUP {
+    FileNameRx          = /\.\c{TEX}|{STY}|{CLS}|{CLO}|{LTX}|{FD}|{DTX}$/;
+    HilitOn             = 1;
+    Colorizer           = 'TEX';
+    MultiLineHilit      = 1;
+    
+    RoutineRegexp	= /^\s*\\(title)|(section)|(subsection)\s*\{/;
+    
+    SaveFolds           = 2;      # save fold info at end of line
+    CommentStart        = '%';
+    CommentEnd          = '';
+}
+
+oinclude 'mym_tex.fte';

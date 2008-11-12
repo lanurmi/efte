@@ -1,0 +1,14 @@
+# additional keybindings for JAVA mode
+# included from ../ui.fte
+
+eventmap JAVA {
+    key       [C+E_0]   { JAVA_Base }
+
+    key       [Tab]     { LineIndent; LineTrim }
+    key       [G-Enter] { LineIndent; LineNew; LineIndent }
+    key       [{]       { SelfInsert; LineIndent }
+    key       [}]       { SelfInsert; LineIndent }
+    key       [:]       { SelfInsert; LineIndent }
+    key       [#]       { SelfInsert; LineIndent }
+    key       [A+\\]    { BlockReIndent }
+}

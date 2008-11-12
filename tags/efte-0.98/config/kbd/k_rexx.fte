@@ -1,0 +1,22 @@
+# FTE keybindings for REXX mode
+# enhanced from the original by Michael DeBusk
+# debu4335@eclipsetel.com
+# Revision March 19, 2001
+
+eventmap REXX {
+    key      [Tab]      { LineIndent; LineTrim }
+    key      [G-Enter]  { LineIndent; LineNew; LineIndent }
+    key      [:]        { SelfInsert; LineIndent }
+    key      [A+\\]     { BlockReIndent }
+    key      [C+E_c]    { REXX_Comment }
+#    key      [C+E_u]    { REXX_RexxUtil }
+#    key      [C+E_s]    { REXX_RxSock }
+#    key      [C+E_f]    { REXX_RxFTP }
+#    key      [C+E_0]    { REXX_Heading }
+#    key      [C+E_1]    { REXX_Do }
+#    key      [C+E_2]    { REXX_DoWhile }
+#    key      [C+E_3]    { REXX_DoUntil }
+#    key      [C+E_4]    { REXX_DoForever }
+#    key      [C+E_5]    { REXX_If }
+#    key      [C+E_6]    { REXX_Select }
+}
