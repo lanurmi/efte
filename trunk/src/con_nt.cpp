@@ -364,13 +364,14 @@ int ReadConsoleEvent(TEvent *E) {
             }
         }
 
-        if (Ch == 0)                            //** Odd: cannot distill keycode.
+        if (Ch == 0) {                          //** Odd: cannot distill keycode.
             return False;
-
-        if (flg & kfCtrl)
-            if (Ch < 32)
+        }
+        if (flg & kfCtrl) {
+            if (Ch < 32) {
                 Ch += 64;
-
+            }
+        }
         E->Key.Code = Ch | flg;         // Set FTE keycode,
         E->What = inp.Event.KeyEvent.bKeyDown ? evKeyDown : evKeyUp;
         return True;
@@ -379,15 +380,21 @@ int ReadConsoleEvent(TEvent *E) {
         LastMouseX = E->Mouse.X = inp.Event.MouseEvent.dwMousePosition.X;
         LastMouseY = E->Mouse.Y = inp.Event.MouseEvent.dwMousePosition.Y;
         flags = inp.Event.MouseEvent.dwControlKeyState;
-        if (flags & (RIGHT_ALT_PRESSED | LEFT_ALT_PRESSED)) flg |= kfAlt;
-        if (flags & (RIGHT_CTRL_PRESSED | LEFT_CTRL_PRESSED)) flg |= kfCtrl;
-        if (flags & SHIFT_PRESSED) flg |= kfShift;
+        if (flags & (RIGHT_ALT_PRESSED | LEFT_ALT_PRESSED)) {
+            flg |= kfAlt;
+        }
+        if (flags & (RIGHT_CTRL_PRESSED | LEFT_CTRL_PRESSED)) {
+            flg |= kfCtrl;
+        }  
+        if (flags & SHIFT_PRESSED) {
+            flg |= kfShift;
+        } 
         E->Mouse.KeyMask = flg;
         E->Mouse.Buttons = (unsigned short)inp.Event.MouseEvent.dwButtonState;
         E->Mouse.Count = 1;
-        if (inp.Event.MouseEvent.dwEventFlags & DOUBLE_CLICK)
+        if (inp.Event.MouseEvent.dwEventFlags & DOUBLE_CLICK) {
             E->Mouse.Count = 2;
-
+        }
         if (inp.Event.MouseEvent.dwEventFlags & MOUSE_WHEELED) {
             E->What        = evCommand;
             E->Msg.View    = 0;
@@ -515,8 +522,8 @@ int ConClear(void) {
 
 #if 0   // Mouse control not necessary when using console functions.
 /*--------------------------------------------------------------------------*/
-/*      CLASS:  tMouHelp is used to control mouse cursor visibility during              */
-/*                      screen updates.                                                                                                 */
+/*      CLASS:  tMouHelp is used to control mouse cursor visibility during  */
+/*                      screen updates.                                     */
 /*--------------------------------------------------------------------------*/
 class tMouHelp {
 protected:
@@ -944,12 +951,12 @@ int ConGetTitle(char *Title, int MaxLen, char *STitle, int SMaxLen) {
 
 #if 0
 /****************************************************************************/
-/*                                                                                                                                                      */
-/*      CODING: Pipe handler.                                                                                                   */
-/*                                                                                                                                                      */
+/*                                                                          */
+/*      CODING: Pipe handler.                                               */
+/*                                                                          */
 /****************************************************************************/
 /*--------------------------------------------------------------------------*/
-/*      STATIC GLOBALS.                                                                                                                 */
+/*      STATIC GLOBALS.                                                     */
 /*--------------------------------------------------------------------------*/
 #define MAX_PIPES       4
 #define PIPE_BUFLEN 4096
