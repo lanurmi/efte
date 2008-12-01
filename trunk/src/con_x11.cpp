@@ -120,6 +120,7 @@ static int Refresh = 0;
 // res_name can be set with -name switch
 static char res_name[20] = "efte";
 static char res_class[] = "Efte";
+static char locale_name[32] = "C";
 
 static Display *display;
 static Colormap colormap;
@@ -412,7 +413,6 @@ static int InitXFonts(void) {
 
 static int SetupXWindow(int argc, char **argv) {
     unsigned long mask;
-    XSetWindowAttributes setWindowAttributes;
 
 #ifdef WINHCLX
     HCLXlibInit(); /* HCL - Initialize the X DLL */
@@ -435,14 +435,16 @@ static int SetupXWindow(int argc, char **argv) {
 
     colormap = DefaultColormap(display, DefaultScreen(display));
 
-    setWindowAttributes.bit_gravity =
-        sizeHints.win_gravity = NorthWestGravity;
-
     // this is correct behavior
     if (initX < 0)
         initX = DisplayWidth(display, DefaultScreen(display)) + initX;
     if (initY < 0)
         initY = DisplayHeight(display, DefaultScreen(display)) + initY;
+
+    XSetWindowAttributes attr;
+    attr.backing_store = Always;
+    attr.background_pixel = BlackPixel(display, DefaultScreen(display));
+
     win = XCreateWindow(display,
                         DefaultRootWindow(display),
                         initX, initY,
@@ -451,7 +453,7 @@ static int SetupXWindow(int argc, char **argv) {
                         // but we need to open a window - so pick up 1 x 1
                         1, 1, 0,
                         CopyFromParent, InputOutput, CopyFromParent,
-                        CWBitGravity, &setWindowAttributes);
+                        CWBackingStore|CWBackPixel, &attr);
 
     i18n_ctx = useI18n ? i18n_open(display, win, &mask) : 0;
 
@@ -485,6 +487,7 @@ static int SetupXWindow(int argc, char **argv) {
     assert(proptype_incr != None);
 
     sizeHints.flags = PResizeInc | PMinSize | PMaxSize | PBaseSize | PWinGravity;
+    sizeHints.win_gravity = NorthWestGravity;
     sizeHints.width_inc = FontCX;
     sizeHints.height_inc = FontCY;
     sizeHints.min_width = MIN_SCRWIDTH * FontCX;
@@ -606,9 +609,38 @@ static int SetupXWindow(int argc, char **argv) {
     XSetWMHints(display, win, &wm_hints);
 #endif
 
+    Atom winAtoms[2];
+    winAtoms[0] = XInternAtom(display, "_NET_WM_STATE_ABOVE", False);
+    winAtoms[1] = XInternAtom(display, "_NET_WM_WINDOW_TYPE_NORMAL", False);
+
+    Atom atom = XInternAtom(display, "_NET_STATE", False);
+    if (atom != None) {
+        XChangeProperty(display, win, atom, XA_ATOM, 32, PropModeReplace, (unsigned char*) winAtoms, 2);
+    }
+
+    pid_t pid = getpid();
+    atom = XInternAtom(display, "_NET_WM_PID", False);
+    if (atom != None) {
+        XChangeProperty(display, win, atom, XA_CARDINAL, 32, PropModeReplace, (unsigned char *) &pid, 1);
+    }
+
+    atom = XInternAtom(display, "WM_CLIENT_LEADER", False);
+    if (atom != None) {
+        XChangeProperty(display, win, atom, XA_WINDOW, 32, PropModeReplace, (unsigned char*)&win, 1L);
+    }
+
+    atom = XInternAtom(display, "WM_WINDOW_ROLE", False);
+    if (atom != None) {
+        XChangeProperty(display, win, atom, XA_STRING, 8, PropModeReplace, (unsigned char *)winTitle, strlen(winTitle));
+    }
+
+    atom = XInternAtom(display, "WM_LOCALE_NAME", False);
+    if (atom != None) {
+        XChangeProperty(display, win, atom, XA_STRING, 8, PropModeReplace, (unsigned char *)locale_name, strlen(locale_name));
+    }
+
     XResizeWindow(display, win, ScreenCols * FontCX, ScreenRows * FontCY);
     XMapRaised(display, win);
-    //    XClearWindow(display, win); /// !!! why?
     return 0;
 }
 
@@ -1005,7 +1037,7 @@ void UpdateWindow(int xx, int yy, int ww, int hh) {
     Refresh = 0;
 }
 
-void ResizeWindow(int ww, int hh) {
+int ResizeWindow(int ww, int hh) {
     int ox = ScreenCols;
     int oy = ScreenRows;
     ww /= FontCX;
@@ -1023,7 +1055,9 @@ void ResizeWindow(int ww, int hh) {
             UpdateWindow(0, oy * FontCY,
                          ScreenCols * FontCX, (ScreenRows - oy) * FontCY);
         Refresh = 0;
+        return 1;
     }
+    return 0;
 }
 
 static struct {
@@ -1376,9 +1410,10 @@ void ProcessXEvents(TEvent *Event) {
                 XCheckTypedWindowEvent(display, win,
                                        ConfigureNotify, &event))
             XSync(display, 0);
-        ResizeWindow(configureEvent->width, configureEvent->height);
-        Event->What = evCommand;
-        Event->Msg.Command = cmResize;
+        if (ResizeWindow(configureEvent->width, configureEvent->height)) {
+            Event->What = evCommand;
+            Event->Msg.Command = cmResize;
+        }
         break;
     case ButtonPress:
     case ButtonRelease:
