@@ -111,7 +111,7 @@ OEXT=o
 include objs.inc
 
 CXXFLAGS += $(DEFINES)
-CXXFLAGS += -Os
+CXXFLAGS += -Os -g
 CXXFLAGS += -fomit-frame-pointer
 #CXXFLAGS += -fsched2-use-traces
 

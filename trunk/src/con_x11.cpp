@@ -112,12 +112,13 @@ static unsigned int CursorY = 0;
 static int CursorVisible = 1;
 static bool insertState = 1;
 static unsigned long CursorLastTime;
+
 // Cursor flashing interval, in msecs
 static unsigned CursorFlashInterval = 300;
 static unsigned char *ScreenBuffer = NULL;
 static int Refresh = 0;
 
-// res_name can be set with -name switch
+static char win_name[20] = "eFte";
 static char res_name[20] = "efte";
 static char res_class[] = "Efte";
 static char locale_name[32] = "C";
@@ -135,6 +136,7 @@ static Atom proptype_incr;
 static Window win;
 static Atom prop_selection;
 static XSizeHints sizeHints;
+
 // program now contains both modes if available
 // some older Xservers don't like XmbDraw...
 static XFontStruct *fontStruct;
@@ -149,9 +151,7 @@ static int useI18n = 1;
 static int FontCX, FontCY;
 static XColor Colors[16];
 static GC GCs[256];
-//static int rc;
-static char winTitle[256] = "eFTE";
-static char winSTitle[256] = "eFTE";
+static char winTitle[256];
 
 static unsigned char* CurSelectionData[3] = {NULL, NULL, NULL};
 static int CurSelectionLen[3] = {0, 0, 0};
@@ -460,7 +460,7 @@ static int SetupXWindow(int argc, char **argv) {
     if (InitXFonts() != 0)
         DieError(1, "XeFTE Fatal: could not open any font!");
 
-    /* >KeyReleaseMask shouldn't be set for correct key mapping */
+    /* KeyReleaseMask shouldn't be set for correct key mapping */
     /* we set it anyway, but not pass to XmbLookupString -- mark */
     mask |= ExposureMask | StructureNotifyMask | VisibilityChangeMask |
             FocusChangeMask | KeyPressMask | KeyReleaseMask |
@@ -504,7 +504,7 @@ static int SetupXWindow(int argc, char **argv) {
     classHints.res_class = res_class;
     XSetClassHint(display, win, &classHints);
 
-    XSetStandardProperties(display, win, winTitle, winTitle, 0, NULL, 0, 0);
+    XSetStandardProperties(display, win, win_name, win_name, 0, NULL, 0, 0);
     XSetWMNormalHints(display, win, &sizeHints);
     XSetWMProtocols(display, win, &wm_delete_window, 1);
     XSetCommand(display, win, argv, argc);
@@ -631,7 +631,7 @@ static int SetupXWindow(int argc, char **argv) {
 
     atom = XInternAtom(display, "WM_WINDOW_ROLE", False);
     if (atom != None) {
-        XChangeProperty(display, win, atom, XA_STRING, 8, PropModeReplace, (unsigned char *)winTitle, strlen(winTitle));
+        XChangeProperty(display, win, atom, XA_STRING, 8, PropModeReplace, (unsigned char *)win_name, strlen(win_name));
     }
 
     atom = XInternAtom(display, "WM_LOCALE_NAME", False);
@@ -678,26 +678,28 @@ int ConClear(void) {
 
 int ConSetTitle(char *Title, char *STitle) {
     char buf[sizeof(winTitle)] = {0};
-    JustFileName(Title, buf, sizeof(buf));
-    if (buf[0] == '\0') // if there is no filename, try the directory name.
-        JustLastDirectory(Title, buf, sizeof(buf));
 
-    strncpy(winTitle, "eFTE - ", sizeof(winTitle) - 1);
-    if (buf[0] != 0) { // if there is a file/dir name, stick it in here.
+    JustFileName(Title, buf, sizeof(buf));
+    if (buf[0] == '\0') {
+        // if there is no filename, try the directory name.
+        JustLastDirectory(Title, buf, sizeof(buf));
+    }
+    snprintf(winTitle, sizeof(winTitle), "%s - ", win_name);
+    if (buf[0] != 0) { 
+        // if there is a file/dir name, stick it in here.
         strncat(winTitle, buf, sizeof(winTitle) - 1 - strlen(winTitle));
         strncat(winTitle, " - ", sizeof(winTitle) - 1 - strlen(winTitle));
     }
     strncat(winTitle, Title, sizeof(winTitle) - 1 - strlen(winTitle));
     winTitle[sizeof(winTitle) - 1] = 0;
-    strncpy(winSTitle, STitle, sizeof(winSTitle) - 1);
-    winSTitle[sizeof(winSTitle) - 1] = 0;
-    XSetStandardProperties(display, win, winTitle, winSTitle, 0, NULL, 0, NULL);
+
+    XSetStandardProperties(display, win, winTitle, winTitle, 0, NULL, 0, NULL);
     return 0;
 }
 
 int ConGetTitle(char *Title, int MaxLen, char *STitle, int SMaxLen) {
     strlcpy(Title, winTitle, MaxLen);
-    strlcpy(STitle, winSTitle, SMaxLen);
+    strlcpy(STitle, winTitle, SMaxLen);
     return 0;
 }
 
@@ -2022,11 +2024,11 @@ GUI::GUI(int &argc, char **argv, int XSize, int YSize) {
             if (c + 1 < argc) {
                 strcpy(WindowFont, argv[++c]);
             }
-        } else if (strcmp(argv[c], "-geometry") == 0) {
+        } else 
+        if (strcmp(argv[c], "-geometry") == 0) {
             if (c + 1 < argc) {
 
-                XParseGeometry(argv[++c], &initX, &initY,
-                               &ScreenCols, &ScreenRows);
+                XParseGeometry(argv[++c], &initX, &initY, &ScreenCols, &ScreenRows);
                 if (ScreenCols > ConMaxCols)
                     ScreenCols = ConMaxCols;
                 else if (ScreenCols < MIN_SCRWIDTH)
@@ -2037,28 +2039,33 @@ GUI::GUI(int &argc, char **argv, int XSize, int YSize) {
                     ScreenRows = MIN_SCRHEIGHT;
                 setUserPosition = 1;
             }
-        } else if ((strcmp(argv[c], "-noxmb") == 0)
-                   || (strcmp(argv[c], "--noxmb") == 0))
+        } else 
+        if ((strcmp(argv[c], "-noxmb") == 0) || (strcmp(argv[c], "--noxmb") == 0)) {
             useXMB = 0;
-        else if ((strcmp(argv[c], "-no18n") == 0)
-                 || (strcmp(argv[c], "--noi18n") == 0))
+        } else 
+        if ((strcmp(argv[c], "-no18n") == 0) || (strcmp(argv[c], "--noi18n") == 0)) {
             useI18n = 0;
-        else if (strcmp(argv[c], "-name") == 0) {
+        } else 
+        if (strcmp(argv[c], "-name") == 0) {
             if (c + 1 < argc) {
-                strncpy(res_name, argv [++c], sizeof(res_name));
-                res_name[sizeof(res_name)-1] = '\0'; // ensure termination
+                snprintf(res_name, sizeof(res_name), "%s", argv [++c]);
+            }
+        } else 
+        if (strcmp(argv[c], "-wname") == 0) {
+            if (c + 1 < argc) {
+                snprintf(win_name, sizeof(win_name), "%s", argv [++c]);
             }
         } else
             argv[o++] = argv[c];
     }
     argc = o;
     argv[argc] = 0;
-
-    if (::ConInit(XSize, YSize) == 0
-            && SetupXWindow(argc, argv) == 0)
+   
+    if (::ConInit(XSize, YSize) == 0 && SetupXWindow(argc, argv) == 0)
         gui = this;
     else
         gui = NULL;
+    
     fArgc = argc;
     fArgv = argv;
 }
