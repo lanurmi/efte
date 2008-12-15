@@ -118,9 +118,10 @@ static unsigned CursorFlashInterval = 300;
 static unsigned char *ScreenBuffer = NULL;
 static int Refresh = 0;
 
+// Configurable X11 parameters
 static char win_name[20] = "eFte";
 static char res_name[20] = "efte";
-static char res_class[] = "Efte";
+static char res_class[20] = "Efte";
 static char locale_name[32] = "C";
 
 static Display *display;
@@ -2049,6 +2050,11 @@ GUI::GUI(int &argc, char **argv, int XSize, int YSize) {
         if (strcmp(argv[c], "-name") == 0) {
             if (c + 1 < argc) {
                 snprintf(res_name, sizeof(res_name), "%s", argv [++c]);
+            }
+        } else 
+        if (strcmp(argv[c], "-wclass") == 0) {
+            if (c + 1 < argc) {
+                snprintf(res_class, sizeof(res_class), "%s", argv [++c]);
             }
         } else 
         if (strcmp(argv[c], "-wname") == 0) {
