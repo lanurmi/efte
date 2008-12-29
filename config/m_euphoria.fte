@@ -23,10 +23,10 @@ colorize EUPHORIA {
         "for", "function",
         "global",
         "include", "if",
-        "loop",
+        "label", "loop",
         "not",
         "or", "override",
-        "procedure",
+        "procedure", "public",
         "switch",
         "then", "type", "to",
         "until",
@@ -94,7 +94,7 @@ mode EUPHORIA: SOURCE {
     AutoHilitParen     = 1;
     SaveFolds          = 0;
 
-    RoutineRegexp      = /^{{override}|{global}|{export}}*\s*{{function}|{procedure}|{type}}\s+/;
+    RoutineRegexp      = /^{{override}|{public}|{global}|{export}}*\s*{{function}|{procedure}|{type}}\s+/;
 
     %if(INDENT)
     # LL = Look Line -- Which line to look at?
