@@ -100,22 +100,17 @@
 		532F6B950D30192F00C0ED59 /* s_string.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 532F6A980D30192C00C0ED59 /* s_string.cpp */; };
 		532F6B970D30192F00C0ED59 /* s_util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 532F6A9B0D30192C00C0ED59 /* s_util.cpp */; };
 		532F6B9A0D30192F00C0ED59 /* view.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 532F6AA00D30192C00C0ED59 /* view.cpp */; };
-		53477E5F0D54164300339791 /* u_stack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53477E5D0D54164300339791 /* u_stack.cpp */; };
 		536371520D417E4F0021126C /* cocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 536371500D417E4F0021126C /* cocoa.mm */; };
 		536371530D417E4F0021126C /* con_cocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 536371510D417E4F0021126C /* con_cocoa.cpp */; };
 		5363715B0D417EEB0021126C /* FTETextAreaView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5363715A0D417EEB0021126C /* FTETextAreaView.m */; };
-		538B51880D414C740092CDDF /* cfte.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 538B51870D414C740092CDDF /* cfte.cpp */; };
-		538B519C0D414E6E0092CDDF /* s_files.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 532F6A950D30192C00C0ED59 /* s_files.cpp */; };
-		538B51A20D414E860092CDDF /* s_string.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 532F6A980D30192C00C0ED59 /* s_string.cpp */; };
-		53E0CFE60D452D00006F8FBB /* h_falcon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53E0CFE50D452D00006F8FBB /* h_falcon.cpp */; };
-		53E0D0100D4F8CCE006F8FBB /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 53E0D00F0D4F8CCE006F8FBB /* Info.plist */; };
+		53C00BEA0F2D40AC00EB3E6A /* h_regex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53C00BE90F2D40AC00EB3E6A /* h_regex.cpp */; };
+		53C00BF30F2D432300EB3E6A /* cfte.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 538B51870D414C740092CDDF /* cfte.cpp */; };
+		53C00C230F2D43FD00EB3E6A /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 53C00C220F2D43FD00EB3E6A /* Info.plist */; };
 		8D11072A0486CEB800E47090 /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = 29B97318FDCFA39411CA2CEA /* MainMenu.nib */; };
-		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		089C165DFE840E0CC02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		13E42FB307B3F0F600E4EEF1 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 		29B97319FDCFA39411CA2CEA /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/MainMenu.nib; sourceTree = "<group>"; };
@@ -186,7 +181,6 @@
 		532F69EA0D30192C00C0ED59 /* e_unix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = e_unix.cpp; sourceTree = "<group>"; };
 		532F69ED0D30192C00C0ED59 /* egui.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = egui.cpp; sourceTree = "<group>"; };
 		532F69EE0D30192C00C0ED59 /* egui.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = egui.h; sourceTree = "<group>"; };
-		532F69F00D30192C00C0ED59 /* feature.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = feature.h; sourceTree = "<group>"; };
 		532F69F10D30192C00C0ED59 /* fnmatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fnmatch.h; sourceTree = "<group>"; };
 		532F69FD0D30192C00C0ED59 /* fte.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fte.cpp; sourceTree = "<group>"; };
 		532F69FF0D30192C00C0ED59 /* fte.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fte.h; sourceTree = "<group>"; };
@@ -272,28 +266,18 @@
 		532F6A9C0D30192C00C0ED59 /* s_util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = s_util.h; sourceTree = "<group>"; };
 		532F6A9F0D30192C00C0ED59 /* sysdep.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sysdep.h; sourceTree = "<group>"; };
 		532F6AA00D30192C00C0ED59 /* view.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = view.cpp; sourceTree = "<group>"; };
-		53477E5D0D54164300339791 /* u_stack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = u_stack.cpp; sourceTree = "<group>"; };
-		53477E5E0D54164300339791 /* u_stack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = u_stack.h; sourceTree = "<group>"; };
 		5363714F0D417E4F0021126C /* cocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cocoa.h; sourceTree = "<group>"; };
 		536371500D417E4F0021126C /* cocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = cocoa.mm; sourceTree = "<group>"; };
 		536371510D417E4F0021126C /* con_cocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = con_cocoa.cpp; sourceTree = "<group>"; };
 		536371590D417EEB0021126C /* FTETextAreaView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FTETextAreaView.h; sourceTree = "<group>"; };
 		5363715A0D417EEB0021126C /* FTETextAreaView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FTETextAreaView.m; sourceTree = "<group>"; };
-		538B51760D414BB60092CDDF /* cefte */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = cefte; sourceTree = BUILT_PRODUCTS_DIR; };
 		538B51870D414C740092CDDF /* cfte.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cfte.cpp; sourceTree = "<group>"; };
-		53E0CFE50D452D00006F8FBB /* h_falcon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = h_falcon.cpp; sourceTree = "<group>"; };
-		53E0D00F0D4F8CCE006F8FBB /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = Info.plist; path = macosx/Info.plist; sourceTree = "<group>"; };
+		53C00BE90F2D40AC00EB3E6A /* h_regex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = h_regex.cpp; sourceTree = "<group>"; };
+		53C00C220F2D43FD00EB3E6A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Info.plist; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* eFTE.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = eFTE.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		538B51740D414BB60092CDDF /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		8D11072E0486CEB800E47090 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -334,7 +318,6 @@
 			isa = PBXGroup;
 			children = (
 				8D1107320486CEB800E47090 /* eFTE.app */,
-				538B51760D414BB60092CDDF /* cefte */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -363,8 +346,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				53E0D00F0D4F8CCE006F8FBB /* Info.plist */,
-				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
+				53C00C220F2D43FD00EB3E6A /* Info.plist */,
 				29B97318FDCFA39411CA2CEA /* MainMenu.nib */,
 			);
 			name = Resources;
@@ -387,8 +369,8 @@
 				5363714F0D417E4F0021126C /* cocoa.h */,
 				536371500D417E4F0021126C /* cocoa.mm */,
 				536371510D417E4F0021126C /* con_cocoa.cpp */,
-				538B51870D414C740092CDDF /* cfte.cpp */,
 				532F696B0D30192B00C0ED59 /* bmps */,
+				538B51870D414C740092CDDF /* cfte.cpp */,
 				532F697F0D30192B00C0ED59 /* c_bind.cpp */,
 				532F69800D30192B00C0ED59 /* c_bind.h */,
 				532F69820D30192B00C0ED59 /* c_cmdtab.h */,
@@ -440,7 +422,6 @@
 				532F69EA0D30192C00C0ED59 /* e_unix.cpp */,
 				532F69ED0D30192C00C0ED59 /* egui.cpp */,
 				532F69EE0D30192C00C0ED59 /* egui.h */,
-				532F69F00D30192C00C0ED59 /* feature.h */,
 				532F69F10D30192C00C0ED59 /* fnmatch.h */,
 				532F69FD0D30192C00C0ED59 /* fte.cpp */,
 				532F69FF0D30192C00C0ED59 /* fte.h */,
@@ -454,7 +435,6 @@
 				532F6A160D30192C00C0ED59 /* h_ada.cpp */,
 				532F6A180D30192C00C0ED59 /* h_c.cpp */,
 				532F6A1A0D30192C00C0ED59 /* h_catbs.cpp */,
-				53E0CFE50D452D00006F8FBB /* h_falcon.cpp */,
 				532F6A1C0D30192C00C0ED59 /* h_fte.cpp */,
 				532F6A1E0D30192C00C0ED59 /* h_ipf.cpp */,
 				532F6A200D30192C00C0ED59 /* h_make.cpp */,
@@ -465,6 +445,7 @@
 				532F6A2A0D30192C00C0ED59 /* h_rexx.cpp */,
 				532F6A2C0D30192C00C0ED59 /* h_sh.cpp */,
 				532F6A2E0D30192C00C0ED59 /* h_simple.cpp */,
+				53C00BE90F2D40AC00EB3E6A /* h_regex.cpp */,
 				532F6A300D30192C00C0ED59 /* h_tex.cpp */,
 				532F6A320D30192C00C0ED59 /* i_ascii.cpp */,
 				532F6A330D30192C00C0ED59 /* i_ascii.h */,
@@ -527,8 +508,6 @@
 				532F6A9B0D30192C00C0ED59 /* s_util.cpp */,
 				532F6A9C0D30192C00C0ED59 /* s_util.h */,
 				532F6A9F0D30192C00C0ED59 /* sysdep.h */,
-				53477E5D0D54164300339791 /* u_stack.cpp */,
-				53477E5E0D54164300339791 /* u_stack.h */,
 				532F6AA00D30192C00C0ED59 /* view.cpp */,
 			);
 			path = src;
@@ -564,22 +543,6 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		538B51750D414BB60092CDDF /* cefte */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 538B517E0D414BE90092CDDF /* Build configuration list for PBXNativeTarget "cefte" */;
-			buildPhases = (
-				538B51730D414BB60092CDDF /* Sources */,
-				538B51740D414BB60092CDDF /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = cefte;
-			productName = cefte;
-			productReference = 538B51760D414BB60092CDDF /* cefte */;
-			productType = "com.apple.product-type.tool";
-		};
 		8D1107260486CEB800E47090 /* eFTE */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "eFTE" */;
@@ -609,7 +572,6 @@
 			projectDirPath = "";
 			targets = (
 				8D1107260486CEB800E47090 /* eFTE */,
-				538B51750D414BB60092CDDF /* cefte */,
 			);
 		};
 /* End PBXProject section */
@@ -620,7 +582,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				8D11072A0486CEB800E47090 /* MainMenu.nib in Resources */,
-				8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */,
 				532F6AA70D30192E00C0ED59 /* cut.bmp in Resources */,
 				532F6AA90D30192E00C0ED59 /* errprev.bmp in Resources */,
 				532F6AAB0D30192E00C0ED59 /* last.bmp in Resources */,
@@ -634,23 +595,13 @@
 				532F6AB50D30192E00C0ED59 /* tagpop.bmp in Resources */,
 				532F6AB60D30192E00C0ED59 /* tagprev.bmp in Resources */,
 				532F6AB70D30192E00C0ED59 /* undo.bmp in Resources */,
-				53E0D0100D4F8CCE006F8FBB /* Info.plist in Resources */,
+				53C00C230F2D43FD00EB3E6A /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		538B51730D414BB60092CDDF /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				538B51880D414C740092CDDF /* cfte.cpp in Sources */,
-				538B519C0D414E6E0092CDDF /* s_files.cpp in Sources */,
-				538B51A20D414E860092CDDF /* s_string.cpp in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		8D11072C0486CEB800E47090 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -738,23 +689,14 @@
 				536371520D417E4F0021126C /* cocoa.mm in Sources */,
 				536371530D417E4F0021126C /* con_cocoa.cpp in Sources */,
 				5363715B0D417EEB0021126C /* FTETextAreaView.m in Sources */,
-				53E0CFE60D452D00006F8FBB /* h_falcon.cpp in Sources */,
-				53477E5F0D54164300339791 /* u_stack.cpp in Sources */,
+				53C00BEA0F2D40AC00EB3E6A /* h_regex.cpp in Sources */,
+				53C00BF30F2D432300EB3E6A /* cfte.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		089C165CFE840E0CC02AAC07 /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				089C165DFE840E0CC02AAC07 /* English */,
-			);
-			name = InfoPlist.strings;
-			path = macosx;
-			sourceTree = "<group>";
-		};
 		29B97318FDCFA39411CA2CEA /* MainMenu.nib */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -767,35 +709,6 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		538B517F0D414BE90092CDDF /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_MODEL_TUNING = G5;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				INSTALL_PATH = "$(HOME)/bin";
-				PREBINDING = NO;
-				PRODUCT_NAME = cefte;
-			};
-			name = Debug;
-		};
-		538B51800D414BE90092CDDF /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_MODEL_TUNING = G5;
-				INSTALL_PATH = "$(HOME)/bin";
-				PREBINDING = NO;
-				PRODUCT_NAME = cefte;
-				ZERO_LINK = NO;
-			};
-			name = Release;
-		};
 		C01FCF4B08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -862,15 +775,6 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		538B517E0D414BE90092CDDF /* Build configuration list for PBXNativeTarget "cefte" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				538B517F0D414BE90092CDDF /* Debug */,
-				538B51800D414BE90092CDDF /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "eFTE" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
