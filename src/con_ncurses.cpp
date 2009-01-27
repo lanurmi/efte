@@ -673,7 +673,13 @@ int ConGetEvent(TEventMask /*EventMask */ ,
             Event->What = evNone;
             ConGetMouseEvent(Event);
             break;
-        case KEY_SRIGHT:
+		case KEY_SF:
+			KEvent->Code = kfShift | kbDown;
+			break;
+		case KEY_SR:
+			KEvent->Code = kfShift | kbUp;
+			break;
+		case KEY_SRIGHT:
             KEvent->Code = kfShift | kbRight;
             break;
         case KEY_SLEFT:
