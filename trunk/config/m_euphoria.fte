@@ -106,7 +106,7 @@ mode EUPHORIA: SOURCE {
     #            LL, AL, IC, Regular Expression, Flags
 
     # Indent functions, proecdures and types
-    IndentRx = { -1,  0,  1, /^{{override}|{global}|{export}}*\s*{{function}|{procedure}|{type}}\s+/, 0 };
+    IndentRx = { -1,  0,  1, /^{{override}|{public}|{global}|{export}}*\s*{{function}|{procedure}|{type}}\s+/, 0 };
 
     # if, for, while loop indentations, ignore if end exists on the line as well
     IndentRx = { -1,  0,  0, /^.*\send.*$/, 2 };
@@ -129,7 +129,7 @@ mode EUPHORIA: SOURCE {
 
     # Indent common types that appear on their own line and ending continuation characters
     IndentRx = { -1,  0,  0, /^\s*\-\-/, 2 }; # Ignore the next regex
-    IndentRx = { -1,  0,  1, /^{{global}|{export}}*\s*{{enum}|{constant}|{atom}|{integer}|{sequence}|{object}|{.*[\{,]}}\s*{--.*}*$/, 1 };
+    IndentRx = { -1,  0,  1, /^{{public}|{global}|{export}}*\s*{{enum}|{constant}|{atom}|{integer}|{sequence}|{object}|{.*[\{,]}}\s*{--.*}*$/, 1 };
     IndentRx = { -1,  0,  0, /^\s*\-\-/, 2 }; # Ignore the next regex
     IndentRx = { -1,  0,  1, /^.*[\+\-\*&]\s*{--.*}*$/, 1 };
     %endif

@@ -134,7 +134,7 @@ colorize PASCAL {
 }
 
 mode PASCAL: SOURCE {      # Pascal Mode
-    FileNameRx          = /\.\cPAS$/;
+    FileNameRx          = /\.\c{{PAS}|{PP}}$/;
     HilitOn             = 1;
     Colorizer           = 'PASCAL';
     AutoIndent          = 1;
