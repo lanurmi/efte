@@ -2038,6 +2038,7 @@ GUI::GUI(int &argc, char **argv, int XSize, int YSize) {
                     ScreenRows = ConMaxRows;
                 else if (ScreenRows < MIN_SCRHEIGHT)
                     ScreenRows = MIN_SCRHEIGHT;
+                XSize = YSize = -1;
                 setUserPosition = 1;
             }
         } else 
