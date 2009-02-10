@@ -50,6 +50,5 @@ all: watconvert.exe
 
 watconvert.exe: watconvert.obj
   $(LD) NAME watconvert SYS $(LDSYSTEM) $(LDFLAGS) FILE {watconvert.obj}
-
-
+  watconvert
 
