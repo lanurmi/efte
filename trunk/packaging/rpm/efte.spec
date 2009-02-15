@@ -11,7 +11,6 @@ Requires: ncurses
 Requires: libX11
 Requires: libXpm
 BuildRequires: gcc-c++
-BuildRequires: cmake
 BuildRequires: gpm-devel
 BuildRequires: ncurses-devel
 BuildRequires: libX11-devel
@@ -31,14 +30,13 @@ File/line size limited by virtual memory.
 rm -rf $RPM_BUILD_ROOT
 
 %setup -q
-cmake . -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release
 
 %build
-make
+cd src && make PREFIX=/usr
 
 %install
 install -d $RPM_BUILD_ROOT/etc/efte
-make install DESTDIR=$RPM_BUILD_ROOT
+cd src && make install PREFIX=/usr DESTDIR=$RPM_BUILD_ROOT
 
 %clean
 rm -rf $RPM_BUILD_ROOT
