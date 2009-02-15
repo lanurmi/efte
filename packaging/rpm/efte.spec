@@ -48,13 +48,5 @@ rm -rf $RPM_BUILD_ROOT
 /usr/bin/efte
 /usr/bin/nefte
 /usr/bin/vefte
-/usr/share
-/usr/share/doc
 /usr/share/doc/efte
-/usr/share/doc/efte/README
-/usr/share/doc/efte/AUTHORS
-/usr/share/doc/efte/COPYING
-/usr/share/doc/efte/Artistic
-/usr/share/doc/efte/HISTORY
-/usr/share/efte
 /usr/share/efte/config
