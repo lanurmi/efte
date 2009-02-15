@@ -26,6 +26,10 @@ ifndef $(X11_PATH)
 	X11_PATH=/usr/X11R6
 endif
 
+ifndef $(PREFIX)
+	PREFIX=/usr/local
+endif
+
 DEFINES=-DUNIX -DHAVE_STRICMP
 CXXFLAGS=$(DEBUG) -Wall -Wno-long-long -pedantic -I$(X11_PATH)/include
 SYSTEM_LIBS=
@@ -206,7 +210,17 @@ defcfg.h: bin2c simple.fte
 	./bin2c simple.fte > defcfg.h
 
 config.h:
-	sed s/\$$\{CMAKE_INSTALL_PREFIX\}/\\/usr\\/local/g < config.h.in > config.h
+	sed s%\$$\{CMAKE_INSTALL_PREFIX\}%$(PREFIX)%g < config.h.in > config.h
+
+install: $(TARGETS)
+	echo prefix = $(PREFIX)
+	install -d $(PREFIX)/bin
+	install -m 644 $(TARGETS) $(PREFIX)/bin
+	install -d $(PREFIX)/share/doc
+	install -m 644 ../README ../COPYING ../Artistic ../HISTORY $(PREFIX)/share/doc
+	install -d $(PREFIX)/share/efte
+	install -d $(PREFIX)/share/efte/config
+	cp -a ../config/* $(PREFIX)/share/efte/config
 
 efte: config.h defcfg.h $(OBJS) $(XOBJS)
 	$(CXX) -o efte $(OBJS) $(XOBJS) $(EFTE_LIBS)
