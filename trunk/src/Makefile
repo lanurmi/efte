@@ -213,14 +213,14 @@ config.h:
 	sed s%\$$\{CMAKE_INSTALL_PREFIX\}%$(PREFIX)%g < config.h.in > config.h
 
 install: $(TARGETS)
-	echo prefix = $(PREFIX)
-	install -d $(PREFIX)/bin
-	install -m 644 $(TARGETS) $(PREFIX)/bin
-	install -d $(PREFIX)/share/doc
-	install -m 644 ../README ../COPYING ../Artistic ../HISTORY $(PREFIX)/share/doc
-	install -d $(PREFIX)/share/efte
-	install -d $(PREFIX)/share/efte/config
-	cp -a ../config/* $(PREFIX)/share/efte/config
+	install -d $(DESTDIR)$(PREFIX)/bin
+	install -m 755 $(TARGETS) $(DESTDIR)$(PREFIX)/bin
+	install -d $(DESTDIR)$(PREFIX)/share/doc
+	install -d $(DESTDIR)$(PREFIX)/share/doc/efte
+	install -m 644 ../README ../COPYING ../Artistic ../HISTORY ../AUTHORS $(DESTDIR)$(PREFIX)/share/doc/efte
+	install -d $(DESTDIR)$(PREFIX)/share/efte
+	install -d $(DESTDIR)$(PREFIX)/share/efte/config
+	cp -a ../config/* $(DESTDIR)$(PREFIX)/share/efte/config
 
 efte: config.h defcfg.h $(OBJS) $(XOBJS)
 	$(CXX) -o efte $(OBJS) $(XOBJS) $(EFTE_LIBS)
