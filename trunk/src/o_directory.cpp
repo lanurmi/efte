@@ -68,7 +68,9 @@ void EDirectory::DrawLine(PCell B, int Line, int Col, ChColor color, int Width) 
 
         if (Size >= 10 * 1024 * 1024) {
             Size /= 1024;
-            if (Size >= 1024 * 1024)
+            if (Size >= 1024 * 1024 * 1024)
+                sprintf(SizeStr, "%7ldG", (long)(Size / 1024 / 1024));
+            else if (Size >= 1024 * 1024)
                 sprintf(SizeStr, "%7ldM", (long)(Size / 1024));
             else
                 sprintf(SizeStr, "%7ldK", (long) Size);
