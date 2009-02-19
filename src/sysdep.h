@@ -11,6 +11,13 @@
 #ifndef __SYSDEP_H
 #define __SYSDEP_H
 
+/* Support big files on 32-bit platform, if possible. */
+#define _FILE_OFFSET_BITS 64
+
+#ifndef _LARGEFILE_SOURCE
+#    define _LARGEFILE_SOURCE
+#endif
+
 #include <assert.h>
 #include <string.h>
 #include <errno.h>
