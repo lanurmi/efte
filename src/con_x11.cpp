@@ -124,6 +124,7 @@ static char res_name[20] = "efte";
 static char res_class[20] = "Efte";
 static char locale_name[32] = "C";
 
+static char *display_name;
 static Display *display;
 static Colormap colormap;
 static Atom wm_protocols;
@@ -423,24 +424,27 @@ static int SetupXWindow(int argc, char **argv) {
     XtAppContext   app_context;
     XtToolkitInitialize();
     app_context = XtCreateApplicationContext();
-    if ((display = XtOpenDisplay(app_context, NULL, argv[0], "efte",
-                                 NULL, 0, &argc, argv)) == NULL)
+    if ((display = XtOpenDisplay(app_context, NULL, argv[0], "efte", NULL, 0, &argc, argv)) == NULL) {
         DieError(1, "%s:  Can't open display\n", argv[0]);
+    }
 #else
-    char *ds = getenv("DISPLAY");
-    if (!ds)
-        DieError(1, "$DISPLAY not set? This version of efte must be run under X11.");
-    if ((display = XOpenDisplay(ds)) == NULL)
-        DieError(1, "XeFTE Fatal: could not open display: %s!", ds);
+    if (display_name == NULL) {
+        display_name = getenv("DISPLAY");
+    }
+    if ((display = XOpenDisplay(display_name)) == NULL) {
+        DieError(1, "XeFTE Fatal: could not open display: %s!", display_name);
+    }
 #endif
 
     colormap = DefaultColormap(display, DefaultScreen(display));
 
     // this is correct behavior
-    if (initX < 0)
+    if (initX < 0) {
         initX = DisplayWidth(display, DefaultScreen(display)) + initX;
-    if (initY < 0)
+    }
+    if (initY < 0) {
         initY = DisplayHeight(display, DefaultScreen(display)) + initY;
+    }
 
     XSetWindowAttributes attr;
     attr.backing_store = Always;
@@ -458,8 +462,9 @@ static int SetupXWindow(int argc, char **argv) {
 
     i18n_ctx = useI18n ? i18n_open(display, win, &mask) : 0;
 
-    if (InitXFonts() != 0)
+    if (InitXFonts() != 0) {
         DieError(1, "XeFTE Fatal: could not open any font!");
+    }
 
     /* KeyReleaseMask shouldn't be set for correct key mapping */
     /* we set it anyway, but not pass to XmbLookupString -- mark */
@@ -2021,6 +2026,11 @@ GUI::GUI(int &argc, char **argv, int XSize, int YSize) {
     int o = 1;
 
     for (int c = 1; c < argc; c++) {
+        if (strcmp(argv[c], "-display") == 0) {
+            if (c + 1 < argc) {
+                display_name = strdup(argv[++c]);
+            }
+        } else 
         if (strcmp(argv[c], "-font") == 0) {
             if (c + 1 < argc) {
                 strcpy(WindowFont, argv[++c]);
