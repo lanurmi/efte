@@ -432,7 +432,7 @@ static int SetupXWindow(int argc, char **argv) {
         display_name = getenv("DISPLAY");
     }
     if ((display = XOpenDisplay(display_name)) == NULL) {
-        DieError(1, "XeFTE Fatal: could not open display: %s!", display_name);
+        DieError(1, "XeFTE Fatal: could not open display: %s!", display_name ? display_name : "NULL");
     }
 #endif
 
