@@ -289,8 +289,10 @@ int ExpandPath(const char *Path, char *Expand, int ExpandSize) {
         break;
     case '~':
         if (Name[1] == SLASH || Name[1] == 0) {
+            const char *Home = getenv("HOME");
+            if (Home == 0) Home = "/";
             path = Name + 1;
-            strlcpy(Name2, getenv("HOME"), sizeof(Name2));
+            strlcpy(Name2, Home, sizeof(Name2));
         } else {
             struct passwd *pwd;
 
