@@ -87,7 +87,7 @@ colorize BASIC {
 }
 
 mode BASIC: SOURCE {
-    FileNameRx         = /\c\.bas$/;
+	FileNameRx         = /\c\.{{bas}|{bi}}$/;
     HilitOn            = 1;
     Colorizer          = "BASIC";
     AutoIndent         = 1;
