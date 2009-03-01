@@ -68,4 +68,11 @@ mode GROOVY: SOURCE {      # GROOVY Mode
     %endif
 }
 
+eventmap GROOVY {
+    key [Tab]       { LineIndent; LineTrim; }
+    key [G-Enter]   { LineIndent; LineNew; }
+    key [A+G-Enter] { LineIndent; LineNew; LineIndent; }
+    key [S+G-Enter] { LineIndent; LineInsert; LineIndent; }
+}
+
 oinclude 'mym_groovy.fte';

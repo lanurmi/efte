@@ -43,7 +43,7 @@ colorize EUPHORIA {
     };
     
     keyword "Editor_Keywords4" {
-        "ifdef", "elsifdef", "trace", "with", "without"
+        "ifdef", "elsifdef", "elsedef", "trace", "with", "without"
     };
 
     h_state 0 { "Normal" }
@@ -53,6 +53,7 @@ colorize EUPHORIA {
     h_trans { 4, "", "\'", "String" }
     h_trans { 5, "<s", "0-9", "Number" }
     h_trans { 6, "", "#", "Number" }
+    h_trans { 7, '<', '/*', 'Comment' }
     h_trans { 0, "S", "_a-zA-Z0-9", "Punctuation" }
 
     h_state 1 { "Normal" }
@@ -80,6 +81,10 @@ colorize EUPHORIA {
     # Hex Number
     h_state 6 { "Number" }
     h_trans { 0, "-S", "0-9A-F", "Normal" }
+
+	# Multiline comment
+	h_state 7 { "Comment" }
+    h_trans { 0, ">", "*/", "Comment" }
 }
 
 mode EUPHORIA: SOURCE {
@@ -106,7 +111,7 @@ mode EUPHORIA: SOURCE {
     #            LL, AL, IC, Regular Expression, Flags
 
     # Indent functions, proecdures and types
-    IndentRx = { -1,  0,  1, /^{{override}|{public}|{global}|{export}}*\s*{{function}|{procedure}|{type}}\s+/, 0 };
+    IndentRx = { -1,  0,  1, /^{{public}|{override}|{global}|{export}}*\s*{{function}|{procedure}|{type}}\s+/, 0 };
 
     # if, for, while loop indentations, ignore if end exists on the line as well
     IndentRx = { -1,  0,  0, /^.*\send.*$/, 2 };
