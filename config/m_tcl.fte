@@ -23,35 +23,88 @@ colorize TCL {
     };
 
     keyword 'Editor_Keywords' {
-        # These keywords were taken from Tcl/Tk 8.03 electronic reference
-        # (as compiled by Charles Todd, October 1998): only TCL keywords
-        # are included here
+        'after', 'append', 'apply', 'array', 'auto_execok', 'auto_import',
+        'auto_load', 'auto_mkindex', 'auto_mkindex_old', 'auto_qualify',
+        'auto_reset',
 
-        'after', 'append', 'array', 'binary', 'break', 'catch', 'cd',
-        'clock', 'close', 'concat', 'continue', 'eof', 'error', 'eval',
-        'exec', 'exit', 'expr', 'fblocked', 'fconfigure', 'fcopy', 'file',
-        'fileevent', 'filename', 'flush', 'for', 'foreach', 'format',
-        'gets', 'glob', 'global', 'history', 'if', 'incr', 'info',
-        'interp', 'join', 'lappend', 'lindex', 'linsert', 'list',
-        'llength', 'load', 'lrange', 'lreplace', 'lsearch', 'lsort',
-        'namespace', 'open', 'package', 'pid', 'pkg_mkIndex', 'proc',
-        'puts', 'pwd', 'read', 'regexp', 'regsub', 'rename', 'resource',
-        'return', 'scan', 'seek', 'set', 'socket', 'source', 'split',
-        'string', 'subst', 'switch', 'tell', 'time', 'trace', 'unset',
-        'update', 'uplevel', 'upvar', 'variable', 'vwait', 'while',
+        'bgerror', 'binary', 'break',
 
-#       Built-ins that require package:
-	#'registry',  # on Windows only
+        'catch', 'cd', 'chan', 'clock', 'close', 'concat', 'continue',
 
-#       Special commands that must be provided (or can be overridden) by
-#       the user:
-	'bgerror', 'unknown',
+        'dde', 'dict',
 
-#       Obsoleted commands
-        'case',
+        'encoding', 'eof', 'error', 'eval', 'exec', 'exit', 'expr',
 
-#       Not a command: don't highlight them!
-	#'Http', 'Safe Base', 'Tcl', 'library',
+        'fblocked', 'fconfigure', 'fcopy', 'file', 'file', 'fileevent',
+        'flush', 'for', 'foreach', 'format',
+
+        'gets', 'glob', 'global',
+
+        'history', 'http',
+
+        'if', 'incr', 'info', 'interp',
+
+        'join',
+
+        'lappend', 'lassign', 'lindex', 'linsert', 'list', 'llength', 'load',
+        'lrange', 'lrepeat', 'lreplace', 'lreverse', 'lsearch', 'lset',
+        'lsort',
+
+        'memory', 'msgcat', 'my',
+
+        'name', 'namespace', 'next',
+
+        'open',
+
+        'package', 'parray', 'pid', 'pkg_mkIndex', 'platform',
+        'prefix', 'proc', 'puts', 'pwd',
+
+        'read', 'refchan', 'regexp', 'registry', 'regsub', 'rename', 'return',
+
+        'scan', 'seek', 'self', 'set', 'socket', 'source', 'split', 'string',
+        'subst', 'switch',
+
+        'tcltest', 'tclvars', 'tcl_endOfWord', 'tcl_findLibrary',
+        'tcl_startOfNextWord', 'tcl_startOfPreviousWord', 'tcl_wordBreakAfter',
+        'tcl_wordBreakBefore', 'tell', 'throw', 'time', 'tm', 'trace',
+        'transchan', 'try',
+
+        'unknown', 'unload', 'unset', 'update', 'uplevel', 'upvar',
+
+        'variable', 'vwait',
+
+        'while',
+
+        'zlib'
+    };
+
+    # Namespaces
+    keyword 'Editor_Keywords2' {
+        'oo', 'platform', 'pkg', 'tcl', 'mathfunc'
+    };
+
+    # Functions under namespaces
+    keyword 'Editor_Keywords3' {
+        # oo
+        'class', 'copy', 'define', 'objdefine', 'object',
+
+        # pkg
+        'create',
+
+        # platform
+        'shell',
+
+        # tcl::mathfunc
+        'abs', 'acos', 'asin', 'atan', 'atan2', 'bool', 'ceil', 'cos',
+        'cosh', 'double', 'entier', 'exp', 'floor', 'fmod', 'hypot',
+        'int', 'isqrt', 'log', 'log10', 'max', 'min', 'pow', 'pand',
+        'round', 'sin', 'sinh', 'sqrt', 'srand', 'tan', 'tanh', 'wide'
+    };
+
+    # Variables
+    keyword 'Editor_Keywords4' {
+        'auto_execs', 'auto_index', 'auto_noexec', 'auto_noload',
+        'auto_path', 'env', 'tcl_nonwordchars', 'tcl_wordchars'
     };
 
     h_state 0 { 'Normal' }
