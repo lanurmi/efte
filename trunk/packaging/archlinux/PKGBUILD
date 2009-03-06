@@ -1,6 +1,6 @@
 # Contributor: Jeremy Cowgar <jeremy@cowgar.com>
 pkgname=efte
-pkgver=0.97
+pkgver=1.0
 pkgrel=1
 pkgdesc="Fast configurable programmers editor"
 license=('GPL', 'custom')
