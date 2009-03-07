@@ -432,12 +432,12 @@ int EDirectory::FmMvFile(const char *Name) {
         return 0;
     }
 
-    if (ExpandPath(Dir, Dir2, sizeof(Dir2)) == -1) {
-        Msg(S_INFO, "Failed to expand destination %s", Name);
-        return 0;
-    }
+	if (ExpandPath(Dir, Dir2, sizeof(Dir2)) == -1) {
+		Msg(S_INFO, "Failed to expand destination %s", Name);
+		return 0;
+	}
 
-    int status = rename(Name, Dir2);
+    int status = rename(FullName, Dir2);
     if (status == 0) {
         RescanDir();
         return 1;
