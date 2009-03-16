@@ -286,18 +286,20 @@ menu Block {
     item "Mark &Column\tAlt+K"	 { BlockMarkColumn }
     item "Mark &Line\tAlt+L"	 { BlockMarkLine }
     item;
-#    item "Select Wor&d"   { BlockSelectWord }
-#    item "Selec&t Line"   { BlockSelectLine }
-#    item;
+    item "Select Wor&d"   { BlockSelectWord }
+    item "Selec&t Line"   { BlockSelectLine }
+    item;
     item "&Write..."		 { BlockWrite }
     item "&Read Stream..."	 { BlockReadStream }
     item "Re&ad Column..."	 { BlockReadColumn }
     item "Rea&d Line..."	 { BlockReadLine }
     item "&Print"		 { BlockPrint }
     item;
-    submenu "Translat&e",	 Translate;
     item "&Indent\tAlt+I"	 { BlockIndent }
     item "U&nindent\tAlt+U"	 { BlockUnindent }
+    item "R&eIndent\tAlt+\\"     { BlockReIndent }
+    item;
+    submenu "Translat&e",	 Translate;
     item "E&xpand Tabs" 	 { BlockUnTab }
     item "&Generate Tabs"	 { BlockEnTab }
     item "Sor&t"		 { BlockSort }
