@@ -82,8 +82,8 @@ colorize EUPHORIA {
     h_state 6 { "Number" }
     h_trans { 0, "-S", "0-9A-F", "Normal" }
 
-	# Multiline comment
-	h_state 7 { "Comment" }
+    # Multiline comment
+    h_state 7 { "Comment" }
     h_trans { 0, ">", "*/", "Comment" }
 }
 
@@ -107,8 +107,6 @@ mode EUPHORIA: SOURCE {
     # IC = Indent Count -- number of indents to apply (multiplied by TabSize)
     # RegExp -- Regular expression to match agains
     # Flags = Flags
-    #
-    #            LL, AL, IC, Regular Expression, Flags
 
     # Indent functions, proecdures and types
     IndentRx = { -1,  0,  1, /^{{public}|{override}|{global}|{export}}*\s*{{function}|{procedure}|{type}}\s+/, 0 };
@@ -122,8 +120,8 @@ mode EUPHORIA: SOURCE {
     IndentRx = {  0,  0, -2, /^\s*end\s+switch\s*{--.*}*$/, 0 };
 
     # Indents/single outdents that are at the end of a line
-    IndentRx = {  0,  0, -1, /^\s*{{do}|{else}|{entry}|{then}}\s*{--.*}*$/, 0 };
-    IndentRx = { -1,  0,  1, /^\s*{{do}|{else}|{entry}|{then}}\s*{--.*}*$/, 0 };
+    IndentRx = {  0,  0, -1, /^\s*{{do}|{else}|{elsedef}|{entry}|{then}}\s*{--.*}*$/, 0 };
+    IndentRx = { -1,  0,  1, /^\s*{{do}|{else}|{elsedef}|{entry}|{then}}\s*{--.*}*$/, 0 };
 
     # Indents that are in the middle of a line
     IndentRx = {  0,  0, -1, /^\s*{{elsifdef}|{elsif}|{case}}\s+/, 0 };
@@ -136,7 +134,7 @@ mode EUPHORIA: SOURCE {
     IndentRx = { -1,  0,  0, /^\s*\-\-/, 2 }; # Ignore the next regex
     IndentRx = { -1,  0,  1, /^{{public}|{global}|{export}}*\s*{{enum}|{constant}|{atom}|{integer}|{sequence}|{object}|{.*[\{,]}}\s*{--.*}*$/, 1 };
     IndentRx = { -1,  0,  0, /^\s*\-\-/, 2 }; # Ignore the next regex
-    IndentRx = { -1,  0,  1, /^.*[\+\-\*&]\s*{--.*}*$/, 1 };
+    IndentRx = { -1,  0,  1, /^.*{[\+\-&]|[^\/]\*}\s*{--.*}*$/, 1 };
     %endif
 }
 
@@ -145,6 +143,7 @@ eventmap EUPHORIA {
     key [G-Enter]   { LineIndent; LineNew; }
     key [A+G-Enter] { LineIndent; LineNew; LineIndent; }
     key [S+G-Enter] { LineIndent; LineInsert; LineIndent; }
+    key [A+\\]      { BlockReIndent; FileTrim; WinRefresh }
 }
 
 oinclude "mym_euphoria.fte";
