@@ -39,7 +39,6 @@ static const struct {
     { "REXX", INDENT_REXX },
     { "SIMPLE", INDENT_REXX },
     { "PLAIN", INDENT_PLAIN },
-    { "REGEX", INDENT_REGEX },
 };
 
 EColorize *Colorizers = 0;

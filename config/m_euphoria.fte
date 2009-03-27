@@ -92,7 +92,7 @@ mode EUPHORIA: SOURCE {
     HilitOn            = 1;
     Colorizer          = "EUPHORIA";
     AutoIndent         = 1;
-    IndentMode         = "REGEX";
+    IndentMode         = "PLAIN";
     MatchCase          = 1;
     Trim               = 1;
     MultiLineHilit     = 1;
@@ -100,50 +100,6 @@ mode EUPHORIA: SOURCE {
     SaveFolds          = 0;
 
     RoutineRegexp      = /^{{override}|{public}|{global}|{export}}*\s*{{function}|{procedure}|{type}}\s+/;
-
-    %if(INDENT)
-    # LL = Look Line -- Which line to look at?
-    # AL = Affect line  -- 0 is current, -1 is previous, -2 is 2 lines back, 1 is next line, etc...
-    # IC = Indent Count -- number of indents to apply (multiplied by TabSize)
-    # RegExp -- Regular expression to match agains
-    # Flags = Flags
-
-    # Indent functions, proecdures and types
-    IndentRx = { -1,  0,  1, /^{{public}|{override}|{global}|{export}}*\s*{{function}|{procedure}|{type}}\s+/, 0 };
-
-    # if, for, while loop indentations, ignore if end exists on the line as well
-    IndentRx = { -1,  0,  0, /^.*\send.*$/, 2 };
-    IndentRx = { -1,  0,  1, /^\s*{{if}|{ifdef}|{for}|{while}|{loop}}\s+/, 0 };
-
-    # Switch statement indents 2, case statements outdent 1
-    IndentRx = { -1,  0,  2, /^\s*switch\s+/, 0 };
-    IndentRx = {  0,  0, -2, /^\s*end\s+switch\s*{--.*}*$/, 0 };
-
-    # Indents/single outdents that are at the end of a line
-    IndentRx = {  0,  0, -1, /^\s*{{do}|{else}|{elsedef}|{entry}|{then}}\s*{--.*}*$/, 0 };
-    IndentRx = { -1,  0,  1, /^\s*{{do}|{else}|{elsedef}|{entry}|{then}}\s*{--.*}*$/, 0 };
-
-    # Indents that are in the middle of a line
-    IndentRx = {  0,  0, -1, /^\s*{{elsifdef}|{elsif}|{case}}\s+/, 0 };
-    IndentRx = { -1,  0,  1, /^\s*{{elsifdef}|{elsif}|{case}}\s+/, 0 };
-
-    # Outdents
-    IndentRx = {  0,  0, -1, /^\s*{{until}|{end}}\s+{{if}|{for}|{while}|{loop}|{procedure}|{function}|{type}}/, 0 };
-
-    # Indent common types that appear on their own line and ending continuation characters
-    IndentRx = { -1,  0,  0, /^\s*\-\-/, 2 }; # Ignore the next regex
-    IndentRx = { -1,  0,  1, /^{{public}|{global}|{export}}*\s*{{enum}|{constant}|{atom}|{integer}|{sequence}|{object}|{.*[\{,]}}\s*{--.*}*$/, 1 };
-    IndentRx = { -1,  0,  0, /^\s*\-\-/, 2 }; # Ignore the next regex
-    IndentRx = { -1,  0,  1, /^.*{[\+\-&]|[^\/]\*}\s*{--.*}*$/, 1 };
-    %endif
-}
-
-eventmap EUPHORIA {
-    key [Tab]       { LineIndent; LineTrim; }
-    key [G-Enter]   { LineIndent; LineNew; }
-    key [A+G-Enter] { LineIndent; LineNew; LineIndent; }
-    key [S+G-Enter] { LineIndent; LineInsert; LineIndent; }
-    key [A+\\]      { BlockReIndent; FileTrim; WinRefresh }
 }
 
 oinclude "mym_euphoria.fte";

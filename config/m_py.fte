@@ -280,12 +280,7 @@ mode PYTHON: SOURCE {
     SaveFolds           = 2;      # save fold info at end of line
 
     CommentStart        = " #";
-    CommentEnd          = "";
-
-    %if(INDENT)
-    #IndentRx  = { -1, -1, /^\s*{{elif}|{else}}.*:/ };
-    #IndentRx  = {  0,  1, /^\s*{{if}|{elif}|{else}|{for}|{while}|{def}}.*:/ };
-    %endif
+	CommentEnd          = "";
 }
 
 oinclude "mym_py.fte";
