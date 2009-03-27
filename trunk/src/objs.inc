@@ -37,7 +37,6 @@ h_pascal.$(OEXT) \
 h_perl.$(OEXT) \
 h_plain.$(OEXT) \
 h_msg.$(OEXT) \
-h_regex.$(OEXT) \
 h_rexx.$(OEXT) \
 h_sh.$(OEXT) \
 h_tex.$(OEXT) \

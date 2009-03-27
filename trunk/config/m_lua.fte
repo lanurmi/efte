@@ -116,14 +116,6 @@ mode Lua: SOURCE {
     CommentEnd          = "";
 
     RoutineRegexp       = /^\s*{local }*function /;
-
-    %if(INDENT)
-    # Minimal indentation for Lua
-    #IndentRx = {  0,  1, /.*function/ };
-    #IndentRx = {  0,  1, /{{do}|{then}}\s*$/ };
-    #IndentRx = { -1, -1, /^\s*end/ };
-    #IndentRx = { -1, -1, /^\s*{{else}|{elseif}}/ };
-    %endif
 }
 
 oinclude "mym_lua.fte";

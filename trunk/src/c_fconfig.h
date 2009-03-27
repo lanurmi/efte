@@ -43,7 +43,6 @@
 #define CF_CONCAT   125
 #define CF_CVSIGNRX 126
 #define CF_SVNIGNRX 127
-#define CF_INDENTRX 128
 
 #define CF_EOF      254
 

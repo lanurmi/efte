@@ -140,9 +140,6 @@ mode FTE: SOURCE {
     CommentEnd          = '';
 
     RoutineRegexp       = /^{mode}|{sub}|{menu}|{object}|{eventmap}|{colorize}\s+/;
-
-    IndentRx = { -1, 0,  1, /\{\s*{\#.*}*$/, 0 };
-    IndentRx = {  0, 0, -1, /\}\s*{\;}*\s*{\#.*}*$/, 0 };
 }
 
 oinclude 'mym_fte.fte';

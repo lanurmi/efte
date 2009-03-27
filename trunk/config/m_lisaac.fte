@@ -80,23 +80,10 @@ mode LISAAC: SOURCE {
     HilitOn             = 1;
     Colorizer           = "LISAAC";
     AutoIndent          = 1;
-    IndentMode          = "REGEX";
+    IndentMode          = "PLAIN";
     MatchCase           = 1;
     MultiLineHilit      = 1;
     AutoHilitParen      = 1;
-
-    IndentRx = { -1, 0,  1, /^\s*Section/, 0 };
-    IndentRx = {  0, 0, -1, /^\s*Section/, 0 };
-
-    IndentRx = { -1, 0,  1, /[\{\(][^\}\)]*$/, 0 };
-    IndentRx = {  0, 0, -1, /^\s*[\}\)]+/, 0 };
-}
-
-eventmap LISAAC {
-    key [Tab]       { LineIndent; LineTrim; }
-    key [G-Enter]   { LineIndent; LineNew; }
-    key [A+G-Enter] { LineIndent; LineNew; LineIndent; }
-    key [S+G-Enter] { LineIndent; LineInsert; LineIndent; }
 }
 
 oinclude "mym_lisaac.fte";

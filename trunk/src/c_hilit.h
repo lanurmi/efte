@@ -52,7 +52,6 @@ HILIT_P(Hilit_SIMPLE);
 int Indent_C(EBuffer *B, int Line, int PosCursor);
 int Indent_REXX(EBuffer *B, int Line, int PosCursor);
 int Indent_SIMPLE(EBuffer *B, int Line, int PosCursor);
-int Indent_REGEX(EBuffer *B, int Line, int PosCursor);
 
 /*
  * NT has 2-byte charcode and attribute... Following is not portable to non-
