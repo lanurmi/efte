@@ -1,0 +1,96 @@
+#
+# eFTE mode for CSS files
+#
+
+colorize CSS {
+    SyntaxParser = "SIMPLE";
+
+    color {
+        { "Normal",      "Editor_Default" },
+        { "Function",    "Lang_Function" },
+        { "Number",      "Lang_DecimalNumber" },
+        { "Comment",     "Lang_Comment" },
+        { "String",      "Lang_String" },
+        { "Punctuation", "Lang_Punctuation" },
+    };
+
+    keyword "Editor_Keywords" {
+        "a", "abbr", "acronym", "address", "area", "b", "base", "bdo",
+        "big", "blockquote", "body", "br", "button", "caption", "cite",
+        "code", "col", "colgroup", "dd", "del", "dfn", "div", "dl",
+        "dt", "em", "fieldset", "form", "frame", "frameset", "h1", "h2",
+        "h3", "h4", "h5", "h6", "head", "hr", "html", "i", "iframe",
+        "img", "input", "ins", "kbd", "label", "legend", "li", "link", "map",
+        "meta", "noframes", "noscript", "object", "ol", "optgroup",
+        "option", "p", "param", "pre", "q", "samp", "script", "select",
+        "small", "span", "strong", "style", "sub", "sup", "table",
+        "tbody", "td", "textarea", "tfoot", "th", "thead", "title", "tr",
+        "tt", "ul", "var"
+    };
+
+    keyword "Editor_Keywords2" {
+        "font-family", "font-style", "font-variant", "font-weight",
+        "font-size", "font", "background-color", "background-image",
+        "background-repeat", "background-attachment", "background-position",
+        "color", "background", "word-spacing", "letter-spacing",
+        "border-top-width", "border-right-width", "border-left-width",
+        "border-bottom-width", "border-width", "list-style-type",
+        "list-style-image", "list-style-position", "text-decoration",
+        "vertical-align", "text-transform", "text-align", "text-indent",
+        "line-height", "margin-top", "margin-right", "margin-bottom",
+        "margin-left", "margin", "padding-top", "padding-right", "padding-bottom",
+        "padding-left", "padding", "border-top", "border-right", "border-bottom",
+        "border-left", "border", "width", "height", "float", "clear", "display",
+        "list-style", "white-space", "border-style", "border-color"
+    };
+
+    keyword "Editor_Keywords3" {
+        "azimuth", "border-bottom-color", "border-bottom-style",
+        "border-collapse", "border-left-color", "border-left-style",
+        "border-right-color", "border-right-style", "border-top-color",
+        "border-top-style", "caption-side", "cell-spacing", "clip", "column-span",
+        "content", "cue", "cue-after", "cue-before", "cursor", "direction",
+        "elevation", "font-size-adjust", "left", "marks", "max-height", "max-width",
+        "middle", "min-height", "min-width", "orphans", "overflow", "page-break-after",
+        "page-break-before", "pause", "pause-after", "pause-before", "pitch",
+        "pitch-range", "play-during", "position", "richness", "right", "row-span",
+        "size", "speak", "speak-date", "speak-header", "speak-punctuation",
+        "speak-time", "speech-rate", "stress", "table-layout", "text-shadow", "top",
+        "visibility", "voice-family", "volume", "widows", "z-index"
+    };
+
+    keyword "Editor_Keywords4" {
+        "@import", "@page", "@font-face"
+    };
+
+    h_state 0 { "Normal" }
+    h_trans { 1, "-s", /a-zA-Z_\-@/, "Normal" }
+    h_trans { 2, "<", '/*', "Comment" }
+    h_trans { 3, "", "#", "Number" }
+    h_trans { 0, "S", /_a-zA-Z0-9\-@/, "Punctuation" }
+
+    h_state 1 { "Normal" }
+    h_trans { 0, "$", "", "Normal" }
+    h_wtype { 1, 1, 0, "", /a-zA-Z0-9_\-@/ }
+
+    h_state 2 { "Comment" }
+    h_trans { 0, ">", '*/', "Comment" }
+
+    h_state 3 { "Number" }
+    h_trans { 0, "-S", /0-9A-Fa-f/, "Normal" }
+}
+
+mode CSS: SOURCE {
+    FileNameRx        = /\c\.css$/;
+    HilitOn           = 1;
+    Colorizer         = "CSS";
+    AutoIndent        = 1;
+    MatchCase         = 0;
+    Trim              = 1;
+    MultiLineHilit    = 1;
+    AutoHilitParen    = 1;
+    CommentStart      = ' /*';
+    CommentEnd        = '*/';
+}
+
+oinclude "mym_css.fte";

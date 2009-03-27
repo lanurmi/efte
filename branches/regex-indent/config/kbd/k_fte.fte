@@ -1,0 +1,9 @@
+# additional keybindings for FTE edit mode
+# included from ../ui.fte
+
+eventmap FTE {
+    key       [Tab]     { LineIndent; LineTrim }
+    key       [G-Enter] { LineIndent; LineNew; LineIndent }
+    key       [{]       { SelfInsert; LineIndent }
+    key       [}]       { SelfInsert; LineIndent }
+}

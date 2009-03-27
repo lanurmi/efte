@@ -1,0 +1,77 @@
+
+# syntax hilit needs to handle <<END
+
+colorize PERL {
+    SyntaxParser = 'PERL';
+    
+    color {
+        { 'Normal',      'Editor_Default' },
+        { 'Comment',     'Lang_Comment' },
+        { 'Function',    'Lang_Function' },
+        { 'Variable',    'Lang_Variable' },
+        { 'Regexp',      'Lang_Regexp' },
+        { 'Number',      'Lang_Number' },
+        { 'String',      'Lang_String' },
+        { 'Punctuation', 'Lang_Punctuation' },
+        { 'QuoteDelim',  'Lang_Regexp' },
+        { 'RegexpDelim', 'Lang_String' },
+    };
+
+    keyword 'Editor_Keywords' {
+        'q', 'qq', 'qw', 'qx', 'qr', 'm', 's', 'y', 'tr',
+        'if', 'sub', 'return', 'while', 'for', 'elsif', 'foreach', 'else',
+        'unless', 'eq', 'not', 'and', 'or', 'ne', 'until', 'abs', 'accept',
+        'lt', 'gt', 'le', 'ge', 'cmp',
+        'alarm', 'atan2', 'bind', 'binmode', 'bless', 'caller', 'chdir',
+        'chmod', 'chomp', 'chop', 'chown', 'chr', 'chroot', 'close',
+        'closedir', 'connect', 'cos', 'crypt', 'dbmclose', 'dbmopen',
+        'defined', 'delete', 'die', 'do', 'dump', 'each', 'eof', 'eval',
+        'exec', 'exists', 'exit', 'exp', 'fcntl', 'fileno', 'flock', 'fork',
+        'formline', 'getc', 'getlogin', 'getpeername', 'getpgrp', 'getppid',
+        'getpriority', 'getpwnam', 'getgrname', 'gethostbyname',
+        'getnetbyname', 'getprotobyname', 'getpwuid', 'getgrgid',
+        'getservbyname', 'gethostbyaddr', 'getnetbyaddr', 'getprotobynumber',
+        'getservbyport', 'getpwent', 'getgrent', 'gethostent', 'getnetent',
+        'getprotoent', 'getservent', 'setpwent', 'setgrent', 'sethostent',
+        'setnetent', 'setprotoent', 'setservent', 'endpwent', 'endgrent',
+        'endhostent', 'endnetent', 'endprotoent', 'endservent', 'getsockname',
+        'getsockopt', 'glob', 'gmtime', 'goto', 'grep', 'hex', 'import',
+        'index', 'int', 'ioctl', 'join', 'keys', 'kill', 'last', 'lc',
+        'lcfirst', 'length', 'link', 'listen', 'local', 'localtime', 'log',
+        'lstat', 'map', 'mkdir', 'msgctl', 'msgget', 'msgsnd', 'msgrcv', 'my',
+        'next', 'no', 'oct', 'open', 'opendir', 'ord', 'our', 'pack', 'pipe', 'pop',
+        'pos', 'print', 'printf', 'push', 'quotemeta', 'rand', 'read',
+        'readdir', 'readlink', 'recv', 'redo', 'ref', 'rename', 'require',
+        'reset', 'return', 'reverse', 'rewinddir', 'rindex', 'rmdir', 'scalar',
+        'seek', 'seekdir', 'select', 'semctl', 'semget', 'semop', 'send',
+        'setpgrp', 'setpriority', 'setsockopt', 'shift', 'shmctl', 'sgmget',
+        'shmread', 'shmwrite', 'shutdown', 'sin', 'sleep', 'socket',
+        'socketpair', 'sort', 'splice', 'split', 'sprintf', 'sqrt', 'srand',
+        'stat', 'study', 'substr', 'symlink', 'syscall', 'sysread', 'system',
+        'syswrite', 'tell', 'telldir', 'tie', 'time', 'times', 'truncate',
+        'uc', 'ucfirst', 'umask', 'undef', 'unlink', 'unpack', 'untie',
+        'unshift', 'use', 'utime', 'values', 'vec', 'wait', 'waitpid',
+        'wantarray', 'warn', 'write', 'x', 'continue', 'package', 'bootstrap',
+        'getgrnam', 'tan'
+    };
+}
+
+mode PERL: SOURCE { # PERL
+    FileNameRx          = /\.\cPL|M$/;
+    FirstLineRx         = /^{\#\! *}|{\cEXTPROC[ \t]+}[^ ]*perl/;
+    HilitOn             = 1;
+    Colorizer           = 'PERL';
+    AutoIndent          = 1;
+    IndentMode          = 'C';
+    MatchCase           = 1;
+    MultiLineHilit      = 1;
+    AutoHilitParen      = 1;
+
+    RoutineRegexp       = /^\s*{sub}|{package}\s+/;
+    
+    SaveFolds           = 2;      # save fold info at end of line
+    CommentStart        = ' #';
+    CommentEnd          = '';
+}
+
+oinclude 'mym_perl.fte';

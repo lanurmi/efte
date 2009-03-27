@@ -1,0 +1,12 @@
+This package was debianized by Riku Voipio <riku.voipio@sci.fi>
+on Wed, 14 Oct 1998 17:00:34 +0200.
+Currently it's maintained by Zdenek Kabelac <kabi@debian.org>
+
+Sources for actual fte package have been downloaded from CVS archive
+URL: http://sourceforge.net/projects/fte/
+
+Previous packages have been using archive files from this place:
+URL: http://www.kiss.uni-lj.si/~k4fr0235/fte   fte-%ver.src.tar.gz
+This was the official home page for this editor.
+
+Copyright: GPL (see /usr/share/common-licenses/GPL) or Artistic  (see README)

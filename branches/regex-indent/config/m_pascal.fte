@@ -1,0 +1,154 @@
+
+colorize PASCAL {
+    SyntaxParser       = 'SIMPLE';
+
+    color {
+        { 'Normal',        'Editor_Default' },
+        { 'Number',        'Lang_DecimalNumber' },
+        { 'HexNumber',     'Lang_HexNumber' },
+        { 'Punctuation',   'Lang_Punctuation' },
+        { 'String',        'Lang_String' },
+        { 'Comment',       'Lang_Comment' },
+        { 'Command',       'Lang_Assembler' }, # assembler
+        { 'CPreprocessor', 'Lang_Preprocessor' },
+        { 'Function',      'Lang_Function' },
+        { 'Keyword',       'Editor_Keywords' },
+    };
+
+    keyword 'Editor_Keywords' {
+        'program', 'const', 'type', 'var', 
+        'begin', 'end', 'array', 'set', 'record', 'string', 
+        'if', 'then', 'else', 'while', 'for', 'to', 'downto', 'do', 'with',
+        'repeat', 'until', 'case', 'of', 'goto', 'exit', 'label',
+        'procedure', 'function', 'nil', 'file', 'and', 'or', 'not', 'xor',
+        'div', 'mod', 'unit', 'uses', 'implementation', 'interface', 
+        'asm', 'inline', 'object', 'constructor', 'destructor', 'inherited', 
+        'except', 'finally', 'initialization', 'out', 'property',
+        'resourcestring', 'try', 'exports', 'library', 'packed',
+        'raise', 'as', 'class', 'dispinterface', 'in', 'shl', 'shr',
+        'threadvar', 'finalization', 'is', 'at', 'on',
+        
+        'private', 'protected', 'public', 'published', 'automated',
+        'absolute', 'abstract', 'cdecl', 'contains', 'default', 'dispid',
+        'dynamic', 'export', 'external', 'far', 'assembler', 'virtual', 
+        'near', 'forward', 'implements', 'index', 'message', 'name',
+        'nodefault', 'overload', 'override', 'package', 'pascal', 'read',
+        'readonly', 'register', 'reintroduce', 'requires', 'resident',
+        'safecall', 'stdcall', 'stored', 'write', 'writeonly', 'result',
+        
+        'integer', 'cardinal', 'shortint', 'smallint', 'longint', 'int64',
+        'byte', 'word', 'longword', 'char', 'boolean', 'bytebool',
+        'wordbool', 'longbool', 'real48', 'single', 'smallword',
+        'double', 'extended', 'comp', 'currency', 'real',
+        'shortstring', 'ansistring', 'widestring',
+    };
+
+    keyword 'Lang_DecimalNumber' {
+        'true', 'false',
+    };
+
+    h_state 0 { 'Normal' }
+    h_trans { 10, '<', '(*&', 'CPreprocessor' }    
+    h_trans { 10, '<', '(*$', 'CPreprocessor' }
+    h_trans { 9, '<', '{&', 'CPreprocessor' }    
+    h_trans { 9, '<', '{$', 'CPreprocessor' }
+    h_trans { 8, '', 'asm', 'Command' }
+
+    # workaround for bug 854418
+    h_trans { 17, '<-x', /\c{while}|{if}|{until}|{not}|{and}|{or}|{xor}|{div}|{mod}\s*\(/, 'Keyword' }
+
+    h_trans { 16, '<-x', /[_a-zA-Z0-9]+\s*\(/, 'Function' }
+
+    h_trans { 5, '-s', 'a-zA-Z_', 'Normal' }
+    h_trans { 11, '<', '//', 'Comment' }
+    h_trans { 1, '<', '(*', 'Comment' }
+    h_trans { 2, '<', '{', 'Comment' }
+    h_trans { 3, '<', '"', 'String' }
+    h_trans { 4, '<', '\'', 'String' }
+    h_trans { 6, '<', '0x', 'HexNumber' }
+    h_trans { 6, '<', '$', 'HexNumber' }
+    h_trans { 7, '<s', '0-9', 'Number' }
+    h_trans { 15, '<', '#$', 'String' }
+    h_trans { 14, '<', '#', 'String' }
+    h_trans { 0, 'S', '_a-zA-Z0-9', 'Punctuation' }
+
+    h_state 1 { 'Comment' }
+    h_trans { 0, '>', '*)', 'Comment' }
+
+    h_state 2 { 'Comment' }
+    h_trans { 0, '>', '}', 'Comment' }
+    
+    h_state 3 { 'String' }
+    h_trans { 0, '>', '"', 'String' }
+    h_trans { 0, '$', '', 'String' }
+
+    h_state 4 { 'String' }
+    h_trans { 0, '>', '\'', 'String' }
+    h_trans { 0, '$', '', 'String' }
+    
+    h_state 5 { 'Normal' }
+    h_trans { 0, '$', '', 'Normal' }
+    h_wtype { 0, 0, 0, 'i', 'a-zA-Z0-9_' }
+
+    h_state 6 { 'HexNumber' }
+    h_trans { 0, '-S', '0-9A-Fa-f', 'Normal' }
+    h_trans { 0, '$', '', 'Normal' }
+
+    h_state 7 { 'Number' }
+    h_trans { 0, '-S', '0-9', 'Normal' }
+    h_trans { 0, '$', '', 'Normal' }
+
+    h_state 8 { 'Command' }
+    h_trans { 0, '', 'end', 'Command' }
+    h_trans { 12, '<', '(*', 'Comment' }
+    h_trans { 13, '<', '{', 'Comment' }
+    
+    h_state 9 { 'CPreprocessor' }
+    h_trans { 0, '>', '}', 'CPreprocessor' }
+    
+    h_state 10 { 'CPreprocessor' }
+    h_trans { 0, '>', '*)', 'CPreprocessor' }
+    
+    h_state 11 { 'Comment' }
+    h_trans { 0, '$', '', 'Comment' }
+    
+    h_state 12 { 'Comment' }
+    h_trans { 8, '>', '*)', 'Comment' }
+
+    h_state 13 { 'Comment' }
+    h_trans { 8, '>', '}', 'Comment' }
+
+    h_state 14 { 'String' }       # character of the form #ddd
+    h_trans { 0, '-S', '0-9', 'Normal' }
+    h_trans { 0, '$', '', 'Normal' }
+
+    h_state 15 { 'String' }       # character of the form #$xx
+    h_trans { 0, '-S', '0-9A-Fa-f', 'Normal' }
+    h_trans { 0, '$', '', 'Normal' }
+
+    h_state 16 { 'Function' }
+    h_trans { 0, '->', '(', 'Normal' }
+
+    h_state 17 { 'Keyword' }
+    h_trans { 0, '->', '(', 'Normal' }
+}
+
+mode PASCAL: SOURCE {      # Pascal Mode
+    FileNameRx          = /\.\c{{PAS}|{PP}|{INC}}$/;
+    HilitOn             = 1;
+    Colorizer           = 'PASCAL';
+    AutoIndent          = 1;
+    IndentMode          = 'PLAIN';
+    MatchCase           = 0;
+    Trim                = 1;
+    MultiLineHilit      = 1;
+    AutoHilitParen      = 1;
+
+    SaveFolds           = 2;      # save fold info at end of line
+    CommentStart        = ' (*';
+    CommentEnd          = '*)';
+
+    RoutineRegexp       = '^{procedure}|{function}>';
+}
+
+oinclude 'mym_pascal.fte';

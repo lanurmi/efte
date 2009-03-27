@@ -1,0 +1,198 @@
+#
+# FTE highlighting rules for GAWK/AWK scripts
+#
+# Contributor: Wirawan Purwanto <wirawan0@softhome.net>
+# Created: 4-Mar-2002
+# Updated: 20-May-2002
+#
+# The syntax highlighting is heavily biased toward GNU AWK.
+#
+# CAVEAT: The syntax highlighting for REGEX is not perfect at all:
+# ordinary divisions WILL be misunderstood as regex. Unless you have
+# divisions in your awk scripts (which is a kind of unlikely for typical
+# scripts), this should not be a big trouble.
+#
+# The original source code is m_gawk.src.fte. DO NOT EDIT FILE m_gawk.fte!
+#
+
+colorize GAWK {
+    SyntaxParser = 'SIMPLE';
+    
+    color {
+        { 'Normal',        'Editor_Default' },
+        { 'Keyword',       'Editor_Keywords' },
+        { 'Number',        'Lang_DecimalNumber' },
+        { 'HexNumber',     'Lang_HexNumber' },
+        { 'Punctuation',   'Lang_Punctuation' },
+        { 'String',        'Lang_String' },
+        { 'Regexp',        'Lang_Regexp' },
+        { 'Comment',       'Lang_Comment' },
+        { 'CPreprocessor', 'Lang_Preprocessor' },
+        { 'Function',      'Lang_Function' },
+        { 'Label',         'Lang_Label' },
+        { 'Tag',           'Markup_Tag' },
+    };
+    
+    keyword 'Editor_Keywords' { # any missing ?
+        'BEGIN', 'END',
+        'print', 'printf', 'delete',
+        'if', 'else', 'for', 'in', 'while', 'do', 'break', 'continue',
+        'next', 'nextfile',
+        'function', 'return', 'exit',
+        'getline',
+    };
+
+    # Standard functions supplied bu AWK
+    keyword 'Lang_Function' { # any missing ?
+        # math-oriented:
+        'int', 'sqrt', 'exp', 'log', 'sin', 'cos', 'atan2',
+        'rand', 'srand',
+        # string-oriented:
+        'index', 'length', 'match', 'split', 'sprintf', 'strtonum', 'sub',
+        'gsub', 'gensub', 'substr', 'tolower', 'toupper',
+        # file i/o:
+        'open', 'close', 'fflush', 'system',
+        # GAWK-specific extensions ---------
+        # string-oriented:
+        'asort',
+        # bit oriented: (AWK/GAWK???)
+        'and', 'or', 'xor', 'compl', 'lshift', 'rshift',
+        # timestamp functions:
+        'systime', 'mktime', 'strftime',
+        # internationalization
+        'dcgettext', 'bindtextdomain',
+
+    }; # standard library procedure/function names
+
+    # Standard variables supplied by AWK
+    keyword 'Lang_Variable' {       # built-in/special-meaning variables
+        'CONVFMT', 'FS', 'OFMT', 'OFS', 'ORS', 'RS', 'SUBSEB',
+
+        'ARGC', 'ARGV', 'ENVIRON', 'ERRNO', 'FILENAME',
+        'FNR', 'NF', 'NR', 'PROCINFO', 'RLENGTH', 'RSTART',
+
+        # gawk specific
+        'BINMODE', 'FIELDWIDTH', 'IGNORECASE', 'LINT', 'TEXTDOMAIN',
+        
+        'ARGIND', 'RT',
+    };
+
+
+#   default state
+    h_state 0 { 'Punctuation' }
+    h_trans { 2,        '-s',    '_a-zA-Z',    'Normal' }
+    h_trans { 6,      '-s',    '0-9',        'Normal' }
+    h_trans { 3,     '<',     '#',          'Comment' }
+    h_trans { 4,     '<',     '"',          'String' }
+#    h_trans { 5,     '<',     '\'',         'String' }
+#   metachar (except tab -- how to include it?)
+    h_trans { 0,     '',      '$',          'CPreprocessor' }
+    h_trans { 0,     '$',     '\\',         'Punctuation' }
+    # literal char
+#    h_trans { 1,       '',      '\\',         'Punctuation' } -- this is not recognized here!
+    h_trans { 7,      '<',     '/',          'Keyword' }
+#   h_trans { 0, 'S', '_a-zA-Z0-9', 'Punctuation' }
+    
+#   quote
+    h_state 1 { 'String' }
+    h_trans { 0,     'S',     '',           'String' }
+    h_trans { 0,     '$',     '',           'Normal' }
+
+#   word
+    h_state 2 { 'Normal' }
+    h_wtype { -1, -1, -1, '', '_a-zA-Z0-9' }
+    # end of a word
+    h_trans { 0,     '$',     '',           'Normal' }
+    h_trans { 0,     '-S',    '_a-zA-Z0-9', 'Normal' }
+
+#   comment
+    h_state 3 { 'Comment' }
+    h_trans { 0,     '$<',    '',           'Normal'  }
+
+#   string ("-quoted)
+    h_state 4 { 'String' }
+    h_trans { 0,     '>',     '"',          'String' }
+    h_trans { 4,     '',      '\\"',        'String' }
+    h_trans { 4,     '',      '\\\\',       'String' }
+    h_trans { 4,     '$',     '\\',         'Punctuation' }
+
+# not allowed in gawk/awk:
+##   string ('-quoted)
+    h_state 5 { 'String' }
+    h_trans { 0,     '>',     '\'',         'String' }
+    h_trans { 5,     '>',     '\\\'',       'String' }
+    h_trans { 5,     '$',     '\\',         'Punctuation' }
+
+#   number
+    h_state 6 { 'Number' }
+    h_trans { 0,     '-S',    '.0-9',       'Normal' }
+    h_trans { 0,     '$',     '',           'Normal' }
+
+#   The regular-expression part:
+
+#   regexp
+    h_state 7 { 'Regexp' }
+    h_trans { 8, '',      '\\',         'Punctuation' }
+#   regexp operators:
+    h_trans { 7,      's',     '^$.+*|()?',  'Punctuation' }
+    h_trans { 9, '<',     '[',          'Punctuation' }
+    h_trans { 11,'<',     '{',          'Punctuation' }
+    h_trans { 0,     '',      '/',          'Keyword' }
+#    h_trans { 12,       '$>',    '',           'Normal' }
+
+#   literal quotation
+    h_state 8 { 'Regexp' }
+    h_trans { 7,      's',     'abfnrtv',    'Punctuation' }
+    h_trans { 7,      'S',     '',           'Regexp' }
+    h_trans { 12,       '$',     '',           'Normal' }
+
+#   grouping using [ ]
+    h_state 9 { 'Regexp' }
+    h_trans { 10, '', '\\',         'Punctuation' }
+    h_trans { 9, '',      '^',          'Punctuation' }
+    h_trans { 9, '',      '-',          'Punctuation' }
+    h_trans { 7,      '>',     ']',          'Punctuation' }
+    h_trans { 12,       '$',     '',           'Normal' }
+    
+#   regexpgroupquote
+    h_state 10 { 'Regexp' }
+    h_trans { 9, 's',     'abfnrtv',    'Punctuation' }
+    h_trans { 9, 'S',     '',           'Regexp' }
+    h_trans { 12,       '$',     '',           'Normal' }
+
+#   repeat count
+    h_state 11 { 'Number' }
+    h_trans { 11,'s',     '0-9',        'Number' }
+    h_trans { 11,'',      ',',          'Punctuation' }
+    h_trans { 7,      '>',     '}',          'Punctuation' }
+    h_trans { 12,       'S',     '',           'Normal' }
+    h_trans { 12,       '$',     '',           'Normal' }
+
+#   error
+    h_state 12 { 'Tag' } # all the way to the end :-)
+
+
+}
+
+mode GAWK: SOURCE {      # AWK mode with GNU extensions
+    FirstLineRx         = /^\#\![ ]*[^ ]*awk>/;
+    FileNameRx          = /\.\c{{AWK}|{GAWK}}$/;
+    HilitOn             = 1;
+    Colorizer           = 'GAWK';
+    AutoIndent          = 1;
+    IndentMode          = 'PLAIN';
+    MatchCase           = 1;
+    Trim                = 1;
+    MultiLineHilit      = 1;
+    AutoHilitParen      = 1;
+    
+    RoutineRegexp       = /^\s*function\s+[A-Za-z_][A-Za-z_0-9]*\s*\(.*/;
+#       RoutineRx      ^\w[\w_:*&]+[\w\s_:*&]@\(
+#       RoutineRx      ^{[a-zA-Z0-9_:*&]#\s*}+\(
+    
+    SaveFolds           = 2;      # save fold info at end of line
+    CommentStart        = ' #';
+    CommentEnd          = '';
+}
+
+oinclude 'mym_gawk.fte';

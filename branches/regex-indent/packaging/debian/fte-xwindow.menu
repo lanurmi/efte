@@ -1,0 +1,8 @@
+?package(fte-xwindow):needs="x11" section="Apps/Editors" icon="mini-edit.xpm"\
+  title="Fte" longtitle="FTE, a powerful text editor"\
+  command="/usr/bin/xfte"
+#?package(fte-xwindow):needs="dwww" section="Apps/Editors" title="Fte Homepage"\
+# command="http://www.ixtas.fri.uni-lj.si/~markom/fte"\
+# longtitle="Fte Homepage"\
+# description="This is the homepage of the fte creator"
+

@@ -1,0 +1,659 @@
+#
+# FTE mode for editing ReStucturedText files
+#
+# ReStucturedText homepage: http://docutils.sourceforge.net/
+#
+# Contributed by: Sergey Pinigin
+#
+# VER: alpha 11 [2006-08-29]
+#
+# Files:
+#   m_rst.fte        Macros, colorize, mode reST (include on  main.fte)
+#   menu/m_rst.fte   Menus reST (include on  ui_fte.fte)
+#   kbd/k_rst.fte    Keybindings reST(include on ui_fte.fte)
+#
+#
+# For testing reST-mode in FTE:
+#   You mast open in FTE *.txt from Docutils documentation 
+#    and change mode to 'reST'.
+#
+#
+
+
+#### SUBs ####
+
+sub RST_LISTS_1ENT { LineNew; MoveUp; MoveWordRight; MoveDown; }
+
+sub RST_CODE { InsertString "::"; 2:LineNew; MoveUp; 2:MoveRight; }
+
+sub RST_INC  { LineNew;  MoveLineStart; InsertString ".. include:: ";    }
+
+# ROLE ========================================================================
+sub RST_ROLE_EMP  { InsertString ":emphasis:``";        MoveLeft; }
+sub RST_ROLE_LIT  { InsertString ":literal:``";         MoveLeft; }
+sub RST_ROLE_STR  { InsertString ":strong:``";          MoveLeft; }
+sub RST_ROLE_SUB  { InsertString ":sub:``";             MoveLeft; }
+sub RST_ROLE_SUP  { InsertString ":sup:``";             MoveLeft; }
+sub RST_ROLE_TIT  { InsertString ":title:``";           MoveLeft; }
+sub RST_ROLE_PEP  { InsertString ":PEP:``";             MoveLeft; }
+sub RST_ROLE_RFC  { InsertString ":RFC:``";             MoveLeft; }
+
+sub RST_ROLE_RAW  { InsertString "raw-:``";           3:MoveLeft; }
+sub RST_ROLE_DRAW {
+    LineNew;
+    InsertString ".. role:: raw-(raw)";
+    LineNew;
+    InsertString "   :format: ";
+    LineNew; 2:MoveUp; 11:MoveRight;
+}
+
+# Inline ======================================================================
+sub RST_INLINE_EMP      { InsertString "**";        MoveLeft;   }
+sub RST_INLINE_STR      { InsertString "****";      2:MoveLeft; }
+sub RST_INLINE_INT      { InsertString "``";        MoveLeft;   }
+sub RST_INLINE_LIT      { InsertString "````";      2:MoveLeft; }
+
+sub RST_INLINE_HLINK    { InsertString "``_";       2:MoveLeft; }
+sub RST_INLINE_ELINK    { InsertString "`<>`_";     4:MoveLeft; }
+sub RST_INLINE_ITAG     { InsertString "_``";       MoveLeft;   } # not set parse
+sub RST_INLINE_REF      { InsertString "[]_";       2:MoveLeft; }
+sub RST_INLINE_REFA     { InsertString "[#]_";      2:MoveLeft; }
+sub RST_INLINE_REFS     { InsertString "||_";       2:MoveLeft; }
+
+# Admonitions =================================================================
+sub RST_ADM_ATTE  { LineNew;  MoveLineStart; InsertString ".. attention:: ";    }
+sub RST_ADM_CAUT  { LineNew;  MoveLineStart; InsertString ".. caution:: ";      }
+sub RST_ADM_DANG  { LineNew;  MoveLineStart; InsertString ".. danger:: ";       }
+sub RST_ADM_ERRO  { LineNew;  MoveLineStart; InsertString ".. error:: ";        }
+sub RST_ADM_HINT  { LineNew;  MoveLineStart; InsertString ".. hint:: ";         }
+sub RST_ADM_IMPO  { LineNew;  MoveLineStart; InsertString ".. important:: ";    }
+sub RST_ADM_NOTE  { LineNew;  MoveLineStart; InsertString ".. note:: ";         }
+sub RST_ADM_TIP   { LineNew;  MoveLineStart; InsertString ".. tip:: ";          }
+sub RST_ADM_WARN  { LineNew;  MoveLineStart; InsertString ".. warning:: ";      }
+sub RST_ADM_ADMO  { LineNew;  MoveLineStart; InsertString ".. admonition:: ";   }
+sub RST_ADM_TITL  { LineNew;  MoveLineStart; InsertString ".. title:: ";        }
+
+# Document Parts ==============================================================
+sub RST_PART_CON  { LineNew;  MoveLineStart; InsertString ".. contents:: ";     }
+sub RST_PART_CON_ { LineNew;  MoveLineStart; InsertString ".. contents:: ";
+    LineNew; InsertString "   :depth:";
+    LineNew; InsertString ":backlinks:";
+    LineNew; InsertString ":local:";
+    LineNew;
+    4:MoveUp; MoveLineEnd;
+}
+
+sub RST_PART_SEC  { LineNew;  MoveLineStart; InsertString ".. sectnum:: ";      }
+sub RST_PART_SEC_ { LineNew;  MoveLineStart; InsertString ".. sectnum:: ";
+    LineNew; InsertString "   :depth:";
+    LineNew; InsertString ":prefix:";
+    LineNew; InsertString ":suffix:";
+    LineNew; InsertString ":start:";
+    LineNew;
+    5:MoveUp; MoveLineEnd;
+}
+
+sub RST_PART_HEAD { LineNew;  MoveLineStart; InsertString ".. header:: ";       }
+sub RST_PART_FOOT { LineNew;  MoveLineStart; InsertString ".. footer:: ";       }
+
+
+# Image =======================================================================
+sub RST_IMAGE_FULL{
+    LineNew; MoveLineStart; InsertString ".. image:: ";
+    LineNew; InsertString "   :alt:";
+    LineNew; InsertString ":height:";
+    LineNew; InsertString ":width:";
+    LineNew; InsertString ":scale:";
+    LineNew; InsertString ":align:";
+    LineNew; InsertString ":target:";
+    LineNew;
+    7:MoveUp; MoveLineEnd;
+}
+
+sub RST_IMAGE { InsertString ".. image:: "; }
+
+sub RST_FIGURE_FULL{
+    LineNew; MoveLineStart; InsertString ".. figure:: ";
+    LineNew; InsertString "   :figwidth:";
+    LineNew; InsertString ":figclass:";
+    LineNew; InsertString ":align:";
+    LineNew;
+    4:MoveUp; MoveLineEnd;
+}
+
+sub RST_FIGURE { InsertString ".. figure:: "; }
+
+# Body Elements ===============================================================
+sub RST_BOEL_TOPI  { LineNew;  MoveLineStart; InsertString ".. topic:: ";           }
+sub RST_BOEL_SIDE  { LineNew;  MoveLineStart; InsertString ".. sidebar:: ";         }
+sub RST_BOEL_LBLK  { LineNew;  MoveLineStart; InsertString ".. line-block:: ";      }
+sub RST_BOEL_PLIT  { LineNew;  MoveLineStart; InsertString ".. parsed-literal:: ";  }
+sub RST_BOEL_RUBR  { LineNew;  MoveLineStart; InsertString ".. rubric:: ";          }
+sub RST_BOEL_EPIG  { LineNew;  MoveLineStart; InsertString ".. epigraph:: ";        }
+sub RST_BOEL_HIGH  { LineNew;  MoveLineStart; InsertString ".. highlights:: ";      }
+sub RST_BOEL_PQUO  { LineNew;  MoveLineStart; InsertString ".. pull-quote:: ";      }
+sub RST_BOEL_COMP  { LineNew;  MoveLineStart; InsertString ".. compound:: ";        }
+sub RST_BOEL_CONT  { LineNew;  MoveLineStart; InsertString ".. container:: ";       }
+
+
+# Table =======================================================================
+sub RST_TAB_TIT  { LineNew;  MoveLineStart; InsertString ".. table:: ";    }
+sub RST_TABS_2C  {
+    LineNew; InsertString "===== ====="; LineNew;
+    LineNew; InsertString "===== ====="; LineNew; 2:MoveUp; MoveLineEnd;
+}
+
+sub RST_TABS_22H {
+    LineNew; InsertString "===== ====="; LineNew;
+    LineNew; InsertString "===== ====="; LineNew; LineNew;
+    LineNew; InsertString "===== ====="; LineNew; 5:MoveUp; MoveLineEnd;
+}
+
+sub RST_TABS_22S {
+    LineNew; InsertString "=====  =====  ======"; LineNew;
+    LineNew; InsertString "------------  ------"; LineNew;
+    LineNew; InsertString "=====  =====  ======"; LineNew; LineNew;
+    LineNew; InsertString "=====  =====  ======"; LineNew; 7:MoveUp; MoveLineEnd;
+}
+
+sub RST_TABG_22  {
+    LineNew; InsertString "+-----------+----------+";
+    LineNew; InsertString "|           |          |"
+    LineNew; InsertString "+-----------+----------+";
+    LineNew; InsertString "|           |          |"
+    LineNew; InsertString "+-----------+----------+"; LineNew; 4:MoveUp; MoveRight;
+}
+
+sub RST_TABG_22H {
+    LineNew; InsertString "+-----------+----------+";
+    LineNew; InsertString "|           |          |"
+    LineNew; InsertString "+===========+==========+";
+    LineNew; InsertString "|           |          |"
+    LineNew; InsertString "+-----------+----------+";
+    LineNew; InsertString "|           |          |"
+    LineNew; InsertString "+-----------+----------+"; LineNew; 6:MoveUp; MoveRight;
+}
+
+sub RST_TABCSV   { LineNew; }
+sub RST_TABLIST  { LineNew;  MoveLineStart; InsertString ".. list-table:: ";
+    LineNew;         InsertString "   :widths:";
+    LineNew;            InsertString ":header-rows:";
+    LineNew;            InsertString ":stub-columns:";
+    LineNew;
+    LineNew;             InsertString "* - ";
+    LineNew;             InsertString "  - ";
+    LineNew; 2:MoveLeft; InsertString "* - ";
+    LineNew;             InsertString "  - ";
+    LineNew; 9:MoveUp; MoveLineEnd;
+}
+
+
+
+#csv-table
+#header
+#file
+#url
+#encoding
+#delim
+#quote
+#keepspace
+#escape
+
+
+sub RST_H1 {
+    MoveLineEnd; LineNew; 100:InsertString "=";  # =========
+    MoveUp; MoveLineEnd; LineTrim;MoveLineEnd; MoveDown; KillToLineEnd;
+}
+
+sub RST_H2 {
+    MoveLineEnd; LineNew; 100:InsertString "-";  # ---------
+    MoveUp; MoveLineEnd; LineTrim;MoveLineEnd; MoveDown; KillToLineEnd;
+}
+
+sub RST_H3 {
+    MoveLineEnd; LineNew; 100:InsertString "\""; # """""""""
+    MoveUp; MoveLineEnd; LineTrim;MoveLineEnd; MoveDown; KillToLineEnd;
+}
+
+sub RST_H4 {
+    MoveLineEnd; LineNew; 100:InsertString "'";  # '''''''''
+    MoveUp; MoveLineEnd; LineTrim;MoveLineEnd; MoveDown; KillToLineEnd;
+}
+
+sub RST_H5 {
+    MoveLineEnd; LineNew; 100:InsertString "`";  # `````````
+    MoveUp; MoveLineEnd; LineTrim;MoveLineEnd; MoveDown; KillToLineEnd;
+}
+
+sub RST_T {
+    MoveLineEnd; LineNew; 100:InsertString "=";  # =========
+    MoveUp; MoveLineEnd; LineTrim;MoveLineEnd; MoveDown; KillToLineEnd;
+}
+
+
+colorize reST {
+    SyntaxParser = 'SIMPLE';
+    %if(COLORS_BLUE_BG)
+    color {
+        { 'Normal',        'Editor_Default' },     # Text
+        { 'String',        'Editor_Keywords' },        # Emphasis, literal, strong ..
+        { 'Comment',       'Lang_Comment' },       # Comment
+        { 'Punctuation',   'Editor_Default' }, # .,:()  ..
+        { 'Special',       'Markup_Special' },     #  ::
+        { 'Tag',           'Editor_Keywords3' },         # .. _text; .. []; __ text; _``;
+        { 'Directive',     'Markup_Symbol' },
+        { 'Symbol',        'String' },     # `text`_; word_
+        { 'Keyword',       'Editor_Keywords' },
+    };
+    %endif
+
+
+    %if(COLORS_BLACK_BG)
+    color {
+        { 'Normal',        'Editor_Default' },     # Text
+        { 'String',        'Lang_String' },        # Emphasis, literal, strong ..
+        { 'Comment',       'Lang_Comment' },       # Comment
+        { 'Punctuation',   'Markup_Punctuation' }, # .,:()  ..
+        { 'Special',       'Markup_Special' },     #  ::
+        { 'Tag',           'Markup_Tag' },         # .. _text; .. []; __ text; _``;
+        { 'Directive',     'Markup_Symbol' },
+        { 'Symbol',        'Markup_Control' },     # `text`_; word_
+        { 'Keyword',       'Editor_Keywords' },
+    };
+    %endif
+
+    # directives
+    keyword 'Editor_Keywords' { # global keywords ...
+        'admonition',
+        'image', 'figure',
+        'topic', 'sidebar', 'line-block', 'parsed-literal',
+        'rubric', 'epigraph',
+        'highlights', 'pull-quote',
+        'compound', 'container',
+        'table', 'csv-table', 'list-table',
+        'contents', 'sectnum', 'section-numbering',
+        'header', 'footer',
+        'meta',
+        'replace', 'unicode',
+        'date',
+        'include',
+        'raw',
+        'class',
+        'role', 'default-role',
+        'title',
+        'restructuredtext-test-directive',
+        'style'
+    };
+
+    # parameters
+    keyword 'Editor_Keywords2' {
+        ':target:', ':scale:', ':height:', ':width:',
+        ':subtitle:',
+        ':figclass:', ':figwidth:',
+        ':alt:', ':align:',
+        #-("top", "middle", "bottom", "left", "center", or "right" )
+        ':escape:', ':keepspace:',  ':quote:', ':delim:',
+        ':header:', ':widths:',
+        ':header-rows:', ':stub-columns:',
+        ':local:', ':backlinks:',
+        ':depth:', ':prefix:',  ':suffix:', ':start:',
+     	':ltrim:', ':rtrim:', ':trim:',
+     	':literal:', ':encoding:',
+     	':file:', ':url:'
+    };
+
+    keyword 'Editor_Keywords5' {
+        'attention',
+        'caution',
+        'danger',
+        'error',
+        'hint',
+        'important',
+        'note',
+        'tip',
+        'warning'
+    };
+
+    #==============================
+    h_state 0 { 'Normal' }
+    #h_trans { 0, '<', /\\/, 'Normal' }                 # (\*.txt)
+    #h_trans { 0, 's', /[.,;:()"\'{}\[\]]/, 'Punctuation' }
+    h_trans { 0, '<x', /^\s*"+\s*$/,'Punctuation' }     # skip /"""""""""""""""/
+    h_trans { 21, '<', '"', 'Normal' }
+    h_trans { 0, '<x', /^\s*'+\s*$/,'Punctuation' }     # skip /'''''''''''''''/
+    h_trans { 0, '<x', /[^ ']'/, 'Normal' }             # skip: doesn't, Tables'
+    h_trans { 23, '<', '\'', 'Normal' }
+
+    h_trans { 24, '^x', /\s*\.\.\s*$/, 'Directive' } 	# ..
+    h_trans { 1, '^x', /\s*\.\.\s+/,  'Directive' } 	# .. text
+    h_trans { 0, '<x', /^\s*\.+\s*$/,'Punctuation' }    # skip /.............../
+
+    h_trans { 5, '^x', /\s*__\s+/,    'Tag' }           # __
+
+    # Skip Grid Tables
+    h_trans { 19, '^x', /^\s*\+[-=]+\+/,  'Normal' }
+
+    # `string` ``string`` *string* **string**
+    h_trans { 0, '<x', /[\s(\[{]\*[^ *][^*]*[^ *]\*[ )\]};:.,]/, 'String' }
+    h_trans { 0, '<x', /[\s(\[{]\*\*[^ *][^*]*[^ ]\*\*[ )\]};:.,]/, 'String' }
+    h_trans { 0, '<x',         /\*[^ *][^*]*[^ *]\*/, 'String' }
+    h_trans { 0, '<x',         /\*\*[^ *][^*]*[^ *]\*\*/, 'String' }
+
+    h_trans { 0, '<x', /[\s(\[{]\`[^ \`][^\`]+[^ \`]\`[ )\]};:.,]/, 'String' }
+    #h_trans { 0, '<x', /[\s(\[{]\`\`[^ \`][^\`]+[^ ]\`\`[ )\]};:.,]/, 'String' }
+    h_trans { 0, '<x',         /\`[^ \`][^\`]+[^ \`]\`[^_]+/, 'String' }
+    h_trans { 0, '<x',         /\`[^ \`][^\`]+[^ \`]\`$/, 'String' }
+    #h_trans { 0, '<x',         /\`[^ \`][^\`]+[^ \`]\`_/, 'Symbol' }
+    #h_trans { 0, '<x',         /\`\`[^ \`][^\`]+[^ \`]\`\`/, 'String' }
+    h_trans { 0, '<x',         /\`\`[^ \`]\`\`/, 'String' }
+    h_trans { 22, '<x', /\`\`[^ \`]/, 'String' }
+
+    # _`text`
+    h_trans { 18, '<', '_`',  'Tag' }
+
+    # `text`_
+    #h_trans { 9, '<x', /\s*\`[^\` ]/,  'Symbol' }
+    h_trans { 9, '<x', /\`[^\` ]/,  'Symbol' }
+
+    # ||
+    h_trans { 0, '<x', /\|.*\|_\s*/, 'Symbol' }
+    h_trans { 11,'<x', /\s\|./, 'String' }
+    h_trans { 11,'^x', /\|./,   'String' }
+
+    # ::
+    h_trans { 13, '<x', /\s*::$/,   'Special' }
+
+    # [word]_
+    h_trans { 0, '<x', /\[.+\]_/, 'Symbol' } # [23]_
+
+    # word_
+    h_trans { 0, '<x', /[^ ]+_\s/, 'Symbol' } # target_
+    h_trans { 0, '<x', /[^ ]+_$/, 'Symbol' }  # target_ (end of line)
+    # word__
+    h_trans { 0, '<x', /[^ ]+__\s/, 'Symbol' } # target__
+    h_trans { 0, '<x', /[^ ]+__$/, 'Symbol' }  # target__ (end of line)
+
+    # Roles
+    h_trans { 15, 's', ':',  'Punctuation' }
+
+    #h_trans { 0, 'S', '_a-zA-Z0-9', 'Punctuation' }        # English only
+    h_trans { 0, 'S', '_a-zA-Z0-9€-¯à-ñ', 'Punctuation' }   #  + dos866 codepage
+    #h_trans { 0, 'S', '_a-zA-Z0-9À-ÿ', 'Punctuation' }     #  + win1251 codepage
+    
+    # .. Directive
+    #==============================
+    h_state 1 { 'Keyword' }
+    h_trans { 7, '<x', /[_|]./, 'Tag' }
+    h_trans { 17, '<', '[', 'Tag' }
+    h_trans { 2, '<x', /\s*::[ ]*/, 'Directive' }
+    h_wtype { 2, 3, 3, '<', '-a-zA-Z' }
+
+    #==============================
+    h_state 2 { 'Tag' }
+    h_trans { 1, '^x', /\s.+/, 'Tag' }
+    h_trans { 1, '$', '', 'Tag' }
+    h_trans { 0, '<x', /\s*::[ ]*/, 'Directive' }
+    h_trans { 0, '', '', 'Normal'}
+
+    # // Comment
+    #==============================
+    h_state 3 { 'Comment' }
+    h_trans { 4, '$', '', 'Comment' }
+
+    #==============================
+    h_state 4 { 'Comment' }
+    h_trans { 0, '^-x', /[^\s]+/, 'Normal'}
+    # Not empty string: one or more space and char
+    h_trans { 3, '^x', /\s+.+/, 'Comment' }
+    # Char in first position
+    #h_trans { 0, '$', '', 'Normal'}
+
+    #__ link text
+    #==============================
+    h_state 5 { 'Tag' }
+    h_trans { 6, '$', '', 'Tag' }
+
+    #==============================
+    h_state 6 { 'Tag' }
+    h_trans { 5, '^x', /\s+.+/, 'Tag' }
+    h_trans { 0, '', '', 'Normal' }
+
+    #.. _Text: text
+    #.. |Text| gfhgh :: text
+    #==============================
+    h_state 7 { 'Tag' }
+    h_trans { 8, '$', '', 'Tag' }
+
+    #==============================
+    h_state 8 { 'Tag' }
+    h_trans { 7, '^x', /\s+.+/, 'Tag' }
+    h_trans { 0, '', '', 'Normal' }
+
+    # `Text <link>`_
+    #==============================
+    h_state 9 { 'Symbol' }
+    h_trans { 0, '>', ' < ', 'Symbol' }
+    h_trans { 10, '>', ' <', 'Tag' }
+    h_trans { 0, '>', '`__', 'Symbol' }
+    h_trans { 0, '>', '`_', 'Symbol' }
+
+    # <>
+    #==============================
+    h_state 10 { 'Tag' }
+    h_trans { 9, '<', '>', 'Tag' }
+
+    # |data|
+    # | Quote text
+    #==============================
+    h_state 11 { 'String' }
+    h_trans { 0, '<x', /.\|/, 'String' }
+    h_trans { 12, '$', '', 'String' }
+
+    #==============================
+    h_state 12 { 'String' }
+    h_trans { 11, '^x', /\s+.+/, 'String' }
+    h_trans { 0, '', '', 'Normal' }
+
+    # ::
+    #==============================
+    h_state 13 { 'Punctuation' }
+    h_trans { 14, '$', '', 'Punctuation' }
+
+    #==============================
+    h_state 14 { 'Punctuation' }
+    h_trans { 13, '^x', /\s+.*/, 'Punctuation' }
+    h_trans { 0, '^-x', /./, 'Normal'}
+
+    # roles
+    # :strong:`STRONG TEXT`
+    #==============================
+    h_state 15 { 'String' }
+    h_trans { 0, '$','', 'Normal'}
+    h_trans { 16, '>', ':`', 'Punctuation' }
+    h_wtype { -1, 0, 0, '<', 'a-zA-Z' }
+    h_words 'String'{
+        'emphasis', 'literal', 'strong',
+        'pep-reference', 'PEP',
+        'rfc-reference', 'RFC',
+        'subscript', 'sub',
+        'superscript', 'sup',
+        'title-reference', 'title', 't'
+    }
+
+    #==============================
+    h_state 16 { 'String' }
+    h_trans { 0, '>', '`', 'Punctuation' }
+
+    #.. [Text] text
+    #==============================
+    h_state 17 { 'Tag' }
+    h_trans { 0, '>', ']', 'Tag' }
+
+    # _`text` entry
+    #==============================
+    h_state 18 { 'Tag' }
+    h_trans { 0, '', '`', 'Tag' }
+
+    # Skip Grid Tables
+    #==============================
+    h_state 19 { 'Normal' }
+    h_trans { 20, '$', '', 'Normal' }
+
+    #==============================
+    h_state 20 { 'Normal' }
+    h_trans { 19, '>x', /\s*[\+\|]+/, 'Normal' }
+    h_trans { 0, '$', '', 'Normal' }
+
+    # Skip ""
+    #==============================
+    h_state 21 { 'Normal' }
+    h_trans { 0, '>', '"', 'Normal' }
+
+    # ``text`` entry
+    #==============================
+    h_state 22 { 'String' }
+    h_trans { 0, '>', '``', 'String' }
+
+    # Skip ''
+    #==============================
+    h_state 23 { 'Normal' }
+    h_trans { 0, '>', '\'', 'Normal' }
+
+    # first line comment
+    #==============================
+    h_state 24 { 'Special' }
+    h_trans { 25, '$', '', 'Normal' }       # up to EOL
+
+    h_state 25 { 'Special' }
+    h_trans { 0, '$', '', 'Normal' }        # empty string
+    h_trans { 0, '<x', /^\s+$/, 'Normal' }  # string contains only space and tabs
+    h_trans { 3, '', '', 'Normal' }
+
+}
+
+mode reST: PLAIN {
+    FileNameRx          = /\.\c{RST}|{REST}|{RSTX}$/; #  /\.\cRST$/;
+    FirstLineRx         = /^=====+/; # !!!!!!
+    HilitOn             = 1;
+    Colorizer           = 'reST';
+    MultiLineHilit      = 1;
+    AutoHilitParen      = 1;
+
+    %if(COLORS_BLUE_BG)
+    # for bialix
+    # but not work macros RST_Hx, need (RightMargin-1):InsertString
+    WordWrap            = 1;
+    RightMargin         = 79;
+    %endif
+
+
+    SaveFolds           = 0;      # save fold info at end of line
+    CommentStart        = ' ..';
+    CommentEnd          = '';
+}
+
+oinclude 'mym_rst.fte';
+
+###################################################
+#!!!!!!!!!!!!!!!!!      BUGS:     !!!!!!!!!!!!!!!!!
+###################################################
+
+# (``[1]_``)
+
+# (1_)
+
+#**1**
+
+#....................
+
+#''
+
+#("_")
+
+#- asterisks: * "*" '*' (*) (* [*] {*} 1*x BOM32_*
+
+#backquotes (`) around the text
+
+#(quickref__)
+
+#| This is a line block.  It ends with a blank line.
+#|     Each new line begins with a vertical bar ("|").
+#|     Line breaks and initial indents are preserved.
+#| Continuation lines are wrapped portions of long lines;
+#  they begin with a space in place of the vertical bar.
+#|     The left edge of a continuation line need not be aligned with
+#  the left edge of the text above it.
+
+
+
+
+
+# +-------+-------------------------------+
+# | ".. " | directive type "::" directive |
+# +-------+ block                         |
+#         |                               |
+#         +-------------------------------+
+#
+# .. content:: text
+#
+# .. image:: text
+#
+# .. |reST| replace:: reStructuredText
+#
+# .. |symbol here| image:: symbol.png
+#
+# .. |the text in Texas| style:: big
+#
+#
+# .......   :strong:`text` ..... :literal:`text`
+#
+#   [1]_
+#
+# .. [1] A footnote contains body elements, consistently
+#    indented by at least 3 spaces.
+#
+#.. [CIT2002] Just like a footnote, except the label is
+#   textual.
+#
+#
+# .. comment text                comment
+#
+#+------------------------------+
+#| paragraph                    |
+#| (ends with "::")             |
+#+------------------------------+
+#   +---------------------------+
+#   | indented literal block    |
+#   +---------------------------+
+#
+# quoting characters ! " # $ % & ' ( ) * + , - . / : ; < = > ? @ [ \ ] ^ _ ` { | } ~
+#+------------------------------+
+#| paragraph                    |
+#| (ends with "::")             |
+#+------------------------------+
+#+------------------------------+
+#| ">" per-line-quoted          |
+#| ">" contiguous literal block |
+#+------------------------------+
+#
+#+------+-----------------------+
+#| "| " | line                  |
+#+------| continuation line     |
+#       +-----------------------+
+#+-------+----------------------+
+#| ".. " | "_" name ":" link    |
+#+-------+ block                |
+#        |                      |
+#        +----------------------+
+#+-------+----------------------+
+#| ".. " | comment              |
+#+-------+ block                |
+#        |                      |
+#        +----------------------+
+#
+#emphasis: "*"
+#strong emphasis: "**"
+#interpreted text: "`"
+#inline literals: "``"
+#substitution references: "|"
+
