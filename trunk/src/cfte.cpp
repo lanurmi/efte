@@ -1812,9 +1812,9 @@ static int LoadFile(const char *WhereName, const char *CfgName, int Level, int o
         snprintf(dirs[4], MAXPATH, "/Program Files/efte/local/%s", CfgName);
         snprintf(dirs[5], MAXPATH, "/Program Files/efte/config/%s", CfgName);
         snprintf(dirs[6], MAXPATH, "/Program Files (x86)/efte/local/%s", CfgName);
-		snprintf(dirs[7], MAXPATH, "/Program Files (x86)/efte/config/%s", CfgName);
-		snprintf(dirs[8], MAXPATH, "%s/eFTE/local/%s", getenv("ProgramFiles"), CfgName);
-		snprintf(dirs[9], MAXPATH, "%s/eFTE/config/%s", getenv("ProgramFiles"), CfgName);
+        snprintf(dirs[7], MAXPATH, "/Program Files (x86)/efte/config/%s", CfgName);
+        snprintf(dirs[8], MAXPATH, "%s/eFTE/local/%s", getenv("ProgramFiles"), CfgName);
+        snprintf(dirs[9], MAXPATH, "%s/eFTE/config/%s", getenv("ProgramFiles"), CfgName);
 #endif // if PT_UNIXISH
 
         char tmp[MAXPATH];
