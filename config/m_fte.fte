@@ -110,7 +110,7 @@ colorize FTE {
         'FileNameRx', 'FirstLineRx',
         'ForceNewLine', 'FunctionUsesContinuation',
         'HelpCommand', 'HilitOn', 'HilitTags',
-        'IgnoreBufferList', 'IndentMode', 'IndentRx', 'IndentWithTabs', 'Insert', 'InsertKillBlock',
+        'IgnoreBufferList', 'IndentMode', 'IndentWithTabs', 'Insert', 'InsertKillBlock',
         'KeepBackups', 'KeepHistory', 'KeepMessages',
         'LeftMargin', 'LineChar', 'LoadDesktopOnEntry', 'LoadMargin',
         'MakeBackups', 'MatchCase', 'MultiLineHilit',
