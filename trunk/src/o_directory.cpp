@@ -292,6 +292,14 @@ int EDirectory::Activate(int No) {
 }
 
 int EDirectory::GetMatchForward(int start) {
+    if (start == 0) {
+        // try to first select the file that starts with the search word
+        for (int i = 0; i < FCount; i++) {
+            const char *fname = Files[i]->Name();
+            if (strnicmp(SearchName, fname, SearchLen) == 0)
+                return i;
+        }
+    }
     for (int i = start; i < FCount; i++) {
         const char *fname = Files[i]->Name();
         for (int j=0; fname[j]; j++) {
