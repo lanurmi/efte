@@ -6,7 +6,7 @@
 # syntax of the color specification is:
 #
 #   fore back
-# or 
+# or
 #   symbolic_fore:symbolic_back
 # or
 #   symbolic
@@ -55,7 +55,7 @@ color_palette {
 
     { "bg",                           'gray:darkBlue' }, # background
     { "fg",                           'gray:darkBlue' }, # foreground
-    
+
     { 'Editor_Selected',              'black:gray' },
     { 'Editor_Markers',               'darkCyan:bg' },
     { 'Editor_FoundText',             'white:darkCyan' },
@@ -102,6 +102,8 @@ color_palette {
     { 'Markup_Default',               'gray:bg' },
     { 'Markup_Punctuation',           'darkCyan:bg' },
     { 'Markup_Symbol',                'green:bg' },
+    { 'Markup_String',                'String' },
+    { 'Markup_Comment',               'Comment' },
     { 'Markup_Tag',                   'cyan:bg' },
     { 'Markup_Special',               'red:bg' },
     { 'Markup_Control',               'magenta:bg' },
