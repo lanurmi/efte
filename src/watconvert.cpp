@@ -15,7 +15,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void main() {
+int main() {
     int  i;
 
     char buffer[30];
@@ -26,13 +26,13 @@ void main() {
     input = fopen("objs.inc", "r");
     if (input == NULL) {
         printf("objs.inc file not found\n");
-        exit(1);
+        return EXIT_FAILURE;
     }
 
     output = fopen("objs.mif", "w");
     if (input == NULL) {
         printf("objs.mif not writable\n");
-        exit(1);
+        return EXIT_FAILURE;
     }
 
     while (fgets(buffer, 30, input) != NULL) {
@@ -42,4 +42,5 @@ void main() {
 
     fclose(input);
     fclose(output);
+    return EXIT_SUCCESS;
 }
