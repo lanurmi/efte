@@ -19,7 +19,6 @@
 extern HAB hab;
 
 int GetClipText(ClipData *cd) {
-    int rc;
     char *text;
 
     cd->fLen = 0;
