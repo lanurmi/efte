@@ -389,7 +389,7 @@ HWND CreatePMMenu(HWND parent, HWND owner, int menu, int id, int style) {
                                                 Menus[menu].Items[i].SubMenu, 0,
                                                 (Menus[menu].Items[i].Cmd == SUBMENU_CONDITIONAL) ? MS_CONDITIONALCASCADE : 0);
                 {
-                    static ids = 1000;
+                    static int ids = 1000;
                     item.id = ids++;
                     if (ids == 7000) {
                         ids = 1000;
