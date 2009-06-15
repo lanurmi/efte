@@ -2559,7 +2559,7 @@ int GViewPeer::ConSetBox(int X, int Y, int W, int H, TCell Cell) {
     for (I = 0; I < H; I++) {
         if (I + Y == cY)
             Hidden = PMHideCursor();
-        VioWrtNCell((UCHAR *) p, (USHORT)(W), (USHORT)(Y + I), (USHORT)X, pmData->hvps);
+        VioWrtNCell(p, (USHORT)(W), (USHORT)(Y + I), (USHORT)X, pmData->hvps);
         if (Hidden)
             PMShowCursor();
     }
