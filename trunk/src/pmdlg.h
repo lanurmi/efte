@@ -8,6 +8,18 @@
  *
  */
 
+#define IDD_ABOUT        400
+#define ID_RESOURCE      401
+#define IDD_ICON1        402
+#define IDD_ICON2        403
+
+#define IDD_INFO         100
+#define INFO_TITLE       101
+#define INFO_TEXT        102
+#define IDD_ERROR        103
+#define INFO_ETITLE      104
+#define INFO_ETEXT       105
+
 #define IDD_PROMPT      300
 #define IDS_PROMPT      301
 #define IDE_FIELD       302
@@ -32,5 +44,4 @@
 #define IDC_JOINLINE      239
 #define IDC_DELETELINE    240
 
-#define IDD_FILEDLG       500
 
