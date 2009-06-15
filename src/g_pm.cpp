@@ -211,6 +211,8 @@ MRESULT EXPENTRY FrameWndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
 MRESULT EXPENTRY AVIOWndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
 MRESULT EXPENTRY ObjectWndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
 MRESULT EXPENTRY CreatorWndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
+MRESULT EXPENTRY AboutDlgProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
+MRESULT EXPENTRY InfoDlgProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
 
 HAB hab = 0;
 HAB habW = 0;
@@ -410,7 +412,7 @@ HWND CreatePMMenu(HWND parent, HWND owner, int menu, int id, int style) {
             p = strchr(s, '&');
             if (p)
                 (*p) = '~';
-            p = (char *) & s;
+            p = (char *) s;
         } else {
             p = 0;
         }
@@ -452,6 +454,48 @@ void InsertHistory(HWND hwnd, int id, int maxlen) {
     }
     free(str);
 }
+
+// display the about dialog
+MRESULT EXPENTRY AboutDlgProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2)
+{
+  switch(msg) {
+      case WM_COMMAND:
+          switch(SHORT1FROMMP(mp1)) {
+                 case DID_OK:
+                 case DID_CANCEL:
+                      WinDismissDlg (hwnd, TRUE);
+                      return 0 ;
+          }
+          break;
+  }
+  return WinDefDlgProc(hwnd, msg, mp1, mp2);
+}
+
+MRESULT EXPENTRY InfoDlgProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2)
+{
+    static PVOID mp2Pointer1;
+           PVOID mp2Pointer2;
+
+    switch (msg) {
+        case WM_INITDLG:
+             mp2Pointer1 = mp2;      // Static copy
+             mp2Pointer2 = mp2;      // Nonm-static copy (gets destroyed)
+             WinSetDlgItemText(hwnd, INFO_TEXT, (PSZ)mp2);
+             break;
+
+        case WM_COMMAND:
+             switch(SHORT1FROMMP(mp1)) {
+                 case DID_OK:
+                 case DID_CANCEL:
+                      WinSetDlgItemText(hwnd, INFO_TEXT, (PSZ)mp2Pointer1);
+                      WinDismissDlg(hwnd, TRUE);
+                      return(0);
+             }
+        break;
+    }
+    return WinDefDlgProc(hwnd, msg, mp1, mp2);
+}
+
 
 MRESULT EXPENTRY FileDlgProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
     FILEDLG *dlg;
@@ -499,17 +543,12 @@ MRESULT EXPENTRY FileDlgProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
 int DLGGetFile(GView *View, const char *Prompt, unsigned int BufLen, char *FileName, int Flags) {
     FILEDLG dlg;
 
-    memset((void *)&dlg, 0, sizeof(dlg));
+    memset(&dlg, 0, sizeof(FILEDLG));
 
     dlg.cbSize = sizeof(dlg);
-    dlg.fl =
-        /*FDS_CENTER |*/ FDS_CUSTOM |
-        ((Flags & GF_SAVEAS) ? FDS_SAVEAS_DIALOG : FDS_OPEN_DIALOG);
+    dlg.fl = FDS_CENTER | ((Flags & GF_SAVEAS) ? FDS_SAVEAS_DIALOG : FDS_OPEN_DIALOG);
     dlg.pszTitle = (char*)Prompt;
     strcpy(dlg.szFullFile, FileName);
-    dlg.hMod = NULLHANDLE;
-    dlg.usDlgId = IDD_FILEDLG;
-    dlg.pfnDlgProc = FileDlgProc;
 
     if (!LONGFROMMR(WinSendMsg(View->Parent->Peer->hwndFrame,
                                UWM_FILEDIALOG, MPFROMP(&dlg), 0)))
@@ -524,46 +563,88 @@ int DLGGetFile(GView *View, const char *Prompt, unsigned int BufLen, char *FileN
     return 0;
 }
 
+// structure used to send message information to main
+// window process
 typedef struct {
     char *Title;
     int NSel;
-    va_list ap;
+    char *Buttons[5];
+    char *Format;
+    char *Message;
     int Flags;
 } ChoiceInfo;
 
-static int DoChoice(HWND hwndFrame, ChoiceInfo *choice) {
+static int DoChoice(HWND hwndFrame, ChoiceInfo *choice)
+{
+    int  rc;
+    int  x;
+    int  y;
+    int  xw;
+    int  yw;
+    int  nx;
+    int  ny;
+    int  cp;
+    int  cd;
+    int  SPC = 4;
+
+    char msgbox[100];
     char msg[1024];
     char Prompt[1024];
     char *fmt;
     char *p;
-    int rc;
-    HWND hwndDlg;
-    HWND hwndStatic;
+
     HWND hwndButton[40];
-    int cyBorder, cxBorder;
-    SWP swp, swp1;
-    int i, x, y;
-    ULONG flFrame = FCF_TITLEBAR | FCF_SYSMENU | FCF_DLGBORDER;
-    HPS ps;
-    int xw, yw, nx, ny;
+
+    SWP swp;
+    SWP swp1;
+
+    ULONG flFrame = FCF_TITLEBAR | FCF_DLGBORDER;
+    HPS  ps;
     RECTL tr;
-    int cp, cd;
-    char msgbox[100];
-    int SPC = 4;
+
+    ULONG dlgtype = 0;
+
+    // If this is the About dialog let's get in done and return
+    if(choice->Flags == GPC_ABOUT) {
+        WinDlgBox(HWND_DESKTOP, hwndFrame, AboutDlgProc, NULLHANDLE, IDD_ABOUT, NULL);
+        return 0;
+    }
+
+    // take care of all the information dialogs with just one button which
+    // should be an OK response
+    if(choice->NSel == 1 && choice->Flags != GPC_ABOUT) {
+        sprintf(msg, choice->Format, choice->Message);
+
+        if(choice->Flags == GPC_NOTE) dlgtype = IDD_INFO;
+        else dlgtype = IDD_ERROR;
+
+        WinDlgBox(HWND_DESKTOP, hwndFrame, InfoDlgProc, NULLHANDLE, dlgtype, msg);
+
+        return 0;
+    }
 
     sprintf(msgbox, "MsgBox: %s", choice->Title);
 
-    cxBorder = WinQuerySysValue(HWND_DESKTOP, SV_CXDLGFRAME);
-    cyBorder = WinQuerySysValue(HWND_DESKTOP, SV_CYDLGFRAME);
+    // Get size of screen:
+    //
+    // Return the system values for the desktop-window handle
+    // (Dimensions are in pels):
+    //   Width of the dialog-frame border
+    long cxBorder = WinQuerySysValue(HWND_DESKTOP, SV_CXDLGFRAME);
+    //   Height of the dialog-frame border
+    long cyBorder = WinQuerySysValue(HWND_DESKTOP, SV_CYDLGFRAME);
 
-    hwndDlg = WinCreateStdWindow(HWND_DESKTOP,
-                                 WS_VISIBLE,
-                                 &flFrame,
-                                 0,
-                                 choice->Title,
-                                 0,
-                                 0,
-                                 0, 0);
+
+
+
+    HWND hwndDlg = WinCreateStdWindow(HWND_DESKTOP,
+                                      WS_VISIBLE | WS_TABSTOP,
+                                      &flFrame,
+                                      0,
+                                      choice->Title,
+                                      0,
+                                      0,
+                                      0, 0);
 
     WinSendMsg(hwndDlg, WM_SETICON,
                MPFROMLONG(WinLoadPointer(HWND_DESKTOP, 0, 1)), 0);
@@ -571,12 +652,16 @@ static int DoChoice(HWND hwndFrame, ChoiceInfo *choice) {
     WinSetOwner(hwndDlg, hwndFrame);
 
     x = SPC;
-    for (i = 0; i < choice->NSel; i++) {
+
+    for (int i = 0; i < choice->NSel; i++) {
         char button[60];
-        strcpy(button, va_arg(choice->ap, char *));
-        p = strchr(button, '&');
-        if (p)
-            *p = '~';
+
+        // convert the & (generic FTE) to ~
+        p = strchr(choice->Buttons[i], '&');
+        if (p) *p = '~';
+
+        // copy current button from Choice structure
+        strcpy(button, choice->Buttons[i]);
 
         hwndButton[i] =
             WinCreateWindow(hwndDlg,
@@ -592,19 +677,22 @@ static int DoChoice(HWND hwndFrame, ChoiceInfo *choice) {
         x += SPC + swp.cx;
     }
 
-    fmt = va_arg(choice->ap, char *);
-    vsprintf(msg, fmt, choice->ap);
+    fmt = choice->Format;
+
+    sprintf(msg, choice->Format, choice->Message);
+
     strncpy((PCHAR)Prompt, msg, sizeof(Prompt));
+
     Prompt[sizeof(Prompt) - 1] = 0;
 
-    hwndStatic = WinCreateWindow(hwndDlg,
-                                 WC_STATIC,
-                                 Prompt,
-                                 WS_VISIBLE | SS_TEXT | DT_TOP | DT_LEFT | DT_WORDBREAK,
-                                 0, 0, 0, 0,
-                                 hwndDlg, HWND_TOP,
-                                 100,
-                                 NULL, NULL);
+    HWND hwndStatic = WinCreateWindow(hwndDlg,
+                                      WC_STATIC,
+                                      Prompt,
+                                      WS_VISIBLE | SS_TEXT | DT_TOP | DT_CENTER | DT_WORDBREAK,
+                                      0, 0, 0, 0,
+                                      hwndDlg, HWND_TOP,
+                                      100,
+                                      NULL, NULL);
 
     WinRestoreWindowPos("eFTEPM", msgbox, hwndDlg);
 
@@ -625,7 +713,7 @@ static int DoChoice(HWND hwndFrame, ChoiceInfo *choice) {
         cd = WinDrawText(ps, -1, (Prompt + cp),
                          &tr,
                          0, 0,
-                         DT_LEFT | DT_TOP | DT_WORDBREAK | DT_TEXTATTRS |
+                         DT_CENTER | DT_VCENTER | DT_WORDBREAK | DT_TEXTATTRS |
                          DT_QUERYEXTENT | DT_EXTERNALLEADING);
         if (!cd)
             break;
@@ -687,17 +775,21 @@ static int DoChoice(HWND hwndFrame, ChoiceInfo *choice) {
 
 /* reimplemented most of the WinMessageBox code to get store/restore position to work */
 int DLGPickChoice(GView *View, const char *ATitle, int NSel, va_list ap, int Flags) {
+    int  i;
+    int  rc;
+
     ChoiceInfo choice;
 
-    choice.Title = (char *)ATitle;
-    choice.NSel = NSel;
-#if defined(__WATCOMC__)
-    memcpy(&choice.ap, &ap, sizeof(choice.ap));
-#else
-    choice.ap = ap;
-#endif
-    choice.Flags = Flags;
-    return LONGFROMMR(WinSendMsg(View->Parent->Peer->hwndFrame, UWM_CHOICE, MPFROMP(&choice), 0));
+    choice.Title   = (char *)ATitle;
+    choice.NSel    = NSel;
+    for(i = 0; i < NSel; i++) choice.Buttons[i] = va_arg(ap, char *);
+    choice.Format  = va_arg(ap, char *);
+    choice.Message = va_arg(ap, char *);
+    choice.Flags   = Flags;
+
+    rc = LONGFROMMR(WinSendMsg(View->Parent->Peer->hwndFrame, UWM_CHOICE, MPFROMP(&choice), 0));
+
+    return(rc);
 }
 
 static struct {
@@ -1714,7 +1806,7 @@ MRESULT EXPENTRY AVIOWndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
     case WM_VSCROLL:
         if (WinPostMsg(pmData->hwndWorker, msg, mp1, mp2) == FALSE) {
             WinMessageBox(HWND_DESKTOP, HWND_DESKTOP,
-                          "WinPostMsg failed, WM_VSCROLL", "ftePM",
+                          "WinPostMsg failed, WM_VSCROLL", "eFTE/PM",
                           0, MB_OK | MB_ERROR | MB_APPLMODAL | MB_MOVEABLE);
         }
         return 0;
@@ -1722,7 +1814,7 @@ MRESULT EXPENTRY AVIOWndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
     case WM_HSCROLL:
         if (WinPostMsg(pmData->hwndWorker, msg, mp1, mp2) == FALSE) {
             WinMessageBox(HWND_DESKTOP, HWND_DESKTOP,
-                          "WinPostMsg failed, WM_HSCROLL", "ftePM",
+                          "WinPostMsg failed, WM_HSCROLL", "eFTE/PM",
                           0, MB_OK | MB_ERROR | MB_APPLMODAL | MB_MOVEABLE);
         }
         return 0;
@@ -1731,7 +1823,7 @@ MRESULT EXPENTRY AVIOWndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
         if (SHORT1FROMMP(mp1) >= 8192) {
             if (WinPostMsg(pmData->hwndWorker, msg, mp1, mp2) == FALSE) {
                 WinMessageBox(HWND_DESKTOP, HWND_DESKTOP,
-                              "WinPostMsg failed, WM_COMMAND", "ftePM",
+                              "WinPostMsg failed, WM_COMMAND", "eFTE/PM",
                               0, MB_OK | MB_ERROR | MB_APPLMODAL | MB_MOVEABLE);
             }
         }
@@ -1740,7 +1832,7 @@ MRESULT EXPENTRY AVIOWndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
     case WM_CHAR:
         if (WinPostMsg(pmData->hwndWorker, msg, mp1, mp2) == FALSE) {
             WinMessageBox(HWND_DESKTOP, HWND_DESKTOP,
-                          "WinPostMsg failed, WM_CHAR", "ftePM",
+                          "WinPostMsg failed, WM_CHAR", "eFTE/PM",
                           0, MB_OK | MB_ERROR | MB_APPLMODAL | MB_MOVEABLE);
         }
         return (MRESULT) TRUE;
@@ -1768,7 +1860,7 @@ MRESULT EXPENTRY AVIOWndProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
     case WM_BUTTON3UP:
         if (WinPostMsg(pmData->hwndWorker, msg, mp1, mp2) == FALSE) {
             WinMessageBox(HWND_DESKTOP, HWND_DESKTOP,
-                          "WinPostMsg failed, WM_MOUSE", "ftePM",
+                          "WinPostMsg failed, WM_MOUSE", "eFTE/PM",
                           0, MB_OK | MB_ERROR | MB_APPLMODAL | MB_MOVEABLE);
         }
         break;
@@ -2021,7 +2113,7 @@ int ConGetEvent(TEventMask EventMask, TEvent *Event, int WaitTime, int Delete, G
                     Event->Msg.View = v;
                     Event->Msg.Command = cmDroppedFile;
                     Event->Msg.Param1 = 0;
-                    Event->Msg.Param2 = &dragname;
+                    Event->Msg.Param2 = dragname;
                     frames = f;
                     return 0;
 
@@ -2467,7 +2559,7 @@ int GViewPeer::ConSetBox(int X, int Y, int W, int H, TCell Cell) {
     for (I = 0; I < H; I++) {
         if (I + Y == cY)
             Hidden = PMHideCursor();
-        VioWrtNCell(p, (USHORT)(W), (USHORT)(Y + I), (USHORT)X, pmData->hvps);
+        VioWrtNCell((UCHAR *) p, (USHORT)(W), (USHORT)(Y + I), (USHORT)X, pmData->hvps);
         if (Hidden)
             PMShowCursor();
     }
@@ -3510,7 +3602,7 @@ int GUI::RunProgram(int mode, char *Command) {
         sd.TraceOpt = SSF_TRACEOPT_NONE;
         sd.PgmTitle = (Command && Command[0] != 0) ? Command : 0;
         sd.PgmName = Prog;
-        sd.PgmInputs = Args;
+        sd.PgmInputs = (UCHAR *) Args;
         sd.TermQ = 0;
         sd.Environment = 0;
         sd.InheritOpt = SSF_INHERTOPT_PARENT;
@@ -3637,7 +3729,7 @@ static int CreatePipeChild(ULONG *sid, PID *pid, HPIPE &hfPipe, char *Command) {
         sd.TraceOpt = SSF_TRACEOPT_NONE;
         sd.PgmTitle = 0;
         sd.PgmName = Prog;
-        sd.PgmInputs = Args;
+        sd.PgmInputs = (UCHAR*) Args;
         sd.TermQ = 0;
         sd.Environment = 0;
         sd.InheritOpt = SSF_INHERTOPT_PARENT;

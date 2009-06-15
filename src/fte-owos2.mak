@@ -25,7 +25,7 @@
 
 CC = wpp386
 LD = wlink
-RC = rc
+RC = wrc
 
 # Machine type -5r Pent -6r Pent Pro
 MACHINE= -3r
@@ -52,8 +52,8 @@ OEXT    = obj
 
 all: efte.exe eftepm.exe
 
-cefte.exe: $(CFTE_OBJS) fte.def
-  $(LD) NAME cefte SYS os2v2 $(LDFLAGS) FILE {$(CFTE_OBJS)}
+#cefte.exe: $(CFTE_OBJS) fte.def
+#  $(LD) NAME cefte SYS os2v2 $(LDFLAGS) FILE {$(CFTE_OBJS)}
 
 defcfg.h: bin2c.exe simple.fte
   bin2c simple.fte >defcfg.h

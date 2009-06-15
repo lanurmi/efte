@@ -196,7 +196,7 @@ int EBuffer::Modify() {
                     FileStatus.st_mtime != StatBuf.st_mtime) {
                 View->MView->Win->Choice(GPC_ERROR, "Warning! Press Esc!", 0, "File %-.55s changed on disk!",
                                          FileName);
-                switch (View->MView->Win->Choice(0, "File Changed on Disk", 3, "&Modify", "&Reload", "&Cancel", "%s",
+                switch (View->MView->Win->Choice(GPC_NOTE, "File Changed on Disk", 3, "&Modify", "&Reload", "&Cancel", "%s",
                                                  FileName))
                 {
                 case 0:
