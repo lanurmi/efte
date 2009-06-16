@@ -1,0 +1,71 @@
+# SGML
+
+menu SGML_Meta {
+    item    "Ampersand" { InsertString "&amp;"; }
+    item    "Less Than\tC-E <" { InsertString "&lt;"; }
+    item    "Greater Than\tC-E >" { InsertString "&gt;"; }
+    item    "CopyRight\tC-E @" { InsertString "&copy;"; }
+}
+
+menu SGML_Ref {
+    item    "Reference" { SGML_REF }
+    item    "Example" { SGML_EX }
+    item    "Manual Refernce" { SGML_MRF }
+    item    "Email" { SGML_EML }
+    item    "Ftp Site" { SGML_FTPS }
+    item    "Ftp Path" { SGML_FTPP }
+    item    "HTTP Site" { SGML_HTPS }
+    item    "HTTP Path" { SGML_HTPP }
+    item    "URL" { SGML_URL }
+
+}
+
+menu SGML_List {
+    item    "Ordinary List"   { SGML_ORD }
+    item    "Numbered List"   { SGML_NUM }
+    item    "Tagged List" { SGML_TAG }
+    item    "Compact Style" { InsertString " compact"; }
+    item    "List Item" { InsertString "<item> "; }
+}
+
+menu SGML_Style {
+    item    "Strong" { SGML_BO }
+    item    "Italic" { SGML_IT }
+    item    "TT" { SGML_TT }
+    item    "VAR" { SGML_VAR }
+    item    "Package" { SGML_PAK }
+    item    "PRGN" { SGML_PGN }
+    item    "File" { SGML_FIL }
+}
+
+menu SGMLTags {
+    item    "Paragraph <p>      " { SGML_PA }
+    item    "Section   <sect>   " { SGML_SE }
+    item    "Chapter   <chapt>  " { SGML_CH }
+    item;
+    submenu "Character Styles", SGML_Style;
+    submenu "Lists", SGML_List;
+    submenu "Cross Reference", SGML_Ref;
+    submenu "Meta Characters", SGML_Meta;
+    item;
+    item    "Blank Document " { SGML_Base }
+}
+
+menu Main_SGML {
+    submenu "&File",    File;
+    submenu "&Edit",    Edit;
+    submenu "&Block",   Block;
+    submenu "&Search",  Search;
+    submenu "Fol&d",    Fold;
+    submenu "&Tools",   Tools;
+    submenu "SG&ML",    SGMLTags;
+    submenu "&Window",  Window;
+    submenu "&Options", Options;
+    submenu "&Help",    Help;
+}
+
+eventmap SGML {
+    MainMenu            = "Main_SGML";   # menu for menubar
+
+    key [A+M] { MainMenu 'M' }
+}

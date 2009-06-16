@@ -1,0 +1,71 @@
+# OCAML mode
+#
+# Vlad Seryakov
+# vlad@crystalballinc.com
+
+colorize OCAML
+{
+    SyntaxParser = 'SIMPLE';
+
+    color
+    {
+        {'Normal', 'Editor_Default'},
+        {'Number', 'Lang_DecimalNumber'},
+        {'Punctuation','Lang_Preprocessor'},
+        {'String','Lang_String'},
+        {'Comment','Lang_Comment'},
+        {'Label','Lang_Label'},
+        {'Function','Lang_Function'}
+    };
+
+    keyword 'Editor_Keywords'
+    {
+      'and',         'as',          'assert',      'asr',         'begin',       'class',
+      'constraint',  'do',          'done',        'downto',      'else',        'end',
+      'exception',   'external',    'false',       'for',         'fun',         'function',
+      'functor',     'if',          'in',          'include',     'inherit',     'initializer',
+      'land',        'lazy',        'let',         'lor',         'lsl',         'lsr',
+      'lxor',        'match',       'method',      'mod',         'module',      'mutable',
+      'new',         'object',      'of',          'open',        'or',          'private',
+      'rec',         'sig',         'struct',      'then',        'to',          'true',
+      'try',         'type',        'val',         'virtual',     'when',        'while',
+      'with'
+    };
+
+    h_state 0 {'Normal'}
+    h_trans {1, '>', '(*', 'Comment'}
+    h_trans {2, '', '"', 'String'}
+    h_trans {3, 's', '0-9', 'Number'}
+    h_trans {0, 'S', '_a-zA-Z0-9', 'Punctuation'}
+    h_trans {4, '-s', 'a-zA-Z_', 'Normal' }
+
+    h_state 1 {'Comment'}
+    h_trans {0, '<', '*)', 'Comment'}
+
+    h_state 2 {'String'}
+    h_trans {0, '', '"', 'String'}
+
+    h_state 3 {'Number'}
+    h_trans {0, 'S-', '0-9\.', 'Number'}
+
+    h_state 4 { 'Normal' }
+    h_trans { 0, '$', '', 'Normal' }
+    h_wtype { 0, 0, 0, 'i', 'a-zA-Z0-9_' }
+}
+
+mode OCAML: PLAIN {
+    FileNameRx     = /\.\c{ML}|{MLI}$/;
+    HilitOn        = 1;
+    Colorizer      = 'OCAML';
+    AutoIndent     = 1;
+    IndentMode     = 'PLAIN';
+    MatchCase      = 1;
+    Trim           = 1;
+    MultiLineHilit = 1;
+    AutoHilitParen = 1;
+    SaveFolds      = 2;
+    CommentStart   = ' (*';
+    CommentEnd     = '*)';
+    RoutineRegexp  = /^{let}|{module}|{type}\ .+}/;
+}
+

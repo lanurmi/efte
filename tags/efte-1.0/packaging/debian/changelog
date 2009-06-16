@@ -1,0 +1,285 @@
+fte (0.50.0-1) unstable; urgency=low
+  * CVS 2003/07/10
+  * fixed spelling (Closes: 12468, 12469)
+  * applied patch (Closes: 118734)
+  * added linda override file
+  * add mini-edit.xpm fte icon based on icons/fte16x16.xpm with reduced
+    colors (Closes: #127877)
+  * if user has set DISPLAY it's correct it will open xfte
+    even over ssh - it's correct behaviour - not bug (Closes: 118734)
+  * actualized README.Debian (Closes: 151674)
+
+ -- Zdenek Kabelac <kabi@debian.org>  Thu,  7 Jul 2003 14:04:21 +0200
+
+fte (0.49.13-15) unstable; urgency=low
+
+  * fixed bug in o_message.cpp causing unexpected crash
+  * some gcc-3.0 compilation fixes (Closes: #104809)
+  * added lintian override file for fte-console
+
+ -- Zdenek Kabelac <kabi@debian.org>  Thu,  17 Jul 2001 14:04:21 +0200
+
+fte (0.49.13-14) unstable; urgency=high
+
+  * CVS 2001/06/21
+  * fixed some serious text corruption bug - introduced into
+    CVS by some "unexperienced" programmer
+
+ -- Zdenek Kabelac <kabi@debian.org>  Thu,  21 Jun 2001 14:04:21 +0200
+  
+fte (0.49.13-13) unstable; urgency=low
+
+  * CVS 2001/06/14
+  * fixed building dependency bug (Closes: #100052)
+  * fixed X Window System description bug (Closes: #76078)
+  * (Closes: #96444) - it was not the fault of fte
+  
+ -- Zdenek Kabelac <kabi@debian.org>  Thu,  7 Jun 2001 14:04:21 +0200
+
+fte (0.49.13-12) unstable; urgency=low
+
+  * CVS 2001/06/07
+  * fixed bug in colorizing of floating point numbers
+  
+ -- Zdenek Kabelac <kabi@debian.org>  Thu,  7 Jun 2001 14:04:21 +0200
+
+fte (0.49.13-11) unstable; urgency=low
+
+  * update after some long time - using CVS 2001/06/05
+  * removed usage of dh_suidregister
+  * fixed bug in reading to large $HOME shell variable (Closes: #68435)
+  * fixed update-alternatives for editor (Closes: #71213)
+  * fixed control file for fte-xwindow added Replaces:  (Closes: #71574)
+  * fixed bug in fte init wrapper script (Closes: #72908)
+
+ -- Zdenek Kabelac <kabi@debian.org>  Sun,  3 Jun 2001 16:04:21 +0200
+
+fte (0.49.13-10) frozen unstable; urgency=low
+
+  * fixed typo in debian/rules script
+  * fixed Build-Depends (missing dependencies) (Closes: #57254)
+
+ -- Zdenek Kabelac <kabi@debian.org>  Tue, 15 Feb 2000 16:04:21 +0100
+
+fte (0.49.13-9) frozen unstable; urgency=low
+
+  * fixed problem with wrong character on linux console
+    for both terminal and console version (Closes: #54764, 54765)
+    (linux console is using iso character for borders,
+    slang version uses slightly modified table for linux terminal)
+  * addeded PHP mode (MIGUEL HERNANDEZ MARTOS x4278303@fedro.ugr.es)
+  * fixed problem with wrong recognization of shell file
+    (e.g. file beginning with #! /bin/sh is shell file)
+  * fixed comment/uncomment option to Edit/Line menu
+
+ -- Zdenek Kabelac <kabi@debian.org>  Wed,  2 Feb 2000 20:13:44 +0100
+
+fte (0.49.13-8) unstable; urgency=low
+
+  * applied bugfix from freshmeat December 28th 1999, 21:30 EST
+  * changed one dependency line from Recommends: to Depenends: for
+    the fte package (Closes: #53299)
+  * slightly improved fte running script
+  * upgraded Standards-Version number and Build-Depends field
+  * fixed minor problem with version number (Closes: #53635)
+  * 
+
+ -- Zdenek Kabelac <kabi@debian.org>  Wed,  2 Feb 2000 20:13:44 +0100
+
+fte (0.49.13-7) unstable; urgency=low
+
+  * fixed some minor problems with tabulators
+    (e.g. tabs are now generated in Makefiles)
+  * (Closes: #53015) - doesn't happen with 0.49 series
+  * using gpg
+
+ -- Zdenek Kabelac <kabi@debian.org>  Mon,  3 Jan 2000 19:38:41 +0100
+
+fte (0.49.13-6) unstable; urgency=low
+
+  * fixed fte running script (Closes: #49895)
+  * improved error handling when opening XWindow font
+  * some lines added to manpage
+  * extended the name of the default font for better adaptability
+    and improved opening of localized font (Closes: #50082)
+    (thanks Alexander Shumakovitch for cooperation)
+
+ -- Zdenek Kabelac <kabi@debian.org>  Mon, 13 Dec 1999 20:00:05 +0100
+
+fte (0.49.13-5) unstable; urgency=low
+
+  * added more colorizer modes to menus
+  * improvements & bugfixes in some colorizers
+  * added check for the ISOCONSOLE shell variable - users can use
+    iso-8859-x fonts on linux console with VFTE
+  * removed colors from ctaged keywords (looks ugly)
+  * added ctags suggestion
+  * added explanation of shell variable to manpage
+  * unreleased
+
+ -- Zdenek Kabelac <kabi@debian.org>  Sun, 24 Nov 1999 22:00:05 +0100
+
+fte (0.49.13-4) unstable; urgency=low
+
+  * fixed problem with line auto-indenting
+  * fixed suid registering for vfte
+
+ -- Zdenek Kabelac <kabi@debian.org>  Sun, 10 Oct 1999 16:54:05 +0100
+
+fte (0.49.13-3) unstable; urgency=low
+
+  * small fixes in building scripts
+
+ -- Zdenek Kabelac <kabi@debian.org>  Tue, 4 Oct 1999 21:34:25 +0100
+
+fte (0.49.13-2) unstable; urgency=low
+
+  * changed design of debian packages
+  * using debmake
+  * following FSH directions
+  * fixed various bugs in X-Windows version
+
+ -- Zdenek Kabelac <kabi@debian.org>  Tue, 28 Sep 1999 19:34:25 +0200
+
+fte (0.49.13-1) unstable; urgency=low
+
+  * new upstream version
+  * as usual bug fixes
+  * added comments to international usage of the fte (8bit)
+  * unreleased
+
+ -- Zdenek Kabelac <kabi@debian.org>  Sun, 30 May 1999 16:46:45 +0200
+
+fte (0.49.2-1) unstable; urgency=low
+
+  * a lot of changes again
+  * various bug fixes
+  * new binary - sfte based upon slang library (usable in xterm)
+  * much better completition mode (Ctrl+Tab)
+  * this was prerelease version and was not publicly available
+
+ -- Zdenek Kabelac <kabi@debian.org>  Wed, 16 Dec 1998 19:05:50 +0100
+
+fte (0.46b5-4.2) frozen unstable; urgency=low
+
+  * non-maintainer upload
+  * moved the seteuid(getuid()) call to beginning of main() where it
+    does the most good. Added dropping of privs in case the open failed
+    which would have left it privileged until die() finished and the
+    program exited. Also added code in case the binary was ever sgid to
+    handle dropping privileges.
+
+ -- Ben Collins <bcollins@debian.org>  Sat,  5 Dec 1998 19:05:59 -0500
+
+fte (0.46b5-4.1) frozen unstable; urgency=low
+
+  * non-maintainer upload
+  * edited con_linux.c to give use suid root permissions only to open
+    the virtual console. (closes #30384) This was a critical security
+    related bug.
+  * enabled use of gpm in fte-console (really should be there IMO)
+
+ -- Ben Collins <bcollins@debian.org>  Sat,  5 Dec 1998 12:04:02 -0500
+
+fte (0.46b5-4) frozen unstable; urgency=low
+
+  * changed frozen to frozen unstable
+  * fixed bug with ctags
+
+ -- Zdenek Kabelac <kabi@debian.org>  Mon, 16 Nov 1998 19:05:50 +0100
+
+fte (0.46b5-3) frozen; urgency=low
+
+  * extensive changes in debian/rules
+  * added SGML mode (for Debian) and small fixes in HTML mode
+  * package splited in three parts
+  * lowered editors' priority for update-menus (now is below VI)
+  * small changes in fte wrapper script
+  * vfte is SUID
+
+ -- Zdenek Kabelac <kabi@debian.org>  Sun, 1 Nov 1998 23:05:50 +0100
+
+fte (0.46b5-2) unstable; urgency=low
+
+  * removed vfte completely from distribution
+  * changed maintainers email address 
+  * i18n support
+
+ -- Zdenek Kabelac <kabi@debian.org>  Wed, 14 Oct 1998 17:05:50 +0100
+
+fte (0.46b5-1) unstable; urgency=low
+
+  * new version and maintainer
+  * support for i18n in X version
+  * more locale fixes (e.g. upper and lower case switch)
+  * man pages and dwww entries changes and fixes
+  * vfte is made for now SUID (because of login security fix)
+  * new configuration made by maintainer
+  * removed any lintian errors and warnings
+  * not publically released
+
+ -- Zdenek Kabelac <kabi@debian.org>  Sun, 04 Oct 1998 14:05:50 +0100
+
+fte (0.45-5) unstable; urgency=low
+
+  * added dwww menu
+  * added /usr/bin/editor -> /usr/bin/fte
+  * added fte wrapper script
+
+ -- Riku Voipio <riku.voipio@iki.fi>  Tue, 21 Oct 1997 03:25:50 +0300
+
+fte (0.45-4) unstable; urgency=low
+
+  * fully libc6
+  * up to latest standards
+
+ -- Riku Voipio <riku.voipio@iki.fi>  Thu, 11 Sep 1997 17:02:37 +0300
+
+fte (0.45-3) unstable; urgency=low
+
+  * now uses libc6 (seems to work, even if xlib is still libc5)
+  * menu 1.0
+
+ -- Riku Voipio <riku.voipio@iki.fi>  Wed, 18 Jun 1997 22:49:18 +0300
+
+fte (0.45-2) frozen unstable; urgency=low
+
+  * standard 2.1.3.0
+  * new maintainer Address
+  * now installs a /etc/fte/system.fterc
+  * fixed some typos :)
+  * routine update to make debstd complain less
+
+ -- Riku Voipio <riku.voipio@iki.fi>  Thu, 1 May 1997 17:23:41 +0300
+
+fte (0.45-1) unstable; urgency=low
+
+  * new upstream release
+  * corrected depencies (now only recommends xlib6)
+
+ -- Riku Voipio <riku.voipio@sci.fi>  Wed, 19 Feb 1997 19:55:37 +0200
+
+fte (0.44-3) unstable; urgency=low
+
+  * fixed bug #7172 (files missing from distribution....)
+  * going to type 100 times "never release anything without running debc"
+
+ -- Riku Voipio <riku.voipio@sci.fi>  Sun, 9 Feb 1997 12:00:48 +0200
+
+fte (0.44-2) unstable; urgency=low
+
+  * wrote manpages (#6629)
+  * removed some non-unix modes from sample.fterc
+  * changed to depend on xlib6 instead on elf-x11r6lib
+
+ -- Riku Voipio <riku.voipio@sci.fi>  Sat, 18 Jan 1997 12:35:18 +0200
+
+fte (0.44-1) unstable; urgency=low
+
+  * initial Release.
+
+ -- Riku Voipio <riku.voipio@sci.fi>  Wed, 25 Dec 1996 20:41:34 +0200
+
+Local variables:
+mode: debian-changelog
+End:

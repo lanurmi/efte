@@ -1,0 +1,56 @@
+# FTE keybindings for editing reStructuredText files
+# maintained by: Sergey Pinigin
+# Revision:      2006-08-29
+#
+# this file defines additional keybindings for RST mode.
+# RST_* macros are defined in ../m_rst.fte
+# menus are defined in        ../menu/m_rst.fte
+# this file is included from  ../ui_fte.fte
+
+eventmap reST {
+
+    # Sections
+    # Press after input Section name
+
+    key [C+E_1]        { RST_H1 }
+    key [C+E_2]        { RST_H2 }
+    key [C+E_3]        { RST_H3 }
+    key [C+E_4]        { RST_H4 }
+    key [C+E_5]        { RST_H5 }
+
+
+    key [C+G+Up]       { RST_ROLE_EMP }
+    key [C+G+Down]     { RST_ROLE_STR }
+    key [C+E_C+L]      { RST_ROLE_LIT }
+
+    key [A+G+Up]       { RST_INLINE_EMP }
+    key [A+G+Down]     { RST_INLINE_STR }
+    key [C+E_0]        { RST_INLINE_INT }
+    key [C+E_9]        { RST_INLINE_LIT }
+
+    key [C+E_C+H]      { RST_INLINE_HLINK }
+    key [C+E_C+U]      { RST_INLINE_ELINK }
+    key [C+E_C+T]      { RST_INLINE_ITAG }
+    key [C+E_C+R]      { RST_INLINE_REF }    # []_
+    key [C+E_C+A]      { RST_INLINE_REFA }   # [#]_
+    key [C+E_C+\\]     { RST_INLINE_REFS }   # ||_
+
+    key [C+E_A+A]      { RST_ADM_ATTE }
+    key [C+E_A+C]      { RST_ADM_CAUT }
+    key [C+E_A+D]      { RST_ADM_DANG }
+    key [C+E_A+E]      { RST_ADM_ERRO }
+    key [C+E_A+H]      { RST_ADM_HINT }
+    key [C+E_A+I]      { RST_ADM_IMPO }
+    key [C+E_A+N]      { RST_ADM_NOTE }
+    key [C+E_A+T]      { RST_ADM_TIP  }
+    key [C+E_A+W]      { RST_ADM_WARN }
+    key [C+E_A+L]      { RST_ADM_TITL }
+    key [C+E_A+O]      { RST_ADM_ADMO }
+
+    key [C+E_C+I]      { RST_IMAGE }
+    key [C+E_C+F]      { RST_FIGURE }
+
+    # List Enter
+    key [C+Enter]      { RST_LISTS_1ENT }
+
+}

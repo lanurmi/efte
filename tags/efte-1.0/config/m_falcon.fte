@@ -1,0 +1,59 @@
+# FTE mode for editing Falcon files
+
+colorize FALCON {
+   SyntaxParser = 'SIMPLE';
+
+   color {
+      { 'Normal',        'Editor_Default' },
+      { 'Number',        'Lang_Number' },
+      { 'Punctuation',   'Lang_Punctuation' },
+      { 'String',        'Lang_String' },
+      { 'Comment',       'Lang_Comment' },
+      { 'Function',      'Lang_Function' },
+   };
+   
+   keyword 'Editor_Keywords' {
+      'case', 'catch', 'class', 
+      'default', 
+      'elif', 'else', 'end', 'export',
+      'for','function',
+      'if', 'init',
+      'loop',
+      'object',
+      'switch', 'select', 
+      'try',
+      'while'
+   };
+   
+   keyword 'Editor_Keywords2' {
+      'and', 'attributes', 
+      'break',
+      'const', 'continue', 
+      'dropping',
+      'forall', 'forfirst', 'forlast', 'from',
+      'global',
+      'in', 'include', 'int',
+      'launch', 'let', 'load',
+      'nil', 'not', 'notin',
+      'to',
+      'or', 
+      'provides',
+      'return',
+      'static', 'step'
+   };
+}
+
+mode FALCON: SOURCE {      # Falcon Mode
+   FileNameRx          = '\\.{fal}|{ftd}$';
+   Colorizer           = 'FALCON';
+   HilitOn             = 1;
+   AutoIndent          = 1;
+   IndentMode          = 'PLAIN';
+   TabSize             = 3;
+   RoutineRegexp       = /^[\s\t]*{class}|{function}\s/;
+   SaveFolds           = 2;      # save fold info at end of line
+   CommentStart        = '/*';
+   CommentEnd          = '*/';
+}
+
+oinclude 'mym_falcon.fte';

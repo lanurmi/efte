@@ -1,0 +1,45 @@
+# menu definitions for Groovy mode
+
+menu Local_GROOVY {
+    item "&Unmark\tEsc"            { BlockMarkStream; BlockUnmark }
+    item "Cu&t\tShift+Del"         { BlockCut }
+    item "&Copy\tCtrl+Ins"         { BlockCopy }
+    item "&Paste\tShift+Ins"       { BlockPasteStream }
+    item "P&aste Column\tAlt+Ins"  { BlockPasteColumn }
+    item;
+    item "Delete &line\tCtrl+Y"    { KillLine }
+    item "Delete to &EOL\tAlt+End" { KillToLineEnd }
+    item;
+    item "&Save\tF2"               { FileSave }
+    item "Cl&ose\tAlt+Q"           { FileClose }
+    item;
+    item "&Indent line\tTab"       { LineIndent }
+    item "I&ndent block\tAlt+\\"   { BlockReIndent }
+    item;
+    item "&Build via Ant\tF9" { Compile "ant -emacs -find build.xml " }
+}
+
+menu Groovy {
+    item "&Build via Ant\tF9" { Compile "ant -emacs -find build.xml " }
+}
+
+menu Main_GROOVY {
+    submenu "&File",    File;
+    submenu "&Edit",    Edit;
+    submenu "&Block",   Block;
+    submenu "&Search",  Search;
+    submenu "Fol&d",    Fold;
+    submenu "&Tools",   Tools;
+    submenu "&Groovy",  Groovy;
+    submenu "&Window",  Window;
+    submenu "&Options", Options;
+    submenu "&Help",    Help;
+}
+
+eventmap GROOVY {
+    LocalMenu = "Local_GROOVY";
+    MainMenu = "Main_GROOVY";
+
+    key [A+G] { MainMenu 'M' }
+    key [F9] { Compile "ant -emacs -find build.xml " }
+}
