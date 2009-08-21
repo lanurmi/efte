@@ -103,7 +103,6 @@
 		536371520D417E4F0021126C /* cocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 536371500D417E4F0021126C /* cocoa.mm */; };
 		536371530D417E4F0021126C /* con_cocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 536371510D417E4F0021126C /* con_cocoa.cpp */; };
 		5363715B0D417EEB0021126C /* FTETextAreaView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5363715A0D417EEB0021126C /* FTETextAreaView.m */; };
-		53C00BEA0F2D40AC00EB3E6A /* h_regex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53C00BE90F2D40AC00EB3E6A /* h_regex.cpp */; };
 		53C00BF30F2D432300EB3E6A /* cfte.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 538B51870D414C740092CDDF /* cfte.cpp */; };
 		53C00C230F2D43FD00EB3E6A /* macosx in Resources */ = {isa = PBXBuildFile; fileRef = 53C00C220F2D43FD00EB3E6A /* macosx */; };
 		8D11072A0486CEB800E47090 /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = 29B97318FDCFA39411CA2CEA /* MainMenu.nib */; };
@@ -272,7 +271,6 @@
 		536371590D417EEB0021126C /* FTETextAreaView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FTETextAreaView.h; sourceTree = "<group>"; };
 		5363715A0D417EEB0021126C /* FTETextAreaView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FTETextAreaView.m; sourceTree = "<group>"; };
 		538B51870D414C740092CDDF /* cfte.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cfte.cpp; sourceTree = "<group>"; };
-		53C00BE90F2D40AC00EB3E6A /* h_regex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = h_regex.cpp; sourceTree = "<group>"; };
 		53C00C220F2D43FD00EB3E6A /* macosx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = folder; path = macosx; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* eFTE.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = eFTE.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -445,7 +443,6 @@
 				532F6A2A0D30192C00C0ED59 /* h_rexx.cpp */,
 				532F6A2C0D30192C00C0ED59 /* h_sh.cpp */,
 				532F6A2E0D30192C00C0ED59 /* h_simple.cpp */,
-				53C00BE90F2D40AC00EB3E6A /* h_regex.cpp */,
 				532F6A300D30192C00C0ED59 /* h_tex.cpp */,
 				532F6A320D30192C00C0ED59 /* i_ascii.cpp */,
 				532F6A330D30192C00C0ED59 /* i_ascii.h */,
@@ -689,7 +686,6 @@
 				536371520D417E4F0021126C /* cocoa.mm in Sources */,
 				536371530D417E4F0021126C /* con_cocoa.cpp in Sources */,
 				5363715B0D417EEB0021126C /* FTETextAreaView.m in Sources */,
-				53C00BEA0F2D40AC00EB3E6A /* h_regex.cpp in Sources */,
 				53C00BF30F2D432300EB3E6A /* cfte.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
