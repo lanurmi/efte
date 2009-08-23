@@ -104,7 +104,7 @@
 		536371530D417E4F0021126C /* con_cocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 536371510D417E4F0021126C /* con_cocoa.cpp */; };
 		5363715B0D417EEB0021126C /* FTETextAreaView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5363715A0D417EEB0021126C /* FTETextAreaView.m */; };
 		53C00BF30F2D432300EB3E6A /* cfte.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 538B51870D414C740092CDDF /* cfte.cpp */; };
-		53C00C230F2D43FD00EB3E6A /* macosx in Resources */ = {isa = PBXBuildFile; fileRef = 53C00C220F2D43FD00EB3E6A /* macosx */; };
+		53EBAEEA104133660047FD93 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 53EBAEE9104133660047FD93 /* Info.plist */; };
 		8D11072A0486CEB800E47090 /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = 29B97318FDCFA39411CA2CEA /* MainMenu.nib */; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
@@ -271,7 +271,7 @@
 		536371590D417EEB0021126C /* FTETextAreaView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FTETextAreaView.h; sourceTree = "<group>"; };
 		5363715A0D417EEB0021126C /* FTETextAreaView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FTETextAreaView.m; sourceTree = "<group>"; };
 		538B51870D414C740092CDDF /* cfte.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cfte.cpp; sourceTree = "<group>"; };
-		53C00C220F2D43FD00EB3E6A /* macosx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = folder; path = macosx; sourceTree = "<group>"; };
+		53EBAEE9104133660047FD93 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Info.plist; sourceTree = SOURCE_ROOT; };
 		8D1107320486CEB800E47090 /* eFTE.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = eFTE.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -344,7 +344,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				53C00C220F2D43FD00EB3E6A /* macosx */,
+				53EBAEE9104133660047FD93 /* Info.plist */,
 				29B97318FDCFA39411CA2CEA /* MainMenu.nib */,
 			);
 			name = Resources;
@@ -507,7 +507,8 @@
 				532F6A9F0D30192C00C0ED59 /* sysdep.h */,
 				532F6AA00D30192C00C0ED59 /* view.cpp */,
 			);
-			path = src;
+			name = src;
+			path = ../src;
 			sourceTree = "<group>";
 		};
 		532F696B0D30192B00C0ED59 /* bmps */ = {
@@ -592,7 +593,7 @@
 				532F6AB50D30192E00C0ED59 /* tagpop.bmp in Resources */,
 				532F6AB60D30192E00C0ED59 /* tagprev.bmp in Resources */,
 				532F6AB70D30192E00C0ED59 /* undo.bmp in Resources */,
-				53C00C230F2D43FD00EB3E6A /* macosx in Resources */,
+				53EBAEEA104133660047FD93 /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -699,7 +700,6 @@
 				29B97319FDCFA39411CA2CEA /* English */,
 			);
 			name = MainMenu.nib;
-			path = macosx;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -740,7 +740,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				INFOPLIST_FILE = macosx/Info.plist;
+				INFOPLIST_FILE = Info.plist;
 				OTHER_CFLAGS = (
 					"-DUNIX",
 					"-DMACOSX",
@@ -759,6 +759,7 @@
 				);
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = Info.plist;
 				OTHER_CFLAGS = (
 					"-DUNIX",
 					"-DMACOSX",
