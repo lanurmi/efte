@@ -818,7 +818,7 @@ int ConPutBox(int X, int Y, int W, int H, PCell Cell) {
          }
         */
         p = CursorXYPos(X, Y + i);
-        memcpy(p, Cell, W * 2);
+        memmove(p, Cell, W * 2);
         if (i + Y == CursorY)
             DrawCursor(1);
         Cell += W;
