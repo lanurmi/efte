@@ -30,7 +30,8 @@ int main() {
     }
 
     output = fopen("objs.mif", "w");
-    if (input == NULL) {
+    if (output == NULL) {
+        fclose(input);
         printf("objs.mif not writable\n");
         return EXIT_FAILURE;
     }
