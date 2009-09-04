@@ -125,8 +125,10 @@ int TagsLoad(int id) { /*FOLD00*/
     if ((fd = open(TagMem + TagFiles[id], O_BINARY | O_RDONLY)) == -1)
         return -1;
 
-    if (fstat(fd, &sb) == -1)
+    if (fstat(fd, &sb) == -1) {
+        close(fd);
         return -1;
+    }
 
     if ((tags = (char *)malloc(sb.st_size)) == 0) {
         close(fd);
@@ -135,8 +137,10 @@ int TagsLoad(int id) { /*FOLD00*/
 
     size = read(fd, tags, sb.st_size);
     close(fd);
-    if (size != sb.st_size)
+    if (size != sb.st_size) {
+        free(tags);
         return -1;
+    }
 
     if (TagMem == 0) { // preallocate (useful when big file)
         char *NM;
