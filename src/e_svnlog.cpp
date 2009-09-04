@@ -95,9 +95,9 @@ ESvnLog::ESvnLog(int createFlags, EModel **ARoot, char *Directory, char *OnFiles
         ListFiles(p, fRemoved, "Removed", cnt, position, len, status, OnFiles, "Rr");
         ListFiles(p, fModified, "Modified", cnt, position, len, status, OnFiles, "Mm");
         ListFiles(p, fOther, "Other", cnt, position, len, status, OnFiles, "AaRrMm", 1);
-        delete position;
-        delete len;
-        delete status;
+        delete [] position;
+        delete [] len;
+        delete [] status;
     } else {
         InsertLine(5, 4, "SVN:");
         InsertLine(6, 30, "SVN: Commiting whole directory");
