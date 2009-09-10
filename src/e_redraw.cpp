@@ -458,7 +458,7 @@ void EBuffer::Redraw() {
                 int l = strlen(s);
                 int fw = W->Cols - l;
                 int fl = strlen(FileName);
-                char num[10];
+                char num[32];
 
                 MoveStr(B, 0, W->Cols, s, SColor, W->Cols);
                 sprintf(num, " %s %d", CCharStr, ModelNo);
