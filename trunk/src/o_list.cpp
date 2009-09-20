@@ -619,9 +619,6 @@ int EList::ScrollUp(int Rows) {
 }
 
 int EList::ScrollDown(int Rows) {
-    if (TopRow == 0)
-        return ErFAIL;
-
     TopRow -= Rows;
     Row -= Rows;
 
