@@ -17,7 +17,7 @@
 #define PROG_CFTE     "cefte"
 #define PROGRAM       PROG_FTE
 #define EXTRA_VERSION ""
-#define VERSION       "1.0" EXTRA_VERSION
+#define VERSION       "1.1" EXTRA_VERSION
 #define VERNUM        MAKE_VERSION(0x00, 0x62, 0x00)
 #define COPYRIGHT     "Copyright (c) 2008-2009 eFTE Group\n" \
    "Copyright (c) 2000-2006 Others\n" \

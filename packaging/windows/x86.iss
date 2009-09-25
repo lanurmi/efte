@@ -3,7 +3,7 @@
 
 [Setup]
 AppName=eFTE
-AppVerName=eFTE 1.0
+AppVerName=eFTE 1.1
 AppPublisher=eFTE SF Group
 AppPublisherURL=http://efte.cowgar.com
 AppSupportURL=http://efte.cowgar.com
@@ -12,7 +12,7 @@ DefaultDirName={pf}\eFTE
 DefaultGroupName=eFTE
 LicenseFile=C:\efte\COPYING
 OutputDir=C:\efte\packaging\windows\x86
-OutputBaseFilename=efte-1.0
+OutputBaseFilename=efte-1.1
 Compression=lzma
 SolidCompression=yes
 
