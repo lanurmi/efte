@@ -68,7 +68,7 @@ BEGIN
     DIALOG  "", 0, 100, 100, 200, 88, , FCF_DLGBORDER
     PRESPARAMS PP_FONTNAMESIZE, "8.Helv"
     BEGIN
-        CTEXT           "EFTE/2  1.00 for OS/2 and ECS" -1, 10, 64, 180,  8
+        CTEXT           "EFTE/2  1.1 for OS/2 and ECS" -1, 10, 64, 180,  8
         ICON            IDD_ICON1,                     -1,  8, 56,   0,  0
         CTEXT           "Copyright (c) 2000-2005 Others"         -1, 10, 40, 180,  8
         CTEXT           "Copyright (c) 1994-1998 Marko Macek" -1, 10, 32, 180,  8

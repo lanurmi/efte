@@ -8,6 +8,10 @@ Revision legend
 Revision history
 -----------------------------------------------------------------------
 
+1.1 -- (trunk)
+  ! Fixed a frequent buffer overflow in e_redraw.cpp
+  ! Fixed a couple of memory/resource leaks found by static analysis
+
 1.0 -- (trunk)
   - First release of eFTE
   - Branded FTE to be eFTE
