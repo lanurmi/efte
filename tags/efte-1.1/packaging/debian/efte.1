@@ -1,0 +1,129 @@
+.TH eFTE 1 
+.SH NAME
+efte \- Text editor
+.SH SYNOPSIS
+.B efte
+.I " [[options] files ...]"
+.BR
+
+.B vefte 
+.I "[[options] files ...]"
+.BR
+
+.B nefte 
+.I "[[options] files ...]"
+.BR
+.\" .I "[[options] files ...]"
+.SH "DESCRIPTION"
+This manual page documents briefly the
+.BR "efte" .
+
+This manual page was written for the Debian GNU/Linux distribution
+(but may be used by others), because the original program does not
+have a manual page.
+Instead, it has documentation in html format; see below.
+.PP
+.B efte
+is a powerful text editor which closely resembles Borlands programming
+editors for M$\-DOS, but is far more flexible and configurable.
+.SH OPTIONS
+.BR efte
+uses a command line syntax, which is a little bit different from
+most of Debian GNU/Linux apps.
+.TP
+.B \-h \-? \--help
+Help on command line options.
+.TP
+.B \-! 
+Ignore any external configuration file and use internal configuration.
+.TP
+.BI \-l <line>[,<column>]
+Go to line (and column) in next file on command line.
+.TP
+.BI \-# <line>[<,column>]
+Same as \fB-l\fP. Do not use this option.
+.TP
+.BI \-m [<mode>]
+Set mode for next files to <mode>. If just plain \fB\-m\fP,
+then use default mode.
+.TP
+.BI \-C [<.cnf>]
+Use specified configuration file (compiled). Plain \fB\-C\fP does the same as
+\fB\-!\fP.
+.TP
+.BI \-D [<.dsk>]
+Load/save desktop from file <.dsk>. If no argument, disable
+desktop load/save.
+.TP
+.BI \-H [<.his>]
+Load/save history from file <.his>. If no argument, disable
+history load/save.
+.TP
+.BI \-T <tagfile>
+Load 'tagfile' at startup.
+.TP
+.BI \-t <tag>
+Lookup tag 'tag' and display file containing it.
+.TP
+.B \-\-
+The rest of the arguments are not options, but filenames.
+.TP
+.B \-+
+The next argument is not an option even if starting with a '-'.
+Useful when loading files that begin with a -.
+.TP
+.B \-noxmb
+Do not use XMB functions in \fBxefte\fP - useful if you have incorrect locales
+and you want to use just english fonts.
+.TP
+.B \-font
+Select XWindow font to use with \fBxefte\fP. See \fBVIOFONT\fP also.
+
+.SH ENVIRONMENTAL VARIABLES
+This is list of variable which might change behavior of some \
+internals of \fBefte\fP.
+.TP
+\fBVIOFONT\fP \- select font used by xefte 
+.TP
+\fBISOCONSOLE\fP \- when set, vefte is usign ascii symbols to draw tables. \
+This is useful when iso latin charset is used on console.
+
+.SH EXAMPLES
+.TP
+.BI "efte \-m" "BIN /usr/bin/vefte"
+load /usr/bin/vefte in BIN mode
+.TP
+\fBefte \-m\fP\fIBIN\fP \fB\-+\fP \fI\-bla\-\fP
+load file -bla- in BIN mode
+.TP
+.BI "efte \-l" "100,30 win.c"
+go to (100,30) in win.c
+.TP
+.BI efte " window.cpp"
+load file window.cpp
+.TP
+.BI "efte \-\-" " \-1 \-2 \-3 \-4 \-5 \-6"
+load files \-1, \-2, \-3, \-4, \-5, \-6
+.TP
+.BI "efte \-D \-H" " efte.dsk efte.his"
+disable desktop and history loading and saving and load files
+efte.dsk and efte.his
+.SH FILES
+.I ~/.efterc
+.br
+.BI /usr/local/etc/ efte/system.fterc
+.br
+.BI /etc/ efte/system.fterc
+
+Default configuration files. Includes all keybindings and menus
+compiled with
+.BR "cefte"(1)
+from config files in \fB/usr/share/doc/\fP\fIefte/config-example.tar.gz\fP.
+.SH "SEE ALSO"
+.BR cefte (1),
+.BI /usr/share/doc/ efte/contents.html
+.SH AUTHORS
+This manual page was written by Riku Voipio and Zdenek Kabelac
+<riku.voipio@iki.fi> <kabi@debian.org> for the Debian GNU/Linux system.
+.SH DATE
+18 Nov 1999

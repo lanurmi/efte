@@ -1,0 +1,460 @@
+color_palette {{"black","0 0"},{"gray","7 7"}}
+color_palette {{"black","0 0"},
+{"darkBlue","1 1"},{"darkGreen","2 2"},{"darkCyan","3 3"},{"darkRed","4 4"},
+{"darkMagenta","5 5"},{"brown","6 6"},{"gray","7 7"},{"darkGray","8 8"},
+{"blue","9 9"},{"green","A A"},{"cyan","B B"},{"red","C C"},{"magenta","D D"},
+{"yellow","E E"},{"white","F F"}}
+color_palette {
+{"ScrollBar_Arrows","black:gray"},
+{"ScrollBar_Background","gray:black"},
+{"ScrollBar_Slider","black:gray"},
+{"Status_Normal","black:darkCyan"},
+{"Status_Active","black:gray"},
+{"Message_Normal","Status_Normal"},
+{"Message_Error","white:darkBlue"},
+{"Message_Bold","white:darkRed"},
+{"EntryField_Field","cyan:darkBlue"},
+{"EntryField_Prompt","white:darkBlue"},
+{"EntryField_Selection","black:darkGreen"},
+{"List_Status","black:gray"},
+{"List_Normal","gray:black"},
+{"List_Selected","white:darkBlue"},
+{"List_Hilited","white:black"},
+{"List_HilitSelect","white:darkBlue"},
+{"List_Marked","yellow:black"},
+{"List_MarkSelect","yellow:darkBlue"},
+{"List_MarkHilit","yellow:black"},
+{"List_MarkHilitSel","yellow:darkBlue"},
+{"ASCII_Chars","gray:black"},
+{"Menu_Background","black:gray"},
+{"Menu_ActiveItem","white:darkBlue"},
+{"Menu_ActiveChar","red:darkBlue"},
+{"Menu_NormalItem","black:gray"},
+{"Menu_NormalChar","red:gray"},
+{"Choice_Title","white:darkBlue"},
+{"Choice_Param","cyan:darkBlue"},
+{"Choice_Background","gray:darkBlue"},
+{"Choice_ActiveItem","black:darkGreen"},
+{"Choice_ActiveChar","white:darkGreen"},
+{"Choice_NormalItem","white:darkBlue"},
+{"Choice_NormalChar","yellow:darkBlue"},
+{"bg","gray:black"},
+{"fg","gray:black"},
+{"Editor_Selected","black:darkCyan"},
+{"Editor_Markers","darkCyan:bg"},
+{"Editor_FoundText","white:darkRed"},
+{"Editor_HilitWord","red:bg"},
+{"Editor_Default","fg:bg"},
+{"Editor_Bold","cyan:bg"},
+{"Editor_Keywords","white:bg"},
+{"Editor_Keywords2","cyan:bg"},
+{"Editor_Keywords3","green:bg"},
+{"Editor_Keywords4","magenta:bg"},
+{"Editor_Keywords5","darkCyan:bg"},
+{"Comment","brown:bg"},
+{"String","yellow:bg"},
+{"Lang_Default","Editor_Default"},
+{"Lang_Number","red:bg"},
+{"Lang_DecimalNumber","Lang_Number"},
+{"Lang_HexNumber","magenta:bg"},
+{"Lang_OctalNumber","magenta:bg"},
+{"Lang_BinaryNumber","magenta:bg"},
+{"Lang_Punctuation","darkCyan:bg"},
+{"Lang_String","String"},
+{"Lang_Comment","Comment"},
+{"Lang_Preprocessor","green:bg"},
+{"Lang_Function","cyan:bg"},
+{"Lang_Label","red:bg"},
+{"Lang_Command","cyan:bg"},
+{"Lang_Regexp","magenta:bg"},
+{"Lang_Variable","gray:bg"},
+{"Lang_Control","darkCyan:bg"},
+{"Lang_Assembler","blue:bg"}}
+colorize PLAIN {SyntaxParser = "PLAIN";color {{"Normal","Editor_Default"}};}
+mode PLAIN {
+Abbreviations = 1;AddCR = 1;AddLF = 1;AutoIndent = 1;BackSpKillBlock = 0;
+BackSpKillTab = 0;BackSpUnindents = 1;Colorizer = "PLAIN";CursorThroughTabs = 1;
+DefFindOpt = "i";DefFindReplaceOpt = "a";DeleteKillBlock = 0;DeleteKillTab = 0;
+DetectLineSep = 1;ExpandTabs = 1;ForceNewLine = 0;HilitOn = 0;HilitTags = 0;
+IndentMode = "PLAIN";IndentWithTabs = 0;Insert = 1;InsertKillBlock = 0;
+KeepBackups = 1;LeftMargin = 1;LineChar = 10;LoadMargin = -1;MatchCase = 0;
+MultiLineHilit = 0;PersistentBlocks = 1;RightMargin = 72;SaveBookmarks = 0;
+MakeBackups = 1;SeeThruSel = 0;ShowMarkers = 1;ShowTabs = 0;SpaceTabs = 0;
+StripChar = 13;TabSize = 8;Trim = 0;TrimOnSave = 0;Undo = 1;UndoLimit = 1023;
+UndoMoves = 0;WordWrap = 0;
+}
+mode SOURCE:PLAIN {}
+object GLOBAL {
+DefaultModeName = "PLAIN";
+WindowFont = "9x15";
+#WindowFont = "*-fixed-bold-*-15*,*-fixed-bold-*-16*";
+}
+menu Object {
+item "&Open...\tF3" {FileOpen;}
+item;
+item "&Next\tAlt+Right" {FileNext;}
+item "&Previous\tAlt+Left" {FilePrev;}
+item;
+item "&Close\tAlt+Q" {FileClose;}
+item "Close All" {FileCloseAll;}
+item;
+item "E&xit\tAlt+X" {ExitEditor;}
+}
+menu Tools {
+item "&Grep..." {AskCompiler "grep -n";}
+item;
+item "&Shell\tAlt+F9" {RunProgram;}
+item "&Run...\tCtrl+F9" {RunProgram;}
+item;
+item "&Messages\tS+F9" {ViewMessages;}
+item "C&lear Messages" {ClearMessages;}
+}
+menu Window {
+item "Split &Horizontal\tCtrl+F4" {WinHSplit;}
+item "&Close view\tCtrl+Alt+F4" {WinClose;}
+item "Close &other views\tF5" {WinZoom;}
+}
+menu Help {
+item "&Keyboard\tF1" {ViewModeMap;}
+item "&Show key" {ShowKey;}
+item;
+item "&About..." {ShowVersion;}
+}
+menu Navigate {
+item "&Reload\tCtrl+R" {Rescan;}
+item;
+item "Go &< level\tCtrl+PgUp" {DirGoUp;}
+item "Go &> level\tCtrl+PgDn" {DirGoDown;}
+item "Go to &\\\tCtrl+\\" {DirGoRoot;}
+item "&/ Goto Dir\t/" {DirGoto;}
+item;
+item "R&ename File" {RenameFile;}
+item "&Make Directory" {MakeDirectory;}
+item;
+item "Delete &File\tCtrl+D" {DeleteFile;}
+}
+menu File {
+item "&Open...\tF3" {FileOpen;}
+item "Open &Directory\tC+M" {DirOpen;}
+item "&Reload\tShift+F3" {FileReload;}
+item;
+item "&Save\tF2" {FileSave;}
+item "Save &As...\tShift+F2" {FileSaveAs;}
+item "Save Al&l\tCtrl+F2" {FileSaveAll;}
+item;
+item "&Next\tAlt+Right" {FileNext;}
+item "&Previous\tAlt+Left" {FilePrev;}
+item;
+item "&Close\tAlt+Q" {FileClose;}
+item "Close All" {FileCloseAll;}
+item;
+item "E&xit\tAlt+X" {ExitEditor;}
+}
+menu Edit {
+item "&Undo\tAlt+BackSp" {Undo;}
+item "&Redo\tAlt+Shift+BackSp" {Redo;}
+item;
+item "Cu&t\tShift+Del" {BlockCut;}
+item "&Copy\tCtrl+Ins" {BlockCopy;}
+item "Cut&-Append" {BlockCutAppend;}
+item "Copy-Appe&nd" {BlockCopyAppend;}
+item "&Paste Stream\tShift+Ins" {BlockPasteStream;}
+item "Paste Colu&mn\tAlt+Ins" {BlockPasteColumn;}
+item "Paste Li&ne" {BlockPasteLine;}
+item "Cl&ear\tCtrl+Del" {BlockKill;}
+}
+menu Block {
+item "&Unmark\tEsc" {BlockUnmark;}
+item "Mark &Stream\tAlt+A" {BlockMarkStream;}
+item "Mark &Column\tAlt+K" {BlockMarkColumn;}
+item "Mark &Line\tAlt+L" {BlockMarkLine;}
+}
+menu SearchWords {
+item "Search &Prev\tAlt+," {SearchWordPrev;}
+item "Search &Next\tAlt+." {SearchWordNext;}
+item "&Highlight\tAlt+/" {HilitWord;}
+}
+menu Search {
+item "&Find...\tCtrl+F" {Find;}
+item "Find &Next\tCtrl+G" {FindRepeat;}
+item "Find &Prev\tCtrl+H" {FindRepeatReverse;}
+item "Find and &Replace...\tCtrl+R" {FindReplace;}
+item;
+item "&Goto Line...\tAlt+J" {MoveToLine;}
+item "Goto &Column..." {MoveToColumn;}
+}
+menu Main {
+submenu "&File",File;
+submenu "&Edit",Edit;
+submenu "&Block",Block;
+submenu "&Search",Search;
+submenu "&Tools",Tools;
+submenu "&Window",Window;
+submenu "&Options",Options;
+submenu "&Help",Help;
+}
+menu Local {
+item "&Unmark\tEsc" {BlockUnmark;}
+item "Cu&t\tShift+Del" {BlockCut;}
+item "&Copy\tCtrl+Ins" {BlockCopy;}
+item "&Paste\tShift+Ins" {BlockPasteStream;}
+item "P&aste Column\tAlt+Ins" {BlockPasteColumn;}
+item;
+item "Delete &line\tCtrl+Y" {KillLine;}
+item "Delete to &EOL\tAlt+End" {KillToLineEnd;}
+item;
+item "&Save\tF2" {FileSave;}
+item "Cl&ose\tAlt+Q" {FileClose;}
+}
+menu DirectoryFile {
+item "&Selected\tEnter" {Activate;}
+item;
+item "&Open...\tF3" {FileOpen;}
+item;
+item "&Next\tAlt+Right" {FileNext;}
+item "&Previous\tAlt+Left" {FilePrev;}
+item;
+item "&Close\tAlt+Q" {FileClose;}
+item;
+item "E&xit\tAlt+X" {ExitEditor;}
+}
+menu DirectoryMain {
+submenu "&File",DirectoryFile;
+submenu "&Navigate",Navigate;
+submenu "&Tools",Tools;
+submenu "&Window",Window;
+submenu "&Help",Help;
+}
+menu MessagesMain {
+submenu "&File",Object;
+submenu "&Tools",Tools;
+submenu "&Window",Window;
+submenu "&Help",Help;
+}
+menu RoutinesMain {
+submenu "&File",Object;
+submenu "&Tools",Tools;
+submenu "&Window",Window;
+submenu "&Help",Help;
+}
+menu BufferListMain {
+submenu "&File",Object;
+submenu "&Tools",Tools;
+submenu "&Window",Window;
+submenu "&Help",Help;
+}
+menu EventMapViewMain {
+submenu "&File",Object;
+submenu "&Tools",Tools;
+submenu "&Window",Window;
+submenu "&Help",Help;
+}
+menu DirectoryLocal {
+item "&Open" {Activate;}
+item;
+item "&Reload\tCtrl+R" {Rescan;}
+item;
+item "Go &< level\tCtrl+PgUp" {DirGoUp;}
+item "Go &> level\tCtrl+PgDn" {DirGoDown;}
+item "Go to &\\\tCtrl+\\" {DirGoRoot;}
+item "&/ Goto Dir\t/" {DirGoto;}
+item;
+item "R&ename File" {RenameFile;}
+item "&Make Directory" {MakeDirectory;}
+item;
+item "Delete &File\tCtrl+D" {DeleteFile;}
+}
+menu BufferListLocal {
+item "&View\tEnter" {Activate;}
+item;
+item "&Save\tCtrl+S" {BufListFileSave;}
+item "&Close\tCtrl+C" {BufListFileClose;}
+}
+menu RoutinesLocal {
+item "&View\tEnter" {Activate;}
+}
+menu EventMapViewLocal {
+item "&Close view\tAlt+Q" {FileClose;}
+}
+menu MessagesLocal {
+item "&View error\tEnter" {Activate;}
+item;
+item "&Previous error\tF11" {CompilePrevError;}
+item "&Next error\tF12" {CompileNextError;}
+}
+eventmap MODEL {
+key [F1] {ViewModeMap;}
+key [C+F2] {FileSaveAll;}
+key [F3] {FileOpen;}
+key [F4] {WinNext;}
+key [C+F4] {WinHSplit;}
+key [S+F4] {WinPrev;}
+key [A+S+F4] {WinClose;}
+key [F5] {WinZoom;}
+key [F6] {FileNext;}
+key [S+F6] {FilePrev;}
+key [A+S-F6] {FileLast;}
+key [F7] {Find $Word;}
+key [F10] {MainMenu;}
+key [C+F10] {FileClose;}
+key [C+F9] {RunProgram;}
+key [A+F9] {RunProgram;}
+key [S+F10] {LocalMenu;}
+key [A+G-Up] {WinPrev;}
+key [A+G-Down] {WinNext;}
+key [A+G-Left] {FilePrev;}
+key [A+G-Right] {FileNext;}
+key [A+G-PgUp] {WinPrev MovePageUp WinNext;}
+key [A+G-PgDn] {WinNext MovePageDown WinPrev;}
+key [A+C+G-PgUp] {WinNext MovePageUp WinPrev;}
+key [A+C+G-PgDn] {WinPrev MovePageDown WinNext;}
+key [A+X] {ExitEditor;}
+key [A+Q] {FileClose;}
+key [C+S+G-Up] {WinResize -1;}
+key [C+S+G-Down] {WinResize +1;}
+key [S+F9] {ViewMessages;}
+key [A+F5] {ShowEntryScreen;}
+key [A+0] {ViewBuffers;}
+key [A+F] {MainMenu "F";}
+key [A+T] {MainMenu "T";}
+key [A+W] {MainMenu "W";}
+key [A+H] {MainMenu "H";}
+}
+eventmap MLIST: MODEL {
+key [G-Left] {MoveLeft;}
+key [G-Right] {MoveRight;}
+key [G-Up] {MoveUp;}
+key [G-Down] {MoveDown;}
+key [G-Home] {MoveFileStart;}
+key [C+G-Home] {MovePageStart;}
+key [G-End] {MoveFileEnd;}
+key [C+G-End] {MovePageEnd;}
+key [G-PgUp] {MovePageUp;}
+key [C+G-PgUp] {MoveFileStart;}
+key [G-PgDn] {MovePageDown;}
+key [C+G-PgDn] {MoveFileEnd;}
+key [C+G-Left] {ScrollRight;}
+key [C+G-Right] {ScrollLeft;}
+key [G-Enter] {Activate;}
+key [Space] {ActivateInOtherWindow;}
+key [S+G-Enter] {CloseActivate;}
+key [C+R] {Rescan;}
+}
+eventmap DIRECTORY: MLIST {
+MainMenu = "DirectoryMain";
+LocalMenu = "DirectoryLocal";
+key [C+G-PgUp] {DirGoUp;}
+key [C+G-PgDn] {DirGoDown;}
+key [C+\\] {DirGoRoot;}
+key [/] {DirGoto;}
+key [\\] {DirGoto;}
+key [C+D] {DeleteFile;}
+key [Esc] {FileClose;}
+key [C+G] {DirSearchNext;}
+key [C+H] {DirSearchPrev;}
+key [A+N] {MainMenu "N";}
+}
+eventmap BUFFERS: MLIST {
+MainMenu = "BufferListMain";
+LocalMenu = "BufferListLocal";
+key [Esc] {FileClose;}
+key [C+C] {BufListFileClose;}
+key [G-Del] {BufListFileClose;}
+key [C+S] {BufListFileSave;}
+key [F2] {BufListFileSave;}
+}
+eventmap MESSAGES: MLIST {
+MainMenu = "MessagesMain";
+LocalMenu = "MessagesLocal";
+key [C+C] {ChildClose;}
+key [G-Home] {MoveLineStart;}
+key [G-End] {MoveLineEnd;}
+}
+eventmap EVENTMAPVIEW: MLIST {
+MainMenu = "EventMapViewMain";
+LocalMenu = "EventMapViewLocal";
+key [Esc] {FileClose;}
+}
+eventmap PLAIN: MODEL {
+MainMenu = "Main";
+LocalMenu = "Local";
+key [Esc] {BlockMarkStream BlockUnmark;}
+key [F2] {FileSave;}
+key [S+F2] {FileSaveAs;}
+key [A+S+F2] {FileSave FileClose;}
+key [S+F3] {FileReload WinRefresh;}
+key [C+F3] {FileOpenInMode;}
+key [F7] {BlockBegin;}
+key [S+F7] {MoveBlockStart;}
+key [F8] {BlockEnd;}
+key [S+F8] {MoveBlockEnd;}
+key [G-Left] {MoveLeft;}
+key [C+G-Left] {MoveWordPrev;}
+key [G-Right] {MoveRight;}
+key [C+G-Right] {MoveWordNext;}
+key [G-Up] {MoveUp;}
+key [G-Down] {MoveDown;}
+key [G-Home] {MoveLineStart;}
+key [C+G-Home] {MovePageStart;}
+key [G-End] {MoveLineEnd;}
+key [C+G-End] {MovePageEnd;}
+key [G-PgUp] {MovePageUp;}
+key [C+G-PgUp] {MoveFileStart;}
+key [G-PgDn] {MovePageDown;}
+key [C+G-PgDn] {MoveFileEnd;}
+key [C+G-Ins] {BlockCopy;}
+key [C+G-Del] {BlockKill;}
+key [S+G-Ins] {BlockPasteStream;}
+key [S+G-Del] {BlockCut;}
+key [A+G-Ins] {BlockPasteColumn;}
+key [A+G-S+Ins] {BlockPasteLine;}
+key [G-Enter] {LineNew;}
+key [S-BackSp] {BackSpace;}
+key [G-Del] {Delete;}
+key [Tab] {InsertTab;}
+key [C+Tab] {CompleteWord;}
+key [C+BackSp] {KillWordPrev;}
+key [C+S+BackSp] {KillToLineStart;}
+key [C+G-Enter] {LineSplit;}
+key [G-S+Enter] {LineInsert;}
+key [A+G-Enter] {LineAdd;}
+key [A+G-Del] {KillWord;}
+key [A+G-End] {KillToLineEnd;}
+key [A+BackSp] {Undo;}
+key [A+S+BackSp] {Redo;}
+key [C+C] {BlockCopy;}
+key [C+V] {BlockPaste;}
+key [C+X] {BlockCut;}
+key [C+Z] {Undo;}
+key [C+S+Z] {Redo;}
+key [C+D] {LineDuplicate;}
+key [C+F] {Find;}
+key [C+G] {FindRepeat;}
+key [C+J] {LineJoin;}
+key [C+H] {FindRepeatReverse;}
+key [C+M] {DirOpen;}
+key [C+R] {FindReplace;}
+key [C+T] {KillWord;}
+key [C+Y] {KillLine;}
+key [A+A] {BlockMarkStream;}
+key [A+B] {MainMenu "B";}
+key [A+C] {BlockCopy;}
+key [A+D] {MainMenu "D";}
+key [A+E] {MainMenu "E";}
+key [A+G] {BlockCut;}
+key [A+J] {MoveToLine;}
+key [A+K] {BlockMarkColumn;}
+key [A+L] {BlockMarkLine;}
+key [A+O] {MainMenu "O";}
+key [A+R] {WrapPara;}
+key [A+S] {MainMenu "S";}
+key [C+S] {IncrementalSearch;}
+key [A+-] {MatchBracket;}
+key [A+=] {HilitMatchBracket;}
+key [C+Space] {InsPrevLineChar;}
+key [A+Space] {InsPrevLineToEol;}
+key [C+_] {ShowPosition;}
+key [C+-] {ShowPosition;}
+key [A+,] {SearchWordPrev;}
+key [A+.] {SearchWordNext;}
+key [A+/] {HilitWord;}}

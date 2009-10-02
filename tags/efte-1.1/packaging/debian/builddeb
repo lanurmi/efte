@@ -1,0 +1,5 @@
+#!/bin/sh
+
+dpkg-buildpackage -sgpg -pgpg -rfakeroot
+
+# debchanges

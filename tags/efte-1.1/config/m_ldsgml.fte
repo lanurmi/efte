@@ -1,0 +1,96 @@
+# linuxdoc-sgml
+
+colorize LDSGML {
+    SyntaxParser = 'SIMPLE';
+    
+    color {
+        { 'Normal',     'Editor_Default' },
+        { 'String',     'Lang_String' },
+        { 'Comment',    'Lang_Comment' },
+        { 'Command',    'Markup_Default' },
+        { 'Symbol',     'Markup_Symbol' },
+        { 'Tag',        'Markup_Tag' },
+        { 'Special',    'Markup_Special' },
+    };
+
+    keyword "Editor_Keywords" { # should be HTML 3.2 complete
+        "doctype",
+        "article",
+        "title", "author", "date",
+        "abstract",
+        "toc",
+        "sect","sect1", "sect2", "sect3", "sect4",
+
+        "label", "ref",
+
+        "url", "htmlurl",
+
+        "tt", "bf", "em",
+
+        "itemize", "enum", "descrip",
+        "item", "tag",
+
+        "p",
+        
+        "code", "verb", "tscreen",
+            
+    };
+    keyword "Editor_Keywords2" {
+        "id", "url", "name",
+    };
+
+    h_state 0 { 'Normal' }
+    h_trans { 5, '<', '<!--', 'Comment' }
+    h_trans { 7, '<', '</', 'Command' }
+    h_trans { 1, '<', '<', 'Command' }
+    h_trans { 2, '<', '&', 'Symbol' }
+
+    h_state 1 { 'Command' }
+    h_trans { 0, '>', '>', 'Command' }
+    h_trans { 3, '<', '\'', 'String' }
+    h_trans { 4, '<', '"', 'String' }
+    h_trans { 8, '>', '/', 'Command' }
+    h_wtype { -1, -1, -1, 'i', 'a-zA-Z0-9_\-' }
+
+    h_state 2 { 'Symbol' }
+    h_trans { 0, '>', ';', 'Symbol' }
+    h_trans { 0, '-S', '#a-zA-Z0-9', 'Symbol' }
+
+    h_state 3 { 'String' }
+    h_trans { 1, '>', '\'', 'String' }
+
+    h_state 4 { 'String' }
+    h_trans { 1, '>', '"', 'String' }
+
+    h_state 5 { 'Comment' }
+    h_trans { 6, '>', '--', 'Comment' }
+
+    h_state 6 { 'Special' }
+    h_trans { 5, '>', '--', 'Comment' }
+    h_trans { 0, '>', '>', 'Comment' }
+
+    h_state 7 { 'Command' }
+    h_trans { 0, '>', '>', 'Command' }
+    h_trans { 3, '<', '\'', 'String' }
+    h_trans { 4, '<', '"', 'String' }
+    h_wtype { -1, -1, -1, 'i', 'a-zA-Z0-9_\-' }
+
+    h_state 8 { 'Tag' }
+    h_trans { 0, '>', '/', 'Command' }
+}
+
+mode LDSGML: MARKUP {
+    FileNameRx          = /\.\c{SGML?}$/;
+    HilitOn             = 1;
+    Colorizer           = "LDSGML";
+    MultiLineHilit      = 1;
+    AutoHilitParen      = 1;
+
+    RoutineRegexp       = /\c\<sect\d?\>/;
+
+    SaveFolds           = 2;      # save fold info at end of line
+    CommentStart        = " <!--";
+    CommentEnd          = "-->";
+}
+
+oinclude 'mym_ldsgml.fte';

@@ -1,0 +1,47 @@
+
+                          eFTE, Version 1.1
+
+                   Copyright 2008-2009 by eFTE SF Group.
+                  Copyright 1994-1998 by Marko Macek.
+                         All rights reserved.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of either:
+
+        a) the GNU General Public License as published by the Free
+           Software Foundation; either version 2, or (at your option) any
+           later version, or
+
+        b) the "Artistic License" which comes with this Kit.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See either
+    the GNU General Public License or the Artistic License for more details.
+
+    You should have received a copy of the Artistic License with this
+    Kit, in the file named "Artistic".  If not, I'll be glad to provide one.
+
+    You should also have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+-----------------------------------------------------------------------
+
+WWW: http://efte.sourceforge.net
+
+Current Authors (alphabetical order):
+    Jeremy Cowgar..... jeremy_c@users.sourceforge.net
+    Lauri Nurmi....... lanurmi@users.sourceforge.net
+
+Original Author: Marko Macek
+Original URL:    http://fte.sourceforge.net
+
+FTE Contributors:
+  - Timo Sirainen
+  - F.Jalvingh
+    NT/Win95/DOS port.
+  - Markus F.X.J. Oberhumer <markus.oberhumer@jk.uni-linz.ac.at>
+    DOS port (DJGPP)
+
+See file HISTORY for a list of recent changes.

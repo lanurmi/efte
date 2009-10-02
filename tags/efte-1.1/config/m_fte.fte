@@ -1,0 +1,145 @@
+colorize FTE {
+    SyntaxParser        = 'FTE';
+
+    color {
+        { 'Normal',      'Editor_Default' },
+        { 'Number',      'Lang_DecimalNumber' },
+        { 'String',      'Lang_String' },
+        { 'Comment',     'Lang_Comment' },
+        { 'Regexp',      'Lang_Regexp' },
+        { 'Punctuation', 'Lang_Punctuation' },
+        { 'Command',     'Lang_Command' },
+        { 'CPreprocessor', 'Lang_Preprocessor' },
+    };
+
+    keyword 'Editor_Keywords' {
+        'mode', 'object', 'key', 'keyword', 'color', 'menu', 'submenu', 'item',
+        'extern', 'include', 'oinclude', 'sub', 'eventmap', 'abbrev', 'colorize',
+        'h_state', 'h_trans', 'h_words', 'h_wtype', 'submenucond',
+        'color_palette',
+    };
+
+    keyword 'Editor_Keywords2' { # macro commands
+        'Activate', 'ActivateInOtherWindow', 'ASCIITable', 'BackSpace',
+        'BlockBegin', 'BlockCaseDown', 'BlockCaseToggle', 'BlockCaseUp',
+        'BlockClear', 'BlockCopy', 'BlockCopyAppend', 'BlockCut',
+        'BlockCutAppend', 'BlockEnd', 'BlockEnTab', 'BlockExtendBegin',
+        'BlockExtendEnd', 'BlockIndent', 'BlockKill', 'BlockMarkColumn',
+        'BlockMarkFunction', 'BlockMarkLine', 'BlockMarkStream', 'BlockPaste',
+        'BlockPasteColumn', 'BlockPasteLine', 'BlockPasteStream', 'BlockPasteOver', 'BlockPrint',
+        'BlockRead', 'BlockReadColumn', 'BlockReadLine', 'BlockReadStream',
+        'BlockReIndent', 'BlockSelectLine', 'BlockSelectPara',
+        'BlockSelectWord', 'BlockSort', 'BlockSortReverse', 'BlockTrans',
+        'BlockTrim', 'BlockUnindent', 'BlockUnmark', 'BlockUnTab',
+        'BlockWrite', 'BufferViewNext', 'BufferViewPrev', 'BufListFileClose',
+        'BufListFileSave', 'Cancel', 'ChangeFlags', 'ChangeKeys',
+        'ChangeLeftMargin', 'ChangeMode', 'ChangeRightMargin', 'ChangeTabSize',
+        'CharCaseDown', 'CharCaseToggle', 'CharCaseUp', 'CharTrans',
+        'ChildClose', 'ClearMessages', 'ClipClear', 'CloseActivate', 'Compile',
+        'CompileNextError', 'CompilePrevError', 'CompleteWord',
+        'ConfigRecompile', 'Delete', 'DeleteFile', 'DesktopLoad', 'DesktopSave', 'DesktopSaveAs',
+        'DirOpen', 'DirGoUp', 'DirGoDown', 'DirGoRoot', 'DirGoto',
+        'ExitEditor', 'ExpandTemplate',
+        'Fail', 'FileClose', 'FileCloseAll', 'FileLast',
+        'FileNext', 'FileOpen', 'FileOpenInMode', 'FilePrev', 'FilePrint',
+        'FileReload', 'FileSave', 'FileSaveAll', 'FileSaveAs', 'FileTrim',
+        'FileWriteTo', 'Find', 'FindRepeat', 'FindRepeatOnce',
+        'FindRepeatReverse', 'FindReplace', 'FoldClose', 'FoldCloseAll',
+        'FoldCreate', 'FoldCreateAtRoutines', 'FoldCreateByRegexp', 'FoldDemote',
+        'FoldDestroy', 'FoldDestroyAll', 'FoldOpen', 'FoldOpenAll',
+        'FoldOpenNested', 'FoldPromote', 'FoldToggleOpenClose', 'FrameClose',
+        'FrameNew', 'FrameNext', 'FramePrev',
+        'GetString', 'GotoBookmark', 'GotoGlobalBookmark',
+        'HilitMatchBracket', 'HilitWord', 'IncrementalSearch', 'IndentFunction',
+        'InsertChar', 'InsertDate',
+        'InsertSpace', 'InsertSpacesToTab', 'InsertString', 'InsertTab',
+        'InsertUid', 'InsPrevLineChar', 'InsPrevLineToEol', 'KillBlock',
+        'KillBlockOrChar', 'KillBlockOrCharPrev', 'KillChar', 'KillCharPrev',
+        'KillLine', 'KillToLineEnd', 'KillToLineStart', 'KillWord',
+        'KillWordPrev', 'LineAdd', 'LineCaseDown', 'LineCaseToggle',
+        'LineCaseUp', 'LineCenter', 'LineDuplicate', 'LineIndent',
+        'LineInsert', 'LineJoin', 'LineNew', 'LineSplit', 'LineTrans',
+        'LineTrim', 'ListRoutines', 'LocalMenu',
+        'MakeDirectory', 'MainMenu', 'MatchBracket',
+        'MoveBeginLinePageFile', 'MoveBeginOrNonWhite', 'MoveBlockEnd',
+        'MoveBlockStart', 'MoveDown', 'MoveEndLinePageFile', 'MoveFileEnd',
+        'MoveFileStart', 'MoveFirstNonWhite', 'MoveFoldNext', 'MoveFoldPrev',
+        'MoveFoldTop', 'MoveFunctionNext', 'MoveFunctionPrev', 'MoveLastNonWhite',
+        'MoveLeft', 'MoveLineBottom', 'MoveLineCenter', 'MoveLineEnd',
+        'MoveLineStart', 'MoveLineTop', 'MoveNext', 'MoveNextEqualIndent',
+        'MoveNextTab', 'MovePageDown', 'MovePageEnd', 'MovePageLeft',
+        'MovePageRight', 'MovePageStart', 'MovePageUp', 'MovePrev',
+        'MovePrevEqualIndent', 'MovePrevPos', 'MovePrevTab', 'MoveRight',
+        'MoveSavedPos', 'MoveSavedPosCol', 'MoveSavedPosRow', 'MoveTabEnd',
+        'MoveTabStart', 'MoveToColumn', 'MoveToLine', 'MoveUp',
+        'MoveWordEndLeft', 'MoveWordEndNext', 'MoveWordEndPrev',
+        'MoveWordEndRight', 'MoveWordLeft', 'MoveWordNext', 'MoveWordPrev',
+        'MoveWordRight', 'PlaceBookmark', 'PlaceGlobalBookmark',
+        'PopGlobalBookmark', 'PushGlobalBookmark',
+        'Redo', 'RegExp', 'RemoveBookmark', 'RemoveGlobalBookmark', 'RenameFile',
+        'Rescan', 'RunCompiler', 'RunProgram',
+        'SavePos', 'ScrollDown', 'ScrollLeft', 'ScrollRight', 'ScrollUp',
+        'SearchWordPrev', 'SearchWordNext',
+        'SelfInsert', 'SetCIndentStyle', 'SetLeftMargin', 'SetPrintDevice',
+        'SetRightMargin', 'ShowEntryScreen', 'ShowHelp', 'ShowHelpWord',
+        'ShowKey', 'ShowMenu', 'ShowPosition', 'ShowVersion', 'SwitchTo',
+        'TagClear', 'TagFind', 'TagFindWord', 'TagGoto', 'TagLoad', 'TagNext',
+        'TagPop', 'TagPrev', 'ToggleAutoIndent', 'ToggleBackSpKillTab',
+        'ToggleBackSpUnindents', 'ToggleDeleteKillTab', 'ToggleExpandTabs', 'ToggleHilitTags',
+        'ToggleIndentWithTabs', 'ToggleInsert', 'ToggleKeepBackups',
+        'ToggleMakeBackups', 'ToggleMatchCase', 'ToggleReadOnly', 'ToggleShowBookmarks', 'ToggleShowMarkers',
+        'ToggleShowTabs', 'ToggleSpaceTabs', 'ToggleSysClipboard', 'ToggleTrim',
+        'ToggleUndo', 'ToggleWordWrap', 'TypeChar', 'Undo', 'ViewBuffers',
+        'RunCvs', 'RunCvsCommit', 'Cvs', 'CvsDiff', 'ViewCvs', 'ViewCvsDiff', 'ViewCvsLog', 'ClearCvsMessages',
+        'RunSvn', 'RunSvnCommit', 'Svn', 'SvnDiff', 'ViewSvn', 'ViewSvnDiff', 'ViewSvnLog', 'ClearSvnMessages',
+        'ViewMessages', 'ViewModeMap', 'WinClose', 'WinHSplit', 'WinNext',
+        'WinPrev', 'WinRefresh', 'WinResize', 'WinZoom', 'WrapPara'
+    };
+    keyword 'Editor_Keywords3' {
+        'Abbreviations', 'AddCR', 'AddLF', 'AutoHilitParen', 'AutoIndent',
+        'BackSpKillBlock', 'BackSpKillTab', 'BackSpUnindents', 'BackupDirectory',
+        'C_BraceOfs', 'C_CaseDelta', 'C_CaseOfs', 'C_ClassDelta', 'C_ClassOfs', 'C_ColonOfs',
+        'C_CommentDelta', 'C_CommentOfs', 'C_Continuation',
+        'C_FirstLevelIndent', 'C_FirstLevelWidth', 'C_Indent', 'C_ParenDelta',
+        'Colorizer', 'CommentEnd', 'CommentStart', 'CompileCommand',
+        'CompileRx', 'CompletionFilter', 'CursorBlink', 'CursorInsertMask', 'CursorOverMask',
+        'CursorThroughTabs', 'CursorWithinEOL', 'CvsCommand', 'CvsIgnoreRx',
+        'DefaultModeName', 'DefFindOpt', 'DefFindReplaceOpt', 'DeleteKillBlock',
+        'DeleteKillTab', 'DetectLineSep',
+        'ExpandTabs',
+        'FileNameRx', 'FirstLineRx',
+        'ForceNewLine', 'FunctionUsesContinuation',
+        'HelpCommand', 'HilitOn', 'HilitTags',
+        'IgnoreBufferList', 'IndentMode', 'IndentWithTabs', 'Insert', 'InsertKillBlock',
+        'KeepBackups', 'KeepHistory', 'KeepMessages',
+        'LeftMargin', 'LineChar', 'LoadDesktopOnEntry', 'LoadMargin',
+        'MakeBackups', 'MatchCase', 'MultiLineHilit',
+        'OpenAfterClose', 'PersistentBlocks', 'PMDisableAccel', 'PrintDevice',
+        'ReadOnly', 'ReassignModelIds', 'RecheckReadOnly', 'REXX_Do_Offset', 'REXX_Indent', 'RightMargin',
+        'RoutineRegexp', 'SaveBookmarks', 'SaveDesktopOnExit', 'SaveFolds', 'ScrollBorderX',
+        'ScrollBorderY', 'ScrollJumpX', 'ScrollJumpY', 'SeeThruSel',
+        'SelectPathname', 'ShowHScroll', 'ShowMarkers', 'ShowMenuBar',
+        'ShowTabs', 'ShowToolBar', 'ShowVScroll', 'SpaceTabs', 'StripChar',
+        'SvnCommand', 'SvnIgnoreRx','SyntaxParser', 'SysClipboard',
+        'TabSize', 'Trim', 'TrimOnSave',
+        'UndoLimit', 'UndoMoves', 'WeirdScroll', 'WordChars', 'WordWrap',
+        'XShellCommand'
+    };
+}
+
+mode FTE: SOURCE {
+    FileNameRx          = /\.\cfte$/;
+    HilitOn             = 1;
+    Colorizer           = 'FTE';
+    IndentMode          = 'C';
+    MultiLineHilit      = 1;
+    AutoHilitParen      = 1;
+
+    SaveFolds           = 2;      # save fold info at end of line
+    CommentStart        = ' #';
+    CommentEnd          = '';
+
+    RoutineRegexp       = /^{mode}|{sub}|{menu}|{object}|{eventmap}|{colorize}\s+/;
+}
+
+oinclude 'mym_fte.fte';

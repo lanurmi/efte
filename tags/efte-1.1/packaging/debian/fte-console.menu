@@ -1,0 +1,2 @@
+?package(fte-console):needs="vc" section="Apps/Editors"\
+	title="VFte" longtitle="VFte, a console text editor" command="vfte"

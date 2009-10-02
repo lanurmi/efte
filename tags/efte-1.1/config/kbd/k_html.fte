@@ -1,0 +1,125 @@
+# FTE keybindings for editing HTML files
+# maintained by m_debusk@sourceforge.com
+# Revision 2001-11-18
+
+# this file defines additional keybindings for HTML mode.
+# HTML_* macros are defined in ../m_html.fte
+# menus are defined in ../menu/m_html.fte
+# this file is included from ../ui.fte
+
+eventmap HTML {
+# Entities
+    key [C+E_&]     { InsertString "&amp;"; }
+    key [C+E_<]     { InsertString "&lt;"; }
+    key [C+E_>]     { InsertString "&gt;"; }
+    key [C+E_"]     { InsertString "&quot;"; }
+    key [C+E_Space]   { InsertString "&nbsp;"; }
+    key [C+Space]   { InsertString "&nbsp;"; }
+# HTML Skeleton
+    key [C+E_0]     { HTML_Base }
+# Run the browser
+    key [F9] { HTML_View }
+# Convert text to HTML
+    key [C+E_x]     { HTML_TXT }
+    
+# Basic Tags
+## Document Types
+    key [C+E_A+F]   { HTML_DTD_X1F }
+    key [C+E_A+K]   { HTML_DTD_X1S }
+    key [C+E_A+N]   { HTML_DTD_X1T }
+    
+## Headers
+    key [C+E_1]     { HTML_H1 }
+    key [C+E_2]     { HTML_H2 }
+    key [C+E_3]     { HTML_H3 }
+    key [C+E_4]     { HTML_H4 }
+    key [C+E_5]     { HTML_H5 }
+    key [C+E_6]     { HTML_H6 }
+    
+## Other Basic Stuff
+    key [C+E_9]     { HTML_BODY }
+    key [C+E_C+Z]   { HTML_HTM }
+    key [C+E_C+P]   { HTML_P }
+    key [C+E_G-Enter] { HTML_BR }
+    key [C+E_-]     { HTML_HR }
+    key [C+E_c]     { HTML_COMMENT }
+    key [C+E_C]     { HTML_COMMENT }
+    
+# Character Format
+    key [C+E_C+B]   { HTML_B }
+    key [C+E_C+S]   { HTML_STRONG }
+    key [C+E_C+I]   { HTML_I }
+    key [C+E_C+E]   { HTML_EM }
+    key [C+E_A+B]   { HTML_BIG }
+    key [C+E_A+S]   { HTML_SMALL }
+    key [C+E_A+U]   { HTML_SUB }
+    key [C+E_A+P]   { HTML_SUP }
+    key [C+E_A+O]   { HTML_BDO }
+
+# Output
+    key [C+E_C+F]   { HTML_PRE }
+    key [C+E_C+C]   { HTML_CODE }
+    key [C+E_C+T]   { HTML_TT }
+    key [C+E_C+K]   { HTML_KBD }
+    key [C+E_C+V]   { HTML_VAR }
+    key [C+E_C+M]   { HTML_SAMP }
+    
+# Blocks
+    key [C+E_C+Y]   { HTML_ACRONYM }
+    key [C+E_C+A]   { HTML_ABBR }
+    key [C+E_A+A]   { HTML_ADDRESS }
+    key [C+E_C+Q]   { HTML_BLOCKQUOTE }
+    key [C+E_A+Q]   { HTML_Q }
+    key [C+E_C+O]   { HTML_CITE }
+    key [C+E_A+I]   { HTML_INS }
+    key [C+E_A+E]   { HTML_DEL }
+    
+# Links
+    key [C+E_C+H]   { HTML_AHREF }
+    key [C+E_C+N]   { HTML_ANAME }
+    key [C+E_C+L]   { HTML_LINK }
+    
+# Frames
+    key [C+E_7]     { HTML_FRAMESET }
+    key [C+E_C+R]   { HTML_NOFRAMES }
+    key [C+E_A+F]   { HTML_FRAME }
+    
+# Input
+    
+# Lists
+    key [C+E_u]     { HTML_UL }
+    key [C+E_o]     { HTML_OL }
+    key [C+E_i]     { HTML_LI }
+    key [C+E_l]     { HTML_DL }
+    key [C+E_t]     { HTML_DT }
+    key [C+E_C+D]   { HTML_DFN }
+    key [C+E_d]     { HTML_DD }
+    
+# Images
+    key [C+E_C+G]   { HTML_IMG }
+    key [C+E_A+M]   { HTML_MAP }
+    
+# Tables
+    key [C+E_A+C]   { HTML_CAPTION }
+    key [C+E_A+G]   { HTML_COLGROUP }
+    key [C+E_A+T]   { HTML_TABLE }
+    key [C+E_b]     { HTML_TBODY }
+    key [C+E_f]     { HTML_TFOOT }
+    key [C+E_h]     { HTML_THEAD }
+    key [C+E_A+H]   { HTML_TH }
+    key [C+E_A+R]   { HTML_TR }
+    key [C+E_A+D]   { HTML_TD }
+    
+# Styles
+    key [C+E_A+L]   { HTML_STYLE }
+    key [C+E_A+V]   { HTML_DIV }
+    key [C+E_C+W]   { HTML_SPAN }
+    key [C+E_.]     { HTML_CENTER }
+    
+# Meta Information
+    key [C+E_C+U]   { HTML_BASEURL }
+    key [C+E_8]     { HTML_HEAD }
+    
+# Programming
+    key [C+E_C+J]   { HTML_OBJECT }
+}

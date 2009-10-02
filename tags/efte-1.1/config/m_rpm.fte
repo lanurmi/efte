@@ -1,0 +1,50 @@
+# m_rpm.fte
+#
+# Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
+#
+# You may distribute under the terms of either the GNU General Public
+# License or the Artistic License, as specified in the README file.
+#
+# eFTE mode for editing RPM spec files
+#
+
+colorize RPM {
+    SyntaxParser = "SIMPLE";
+
+    color {
+        { "Normal",        "Editor_Default" },
+        { "Comment",       "Lang_Comment" },
+        { "Command",       "Lang_Command" },
+        { "String",        "Lang_String" },
+        { "Number",        "Lang_DecimalNumber" },
+        { "Punctuation",   "Lang_Punctuation" },
+    };
+
+    # Header (0)
+    h_state 0 { "Normal" }
+    h_trans { 2, "^", "%", "String" }
+    h_trans { 3, "x", "^[A-Za-z0-9_]", "Command" }
+
+    h_state 1 { "Normal" }
+    h_trans { 2, "^", "%", "String" }
+    h_trans { 1, "$", "", "Normal" }
+
+    # Section Header
+    h_state 2 { "String" }
+    h_trans { 1, "$", "", "String" }
+
+    # Header command
+    h_state 3 { "Command" }
+    h_trans { 0, "", ":", "Command" }
+
+}
+
+mode RPM: SOURCE {
+    FileNameRx           = "\\.{spec}$";
+    Colorizer            = "RPM";
+    HilitOn              = 1;
+    AutoIndent           = 1;
+    IndentMode           = "PLAIN";
+}
+
+oinclude "mym_rpm.fte";
