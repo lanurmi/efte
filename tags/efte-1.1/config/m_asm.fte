@@ -1,0 +1,165 @@
+# x86 instruction list now nearly complete, 
+# also added floating point registers and some nasm directives
+#                                   jsvendsen 07-24-2001
+colorize ASM {
+    SyntaxParser = 'SIMPLE';
+    
+    color {
+        { 'Normal',        'Editor_Default' },
+        { 'Keyword',       'Editor_Keywords' },
+        { 'Number',        'Lang_DecimalNumber' },
+        { 'HexNumber',     'Lang_HexNumber' },
+        { 'Punctuation',   'Lang_Punctuation' },
+        { 'String',        'Lang_String' },
+        { 'Comment',       'Lang_Comment' },
+        { 'CPreprocessor', 'Lang_Preprocessor' },
+        { 'Function',      'Lang_Function' },
+        { 'Label',         'Lang_Label' },
+    };
+
+    keyword 'Editor_Keywords' {
+        'mov', 'push', 'pop', 'popad', 'movzx', 'movsx', 'lea', 'hlt',
+        'sal', 'sar', 'shl', 'shr', 'and', 'or', 'xor', 'not', 'ibts',
+        'add', 'adc', 'adb', 'sub', 'sbb', 'neg',
+        'mul', 'div', 'idiv', 'imul',
+        'test', 'cmp',
+        'inc', 'dec',
+        'popa', 'popaw', 'popf', 'popfw', 'popfd', 
+        'pusha', 'pushad', 'pushaw', 'pushf', 'pushfd', 'pushfw',
+        'scasd', 'scasw', 'scasb',
+        'movsd', 'movsw', 'movsb',
+        'stosd', 'stosw', 'stosb',
+        'out', 'outsd', 'outsw', 'outsb',
+        'in', 'insd', 'insw', 'insb', 
+        'int', 'nop', 'rep', 'repz', 'repnz', 'repe', 'repne', 
+        'int1', 'icepb', 'int01', 'int3', 'into',
+        'cld', 'clc', 'cli', 'clts', 'stc',
+        'aaa', 'aas', 'aam', 'aad', 'daa', 'das',
+        'arpl', 'bound', 'bsf', 'bswap',
+        'bt', 'btc', 'btr', 'bts',
+        'cbw', 'cwd', 'cdq', 'cwde',
+        'cmc', 'cpuid', 'emms',
+        'cmpsb', 'cmpsw', 'cmpsd',
+        'cmpxchg', 'cmpxchg486', 'cmpxchg8b',
+        'f2xm1', 'fabs', 'fadd', 'faddp', 'to', 'fbld', 'fbstp',
+        'fchs', 'fclex', 'fcmovb', 'fcmovbe', 'fcmove', 'fcmovnb', 'fcmovnbe',
+        'fcmovne', 'fcmovnu', 'fcmovu', 'fcom', 'fcomp', 'fcompp', 'fcomi',
+        'fcomip', 'fcos', 'fdecstp', 'fdisi', 'fndisi', 'feni', 'fneni',
+        'fdiv', 'fdivp', 'fdivr', 'fdivrp', 'fcos', 'ffree', 'fiadd',
+        'ficom', 'ficomp', 'fidiv', 'fidivr', 'fild', 'fist', 'fistp',
+        'fimul', 'fincstp', 'finit', 'fninit', 'fisub', 'fisubr',
+        'fld', 'fld1', 'fldl2e', 'fldl2t', 'fldlg2', 'fldln2', 'fldpi', 
+        'fldz', 'fldcw', 'fldenv', 'fmul', 'fmulp', 'fnop', 'fpatan', 'fptan',
+        'fprem', 'fprem1', 'frndint', 'fsave', 'frstor', 'fscale',
+        'fsetpm', 'fsin', 'fsincos', 'fsqrt', 'fst', 'fstp', 'fstcw',
+        'fstenv', 'fnstenv', 'fsub', 'fsubr', 'fsubp', 'fsubrp', 'ftst',
+        'fucom', 'fucomp', 'fucompp', 'fucomi', 'fucomip', 'fxam', 'fxch',
+        'fxtract', 'fyl2x', 'fyl2xp1', 
+        'invd', 'invlpg', 'lahf', 'lar', 'lds', 'les', 'lfs', 'lgs', 'lss',
+        'lgdt', 'lidt', 'lldt', 'sgdt', 'sidt', 'sldt', 'lmsw', 'smsw',
+        'loadall', 'loadall286', 'lsl', 'ltr', 'movd', 'movq',
+        'packssdw', 'packsswb', 'packuswb', 'paddb', 'paddw', 'paddd',
+        'paddsb', 'paddsw', 'paddusb', 'paddusw', 'paddsiw', 'pand', 'pandn',
+        'paveb', 'pcmpeqb', 'pcmpeqw', 'pcmpeqd', 'pcmpgtb', 'pcmpgtw',
+        'pcmpgtd', 'pdistib', 'pmachriw', 'pmulhriw', 'pmaddwd', 'pmagw',
+        'pmulhrw', 'pmulhw', 'pmullw', 'pmvzb', 'pmvnzb', 'pmvlzb', 'pmvgezb',
+        'por', 'psllw', 'pslld', 'psllq', 'psraw', 'psrad', 'psrlw', 'psrld',
+        'psrlq', 'psubb', 'psubw', 'psubd', 'psubsb', 'psubsw', 'psubusb',
+        'psubusw', 'psubsiw', 'punpckhbw', 'punpckhwd', 'punpckhdq',
+        'punpcklbw', 'punpcklwd', 'punpckldq', 'pxor',
+        'rcl', 'rcr', 'rdmsr', 'rdpmc', 'rdtsc', 'rol', 'ror', 'rsm', 'sahf',
+        'salc', 'shld', 'shrd', 'smi', 'stc', 'std', 'sti', 'str',
+        'umov', 'verr', 'verw', 'wait', 'wbinvd', 'wrmsr', 'xadd', 'xbts',
+        'xchg', 'xlatb', 
+        'enter', 'leave',
+    };
+
+    keyword 'Editor_Keywords3' {
+        'eax', 'ax', 'ah', 'al',
+        'ebx', 'bx', 'bh', 'bl',
+        'ecx', 'cx', 'ch', 'cl',
+        'edx', 'dx', 'dh', 'dl',
+        'si', 'di', 'esi', 'edi',
+        'cs', 'ss', 'ds', 'es', 'fs', 'gs',
+        'bp', 'ebp', 'sp', 'esp',
+        'ip', 'eip',
+        'st', 'st0', 'st1', 'st2', 'st3', 'st4', 'st5', 'st6', 'st7',
+    };
+
+    keyword 'Editor_Keywords2' {
+        'call', 'ret', 'retf', 'retn',
+        'iret', 'iretw', 'iretd',
+        'jmp',
+        'je', 'jne',
+        'jz', 'jnz',
+        'jl', 'jle', 'jg', 'jge',
+        'jnge', 'jng', 'jnle', 'jnl',
+        'jb', 'jbe', 'ja', 'jae',
+        'jnae', 'jna', 'jnbe', 'jnb',
+        'jo', 'jns',
+        'jcxz', 'jecxz',
+        'loop', 'loope', 'loopz', 'loopne', 'loopnz',
+        
+    };
+
+    keyword 'Editor_Keywords4' {
+        'near', 'far', 'short', 'seg', 'offset',
+        'ptr', 'word', 'byte', 'dword', 'qword', 'dup',
+    };
+    
+    keyword 'Editor_Keywords5' {
+        'assume', 'label', 'group',
+        'if', 'ifdef', 'ifndef', 'endif', 'else',
+        'public', 'extrn',
+        'macro', 'endm',
+        'end',
+        'proc', 'endp', 'equ', 'define',
+        'segment', 'section', 'seg', 'wrt', 'ends', 'use32', 'use16',
+        'db', 'dw', 'dd', 'dq', 'dt',
+        'resb', 'resw', 'resd', 'resq', 'rest',
+
+        'model', 'ideal', 'codeseg', 'dataseg', 'stack', 'include', 'locals',
+        'incbin', 'bits', 'times' ,'org',
+    };
+
+    h_state 0 { 'Normal' }
+    h_trans { 5, '-s', 'a-zA-Z_$@', 'Normal' }
+    h_trans { 1, '<', ';', 'Comment' }
+    h_trans { 2, '<', '\'', 'String' }
+    h_trans { 3, '<', '"', 'String' }
+    h_trans { 4, '-s', '0-9', 'Number' }
+    h_trans { 0, 'S', 'a-zA-Z0-9_$@', 'Punctuation' }
+
+    h_state 1 { 'Comment' }
+    h_trans { 0, '$', '', 'Comment' }
+
+    h_state 2 { 'String' }
+    h_trans { 0, '$', '', 'Normal' }
+    h_trans { 0, '', '\'', 'String' }
+
+    h_state 3 { 'String' }
+    h_trans { 0, '$', '', 'Normal' }
+    h_trans { 0, '', '"', 'String' }
+
+    h_state 4 { 'Number' }
+    h_trans { 0, '$', '', 'Normal' }
+    h_trans { 0, 's', 'Hh', 'Number' }
+    h_trans { 0, '-S', '0-9A-Fa-f', 'Number' }
+
+    h_state 5 { 'Normal' }
+    h_trans { 0, '$', '', 'Normal' }
+    h_wtype { 0, 0, 0, 'i', 'a-zA-Z0-9_$@' }
+}
+
+mode ASM: SOURCE {
+    FileNameRx          = /\.\cASM$/;
+    HilitOn             = 1;
+    Colorizer           = 'ASM';
+    AutoHilitParen      = 1;
+    
+    SaveFolds           = 2;      # save fold info at end of line
+    CommentStart        = ' ;';
+    CommentEnd          = '';
+}
+
+oinclude 'mym_asm.fte';

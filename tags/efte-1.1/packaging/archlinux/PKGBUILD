@@ -1,0 +1,21 @@
+# Contributor: Jeremy Cowgar <jeremy@cowgar.com>
+pkgname=efte
+pkgver=1.1
+pkgrel=1
+pkgdesc="Fast configurable programmers editor"
+license=('GPL', 'custom')
+url="http://efte.cowgar.com"
+source=(http://downloads.sourceforge.net/sourceforge/$pkgname/$pkgname-$pkgver.tar.gz)
+md5sums=('')
+arch=('i686' 'x86_64')
+
+build() {
+  cd $startdir/src/$pkgname-$pkgver
+  cmake -DBUILD_X=ON -DBUILD_CONSOLE=ON -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX=/usr . || return 1
+  make || return 1
+  make DESTDIR=$startdir/pkg install || return 1
+
+  install -D -m 644 $startdir/pkg/usr/share/licenses/efte/Artistic \
+      $startdir/pkg/usr/share/licenses/efte/Artistic || return 1
+}

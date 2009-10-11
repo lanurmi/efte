@@ -1,0 +1,51 @@
+.TH CEFTE 1 
+.SH NAME
+cefte \- Compiles efte config files
+.SH SYNOPSIS
+.BI cefte " sourcefile [destfile]"
+.SH "DESCRIPTION"
+This manual page documents briefly the
+.BR "cfte".
+
+This manual page was written for the Debian GNU/Linux distribution
+(but may be used by others), because the original program does not
+have a manual page. Instead, it has documentation in html format; see below.
+.PP
+.B cefte
+compiles the 
+.I .efterc
+binary for
+.BR "efte"(1)
+from human readable sources. Example of these source files can be found at 
+\fB/usr/share/doc/\fP\fIefte/config-example.tar.gz\fP.
+.SH EXAMPLES
+.TP
+.BI cefte " /usr/share/doc/fte/config/main.fte"
+compiles the example config tree to
+.IR efte-new.cnf
+.TP
+.BI cefte " main.fte ~/.efterc"
+compiles the main.fte (in current directory) to
+.IR ~/.efterc
+.SH FILES
+.TP
+.IR ~/.efterc
+Default Configuration file. Includes All keybinding and menus
+compiled with
+.B cefte
+from config files in \fB/usr/share/doc/\fP\fIefte/config/main.fte\fP.
+There is a sample \fI.efterc\fP in \fB/etc/\fP\fIefte/system.fterc\fP.
+.TP
+.I *.fte
+Configuration sources. The syntax of these files is explained 
+in \fB/usr/share/doc/\fP\fIefte/contents.html\fP.
+.SH "SEE ALSO"
+.BR efte (1),
+.BR vefte (1),
+.BR nefte (1),
+.BI /usr/share/doc/ efte/contents.html
+.SH AUTHORS
+This manual page was written by Riku Voipio and Zdenek Kabelac
+<riku.voipio@iki.fi> <kabi@debian.org> for the Debian GNU/Linux system.
+.SH DATE
+28 Sep 1999

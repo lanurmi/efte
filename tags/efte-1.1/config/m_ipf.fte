@@ -1,0 +1,672 @@
+# Alternate FTE mode for editing CSS files
+# maintained by alfredo@netropolis-si.com
+#
+# Standing issues:
+#
+# -Since FTE saves its folds as comments and IPFC only allows single-line
+# comments that must start with '.*' (which restricts useful values of
+# SaveFolds to 0 or 1), each line where a FTE text fold begins becomes
+# automatically a comment as a whole for IPFC and is therefore left out of the
+# final document. To prevent accidentally commenting lines out of the document
+# when creating text folds, a line break is appended at the end of each one.
+# However, this prevents FTE from recognizing those comments as its very own
+# text folds when the file is loaded again. So for now it's better not to save
+# folds at all -> FileClutterUponSave prevented :)
+#
+# Latest changes:
+#
+# Revision 2006/10/06
+#
+# -Fixed mispelled keywords, and added '_' as attribute value legal char
+#
+# Revision 2006/09/13 
+#
+# -Minor changes to the entities <-> chars conv. table
+# -Slight reword of previous 'Standing issues'
+#
+# Revision 2006/09/03 (first public release)
+#
+# -Complete re-write of original m_ipf.fte
+#
+# -Decent syntax parsing:
+#  -keywords are defined on a per state basis instead of globally, so only
+#   relevant keywords are highlighted each time
+#  -attribute/value states inside open tags
+#  -non-closed tags, double colons (::) etc. analysis matches IPFC's as
+#   closely as possible.
+# -More flexible routine definition: headers are allowed to have attributes
+#  when defining a routine ;)
+# -Fixed a NASTY bug that makes me suspect no one actually tried IPF mode before:
+#  comments are not translated to text and inserted into the doc anymore.
+#  FileMessUponLoad prevented as well :)
+# -Changed SaveFolds from 1 to 0 because of the standing issue.
+# -Changed CommentEnd to "\r\n" to prevent accidentally commenting text parts
+#  out of the doc
+#
+
+colorize IPF {
+    SyntaxParser = 'SIMPLE';
+
+    color {
+        { 'Normal',     'Editor_Default' },
+        { 'String',     'Lang_String' },
+        { 'Symbol',     'Markup_Symbol' },
+#        Not needed anymore: all valid (known) tags are defined as keywords
+#        { 'Tag',        'Markup_Tag' },
+        { 'Control',    'Markup_Control' },
+#        Alfredo's addition to colour space
+        { 'Punctuation', 'Lang_Punctuation' },
+        { 'Comment',     'Lang_Comment' },
+        { 'Special',     'Editor_HilitWord' }
+    };
+
+    # Now for the states machine & syntax parsing itself...
+
+    # 0: Just entering the file - NOW WHAT?
+     # Everything other than a comment or a ':userdoc.' tag should be wrong
+     # but we'll just distinguish 'text' and 'tags'
+
+    h_state 0 { 'Normal' }
+    h_trans { 1, '-', ':', 'Normal' }  # This could just open a tag, but NOT
+    h_trans { 3, '<', '&', 'Symbol' }
+    h_trans { 8, '^<', '.*', 'Comment' }
+    h_trans { 7, '^<', '.', 'Control' }
+
+    # 1: Trying to decide if we're inside a tag or not
+    # At least no check is needed BEFORE the colon.
+    # If followed by a space, a colon will be recognised by IPFC as normal
+    # text; otherwise it is assumed to be opening a tag...
+
+    h_state 1 { 'Normal' }
+     # remember: the pointer wasn't advanced before getting here
+     # -> we just drop out of tag mode or advance the pointer and get into it!
+    h_trans { 0, '>', ': ', 'Normal' }
+    h_trans { 0, '$>', ':', 'Normal' } # EOL considered harmful as a place to open tags :)
+    h_trans { 2, '>', '::', 'Special' } # Warning the user, still get to 'tag' mode
+    h_trans { 2, '>', ':', 'Punctuation' }
+
+    # 2: We just got inside a tag
+    # As soon as a space is found we go into attribute mode, so ": p."
+    # is interpreted as 'no tag, attribute p' just as IPFC does
+
+    h_state 2 { 'Special' }
+    h_words 'Editor_Keywords' { # Structural, block-level tags:
+        'userdoc', 'euserdoc', 'title',
+        'docprof', 'ctrldef', 'ectrldef', 'ctrl',
+        'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+        'acviewport', #acviewport must follow a primary heading
+        'i1', 'i2',
+        'p', 'xmp', 'exmp',
+    }
+    h_words 'Editor_Keywords2' { # less important tags
+        'cgraphic', 'ecgraphic',
+        'artlink', 'eartlink', 'artwork',
+        'caution', 'ecaution',
+        'color', 'ddf',
+        'fig', 'efig', 'figcap', 'font', 'fn', 'efn',
+        'hp1', 'ehp1', 'hp2', 'ehp2', 'hp3', 'ehp3',
+        'hp4', 'ehp4', 'hp5', 'ehp5', 'hp6', 'ehp6',
+        'hp7', 'ehp7', 'hp8', 'ehp8', 'hp9', 'ehp9',
+        'hide', 'ehide', 'icmd', 'isyn', 'lines', 'elines',
+        'link', 'elink', 'lm', 'note', 'nt', 'ent', 'pbutton',
+        'rm', 'warning', 'ewarning',
+        'dl', 'edl', 'dthd', 'ddhd', 'dt', 'dd', 'li', 'lp', 'ol',
+        'eol', 'parml', 'eparml', 'pt', 'pd', 'sl', 'esl', 'table',
+        'etable', 'row', 'c', 'ul', 'eul',
+    }
+    h_wtype { 4, 4, 4, '', 'a-zA-Z0-9' } # one tag and go into attributes
+    h_trans { 0, '>', '.', 'Tag' }
+
+    # 3: entity definition - freestyle, we just check for the trailing .
+    h_state 3 { 'Symbol' }
+    h_trans { 0, '>', '.', 'Symbol' }
+    h_trans { 0, '$', '', 'Normal' }
+    # if the symbol is not closed before EOL, IPFC truncates it and reverts to 'normal'
+
+    # 4: Attribute name - only keywords allowed here, so the default is 'Special'
+    h_state 4 { 'Special' }
+    h_words 'Editor_Keywords3' { # attribute names
+        'dll', 'objectname', 'objectinfo', 'objectid',
+        'vpx', 'vpy', 'vpcx', 'vpcy',
+        'name', 'align', 'linkfile', 'runin', 'fit',
+        'text', 'fc', 'bc', 'ctrlid', 'controls', 'page',
+        'coverpage', 'res', 'compact', 'tsize', 'break',
+        'toc', 'ctrlarea', 'facename', 'size', 'codepage',
+        'id', 'global', 'tutorial', 'x', 'y', 'width', 'height',
+        'group', 'viewport', 'clear', 'titlebar', 'scroll',
+        'rules', 'nosearch', 'noprint', 'hide', 'ctrlrefid',
+        'key', 'roots', 'sortkey', 'refid', 'root', 'reftype',
+        'database', 'object', 'data', 'auto', 'dependent',
+        'split', 'margin', 'break', 'cols', 'rules', 'frame',
+        'face', 'left', 'right', 'center', 'index',
+    }
+    h_wtype { -1, -1, -1, '', 'a-z' }
+    h_trans { 9, '^<', '.*', 'Comment' }  # comments work as usual
+    h_trans { 5, '', ' =', 'Special' } # no spaces around '='
+    h_trans { 5, '', '=', 'Punctuation' } # go for attribute values
+    h_trans { 0, '>', '.', 'Punctuation' } # This is still a substate of 'tags' so an . ends it
+    # Now ':' is interpreted by IPFC as closing the current [malformed] tag
+    # and opening a new one - won't people be so wicked ever? ;)
+    h_trans { 0, '-', ':', 'Tag' }
+
+    # 5: Attribute value: one free-style word or check for ' to go into string mode
+    h_state 5 { 'Normal' }
+    h_wtype { 4, 4, 4, '', 'a-zA-Z0-9%_' }
+    h_trans { 6, '<', '\'', 'String' }
+
+    # 6: Single-quote enclosed attribute values
+    h_state 6 { 'String' }
+    h_trans { 5, '>', '\'', 'String' }
+
+    # 7: 'Strange' IPF control structures - only 4 keywords allowed
+    h_state 7 { 'Special' }
+    h_words 'Markup_Control' { 'br', 'ce', 'im', 'nameit' }
+    h_wtype { 0, -1, 0, '', 'a-zA-Z' }
+    h_trans { 0, '$', '', 'Comment' }
+
+    # 8: Single-line comment, from 'text' mode
+    h_state 8 { 'Comment' }
+    h_trans { 0, '$', '', 'Comment' }
+
+    # 9: Single-line comment, from 'inside tag -> atributes' mode
+    h_state 9 { 'Comment' }
+    h_trans { 4, '$', '', 'Comment' }
+}
+
+mode IPF: PLAIN {               # .IPF files
+    FileNameRx          = /\.\cIPF$/;
+    HilitOn             = 1;
+    Colorizer           = 'IPF';
+    MultiLineHilit      = 1;
+    RoutineRegexp       = ':[Hh][0-6].*\.';
+    SaveFolds           = 0;    # 1 = save fold info at beginning of line
+    CommentStart        = '.*';
+    CommentEnd          = "\r\n";
+}
+
+# IPF entities <-> plain text conversions
+
+sub IPF_ent_ascii {
+#    ?FindReplace /&amp./ /&/ "agn" ;
+    ?FindReplace /&and./ /^/ "agn" ;
+    ?FindReplace /&apos./ /'/ "agn" ;
+    ?FindReplace /&asterisk./ /*/ "agn" ;
+    ?FindReplace /&atsign./ /@/ "agn" ;
+    ?FindReplace /&bslash./ "\\" "agn" ;
+    ?FindReplace /&bsl./ "\\" "agn" ;
+    ?FindReplace /&bullet./ // "agn" ;
+    ?FindReplace /&bul./ // "agn" ;
+    ?FindReplace /&caret./ /^/ "agn" ;
+    ?FindReplace /&cdq./ /"/ "agn" ;
+    ?FindReplace /&csq./ /'/ "agn" ;
+    ?FindReplace /&comma./ /,/ "agn" ;
+    ?FindReplace /&colon./ /:/ "agn" ;
+    ?FindReplace /&dash./ /-/ "agn" ;
+    ?FindReplace /&dollar./ /$/ "agn" ;
+    ?FindReplace /&darrow./ // "agn" ;
+    ?FindReplace /&emdash./ /---/ "agn" ;
+    ?FindReplace /&endash./ /--/ "agn" ;
+    ?FindReplace /&eq./ /=/ "agn" ;
+    ?FindReplace /&equals./ /=/ "agn" ;
+    ?FindReplace /&eqsym./ /=/ "agn" ;
+    ?FindReplace /&xclm./ /!/ "agn" ;
+    ?FindReplace /&xclam./ /!/ "agn" ;
+    ?FindReplace /&grave./ /`/ "agn" ;
+    ?FindReplace /&gt./ />/ "agn" ;
+    ?FindReplace /&gtsym./ />/ "agn" ;
+    ?FindReplace /&house./ // "agn" ;
+    ?FindReplace /&hyphen./ /-/ "agn" ;
+    ?FindReplace /&inve./ /­/ "agn" ;
+    ?FindReplace /&invq./ /¨/ "agn" ;
+    ?FindReplace /&larrow./ // "agn" ;
+    ?FindReplace /&lahead./ // "agn" ;
+    ?FindReplace /&lbrace./ /{/ "agn" ;
+    ?FindReplace /&lbrc./ /{/ "agn" ;
+    ?FindReplace /&lbracket./ /[/ "agn" ;
+    ?FindReplace /&lbrk./ /[/ "agn" ;
+    ?FindReplace /&lpar./ /(/ "agn" ;
+    ?FindReplace /&lparen./ /(/ "agn" ;
+    ?FindReplace /&lt./ /</ "agn" ;
+    ?FindReplace /&ltsym./ /</ "agn" ;
+    ?FindReplace /&lor./ /|/ "agn" ;
+    ?FindReplace /&mdash./ /---/ "agn" ;
+    ?FindReplace /&minus./ /-/ "agn" ;
+    ?FindReplace /&ndash./ /--/ "agn" ;
+    ?FindReplace /&numsign./ /#/ "agn" ;
+    ?FindReplace /&odq./ /"/ "agn" ;
+    ?FindReplace /&osq./ /'/ "agn" ;
+    ?FindReplace /&percent./ "%" "agn" ;
+    ?FindReplace /&per./ /./ "agn" ;
+    ?FindReplace /&period./ /./ "agn" ;
+    ?FindReplace /&plus./ /+/ "agn" ;
+    ?FindReplace /&rarrow./ // "agn" ;
+    ?FindReplace /&rahead./ // "agn" ;
+    ?FindReplace /&rbrace./ /}/ "agn" ;
+    ?FindReplace /&rbrc./ /}/ "agn" ;
+    ?FindReplace /&rbracket./ /]/ "agn" ;
+    ?FindReplace /&rbrk./ /]/ "agn" ;
+    ?FindReplace /&rpar./ /)/ "agn" ;
+    ?FindReplace /&rparen./ /)/ "agn" ;
+    ?FindReplace /&semi./ /;/ "agn" ;
+    ?FindReplace /&similar./ /~/ "agn" ;
+    ?FindReplace /&slash./ '/' "agn" ;
+    ?FindReplace /&slr./ '/' "agn" ;
+    ?FindReplace /&tilde./ /~/ "agn" ;
+    ?FindReplace /&uarrow./ // "agn" ;
+    ?FindReplace /&us./ /_/ "agn" ;
+    ?FindReplace /&vbar./ /|/ "agn" ;
+}
+
+sub IPF_ent_ibm850 {
+    IPF_ent_ascii;
+    ?FindReplace /&aa./ / / "agn" ;
+    ?FindReplace /&ac./ /ƒ/ "agn" ;
+    ?FindReplace /&ae./ /„/ "agn" ;
+    ?FindReplace /&Ae./ /Ž/ "agn" ;
+    ?FindReplace /&ag./ /…/ "agn" ;
+    ?FindReplace /&aelig./ /‘/ "agn" ;
+    ?FindReplace /&AElig./ /’/ "agn" ;
+#    ?FindReplace /&alpha./ /à/ "agn" ;
+#    ?FindReplace /&Alpha./ /A/ "agn" ;
+    ?FindReplace /&angstrom./ /?/ "agn" ;
+    ?FindReplace /&ao./ /†/ "agn" ;
+    ?FindReplace /&Ao./ /?/ "agn" ;
+    ?FindReplace /&bx2022./ /¹/ "agn" ;
+    ?FindReplace /&bx2020./ /º/ "agn" ;
+    ?FindReplace /&bx0022./ /»/ "agn" ;
+    ?FindReplace /&bx2002./ /¼/ "agn" ;
+    ?FindReplace /&bx2200./ /È/ "agn" ;
+    ?FindReplace /&bx0220./ /É/ "agn" ;
+    ?FindReplace /&bx2202./ /Ê/ "agn" ;
+    ?FindReplace /&bx0222./ /Ë/ "agn" ;
+    ?FindReplace /&bx2220./ /Ì/ "agn" ;
+    ?FindReplace /&bx0202./ /Í/ "agn" ;
+    ?FindReplace /&bx2222./ /Î/ "agn" ;
+#    ?FindReplace /&bx1012./ /µ/ "agn" ;
+#    ?FindReplace /&bx2021./ /¶/ "agn" ;
+#    ?FindReplace /&bx0021./ /·/ "agn" ;
+#    ?FindReplace /&bx0012./ /¸/ "agn" ;
+#    ?FindReplace /&bx2001./ /½/ "agn" ;
+#    ?FindReplace /&bx1002./ /¾/ "agn" ;
+#    ?FindReplace /&bx1210./ /Æ/ "agn" ;
+#    ?FindReplace /&bx2120./ /Ç/ "agn" ;
+#    ?FindReplace /&bx1202./ /Ï/ "agn" ;
+#    ?FindReplace /&bx1201./ /Ð/ "agn" ;
+#    ?FindReplace /&bx0212./ /Ñ/ "agn" ;
+#    ?FindReplace /&bx0121./ /Ò/ "agn" ;
+#    ?FindReplace /&bx2100./ /Ó/ "agn" ;
+#    ?FindReplace /&bx1200./ /Ô/ "agn" ;
+#    ?FindReplace /&bx0210./ /Õ/ "agn" ;
+#    ?FindReplace /&bx0120./ /Ö/ "agn" ;
+#    ?FindReplace /&bx2121./ /×/ "agn" ;
+#    ?FindReplace /&bx1212./ /Ø/ "agn" ;
+    ?FindReplace /&Beta./ /á/ "agn" ;
+    ?FindReplace /&bxas./ /Á/ "agn" ;
+    ?FindReplace /&bxbj./ /Á/ "agn" ;
+    ?FindReplace /&bxcr./ /Å/ "agn" ;
+    ?FindReplace /&bxcj./ /Å/ "agn" ;
+    ?FindReplace /&bxde./ /Â/ "agn" ;
+    ?FindReplace /&bxtj./ /Â/ "agn" ;
+    ?FindReplace /&bxh./ /Ä/ "agn" ;
+    ?FindReplace /&bxll./ /À/ "agn" ;
+    ?FindReplace /&bxlr./ /Ù/ "agn" ;
+    ?FindReplace /&bxri./ /´/ "agn" ;
+    ?FindReplace /&bxrj./ /´/ "agn" ;
+    ?FindReplace /&bxle./ /Ã/ "agn" ;
+    ?FindReplace /&bxlj./ /Ã/ "agn" ;
+    ?FindReplace /&bxul./ /Ú/ "agn" ;
+    ?FindReplace /&bxur./ /¿/ "agn" ;
+    ?FindReplace /&bxv./ /³/ "agn" ;
+    ?FindReplace /&cc./ /‡/ "agn" ;
+    ?FindReplace /&Cc./ /€/ "agn" ;
+    ?FindReplace /&cent./ /½/ "agn" ;
+    ?FindReplace /&cdqf./ /¯/ "agn" ;
+    ?FindReplace /&degree./ /ø/ "agn" ;
+    ?FindReplace /&deg./ /ø/ "agn" ;
+#    ?FindReplace /&delta./ /ë/ "agn" ;
+    ?FindReplace /&divide./ /ö/ "agn" ;
+    ?FindReplace /&dot./ /ú/ "agn" ;
+    ?FindReplace /&ea./ /‚/ "agn" ;
+    ?FindReplace /&Ea./ /?/ "agn" ;
+    ?FindReplace /&ec./ /ˆ/ "agn" ;
+    ?FindReplace /&ee./ /‰/ "agn" ;
+    ?FindReplace /&eg./ /Š/ "agn" ;
+#    ?FindReplace /&epsilon./ /î/ "agn" ;
+    ?FindReplace /&fnof./ /Ÿ/ "agn" ;
+ #   ?FindReplace /&Gamma./ /â/ "agn" ;
+#    ?FindReplace /&ge./ /ò/ "agn" ;
+#    ?FindReplace /&gesym./ /ò/ "agn" ;
+    ?FindReplace /&ia./ /¡/ "agn" ;
+    ?FindReplace /&ic./ /Œ/ "agn" ;
+    ?FindReplace /&ie./ /‹/ "agn" ;
+    ?FindReplace /&ig./ /?/ "agn" ;
+#    ?FindReplace /&identical./ /ð/ "agn" ;
+#    ?FindReplace /&infinity./ /ì/ "agn" ;
+#    ?FindReplace /&intersect./ /ï/ "agn" ;
+#    ?FindReplace /&inttop./ /ô/ "agn" ;
+#    ?FindReplace /&intbot./ /õ/ "agn" ;
+    ?FindReplace /&le./ /ó/ "agn" ;
+    ?FindReplace /&lesym./ /ó/ "agn" ;
+    ?FindReplace /&lnot./ /ª/ "agn" ;
+    ?FindReplace /&lnotrev./ /©/ "agn" ;
+    ?FindReplace /&mu./ /æ/ "agn" ;
+    ?FindReplace /&nt./ /¤/ "agn" ;
+    ?FindReplace /&Nt./ /¥/ "agn" ;
+#    ?FindReplace /&nearly./ /÷/ "agn" ;
+    ?FindReplace /&notsym./ /ª/ "agn" ;
+    ?FindReplace /&oa./ /¢/ "agn" ;
+    ?FindReplace /&oc./ /“/ "agn" ;
+    ?FindReplace /&og./ /•/ "agn" ;
+    ?FindReplace /&oe./ /”/ "agn" ;
+    ?FindReplace /&Oe./ /™/ "agn" ;
+#    ?FindReplace /&Omega./ /ê/ "agn" ;
+    ?FindReplace /&frac14./ /¬/ "agn" ;
+    ?FindReplace /&frac12./ /«/ "agn" ;
+    ?FindReplace /&odqf./ /®/ "agn" ;
+#    ?FindReplace /&phi./ /í/ "agn" ;
+#    ?FindReplace /&Phi./ /è/ "agn" ;
+#    ?FindReplace /&pi./ /ã/ "agn" ;
+    ?FindReplace /&plusmin./ /ñ/ "agn" ;
+    ?FindReplace /&pm./ /ñ/ "agn" ;
+    ?FindReplace /&Lsterling./ /œ/ "agn" ;
+#    ?FindReplace /&rbl./ / / "agn" ;
+    ?FindReplace /&box14./ /°/ "agn" ;
+    ?FindReplace /&box12./ /±/ "agn" ;
+    ?FindReplace /&box34./ /²/ "agn" ;
+#    ?FindReplace /&Sigma./ /ä/ "agn" ;
+#    ?FindReplace /&sigma./ /å/ "agn" ;
+#    ?FindReplace /&BOX./ /Û/ "agn" ;
+#    ?FindReplace /&BOXBOT./ /Ü/ "agn" ;
+#    ?FindReplace /&BOXTOP./ /ß/ "agn" ;
+#    ?FindReplace /&BOXLEFT./ /Ý/ "agn" ;
+#    ?FindReplace /&BOXRIGHT./ /Þ/ "agn" ;
+#    ?FindReplace /&splitvbar./ /|/ "agn" ;
+    ?FindReplace /&sqbul./ /þ/ "agn" ;
+    ?FindReplace /&sqrt./ /û/ "agn" ;
+    ?FindReplace /&sup2./ /ý/ "agn" ;
+    ?FindReplace /&supn./ /ü/ "agn" ;
+#    ?FindReplace /&tau./ /ç/ "agn" ;
+#    ?FindReplace /&Theta./ /é/ "agn" ;
+    ?FindReplace /&ua./ /£/ "agn" ;
+    ?FindReplace /&uc./ /–/ "agn" ;
+    ?FindReplace /&ug./ /—/ "agn" ;
+    ?FindReplace /&ue./ /?/ "agn" ;
+    ?FindReplace /&Ue./ /š/ "agn" ;
+    ?FindReplace /&aus./ /¦/ "agn" ;
+    ?FindReplace /&ous./ /§/ "agn" ;
+    ?FindReplace /&ye./ /˜/ "agn" ;
+    ?FindReplace /&yen./ /¾/ "agn" ;
+}
+
+sub IPF_ent_win1252 {
+    IPF_ent_ascii;
+    ?FindReplace /&aa./ /á/ "agn" ;
+    ?FindReplace /&ac./ /â/ "agn" ;
+    ?FindReplace /&ae./ /ä/ "agn" ;
+    ?FindReplace /&Ae./ /Ä/ "agn" ;
+    ?FindReplace /&ag./ /à/ "agn" ;
+    ?FindReplace /&aelig./ /æ/ "agn" ;
+    ?FindReplace /&AElig./ /Æ/ "agn" ;
+    ?FindReplace /&angstrom./ /Å/ "agn" ;
+    ?FindReplace /&ao./ /å/ "agn" ;
+    ?FindReplace /&Ao./ /Å/ "agn" ;
+    ?FindReplace /&Beta./ /ß/ "agn" ;
+    ?FindReplace /&cc./ /ç/ "agn" ;
+    ?FindReplace /&Cc./ /Ç/ "agn" ;
+    ?FindReplace /&cent./ /¢/ "agn" ;
+    ?FindReplace /&cdqf./ /»/ "agn" ;
+    ?FindReplace /&degree./ /°/ "agn" ;
+    ?FindReplace /&deg./ /°/ "agn" ;
+    ?FindReplace /&divide./ /÷/ "agn" ;
+    ?FindReplace /&dot./ /·/ "agn" ;
+    ?FindReplace /&ea./ /é/ "agn" ;
+    ?FindReplace /&Ea./ /É/ "agn" ;
+    ?FindReplace /&ec./ /ê/ "agn" ;
+    ?FindReplace /&ee./ /ë/ "agn" ;
+    ?FindReplace /&eg./ /è/ "agn" ;
+    ?FindReplace /&fnof./ /ƒ/ "agn" ;
+    ?FindReplace /&ia./ /í/ "agn" ;
+    ?FindReplace /&ic./ /î/ "agn" ;
+    ?FindReplace /&ie./ /ï/ "agn" ;
+    ?FindReplace /&ig./ /ì/ "agn" ;
+    ?FindReplace /&lnot./ /¬/ "agn" ;
+    ?FindReplace /&mu./ /µ/ "agn" ;
+    ?FindReplace /&nt./ /ñ/ "agn" ;
+    ?FindReplace /&Nt./ /Ñ/ "agn" ;
+    ?FindReplace /&notsym./ /¬/ "agn" ;
+    ?FindReplace /&oa./ /ó/ "agn" ;
+    ?FindReplace /&oc./ /ô/ "agn" ;
+    ?FindReplace /&og./ /ò/ "agn" ;
+    ?FindReplace /&oe./ /ö/ "agn" ;
+    ?FindReplace /&Oe./ /Ö/ "agn" ;
+    ?FindReplace /&frac14./ /¼/ "agn" ;
+    ?FindReplace /&frac12./ /½/ "agn" ;
+    ?FindReplace /&odqf./ /«/ "agn" ;
+    ?FindReplace /&plusmin./ /±/ "agn" ;
+    ?FindReplace /&pm./ /±/ "agn" ;
+    ?FindReplace /&Lsterling./ /£/ "agn" ;
+    ?FindReplace /&sqrt./ /¹/ "agn" ;
+    ?FindReplace /&sup2./ /²/ "agn" ;
+    ?FindReplace /&supn./ /³/ "agn" ;
+    ?FindReplace /&ua./ /ú/ "agn" ;
+    ?FindReplace /&uc./ /û/ "agn" ;
+    ?FindReplace /&ug./ /ù/ "agn" ;
+    ?FindReplace /&ue./ /ü/ "agn" ;
+    ?FindReplace /&Ue./ /Ü/ "agn" ;
+    ?FindReplace /&aus./ /ª/ "agn" ;
+    ?FindReplace /&ous./ /º/ "agn" ;
+    ?FindReplace /&ye./ /ÿ/ "agn" ;
+    ?FindReplace /&yen./ /¥/ "agn" ;
+}
+
+sub IPF_ascii_ent {
+#    ?FindReplace /&/ /&amp./ "agn" ;
+    ?FindReplace /^/ /&and./ "agn" ;
+#    ?FindReplace /'/ /&apos./ "agn" ;
+    ?FindReplace /*/ /&asterisk./ "agn" ;
+    ?FindReplace /@/ /&atsign./ "agn" ;
+    ?FindReplace "\\" /&bslash./ "agn" ;
+    ?FindReplace // /&bullet./ "agn" ;
+    ?FindReplace /^/ /&caret./ "agn" ;
+    ?FindReplace /"/ /&cdq./ "agn" ;
+    ?FindReplace /,/ /&comma./ "agn" ;
+#    ?FindReplace /:/ /&colon./ "agn" ;
+    ?FindReplace /$/ /&dollar./ "agn" ;
+    ?FindReplace // /&darrow./ "agn" ;
+    ?FindReplace /---/ /&emdash./ "agn" ;
+    ?FindReplace /--/ /&endash./ "agn" ;
+    ?FindReplace /-/ /&dash./ "agn" ;
+#    ?FindReplace /=/ /&eq./ "agn" ;
+    ?FindReplace /!/ /&xclm./ "agn" ;
+    ?FindReplace /`/ /&grave./ "agn" ;
+    ?FindReplace />/ /&gt./ "agn" ;
+    ?FindReplace // /&house./ "agn" ;
+#    ?FindReplace /-/ /&hyphen./ "agn" ;
+    ?FindReplace // /&larrow./ "agn" ;
+    ?FindReplace /{/ /&lbrc./ "agn" ;
+    ?FindReplace /[/ /&lbrk./ "agn" ;
+    ?FindReplace /(/ /&lpar./ "agn" ;
+    ?FindReplace /</ /&lt./ "agn" ;
+    ?FindReplace /|/ /&lor./ "agn" ;
+    ?FindReplace /---/ /&mdash./ "agn" ;
+    ?FindReplace /-/ /&minus./ "agn" ;
+    ?FindReplace /--/ /&ndash./ "agn" ;
+    ?FindReplace /#/ /&numsign./ "agn" ;
+    ?FindReplace /"/ /&odq./ "agn" ;
+    ?FindReplace "%" /&percent./ "agn" ;
+#    ?FindReplace /./ /&per./ "agn" ;
+#    ?FindReplace /./ /&period./ "agn" ;
+    ?FindReplace /+/ /&plus./ "agn" ;
+    ?FindReplace // /&rarrow./ "agn" ;
+    ?FindReplace /}/ /&rbrc./ "agn" ;
+    ?FindReplace /]/ /&rbrk./ "agn" ;
+    ?FindReplace /)/ /&rpar./ "agn" ;
+    ?FindReplace /;/ /&semi./ "agn" ;
+    ?FindReplace '/' /&slr./ "agn" ;
+    ?FindReplace /~/ /&tilde./ "agn" ;
+    ?FindReplace // /&uarrow./ "agn" ;
+    ?FindReplace /_/ /&us./ "agn" ;
+    ?FindReplace /|/ /&vbar./ "agn" ;
+}
+
+sub IPF_ibm850_ent {
+    IPF_ascii_ent;
+    ?FindReplace /­/ /&inve./ "agn" ;
+    ?FindReplace /¨/ /&invq./ "agn" ;
+    ?FindReplace / / /&aa./ "agn" ;
+    ?FindReplace /ƒ/ /&ac./ "agn" ;
+    ?FindReplace /„/ /&ae./ "agn" ;
+    ?FindReplace /Ž/ /&Ae./ "agn" ;
+    ?FindReplace /…/ /&ag./ "agn" ;
+    ?FindReplace /‘/ /&aelig./ "agn" ;
+    ?FindReplace /’/ /&AElig./ "agn" ;
+    ?FindReplace /?/ /&angstrom./ "agn" ;
+    ?FindReplace /†/ /&ao./ "agn" ;
+    ?FindReplace /?/ /&Ao./ "agn" ;
+    ?FindReplace /¹/ /&bx2022./ "agn" ;
+    ?FindReplace /º/ /&bx2020./ "agn" ;
+    ?FindReplace /»/ /&bx0022./ "agn" ;
+    ?FindReplace /¼/ /&bx2002./ "agn" ;
+    ?FindReplace /È/ /&bx2200./ "agn" ;
+    ?FindReplace /É/ /&bx0220./ "agn" ;
+    ?FindReplace /Ê/ /&bx2202./ "agn" ;
+    ?FindReplace /Ë/ /&bx0222./ "agn" ;
+    ?FindReplace /Ì/ /&bx2220./ "agn" ;
+    ?FindReplace /Í/ /&bx0202./ "agn" ;
+    ?FindReplace /Î/ /&bx2222./ "agn" ;
+    ?FindReplace /á/ /&Beta./ "agn" ;
+    ?FindReplace /Á/ /&bxas./ "agn" ;
+    ?FindReplace /Á/ /&bxbj./ "agn" ;
+    ?FindReplace /Å/ /&bxcr./ "agn" ;
+    ?FindReplace /Å/ /&bxcj./ "agn" ;
+    ?FindReplace /Â/ /&bxde./ "agn" ;
+    ?FindReplace /Â/ /&bxtj./ "agn" ;
+    ?FindReplace /Ä/ /&bxh./ "agn" ;
+    ?FindReplace /À/ /&bxll./ "agn" ;
+    ?FindReplace /Ù/ /&bxlr./ "agn" ;
+    ?FindReplace /´/ /&bxri./ "agn" ;
+    ?FindReplace /´/ /&bxrj./ "agn" ;
+    ?FindReplace /Ã/ /&bxle./ "agn" ;
+    ?FindReplace /Ã/ /&bxlj./ "agn" ;
+    ?FindReplace /Ú/ /&bxul./ "agn" ;
+    ?FindReplace /¿/ /&bxur./ "agn" ;
+    ?FindReplace /³/ /&bxv./ "agn" ;
+    ?FindReplace /‡/ /&cc./ "agn" ;
+    ?FindReplace /€/ /&Cc./ "agn" ;
+    ?FindReplace /½/ /&cent./ "agn" ;
+    ?FindReplace /¯/ /&cdqf./ "agn" ;
+    ?FindReplace /ø/ /&degree./ "agn" ;
+    ?FindReplace /ø/ /&deg./ "agn" ;
+    ?FindReplace /ö/ /&divide./ "agn" ;
+    ?FindReplace /ú/ /&dot./ "agn" ;
+    ?FindReplace /‚/ /&ea./ "agn" ;
+    ?FindReplace /?/ /&Ea./ "agn" ;
+    ?FindReplace /ˆ/ /&ec./ "agn" ;
+    ?FindReplace /‰/ /&ee./ "agn" ;
+    ?FindReplace /Š/ /&eg./ "agn" ;
+    ?FindReplace /Ÿ/ /&fnof./ "agn" ;
+    ?FindReplace /¡/ /&ia./ "agn" ;
+    ?FindReplace /Œ/ /&ic./ "agn" ;
+    ?FindReplace /‹/ /&ie./ "agn" ;
+    ?FindReplace /?/ /&ig./ "agn" ;
+    ?FindReplace /ª/ /&lnot./ "agn" ;
+    ?FindReplace /æ/ /&mu./ "agn" ;
+    ?FindReplace /¤/ /&nt./ "agn" ;
+    ?FindReplace /¥/ /&Nt./ "agn" ;
+    ?FindReplace /¢/ /&oa./ "agn" ;
+    ?FindReplace /“/ /&oc./ "agn" ;
+    ?FindReplace /•/ /&og./ "agn" ;
+    ?FindReplace /”/ /&oe./ "agn" ;
+    ?FindReplace /™/ /&Oe./ "agn" ;
+    ?FindReplace /¬/ /&frac14./ "agn" ;
+    ?FindReplace /«/ /&frac12./ "agn" ;
+    ?FindReplace /®/ /&odqf./ "agn" ;
+    ?FindReplace /ñ/ /&pm./ "agn" ;
+    ?FindReplace /œ/ /&Lsterling./ "agn" ;
+    ?FindReplace /°/ /&box14./ "agn" ;
+    ?FindReplace /±/ /&box12./ "agn" ;
+    ?FindReplace /²/ /&box34./ "agn" ;
+    ?FindReplace /Û/ /&BOX./ "agn" ;
+    ?FindReplace /Ü/ /&BOXBOT./ "agn" ;
+    ?FindReplace /ß/ /&BOXTOP./ "agn" ;
+    ?FindReplace /þ/ /&sqbul./ "agn" ;
+    ?FindReplace /û/ /&sqrt./ "agn" ;
+    ?FindReplace /ý/ /&sup2./ "agn" ;
+    ?FindReplace /ü/ /&supn./ "agn" ;
+    ?FindReplace /£/ /&ua./ "agn" ;
+    ?FindReplace /–/ /&uc./ "agn" ;
+    ?FindReplace /—/ /&ug./ "agn" ;
+    ?FindReplace /?/ /&ue./ "agn" ;
+    ?FindReplace /š/ /&Ue./ "agn" ;
+    ?FindReplace /¦/ /&aus./ "agn" ;
+    ?FindReplace /§/ /&ous./ "agn" ;
+    ?FindReplace /˜/ /&ye./ "agn" ;
+    ?FindReplace /¾/ /&yen./ "agn" ;
+}
+
+sub IPF_win1252_ent {
+    IPF_ascii_ent;
+    ?FindReplace /¡/ /&inve./ "agn" ;
+    ?FindReplace /¿/ /&invq./ "agn" ;
+    ?FindReplace /á/ /&aa./ "agn" ;
+    ?FindReplace /â/ /&ac./ "agn" ;
+    ?FindReplace /ä/ /&ae./ "agn" ;
+    ?FindReplace /Ä/ /&Ae./ "agn" ;
+    ?FindReplace /à/ /&ag./ "agn" ;
+    ?FindReplace /æ/ /&aelig./ "agn" ;
+    ?FindReplace /Æ/ /&AElig./ "agn" ;
+    ?FindReplace /Å/ /&angstrom./ "agn" ;
+    ?FindReplace /å/ /&ao./ "agn" ;
+    ?FindReplace /Å/ /&Ao./ "agn" ;
+    ?FindReplace /ß/ /&Beta./ "agn" ;
+    ?FindReplace /ç/ /&cc./ "agn" ;
+    ?FindReplace /Ç/ /&Cc./ "agn" ;
+    ?FindReplace /¢/ /&cent./ "agn" ;
+    ?FindReplace /»/ /&cdqf./ "agn" ;
+    ?FindReplace /°/ /&degree./ "agn" ;
+    ?FindReplace /°/ /&deg./ "agn" ;
+    ?FindReplace /÷/ /&divide./ "agn" ;
+    ?FindReplace /·/ /&dot./ "agn" ;
+    ?FindReplace /é/ /&ea./ "agn" ;
+    ?FindReplace /É/ /&Ea./ "agn" ;
+    ?FindReplace /ê/ /&ec./ "agn" ;
+    ?FindReplace /ë/ /&ee./ "agn" ;
+    ?FindReplace /è/ /&eg./ "agn" ;
+    ?FindReplace /ƒ/ /&fnof./ "agn" ;
+    ?FindReplace /í/ /&ia./ "agn" ;
+    ?FindReplace /î/ /&ic./ "agn" ;
+    ?FindReplace /ï/ /&ie./ "agn" ;
+    ?FindReplace /ì/ /&ig./ "agn" ;
+    ?FindReplace /¬/ /&lnot./ "agn" ;
+    ?FindReplace /µ/ /&mu./ "agn" ;
+    ?FindReplace /ñ/ /&nt./ "agn" ;
+    ?FindReplace /Ñ/ /&Nt./ "agn" ;
+    ?FindReplace /ó/ /&oa./ "agn" ;
+    ?FindReplace /ô/ /&oc./ "agn" ;
+    ?FindReplace /ò/ /&og./ "agn" ;
+    ?FindReplace /ö/ /&oe./ "agn" ;
+    ?FindReplace /Ö/ /&Oe./ "agn" ;
+    ?FindReplace /¼/ /&frac14./ "agn" ;
+    ?FindReplace /½/ /&frac12./ "agn" ;
+    ?FindReplace /«/ /&odqf./ "agn" ;
+    ?FindReplace /±/ /&pm./ "agn" ;
+    ?FindReplace /£/ /&Lsterling./ "agn" ;
+    ?FindReplace /¹/ /&sqrt./ "agn" ;
+    ?FindReplace /²/ /&sup2./ "agn" ;
+    ?FindReplace /³/ /&supn./ "agn" ;
+    ?FindReplace /ú/ /&ua./ "agn" ;
+    ?FindReplace /û/ /&uc./ "agn" ;
+    ?FindReplace /ù/ /&ug./ "agn" ;
+    ?FindReplace /ü/ /&ue./ "agn" ;
+    ?FindReplace /Ü/ /&Ue./ "agn" ;
+    ?FindReplace /ª/ /&aus./ "agn" ;
+    ?FindReplace /º/ /&ous./ "agn" ;
+    ?FindReplace /ÿ/ /&ye./ "agn" ;
+    ?FindReplace /¥/ /&yen./ "agn" ;
+}
+
+sub IPF_2colon {
+    ?FindReplace '::' '&colon.:'  'agn' ;
+    ?FindReplace ':\\' '&colon.\\' 'agn' ;
+    ?FindReplace ':/' '&colon./' 'agn' ;
+}

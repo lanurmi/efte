@@ -1,0 +1,48 @@
+# C mode
+
+colorize UNREALSCRIPT {
+    SyntaxParser = 'C';
+
+    color {
+        { 'Normal',        'Editor_Default' },
+        { 'Number',        'Lang_DecimalNumber' },
+        { 'HexNumber',     'Lang_HexNumber' },
+        { 'Punctuation',   'Lang_Punctuation' },
+        { 'String',        'Lang_String' },
+        { 'Comment',       'Lang_Comment' },
+        { 'CPreprocessor', 'Lang_Preprocessor' },
+        { 'Function',      'Lang_Function' },
+        { 'Label',         'Lang_Label' },
+    };
+
+    keyword 'Editor_Keywords' {
+        'class', 'extends', 'function', 'defaultproperties', 'Super',
+        'var', 'if', 'return', 'bool', 'true', 'false', 'string', 'local',
+        'Begin', 'Object', 'array', 'int', 'float', 'enum', 'localized',
+        'struct', 'config', 'for', 'else', 'event', 'exec', 'state', 'while',
+        'break', 'continue', 'native', 'simulated', 'abstract', 'native',
+        'nativereplication', 'const', 'final', 'iterator', 'static', 'color',
+        'simulated', 'replication', 'unreliable', 'foreach', 'optional',
+        'out', 'switch', 'transient', 'name', 'export', 'delegate', 'cpptext',
+        'globalconfig', 'self', 'preoperator', 'postoperator', 'operator',
+        'coerce', 'noexport', 'ignores',
+    };
+}
+
+mode UNREALSCRIPT: C {      # UScript Mode
+    FileNameRx          = /\.\c{UC}$/;
+    HilitOn             = 1;
+    Colorizer           = 'UNREALSCRIPT';
+    AutoIndent          = 0;
+    IndentMode          = 'C';
+    MatchCase           = 0;
+    Trim                = 1;
+    MultiLineHilit      = 1;
+    AutoHilitParen      = 1;
+    RoutineRegexp	= /^\s*(({cpptext}|{defaultproperties}|{replication})\s*)|((({native}|{native\(\d+\)}|{final}|{static}|{simulated}|{exec})\s+)*({function}|{event})\s+(.+\s+)?[\w_]+\s*\([^;]*)$/;
+    SaveFolds           = 2;      # save fold info at end of line
+    CommentStart        = ' /*';
+    CommentEnd          = '*/';
+}
+
+oinclude 'mym_unrealscript.fte';
