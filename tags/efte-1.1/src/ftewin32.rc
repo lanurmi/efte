@@ -1,3 +1,0 @@
-#include <windows.h>
-
-FTE ICON "..\\packaging\\shared\\eftewin32.ico"
