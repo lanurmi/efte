@@ -8,7 +8,7 @@ Revision legend
 Revision history
 -----------------------------------------------------------------------
 
-1.1 -- November 11, 2009
+1.1 -- October 11, 2009
   ! Fixed a frequent buffer overflow in e_redraw.cpp
   ! Fixed a couple of memory/resource leaks found by static analysis
 
