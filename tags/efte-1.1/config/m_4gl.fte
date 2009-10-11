@@ -1,0 +1,260 @@
+# GL mode
+
+colorize GL {
+#    SyntaxParser = 'C';
+    SyntaxParser = 'SIMPLE';
+
+    color {
+        { 'Normal',        'Editor_Default' },
+        { 'Keyword',       'Editor_Keywords' },
+        { 'Number',        'Lang_DecimalNumber' },
+        { 'HexNumber',     'Lang_HexNumber' },
+        { 'Punctuation',   'Lang_Punctuation' },
+        { 'String',        'Lang_String' },
+        { 'Comment',       'Lang_Comment' },
+        { 'Function',      'Lang_Function' },
+#       { 'CPreprocessor', 'Lang_Preprocessor' },
+#       { 'Label',         'Lang_Label' },
+    };
+
+    keyword 'Editor_Keywords' { # any missing ?
+        'ABSOLUTE',
+        'AFTER',
+        'ALTER',
+        'AND',
+        'ARRAY',
+        'AT',
+        'ATTRIBUTE',
+        'AUTONEXT',
+        'BEFORE',
+        'BEGIN',
+        'BOTTOM',
+        'BY',
+        'CASE',
+        'CHAR',
+        'CHARACTER',
+        'CLEAR',
+        'CLIPPED',
+        'CLOSE',
+        'COLUMNS',
+        'COMMIT',
+        'CONSTRUCT',
+        'CONTINUE',
+        'CREATE',
+        'CURRENT', 
+        'CURSOR',
+        'DATABASE',
+        'DATE',
+        'DATETIME',
+        'DEC',
+        'DECIMAL',
+        'DECLARE',
+        'DEFAULTS',
+        'DEFER',
+        'DEFINE',
+        'DELETE',
+        'DISPLAY',
+        'DOUBLE PRECISION',
+        'DROP',
+        'ELSE',
+        'END',
+        'ERROR',
+        'EVERY',
+        'EXECUTE',
+        'EXIT',
+        'FETCH',
+        'FIELD',
+        'FINISH',
+        'FIRST',
+        'FLOAT',
+        'FLUSH',
+        'FOR',
+        'FOREACH',
+        'FORM',
+        'FORMAT',
+        'FREE',
+        'FROM',
+        'GLOBALS',
+        'GOTO',
+        'GRANT',
+        'IF',
+        'INITIALIZE',
+        'INPUT',
+        'INSERT',
+        'INT',
+        'INTEGER',
+        'INTERVAL',
+        'INTO',
+        'IS',
+        'KEY',
+        'LABEL',
+        'LAST',
+        'LEFT',
+        'LENGTH',
+        'LET',
+        'LIKE',
+        'LINE',
+        'LOAD',
+        'LOCATE',
+        'LOCK',
+        'MAIN',
+        'MARGIN',
+        'MENU',
+        'MESSAGE',
+        'MONEY',
+        'NEXT',
+        'NOT',
+        'NUMERIC',
+        'ON',
+        'OPEN',
+        'OPTIONS',
+        'OR',
+        'OTHERWISE',
+        'OUTPUT',
+        'PAGE',
+        'PREPARE',
+        'PREVIOUS',
+        'PRINT',
+        'PRINTER',
+        'PROGRAM',
+        'PROMPT',
+        'PUT',
+        'REAL',
+        'RECORD',
+        'RECOVER',
+        'RENAME',
+        'REPORT',
+        'RETURN',
+        'RETURNING',
+        'REVOKE',
+        'RIGHT',
+        'ROLLBACK',
+        'ROLLFORWARD',
+        'ROW',
+        'ROWS',
+        'RUN',
+        'SCROLL',
+        'SELECT',
+        'SERIAL',
+        'SET',
+        'SLEEP',
+        'SMALLFLOAT',
+        'SMALLINT',
+        'START',
+        'THEN',
+        'TO',
+        'TOP',
+        'UNION',
+        'UNLOAD',
+        'UNLOCK',
+        'UPDATE',
+        'UPSHIFT',
+        'VALIDATE',
+        'WHEN',
+        'WHENEVER',
+        'WHERE',
+        'WHILE',
+        'WINDOW',
+        'WITH',
+        'WITHOUT',
+        'WRAP',
+        #'FUNCTION', 'CALL',
+    };
+
+    keyword 'Editor_Keywords2' {
+        'BORDER',
+        'DATE',
+        'FALSE',
+        'INT_FLAG',
+        'NOTFOUND',
+        'NULL',
+        'QUIT_FLAG',
+        'REVERSE',
+        'STATUS',
+        'TIME',
+        'TODAY',
+        'TRUE',
+    };
+
+    keyword 'Editor_Keywords3' {
+        'FGL_GETENV',
+        'FGL_KEYVAL',
+        'FGL_LASTKEY',
+        'FIELD_TOUCHED',
+        'GET_FLDBUF',
+    };
+
+    h_state 0 { 'Normal' }
+    h_trans {1, '<', '#', 'Comment' }
+    h_trans {2, '<', '{', 'Comment' }
+    h_trans {3, '<', '"', 'String' }
+    h_trans {4, '<', '\'', 'String' }
+    h_trans {5, '<', '0x', 'HexNumber' }
+    h_trans {6, '<s', '0-9', 'Number'}
+    h_trans {0, 'S', '_a-zA-Z0-9', 'Punctuation' }
+    h_trans {7, '<', 'CALL', 'Keyword' }
+    h_trans {7, '<', 'FUNCTION', 'Keyword' }
+    h_trans {8, '-s', 'a-zA-Z_', 'Normal' }
+
+    h_state 1 { 'Comment'}
+    h_trans {0, '$', '', 'Comment' }
+
+    h_state 2 { 'Comment' }
+    h_trans { 0, '>', '}', 'Comment' }
+
+    h_state 3 { 'String' }
+    h_trans {0, '>', '"', 'String'}
+
+    h_state 4 { 'String' }
+    h_trans {0, '>', '\'', 'String'}
+
+    h_state 5 { 'HexNumber' }
+    h_trans { 0, '-S', '0-9A-Fa-f', 'Normal' }
+    h_trans { 0, '$', '', 'Normal' }
+
+    h_state 6 { 'Number' }
+    h_trans { 0, 'S', '0-9', 'Normal' }
+    h_trans { 0, '$', '', 'Normal' }
+
+    h_state 7 { 'Function' }
+    h_trans { 0, '->', '(', 'Normal' }
+    h_trans { 0, '$', '', 'Normal' }
+
+    h_state 8 { 'Normal' }
+    h_trans { 0, '$', '', 'Normal' }
+    h_wtype { 0, 0, 0, 'S', 'a-zA-Z0-9_' }
+
+}
+
+mode GL: SOURCE {      # 4GL Mode
+    FileNameRx          = /\.\c{4GL}|{4BL}$/;
+    HilitOn             = 1;
+    Colorizer           = 'GL';
+    AutoIndent          = 1;
+    IndentMode          = 'PLAIN';
+    SpaceTabs           = 0;
+    Trim                = 1;
+    MultiLineHilit      = 1;
+    AutoHilitParen      = 1;
+
+#    RoutineRegexp       = /FUNCTION/;
+#    RoutineRegexp       = /^\w[\w_:*&~]+[\w\s_:*&~]@\([^;]*$/;
+#    RoutineRegexp       = /[\w\s_:*&~]@\(*/;
+#       RoutineRx      ^\w[\w_:*&]+[\w\s_:*&]@\(
+#       RoutineRx      ^{[a-zA-Z0-9_:*&]#\s*}+\(
+
+    SaveFolds           = 2;      # save fold info at end of line
+    CommentStart        = ' {';
+    CommentEnd          = '}';
+
+    CursorThroughTabs = 0;
+    DeleteKillTab = 1;
+    DeleteKillBlock = 1;
+    BackSpKillTab = 1;
+    Abbreviations = 1;
+#    IndentWithTabs = 1;
+#    BackSpUnindents = 0;
+#    SpaceTabs = 0;
+}
+
+oinclude 'mym_4gl.fte';

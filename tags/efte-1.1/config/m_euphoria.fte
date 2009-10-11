@@ -1,0 +1,105 @@
+#
+# eFTE mode for Euphoria (http://rapideuphoria.com)
+#
+
+colorize EUPHORIA {
+    SyntaxParser = "SIMPLE";
+
+    color {
+        { "Normal",      "Editor_Default" },
+        { "Function",    "Lang_Function" },
+        { "Number",      "Lang_DecimalNumber" },
+        { "Comment",     "Lang_Comment" },
+        { "String",      "Lang_String" },
+        { "Punctuation", "Lang_Punctuation" },
+    };
+
+    keyword "Editor_Keywords" {
+        "as", "and",
+        "by",
+        "case", "constant",
+        "do",
+        "end", "else", "elsif", "enum", "export",
+        "for", "function",
+        "global",
+        "include", "if",
+        "label", "loop",
+        "not",
+        "or", "override",
+        "procedure", "public",
+        "switch",
+        "then", "type", "to",
+        "until",
+        "while",
+        "xor"
+    };
+
+    keyword "Editor_Keywords2" {
+        "object", "sequence", "integer", "atom"
+    };
+    
+    keyword "Editor_Keywords3" {
+        "break", "continue", "entry", "exit", "goto", "glabel", "retry", "return"
+    };
+    
+    keyword "Editor_Keywords4" {
+        "ifdef", "elsifdef", "elsedef", "trace", "with", "without"
+    };
+
+    h_state 0 { "Normal" }
+    h_trans { 1, "-s", "a-zA-Z_", "Normal" }
+    h_trans { 2, "<", "--", "Comment" }
+    h_trans { 3, "", "\"", "String" }
+    h_trans { 4, "", "\'", "String" }
+    h_trans { 5, "<s", "0-9", "Number" }
+    h_trans { 6, "", "#", "Number" }
+    h_trans { 7, '<', '/*', 'Comment' }
+    h_trans { 0, "S", "_a-zA-Z0-9", "Punctuation" }
+
+    h_state 1 { "Normal" }
+    h_trans { 0, "$", "", "Normal" }
+    h_wtype { 1, 1, 0, "", "a-zA-Z0-9_" }
+
+    h_state 2 { "Comment" }
+    h_trans { 0, "$", "", "String" }
+
+    h_state 3 { "String" }
+    h_trans { 0, "", "\"", "String" }
+    h_trans { 0, "$", "", "String" }
+    h_trans { 3, "Qq", "\\", "String" }
+    
+    h_state 4 { "String" }
+    h_trans { 0, "", "'", "String" }
+    h_trans { 0, "$", "", "String" }
+    h_trans { 4, "Qq", "\\", "String" }
+    
+    # Normal Number
+    h_state 5 { "Number" }
+    h_trans { 0, "-S", "0-9", "Normal" }
+    h_trans { 0, "$", "", "Normal" }
+    
+    # Hex Number
+    h_state 6 { "Number" }
+    h_trans { 0, "-S", "0-9A-F", "Normal" }
+
+    # Multiline comment
+    h_state 7 { "Comment" }
+    h_trans { 0, ">", "*/", "Comment" }
+}
+
+mode EUPHORIA: SOURCE {
+    FileNameRx         = /\c{{\.{e}|{ew}|{eu}|{ed}|{ex}|{exu}|{exw}|{exd}$}|{ex.err}}/;
+    HilitOn            = 1;
+    Colorizer          = "EUPHORIA";
+    AutoIndent         = 1;
+    IndentMode         = "PLAIN";
+    MatchCase          = 1;
+    Trim               = 1;
+    MultiLineHilit     = 1;
+    AutoHilitParen     = 1;
+    SaveFolds          = 0;
+
+    RoutineRegexp      = /^{{override}|{public}|{global}|{export}}*\s*{{function}|{procedure}|{type}}\s+/;
+}
+
+oinclude "mym_euphoria.fte";

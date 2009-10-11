@@ -1,0 +1,561 @@
+Revision legend
+-----------------------------------------------------------------------
+
+  - = general alteration/note
+  + = added new feature
+  ! = fixed a bug
+
+Revision history
+-----------------------------------------------------------------------
+
+1.1 -- October 11, 2009
+  ! Fixed a frequent buffer overflow in e_redraw.cpp
+  ! Fixed a couple of memory/resource leaks found by static analysis
+
+1.0 -- June 16, 2009
+  - First release of eFTE
+  - Branded FTE to be eFTE
+  - Removed DJGPP support
+  - Migrated to SVN for revision control
+  + Added CursorWithinEOL
+  + Added searching in the Routine List
+  + Added new mode for CMake files
+  + Windows XP and Vista now expand ~ to be the users home directory
+  + Windows now normalizes path separators, / becomes \\
+  ! BlockRead command was not expanding any file
+  ! WM_COMMAND now set in X11 binary
+  - Removed partially implemented block cursor sizing
+  + Added DesktopLoad command
+  + Added oinclude command which optionally includes a configuration file
+  + Modes are now user configurable w/o need to edit actual mode file
+  - Cleaned up code a bit with manual and automatic formatting (astyle)
+  - Converted from Makefiles to CMake on Win32, Unixes and OS/X
+  ! assert bug fixed when compiling with newer Microsoft compilers
+  + Configuration compiler loading is now much smarter
+  - Moved all documentation to the wiki where it is now user editable
+    as well as developer editable.
+  ! Many minor bug fixes
+  - Began native Mac OS X GUI interface
+  + Added configuration variable BackupDirectory to allow storing backups
+    in a common directory
+  + Added based modes SOURCE and MARKUP and changed all existing modes
+    to inherit from SOURCE, MARKUP or PLAIN
+  + ebuild added, contributed by Daniel Hiepler
+  + efte.spec added for rpm distributions
+  + Macro system is now case insensitive
+  + Added split method to FindReplace
+  + Removed binary configuration dependency. eFTE now reads the
+    plain text configuration files
+  + Added a nicer help screen
+  ! WM_HINTS are set properly in X11
+  + GetString and $Str0-$Str9
+  + User defined mode based generic indentation system
+  + RegExp macro to perform regular expression replacements on user variables
+  + ExpandTemplate macro for advanced user templates
+  + Added user defined regular expression based indentation engine for any mode
+  + Added new modes for Euphoria, Lua, VHDL
+  ! Many bugs fixed in the bash syntax parser
+
+0.50.1 -- January 17, 2008
+  - Forked from FTE (http://fte.sourceforge.net)
+
+0.50.1 -- September 2006
+  - Cleanup and Debian package update
+
+0.50.0 -- <fill month here> 2003
+  - Many internal and some external changes
+  - Some bugs fixed in this release
+  + cfte: added -p[reprocess] command line paramter, it can be used to debug configuration files.
+  ! X11: XShellCommand is used to specify used shell under X11. $TERM is no longer used as shell.
+
+0.46
+  ! bug fixes
+  ! coredump when $DISPLAY not set fixed
+  ! occasional coredump at exit from PM version fixed.
+  ! X11: check for invalid -geometry (larger than 255x255).
+  + colors are specified using a palette in the configuration file
+  + ShowHelp command (view .INF file under OS/2, .HLP under Win*,
+    manpage under UNIX). Context Sensitive.
+  + configuration file preprocessor %if(), %endif, %define
+  + Global (persistent) Bookmarks commands + Push/Pop bookmark
+  + Under UNIX it should now print using lpr
+  + SIOD mode contributed.
+  + command FileTrim,BlockTrim - trim whitespace at end of lines
+  + mode option to strip whitespace at EOF on FileSave. (TrimOnSave)
+  + C/C++ indentation style is now selectable from menu
+  + compile command configurable per mode (CompileCommand option)
+  + command to compile without asking anything (RunCompiler)
+  + only load desktop when no arguments on command line (option)
+    (this is achieved by setting LoadDesktopOnEntry=2 in global.fte)
+  + create folds with RoutineRx (command FoldCreateAtRoutines)
+  + command to center current line (LineCenter)
+  + OS/2: does not need 'clipserv' anymore (experimental, please report bugs).
+  + Readonly files are not editable when loaded.
+  + ...
+
+0.45 -- February 1997
+  ! bug fixes.
+  ! some command line option changes (-h = help now, -H = history).
+  + support for multiple frames in the PM version.
+  + first win32 console version.
+
+0.44 -- November 28
+  
+0.44b6 -- November 1996
+  ! Bug fixes in Linux pipe handling.
+  ! Bug fixes in OS/2 PM version. 
+  ! Fixed repainting bugs in Messages view.
+
+0.44b5 -- November 1996
+  ! Minor bug fixes.
+  ! Changes in syntax highlighting configuration.
+
+0.44b4 -- October 1996
+  ! Minor bug fixes and numerous performance improvements.
+  + New commands: BlockEnTab, BlockUnTab.
+  + Configurable syntax highlighting. Modes HTML/IPF/Ada/Pascal/...
+    are now configured externally.
+  + CTags support. New commands: TagFind, TagFindWord, TagNext, TagPrev,
+    TagPop, TagLoad, TagClear. Needs external ctags utility to create
+    tags file. Tagfile and tag to find can be given on command line.
+  + New option: KeepMessages. New command: ClearMessages.
+  + X11: added support for selection copy/paste.
+  + PM: Accept file dropped on editor window.
+  + PM: Optional toolbar (not configurable yet). New option: ShowToolBar.
+  + PM: GUI dialogs (find/replace, file, ...). New option: GUIDialogs.
+  + PM: Conditional cascade menus can now be used.
+  + PM: Alt+Fx accelerators can now be disabled with PMDisableAccel option.
+  - Removed WSStyleSearch flag.
+  ! PM: Rollup of editor window should now work (tested with title.dll)
+  ! Menus can now be overriden by predefining them.
+  ! Unix: completion of .* (dot) files now works.
+  ! Various fixes to C-mode smart indentation.
+  ! BlockReadXXX caused crashes when used with bad filename.
+  + Incremental search can now be continued by using up/down arrow.
+  ! ExitEditor doesn't close files immediatelly after discard. Desktop
+    is now properly saved after cancelling ExitEditor command.
+  + PM: Bigger file selection dialog box with history and save position.
+  + New commands: IndentFunction, BlockMarkFunction, MoveFunctionPrev,
+    MoveFunctionNext. Contributed by: jalving@ibm.net
+  + ...
+
+0.43 -- 15 July 1996
+  ! Minor bug fixes. 
+  ! Upper/Lower block in column mode could cause a crash.
+  ! CompleteWord command occasionally inserted garbage when previous
+    match was found in the same line.
+
+0.42 -- July 1996
+  ! Several minor bug fixes.
+  ! PM version doesn't crash when non-existant file is loaded on startup.
+  ! HilitWord command now works again.
+  + Setting for HilitWord color.
+  + ViewModeMap command is back.
+
+0.41 -- June 1996
+  ! Compile command crashed depending on command input.
+  ! Substrings were matched for keywords in smart indentation (C,REXX)
+  ! InsertSpacesToTab command always returned fail status.
+  ! CFTE now compiles to temporary file first and replaces original on
+    success only.
+  ! CFTE returns correct errorlevel on failure (0 = ok, 1 = fail).
+  ! SavePos/PrevPos is now stored using real line number, not virtual
+    (folded).
+  + BlockSort command.
+  + UndoMoves setting can be set for mode to enable undo/redo of all
+    cursor movements.
+  + BlockCutAppend, BlockCopyAppend commands to append cut/copied
+    block to clipboard.
+  + Error message locations now track the position better when a file
+    is edited (lines are added/removed).
+
+0.40 -- June 1996
+  ! Keyword inheritance was not properly handled in colorize modes.
+  ! Colors were not inherited in colorize modes.
+  ! OS2: Keys Alt+<menu-letter>, F10, Alt+Enter, Alt+Space are available
+    for remapping.
+  ! Some startup window sizing problems fixed.
+  ! Fixed several bugs in configuration files (no bindings for MSG mode,
+    some Alt+<letter> menu shortcuts).
+  ! Abbreviation expansion could abort with 'asssertion failed'.
+  + Performance improvements (MatchBracket and related stuff).
+  + OS2: Window position is now saved.
+  + FTE now remembers the directory the compilation was started from and
+    will resolve all relative pathnames found in error messages using
+    this directory. The current directory is determined by currently
+    active file or directory. If Messages are already open, FTE will
+    use directory from there instead of the current one. The current
+    directory of message list is always the directory the compilation was
+    started from.
+
+0.39 -- May 96
+  ! Fixed crash in Compile commands when repeating it.
+  ! Multi-key bindings inserted an ascii char if the 2+ key was not valid.
+  ! when inserting ) in Cmode, it failed to advance the cursor when there
+    was no match and AutoHilitParen was set to 1.
+  + EventMap variable to define keymap to use for mode.
+  ! MoveToLine shows correct default line value when folds are used.
+  - Did some reorganization of config files to make adding new
+    binding sets easier.
+
+0.38 -- May 96
+  ! Many bug fixes (mostly minor).
+  + BlockWrite command can now append to a file.
+  + Directory browser.
+  ! PERL: properly highlight s[][], tr[][].
+  + Configuration files must now be compiled.
+  + Syntax highlighting definitions now independant of editing mode.
+  + Event mappings now independant of editing mode.
+  + Abbreviatons. Can expand the text or run a macro.
+  + Searching can now check for words without using regular expressions.
+  + Loading files is now almost twice as fast.
+  + File positions and prompt history is now saved in file FTE.HIS.
+  + The list of loaded files is saved on exit to FTE.DSK. Files
+    are automatically loaded on startup. Several settings and command line
+    options are available to configure this.
+  + On startup, only the first file is actually loaded. Other
+    files are loaded only as they are needed.
+  + BlockTrans, CharTrans and LineTrans commands. Can translate
+    characters according to arguments (BlockTrans 'a-z' 'A-Z', etc).
+  + When cursor is over the bracket, the matching bracket can be
+    higlighted automatically of visible on screen.
+  ! InsPrevLineChar, InsPrevLineToEol failed when tabs were on previous line.
+  + Nonpersistent blocks (with various options and commands).
+  + ...
+
+0.37 -- Dec 95
+  - Status line can now be hidden. Also changed it's look.
+  - Changed the syntax of keyboard bindings. Now it is possible to better
+    emulate the wordstar two-key behavior. See documentation for details.
+    It is also possible to define different commands for gray/white keys.
+  ! MENU shortcuts now work.
+  + New command: FileWriteTo
+  ! Fixed crash when trying to center nonexistant line in file.
+  - Changing folds now modifies the file.
+  - When CursorTroughTabs was set to 0, certain movement commands would
+    behave incorrectly.
+  + S-Ins will perform Paste operation in prompts.
+  + New Command: WinResize <delta> and WinClose. Windows can be also 
+    resized by a mouse.
+
+0.36 -- Oct 95
+  ! Fixed when editor would crash when saving a folded file, but no folds
+    are configured for active mode.
+  ! Fixed minor bug in C mode indentation.
+  + New command: InsertSpacesToTab (takes optional tabsize argument).
+
+0.35 -- Oct 95
+   KillWordPrev now works correctly.
+   FindReplace command works correctly if WSStyleSearch == 1.
+
+0.34 -- 1995/10/15
+   Minor fixes & docs updates...
+  
+0.33 -- 1995/10/01
+    
+  ! SIGBREAK handler now works again.
+  ! Fixes in C/C++ smart indentation (if in switch, ...)
+  + Pascal highlighting mode.
+  + Printing.
+  + Rewritten folding. Now supports nested folds, opening,
+    closing folds, and persistent folds.
+  + New folding commands: FoldCreate, FoldDestroy, FoldOpen,
+    FoldClose, FoldPromote, FoldDemote, FoldCreateByRegexp,
+    FoldOpenAll, FoldOpenNested, FoldCloseAll, FoldDestroyAll,
+    FoldToggleOpenClose, MoveFoldPrev, MoveFoldNext.
+  + New settings: SaveFolds, CommentStart, CommentEnd.
+  + Word characters can be configured using WordChars setting.
+    
+  
+0.32 -- 1995/08/15
+    
+  + New search routines. (Find, FindReplace, FindRepeat,
+    FindRepeatReverse, FindRepeatOnce, ...)
+  + Block-local searches.
+  + In buffer-list, most recently used files will now be listed first.
+  + Main menu bar can now be hidden.
+  + Performance improvements.
+  + Bookmarks! New commands: PlaceBookmark, GotoBookmark, RemoveBookmark
+  + Files can now be saved and closed from window list.
+  + Optimized CMode indentation. Also more configurable.
+    
+  
+0.31 -- 1995/07/31
+    
+  ! Bug fixed in undo/redo when UndoLimit reached.
+    
+0.30 -- 1995/07/30
+    
+  + Folding support.
+  + New commands: FoldLine, UnfoldLine, UnfoldNextLine, UnfoldAll, ClearFolds, FoldIndent, FoldRegexp, FoldBlock, UnfoldBlock, FoldBlockRegexp
+  ! BackSpace at eof when TrimLine is enabled will not abort.
+  + Incremental search (IncrementalSearch).
+  + PgUp/PgDn on a file prompt will show a list of files.
+  + New command: CompleteWord
+    
+  
+ 0.29
+  
+   1995/07/20
+    
+     Regexps can now be case insensitive (\C,\c).
+     BlockRead/BlockReadColumn/BlockWrite commands.
+     Block marking can now be undone.
+     Commands that prompt for string/int values can now take string/int arguments.
+     Multiple compile-regex statements can be specified simultaneously
+     Minor bug-fixes in regexps ([\x00-\xFF] now works).
+     Filter for filename completion.
+     New commands: SwitchTo ChangeKeys ChangeFlags ShowMenu 
+     New options: CompletionFilter DefaultModeName
+    
+  
+ 0.28
+  
+   1995/07/08
+    
+     - Needs to have documentation updated.
+     Mostly rewritten PERL highlighting. Works much better now.
+     Completely new config file syntax.
+     New commands: ASCIITable, LoadFileInMode
+     CMode indentation should now work for Perl (close enough).
+     Highlighting for ADA and Email messages.
+    
+  
+ 0.27
+  
+   1995/06/19
+    
+     Minor bug fixes.
+    
+  
+ 0.26
+  
+   1995/06/18
+    
+     New commands: {Char,Line,Block}Case{Up,Down,Toggle}
+     New setting: LoadAfterQuit -- if set to 1, editor will prompt to load another file before exiting.
+     New setting: ShowScrollBar {0,1}.
+    
+  
+ 0.25
+  
+   1995/06/12
+    
+     Minor bug fix in REXX highlighting ("\"", ...)
+     Bug fixes in word wrap.
+     BlockCut now doesn't move the cursor to the block beginning.
+     New commands: MoveLineTop, MoveLineCenter, MoveLineBottom.
+     Editor will now check if the file has changed before the first modification.
+     Found text is now highlighted.
+     New CMode setting: C.BraceOfs and command: ChangeCBraceOfs
+     New commands: MovePrevPos, SavePos, MoveSavedPos, MoveSavedPosCol, MoveSavedPosRow
+    
+  
+ 0.24
+  
+   1995/06/06
+    
+     When checking for file modification time of last change is now used instead of the time of last access.
+     Wildcard support for file loading.
+    
+  
+ 0.23
+  
+   1995/06/04
+    
+     Ctrl+C and Ctrl+Break are now disabled.
+     Ctrl+S and Ctrl+C keys are now again recognised in Windowed mode.
+     Fixed problem when spawning a subprocess in Windowed mode.
+     New command: ShowEntryScreen
+     ListRoutines in CMode only shows functions not their prototypes.
+     New setting: SysClipboard - if set to 1, editor will automatically use system clipboard.
+     New command: ToggleSysClipboard.
+     Minor bug fix in PM clipboard support.
+     New commands: BlockPasteStream, BlockPasteColumn and BlockPasteLine. BlockPaste command will now always paste in current block mode, not in the last Copy/Cut mode.
+     More than 4 commands can be bound to a key (actually this worked since 0.18, but was not documented).
+     New command: FileReload.
+     Editor will now check if file has changed on disk before saving it.
+    
+  
+ 0.22
+  
+   1995/05/28
+    
+     But fix in regular expressions (nested +#*@).
+     Changes in regular expression syntax.
+     New function: ListRoutines. Shows functions in current buffer.
+     New setting: RoutineRx
+    
+  
+ 0.21
+  
+   1995/05/21
+    
+     REXX mode smart indentation.
+     KillWord & KillWordPrev commands now actually work.
+     Pressing Ctrl+Enter to begin Search will toggle case sensitivity of search.
+     New option 'Trim' and commands 'ToggleTrim', 'LineTrim'. Removes whitespace from end of lines.
+     New option 'ShowMarkers' and command 'ToggleShowMarkers'. Shows end of line and end of file markers.
+     Bug fix in PERL highlighting (caused lockups)
+     Bug fixes and improvements in regular expressions.
+    
+  
+ 0.20
+  
+   1995/05/18
+    
+     Major bug fixes in word wrap.
+     New commands: MovePrevTab, MoveNextTab.
+     Bug fixes in BlockIndent and BlockUnindent (stream/line mode)
+    
+  
+ 0.19
+  
+   1995/05/16
+    
+     Function names in REXX are now highlighted.
+     WordWrap can be set to 0 - disabled, 1 - wrap line at right margin and 2 - wrap paragraph continously. Function ToggleAutoWrap renamed to ToggleWordWrap.
+     New way to set left/right margin (SetLeftMargin, SetLeftMargin)
+     Minor fix in PERL highlighting.
+    
+  
+ 0.18
+  
+   1995/05/13
+    
+     PERL Syntax Higlighting.
+     Memory allocation problem in tab expansion.
+     Wordwrap now strips all spaces on beginning of line (except on the first line of the paragraph).
+     Tabs can be set to any number between 1 and 32.
+     Changed names of buffer flags (WrapOn -> AutoWrap, UndoRedo -> Undo, ShowTab -> ShowTabs)
+     New commands: ToggleAutoIndent, ToggleExpandTabs, ToggleShowTabs, ToggleUndo, ToggleReadOnly, ToggleKeepBackups, ToggleMatchCase, ToggleBackSpKillTab,
+         ToggleDeleteKillTab, ToggleSpaceTabs, ToggleIndentWithTabs, ToggleBackSpUnindents, ToggleAutoWrap.
+     New commands: WinRefresh, ChangeTabSize, ChangeCIndent, ChangeLeftMargin, ChangeRightMargin.
+     
+  
+ 0.17
+  
+   1995/05/10
+    
+     Minor fix in word-wrap.
+     Screen repaint problems when shelling out fixed.
+     Blinking disabled for full-screen, high-intensity background colors can now be used.
+    
+  
+ 0.16
+  
+   1995/05/06
+   
+    Minor speedups in screen handling and highlighting.
+    Regular expressions can now match start and end of words using .
+    Regexp replace can paste entire matched string using &.
+    Regexp search/replace could match part of just replaced string.
+    New commands: MoveLastNonWhite, MovePrevEqualIndent and MoveNextEqualIndent, LineDuplicate, InsPrevLineChar, InsPrevLineToEol.
+    New color config. 'C.Function' for functions in C highlighting mode.
+    Improved CMode hilit, preprocessor hiliting improved (strings, comments, numbers)
+   
+  
+ 0.15
+  
+   1995/04/29
+    
+     Speed improvement in CMode auto indent.
+     Delete command can now delete full tabs instead of converting them to spaces.
+     When closing a modified file, editor prompts you to save it.
+     Automatic indentation can now use tabs.
+     Manual and automatic wordwrap.
+    
+   1995/04/24
+    
+     Backspace can now delete full tabs instead of converting them to spaces (See BackSpace and KillBackTab).
+     Backspace can unindent to previous indentation level.
+    
+   1995/04/20
+    
+     Basic mouse support.
+    
+   1995/04/12
+    
+     Configurable colors/keywords in C/REXX mode.
+    
+  
+ 0.14
+  
+   1995/04/07
+    
+     Characters could not be entered using AltGr on international keyboards.
+     Immediatelly doing an undo on a newly loaded file deleted the first line.
+     Ascii characters >= 128 can be now entered without quote command (C-Q).
+     IPF Syntax highlighting.
+    
+  
+ 0.13
+  
+   1995/04/03
+    
+     Bug fix in regular expressions.
+     Bug fixes in compiler support
+     Editor clipboard can now be copied to/from PM clipboard.
+    
+  
+ 0.12
+  
+   1995/03/30
+    
+     Compiler support + error message parsing
+    
+   1995/03/25
+    
+     Paren matching (Command: MatchBracket).
+     Bug fixes in CMode smart indentation.
+    
+  
+ 0.11
+  
+   1995/03/11
+    
+     Unlimited undo now works again.
+    
+   1995/03/18
+    
+     Entire blocks of C code can now be reindented (BlockReIndent)
+     Search can now be case insensitive (SearchMatchCase - toggle). Option: MatchCase, Command: SearchMatchCase
+     Regular expression find/replace works (case sensitive only)
+    
+   1995/03/19
+    
+     Fixed a bug in redo (last command could not be undone)
+     New option: KeepBackups -- if set to 0, backup files will be deleted after a succesful save.
+    
+  
+ 0.10
+  
+   1995/03/06
+    
+     Fixed CMode indent when tabs are present in the file.
+     Prompts now retain previous text only if you try to edit it.
+    
+   1995/03/04
+    
+     4DOS/4OS2 style filename completion (FileOpen, ...).
+    
+   1995/02/25
+    
+     New load routine, much faster in some cases.
+     Undo/Redo can now be limited (if you hate to waste memory).
+    
+   1995/02/19
+    
+     C Mode indentation level can now be specified (C.Indent)
+     Bug fixes in screen redraw. 
+     Editor will now scroll text instead of always redisplaying the screen.
+     Regular expressions (Search only).
+    
+  
+ 0.09 
+  
+   1995/02/08   
+    
+     First public release (Version 0.09b)
+    
+  
