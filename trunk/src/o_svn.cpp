@@ -74,9 +74,9 @@ char ESvn::GetFileStatus(char *file) {
     return 0;
 }
 
-//  §¡®à áâà®ª ¯®á«¥ ¢ë¯®«­¥­¨ï 'svn st'
-// ‘âà®ª¨ ­ ç¨­ îé¨¥áï ­  á¨¬¢®«ë ¨§ SvnStatusChars
-// ®¤á¢¥ç¨¢ îâáï ¨ ¬®¦­® ¯¥à¥©â¨ ­  íâ¨ ä ©«ë
+// Ğ Ğ°Ğ·Ğ±Ğ¾Ñ€ ÑÑ‚Ñ€Ğ¾Ğº Ğ¿Ğ¾ÑĞ»Ğµ Ğ²Ñ‹Ğ¿Ğ¾Ğ»Ğ½ĞµĞ½Ğ¸Ñ 'svn st'
+// Ğ¡Ñ‚Ñ€Ğ¾ĞºĞ¸ Ğ½Ğ°Ñ‡Ğ¸Ğ½Ğ°ÑÑ‰Ğ¸ĞµÑÑ Ğ½Ğ° ÑĞ¸Ğ¼Ğ²Ğ¾Ğ»Ñ‹ Ğ¸Ğ· SvnStatusChars
+// ĞŸĞ¾Ğ´ÑĞ²ĞµÑ‡Ğ¸Ğ²Ğ°ÑÑ‚ÑÑ Ğ¸ Ğ¼Ğ¾Ğ¶Ğ½Ğ¾ Ğ¿ĞµÑ€ĞµĞ¹Ñ‚Ğ¸ Ğ½Ğ° ÑÑ‚Ğ¸ Ñ„Ğ°Ğ¹Ğ»Ñ‹
 void ESvn::ParseLine(char *line, int len) {
     if (len > 2 && line[1] == ' ' && strchr(SvnStatusChars, line[0]))
         AddLine(line + 7, -1, line, 5);
