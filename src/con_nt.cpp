@@ -332,8 +332,8 @@ int ReadConsoleEvent(TEvent *E) {
                 case '`':
                     Ch = '`';
                     break;
-                case 'ï':
-                    Ch = 'ï';
+                case '\xEF':
+                    Ch = '\xEF';
                     break;
                 }
             }
@@ -871,7 +871,9 @@ char ConGetDrawChar(int index) {
     static const char *tab = NULL;
 
     if (!tab) {
-        tab = GetGUICharacters("WindowsNT", "Ú¿ÀÙÄ³ÂÃ´ÁÅ\x1AúÄ±°\x1B\x1A");
+        tab = GetGUICharacters("WindowsNT",
+                               "\xDA\xBF\xC0\xD9\xC4\xB3\xC2\xC3\xB4\xC1\xC5"
+                               "\x1A\xFA\x04\xC4\x18\x19\xB1\xB0\x1B\x1A");
     }
     assert(index >= 0 && index < (int)strlen(tab));
 
