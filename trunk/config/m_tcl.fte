@@ -156,6 +156,7 @@ mode TCL: SOURCE { # TCL
     SaveFolds           = 2;      # save fold info at end of line
     CommentStart        = ' #';
     CommentEnd          = '';
+    RoutineRegexp      = /^{proc}\s+/;
 }
 
 oinclude 'mym_tcl.fte';
