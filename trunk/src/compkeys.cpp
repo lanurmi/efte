@@ -2,7 +2,7 @@
  * compkeys.cpp
  *
  *    Copyright (c) 2008, eFTE SF Group (see AUTHORS file)
- *    Copyright (c) 1998 by István Váradi
+ *    Copyright (c) 1998 by IstvÃ¡n VÃ¡radi
  *
  *    You may distribute under the terms of either the GNU General Public
  *    License or the Artistic License, as specified in the README file.
@@ -332,7 +332,7 @@ int main(int argc, char* argv[]) {
     finname[0] = '\0';
     foutname[0] = '\0';
 
-    printf("Linux keymap compiler for SLang eFTE, Copyright (c) 1998 by István Váradi\n\n");
+    printf("Linux keymap compiler for SLang eFTE, Copyright (c) 1998 by IstvÃ¡n VÃ¡radi\n\n");
 
     if (argc < 3) {
         fprintf(stderr, "Usage: compkeys infile outfile\n\n");
