@@ -16,8 +16,7 @@ colorize C {
     };
 
     keyword 'Editor_Keywords' { # any missing ?
-        # standard C keywords
-	'asm',
+	# standard C(99) keywords
 	'break',
 	'case',
 	'const',
@@ -31,13 +30,17 @@ colorize C {
 	'goto',
 	'if',
 	'inline',
+	'restrict',
 	'return',
 	'sizeof',
 	'struct',
 	'switch',
 	'typedef',
 	'union',
-        'while',
+	'while',
+	'_Bool',
+	'_Complex',
+	'_Imaginary',
 
 	# C++ keywords
 	'catch',
@@ -118,6 +121,7 @@ colorize C {
 	# wide char (from new C/C++ 1998/1999 standards):
 	'wchar_t',
 
+	'asm',
 	'cdecl',
 	'pascal',
 	'_asm',
