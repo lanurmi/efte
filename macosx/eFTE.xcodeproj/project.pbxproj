@@ -103,6 +103,7 @@
 		536371520D417E4F0021126C /* cocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 536371500D417E4F0021126C /* cocoa.mm */; };
 		536371530D417E4F0021126C /* con_cocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 536371510D417E4F0021126C /* con_cocoa.cpp */; };
 		5363715B0D417EEB0021126C /* FTETextAreaView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5363715A0D417EEB0021126C /* FTETextAreaView.m */; };
+		53BB49371167FDDE002D3A06 /* efte.icns in Resources */ = {isa = PBXBuildFile; fileRef = 53BB49361167FDDE002D3A06 /* efte.icns */; };
 		53C00BF30F2D432300EB3E6A /* cfte.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 538B51870D414C740092CDDF /* cfte.cpp */; };
 		53EBAEEA104133660047FD93 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 53EBAEE9104133660047FD93 /* Info.plist */; };
 		8D11072A0486CEB800E47090 /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = 29B97318FDCFA39411CA2CEA /* MainMenu.nib */; };
@@ -271,6 +272,7 @@
 		536371590D417EEB0021126C /* FTETextAreaView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FTETextAreaView.h; sourceTree = "<group>"; };
 		5363715A0D417EEB0021126C /* FTETextAreaView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FTETextAreaView.m; sourceTree = "<group>"; };
 		538B51870D414C740092CDDF /* cfte.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cfte.cpp; sourceTree = "<group>"; };
+		53BB49361167FDDE002D3A06 /* efte.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = efte.icns; sourceTree = "<group>"; };
 		53EBAEE9104133660047FD93 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Info.plist; sourceTree = SOURCE_ROOT; };
 		8D1107320486CEB800E47090 /* eFTE.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = eFTE.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -323,6 +325,7 @@
 		29B97314FDCFA39411CA2CEA /* eFTE */ = {
 			isa = PBXGroup;
 			children = (
+				53BB49361167FDDE002D3A06 /* efte.icns */,
 				532F69670D30192B00C0ED59 /* src */,
 				080E96DDFE201D6D7F000001 /* Classes */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
@@ -594,6 +597,7 @@
 				532F6AB60D30192E00C0ED59 /* tagprev.bmp in Resources */,
 				532F6AB70D30192E00C0ED59 /* undo.bmp in Resources */,
 				53EBAEEA104133660047FD93 /* Info.plist in Resources */,
+				53BB49371167FDDE002D3A06 /* efte.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
