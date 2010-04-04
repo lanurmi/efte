@@ -104,6 +104,7 @@
 		536371530D417E4F0021126C /* con_cocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 536371510D417E4F0021126C /* con_cocoa.cpp */; };
 		5363715B0D417EEB0021126C /* FTETextAreaView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5363715A0D417EEB0021126C /* FTETextAreaView.m */; };
 		53BB49371167FDDE002D3A06 /* efte.icns in Resources */ = {isa = PBXBuildFile; fileRef = 53BB49361167FDDE002D3A06 /* efte.icns */; };
+		53BB496B116817E4002D3A06 /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BB496A116817E4002D3A06 /* AppController.m */; };
 		53C00BF30F2D432300EB3E6A /* cfte.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 538B51870D414C740092CDDF /* cfte.cpp */; };
 		53EBAEEA104133660047FD93 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 53EBAEE9104133660047FD93 /* Info.plist */; };
 		8D11072A0486CEB800E47090 /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = 29B97318FDCFA39411CA2CEA /* MainMenu.nib */; };
@@ -273,6 +274,8 @@
 		5363715A0D417EEB0021126C /* FTETextAreaView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FTETextAreaView.m; sourceTree = "<group>"; };
 		538B51870D414C740092CDDF /* cfte.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cfte.cpp; sourceTree = "<group>"; };
 		53BB49361167FDDE002D3A06 /* efte.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = efte.icns; sourceTree = "<group>"; };
+		53BB4969116817E4002D3A06 /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppController.h; sourceTree = "<group>"; };
+		53BB496A116817E4002D3A06 /* AppController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppController.m; sourceTree = "<group>"; };
 		53EBAEE9104133660047FD93 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Info.plist; sourceTree = SOURCE_ROOT; };
 		8D1107320486CEB800E47090 /* eFTE.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = eFTE.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -365,6 +368,8 @@
 		532F69670D30192B00C0ED59 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				53BB4969116817E4002D3A06 /* AppController.h */,
+				53BB496A116817E4002D3A06 /* AppController.m */,
 				536371590D417EEB0021126C /* FTETextAreaView.h */,
 				5363715A0D417EEB0021126C /* FTETextAreaView.m */,
 				5363714F0D417E4F0021126C /* cocoa.h */,
@@ -692,6 +697,7 @@
 				536371530D417E4F0021126C /* con_cocoa.cpp in Sources */,
 				5363715B0D417EEB0021126C /* FTETextAreaView.m in Sources */,
 				53C00BF30F2D432300EB3E6A /* cfte.cpp in Sources */,
+				53BB496B116817E4002D3A06 /* AppController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -748,6 +754,7 @@
 				OTHER_CFLAGS = (
 					"-DUNIX",
 					"-DMACOSX",
+					"-DCOMPILING_FOR_COCOA",
 				);
 				PREBINDING = NO;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
@@ -767,6 +774,7 @@
 				OTHER_CFLAGS = (
 					"-DUNIX",
 					"-DMACOSX",
+					"-DCOMPILING_FOR_COCOA",
 				);
 				PREBINDING = NO;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;

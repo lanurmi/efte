@@ -1193,6 +1193,9 @@ void GUI::ProcessEvent() {
     }
 }
 
+// Temporary hack: This function has different implementation
+// for the experimental Cocoa version
+#ifndef COMPILING_FOR_COCOA
 int GUI::Run() {
     if (Start(fArgc, fArgv) == 0) {
         doLoop = 1;
@@ -1203,6 +1206,7 @@ int GUI::Run() {
     }
     return 1;
 }
+#endif // !COMPILING_FOR_COCOA
 
 int GUI::multiFrame() {
     return 0;

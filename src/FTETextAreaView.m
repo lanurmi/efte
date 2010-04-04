@@ -99,6 +99,8 @@ static const NSColor* getNSColorForDOSColor(int color) {
 - (void)mouseDown:(NSEvent *)theEvent {
     [super mouseDown:theEvent];
 	NSLog(@"mouse");
+	MyDispatchKeyEvent('m');
+	[self setNeedsDisplay:YES];
 }
 
 void *theGlobalGUI = 0;
@@ -108,8 +110,9 @@ void MyDispatchEvent();
 	NSLog(@"key pressed");
 	NSLog([theEvent characters]);
 	
-	MyDispatchKeyEvent([theEvent characters]);
+	MyDispatchKeyEvent([[theEvent characters] characterAtIndex:0]);
 	[self setNeedsDisplay:YES];
+	[self display];
 
 //	DispatchEvent(frames, NextEvent.Msg.View, NextEvent);
 //	NextEvent.What = evNone;
