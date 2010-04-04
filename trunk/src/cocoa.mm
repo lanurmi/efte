@@ -8,10 +8,15 @@
  */
 
 #import <Cocoa/Cocoa.h>
+#import "AppController.h"
 
 int cacao() {
     int argc = 1;
     char *myarg = "";
     char **argv = &myarg;
+
+    AppController *delegate = [[AppController alloc] init];
+    [NSApp setDelegate: delegate];
+
     return NSApplicationMain(argc, (const char **) argv);
 }
