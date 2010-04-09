@@ -53,7 +53,7 @@ char *MakeBackup(char *FileName, char *NewName) {
 
 		strcpy(TmpFileName, FileName);
 
-        for (int idx=0; idx < strlen(TmpFileName); idx++)
+        for (size_t idx=0; idx < strlen(TmpFileName); idx++)
             if (TmpFileName[idx] == '/' || TmpFileName[idx] == '\\' || TmpFileName[idx] == ':')
                 TmpFileName[idx] = '_';
         snprintf(TmpBackupName, MAXPATH, "%s/%s", BackupDirectory, TmpFileName);
