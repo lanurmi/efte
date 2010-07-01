@@ -1838,8 +1838,7 @@ static int LoadFile(const char *WhereName, const char *CfgName, int Level, int o
 
         for (int idx=0; idx<SEARCH_PATH_LEN; idx++) {
             sprintf(tmp, dirs[idx], CfgName);
-            ExpandPath(tmp, Cfg, sizeof(Cfg));
-            if (FileExists(Cfg)) {
+            if (ExpandPath(tmp, Cfg, sizeof(Cfg)) == 0 && FileExists(Cfg)) {
                 found = true;
                 break;
             }

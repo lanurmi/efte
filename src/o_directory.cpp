@@ -22,7 +22,8 @@ EDirectory::EDirectory(int createFlags, EModel **ARoot, char *aPath): EList(crea
     Files = 0;
     FCount = 0;
     SearchLen = 0;
-    ExpandPath(aPath, XPath, sizeof(XPath));
+    if (ExpandPath(aPath, XPath, sizeof(XPath)) == -1)
+        strcpy(XPath, "/");
     Slash(XPath, 1);
     Path = strdup(XPath);
     RescanList();
