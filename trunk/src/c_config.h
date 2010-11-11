@@ -8,8 +8,8 @@
  *
  */
 
-#ifndef __CONFIG_H
-#define __CONFIG_H
+#ifndef CCONFIG_H_
+#define CCONFIG_H_
 
 #include "sysdep.h"
 

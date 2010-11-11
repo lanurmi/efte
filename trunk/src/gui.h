@@ -8,8 +8,8 @@
  *
  */
 
-#ifndef __GUI_H
-#define __GUI_H
+#ifndef GUI_H_
+#define GUI_H_
 
 #include "console.h"
 #include <stdarg.h>

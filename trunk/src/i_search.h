@@ -8,8 +8,8 @@
  *
  */
 
-#ifndef __ISEARCH_H
-#define __ISEARCH_H
+#ifndef ISEARCH_H_
+#define ISEARCH_H_
 
 #define MAXISEARCH 256
 

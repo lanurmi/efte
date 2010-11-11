@@ -8,8 +8,8 @@
  *
  */
 
-#ifndef __FTE_H
-#define __FTE_H
+#ifndef FTE_H_
+#define FTE_H_
 
 #include "ftever.h"
 #include "sysdep.h"

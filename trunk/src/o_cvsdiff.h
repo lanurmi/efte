@@ -12,8 +12,8 @@
  * to clipboard and allows to jump to lines in real sources.
  */
 
-#ifndef __CVSDIFF_H__
-#define __CVSDIFF_H__
+#ifndef CVSDIFF_H_
+#define CVSDIFF_H_
 
 class ECvsDiff: public ECvsBase {
 public:

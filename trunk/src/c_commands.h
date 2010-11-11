@@ -8,8 +8,8 @@
  *
  */
 
-#ifndef __COMMANDS_H__
-#define __COMMANDS_H__
+#ifndef COMMANDS_H_
+#define COMMANDS_H_
 
 typedef enum {
     ErFAIL = 0,

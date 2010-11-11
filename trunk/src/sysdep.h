@@ -8,8 +8,8 @@
  *
  */
 
-#ifndef __SYSDEP_H
-#define __SYSDEP_H
+#ifndef SYSDEP_H_
+#define SYSDEP_H_
 
 /* Support big files on 32-bit platform, if possible. */
 #define _FILE_OFFSET_BITS 64

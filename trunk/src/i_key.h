@@ -8,8 +8,8 @@
  *
  */
 
-#ifndef __EXKEY_H
-#define __EXKEY_H
+#ifndef EXKEY_H_
+#define EXKEY_H_
 
 class ExKey: public ExView {
 public:

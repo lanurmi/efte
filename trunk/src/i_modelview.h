@@ -8,8 +8,8 @@
  *
  */
 
-#ifndef __EXEDIT_H
-#define __EXEDIT_H
+#ifndef EXEDIT_H_
+#define EXEDIT_H_
 
 class EView;
 

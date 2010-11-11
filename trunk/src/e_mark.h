@@ -7,8 +7,8 @@
  * License or the Artistic License, as specified in the README file.
  *
  */
-#ifndef __EMARK_H
-#define __EMARK_H
+#ifndef EMARK_H_
+#define EMARK_H_
 
 #include "e_buffer.h"
 

@@ -8,8 +8,8 @@
  *
  */
 
-#ifndef __CLIPLIB_H
-#define __CLIPLIB_H
+#ifndef CLIPLIB_H_
+#define CLIPLIB_H_
 
 #ifdef __cplusplus
 extern "C" {

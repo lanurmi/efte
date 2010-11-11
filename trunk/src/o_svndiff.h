@@ -12,8 +12,8 @@
  * to clipboard and allows to jump to lines in real sources.
  */
 
-#ifndef __SVNDIFF_H__
-#define __SVNDIFF_H__
+#ifndef SVNDIFF_H_
+#define SVNDIFF_H_
 
 class ESvnDiff: public ESvnBase {
 public:

@@ -8,8 +8,8 @@
  *
  */
 
-#ifndef __HILIT_H__
-#define __HILIT_H__
+#ifndef HILIT_H_
+#define HILIT_H_
 
 #include "console.h"
 #include "c_mode.h"
@@ -238,4 +238,4 @@ inline int LookAtNoCase(EBuffer *B, int Row, unsigned int Pos, const char *What,
     return LookAt(B, Row, Pos, What, State, NoWord, 1);
 }
 
-#endif /* __HILIT_H__ */
+#endif /* __HILIT_H_ */

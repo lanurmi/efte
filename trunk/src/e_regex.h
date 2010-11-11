@@ -8,8 +8,8 @@
  *
  */
 
-#ifndef __REGEX_H
-#define __REGEX_H
+#ifndef REGEX_H_
+#define REGEX_H_
 
 /*
  * Operator:

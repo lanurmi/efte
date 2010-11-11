@@ -8,8 +8,8 @@
  *
  */
 
-#ifndef __OLIST_H__
-#define __OLIST_H__
+#ifndef OLIST_H_
+#define OLIST_H_
 
 class EList;
 

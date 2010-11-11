@@ -8,8 +8,8 @@
  *
  */
 
-#ifndef __BIND_H
-#define __BIND_H
+#ifndef BIND_H_
+#define BIND_H_
 
 
 #include "console.h"

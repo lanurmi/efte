@@ -8,8 +8,8 @@
  *
  */
 
-#ifndef __IOVIEW_H
-#define __IOVIEW_H
+#ifndef IOVIEW_H_
+#define IOVIEW_H_
 
 class GxView;
 class EBuffer;

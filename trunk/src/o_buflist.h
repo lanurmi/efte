@@ -8,8 +8,8 @@
  *
  */
 
-#ifndef __BUFLIST_H
-#define __BUFLIST_H
+#ifndef BUFLIST_H_
+#define BUFLIST_H_
 
 class BufferView: public EList {
 public:

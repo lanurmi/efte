@@ -8,8 +8,8 @@
  *
  */
 
-#ifndef __ROUTINE_H__
-#define __ROUTINE_H__
+#ifndef ROUTINE_H_
+#define ROUTINE_H_
 
 class RoutineView: public EList {
 public:

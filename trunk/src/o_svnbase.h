@@ -12,8 +12,8 @@
  * - starts SVN and shows its messages in list view.
  */
 
-#ifndef __SVNBASE_H__
-#define __SVNBASE_H__
+#ifndef SVNBASE_H_
+#define SVNBASE_H_
 
 typedef struct {
     char *File; // Relative to view's directory

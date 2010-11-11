@@ -8,8 +8,8 @@
  *
  */
 
-#ifndef __FPOSHIST_H__
-#define __FPOSHIST_H__
+#ifndef FPOSHIST_H_
+#define FPOSHIST_H_
 
 #ifdef UNIX
 #define HISTORY_NAME ".efte-history"

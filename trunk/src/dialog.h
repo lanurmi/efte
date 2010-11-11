@@ -8,8 +8,8 @@
  *
  */
 
-#ifndef __DIALOG_H__
-#define __DIALOG_H__
+#ifndef DIALOG_H_
+#define DIALOG_H_
 
 #define askYes     0
 #define askNo      1

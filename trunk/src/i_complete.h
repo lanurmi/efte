@@ -8,8 +8,8 @@
  *
  */
 
-#ifndef __EXCOMPLETE_H
-#define __EXCOMPLETE_H
+#ifndef EXCOMPLETE_H_
+#define EXCOMPLETE_H_
 
 #include <ctype.h>
 

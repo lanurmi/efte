@@ -8,8 +8,8 @@
  *
  */
 
-#ifndef __MESSAGES_H__
-#define __MESSAGES_H__
+#ifndef MESSAGES_H_
+#define MESSAGES_H_
 
 typedef struct {
     char *file;

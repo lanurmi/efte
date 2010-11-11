@@ -8,8 +8,8 @@
  *
  */
 
-#ifndef __FILESYS_H__
-#define __FILESYS_H__
+#ifndef FILESYS_H_
+#define FILESYS_H_
 
 #define SDOT   "."
 

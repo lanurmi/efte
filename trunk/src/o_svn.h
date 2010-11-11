@@ -12,8 +12,8 @@
  * Class providing access to most of SVN commands.
  */
 
-#ifndef __SVN_H__
-#define __SVN_H__
+#ifndef SVN_H_
+#define SVN_H_
 
 class ESvn: public ESvnBase {
 public:

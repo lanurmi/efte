@@ -8,8 +8,8 @@
  *
  */
 
-#ifndef __FCONFIG_H__
-#define __FCONFIG_H__
+#ifndef FCONFIG_H_
+#define FCONFIG_H_
 
 #define CF_STRING   1
 #define CF_INT      2

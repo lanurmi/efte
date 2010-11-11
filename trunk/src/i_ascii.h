@@ -8,8 +8,8 @@
  *
  */
 
-#ifndef __EXASCII_H
-#define __EXASCII_H
+#ifndef EXASCII_H_
+#define EXASCII_H_
 
 class ExASCII: public ExView {
 public:

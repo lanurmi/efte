@@ -8,8 +8,8 @@
  *
  */
 
-#ifndef __CONI18N_H__
-#define __CONI18N_H__
+#ifndef CONI18N_H_
+#define CONI18N_H_
 
 #include <X11/Xlib.h>
 #include <X11/Xlocale.h>

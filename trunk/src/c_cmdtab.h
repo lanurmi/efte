@@ -8,8 +8,8 @@
  *
  */
 
-#ifndef CMDTAB_H
-#define CMDTAB_H
+#ifndef CMDTAB_H_
+#define CMDTAB_H_
 
 #include "c_commands.h"
 
