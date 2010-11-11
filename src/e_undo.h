@@ -8,8 +8,8 @@
  *
  */
 
-#ifndef __UNDO_H__
-#define __UNDO_H__
+#ifndef UNDO_H_
+#define UNDO_H_
 
 /*
  * only core operations can be directly undone

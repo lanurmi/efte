@@ -8,8 +8,8 @@
  *
  */
 
-#ifndef __EGUI_H__
-#define __EGUI_H__
+#ifndef EGUI_H_
+#define EGUI_H_
 
 #include "gui.h"
 #include "c_bind.h"  // KeySel

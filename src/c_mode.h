@@ -8,8 +8,8 @@
  *
  */
 
-#ifndef __EMODE_H__
-#define __EMODE_H__
+#ifndef EMODE_H_
+#define EMODE_H_
 
 #define CMD_EXT 0x1000  // max 4096 internal commands, check cfte.cpp
 

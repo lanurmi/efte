@@ -8,8 +8,8 @@
  *
  */
 
-#ifndef __COLOR_H
-#define __COLOR_H
+#ifndef COLOR_H_
+#define COLOR_H_
 
 #include "c_mode.h"
 

@@ -11,8 +11,8 @@
  * Class providing access to most of CVS commands.
  */
 
-#ifndef __CVS_H__
-#define __CVS_H__
+#ifndef CVS_H_
+#define CVS_H_
 
 class ECvs: public ECvsBase {
 public:

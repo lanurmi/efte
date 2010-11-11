@@ -8,8 +8,8 @@
  *
  */
 
-#ifndef __MAPVIEW_H__
-#define __MAPVIEW_H__
+#ifndef MAPVIEW_H_
+#define MAPVIEW_H_
 
 class EventMapView: public EList {
 public:

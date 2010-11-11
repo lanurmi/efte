@@ -9,8 +9,8 @@
  *
  */
 
-#ifndef __TAGS_H
-#define __TAGS_H
+#ifndef TAGS_H_
+#define TAGS_H_
 
 #include <stdio.h> // FILE
 

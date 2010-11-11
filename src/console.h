@@ -8,8 +8,8 @@
  *
  */
 
-#ifndef __CONSOLE_H__
-#define __CONSOLE_H__
+#ifndef CONSOLE_H_
+#define CONSOLE_H_
 
 /* don't change these, used as index */
 #define DCH_C1 0

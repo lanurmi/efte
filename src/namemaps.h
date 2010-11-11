@@ -9,8 +9,8 @@
  */
 
 /* M$VC++ !!! */
-#ifndef __NAMEMAPS_H__
-#define __NAMEMAPS_H__
+#ifndef NAMEMAPS_H_
+#define NAMEMAPS_H_
 
 #define access     _access
 #define chmod      _chmod

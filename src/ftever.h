@@ -8,8 +8,8 @@
  *
  */
 
-#ifndef __FTEVER_H
-#define __FTEVER_H
+#ifndef FTEVER_H_
+#define FTEVER_H_
 
 #define MAKE_VERSION(major,minor,release) ((major<<24L) | (minor << 16L) | release)
 

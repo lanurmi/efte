@@ -8,8 +8,8 @@
  *
  */
 
-#ifndef __SDIRECT_H
-#define __SDIRECT_H
+#ifndef SDIRECT_H_
+#define SDIRECT_H_
 
 // error handling needs some work
 

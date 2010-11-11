@@ -12,8 +12,8 @@
  * - starts CVS and shows its messages in list view.
  */
 
-#ifndef __CVSBASE_H__
-#define __CVSBASE_H__
+#ifndef CVSBASE_H_
+#define CVSBASE_H_
 
 typedef struct {
     char *File; // Relative to view's directory

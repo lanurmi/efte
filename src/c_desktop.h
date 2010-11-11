@@ -8,8 +8,8 @@
  *
  */
 
-#ifndef __DESKTOP_H__
-#define __DESKTOP_H__
+#ifndef DESKTOP_H_
+#define DESKTOP_H_
 
 #ifdef UNIX
 #    define        DESKTOP_NAME       ".efte-desktop"

@@ -8,8 +8,8 @@
  *
  */
 
-#ifndef __I_VIEW_H__
-#define __I_VIEW_H__
+#ifndef I_VIEW_H_
+#define I_VIEW_H_
 
 class EView;
 

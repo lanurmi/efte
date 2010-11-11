@@ -8,8 +8,8 @@
  *
  */
 
-#ifndef __TOOLBAR_H
-#define __TOOLBAR_H
+#ifndef TOOLBAR_H_
+#define TOOLBAR_H_
 
 #define tiBITMAP     1
 #define tiSEPARATOR  2

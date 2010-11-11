@@ -8,8 +8,8 @@
  *
  */
 
-#ifndef __S_STRING_H__
-#define __S_STRING_H__
+#ifndef S_STRING_H_
+#define S_STRING_H_
 
 int UnTabStr(char *dest, int maxlen, const char *source, int slen);
 
@@ -25,4 +25,4 @@ size_t strlcat(char *dst, const char *src, size_t size);
 int stricmp(const char *a, const char *b);
 #endif
 
-#endif // __S_STRING_H__
+#endif

@@ -8,8 +8,8 @@
  *
  */
 
-#ifndef __S_UTIL_H__
-#define __S_UTIL_H__
+#ifndef S_UTIL_H_
+#define S_UTIL_H_
 
 #define USE_CtrlEnter    1
 

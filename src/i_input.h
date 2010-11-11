@@ -8,8 +8,8 @@
  *
  */
 
-#ifndef __EXINPUT_H
-#define __EXINPUT_H
+#ifndef EXINPUT_H_
+#define EXINPUT_H_
 
 typedef int (*Completer)(const char *Name, char *Completed, int Num);
 

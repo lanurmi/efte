@@ -8,8 +8,8 @@
  *
  */
 
-#ifndef __ODIRECTORY_H
-#define __ODIRECTORY_H
+#ifndef ODIRECTORY_H_
+#define ODIRECTORY_H_
 
 class EDirectory: public EList {
 public:

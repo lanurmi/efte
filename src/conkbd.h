@@ -8,8 +8,8 @@
  *
  */
 
-#ifndef __CONKBD_H__
-#define __CONKBD_H__
+#ifndef CONKBD_H_
+#define CONKBD_H_
 
 #define kfAltXXX    0x01000000L
 #define kfModifier  0x02000000L

@@ -8,8 +8,8 @@
  *
  */
 
-#ifndef __EXCHOICE_H
-#define __EXCHOICE_H
+#ifndef EXCHOICE_H_
+#define EXCHOICE_H_
 
 class ExChoice: public ExView {
 public:
