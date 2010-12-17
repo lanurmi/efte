@@ -31,6 +31,8 @@ typedef HILIT_P((*SyntaxProc));
 
 
 int Indent_Plain(EBuffer *B, int Line, int PosCursor);
+int Indent_Continue(EBuffer *B, int Line, int PosCursor);
+
 HILIT_P(Hilit_Plain);
 
 /* highlighting state */

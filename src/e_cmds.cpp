@@ -840,6 +840,10 @@ int EBuffer::LineIndent() {
             rc = Indent_SIMPLE(this, L, 1);
             break;
 
+        case INDENT_CONTINUE:
+            rc = Indent_Continue(this, L, 1);
+            break;
+
         default:
             rc = Indent_Plain(this, L, 1);
             break;

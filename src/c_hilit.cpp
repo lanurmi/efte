@@ -39,6 +39,7 @@ static const struct {
     { "REXX", INDENT_REXX },
     { "SIMPLE", INDENT_REXX },
     { "PLAIN", INDENT_PLAIN },
+    { "CONTINUE", INDENT_CONTINUE },
 };
 
 EColorize *Colorizers = 0;
