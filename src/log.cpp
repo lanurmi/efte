@@ -62,14 +62,23 @@ ostream& GlobalLog::operator()() {
     time_t tNow = time(NULL);
     struct tm* ptm = localtime(&tNow);
 
-    char cOldFill = m_ofsLog.fill('0');
+	char cOldFill = m_ofsLog.fill('0');
+#if defined(__WATCOMC__)
+	m_ofsLog << ptm->tm_year + 1900 << '-'
+		<< ptm->tm_mon  << '-'
+		<< ptm->tm_mday << ' '
+		<< ptm->tm_hour << ':'
+		<< ptm->tm_min  << ':'
+		<< ptm->tm_sec  << ' '
+#else
     m_ofsLog << setw(4) << ptm->tm_year + 1900 << '-'
-    << setw(2) << ptm->tm_mon  << '-'
-    << setw(2) << ptm->tm_mday << ' '
-    << setw(2) << ptm->tm_hour << ':'
-    << setw(2) << ptm->tm_min  << ':'
-    << setw(2) << ptm->tm_sec  << ' '
-    << "eFTE" << ' ';
+		<< setw(2) << ptm->tm_mon  << '-'
+		<< setw(2) << ptm->tm_mday << ' '
+		<< setw(2) << ptm->tm_hour << ':'
+		<< setw(2) << ptm->tm_min  << ':'
+		<< setw(2) << ptm->tm_sec  << ' '
+#endif
+		<< "eFTE" << ' ';
     m_ofsLog.fill(cOldFill);
     return m_ofsLog;
 }
@@ -134,8 +143,12 @@ void Log__BinaryData(FunctionLog& LOGOBJNAME, void* bin_data, size_t len, unsign
         for (j = i; j < i + LINE_LENGTH; ++j) {
             if (j < len) {
                 int const c = ((char*)bin_data)[i+j];
-                if (j != i) os << ',';
-                os << hex << setw(2) << c << dec;
+				if (j != i) os << ',';
+#if defined(__WATCOMC__)
+				os << hex << c << dec;
+#else
+				os << hex << setw(2) << c << dec;
+#endif
             } else {
                 os << "   ";
             }
