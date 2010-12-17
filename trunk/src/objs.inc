@@ -30,6 +30,7 @@ g_draw.$(OEXT) \
 g_menu.$(OEXT) \
 h_ada.$(OEXT) \
 h_c.$(OEXT) \
+h_cont.$(OEXT) \
 h_fte.$(OEXT) \
 h_ipf.$(OEXT) \
 h_make.$(OEXT) \

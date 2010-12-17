@@ -53,10 +53,11 @@ typedef int ChColor;
 #define HILIT_CATBS  15
 #define HILIT_SIMPLE 16
 
-#define INDENT_PLAIN  0
-#define INDENT_C      1
-#define INDENT_REXX   2
-#define INDENT_SIMPLE 3
+#define INDENT_PLAIN    0
+#define INDENT_C        1
+#define INDENT_REXX     2
+#define INDENT_SIMPLE   3
+#define INDENT_CONTINUE 4
 
 #define BFI_AutoIndent          0
 #define BFI_Insert              1
