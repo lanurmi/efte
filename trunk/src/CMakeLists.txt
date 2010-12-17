@@ -56,7 +56,7 @@ SET( BASE_FTE_SOURCES
   e_file.cpp e_fold.cpp e_line.cpp e_loadsave.cpp e_mark.cpp e_print.cpp
   e_redraw.cpp e_regex.cpp e_search.cpp e_svnlog.cpp e_tags.cpp e_trans.cpp
   e_undo.cpp egui.cpp fte.cpp g_draw.cpp g_menu.cpp gui.cpp h_ada.cpp
-  h_c.cpp h_catbs.cpp h_fte.cpp h_ipf.cpp h_make.cpp h_msg.cpp
+  h_c.cpp h_cont.cpp h_catbs.cpp h_fte.cpp h_ipf.cpp h_make.cpp h_msg.cpp
   h_pascal.cpp h_perl.cpp h_plain.cpp h_rexx.cpp h_sh.cpp h_simple.cpp
   h_tex.cpp i_ascii.cpp i_choice.cpp i_complete.cpp i_input.cpp i_key.cpp
   i_modelview.cpp i_oview.cpp i_search.cpp i_view.cpp indent.cpp log.cpp
