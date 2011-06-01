@@ -19,7 +19,6 @@ char buffer[MAXCLIPTEXT];
 
 int main(int argc, char **argv) {
     ClipData cd;
-    int i;
 
     if ((argc == 2) && (strcmp(argv[1], "-s") == 0)) {
         cd.fLen = fread(buffer, 1, MAXCLIPTEXT, stdin);

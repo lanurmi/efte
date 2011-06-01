@@ -63,6 +63,6 @@ extern ChColor hcChoice_NormalChar;
 
 extern ChColor MsgColor[3];
 
-int SetColor(const char *ChColor, const char *Value);
+int SetColor(const char *ColorV, const char *Value);
 
 #endif
