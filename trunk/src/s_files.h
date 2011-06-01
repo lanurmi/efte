@@ -27,7 +27,7 @@
 
 #define ISSLASH(c) (((c) == '/') || ((c) == '\\'))
 #define ISSEP(c) (((c) == ':') || ISSLASH(c))
-#endif
+#endif // OS2 || NT
 
 char *Slash(char *Path, int Add);
 char *SlashDir(char *Path);
@@ -47,4 +47,4 @@ int JoinDirFile(char *Dest, const char *Dir, const char *Name);
 char *SepRChr(char *Dir);
 int RelativePathName(const char *Dir, const char *Path, char *RelPath);
 
-#endif // OS2 || NT
+#endif
