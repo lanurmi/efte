@@ -38,10 +38,14 @@ int ELine::Allocate(unsigned int Bytes) {
     unsigned int Allocated;
 
     Allocated = (Bytes | CHAR_TRESHOLD);
-    if (Chars)
-        Chars = (char *) realloc(Chars, Allocated);
-    else
+    if (Chars) {
+        char *ReallocChars = (char *) realloc(Chars, Allocated);
+        if(ReallocChars == NULL)
+            free(Chars);
+        Chars = ReallocChars;
+    } else {
         Chars = (char *) malloc(Allocated);
+    }
     if (Chars == NULL)
         return 0;
     return 1;
