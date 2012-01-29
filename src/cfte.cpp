@@ -711,7 +711,7 @@ static int GetNumber(CurPos &cp) {
     int value = 0;
     int neg = 0;
 
-    if (cp.c < cp.z && *cp.c == '-' || *cp.c == '+') {
+    if (cp.c < cp.z && (*cp.c == '-' || *cp.c == '+')) {
         if (*cp.c == '-') neg = 1;
         cp.c++;
     }
