@@ -744,12 +744,12 @@ static int FindPrevIndent(EBuffer *B, int &RowP, int &ColP, char &CharP, int Fla
                             ENDFUNCRC(1);
                         }
                         if (((Flags & FIND_CASE) || (BolChar == ':')) &&
-                                (L - ColP >= 4 &&
+                                ((L - ColP >= 4 &&
                                  IsState(StateMap + ColP, hsC_Keyword, 4) &&
                                  memcmp(P + ColP, "case", 4) == 0) ||
                                 ((L - ColP >= 7) &&
                                  IsState(StateMap + ColP, hsC_Keyword, 7) &&
-                                 memcmp(P + ColP, "default", 7) == 0)) {
+                                 memcmp(P + ColP, "default", 7) == 0))) {
                             CharP = 'c';
                             if (BolChar == ':') {
                                 CharP = BolChar;
