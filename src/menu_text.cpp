@@ -210,7 +210,7 @@ int ExecVertMenu(int x, int y, int id, TEvent &E, UpMenu *up) {
     if (w > Cols) w = Cols;
     if (h > Rows) h = Rows;
 
-    if ((x + w) > Cols)
+    if ((x + w) > Cols) {
         if (up && up->x == 0 && up->y == 0 && up->h == 1) {
             x = Cols - w;
         } else {
@@ -219,12 +219,14 @@ int ExecVertMenu(int x, int y, int id, TEvent &E, UpMenu *up) {
             else
                 x = x - w + 1;
         }
-    if ((y + h) > Rows)
+    }
+    if ((y + h) > Rows) {
         if (up)
             y = y - h + 3;
         else {
             y = y - h + 1;
         }
+    }
     if (x < 0) x = 0;
     if (y < 0) y = 0;
 

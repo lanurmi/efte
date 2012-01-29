@@ -82,13 +82,14 @@ int EBuffer::BlockPrint() {
                         bc += Z - A;
                 }
             }
-            if (BFI(this, BFI_AddCR) == 1)
+            if (BFI(this, BFI_AddCR) == 1) {
                 if (fwrite(&cr, 1, 1, fp) != 1) {
                     error++;
                     break;
                 } else
                     bc++;
-            if (BFI(this, BFI_AddLF) == 1)
+            }
+            if (BFI(this, BFI_AddLF) == 1) {
                 if (fwrite(&lf, 1, 1, fp) != 1) {
                     error++;
                     break;
@@ -96,6 +97,7 @@ int EBuffer::BlockPrint() {
                     bc++;
                     lc++;
                 }
+            }
             if ((lc % 200) == 0)
                 Msg(S_INFO, "Printing, %d lines, %d bytes.", lc, bc);
 

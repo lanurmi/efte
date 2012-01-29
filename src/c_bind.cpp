@@ -319,11 +319,12 @@ static int MatchKey(TKeyCode aKey, KeySel aSel) {
     flags &= ~kfAltXXX;
 
     if (flags & kfShift) {
-        if (key < 256)
+        if (key < 256) {
             if (flags == kfShift)
                 flags &= ~kfShift;
             else if (isascii(key))
                 key = toupper(key);
+        }
     }
     if ((flags & kfCtrl) && !(flags & kfSpecial))
         if (key < 32)

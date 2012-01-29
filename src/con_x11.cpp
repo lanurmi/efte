@@ -571,7 +571,7 @@ static int SetupXWindow(int argc, char **argv) {
                 ((char *)(colors + j))[0] = xc.blue >> 8;
                 ((char *)(colors + j))[1] = xc.green >> 8;
                 ((char *)(colors + j))[2] = xc.red >> 8;
-                ((char *)(colors + j))[3] = 0xff;
+                ((unsigned char *)(colors + j))[3] = 0xff;
             } else {
                 // Color parsing failed
                 colors[j] = 0;

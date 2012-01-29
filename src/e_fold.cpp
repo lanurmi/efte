@@ -148,11 +148,12 @@ int EBuffer::ExposeRow(int Row) { /*FOLD00*/
 
 void EBuffer::UpdateVis(EPoint &M, int Row, int Delta) { /*FOLD00*/
     if (Delta < 0) {
-        if (M.Row > Row)
+        if (M.Row > Row) {
             if (M.Row < Row - Delta)
                 M.Row = Row;
             else
                 M.Row += Delta;
+        }
     } else {
         if (M.Row >= Row)
             M.Row += Delta;

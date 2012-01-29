@@ -255,27 +255,30 @@ int EBuffer::UpdateMark(EPoint &M, int Type, int Row, int Col, int Rows, int Col
         switch (BlockMode) {
         case bmLine:
         case bmColumn:
-            if (M.Row >= Row)
+            if (M.Row >= Row) {
                 if (InRange(Row, M.Row, Row + Rows))
                     M.Row = Row;
                 else
                     M.Row -= Rows;
+            }
             break;
         case bmStream:
             if (Cols) {
                 if (M.Row == Row)
-                    if (M.Col >= Col)
+                    if (M.Col >= Col) {
                         if (M.Col < Col + Cols)
                             M.Col = Col;
                         else
                             M.Col -= Cols;
+                    }
             }
             if (Rows) {
-                if (M.Row >= Row)
+                if (M.Row >= Row) {
                     if (M.Row < Row + Rows) {
                         M.Row = Row;
                         M.Col = 0;
                     } else M.Row -= Rows;
+                }
             }
         }
         break;

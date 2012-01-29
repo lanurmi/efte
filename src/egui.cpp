@@ -974,12 +974,11 @@ void EGUI::EditorCleanup() {
     SSBuffer = NULL;
 
     if (ActiveView != NULL) {
-        EView *BW, *NW;
+        EView *BW;
 
         // If EView what is about to be deleted is currently ActiveView, ActiveView moves to next one
         // or if there is no next, it will be set as NULL.
         while ((BW = ActiveView) != NULL) {
-            NW = BW->Next;
             delete BW;
         }
         //EView *BW, *NW, *AW;
