@@ -261,7 +261,7 @@ int EBuffer::LoadFrom(const char *AFileName) {
                         // Locate position of comment start - skip bookmarks and fold
                         if (BFI(this, BFI_SaveBookmarks) == 2 && pos - 10 >= 0 && LL[l]->Chars[pos-1] == 'b') {
                             char numbuf[5];
-                            int i;
+                            unsigned int i;
 
                             memcpy(numbuf, LL[l]->Chars + pos - 5, 4);
                             numbuf[4] = 0;
@@ -314,7 +314,7 @@ int EBuffer::LoadFrom(const char *AFileName) {
                     // Now get bookmarks
                     if (BFI(this, BFI_SaveBookmarks) == where && (pos + len_end + 10 <= LL[l]->Count) && memcmp(LL[l]->Chars + pos, "BOOK", 4) == 0) {
                         int error = 0;
-                        int i, col, startBook;
+                        unsigned int i, col, startBook;
                         char numbuf[5], buf[256];
 
                         startBook = pos;
@@ -336,7 +336,7 @@ int EBuffer::LoadFrom(const char *AFileName) {
                                 error = 1;
                                 break;
                             }
-                            if (pos + i + 6 + len_end > LL[l]->Count || i == 0) {
+                            if (pos + i + 6 + len_end > (unsigned int)LL[l]->Count || i == 0) {
                                 error = 1;
                                 break;
                             }

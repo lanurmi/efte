@@ -376,7 +376,7 @@ static int SetGlobalNumber(int what, int number) {
 }
 
 static void SetRGBColor(const char *string) {
-    int idx, r, g, b;
+    unsigned int idx, r, g, b;
     if (sscanf(string, "%x:%x,%x,%x", &idx, &r, &g, &b) != 4) {
         fprintf(stderr, "Invalid RGB Definition: %s\n", string);
         return;
@@ -975,7 +975,7 @@ static int ReadColorize(CurPos &cp, EColorize *Colorize, const char *ModeName) {
 
             if (strcmp(colorstr, "-") != 0) {
                 const char *Value = colorstr;
-                int Col;
+                unsigned int Col;
 
                 if (*Value == '-') {
                     Value++;

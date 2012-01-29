@@ -1409,7 +1409,7 @@ int EBuffer::SetRightMargin() {
 }
 
 int EBuffer::ChangeMode(char *AMode) {
-    if (Mode = FindMode(AMode)) {
+    if ((Mode = FindMode(AMode)) != NULL) {
         Flags = Mode->Flags;
         HilitProc = 0;
         if (Mode->fColorize)
@@ -1422,7 +1422,7 @@ int EBuffer::ChangeMode(char *AMode) {
 }
 
 int EBuffer::ChangeKeys(char *AMode) {
-    if (Mode = FindMode(AMode)) {
+    if ((Mode = FindMode(AMode)) != NULL) {
         HilitProc = 0;
         if (Mode->fColorize)
             HilitProc = GetHilitProc(Mode->fColorize->SyntaxParser);

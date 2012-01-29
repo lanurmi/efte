@@ -705,17 +705,19 @@ int EBuffer::BlockWriteTo(const char *AFileName, int Append) {
                         bc += Z - A;
                 }
             }
-            if (BFI(this, BFI_AddCR) == 1)
+            if (BFI(this, BFI_AddCR) == 1) {
                 if (fputc(13, fp) < 0) goto error;
                 else
                     bc++;
-            if (BFI(this, BFI_AddLF) == 1)
+            }
+            if (BFI(this, BFI_AddLF) == 1) {
                 if (fputc(10, fp) < 0)
                     goto error;
                 else {
                     bc++;
                     lc++;
                 }
+            }
             if (bc > 65536 + oldc) {
                 Msg(S_INFO, "Writing %s, %d lines, %d bytes.", AFileName, lc, bc);
                 oldc = bc;
