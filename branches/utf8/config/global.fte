@@ -1,0 +1,138 @@
+object GLOBAL {
+#    ScreenSizeX = 80; ScreenSizeY = 25;
+
+    CursorBlink         = 0; # set to 1 to have a blinking cursor.
+    CursorInsertMask    = 127;
+    CursorOverMask      = 68;
+
+    SysClipboard        = 1;   # use system (PM) clipboard if available
+    SelectPathname      = 1;   # select pathname when asking for file
+        
+    OpenAfterClose      = 1;   # prompt to load new file after closing last
+        
+    ShowMenuBar         = 1;   # show main menu bar
+    ShowToolBar         = 1;   # builtin tool bar (OS/2 PM version only)
+                               # 0=none, 1=top 1=bottom of window
+    ShowVScroll         = 1;   # show vertical scroll bar (text)
+    ShowHScroll         = 0;   # show horizontal scroll bar (text)
+    WeirdScroll         = 0; 
+
+    PMDisableAccel      = 0;   # disable Alt+Fx PM accelerators
+
+    DefaultModeName     = 'PLAIN'; 
+    
+    KeepHistory         = 1;   # load/save history on entry/exit
+    LoadDesktopOnEntry  = 0;   # load desktop on fte start (2 = when no files)
+    SaveDesktopOnExit   = 0;   # save desktop in ExitEditor
+
+    IgnoreBufferList    = 0;   # skip buffer list in FileNext/Prev/Last
+    ReassignModelIds    = 0;   # assign first empty number for newly created buffer
+
+    RecheckReadOnly     = 0;   # recheck read only status when trying to modify file (only performed on when read only is set)
+
+    CompletionFilter    = /^{\c.+\.o|a|{bak}|{exe}|{lib}|{class}|{jar}|{zip}|{gz}|{tar.gz}|{tgz}}|{.+~}|{CVS}|{SVN}$/;
+    # {obj} file is also ASCII Object File Format for MAYA graphics editor
+    # so it is removed from Completion Filter
+    
+%if(OS_UNIX)
+    PrintDevice         = "|lpr";
+%endif
+%if(!OS_UNIX)
+    PrintDevice         = '\\DEV\\PRN';
+%endif
+    
+    CompileCommand      = 'make ';
+    KeepMessages        = 1;
+
+    CvsCommand          = 'cvs';
+    SvnCommand          = 'svn';
+%if(OS_UNIX)
+    HelpCommand         = "man";
+%endif
+%if(OS_OS2)
+    HelpCommand         = "start view.exe";
+%endif
+
+    ScrollBorderX       = 0;
+    ScrollBorderY       = 0;
+    ScrollJumpX         = 8;
+    ScrollJumpY         = 1;
+    
+# smart indentation.        
+    C_Indent            = 4;
+    C_Continuation      = 4;
+    C_BraceOfs          = 0;
+    C_CaseOfs           = 0;
+    C_CaseDelta         = 4;
+    C_ClassOfs          = 0;
+    C_ClassDelta        = 4;
+    C_ColonOfs          = -4;
+    C_CommentOfs        = 0;
+    C_CommentDelta      = 1;
+    C_FirstLevelWidth   = -1;
+    C_FirstLevelIndent  = 4;
+    C_ParenDelta        = -1;
+    # if this is true (1), function parameters will only indent
+    # as much as C_Continuation says, rather than line up one column
+    # to the right of the '('.
+    FunctionUsesContinuation = 0;
+    
+    REXX_Indent         = 4;
+#    REXX_Do_Offset      = 0;
+
+    # Compiler Regular Expressions
+    # 1 = Filename
+    # 2 = Line number
+    # 3 = Message
+
+    # Ant (groovy)
+    CompileRx = { 2, 4, 3, /^([\w:._\-\+\/\\]+):\d+:\s[^\/\\]*([\w:._\-\+\/\\]+):\s(.#)\s\@\sline\s(\d+),\scolumn\s\d+.$/ };
+
+    # Ant (javac)
+    CompileRx = { 1, 2, 3, /^.*\s([\w:._\-\+\/\\]+):(\d+):\s(.*)$/ };
+
+    # grep -n
+    CompileRx = { 1, 2, 3, /^([\w:._\-\+\/\\]#):(\d+):/ };
+    
+    # GCC
+    CompileRx = { 1, 2, 3, /^([\w:._\-\+\/\\]+):(\d+):\s(.*)$/ };
+    
+    # Borland C++
+    CompileRx = { 1, 2, 3, /^{Error}|{Warning}\s(\S+)\s(\d+):\s(.*)$/ };
+    
+    # Borland C++ 5.5 command line <wirawan0>
+    CompileRx = { 1, 2, 3, /^{Error E}|{Warning W}\d+\s(\S+)\s(\d+):\s(.*)$/ };
+    
+    # CSet++
+    CompileRx = { 1, 2, 3, /^([\w:._\-\+\/\\]+)\((\d+):\d+\)(.*)$/ };
+    
+    # Watcom C++
+    CompileRx = { 1, 2, 3, /^([\w:._\-\+\/\\]+)\((\d+)\):\x20{Error!}|{Warning!}(.*)$/ };
+    
+    # xlC (AIX)
+    CompileRx = { 1, 2, 3, /^"([\w:._\-\+\/\\]+)", line (\d+){.\d+}?: (.*)$/ };
+    
+    # IPF compiler
+    CompileRx = { 1, 2, 3, /^\<([^:]+):(\d+)\> (.*)$/ };
+    
+    CompileRx = { 1, 2, 3, /^([\w:._\-\+\/\\]+)\((\d+)\)\s*:\s*(.*)$/ };
+    CompileRx = { 2, 3, 1, /^([^\t]+)\t([^\t]+)\t(\d+)$/ };
+    CompileRx = { 2, 3, 1, /^\s*at\s*([^\(]+)\(([^\:]+)\:(\d+)\)$/ };  # PAF@design.ru
+
+    # jikes +E (tested with version 1.18)
+    CompileRx = { 1, 2, 3, /^.*\s([\w._\-\+\/\\]+):(\d+):\d+:\d+:\d+:\s(.*)$/ };
+
+    # Python interpreter tracebacks
+    CompileRx = { 1, 2, 3, /^\s*File\s+"([\w:._\-\+\/\\]+)",\s+line\s+(\d+)(.*)$/ };
+    
+    # bash: <wirawan0>
+    CompileRx = { 1, 2, 3, /^([\w:._\-\/\\]+): line (\d+):\s(.*)$/ };
+    
+    # perl: <wirawan0>
+    CompileRx = { 2, 3, 1, /^(.*) at ([^ ]+) line ([0-9]+)/ };
+    
+    CvsIgnoreRx = /^cvs update: Updating /;
+    CvsIgnoreRx = /^cvs server: Updating /;
+    SvnIgnoreRx = /^svn update: Updating /;
+    SvnIgnoreRx = /^svn server: Updating /;
+}

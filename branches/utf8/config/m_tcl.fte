@@ -1,0 +1,162 @@
+#
+# TCL keyword highlighting (initial version)
+#
+# Contributor: Wirawan Purwanto <wirawan0@softhome.net> [2003-01-22]
+# Submitted to FTE community: 2003-05-20
+#
+# NOTE:
+# All the keywords originally listed in this file were deleted: they
+# were 100% WRONG! They were SH keywords!
+#
+
+colorize TCL {
+    SyntaxParser = 'SIMPLE';
+    
+    color {
+        { 'Normal',      'Editor_Default' },
+        { 'Comment',     'Lang_Comment' },
+        { 'String',      'Lang_String' },
+        { 'Punctuation', 'Lang_Punctuation' },
+        { 'Variable',    'Lang_Variable' },
+        { 'Directive',   'Lang_Preprocessor' },
+        { 'Special',     'Lang_Control' },
+    };
+
+    keyword 'Editor_Keywords' {
+        'after', 'append', 'apply', 'array', 'auto_execok', 'auto_import',
+        'auto_load', 'auto_mkindex', 'auto_mkindex_old', 'auto_qualify',
+        'auto_reset',
+
+        'bgerror', 'binary', 'break',
+
+        'catch', 'cd', 'chan', 'clock', 'close', 'concat', 'continue',
+
+        'dde', 'dict',
+
+        'encoding', 'eof', 'error', 'eval', 'exec', 'exit', 'expr',
+
+        'fblocked', 'fconfigure', 'fcopy', 'file', 'file', 'fileevent',
+        'flush', 'for', 'foreach', 'format',
+
+        'gets', 'glob', 'global',
+
+        'history', 'http',
+
+        'if', 'incr', 'info', 'interp',
+
+        'join',
+
+        'lappend', 'lassign', 'lindex', 'linsert', 'list', 'llength', 'load',
+        'lrange', 'lrepeat', 'lreplace', 'lreverse', 'lsearch', 'lset',
+        'lsort',
+
+        'memory', 'msgcat', 'my',
+
+        'name', 'namespace', 'next',
+
+        'open',
+
+        'package', 'parray', 'pid', 'pkg_mkIndex', 'platform',
+        'prefix', 'proc', 'puts', 'pwd',
+
+        'read', 'refchan', 'regexp', 'registry', 'regsub', 'rename', 'return',
+
+        'scan', 'seek', 'self', 'set', 'socket', 'source', 'split', 'string',
+        'subst', 'switch',
+
+        'tcltest', 'tclvars', 'tcl_endOfWord', 'tcl_findLibrary',
+        'tcl_startOfNextWord', 'tcl_startOfPreviousWord', 'tcl_wordBreakAfter',
+        'tcl_wordBreakBefore', 'tell', 'throw', 'time', 'tm', 'trace',
+        'transchan', 'try',
+
+        'unknown', 'unload', 'unset', 'update', 'uplevel', 'upvar',
+
+        'variable', 'vwait',
+
+        'while',
+
+        'zlib'
+    };
+
+    # Namespaces
+    keyword 'Editor_Keywords2' {
+        'oo', 'platform', 'pkg', 'tcl', 'mathfunc'
+    };
+
+    # Functions under namespaces
+    keyword 'Editor_Keywords3' {
+        # oo
+        'class', 'copy', 'define', 'objdefine', 'object',
+
+        # pkg
+        'create',
+
+        # platform
+        'shell',
+
+        # tcl::mathfunc
+        'abs', 'acos', 'asin', 'atan', 'atan2', 'bool', 'ceil', 'cos',
+        'cosh', 'double', 'entier', 'exp', 'floor', 'fmod', 'hypot',
+        'int', 'isqrt', 'log', 'log10', 'max', 'min', 'pow', 'pand',
+        'round', 'sin', 'sinh', 'sqrt', 'srand', 'tan', 'tanh', 'wide'
+    };
+
+    # Variables
+    keyword 'Editor_Keywords4' {
+        'auto_execs', 'auto_index', 'auto_noexec', 'auto_noload',
+        'auto_path', 'env', 'tcl_nonwordchars', 'tcl_wordchars'
+    };
+
+    h_state 0 { 'Normal' }
+    h_trans { 1, '-s', 'a-zA-Z0-9_', 'Normal' }
+    h_trans { 5, '<', '$', 'Variable' }
+    h_trans { 6, '<', '-', 'Directive' }
+    h_trans { 7, '<', '.', 'Special' }
+    h_trans { 2, '<', '#', 'Comment' }
+    h_trans { 3, '<', '"', 'String' }
+    h_trans { 4, '<', '`', 'String' }
+    h_trans { 0, 'S', 'a-zA-Z0-9_', 'Punctuation' }
+
+    h_state 1 { 'Normal' }
+    h_trans { 0, '$', '', 'Normal' }
+    h_wtype { 0, 0, 0, '', 'a-zA-Z0-9_' }
+
+    h_state 2 { 'Comment' }
+    h_trans { 0, '$', '', 'Normal' }
+
+    h_state 3 { 'String' }
+    h_trans { 0, '>', '"', 'String' }
+    h_trans { 3, 'qQ', '\\', 'String' }
+
+    h_state 4 { 'String' }
+    h_trans { 0, '>', '`', 'String' }
+    h_trans { 4, 'qQ', '\\', 'String' }
+
+    h_state 5 { 'Variable' }
+    h_trans { 0, '$', '', 'Normal' }
+    h_trans { 0, '-S',  'a-zA-Z0-9_', 'Normal' }
+
+    h_state 6 { 'Directive' }
+    h_trans { 0, '$', '', 'Normal' }
+    h_trans { 0, '-S',  'a-zA-Z0-9_', 'Normal' }
+
+    h_state 7 { 'Special' }
+    h_trans { 0, '$', '', 'Normal' }
+    h_trans { 0, '-S',  'a-zA-Z0-9_', 'Normal' }
+}
+
+mode TCL: SOURCE { # TCL
+    FileNameRx          = /\.\ctcl$/;
+    FirstLineRx         = /^\#\![^ ]*{{wish>}|{tclsh>}}/;
+    HilitOn             = 1;
+    Colorizer           = 'TCL';
+    MultiLineHilit      = 1;
+    AutoHilitParen      = 1;
+    
+    SaveFolds           = 2;      # save fold info at end of line
+    CommentStart        = ' #';
+    CommentEnd          = '';
+    RoutineRegexp      = /^{proc}\s+/;
+}
+
+oinclude 'mym_tcl.fte';

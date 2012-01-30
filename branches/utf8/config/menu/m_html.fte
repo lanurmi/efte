@@ -1,0 +1,211 @@
+# eFTE menus for editing HTML files
+# contributed by m_debusk@sourceforge.com
+# Revision 2008-08-01
+
+# HTML
+
+menu HTML_DTD {
+    item    "XHTML 1.0 &Transitional" { HTML_DTD_X1T }
+    item    "XHTML 1.0 &Strict" { HTML_DTD_X1S }
+    item    "XHTML 1.0 &Frameset" { HTML_DTD_X1F }
+    item;
+    item    "HTML &4.01 Transitional" { HTML_DTD_4T }
+    item    "HTML 4.0&1 Strict" { HTML_DTD_4S }
+    item    "HTML 4.&01 Frameset" { HTML_DTD_4F }
+    item;
+    item    "HTML &3.2 Final" { HTML_DTD_32F }
+    item;
+    item    "HTML &2.0" { HTML_DTD_2 }
+}
+
+menu HTML_Character {
+    item    "&Bold        <b>       C-E C-B" { HTML_B }
+    item    "&Strong      <strong>  C-E C-S" { HTML_STRONG }
+    item    "&Italic      <i>       C-E C-I" { HTML_I }
+    item    "&Emphasize   <em>      C-E C-E" { HTML_EM }
+    item    "Bi&g         <big>     C+E A+B" { HTML_BIG }
+    item    "S&mall       <small>   C+E A+S" { HTML_SMALL }
+    item    "S&ubscript   <sub>     C+E A+U" { HTML_SUB }
+    item    "Superscri&pt <sup>     C+E A+P" { HTML_SUP }
+    item    "Bidirecti&on <bdo>     C+E A+O" { HTML_BDO }
+    
+}
+
+menu HTML_Output {
+    item    "Pre&formatted  <pre>  C-E C-F" { HTML_PRE }
+    item    "&Code          <code> C-E C-C" { HTML_CODE }
+    item    "&Typewriter    <tt>   C-E C-T" { HTML_TT }
+    item    "&Kbd entry     <kbd>  C-E C-K" { HTML_KBD }
+    item    "&Variable      <var>  C-E C-V" { HTML_VAR }
+    item    "Sam&ple msg    <samp> C-E C-M" { HTML_SAMP }
+}
+
+menu HTML_Header {
+    item    "&1  <h1>  C-E 1" { HTML_H1 }
+    item    "&2  <h2>  C-E 2" { HTML_H2 }
+    item    "&3  <h3>  C-E 3" { HTML_H3 }
+    item    "&4  <h4>  C-E 4" { HTML_H4 }
+    item    "&5  <h5>  C-E 5" { HTML_H5 }
+    item    "&6  <h6>  C-E 6" { HTML_H6 }
+}
+
+menu HTML_List {
+    item    "List &item        <li>  C-E i  "  { HTML_LI }
+    item    "&Unordered list   <ui>  C-E u  "  { HTML_UL }
+    item    "&Ordered list     <ol>  C-E o  "  { HTML_OL }
+    item    "&Definition       <dfn> C-E C-D"  { HTML_DFN }
+    item    "Definition &list  <dl>  C-E l  "  { HTML_DL }
+    item    "Definition &tag   <dt>  C-E t  "  { HTML_DT }
+    item    "Definition D&ata  <dd>  C-E d  "  { HTML_DD }
+}
+
+menu HTML_Table {
+    item    "&Table        <table>    C-E A-T " { HTML_TABLE }
+    item    "&Caption      <caption>  C-E A-C" { HTML_CAPTION }
+    item    "&Header       <th>       C-E A-H" { HTML_TH }
+    item    "&Row          <tr>       C-E A-R" { HTML_TR }
+    item    "&Data         <td>       C-E A-D" { HTML_TD }
+    item    "Co&lumn       <col>             " { HTML_COL }
+    item    "Column &Group <colgroup> C+E A+G" { HTML_COLGROUP }
+    item    "TH&ead        <thead>    C+E h  " { HTML_THEAD }
+    item    "TFo&ot        <tfoot>    C+E f  " { HTML_TFOOT }
+    item    "TBod&y        <thead>    C+E b  " { HTML_TBODY }
+}
+
+menu HTML_Colors {
+    item    "&Black  " { InsertString "#000000" }
+    item    "Bl&ue   " { InsertString "#0000ff" }
+    item    "&Cyan   " { InsertString "#00ffff" }
+    item    "&Gray   " { InsertString "#808080" }
+    item    "Gr&een  " { InsertString "#008000" }
+    item    "&Lime   " { InsertString "#00ff00" }
+    item    "&Magenta" { InsertString "#ff00ff" }
+    item    "M&aroon " { InsertString "#800000" }
+    item    "&Navy   " { InsertString "#000080" }
+    item    "&Olive  " { InsertString "#808000" }
+    item    "&Purple " { InsertString "#800080" }
+    item    "&Red    " { InsertString "#ff0000" }
+    item    "&Silver " { InsertString "#c0c0c0" }
+    item    "&Teal   " { InsertString "#008080" }
+    item    "&White  " { InsertString "#ffffff" }
+    item    "&Yellow " { InsertString "#ffff00" }
+}
+
+menu HTML_Blocks {
+    item    "&Abbreviation  <abbr>       C+E C+A" { HTML_ABBR }
+    item    "Acron&ym       <acronym>    C+E C+Y" { HTML_ACRONYM }
+    item    "Addre&ss       <address>    C+E A+A" { HTML_ADDRESS }
+    item    "&Blockquote    <blockquote> C+E C+Q" { HTML_BLOCKQUOTE }
+    item    "&Citation      <cite>       C-E C-O" { HTML_CITE }
+    item    "&Deleted Text  <del>        C+E A+E" { HTML_DEL }
+    item    "&Inserted Text <ins>        C+E A+I" { HTML_INS }
+    item    "&Quote         <q>          C+E A+Q" { HTML_Q }
+}
+
+menu HTML_Links {
+    item    "Anchor &Name   <a name> C-E C-N" { HTML_ANAME }
+    item    "Anchor H&Ref   <a href> C-E C-H" { HTML_AHREF }
+    item    "Resource &Link <link>   C+E C+L" { HTML_LINK }
+}
+menu HTML_Frames {
+    item    "&Frameset     <frameset> C+E 7  " { HTML_FRAMESET }
+    item    "F&rame        <frame>    C+E A+F" { HTML_FRAME }
+    item    "&No Frames    <noframes> C+E C+R" { HTML_NOFRAMES }
+    item    "&Inline Frame <iframe>          " { HTML_IFRAME }
+}
+
+menu HTML_Input {
+    item    "&Form            <form>     " { HTML_FORM }
+    item    "&Input Field     <input>    " { HTML_INPUT }
+    item    "&Text Area       <textarea> " { HTML_TEXTAREA }
+    item    "Push &Button     <button>   " { HTML_BUTTON }
+    item    "&Selectable list <select>   " { HTML_SELECT }
+    item    "&List box item   <option>   " { HTML_OPTION }
+    item    "&Option group    <optgroup> " { HTML_OPTGROUP }
+    item    "La&bel           <label>    " { HTML_LABEL }
+    item    "Fiel&dset        <fieldset> " { HTML_FIELDSET }
+    item    "Fi&eldset title  <legend>   " { HTML_LEGEND }
+}
+
+menu HTML_Images {
+    item    "Ima&ge Source   <img src> C-E C-G" { HTML_IMG }
+    item    "Image &Map      <map>     C+E A+M" { HTML_MAP }
+    item    "Image Map &Area <area>           " { HTML_AREA }
+}
+
+menu HTML_Styles {
+    submenu "C&olors                     ", HTML_Colors;
+    item;
+    item    "&Style      <style>  C+E A+L" { HTML_STYLE }
+    item    "&Division   <div>    C+E A+V" { HTML_DIV }
+    item    "S&pan Style <span>   C+E C+W" { HTML_SPAN }
+    item    "&Centered   <center> C-E .  " { HTML_CENTER }
+}
+
+menu HTML_Prog {
+    item    "&Script             <script>        " { HTML_SCRIPT }
+    item    "&Parameters         <param>         " { HTML_PARAM }
+    item    "Script &Alternative <noscript>      " { HTML_NOSCRIPT }
+    item    "Ob&ject             <object> C+E C+J" { HTML_OBJECT }
+}
+
+menu HTML_Doc {
+    submenu "Document T&ype Definitions      ", HTML_DTD;
+    submenu "&Frames                         ", HTML_Frames;
+    item;
+    item    "&Body           <body>   C+E 9  " { HTML_BODY }
+    item    "Declare &HTML   <html>   C+E C+Z" { HTML_HTM }
+    item    "Convert Te&xt            C-E &x " { HTML_TXT }
+    item    "Co&mment block  <!-- --> C-E c  " { HTML_COMMENT }
+    item    "Hea&d           <head>   C+E 8  " { HTML_HEAD }
+    item    "&Title          <title>         " { HTML_TITLE }
+    item    "Meta &Info      <meta />        " { HTML_META }
+    item    "Ba&se           <base /> C+E C+U" { HTML_BASEURL }
+}
+menu HTMLTags {
+    item    "&Paragraph     <p>  C-E C-P" { HTML_P }
+    item    "Line brea&k    <br> C-E Enter" { HTML_BR }
+    item    "Horiz. rule    <hr> C-E &-" { HTML_HR }
+    item    "Basic document      C-E &0" { HTML_Base }
+    item    "Basic Frame Document" { HTML_BaseFrame }
+    item;
+    submenu "Do&cument Tags", HTML_Doc;
+    submenu "C&haracter Format", HTML_Character;
+    submenu "Output &Format", HTML_Output;
+    submenu "&Blocks", HTML_Blocks;
+    submenu "Hea&der", HTML_Header;
+    submenu "&Lists", HTML_List;
+    submenu "&Tables", HTML_Table;
+    submenu "L&inks", HTML_Links;
+    submenu "F&orms", HTML_Input;
+    submenu "Ima&ges", HTML_Images;
+    submenu "St&yles", HTML_Styles;
+    submenu "P&rogramming", HTML_Prog;
+    item;
+    item "&View in Browser\tF9" { FileSave; HTML_View }
+    item "Save and &Tidy" {
+        FileSave; HTML_Tidy; FileReload; }
+    item "Save and &ISpell" {
+        FileSave;
+        RunProgram "E:\\ISPELL40\\ispell.exe " . $FilePath;
+        FileReload; }
+}
+
+menu Main_HTML {
+    submenu "&File",    File;
+    submenu "&Edit",    Edit;
+    submenu "&Block",   Block;
+    submenu "&Search",  Search;
+    submenu "Fol&d",    Fold;
+    submenu "&Tools",   Tools;
+    submenu "HT&ML",    HTMLTags;
+    submenu "&Window",  Window;
+    submenu "&Options", Options;
+    submenu "&Help",    Help;
+}
+
+eventmap HTML {
+    MainMenu            = "Main_HTML";   # menu for menubar
+    
+    key [A+M] { MainMenu 'M' }
+}

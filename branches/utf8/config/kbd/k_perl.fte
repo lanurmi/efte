@@ -1,0 +1,12 @@
+# additional keybindings for PERL mode
+# included from ../ui.fte
+
+eventmap PERL {
+    key      [Tab]      { LineIndent LineTrim }
+    key      [G-Enter]  { LineIndent LineNew LineIndent }
+
+    key      [#]        { SelfInsert LineIndent }
+    key      [{]        { SelfInsert LineIndent }
+    key      [}]        { SelfInsert LineIndent }
+    key      [A+\\]     { BlockReIndent }
+}

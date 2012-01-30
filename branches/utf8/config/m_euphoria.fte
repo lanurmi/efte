@@ -1,0 +1,144 @@
+#
+# eFTE mode for OpenEuphoria (http://openeuphoria.org)
+#
+# TODO:
+#   * Highlight eudoc comments
+#   * Handle include std/sequence.e properly
+#   * Highlight 'TODO' comments
+#
+
+colorize EUPHORIA {
+    SyntaxParser = "SIMPLE";
+
+    color {
+        { "Normal",      "Editor_Default" },
+        { "Function",    "Lang_Function" },
+        { "Number",      "Lang_DecimalNumber" },
+        { "Comment",     "Lang_Comment" },
+        { "String",      "Lang_String" },
+        { "Punctuation", "Lang_Punctuation" },
+    };
+
+    keyword "Editor_Keywords" {
+        "as", "and",
+        "by",
+        "case", "constant",
+        "do",
+        "end", "else", "elsif", "enum", "export",
+        "for", "function",
+        "global",
+        "include", "if",
+        "label", "loop",
+        "namespace", "not",
+        "or", "override",
+        "procedure", "public",
+        "switch",
+        "then", "type", "to",
+        "until",
+        "while",
+        "xor"
+    };
+
+    keyword "Editor_Keywords2" {
+        "atom", "integer", "object", "sequence"
+    };
+    
+    keyword "Editor_Keywords3" {
+        "break", "continue", "entry", "exit", "goto", "label", "retry", "return"
+    };
+    
+    keyword "Editor_Keywords4" {
+        "ifdef", "elsifdef", "elsedef", "trace", "with", "without"
+    };
+
+    h_state 0 { "Normal" }
+    h_trans { 1, "-s", "a-zA-Z_", "Normal" }
+    h_trans { 2, "<", "--", "Comment" }
+    h_trans { 7, '<', '/*', 'Comment' }
+    h_trans { 10, "",   "0b", "Number" }
+    h_trans { 11, "",   "0d", "Number" }
+    h_trans { 12, "",   "0t", "Number" }
+    h_trans { 13, "",   "0x", "Number" }
+    h_trans { 13, "",    "#", "Number" }
+    h_trans { 5, "<s", "0-9_", "Number" }
+    h_trans { 8, "", "`", "String" }
+    h_trans { 9, "", "\"\"\"", "String" }
+    h_trans { 3, "", "\"", "String" }
+    h_trans { 4, "", "\'", "String" }
+    h_trans { 0, "S", "_a-zA-Z0-9", "Punctuation" }
+
+    # Normal text
+    h_state 1 { "Normal" }
+    h_trans { 0, "$", "", "Normal" }
+    h_wtype { 1, 1, 0, "", "a-zA-Z0-9_" }
+
+    # Line comment
+    h_state 2 { "Comment" }
+    h_trans { 0, "$", "", "String" }
+
+    # Double quote string
+    h_state 3 { "String" }
+    h_trans { 0, "", "\"", "String" }
+    h_trans { 0, "$", "", "String" }
+    h_trans { 3, "Qq", "\\", "String" }
+
+    # Single quote character
+    h_state 4 { "String" }
+    h_trans { 0, "", "'", "String" }
+    h_trans { 0, "$", "", "String" }
+    h_trans { 4, "Qq", "\\", "String" }
+    
+    # Normal Number
+    h_state 5 { "Number" }
+    h_trans { 0, "-S", "0-9_", "Normal" }
+    h_trans { 0, "$", "", "Normal" }
+    
+    # Hex Number
+    h_state 6 { "Number" }
+    h_trans { 0, "-S", "0-9_", "Normal" }
+
+    # Multiline comment
+    h_state 7 { "Comment" }
+    h_trans { 0, ">", "*/", "Comment" }
+
+    # Mutiline backtick string
+    h_state 8 { "String" }
+    h_trans { 0, "", "`", "String" }
+
+    # Multiline triple quote string
+    h_state 9 { "String" }
+    h_trans { 0, "", "\"\"\"", "String" }
+
+    # Binary numbers
+    h_state 10 { "Number" }
+    h_trans { 0, "-S", "01_", "Normal" }
+
+    # Decimal (alternate) format
+    h_state 11 { "Number" }
+    h_trans { 0, "-S", "0-9_", "Normal" }
+
+    # Octal format
+    h_state 12 { "Number" }
+    h_trans { 0, "-S", "0-7_", "Normal" }
+
+    # Hex format
+    h_state 13 { "Number" }
+    h_trans { 0, "-S", "0-9A-Fa-f_", "Normal" }
+}
+
+mode EUPHORIA: SOURCE {
+    FileNameRx         = /\c{{\.{e}|{ew}|{eu}|{ex}|{exu}|{exw}}|{ex.err}}/;
+    HilitOn            = 1;
+    Colorizer          = "EUPHORIA";
+    AutoIndent         = 1;
+    IndentMode         = "CONTINUE";
+    MatchCase          = 1;
+    Trim               = 1;
+    MultiLineHilit     = 1;
+    AutoHilitParen     = 1;
+    SaveFolds          = 0;
+
+    RoutineRegexp      = /^{{override}|{public}|{global}|{export}}*\s*{{function}|{procedure}|{type}}\s+/;
+}
+
+oinclude "mym_euphoria.fte";

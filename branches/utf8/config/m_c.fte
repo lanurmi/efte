@@ -1,0 +1,214 @@
+# C mode
+
+colorize C {
+    SyntaxParser = 'C';
+
+    color {
+	{ 'Normal',	   'Editor_Default' },
+	{ 'Number',	   'Lang_DecimalNumber' },
+	{ 'HexNumber',	   'Lang_HexNumber' },
+	{ 'Punctuation',   'Lang_Punctuation' },
+	{ 'String',	   'Lang_String' },
+	{ 'Comment',	   'Lang_Comment' },
+	{ 'CPreprocessor', 'Lang_Preprocessor' },
+	{ 'Function',	   'Lang_Function' },
+	{ 'Label',	   'Lang_Label' },
+    };
+
+    keyword 'Editor_Keywords' { # any missing ?
+	# standard C(99) keywords
+	'break',
+	'case',
+	'const',
+	'continue',
+	'default',
+	'do',
+	'else',
+	'enum',
+	'extern',
+	'for',
+	'goto',
+	'if',
+	'inline',
+	'restrict',
+	'return',
+	'sizeof',
+	'struct',
+	'switch',
+	'typedef',
+	'union',
+	'while',
+	'_Bool',
+	'_Complex',
+	'_Imaginary',
+
+	# C++ keywords
+	'asm',
+	'catch',
+	'class',
+	'const_cast',
+	'delete',
+	'dynamic_cast',
+	'export',
+	'except',
+	'explicit',
+	'friend',
+	'finally',
+	'namespace',
+	'new',
+	'operator',
+	'private',
+	'protected',
+	'public',
+	'reinterpret_cast',
+	'static_cast',
+	'template',
+	'this',
+	'throw',
+	'try',
+	'typeid',
+	'type_info',
+	'typename',
+	'typeof',
+	'using',
+	'virtual',
+	'and',
+	'and_eq',
+	'bad_cast',
+	'bad_typeid',
+	'bitand',
+	'bitor',
+	'compl',
+	'not',
+	'not_eq',
+	'or',
+	'or_eq',
+	'xor',
+	'xor_eq',
+
+	# C++0x (C++ 11) keywords
+	# Source: N2798, Working Draft, Standard for Programming Language C++, 2008-10-04
+	'alignof',
+	'axiom',
+	'char16_t',
+	'char32_t',
+	'concept',
+	'concept_map',
+	'constexpr',
+	'decltype',
+	'late_check',
+	'nullptr',
+	'requires',
+	'static_assert',
+	'thread_local',
+
+	# types
+	'auto',
+	'char',
+	'double',
+	'float',
+	'int',
+	'int16_t',
+	'int32_t',
+	'int64_t',
+	'int8_t',
+	'long',
+	'off_t',
+	'ptrdiff_t',
+	'register',
+	'short',
+	'signed',
+	'size_t',
+	'ssize_t',
+	'static',
+	'time_t',
+	'uint',
+	'uint16_t',
+	'uint32_t',
+	'uint64_t',
+	'uint8_t',
+	'unsigned',
+	'void',
+	'volatile',
+
+	# types C++
+	'mutable',
+	'bool',
+
+	# wide char (from new C/C++ 1998/1999 standards):
+	'wchar_t',
+
+	'cdecl',
+	'pascal',
+	'_asm',
+	'__asm',
+	'_far16',
+	'__far16',
+	'_pascal',
+	'_cdecl',
+	'__cdecl',
+	'_export',
+	'__pascal',
+	'_stdcall',
+	'_syscall',
+	'__stdcall',
+	'__syscall',
+	'_fastcall',
+	'__fastcall',
+	'__export',
+	# some gcc extensions
+	'__asm__',
+	'__attribute__',
+	'__format__',
+	'__printf__',
+    };
+    # show these as numbers
+    # True, TRUE, False, FALSE, NULL are commonly defined values
+    # but they are not part of C lang
+    keyword 'Lang_DecimalNumber' {
+	'true',
+	'True',
+	'TRUE',
+	'false',
+	'False',
+	'FALSE',
+	'NULL',
+    };
+
+}
+
+mode C: SOURCE {      # C/C++ Mode
+    FileNameRx		= /\.\c{c|h|{cpp}|{cxx}|{hpp}|{cc}|{cu}|m|{mm}|{xs}}$/;
+    HilitOn		= 1;
+    Colorizer		= 'C';
+    AutoIndent		= 1;
+    IndentMode		= 'C';
+    MatchCase		= 1;
+    Trim		= 1;
+    MultiLineHilit	= 1;
+    AutoHilitParen	= 1;
+
+#    RoutineRegexp	 = /^\w[\w_:*&~]+[\w\\s_:*&~]@\(.*\){\s*\{}?\s*$/;
+    RoutineRegexp	= /^\w[\w_:*&~]+[\w\s_:*&~]@\([^;]*$/;
+#	RoutineRx      ^\w[\w_:*&]+[\w\s_:*&]@\(
+#	RoutineRx      ^{[a-zA-Z0-9_:*&]#\s*}+\(
+
+    SaveFolds		= 2;	  # save fold info at end of line
+    CommentStart	= ' /*';
+    CommentEnd		= '*/';
+%if(UI_KB)
+    TabSize		= 8; # think twice before changing this, historically
+			     # it's been known to cause a mess in sources ;-)
+    SpaceTabs		= 0;
+    IndentWithTabs	= 1;
+    CursorThroughTabs	= 1;
+    DeleteKillTab	= 0;
+    DeleteKillBlock	= 0;
+    BackSpKillTab	= 0;
+    BackSpUnindents	= 0;
+    Abbreviations	= 1;
+    UndoMoves		= 0;
+%endif
+}
+
+oinclude 'mym_c.fte';
