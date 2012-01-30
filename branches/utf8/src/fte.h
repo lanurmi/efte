@@ -13,6 +13,7 @@
 
 #include "ftever.h"
 #include "sysdep.h"
+#include "unichar.h"
 
 #ifdef NEED_LOG_H
 #include "log.h"

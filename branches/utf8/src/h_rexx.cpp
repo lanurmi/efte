@@ -83,7 +83,7 @@ set_normal:
                     if (B)
                         MoveMem(B, C - Pos, Width, Line->Chars + i, HILIT_CLRD(), j);
                     if (State == hsREXX_Keyword)
-                        if (strnicmp(Line->Chars + i, "CALL", 4) == 0)
+                        if (uni_strnicmp_ascii(Line->Chars + i, "CALL", 4) == 0)
                             wascall = 1;
                     i += j;
                     len -= j;
@@ -148,17 +148,17 @@ int REXX_Do_Offset = 0;
 #define REXX_DO_OFFSET         REXX_Do_Offset
 
 
-static int Match(int Len, int Pos, hsState *StateMap, const char *Text, const char *String, hsState State) {
+static int Match(int Len, int Pos, hsState *StateMap, const unichar_t *Text, const char *String, hsState State) {
     int L = strlen(String);
 
     if (Pos + L <= Len)
         if (StateMap == NULL || IsState(StateMap + Pos, State, L))
-            if (strnicmp(String, Text + Pos, L) == 0)
+            if (uni_strnicmp_ascii(Text + Pos, String, L) == 0)
                 return 1;
     return 0;
 }
 
-static int Match2(int Len, int Pos, hsState *StateMap, const char *Text, const char *String, hsState State) {
+static int Match2(int Len, int Pos, hsState *StateMap, const unichar_t *Text, const char *String, hsState State) {
     int L = strlen(String);
 
     int i;
@@ -167,13 +167,13 @@ static int Match2(int Len, int Pos, hsState *StateMap, const char *Text, const c
 
     if (Pos + L <= Len)
         if (StateMap == NULL || IsState(StateMap + Pos, State, L))
-            if (strnicmp(String, Text + Pos, L) == 0)
+            if (uni_strnicmp_ascii(Text + Pos, String, L) == 0)
                 return 1;
     return 0;
 }
 
 static int SearchMatch(int Count, EBuffer *B, int Row, int Ctx) {
-    char *P;
+    unichar_t *P;
     int L;
     int Pos;
     int StateLen;
@@ -260,7 +260,7 @@ static int CheckLabel(EBuffer *B, int Line) {
 }
 
 static int SearchBackContext(EBuffer *B, int Row, char &ChFind) {
-    char *P;
+    unichar_t *P;
     int L;
     int Pos;
     int Count = -1;

@@ -140,8 +140,10 @@ typedef int ChColor;
     ((x)[(unsigned char)(y) >> 3] |  (1 << ((unsigned char)(y) & 0x7))) : \
     ((x)[(unsigned char)(y) >> 3] & ~(1 << ((unsigned char)(y) & 0x7)))))
 
-#define WGETBIT(x,y) \
+#define WGETBIT8(x,y) \
     (((x)[(unsigned char)(y) / 8] &  (1 << ((unsigned char)(y) % 8))) ? 1 : 0)
+#define WGETBIT(x,y) \
+    WGETBIT8(x, (y) <= 0xff ? (y) : 0xff)
 
 typedef struct {
     int num[BFI_COUNT];

@@ -71,7 +71,7 @@ EBuffer::EBuffer(int createFlags, EModel **ARoot, const char * /*AName*/)
     HilitProc = 0;
     if (Mode && Mode->fColorize)
         HilitProc = GetHilitProc(Mode->fColorize->SyntaxParser);
-    InsertLine(CP, 0, 0); /* there should always be at least one line in the edit buffer */
+    InsertLine(CP, 0, (unichar_t *)0); /* there should always be at least one line in the edit buffer */
     Flags = (Mode->Flags);
     Modified = 0;
 }
@@ -222,12 +222,19 @@ int EBuffer::LoadRegion(EPoint * /*A*/, int /*FH*/, int /*StripChar*/, int /*Lin
     return 0;
 }
 
-int EBuffer::InsertLine(EPoint Pos, int ACount, const char *AChars) {
+int EBuffer::InsertLine(EPoint Pos, int ACount, const unichar_t *AChars) {
     if (InsLine(Pos.Row, 0) == 0) return 0;
     if (InsText(Pos.Row, Pos.Col, ACount, AChars) == 0) return 0;
     return 1;
 }
 
+#ifdef UNICODE_ENABLED
+int EBuffer::InsertLine(EPoint Pos, int ACount, const char *AChars) {
+    if (InsLine(Pos.Row, 0) == 0) return 0;
+    if (InsText(Pos.Row, Pos.Col, ACount, AChars) == 0) return 0;
+    return 1;
+}
+#endif
 
 int EBuffer::UpdateMark(EPoint &M, int Type, int Row, int Col, int Rows, int Cols) {
     switch (Type) {
@@ -568,7 +575,7 @@ int EBuffer::DelLine(int Row, int DoMark) {
     assert(VLine != -1);
 
     if (BFI(this, BFI_Undo) == 1) {
-        if (PushUData(RLine(Row)->Chars, RLine(Row)->Count) == 0) return 0;
+        if (PushUData(RLine(Row)->Chars, RLine(Row)->Count * sizeof(unichar_t)) == 0) return 0;
         if (PushULong(RLine(Row)->Count) == 0) return 0;
         if (PushULong(Row) == 0) return 0;
         if (PushUChar(ucDelLine) == 0) return 0;
@@ -635,7 +642,7 @@ int EBuffer::InsLine(int Row, int DoAppend, int DoMark) {
     } else {
         VLine = VCount;
     }
-    L = new ELine(0, (char *)0);
+    L = new ELine(0, (unichar_t *)0);
     if (L == 0) return 0;
     if (BFI(this, BFI_Undo) == 1) {
         if (PushULong(Row) == 0) return 0;
@@ -698,7 +705,7 @@ int EBuffer::DelChars(int Row, int Ofs, int ACount) {
     if (Modify() == 0) return 0;
 
     if (BFI(this, BFI_Undo) == 1) {
-        if (PushUData(L->Chars + Ofs, ACount) == 0) return 0;
+        if (PushUData(L->Chars + Ofs, ACount * sizeof(unichar_t)) == 0) return 0;
         if (PushULong(ACount) == 0) return 0;
         if (PushULong(Ofs) == 0) return 0;
         if (PushULong(Row) == 0) return 0;
@@ -715,7 +722,7 @@ int EBuffer::DelChars(int Row, int Ofs, int ACount) {
     return 1;
 }
 
-int EBuffer::InsChars(int Row, int Ofs, int ACount, const char *Buffer) {
+int EBuffer::InsChars(int Row, int Ofs, int ACount, const unichar_t *Buffer) {
     PELine L;
 
 //    printf("InsChars: %d:%d %d\n", Row, Ofs, ACount);
@@ -754,14 +761,15 @@ int EBuffer::InsertIndent(int Row, int Ofs, int ACount) {
         /* We're writing the initial indentation to the line.
            Insert as many tabs as we can and fill the rest with spaces. */
         int tabCount, tabSize = BFI(this, BFI_TabSize);
-        char *tabs;
+        unichar_t *tabs;
 
         tabCount = ACount / tabSize;
-        tabs = (char *)malloc(tabCount);
+        tabs = (unichar_t *)malloc(sizeof(unichar_t) * tabCount);
         if (tabs == NULL)
             return 0;
 
-        memset(tabs, '\t', tabCount);
+        for (int i = 0; i < tabCount; i++)
+            tabs[i] = '\t';
         if (InsChars(Row, Ofs, tabCount, tabs) == 0) {
             free(tabs);
             return 0;
@@ -797,7 +805,7 @@ int EBuffer::UnTabPoint(int Row, int Col) {
     return 1;
 }
 
-int EBuffer::ChgChars(int Row, int Ofs, int ACount, const char * /*Buffer*/) {
+int EBuffer::ChgChars(int Row, int Ofs, int ACount, const unichar_t * /*Buffer*/) {
     PELine L;
 
     assert(Row >= 0 && Row < RCount && Ofs >= 0);
@@ -810,7 +818,7 @@ int EBuffer::ChgChars(int Row, int Ofs, int ACount, const char * /*Buffer*/) {
     if (Modify() == 0) return 0;
 
     if (BFI(this, BFI_Undo) == 1) {
-        if (PushUData(L->Chars + Ofs, ACount) == 0) return 0;
+        if (PushUData(L->Chars + Ofs, ACount * sizeof(unichar_t)) == 0) return 0;
         if (PushULong(ACount) == 0) return 0;
         if (PushULong(Ofs) == 0) return 0;
         if (PushULong(Row) == 0) return 0;
@@ -853,7 +861,7 @@ int EBuffer::DelText(int Row, int Col, int ACount, int DoMark) {
     return 1;
 }
 
-int EBuffer::InsText(int Row, int Col, int ACount, const char *ABuffer, int DoMark) {
+int EBuffer::InsText(int Row, int Col, int ACount, const unichar_t *ABuffer, int DoMark) {
     int B, L;
 
 //    printf("InsText: %d:%d %d\n", Row, Col, ACount);
@@ -872,6 +880,21 @@ int EBuffer::InsText(int Row, int Col, int ACount, const char *ABuffer, int DoMa
     if (InsChars(Row, B, ACount, ABuffer) == 0) return 0;
 //    printf("OK\n");
     return 1;
+}
+
+#ifdef UNICODE_ENABLED
+int EBuffer::InsText(int Row, int Col, int ACount, const char *Buffer, int DoMark)
+{
+    unichar_t *uniBuffer = uni_ascii_to_unichar(Buffer, ACount);
+    int ret = InsText(Row, Col, ACount, uniBuffer, DoMark);
+    free(uniBuffer);
+    return ret;
+}
+#endif
+
+int EBuffer::InsTextSpace(int Row, int Col, int ACount, int DoMark)
+{
+    return InsText(Row, Col, ACount, (unichar_t *)0, DoMark);
 }
 
 int EBuffer::PadLine(int Row, int Length) {
@@ -904,7 +927,7 @@ int EBuffer::InsLineText(int Row, int Col, int ACount, int LCol, PELine Line) {
         Pos = ScreenPos(Line, Ofs);
         if (Pos < LCol) {
             TPos = NextTab(Pos, BFI(this, BFI_TabSize));
-            if (InsText(Row, Col, TPos - LCol, 0) == 0)
+            if (InsTextSpace(Row, Col, TPos - LCol) == 0)
                 return 0;
             Col += TPos - LCol;
             ACount -= TPos - LCol;
@@ -916,7 +939,7 @@ int EBuffer::InsLineText(int Row, int Col, int ACount, int LCol, PELine Line) {
     if (Ofs < Line->Count && Line->Chars[Ofs] == '\t') {
         Pos = ScreenPos(Line, Ofs);
         if (Pos < LCol + ACount) {
-            if (InsText(Row, Col, LCol + ACount - Pos, 0) == 0)
+            if (InsTextSpace(Row, Col, LCol + ACount - Pos) == 0)
                 return 0;
         }
     }

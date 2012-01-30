@@ -156,7 +156,7 @@ int ECvsLog::ConfQuit(GxView *V, int /*multiFile*/) {
         // Now remove CVS: lines and really save
         for (i = 0;i < RCount;) {
             PELine l = RLine(i);
-            if (l->Count >= 4 && strncmp(l->Chars, "CVS:", 4) == 0) DelLine(i);
+            if (l->Count >= 4 && uni_strncmp_ascii(l->Chars, "CVS:", 4) == 0) DelLine(i);
             else i++;
         }
         Save();

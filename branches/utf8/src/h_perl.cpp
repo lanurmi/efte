@@ -121,7 +121,7 @@ int Hilit_PERL(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
     int isEOHereDoc = 0;
     if ((State & X_MASK) == hsPerl_HereDoc) {
         isEOHereDoc = strlen(hereDocKey) == (size_t)len &&
-                      strncmp(hereDocKey, Line->Chars, len) == 0;
+                      uni_strncmp_ascii(Line->Chars, hereDocKey, len) == 0;
         if (isEOHereDoc) State = hsPerl_Normal | (State & X_BIT);
     }
     for (i = 0; i < Line->Count;) {
@@ -172,10 +172,10 @@ hilit:
                 } else if (
                     i == 0 && X_NOT(State) && (*p == '=') && len > 4 &&
                     (
-                        strncmp(p + 1, "head", 4) == 0 ||
-                        strncmp(p + 1, "item", 4) == 0 ||
-                        strncmp(p + 1, "over", 4) == 0 ||
-                        strncmp(p + 1, "back", 4) == 0
+                        uni_strncmp_ascii(p + 1, "head", 4) == 0 ||
+                        uni_strncmp_ascii(p + 1, "item", 4) == 0 ||
+                        uni_strncmp_ascii(p + 1, "over", 4) == 0 ||
+                        uni_strncmp_ascii(p + 1, "back", 4) == 0
                     )
                 ) {
                     State = hsPerl_Docs;
@@ -184,7 +184,7 @@ hilit:
                 } else if (
                     i == 0 && X_NOT(State) && (*p == '=') && len > 3 &&
                     (
-                        strncmp(p + 1, "pod",  3) == 0
+                        uni_strncmp_ascii(p + 1, "pod",  3) == 0
                     )
                 ) {
                     State = hsPerl_Docs;
@@ -201,7 +201,7 @@ hilit:
                     if (BF->GetHilitWord(j, &Line->Chars[i], Color)) {
                         //Color = hcPERL_Keyword;
                         State = hsPerl_Keyword;
-                        if (strncmp(p, "sub", 3) == 0) {
+                        if (uni_strncmp_ascii(p, "sub", 3) == 0) {
                             inSub = 1;
                         }
                     } else {

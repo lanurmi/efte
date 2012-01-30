@@ -29,7 +29,7 @@ ExComplete::ExComplete(EBuffer *B): ExView() {
     Orig = Buffer->CP;
     WordBegin = NULL;
     WordFixed = WordPos = WordsLast = 0;
-    Words = new char *[MAXCOMPLETEWORDS + 2];
+    Words = new unichar_t *[MAXCOMPLETEWORDS + 2];
     if (Words != NULL)
         RefreshComplete();
 }
@@ -66,7 +66,7 @@ int ExComplete::DoCompleteWord() {
 
     if (WordsLast <= 0 || !Words[WordPos]) return rc;
 
-    int l = strlen(Words[WordPos]);
+    int l = uni_strlen(Words[WordPos]);
 
     if (Buffer->InsText(Buffer->VToR(Orig.Row), Orig.Col, l, Words[WordPos], 1)
             && Buffer->SetPos(Orig.Col + l, Orig.Row)) {
@@ -97,7 +97,7 @@ void ExComplete::HandleEvent(TEvent &Event) {
             // the next string, but with `locale sort` this is impossible!!
             // this loop is little inefficient but it's quite short & nice
             for (i = WordPos; i-- > 0;)
-                if (strncmp(Words[WordPos], Words[i], WordFixed) == 0) {
+                if (uni_strncmp(Words[WordPos], Words[i], WordFixed) == 0) {
                     WordPos = i;
                     break;
                 }
@@ -106,7 +106,7 @@ void ExComplete::HandleEvent(TEvent &Event) {
         case kbPgDn:
         case kbRight:
             for (i = WordPos; i++ < WordsLast - 1;)
-                if (strncmp(Words[WordPos], Words[i], WordFixed) == 0) {
+                if (uni_strncmp(Words[WordPos], Words[i], WordFixed) == 0) {
                     WordPos = i;
                     break;
                 }
@@ -114,21 +114,21 @@ void ExComplete::HandleEvent(TEvent &Event) {
             break;
         case kbHome:
             for (i = 0; i < WordPos; i++)
-                if (strncmp(Words[WordPos], Words[i], WordFixed) == 0)
+                if (uni_strncmp(Words[WordPos], Words[i], WordFixed) == 0)
                     WordPos = i;
             Event.What = evNone;
             break;
         case kbEnd:
             for (i = WordsLast - 1; i > WordPos; i--)
-                if (strncmp(Words[WordPos], Words[i], WordFixed) == 0)
+                if (uni_strncmp(Words[WordPos], Words[i], WordFixed) == 0)
                     WordPos = i;
             Event.What = evNone;
             break;
         case kbTab:
             while (WordPos < WordsLast - 1) {
                 WordPos++;
-                if (strncmp(Words[WordPos], Words[WordPos - 1],
-                            WordFixed + 1))
+                if (uni_strncmp(Words[WordPos], Words[WordPos - 1],
+                                WordFixed + 1))
                     break;
             }
             Event.What = evNone;
@@ -136,8 +136,8 @@ void ExComplete::HandleEvent(TEvent &Event) {
         case kbTab | kfShift:
             while (WordPos > 0) {
                 WordPos--;
-                if (strncmp(Words[WordPos], Words[WordPos + 1],
-                            WordFixed + 1))
+                if (uni_strncmp(Words[WordPos], Words[WordPos + 1],
+                                WordFixed + 1))
                     break;
             }
             Event.What = evNone;
@@ -164,14 +164,14 @@ void ExComplete::HandleEvent(TEvent &Event) {
             break;
         default:
             if (CheckASCII(Event.Key.Code&~kfShift)) {
-                char *s = new char[WordFixed + 2];
+                unichar_t *s = new unichar_t[WordFixed + 2];
                 if (s != NULL) {
                     if (WordFixed > 0)
-                        strncpy(s, Words[WordPos], WordFixed);
+                        memcpy(s, Words[WordPos], WordFixed * sizeof(s[0]));
                     s[WordFixed] = (unsigned char)(Event.Key.Code & 0xFF);
                     s[WordFixed + 1] = 0;
                     for (int i = 0; i < WordsLast; i++)
-                        if (strncmp(s, Words[i], WordFixed + 1) == 0) {
+                        if (uni_strncmp(s, Words[i], WordFixed + 1) == 0) {
                             WordPos = i;
                             if (WordFixedCount == 1)
                                 DoQuit = 1;
@@ -248,8 +248,8 @@ void ExComplete::RepaintStatus() {
         MoveStr(B, 0, W, sc, COM_NORM, W);
         // int cur = p;
         MoveStr(B, p, W, WordBegin, COM_ORIG, W);
-        p += strlen(WordBegin);
-        int l = strlen(Words[WordPos]);
+        p += uni_strlen(WordBegin);
+        int l = uni_strlen(Words[WordPos]);
         if (WordFixed > 0) {
             MoveStr(B, p, W, Words[WordPos], COM_MARK, W);
             p += WordFixed;
@@ -289,11 +289,11 @@ int ExComplete::RefreshComplete() {
     if (!wlen)
         return 0;
 
-    WordBegin = new char[wlen + 1];
+    WordBegin = new unichar_t[wlen + 1];
     if (WordBegin == NULL)
         return 0;
 
-    strncpy(WordBegin, L->Chars + P, wlen);
+    memcpy(WordBegin, L->Chars + P, wlen * sizeof(WordBegin[0]));
     WordBegin[wlen] = 0;
 
     // fprintf(stderr, "Calling %d  %s\n", wlen, WordBegin);
@@ -326,10 +326,10 @@ int ExComplete::RefreshComplete() {
         if (len == 0)
             continue;
 
-        char *s = new char[len + 1];
+        unichar_t *s = new unichar_t[len + 1];
 
         if (s != NULL) {
-            strncpy(s, M->Chars + X + wlen, len);
+            memcpy(s, M->Chars + X + wlen, len * sizeof(s[0]));
             s[len] = 0;
 
             int c = 1, H = 0, L = 0, R = WordsLast;
@@ -337,7 +337,7 @@ int ExComplete::RefreshComplete() {
             // using sort to insert only unique words
             while (L < R) {
                 H = (L + R) / 2;
-                c = strcmp(s, Words[H]);
+                c = uni_strcmp(s, Words[H]);
                 if (c < 0)
                     R = H;
                 else if (c > 0)
@@ -389,14 +389,14 @@ void ExComplete::FixedUpdate(int add) {
         if (WordFixed > 0)
             WordFixed += add;
     } else if (add > 0) {
-        if (strlen(Words[WordPos]) > WordFixed)
+        if (uni_strlen(Words[WordPos]) > WordFixed)
             WordFixed += add;
     }
 
     if (WordFixed > 0) {
         WordFixedCount = 0;
         for (int i = 0; i < WordsLast; i++)
-            if (strncmp(Words[WordPos], Words[i], WordFixed) == 0)
+            if (uni_strncmp(Words[WordPos], Words[i], WordFixed) == 0)
                 WordFixedCount++;
     } else
         WordFixedCount = WordsLast;

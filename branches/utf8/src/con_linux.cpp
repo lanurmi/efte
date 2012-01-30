@@ -386,7 +386,7 @@ static int conwrite(int fd, void *p, int len) {  // len should be a multiple of 
 
 int ConClear() {
     int X, Y;
-    TCell Cell = ' ' | (0x07 << 8);
+    TCell Cell = { ' ', 0x07 };
     ConQuerySize(&X, &Y);
     ConSetBox(0, 0, X, Y, Cell);
     ConSetCursorPos(0, 0);
@@ -450,7 +450,7 @@ int ConPutLine(int X, int Y, int W, int H, PCell Cell) {
 
 int ConSetBox(int X, int Y, int W, int H, TCell Cell) {
     TDrawBuffer B;
-    MoveCh(B, Cell & 0xFF, Cell >> 8, W);
+    MoveCh(B, Cell.chr, Cell.attr, W);
     ConPutLine(X, Y, W, H, B);
     return 0;
 }

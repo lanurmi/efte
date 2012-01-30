@@ -18,7 +18,7 @@
 int Hilit_MAKE(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, hlState &State, hsState *StateMap, int *ECol) {
     HILIT_VARS(BF->Mode->fColorize->Colors, Line);
     int len1 = len;
-    char *last = p + len1 - 1;
+    unichar_t *last = p + len1 - 1;
 
     for (i = 0; i < Line->Count;) {
         if (i == 0 && *p == 9) {

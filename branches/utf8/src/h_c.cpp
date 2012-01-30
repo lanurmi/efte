@@ -34,7 +34,7 @@ int Hilit_C(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, h
     int firstnw = 0;
     HILIT_VARS(BF->Mode->fColorize->Colors, Line);
     int len1 = len;
-    char *last = p + len1 - 1;
+    unichar_t *last = p + len1 - 1;
     int was_include = 0;
 
     for (i = 0; i < Line->Count;) {
@@ -229,7 +229,7 @@ int Hilit_C(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, h
                             (isalnum(Line->Chars[i+j]) ||
                              (Line->Chars[i + j] == '_'))
                           ) j++;
-                    if (j == 7 && memcmp(Line->Chars + i, "include", 7) == 0)
+                    if (j == 7 && uni_strncmp_ascii(Line->Chars + i, "include", 7) == 0)
                         was_include = 1;
                     if (StateMap)
                         memset(StateMap + i, State, j);
@@ -345,7 +345,7 @@ int LookAt(EBuffer *B, int Row, unsigned int Pos, const char *What, hsState Stat
         LOG << "Row out of range: " << Row << " vs " << B->RCount << ENDLINE;
         ENDFUNCRC(0);
     }
-    char*        pLine       = B->RLine(Row)->Chars;
+    unichar_t *pLine       = B->RLine(Row)->Chars;
     unsigned int uLineLength = B->RLine(Row)->Count;
     Pos = B->CharOffset(B->RLine(Row), Pos);
     if (Pos + strlen(What) > uLineLength) {
@@ -356,8 +356,8 @@ int LookAt(EBuffer *B, int Row, unsigned int Pos, const char *What, hsState Stat
     }
     LOG << "Check against [" << What << ']' << ENDLINE;
     if (
-        (CaseInsensitive && memicmp(pLine + Pos, What, Len) == 0) ||
-        (!CaseInsensitive && memcmp(pLine + Pos, What, Len) == 0)
+        (CaseInsensitive && uni_strnicmp_ascii(pLine + Pos, What, Len) == 0) ||
+        (!CaseInsensitive && uni_strncmp_ascii(pLine + Pos, What, Len) == 0)
     ) {
         int StateLen;
         hsState *StateMap;
@@ -463,7 +463,7 @@ static int CheckLabel(EBuffer *B, int Line) {
 }
 
 static int SearchBackMatch(int Count, EBuffer *B, int Row, hsState State, const char *Open, const char *Close, int *OPos, int *OLine, int matchparens = 0, int bolOnly = 0) {
-    char *P;
+    unichar_t *P;
     int L;
     int Pos;
     int LOpen = strlen(Open);
@@ -509,7 +509,7 @@ static int SearchBackMatch(int Count, EBuffer *B, int Row, hsState State, const 
                             (CountX[0] == 0 && CountX[1] == 0 && CountX[2] == 0)) {
                         if (LOpen + Pos <= L) {
                             if (IsState(StateMap + Pos, State, LOpen)) {
-                                if (memcmp(P + Pos, Open, LOpen) == 0) Count++;
+                                if (uni_strncmp_ascii(P + Pos, Open, LOpen) == 0) Count++;
                                 if (Count == 0) {
                                     if (bolOnly)
                                         didMatch = 1;
@@ -523,7 +523,7 @@ static int SearchBackMatch(int Count, EBuffer *B, int Row, hsState State, const 
                             }
                             if (LClose + Pos <= L) {
                                 if (IsState(StateMap + Pos, State, LClose)) {
-                                    if (memcmp(P + Pos, Close, LClose) == 0) Count--;
+                                    if (uni_strncmp_ascii(P + Pos, Close, LClose) == 0) Count--;
                                 }
                             }
                         }
@@ -548,7 +548,7 @@ static int FindPrevIndent(EBuffer *B, int &RowP, int &ColP, char &CharP, int Fla
     LOG << "Flags: " << hex << Flags << dec << ENDLINE;
     int StateLen;
     hsState *StateMap = 0;
-    char *P;
+    unichar_t *P;
     int L;
     int Count[4] = {
         0, // { }
@@ -692,7 +692,7 @@ static int FindPrevIndent(EBuffer *B, int &RowP, int &ColP, char &CharP, int Fla
                 } else if (StateMap[ColP] == hsC_Keyword && (BolChar == ' ' || BolChar == ':')) {
                     if (L - ColP >= 2 &&
                             IsState(StateMap + ColP, hsC_Keyword, 2) &&
-                            memcmp(P + ColP, "if", 2) == 0) {
+                            uni_strncmp_ascii(P + ColP, "if", 2) == 0) {
                         //puts("\nif");
                         if (Count[3] > 0)
                             Count[3]--;
@@ -706,7 +706,7 @@ static int FindPrevIndent(EBuffer *B, int &RowP, int &ColP, char &CharP, int Fla
                     }
                     if (L - ColP >= 4 &&
                             IsState(StateMap + ColP, hsC_Keyword, 4) &&
-                            memcmp(P + ColP, "else", 4) == 0) {
+                            uni_strncmp_ascii(P + ColP, "else", 4) == 0) {
                         //puts("\nelse\x7");
                         if (Flags & FIND_ELSE) {
                             if (TEST_ZERO) {
@@ -722,7 +722,7 @@ static int FindPrevIndent(EBuffer *B, int &RowP, int &ColP, char &CharP, int Fla
                         if ((Flags & FIND_FOR) &&
                                 L - ColP >= 3 &&
                                 IsState(StateMap + ColP, hsC_Keyword, 3) &&
-                                memcmp(P + ColP, "for", 3) == 0) {
+                                uni_strncmp_ascii(P + ColP, "for", 3) == 0) {
                             CharP = 'f';
                             free(StateMap);
                             ENDFUNCRC(1);
@@ -730,7 +730,7 @@ static int FindPrevIndent(EBuffer *B, int &RowP, int &ColP, char &CharP, int Fla
                         if ((Flags & FIND_WHILE) &&
                                 L - ColP >= 5 &&
                                 IsState(StateMap + ColP, hsC_Keyword, 5) &&
-                                memcmp(P + ColP, "while", 5) == 0) {
+                                uni_strncmp_ascii(P + ColP, "while", 5) == 0) {
                             CharP = 'w';
                             free(StateMap);
                             ENDFUNCRC(1);
@@ -738,7 +738,7 @@ static int FindPrevIndent(EBuffer *B, int &RowP, int &ColP, char &CharP, int Fla
                         if ((Flags & FIND_SWITCH) &&
                                 L - ColP >= 6 &&
                                 IsState(StateMap + ColP, hsC_Keyword, 6) &&
-                                memcmp(P + ColP, "switch", 6) == 0) {
+                                uni_strncmp_ascii(P + ColP, "switch", 6) == 0) {
                             CharP = 's';
                             free(StateMap);
                             ENDFUNCRC(1);
@@ -746,10 +746,10 @@ static int FindPrevIndent(EBuffer *B, int &RowP, int &ColP, char &CharP, int Fla
                         if (((Flags & FIND_CASE) || (BolChar == ':')) &&
                                 ((L - ColP >= 4 &&
                                  IsState(StateMap + ColP, hsC_Keyword, 4) &&
-                                 memcmp(P + ColP, "case", 4) == 0) ||
+                                 uni_strncmp_ascii(P + ColP, "case", 4) == 0) ||
                                 ((L - ColP >= 7) &&
                                  IsState(StateMap + ColP, hsC_Keyword, 7) &&
-                                 memcmp(P + ColP, "default", 7) == 0))) {
+                                 uni_strncmp_ascii(P + ColP, "default", 7) == 0))) {
                             CharP = 'c';
                             if (BolChar == ':') {
                                 CharP = BolChar;
@@ -762,7 +762,7 @@ static int FindPrevIndent(EBuffer *B, int &RowP, int &ColP, char &CharP, int Fla
                         if (((Flags & FIND_CLASS) || (BolChar == ':')) &&
                                 (L - ColP >= 5 &&
                                  IsState(StateMap + ColP, hsC_Keyword, 5) &&
-                                 memcmp(P + ColP, "class", 5) == 0)) {
+                                 uni_strncmp_ascii(P + ColP, "class", 5) == 0)) {
                             CharP = 'l';
                             if (BolChar == ':') {
                                 CharP = BolChar;
@@ -775,13 +775,13 @@ static int FindPrevIndent(EBuffer *B, int &RowP, int &ColP, char &CharP, int Fla
                         if (((Flags & FIND_CLASS) || (BolChar == ':')) &&
                                 ((L - ColP >= 6 &&
                                   IsState(StateMap + ColP, hsC_Keyword, 6) &&
-                                  memcmp(P + ColP, "public", 6) == 0) ||
+                                  uni_strncmp_ascii(P + ColP, "public", 6) == 0) ||
                                  ((L - ColP >= 7) &&
                                   IsState(StateMap + ColP, hsC_Keyword, 7) &&
-                                  memcmp(P + ColP, "private", 7) == 0) ||
+                                  uni_strncmp_ascii(P + ColP, "private", 7) == 0) ||
                                  ((L - ColP >= 9) &&
                                   IsState(StateMap + ColP, hsC_Keyword, 9) &&
-                                  memcmp(P + ColP, "protected", 9) == 0))) {
+                                  uni_strncmp_ascii(P + ColP, "protected", 9) == 0))) {
                             CharP = 'p';
                             if (BolChar == ':') {
                                 CharP = BolChar;
@@ -818,7 +818,7 @@ static int FindPrevIndent(EBuffer *B, int &RowP, int &ColP, char &CharP, int Fla
 #define SKIP_TOBOL    8
 
 static int SkipWhite(EBuffer *B, int Bottom, int &Row, int &Col, int Flags) {
-    char *P;
+    unichar_t *P;
     int L;
     int StateLen;
     hsState *StateMap;

@@ -117,9 +117,9 @@ void RoutineView::HandleEvent(TEvent &Event) {
 int RoutineView::getMatchingLine(int start, int direction) {
     int i = start;
     do {
-        char *str = Buffer->RLine(Buffer->rlst.Lines[i])->Chars;
+        unichar_t *str = Buffer->RLine(Buffer->rlst.Lines[i])->Chars;
         for (int j = 0; str[j]; j++) {
-            if (str[j] == SearchString[0] && strnicmp(SearchString, str + j, SearchLen) == 0) {
+            if (str[j] == SearchString[0] && uni_strnicmp_ascii(str + j, SearchString, SearchLen) == 0) {
                 return i;
             }
         }
@@ -133,7 +133,7 @@ int RoutineView::getMatchingLine(int start, int direction) {
 
 void RoutineView::DrawLine(PCell B, int Line, int Col, ChColor color, int Width) {
     if (Buffer->RLine(Buffer->rlst.Lines[Line])->Count > Col) {
-        char str[1024];
+        unichar_t str[1024];
         int len;
 
         len = UnTabStr(str, sizeof(str),

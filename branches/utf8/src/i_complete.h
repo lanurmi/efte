@@ -20,9 +20,9 @@ class ExComplete: public ExView {
     EPoint Orig;
     EBuffer *Buffer;
     int WordsLast;
-    char **Words;
-    char *WordBegin;
-    char *WordContinue;
+    unichar_t **Words;
+    unichar_t *WordBegin;
+    unichar_t *WordContinue;
     int WordPos;
     size_t WordFixed;
     size_t WordFixedCount;

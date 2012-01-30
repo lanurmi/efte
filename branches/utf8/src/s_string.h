@@ -11,6 +11,9 @@
 #ifndef S_STRING_H_
 #define S_STRING_H_
 
+#include "unichar.h"
+
+int UnTabStr(unichar_t *dest, int maxlen, const unichar_t *source, int slen);
 int UnTabStr(char *dest, int maxlen, const char *source, int slen);
 
 #if !defined(HAVE_STRLCPY)

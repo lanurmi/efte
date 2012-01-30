@@ -61,9 +61,11 @@ int Indent_SIMPLE(EBuffer *B, int Line, int PosCursor);
  * assumed array.. (Jal)
  */
 #ifdef NTCONSOLE
-#    define PCLI unsigned short
+#  define BPTR_SET(BPtr, chr, attr) \
+    *BPtr = (chr & 0xffff) | (attr << 16)
 #else
-#    define PCLI unsigned char
+#  define BPTR_SET(BPtr, _chr, _attr) \
+    BPtr->chr = _chr; BPtr->attr = _attr;
 #endif
 
 #define HILIT_CLRD() \
@@ -74,9 +76,8 @@ int Indent_SIMPLE(EBuffer *B, int Line, int PosCursor);
     BPos = C - Pos; \
     if (B) \
     if (BPos >= 0 && BPos < Width) { \
-    BPtr = (PCLI *) (B + BPos); \
-    BPtr[0] = *p; \
-    BPtr[1] = HILIT_CLRD(); \
+    BPtr = B + BPos; \
+    BPTR_SET(BPtr, *p, HILIT_CLRD()); \
     } \
     if (StateMap) StateMap[i] = (hsState)(State & 0xFF); \
     } while (0)
@@ -126,13 +127,13 @@ int Indent_SIMPLE(EBuffer *B, int Line, int PosCursor);
     } while (0)
 
 #define HILIT_VARS(ColorTable, Line) \
-    PCLI *BPtr; \
+    TCell *BPtr; \
     int BPos; \
     ChColor *Colors = ColorTable; \
     ChColor Color = CLR_Normal; \
     int i; \
     int len = Line->Count; \
-    char *p = Line->Chars; \
+    unichar_t *p = Line->Chars; \
     int NC = 0, C = 0; \
     int TabSize = BFI(BF, BFI_TabSize); \
     int ExpandTabs = BFI(BF, BFI_ExpandTabs);
@@ -193,7 +194,7 @@ struct HState {
     int nextKwdNoCharState;
 
     void InitState();
-    int GetHilitWord(int len, char *str, ChColor &clr);
+    int GetHilitWord(int len, unichar_t *str, ChColor &clr);
 };
 
 class HMachine {

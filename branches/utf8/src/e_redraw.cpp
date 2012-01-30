@@ -267,6 +267,7 @@ void EBuffer::Redraw() {
     ChColor SColor;
     int RowA, RowZ;
 
+    memset(B, 0, sizeof(B));
     {
         int W1, H1;
         if (!(View && View->MView))
@@ -410,7 +411,7 @@ void EBuffer::Redraw() {
                 int NumChars = RLine(ActLine)->Count;
                 //            int NumColumns = ScreenPos(Line(CurLine), NumChars);
                 char *fName = FileName;
-                unsigned char CurCh = 0xFF;
+                unichar_t CurCh = 0xFF;
                 int lf = strlen(fName);
                 char CCharStr[20] = "";
 
@@ -544,7 +545,7 @@ void EBuffer::Redraw() {
     RedrawToEos = 0;
 }
 
-int EBuffer::GetHilitWord(int len, char *str, ChColor &clr, int IgnCase) {
+int EBuffer::GetHilitWord(int len, unichar_t *str, ChColor &clr, int IgnCase) {
     char *p;
 
     if (Mode == 0 || Mode->fColorize == 0)
@@ -554,9 +555,9 @@ int EBuffer::GetHilitWord(int len, char *str, ChColor &clr, int IgnCase) {
         return 0;
 
     {
-        char s[CK_MAXLEN + 1];
+        unichar_t s[CK_MAXLEN + 1];
         s[CK_MAXLEN] = 0;
-        memcpy(s, str, len);
+        memcpy(s, str, sizeof(s[0]) * len);
         s[len] = 0;
         if (HilitFindWord(s)) {
             clr = COUNT_CLR + hcPlain_HilitWord;
@@ -567,7 +568,7 @@ int EBuffer::GetHilitWord(int len, char *str, ChColor &clr, int IgnCase) {
     p = Mode->fColorize->Keywords.key[len];
     if (IgnCase) {
         while (p && *p) {
-            if (strnicmp(p, str, len) == 0) {
+            if (uni_strnicmp_ascii(str, p, len) == 0) {
                 clr = COUNT_CLR + ((unsigned char*)p)[len];
                 return 1;
             }
@@ -575,7 +576,7 @@ int EBuffer::GetHilitWord(int len, char *str, ChColor &clr, int IgnCase) {
         }
     } else {
         while (p && *p) {
-            if (memcmp(p, str, len) == 0) {
+            if (uni_strncmp_ascii(str, p, len) == 0) {
                 clr = COUNT_CLR + ((unsigned char*)p)[len];
                 //printf("PLEN %d  %d\n", p[len], COUNT_CLR);
                 return 1;

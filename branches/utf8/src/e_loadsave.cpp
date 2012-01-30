@@ -39,7 +39,8 @@ int EBuffer::LoadFrom(const char *AFileName) {
     int fd;
     int len = 0, partLen;
     unsigned long numChars = 0, Lines = 0;
-    char *p, *e, *m = NULL;
+    unichar_t *m = NULL;
+    char *p, *e;
     int lm = 0;
     int lf;
     int SaveUndo, SaveReadOnly;
@@ -132,17 +133,28 @@ int EBuffer::LoadFrom(const char *AFileName) {
                 lf = 0;
             }
             partLen = e - p; // # of chars in buffer for current line
-            m = (char *)realloc((void *)m, (lm + partLen) + CHAR_TRESHOLD);
+            m = (unichar_t *)realloc((void *)m, sizeof(unichar_t) * ((lm + partLen) + CHAR_TRESHOLD));
             if (m == NULL)
                 goto fail;
-            memcpy((void *)(m + lm), p, partLen);
+
+#if 1
+            unichar_t *tmp = uni_utf8_to_unichar(p, partLen);
+            unsigned int tmp_len = uni_strlen(tmp);
+            memcpy(m+lm, tmp, tmp_len * sizeof(*tmp));
+            lm += tmp_len;
+            numChars += tmp_len;
+#else
+            // FIXME: insert UTF-8 decoding here
+            for (int i = 0; i < partLen; i++)
+                m[lm+i] = p[i];
             lm += partLen;
             numChars += partLen;
+#endif
 
             if (lf) {
                 // there is a new line, add it to buffer
 
-                if (lm == 0 && m == NULL && (m = (char *)malloc(CHAR_TRESHOLD)) == 0)
+                if (lm == 0 && m == NULL && (m = (unichar_t *)malloc(sizeof(unichar_t)*CHAR_TRESHOLD)) == 0)
                     goto fail;
 #if 0
                 { // support for VIM tabsize commands
@@ -159,7 +171,7 @@ int EBuffer::LoadFrom(const char *AFileName) {
                 if (RCount == RAllocated)
                     if (Allocate(RCount ? (RCount * 2) : 1) == 0)
                         goto fail;
-                if ((LL[RCount++] = new ELine((char *)m, lm)) == 0)
+                if ((LL[RCount++] = new ELine(m, lm)) == 0)
                     goto fail;
                 RGap = RCount;
 
@@ -176,7 +188,7 @@ int EBuffer::LoadFrom(const char *AFileName) {
     }
 
     if ((RCount == 0) || (lm > 0) || !BFI(this, BFI_ForceNewLine)) {
-        if (lm == 0 && m == NULL && (m = (char *)malloc(CHAR_TRESHOLD)) == 0)
+        if (lm == 0 && m == NULL && (m = (unichar_t *)malloc(sizeof(unichar_t)*CHAR_TRESHOLD)) == 0)
             goto fail;
         // Grow the line table if required,
         if (RCount == RAllocated)

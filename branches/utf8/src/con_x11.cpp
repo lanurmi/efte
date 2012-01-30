@@ -115,7 +115,7 @@ static unsigned long CursorLastTime;
 
 // Cursor flashing interval, in msecs
 static unsigned CursorFlashInterval = 300;
-static unsigned char *ScreenBuffer = NULL;
+static TCell *ScreenBuffer = NULL;
 static int Refresh = 0;
 
 // Configurable X11 parameters
@@ -207,14 +207,15 @@ static int GetFTEClip(Atom clip) {
 
 
 static int AllocBuffer() {
-    unsigned char *p;
+    TCell *p;
     unsigned int i;
 
-    ScreenBuffer = (unsigned char *)malloc(2 * ScreenCols * ScreenRows);
+    ScreenBuffer = (TCell *)malloc(sizeof(TCell) * ScreenCols * ScreenRows);
     if (ScreenBuffer == NULL) return -1;
     for (i = 0, p = ScreenBuffer; i < ScreenCols * ScreenRows; i++) {
-        *p++ = 32;
-        *p++ = 0x07;
+        p->chr = ' ';
+        p->attr = 0x07;
+        p++;
     }
     return 0;
 }
@@ -710,28 +711,35 @@ int ConGetTitle(char *Title, int MaxLen, char *STitle, int SMaxLen) {
 }
 
 #define InRange(x,a,y) (((x) <= (a)) && ((a) < (y)))
-#define CursorXYPos(x,y) (ScreenBuffer + ((x) + ((y) * ScreenCols)) * 2)
+#define CursorXYPos(x,y) (ScreenBuffer + ((x) + ((y) * ScreenCols)))
 
 void DrawCursor(int Show) {
     if (CursorVisible) {
-        unsigned char *p = CursorXYPos(CursorX, CursorY);
+        TCell *p = CursorXYPos(CursorX, CursorY);
 
         // Check if cursor is on or off due to flashing
         if (CursorBlink)
             Show &= (CursorLastTime % (CursorFlashInterval * 2)) > CursorFlashInterval;
-        int attr = p[1];
+        int attr = p->attr;
         if (Show)
             attr ^= insertState ? CursorInsertMask : CursorOverMask;
-        if (!useXMB)
-            XDrawImageString(display, win, GCs[attr],
-                             CursorX * FontCX,
-                             fontStruct->max_bounds.ascent + CursorY * FontCY,
-                             (char *)p, 1);
+        if (!useXMB) {
+            XChar2b chr;
+
+            chr.byte1 = p->chr >> 8;
+            chr.byte2 = p->chr;
+            XDrawImageString16(display, win, GCs[attr],
+                               CursorX * FontCX,
+                               fontStruct->max_bounds.ascent + CursorY * FontCY,
+                               &chr, 1);
+        }
 #ifdef USE_XMB
-        else
-            XmbDrawImageString(display, win, fontSet, GCs[attr],
+        else {
+            wchar_t chr = p->chr;
+            XwcDrawImageString(display, win, fontSet, GCs[attr],
                                CursorX * FontCX, FontCYD + CursorY * FontCY,
-                               (char *)p, 1);
+                               &chr, 1);
+        }
 #endif
 #if 0
         if (Show) {
@@ -746,9 +754,9 @@ void DrawCursor(int Show) {
 }
 
 int ConPutBox(int X, int Y, int W, int H, PCell Cell) {
+    TCell *ps, *ops, *p, *c;
     unsigned int i;
-    unsigned char temp[256], attr;
-    unsigned char *p, *ps, *c, *ops;
+    unsigned char attr;
     unsigned int len, x, l, ox, olen, skip;
 
 
@@ -762,8 +770,7 @@ int ConPutBox(int X, int Y, int W, int H, PCell Cell) {
     //fprintf(stderr, "%d %d  %d %d %d %d\n", ScreenCols, ScreenRows, X, Y, W, H);
     for (i = 0; i < (unsigned int)H; i++) {
         len = W;
-        p = CursorXYPos(X, Y + i);
-        ps = (unsigned char *) Cell;
+        ps = Cell;
         x = X;
         while (len > 0) {
             if (!Refresh) {
@@ -772,9 +779,9 @@ int ConPutBox(int X, int Y, int W, int H, PCell Cell) {
                 ops = ps;
                 ox = x;
                 olen = len;
-                while ((len > 0) && c[0] == ps[0] && c[1] == ps[1]) {
-                    ps += 2;
-                    c += 2;
+                while ((len > 0) && c->chr == ps->chr && c->attr == ps->attr) {
+                    ps++;
+                    c++;
                     x++;
                     len--;
                     skip++;
@@ -786,25 +793,39 @@ int ConPutBox(int X, int Y, int W, int H, PCell Cell) {
                     len = olen;
                 }
             }
-            p = ps;
             l = 1;
-            temp[0] = *ps++;
-            attr = *ps++;
-            while ((l < len) && ((unsigned char)(ps[1]) == attr)) {
-                temp[l++] = *ps++;
-                ps++;
+            if (!useXMB) {
+                XChar2b temp[256];
+                temp[0].byte1 = ps->chr >> 8;
+                temp[0].byte2 = ps->chr;
+                attr = ps->attr; ps++;
+                while ((l < len) && (ps->attr == attr)) {
+                    temp[l].byte1 = ps->chr >> 8;
+                    temp[l].byte2 = ps->chr & 0xff;
+                    l++;
+                    ps++;
+                }
+
+                XDrawImageString16(display, win, GCs[((unsigned)attr) & 0xFF],
+                                   x * FontCX, fontStruct->max_bounds.ascent +
+                                   (Y + i) * FontCY,
+                                   temp, l);
             }
-            if (!useXMB)
-                XDrawImageString(display, win, GCs[((unsigned)attr) & 0xFF],
-                                 x * FontCX, fontStruct->max_bounds.ascent +
-                                 (Y + i) * FontCY,
-                                 (char *)temp, l);
 #ifdef USE_XMB
-            else
-                XmbDrawImageString(display, win, fontSet,
+            else {
+                wchar_t temp[256];
+
+                temp[0] = ps->chr;
+                attr = ps->attr; ps++;
+                while ((l < len) && (ps->attr == attr)) {
+                    temp[l++] = ps->chr;
+                    ps++;
+                }
+                XwcDrawImageString(display, win, fontSet,
                                    GCs[((unsigned)attr) & 0xFF],
                                    x * FontCX, FontCYD + (Y + i) * FontCY,
-                                   (char *)temp, l);
+                                   temp, l);
+            }
 #endif
             //temp[l] = 0; printf("%s\n", temp);
             len -= l;
@@ -818,7 +839,7 @@ int ConPutBox(int X, int Y, int W, int H, PCell Cell) {
          }
         */
         p = CursorXYPos(X, Y + i);
-        memmove(p, Cell, W * 2);
+        memmove(p, Cell, W * sizeof(*p));
         if (i + Y == CursorY)
             DrawCursor(1);
         Cell += W;
@@ -830,7 +851,7 @@ int ConGetBox(int X, int Y, int W, int H, PCell Cell) {
     int i;
 
     for (i = 0; i < H; i++) {
-        memcpy(Cell, CursorXYPos(X, Y + i), 2 * W);
+        memcpy(Cell, CursorXYPos(X, Y + i), sizeof(TCell) * W);
         Cell += W;
     }
     return 0;
@@ -869,7 +890,7 @@ int ConScroll(int Way, int X, int Y, int W, int H, TAttr Fill, int Count) {
                   X * FontCX,
                   Y * FontCY);
         for (l = 0; l < H - Count; l++)
-            memcpy(CursorXYPos(X, Y + l), CursorXYPos(X, Y + l + Count), 2 * W);
+            memcpy(CursorXYPos(X, Y + l), CursorXYPos(X, Y + l + Count), sizeof(TCell) * W);
 
         if (ConSetBox(X, Y + l, W, Count, Cell) == -1)
             return -1;
@@ -882,7 +903,7 @@ int ConScroll(int Way, int X, int Y, int W, int H, TAttr Fill, int Count) {
                   X * FontCX,
                   (Y + Count) * FontCY);
         for (l = H - 1; l >= Count; l--)
-            memcpy(CursorXYPos(X, Y + l), CursorXYPos(X, Y + l - Count), 2 * W);
+            memcpy(CursorXYPos(X, Y + l), CursorXYPos(X, Y + l - Count), sizeof(TCell) * W);
 
         if (ConSetBox(X, Y, W, Count, Cell) == -1)
             return -1;
@@ -892,19 +913,19 @@ int ConScroll(int Way, int X, int Y, int W, int H, TAttr Fill, int Count) {
 }
 
 int ConSetSize(int X, int Y) {
-    unsigned char *NewBuffer;
-    unsigned char *p;
+    TCell *NewBuffer, *p;
     int i;
     int MX, MY;
 
     assert(X <= ConMaxCols);
     assert(Y <= ConMaxRows);
 
-    p = NewBuffer = (unsigned char *) malloc(X * Y * 2);
+    p = NewBuffer = (TCell *) malloc(X * Y * sizeof(TCell));
     if (NewBuffer == NULL) return -1;
     for (i = 0; i < X * Y; i++) {
-        *p++ = ' ';
-        *p++ = 0x07;
+        p->chr = ' ';
+        p->attr = 0x07;
+        p++;
     }
     MX = ScreenCols;
     if (X < MX)
@@ -914,8 +935,8 @@ int ConSetSize(int X, int Y) {
         MY = Y;
     p = NewBuffer;
     for (i = 0; i < MY; i++) {
-        memcpy(p, CursorXYPos(0, i), MX * 2);
-        p += X * 2;
+        memcpy(p, CursorXYPos(0, i), MX * sizeof(*p));
+        p += X;
     }
     free(ScreenBuffer);
     ScreenBuffer = NewBuffer;
