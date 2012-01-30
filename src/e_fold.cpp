@@ -215,7 +215,10 @@ int EBuffer::FoldCreateByRegexp(char *Regexp) { /*FOLD00*/
             RxMatchRes RM;
 
             X = RLine(L);
-            if (RxExec(R, X->Chars, X->Count, X->Chars, &RM) == 1) {
+            char *utf8Str = uni_to_utf8_n(X->Chars, X->Count);
+            int ret = RxExec(R, utf8Str, strlen(utf8Str), utf8Str, &RM);
+            free(utf8Str);
+            if (ret == 1) {
                 if (first >= 0) {
                     int i;
 
@@ -223,7 +226,7 @@ int EBuffer::FoldCreateByRegexp(char *Regexp) { /*FOLD00*/
                         PELine Y;
 
                         Y = RLine(i);
-                        if ((Y->Count == 0) || strrchr(Y->Chars, '}')) {
+                        if ((Y->Count == 0) || uni_strrchr(Y->Chars, '}')) {
                             if ((L - i) > 2) {
                                 while ((i > 0) && (RLine(i - 1)->Count == 0))
                                     i--;

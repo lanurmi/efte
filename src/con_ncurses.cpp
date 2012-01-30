@@ -337,7 +337,7 @@ int ConScroll(int Way, int X, int Y, int W, int H, TAttr Fill, int Count) {
 
     box = new TCell [W * H];
 
-    TCell fill = (((unsigned) Fill) << 8) | ' ';
+    TCell fill = { ' ', Fill };
 
     ConGetBox(X, Y, W, H, box);
 

@@ -10,7 +10,7 @@
 
 #include "fte.h"
 
-ELine::ELine(int ACount, const char *AChars) {
+ELine::ELine(int ACount, const unichar_t *AChars) {
     Chars = NULL;
     Count = ACount;
     Allocate(Count);
@@ -18,11 +18,13 @@ ELine::ELine(int ACount, const char *AChars) {
     IndentContinuation = -1;
     if (AChars)
         memcpy(Chars, AChars, Count);
-    else
-        memset(Chars, ' ', Count);
+    else {
+        for (int i = 0; i < Count; i++)
+            Chars[i] = ' ';
+    }
 }
 
-ELine::ELine(char *AChars, int ACount) {
+ELine::ELine(unichar_t *AChars, int ACount) {
     Chars = AChars;
     Count = ACount;
     StateE = 0;
@@ -39,12 +41,13 @@ int ELine::Allocate(unsigned int Bytes) {
 
     Allocated = (Bytes | CHAR_TRESHOLD);
     if (Chars) {
-        char *ReallocChars = (char *) realloc(Chars, Allocated);
+        unichar_t *ReallocChars =
+            (unichar_t *) realloc(Chars, sizeof(unichar_t) * Allocated);
         if(ReallocChars == NULL)
             free(Chars);
         Chars = ReallocChars;
     } else {
-        Chars = (char *) malloc(Allocated);
+        Chars = (unichar_t *) malloc(sizeof(unichar_t) * Allocated);
     }
     if (Chars == NULL)
         return 0;
@@ -58,7 +61,7 @@ int EBuffer::ScreenPos(ELine *L, int Offset) {
     if (!ExpandTabs) {
         return Offset;
     } else {
-        char *p = L->Chars;
+        unichar_t *p = L->Chars;
         int Len = L->Count;
         int Pos = 0;
         int Ofs = Offset;
@@ -94,7 +97,7 @@ int EBuffer::CharOffset(ELine *L, int ScreenPos) {
     } else {
         int Pos = 0;
         int Ofs = 0;
-        char *p = L->Chars;
+        unichar_t *p = L->Chars;
         int Len = L->Count;
 
         while (Len > 0) {

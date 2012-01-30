@@ -18,6 +18,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
+#include "unichar.h"
 #include "ftever.h"
 #include "sysdep.h"
 #include "c_fconfig.h"

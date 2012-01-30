@@ -111,11 +111,16 @@ int Hilit_SIMPLE(EBuffer *BF, int LN, PCell B, int Pos, int Width, ELine *Line, 
                 if ((matchFlags & (MATCH_SET | MATCH_NOTSET)) == 0) {
                     if (matchFlags & MATCH_REGEXP) {
                         RxMatchRes b;
-                        if (!RxExecMatch(tr->regexp, Line->Chars, Line->Count, p, &b, (matchFlags & MATCH_NO_CASE) ? 0 : RX_CASE)) continue;
+                        int pos = p - Line->Chars;
+                        //FIXME: pos doesn't work with non-ascii text
+                        char *utf8Str = uni_to_utf8_n(Line->Chars, Line->Count);
+                        int ret = RxExecMatch(tr->regexp, utf8Str, strlen(utf8Str), utf8Str + pos, &b, (matchFlags & MATCH_NO_CASE) ? 0 : RX_CASE);
+                        free(utf8Str);
+                        if (!ret) continue;
                         if (b.Open[1] != -1 && b.Close[1] != -1) matchLen = b.Open[1] - i;
                         else matchLen = b.Close[0] - i;
                     } else if (matchFlags & MATCH_NO_CASE) {
-                        if (memicmp(match, p, matchLen))
+                        if (uni_strnicmp_ascii(p, match, matchLen))
                             continue;
                     } else {
                         for (cc = 0; cc < matchLen; cc++)

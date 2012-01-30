@@ -196,7 +196,7 @@ int EBuffer::Undo(int undo) {
             if (rc == 0) return 0;
             if (GetUData(No, Pos, &data, Len) == 0) return 0;
             if (InsLine(Line, 0) == 0) return 0;
-            if (InsText(Line, 0, Len, (char *) data) == 0) return 0;
+            if (InsText(Line, 0, Len, (unichar_t *) data) == 0) return 0;
             Pos -= Len;
             break;
 
@@ -218,7 +218,7 @@ int EBuffer::Undo(int undo) {
             UGET(rc, No, Pos, ACount);
             if (rc == 0) return 0;
             if (GetUData(No, Pos, &data, ACount) == 0) return 0;
-            if (InsChars(Line, Col, ACount, (char *) data) == 0) return 0;
+            if (InsChars(Line, Col, ACount, (unichar_t *) data) == 0) return 0;
             Pos -= ACount;
             break;
 

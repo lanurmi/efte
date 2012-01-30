@@ -84,12 +84,12 @@ typedef class EPoint* PEPoint;
 class ELine {
 public:
     int Count;
-    char *Chars;
+    unichar_t *Chars;
     hlState StateE;
     int IndentContinuation;
 
-    ELine(int ACount, const char *AChars);
-    ELine(char *AChars, int ACount);
+    ELine(int ACount, const unichar_t *AChars);
+    ELine(unichar_t *AChars, int ACount);
     ~ELine();
     int Allocate(unsigned int Bytes);
 
@@ -215,7 +215,7 @@ public:
     int MinRedraw, MaxRedraw;
     int RedrawToEos;
 
-    char **WordList;
+    unichar_t **WordList;
     int WordCount;
 
     SyntaxProc HilitProc;
@@ -334,7 +334,10 @@ public:
     int SaveRegion(EPoint *A, EPoint *Z, int FH, int AddCR, int AddLF, int Mode);
 
     int AssertLine(int Line);
+    int InsertLine(EPoint Pos, int ACount, const unichar_t *AChars);
+#ifdef UNICODE_ENABLED
     int InsertLine(EPoint Pos, int ACount, const char *AChars);
+#endif
 
     int UpdateMarker(int Type, int Line, int Col, int Lines, int Cols);
     int UpdateMark(EPoint &M, int Type, int Line, int Col, int Lines, int Cols);
@@ -398,11 +401,15 @@ public:
     int UnTabPoint(int Row, int Col);
     int InsLine(int Row, int DoAppend, int DoMark = 1);
     int DelChars(int Row, int Ofs, int ACount);
-    int InsChars(int Row, int Ofs, int ACount, const char *Buffer);
+    int InsChars(int Row, int Ofs, int ACount, const unichar_t *Buffer);
     int InsertIndent(int Row, int Ofs, int ACount);
-    int ChgChars(int Row, int Ofs, int ACount, const char *Buffer);
+    int ChgChars(int Row, int Ofs, int ACount, const unichar_t *Buffer);
     int DelText(int Row, int Col, int ACount, int DoMark = 1);
+    int InsText(int Row, int Col, int ACount, const unichar_t *Buffer, int DoMark = 1);
+#ifdef UNICODE_ENABLED
     int InsText(int Row, int Col, int ACount, const char *Buffer, int DoMark = 1);
+#endif
+    int InsTextSpace(int Row, int Col, int ACount, int DoMark = 1);
     int InsLineText(int Row, int Col, int ACount, int Pos, PELine Line);
     int SplitLine(int Row, int Col);
     int JoinLine(int Row, int Col);
@@ -423,7 +430,7 @@ public:
     void Rehilit(int ToRow);
     void Redraw();
     void FullRedraw();
-    int  GetHilitWord(int len, char *str, ChColor &clr, int IgnCase = 0);
+    int  GetHilitWord(int len, unichar_t *str, ChColor &clr, int IgnCase = 0);
 
 /////////////////////////////////////////////////////////////////////////////
 // Utility Routines
@@ -433,8 +440,12 @@ public:
     int LineIndentedCharCount(ELine *l, const char *indentchars);
     int IndentLine(int Row, int Indent);
     int GetMap(int Row, int *StateLen, hsState **StateMap);
+    int FindStr(unichar_t *Data, int Len, int Options);
+    int FindStr(unichar_t *Data, int Len, SearchReplaceOptions &opt);
+#ifdef UNICODE_ENABLED
     int FindStr(char *Data, int Len, int Options);
     int FindStr(char *Data, int Len, SearchReplaceOptions &opt);
+#endif
     int FindRx(RxNode *Rx, SearchReplaceOptions &opt);
     int Find(SearchReplaceOptions &opt);
     int IsLineBlank(int Row);
@@ -584,7 +595,10 @@ public:
 
     int     InsertChar(char aCh);
     int     TypeChar(char aCh);
+    int     InsertString(const unichar_t *aStr, int aCount);
+#ifdef UNICODE_ENABLED
     int     InsertString(const char *aStr, int aCount);
+#endif
     int     InsertSpacesToTab(int TSize);
     int     InsertTab();
     int     InsertSpace();
@@ -667,9 +681,9 @@ public:
     int     SearchReplaceB(ExState &State);
     int     SearchReplaceRx(ExState &State);
 
-    int     HilitAddWord(const char *Word);
-    int     HilitFindWord(const char *Word);
-    int     HilitRemoveWord(const char *Word);
+    int     HilitAddWord(const unichar_t *Word);
+    int     HilitFindWord(const unichar_t *Word);
+    int     HilitRemoveWord(const unichar_t *Word);
     int     HilitWord();
     int     SearchWord(int Flags);
 

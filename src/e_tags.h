@@ -26,7 +26,7 @@ void TagClear();
 int TagGoto(EView *V, char *Tag);
 int TagDefined(const char *Tag);
 int TagFind(EBuffer *B, EView *V, char *Tag);
-int TagComplete(char **Words, int *WordsPos, int WordsMax, char *Tag);
+int TagComplete(unichar_t **Words, int *WordsPos, int WordsMax, unichar_t *Tag);
 int TagNext(EView *V);
 int TagPrev(EView *V);
 int TagPop(EView *V);

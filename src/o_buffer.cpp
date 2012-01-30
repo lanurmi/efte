@@ -1984,14 +1984,12 @@ int EBuffer::GetStrVar(int var, char *str, int buflen) {
             // calculate total length for buffer copy
             int length = wordEnd - wordBegin;
 
-            if ((length + 1) < buflen) {
-                length++;
-            } else {
-                length = buflen;
-            }
-
-            // copy word to buffer
-            strlcpy(str, &L->Chars[wordBegin], length);
+            char *utf8Str = uni_to_utf8_n(&L->Chars[wordBegin], length);
+            int len = strlen(utf8Str);
+            if (len >= buflen) len = buflen-1;
+            memcpy(str, utf8Str, len);
+            str[len] = '\0';
+            free(utf8Str);
         }
     }
     return 1;
@@ -2004,17 +2002,12 @@ int EBuffer::GetStrVar(int var, char *str, int buflen) {
         strlcpy(str, "", buflen);
 
         if (L->Count > 0) {
-            // calculate total length for buffer copy
-            int length = L->Count;
-
-            if ((length + 1) < buflen) {
-                length++;
-            } else {
-                length = buflen;
-            }
-
-            // copy word to buffer
-            strlcpy(str, L->Chars, length);
+            char *utf8Str = uni_to_utf8_n(L->Chars, L->Count);
+            int len = strlen(utf8Str);
+            if (len >= buflen) len = buflen-1;
+            memcpy(str, utf8Str, len);
+            str[len] = '\0';
+            free(utf8Str);
         }
     }
     return 1;

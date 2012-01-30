@@ -31,12 +31,12 @@ int Hilit_SH(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, 
             //           i, len, strlen(seof), seof, Line->Chars);
 
             // Skip past any leading tabs.
-            char* iseof = Line->Chars;
+            unichar_t* iseof = Line->Chars;
             size_t len_left = len;
             while (*iseof == '\t') ++iseof, --len_left;
 
             isEOF = strlen(seof) == len_left &&
-                    strncmp(seof, iseof, len_left) == 0;
+                    uni_strncmp_ascii(iseof, seof, len_left) == 0;
         }
         IF_TAB() else {
             int j = 1;
@@ -81,19 +81,19 @@ int Hilit_SH(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, 
                                 int s;
                                 switch (j) {
                                 case 2:
-                                    s = strncmp(p, "in", j);
+                                    s = uni_strncmp_ascii(p, "in", j);
                                     break;
                                 case 3:
-                                    s = strncmp(p, "for", j);
+                                    s = uni_strncmp_ascii(p, "for", j);
                                     break;
                                 case 4:
-                                    s = strncmp(p, "read", j);
+                                    s = uni_strncmp_ascii(p, "read", j);
                                     break;
                                 case 5:
-                                    s = strncmp(p, "unset", j);
+                                    s = uni_strncmp_ascii(p, "unset", j);
                                     break;
                                 case 6:
-                                    s = strncmp(p, "export", j);
+                                    s = uni_strncmp_ascii(p, "export", j);
                                     break;
                                 default:
                                     s = 1;

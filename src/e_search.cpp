@@ -152,7 +152,7 @@ int ParseSearchReplace(EBuffer *B, const char *str, int replace, SearchReplaceOp
     return 1;
 }
 
-int EBuffer::FindStr(char *Data, int Len, int Options) {
+int EBuffer::FindStr(unichar_t *Data, int Len, int Options) {
     SearchReplaceOptions opt;
 
     memset(&opt, 0, sizeof(opt));
@@ -162,12 +162,24 @@ int EBuffer::FindStr(char *Data, int Len, int Options) {
     return FindStr(Data, Len, opt);
 }
 
-int EBuffer::FindStr(char *Data, int Len, SearchReplaceOptions &opt) {
+#ifdef UNICODE_ENABLED
+int EBuffer::FindStr(char *Data, int Len, int Options) {
+    SearchReplaceOptions opt;
+
+    memset(&opt, 0, sizeof(opt));
+
+    opt.Options = Options;
+
+    return FindStr(Data, Len, opt);
+}
+#endif
+
+int EBuffer::FindStr(unichar_t *Data, int Len, SearchReplaceOptions &opt) {
     int Options = opt.Options;
     int LLen, Start, End;
     int C, L;
     PELine X;
-    char *P;
+    unichar_t *P;
 
     if (Options & SEARCH_RE)
         return 0;
@@ -294,7 +306,7 @@ int EBuffer::FindStr(char *Data, int Len, SearchReplaceOptions &opt) {
                      ||
                      ((Options & SEARCH_NCASE)
                       && (toupper(P[C]) == toupper(Data[0]))
-                      && (strnicmp(P + C, Data, Len) == 0))) /* && BOL | EOL */
+                      && (uni_strnicmp(P + C, Data, Len) == 0))) /* && BOL | EOL */
                ) {
                 Match.Col = ScreenPos(X, C);
                 Match.Row = L;
@@ -325,11 +337,20 @@ int EBuffer::FindStr(char *Data, int Len, SearchReplaceOptions &opt) {
     return 0;
 }
 
+#ifdef UNICODE_ENABLED
+int EBuffer::FindStr(char *Data, int Len, SearchReplaceOptions &opt) {
+    unichar_t *uniStr = uni_ascii_to_unichar(Data, Len);
+    int ret = FindStr(uniStr, Len, opt);
+    free(uniStr);
+    return ret;
+}
+#endif
+
 int EBuffer::FindRx(RxNode *Rx, SearchReplaceOptions &opt) {
     int Options = opt.Options;
     int LLen, Start, End;
     int C, L;
-    char *P;
+    unichar_t *P;
     PELine X;
     RxMatchRes b;
 
@@ -470,7 +491,11 @@ int EBuffer::FindRx(RxNode *Rx, SearchReplaceOptions &opt) {
         }
 
         if (Start <= End) {
-            if (RxExec(Rx, P + Start, End - Start, P + C, &b, (Options & SEARCH_NCASE) ? 0 : RX_CASE) == 1) {
+            char *utf8Str = uni_to_utf8_n(P + Start, End - Start);
+            /* FIXME: C doesn't point to correct position with non-ascii data */
+            int ret = RxExec(Rx, utf8Str, strlen(utf8Str), utf8Str + C, &b, (Options & SEARCH_NCASE) ? 0 : RX_CASE);
+            free(utf8Str);
+            if (ret == 1) {
                 C = ScreenPos(X, b.Open[0] + Start);
                 Match.Col = C;
                 Match.Row = L;
@@ -616,7 +641,10 @@ ok_rep:
                 P = Match.Col;
                 P = CharOffset(L, P);
 
-                if (0 == RxReplace(opt.strReplace, L->Chars, L->Count, MatchRes, &PR, &LR)) {
+                char *utf8Str = uni_to_utf8_n(L->Chars, L->Count);
+                int ret = RxReplace(opt.strReplace, utf8Str, strlen(utf8Str), MatchRes, &PR, &LR);
+                free(utf8Str);
+                if (0 == ret) {
                     if (DelText(R, Match.Col, MatchLen) == 0) goto error;
                     if (PR && LR > 0)
                         if (InsText(R, Match.Col, LR, PR) == 0) goto error;
@@ -1009,7 +1037,10 @@ int EBuffer::ScanForRoutines() {
     Msg(S_BUSY, "Matching %s", BFS(this, BFS_RoutineRegexp));
     for (line = 0; line < RCount; line++) {
         L = RLine(line);
-        if (RxExec(regx, L->Chars, L->Count, L->Chars, &res) == 1) {
+        char *utf8Str = uni_to_utf8_n(L->Chars, L->Count);
+        int ret = RxExec(regx, utf8Str, strlen(utf8Str), utf8Str, &res);
+        free(utf8Str);
+        if (ret == 1) {
             rlst.Count++;
             rlst.Lines = (int *) realloc((void *) rlst.Lines, sizeof(int) * (rlst.Count | 0x1F));
             rlst.Lines[rlst.Count - 1] = line;

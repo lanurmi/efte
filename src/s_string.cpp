@@ -11,6 +11,37 @@
 #include "fte.h"
 #include <string.h>
 
+int UnTabStr(unichar_t *dest, int maxlen, const unichar_t *source, int slen) {
+    unichar_t *p = dest;
+    int i;
+    int pos = 0;
+
+    maxlen--;
+    for (i = 0; i < slen; i++) {
+        if (maxlen > 0) {
+            if (source[i] == '\t') {
+                do {
+                    if (maxlen > 0) {
+                        *p++ = ' ';
+                        maxlen--;
+                    }
+                    pos++;
+                } while (pos & 0x7);
+            } else {
+                *p++ = source[i];
+                pos++;
+                maxlen--;
+            }
+        } else
+            break;
+    }
+
+    //dest[pos] = 0;
+    *p = '\0';
+    return pos;
+}
+
+#ifdef UNICODE_ENABLED
 int UnTabStr(char *dest, int maxlen, const char *source, int slen) {
     char *p = dest;
     int i;
@@ -40,6 +71,7 @@ int UnTabStr(char *dest, int maxlen, const char *source, int slen) {
     *p = '\0';
     return pos;
 }
+#endif
 
 #if !defined(HAVE_STRLCPY)
 size_t strlcpy(char *dst, const char *src, size_t size) {

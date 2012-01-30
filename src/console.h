@@ -11,6 +11,8 @@
 #ifndef CONSOLE_H_
 #define CONSOLE_H_
 
+#include "unichar.h"
+
 /* don't change these, used as index */
 #define DCH_C1 0
 #define DCH_C2 1
@@ -91,7 +93,10 @@ typedef TAttr *PAttr;
 #ifdef NTCONSOLE
 typedef unsigned long TCell;
 #else
-typedef unsigned short TCell;
+typedef struct {
+    unichar_t chr;
+    TAttr attr;
+} TCell;
 #endif
 
 typedef TCell *PCell;
@@ -190,9 +195,10 @@ int ConQueryMouseButtons(int *ButtonCount);
 int ConGetEvent(TEventMask EventMask, TEvent *Event, int WaitTime, int Delete);
 int ConPutEvent(TEvent Event);
 
-void MoveCh(PCell B, char Ch, TAttr Attr, int Count);
-void MoveChar(PCell B, int Pos, int Width, const char Ch, TAttr Attr, int Count);
-void MoveMem(PCell B, int Pos, int Width, const char* Ch, TAttr Attr, int Count);
+void MoveCh(PCell B, unichar_t Ch, TAttr Attr, int Count);
+void MoveChar(PCell B, int Pos, int Width, const unichar_t Ch, TAttr Attr, int Count);
+void MoveMem(PCell B, int Pos, int Width, const unichar_t* Ch, TAttr Attr, int Count);
+void MoveStr(PCell B, int Pos, int Width, const unichar_t* Ch, TAttr Attr, int MaxCount);
 void MoveStr(PCell B, int Pos, int Width, const char* Ch, TAttr Attr, int MaxCount);
 void MoveCStr(PCell B, int Pos, int Width, const  char* Ch, TAttr A0, TAttr A1, int MaxCount);
 void MoveAttr(PCell B, int Pos, int Width, TAttr Attr, int Count);

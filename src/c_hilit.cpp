@@ -65,38 +65,38 @@ SyntaxProc GetHilitProc(int id) {
     return 0;
 }
 
-int EBuffer::HilitAddWord(const char *Word) {
+int EBuffer::HilitAddWord(const unichar_t *Word) {
     if (HilitFindWord(Word) == 1)
         return 1;
-    WordList = (char **)realloc((void *)WordList, (1 + WordCount) * sizeof(char *));
+    WordList = (unichar_t **)realloc((void *)WordList, (1 + WordCount) * sizeof(unichar_t *));
     if (WordList == 0) return 0;
-    WordList[WordCount++] = strdup(Word);
+    WordList[WordCount++] = uni_strdup(Word);
     FullRedraw();
     return 1;
 }
 
-int EBuffer::HilitFindWord(const char *Word) {
+int EBuffer::HilitFindWord(const unichar_t *Word) {
     for (int i = 0; i < WordCount; i++) {
         if (BFI(this, BFI_MatchCase) == 1) {
-            if (strcmp(Word, WordList[i]) == 0) return 1;
+            if (uni_strcmp(Word, WordList[i]) == 0) return 1;
         } else {
-            if (stricmp(Word, WordList[i]) == 0) return 1;
+            if (uni_stricmp(Word, WordList[i]) == 0) return 1;
         }
     }
     return 0;
 }
 
-int EBuffer::HilitRemoveWord(const char *Word) {
+int EBuffer::HilitRemoveWord(const unichar_t *Word) {
     for (int i = 0; i < WordCount; i++) {
         if (BFI(this, BFI_MatchCase) == 1) {
-            if (strcmp(Word, WordList[i]) != 0) continue;
+            if (uni_strcmp(Word, WordList[i]) != 0) continue;
         } else {
-            if (stricmp(Word, WordList[i]) != 0) continue;
+            if (uni_stricmp(Word, WordList[i]) != 0) continue;
         }
         free(WordList[i]);
-        memmove(WordList + i, WordList + i + 1, sizeof(char *) * (WordCount - i - 1));
+        memmove(WordList + i, WordList + i + 1, sizeof(unichar_t *) * (WordCount - i - 1));
         WordCount--;
-        WordList = (char **)realloc((void *)WordList, WordCount * sizeof(char *));
+        WordList = (unichar_t **)realloc((void *)WordList, WordCount * sizeof(unichar_t *));
         FullRedraw();
         return 1;
     }
@@ -105,7 +105,7 @@ int EBuffer::HilitRemoveWord(const char *Word) {
 
 int EBuffer::HilitWord() {
     PELine L = VLine(CP.Row);
-    char s[CK_MAXLEN + 2];
+    unichar_t s[CK_MAXLEN + 2];
     int P, len = 0;
 
     P = CharOffset(L, CP.Col);
@@ -196,7 +196,7 @@ void HState::InitState() {
     nextKwdNoCharState = -1;
 }
 
-int HState::GetHilitWord(int len, char *str, ChColor &clr) {
+int HState::GetHilitWord(int len, unichar_t *str, ChColor &clr) {
     char *p;
 
     if (len >= CK_MAXLEN || len < 1)
@@ -205,7 +205,7 @@ int HState::GetHilitWord(int len, char *str, ChColor &clr) {
     p = keywords.key[len];
     if (options & STATE_NOCASE) {
         while (p && *p) {
-            if (strnicmp(p, str, len) == 0) {
+            if (uni_strnicmp_ascii(str, p, len) == 0) {
                 clr = COUNT_CLR + ((unsigned char*)p)[len];
                 return 1;
             }
@@ -213,7 +213,7 @@ int HState::GetHilitWord(int len, char *str, ChColor &clr) {
         }
     } else {
         while (p && *p) {
-            if (memcmp(p, str, len) == 0) {
+            if (uni_strncmp_ascii(str, p, len) == 0) {
                 clr = COUNT_CLR + ((unsigned char*)p)[len];
                 return 1;
             }

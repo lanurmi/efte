@@ -935,7 +935,7 @@ int EBuffer::TypeChar(char aCh) { // does abbrev expansion if appropriate
     return InsertString(&aCh, 1);
 }
 
-int EBuffer::InsertString(const char *aStr, int aCount) {
+int EBuffer::InsertString(const unichar_t *aStr, int aCount) {
     int P;
     int C, L;
     int Y = VToR(CP.Row);
@@ -990,6 +990,16 @@ int EBuffer::InsertString(const char *aStr, int aCount) {
     return 1;
 }
 
+#ifdef UNICODE_ENABLED
+int EBuffer::InsertString(const char *aStr, int aCount)
+{
+    unichar_t *uniBuffer = uni_ascii_to_unichar(aStr, aCount);
+    int ret = InsertString(uniBuffer, aCount);
+    free(uniBuffer);
+    return ret;
+}
+#endif
+
 int EBuffer::InsertSpacesToTab(int TSize) {
     int P = CP.Col, P1;
 
@@ -1006,7 +1016,7 @@ int EBuffer::InsertSpacesToTab(int TSize) {
         if (CP.Col < LineLen())
             if (DelText(VToR(CP.Row), CP.Col, P1 - P) == 0) return 0;
     }
-    if (InsText(VToR(CP.Row), CP.Col, P1 - P, 0) == 0) return 0;
+    if (InsTextSpace(VToR(CP.Row), CP.Col, P1 - P) == 0) return 0;
     if (SetPos(P1, CP.Row) == 0) return 0;
     return 1;
 }
@@ -1030,7 +1040,7 @@ int EBuffer::LineIndented(int Row, const char *indentchars) {
 }
 
 int EBuffer::LineIndentedCharCount(ELine *l, const char *indentchars) {
-    char *PC;
+    unichar_t *PC;
     int CC, i;
 
     if (! l)
@@ -1069,7 +1079,7 @@ int EBuffer::IndentLine(int Row, int Indent) {
                 }
             }
             if (Indent > 0)
-                if (InsText(Row, C, Indent, 0) == 0) return 0;
+                if (InsTextSpace(Row, C, Indent) == 0) return 0;
         }
     }
     return Ind - I;

@@ -404,7 +404,7 @@ int EBuffer::BlockIndent() {
             break;
         case bmColumn:
             if (L < E.Row) {
-                if (InsText(L, B.Col, 1, 0) == 0) return 0;
+                if (InsTextSpace(L, B.Col, 1) == 0) return 0;
                 if (DelText(L, E.Col, 1) == 0) return 0;
             }
             break;
@@ -437,7 +437,7 @@ int EBuffer::BlockUnindent() {
             break;
         case bmColumn:
             if (L < E.Row) {
-                if (InsText(L, E.Col, 1, 0) == 0) return 0;
+                if (InsTextSpace(L, E.Col, 1) == 0) return 0;
                 if (DelText(L, B.Col, 1) == 0) return 0;
             }
             break;
@@ -941,7 +941,7 @@ int EBuffer::BlockEnTab() {
     EPoint B, E;
     ELine *L;
     int O, C, O1, C1;
-    char tab = '\t';
+    unichar_t tab = '\t';
 
     AutoExtend = 0;
     if (CheckBlock() == 0) return 0;
@@ -1010,6 +1010,7 @@ int EBuffer::FindFunction(int delta, int way) {
     int         line;
     PELine      L;
     RxMatchRes  res;
+    char *utf8Str;
 
     if (BFS(this, BFS_RoutineRegexp) == 0) {
         View->MView->Win->Choice(GPC_ERROR, "Error", 1,
@@ -1029,7 +1030,10 @@ int EBuffer::FindFunction(int delta, int way) {
     line = VToR(CP.Row) + delta;
     while (line >= 0 && line < RCount) {
         L = RLine(line);
-        if (RxExec(regx, L->Chars, L->Count, L->Chars, &res) == 1)
+        utf8Str = uni_to_utf8_n(L->Chars, L->Count);
+        int ret = RxExec(regx, utf8Str, strlen(utf8Str), utf8Str, &res);
+        free(utf8Str);
+        if (ret == 1)
             break;
         line += way;
     }

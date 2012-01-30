@@ -24,7 +24,7 @@ int Hilit_FTE(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line,
     int j = 0;
     HILIT_VARS(BF->Mode->fColorize->Colors, Line);
     int len1 = len;
-    char *last = p + len1 - 1;
+    unichar_t *last = p + len1 - 1;
 
     C = 0;
     NC = 0;
