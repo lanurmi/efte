@@ -106,6 +106,7 @@
 		53BB49371167FDDE002D3A06 /* efte.icns in Resources */ = {isa = PBXBuildFile; fileRef = 53BB49361167FDDE002D3A06 /* efte.icns */; };
 		53BB496B116817E4002D3A06 /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BB496A116817E4002D3A06 /* AppController.m */; };
 		53C00BF30F2D432300EB3E6A /* cfte.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 538B51870D414C740092CDDF /* cfte.cpp */; };
+		53CA71A914DB3AF10062B97F /* h_cont.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53CA71A814DB3AF10062B97F /* h_cont.cpp */; };
 		53EBAEEA104133660047FD93 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 53EBAEE9104133660047FD93 /* Info.plist */; };
 		8D11072A0486CEB800E47090 /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = 29B97318FDCFA39411CA2CEA /* MainMenu.nib */; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
@@ -276,6 +277,7 @@
 		53BB49361167FDDE002D3A06 /* efte.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = efte.icns; sourceTree = "<group>"; };
 		53BB4969116817E4002D3A06 /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppController.h; sourceTree = "<group>"; };
 		53BB496A116817E4002D3A06 /* AppController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppController.m; sourceTree = "<group>"; };
+		53CA71A814DB3AF10062B97F /* h_cont.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = h_cont.cpp; sourceTree = "<group>"; };
 		53EBAEE9104133660047FD93 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Info.plist; sourceTree = SOURCE_ROOT; };
 		8D1107320486CEB800E47090 /* eFTE.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = eFTE.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -441,6 +443,7 @@
 				532F6A160D30192C00C0ED59 /* h_ada.cpp */,
 				532F6A180D30192C00C0ED59 /* h_c.cpp */,
 				532F6A1A0D30192C00C0ED59 /* h_catbs.cpp */,
+				53CA71A814DB3AF10062B97F /* h_cont.cpp */,
 				532F6A1C0D30192C00C0ED59 /* h_fte.cpp */,
 				532F6A1E0D30192C00C0ED59 /* h_ipf.cpp */,
 				532F6A200D30192C00C0ED59 /* h_make.cpp */,
@@ -698,6 +701,7 @@
 				5363715B0D417EEB0021126C /* FTETextAreaView.m in Sources */,
 				53C00BF30F2D432300EB3E6A /* cfte.cpp in Sources */,
 				53BB496B116817E4002D3A06 /* AppController.m in Sources */,
+				53CA71A914DB3AF10062B97F /* h_cont.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
