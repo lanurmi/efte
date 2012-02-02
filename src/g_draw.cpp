@@ -240,6 +240,26 @@ void MoveMem(PCell B, int Pos, int Width, const char* Ch, TAttr Attr, int Count)
     }
 }
 
+#ifdef UNICODE_ENABLED
+void MoveMem(PCell B, int Pos, int Width, const unichar_t* Ch, TAttr Attr, int Count) {
+    PCHAR_INFO p = (PCHAR_INFO) B;
+
+    if (Pos < 0) {
+        Count += Pos;
+        Ch -= Pos;
+        Pos = 0;
+    }
+    if (Pos >= Width) return;
+    if (Pos + Count > Width) Count = Width - Pos;
+    if (Count <= 0) return;
+    for (p += Pos; Count > 0; Count--) {
+        p->Char.UnicodeChar = *Ch++;
+        p->Attributes = Attr;
+        p++;
+    }
+}
+#endif
+
 void MoveStr(PCell B, int Pos, int Width, const char* Ch, TAttr Attr, int MaxCount) {
     PCHAR_INFO p = (PCHAR_INFO) B;
 
@@ -258,6 +278,25 @@ void MoveStr(PCell B, int Pos, int Width, const char* Ch, TAttr Attr, int MaxCou
     }
 }
 
+#ifdef UNICODE_ENABLED
+void MoveStr(PCell B, int Pos, int Width, const unichar_t* Ch, TAttr Attr, int MaxCount) {
+    PCHAR_INFO p = (PCHAR_INFO) B;
+
+    if (Pos < 0) {
+        MaxCount += Pos;
+        Ch -= Pos;
+        Pos = 0;
+    }
+    if (Pos >= Width) return;
+    if (Pos + MaxCount > Width) MaxCount = Width - Pos;
+    if (MaxCount <= 0) return;
+    for (p += Pos; MaxCount > 0 && (*Ch != 0); MaxCount--) {
+        p->Char.UnicodeChar = *Ch++;
+        p->Attributes = Attr;
+        p++;
+    }
+}
+#endif
 void MoveCStr(PCell B, int Pos, int Width, const char* Ch, TAttr A0, TAttr A1, int MaxCount) {
     PCHAR_INFO p = (PCHAR_INFO) B;
     char was;
