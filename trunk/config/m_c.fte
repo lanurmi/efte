@@ -86,19 +86,17 @@ colorize C {
 	'xor',
 	'xor_eq',
 
-	# C++0x (C++ 11) keywords
-	# Source: N2798, Working Draft, Standard for Programming Language C++, 2008-10-04
+	# C++11 keywords (that are not in C++98)
+	# Source: N3376, Working Draft, Standard for Programming Language C++, 2012-02-28
+	'alignas',
 	'alignof',
-	'axiom',
 	'char16_t',
 	'char32_t',
-	'concept',
-	'concept_map',
 	'constexpr',
 	'decltype',
 	'late_check',
+	'noexcept',
 	'nullptr',
-	'requires',
 	'static_assert',
 	'thread_local',
 
