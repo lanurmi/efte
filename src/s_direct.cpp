@@ -272,7 +272,7 @@ again:
         if (!(Flags & ffFULLPATH)) // need it now
             JoinDirFile(fullpath, Directory, dent->d_name);
 
-        if (Flags && ffLINK) {
+        if (Flags & ffLINK) {
             // if we are handling location of symbolic links, lstat cannot be used
             // instead use normal stat
             if (stat(fullpath, &st) != 0 && 0)
