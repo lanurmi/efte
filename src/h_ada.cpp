@@ -114,7 +114,7 @@ hilit:
     }
     if (State == hsAda_CommentL)
         State = hsAda_Normal;
-    if ((len1 == 0)) {
+    if (len1 == 0) {
         switch (State) {
         case hsAda_String1:
         case hsAda_String2:
