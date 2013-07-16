@@ -544,9 +544,12 @@ void EMessages::ShowError(EView *V, int err) {
                 }
             }
             if (ErrList[err]->msg != 0)
-                V->Msg(S_INFO, "%s", ErrList[err]->msg);
+                // Both these SetMsg() calls were Msg(S_INFO, ...) calls,
+                // but that causes buffer overflows for very long
+                // arguments.
+                V->SetMsg(ErrList[err]->msg);
             else
-                V->Msg(S_INFO, "%s", ErrList[err]->text);
+                V->SetMsg(ErrList[err]->text);
         }
     }
 }
