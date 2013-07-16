@@ -96,14 +96,17 @@ int Hilit_C(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, h
                     goto hilit2;
                 } else if (isdigit(*p)) {
                     // check if it is not floating point number 0.08!
-                    if ((len >= 2) && (*p == '0') && p[1] != '.') {
+                    if ((len >= 2) && ((*p == '0') && p[1] != '.' &&
+                    // only numbers longer than 1 digit be hex/octal
+                                       isdigit(p[1]) || toupper(p[1]) == 'X'))
+                    {
                         if (toupper(*(p + 1)) == 'X') {
                             Color = CLR_HexNumber;
                             ColorNext();
                             ColorNext();
                             while (len && isxdigit(*p)) ColorNext();
                         } else { /* assume it's octal */
-                            Color = CLR_Number;
+                            Color = CLR_OctalNumber;
                             ColorNext();
                             while (len && ('0' <= *p && *p <= '7')) ColorNext();
                             // if we hit a non-octal, stop hilighting it.
@@ -260,7 +263,7 @@ hilit:
                             ColorNext();
                             while (len && isxdigit(*p)) ColorNext();
                         } else { /* assume it's octal */
-                            Color = CLR_Number;
+                            Color = CLR_OctalNumber;
                             ColorNext();
                             while (len && ('0' <= *p && *p <= '7')) ColorNext();
                             // if we hit a non-octal, stop hilighting it.
