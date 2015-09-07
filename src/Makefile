@@ -46,6 +46,7 @@ ifeq ($(UNAME),Linux)
 	endif
 endif
 ifeq ($(UNAME),Darwin)
+        X11_PATH=/opt/X11
 	DEFINES += -DDARWIN
 endif
 ifeq ($(UNAME),"HP/UX")
