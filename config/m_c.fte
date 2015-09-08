@@ -42,6 +42,15 @@ colorize C {
 	'_Complex',
 	'_Imaginary',
 
+	# ... and C11 (that are not in C99)
+	'_Alignas',
+	'_Alignof',
+	'_Atomic',
+	'_Generic',
+	'_Noreturn',
+	'_Static_assert',
+	'_Thread_local',
+
 	# C++ keywords
 	'asm',
 	'catch',
