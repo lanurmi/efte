@@ -1,0 +1,15 @@
+*.o
+*.obj
+*.exe
+*.a
+src/config.h
+macosx/eFTE.xcodeproj/project.xcworkspace/
+macosx/eFTE.xcodeproj/xcuserdata/
+src/.depend.mak
+src/bin2c
+src/config.h
+src/defcfg.h
+src/nefte
+src/vefte
+src/efte
+
