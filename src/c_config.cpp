@@ -381,13 +381,11 @@ static void SetRGBColor(const char *string) {
         fprintf(stderr, "Invalid RGB Definition: %s\n", string);
         return;
     }
-    if (idx < 0 || idx > 15) {
+    if (idx > 15) {
         fprintf(stderr, "Invalid RGB index: (0-f only) (%s)\n", string);
         return;
     }
-    if (r < 0 || r > 255 ||
-            g < 0 || g > 255 ||
-            b < 0 || b > 255) {
+    if (r > 255 || g > 255 || b > 255) {
         fprintf(stderr, "Invalid RGB palette values (00-ff only): %s\n", string);
         return;
     }
