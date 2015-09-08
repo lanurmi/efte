@@ -98,7 +98,7 @@ int Hilit_C(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, h
                     // check if it is not floating point number 0.08!
                     if ((len >= 2) && ((*p == '0') && p[1] != '.' &&
                     // only numbers longer than 1 digit be hex/octal
-                                       isdigit(p[1]) || toupper(p[1]) == 'X'))
+                                       (isdigit(p[1]) || toupper(p[1]) == 'X')))
                     {
                         if (toupper(*(p + 1)) == 'X') {
                             Color = CLR_HexNumber;
