@@ -69,6 +69,7 @@ s_files.$(OEXT) \
 s_direct.$(OEXT) \
 s_util.$(OEXT) \
 s_string.$(OEXT) \
+unichar.$(OEXT) \
 view.$(OEXT) \
 gui.$(OEXT) \
 egui.$(OEXT) \
