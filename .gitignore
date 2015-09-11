@@ -5,6 +5,7 @@
 src/config.h
 macosx/eFTE.xcodeproj/project.xcworkspace/
 macosx/eFTE.xcodeproj/xcuserdata/
+macosx/build/
 src/.depend.mak
 src/bin2c
 src/config.h
