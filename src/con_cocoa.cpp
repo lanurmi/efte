@@ -28,12 +28,9 @@
 #include "console.h"
 #include "gui.h"
 
-#include "con_i18n.h"
 #include "s_files.h"
 #include "s_util.h"
 #include "s_string.h"
-
-i18n_context_t* i18n_ctx = NULL;
 
 #ifdef CAST_FD_SET_INT
 #define FD_SET_CAST() (int *)
@@ -64,12 +61,6 @@ static GPipe Pipes[MAX_PIPES] = {
     { 0 },
 };
 
-static const long MouseAutoDelay = 40;
-static const long MouseAutoRepeat = 200;
-static const long MouseMultiClick = 300;
-
-static int setUserPosition = 0;
-static int initX = 0, initY = 0;
 /*static*/
 unsigned int ScreenCols = 80;
 /*static*/
@@ -85,32 +76,9 @@ static unsigned CursorFlashInterval = 300;
 unsigned char *ScreenBuffer = NULL;
 static int Refresh = 0;
 
-static int useI18n = 1;
 static int FontCX = 8, FontCY = 18;
 static char winTitle[256] = "eFTE";
 static char winSTitle[256] = "eFTE";
-
-typedef struct _IncrementalSelectionInfo {
-    struct _IncrementalSelectionInfo *next;
-    unsigned char *data;
-    int len;
-    int pos;
-    Atom requestor;
-    Atom property;
-    Atom type;
-    time_t lastUse;
-} IncrementalSelectionInfo;
-IncrementalSelectionInfo *incrementalSelections = NULL;
-
-static Bool gotXError;
-
-static void SendSelection(XEvent *notify, Atom property, Atom type, unsigned char *data, int len, Bool privateData);
-
-static int ErrorHandler(Display *, XErrorEvent *ee) {
-    gotXError = True;
-    return 1;
-}
-
 
 static int AllocBuffer() {
     unsigned char *p;
@@ -124,27 +92,6 @@ static int AllocBuffer() {
     }
     return 0;
 }
-
-static struct {
-    int r, g, b;
-} dcolors[] = {
-    {   0,   0,   0 },  //     black
-    {   0,   0, 160 },  // darkBlue
-    {   0, 160,   0 },  // darkGreen
-    {   0, 160, 160 },  // darkCyan
-    { 160,   0,   0 },  // darkRed
-    { 160,   0, 160 },  // darkMagenta
-    { 160, 160,   0 },  // darkYellow
-    { 204, 204, 204 },  // paleGray
-    { 160, 160, 160 },  // darkGray
-    {   0,   0, 255 },  //     blue
-    {   0, 255,   0 },  //     green
-    {   0, 255, 255 },  //     cyan
-    { 255,   0,   0 },  //     red
-    { 255,   0, 255 },  //     magenta
-    { 255, 255,   0 },  //     yellow
-    { 255, 255, 255 },  //     white
-};
 
 #include "cocoa.h"
 
@@ -481,16 +428,7 @@ void ResizeWindow(int ww, int hh) {
     }
 }
 
-void ConvertKeyToEvent(KeySym key, KeySym key1, char */*keyname*/, char */*keyname1*/, int etype, int state, TEvent *Event) {
-}
-
-
-static TEvent LastMouseEvent = { evNone };
-
 #define TM_DIFF(x,y) ((long)(((long)(x) < (long)(y)) ? ((long)(y) - (long)(x)) : ((long)(x) - (long)(y))))
-
-void ConvertClickToEvent(int type, int xx, int yy, int button, int state, TEvent *Event, Time mtime) {
-}
 
 static void FlashCursor() {
     struct timeval tv;
