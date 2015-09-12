@@ -191,7 +191,7 @@ help:
 	@echo "  If for your system, you find that you have to change the defaults"
 	@echo "  in order to compile (not just for personal preference), please"
 	@echo "  help us make eFTE that much better for all and submit a bug"
-	@echo "  report to: http://sourceforge.net/projects/efte"
+	@echo "  report to: https://github.com/lanurmi/efte/issues"
 	@echo
 	@echo "Individual target names:"
 	@echo "  help      - Display this help message"
