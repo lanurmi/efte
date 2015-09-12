@@ -31,8 +31,8 @@
 WWW: https://github.com/lanurmi/efte/
 
 Current Authors (alphabetical order):
-    Jeremy Cowgar..... jeremy_c@users.sourceforge.net
-    Lauri Nurmi....... lanurmi@users.sourceforge.net
+    Jeremy Cowgar..... jcowgar
+    Lauri Nurmi....... lanurmi
 
 Original Author: Marko Macek
 Original URL:    http://fte.sourceforge.net
@@ -41,7 +41,7 @@ FTE Contributors:
   - Timo Sirainen
   - F.Jalvingh
     NT/Win95/DOS port.
-  - Markus F.X.J. Oberhumer <markus.oberhumer@jk.uni-linz.ac.at>
+  - Markus F.X.J. Oberhumer
     DOS port (DJGPP)
 
 See file HISTORY for a list of recent changes.
