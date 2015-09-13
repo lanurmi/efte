@@ -16,7 +16,7 @@
 #include "c_commands.h"
 #include "c_history.h"
 
-EDirectory::EDirectory(int createFlags, EModel **ARoot, char *aPath): EList(createFlags, ARoot, aPath) {
+EDirectory::EDirectory(int createFlags, EModel **ARoot, const char *aPath): EList(createFlags, ARoot, aPath) {
     char XPath[MAXPATH];
 
     Files = 0;

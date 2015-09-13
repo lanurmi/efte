@@ -20,7 +20,7 @@
 
 class ESvnLog: public EBuffer {
 public:
-    ESvnLog(int createFlags, EModel **ARoot, char *Directory, char *OnFiles);
+    ESvnLog(int createFlags, EModel **ARoot, const char *Directory, const char *OnFiles);
     ~ESvnLog();
 
     // List files into buffer

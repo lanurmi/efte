@@ -323,7 +323,7 @@ EListPort *EList::GetVPort() {
     return (EListPort *)View->Port;
 }
 
-void EList::SetTitle(char *ATitle) {
+void EList::SetTitle(const char *ATitle) {
     if (Title)
         free(Title);
     Title = strdup(ATitle);

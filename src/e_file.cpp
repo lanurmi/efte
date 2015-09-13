@@ -10,7 +10,7 @@
 
 #include "fte.h"
 
-EBuffer *FindFile(char *FileName) {
+EBuffer *FindFile(const char *FileName) {
     EModel *M;
     EBuffer *B;
 

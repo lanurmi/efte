@@ -80,7 +80,7 @@ public:
     GFrame(int XSize, int YSize);
     virtual ~GFrame();
 
-    int ConSetTitle(char *Title, char *STitle);
+    int ConSetTitle(const char *Title, char *STitle);
     int ConGetTitle(char *Title, int MaxLen, char *STitle, int SMaxLen);
 
     int ConSetSize(int X, int Y);

@@ -12,7 +12,7 @@
 
 EMarkIndex markIndex;
 
-EMark::EMark(char *aName, char *aFileName, EPoint aPoint, EBuffer *aBuffer) {
+EMark::EMark(const char *aName, const char *aFileName, EPoint aPoint, EBuffer *aBuffer) {
     Name = new char[strlen(aName) + 1];
     FileName = new char[strlen(aFileName) + 1];
     Buffer = 0;
@@ -88,7 +88,7 @@ EMarkIndex::~EMarkIndex() {
     }
 }
 
-EMark *EMarkIndex::insert(char *aName, char *aFileName, EPoint aPoint, EBuffer *aBuffer) {
+EMark *EMarkIndex::insert(const char *aName, const char *aFileName, EPoint aPoint, EBuffer *aBuffer) {
     int L = 0, R = markCount, M, cmp;
 
     assert(aName != 0 && aName[0] != 0);
@@ -121,7 +121,7 @@ EMark *EMarkIndex::insert(char *aName, char *aFileName, EPoint aPoint, EBuffer *
     return m;
 }
 
-EMark *EMarkIndex::insert(char *aName, EBuffer *aBuffer, EPoint aPoint) {
+EMark *EMarkIndex::insert(const char *aName, EBuffer *aBuffer, EPoint aPoint) {
     assert(aName != 0 && aName[0] != 0);
     assert(aBuffer != 0);
     assert(aBuffer->FileName != 0);
@@ -129,7 +129,7 @@ EMark *EMarkIndex::insert(char *aName, EBuffer *aBuffer, EPoint aPoint) {
     return insert(aName, aBuffer->FileName, aPoint, aBuffer);
 }
 
-EMark *EMarkIndex::locate(char *aName) {
+EMark *EMarkIndex::locate(const char *aName) {
     int L = 0, R = markCount, M, cmp;
 
     assert(aName != 0 && aName[0] != 0);
@@ -147,7 +147,7 @@ EMark *EMarkIndex::locate(char *aName) {
     return 0;
 }
 
-int EMarkIndex::remove(char *aName) {
+int EMarkIndex::remove(const char *aName) {
     int L = 0, R = markCount, M, cmp;
 
     assert(aName != 0 && aName[0] != 0);
@@ -178,7 +178,7 @@ int EMarkIndex::remove(char *aName) {
     return 0;
 }
 
-int EMarkIndex::view(EView *aView, char *aName) {
+int EMarkIndex::view(EView *aView, const char *aName) {
     EMark *m = locate(aName);
     if (m) {
         EBuffer *b = m->getBuffer();

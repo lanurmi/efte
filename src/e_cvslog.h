@@ -20,7 +20,7 @@
 
 class ECvsLog: public EBuffer {
 public:
-    ECvsLog(int createFlags, EModel **ARoot, char *Directory, char *OnFiles);
+    ECvsLog(int createFlags, EModel **ARoot, const char *Directory, const char *OnFiles);
     ~ECvsLog();
 
     // List files into buffer

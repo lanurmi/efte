@@ -339,7 +339,7 @@ static const OrdLookup hilit_colors[] = {
     { 0, 0 },
 };
 
-static int Lookup(const OrdLookup *where, char *what) {
+static int Lookup(const OrdLookup *where, const char *what) {
     int i;
 
     for (i = 0; where[i].Name != 0; i++) {
@@ -494,7 +494,7 @@ static int DefineColor(char *name, char *value) {
     return 1;
 }
 
-static char *DefinedColor(char *name) {
+static char *DefinedColor(const char *name) {
     if (colors == 0 || colorCount == 0)
         return 0;
     for (int i = 0; i < colorCount; i++)

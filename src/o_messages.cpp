@@ -42,7 +42,7 @@ void FreeCRegexp() {
     }
 }
 
-EMessages::EMessages(int createFlags, EModel **ARoot, char *ADir, char *ACommand): EList(createFlags, ARoot, "Messages") {
+EMessages::EMessages(int createFlags, EModel **ARoot, const char *ADir, const char *ACommand): EList(createFlags, ARoot, "Messages") {
     CompilerMsgs = this;
     ErrCount = 0;
     ErrList = 0;
@@ -143,7 +143,7 @@ void EMessages::FindFileErrors(EBuffer *B) {
         }
 }
 
-int EMessages::RunPipe(char *ADir, char *ACommand) {
+int EMessages::RunPipe(const char *ADir, const char *ACommand) {
     if (!KeepMessages)
         FreeErrors();
 
@@ -220,7 +220,7 @@ void EMessages::AddError(Error *p) {
     UpdateList();
 }
 
-void EMessages::AddError(char *file, int line, char *msg, const char *text, int hilit) {
+void EMessages::AddError(const char *file, int line, const char *msg, const char *text, int hilit) {
     Error *pe;
 
     pe = (Error *) malloc(sizeof(Error));
@@ -521,7 +521,7 @@ bad:
     return 1;
 }
 
-int EMessages::Compile(char * /*Command*/) {
+int EMessages::Compile(const char * /*Command*/) {
     return 0;
 }
 

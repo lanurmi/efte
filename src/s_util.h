@@ -22,7 +22,7 @@ class EView;
 class EBuffer;
 class EModel;
 
-char* MakeBackup(char *FileName, char *NewName);
+char* MakeBackup(const char *FileName, char *NewName);
 
 int GetPMClip(int clipboard);
 int PutPMClip(int clipboard);

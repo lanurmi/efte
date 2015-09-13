@@ -18,9 +18,10 @@
 
 ESvnLog *SvnLogView;
 
-ESvnLog::ESvnLog(int createFlags, EModel **ARoot, char *Directory, char *OnFiles): EBuffer(createFlags, ARoot, NULL) {
+ESvnLog::ESvnLog(int createFlags, EModel **ARoot, const char *Directory, const char *AOnFiles): EBuffer(createFlags, ARoot, NULL) {
     int i, j, p;
     char msgFile[MAXPATH];
+    char *OnFiles = strdup(AOnFiles);
 
     SvnLogView = this;
     // Create filename for message
@@ -107,6 +108,7 @@ ESvnLog::ESvnLog(int createFlags, EModel **ARoot, char *Directory, char *OnFiles
     InsertLine(p + 1, 60, "SVN: -------------------------------------------------------");
     SetPos(0, 0);
     FreeUndo();
+    free(OnFiles);
     Modified = 0;
 }
 

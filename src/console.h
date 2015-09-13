@@ -160,7 +160,7 @@ int ConInit(int XSize, int YSize);
 int ConDone();
 int ConSuspend();
 int ConContinue();
-int ConSetTitle(char *Title, char *STitle);
+int ConSetTitle(const char *Title, char *STitle);
 int ConGetTitle(char *Title, int MaxLen, char *STitle, int SMaxLen);
 
 int ConClear();

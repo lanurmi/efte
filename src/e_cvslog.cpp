@@ -17,9 +17,10 @@
 
 ECvsLog *CvsLogView;
 
-ECvsLog::ECvsLog(int createFlags, EModel **ARoot, char *Directory, char *OnFiles): EBuffer(createFlags, ARoot, NULL) {
+ECvsLog::ECvsLog(int createFlags, EModel **ARoot, const char *Directory, const char *AOnFiles): EBuffer(createFlags, ARoot, NULL) {
     int i, j, p;
     char msgFile[MAXPATH];
+    char *OnFiles = strdup(AOnFiles);
 
     CvsLogView = this;
     // Create filename for message
@@ -106,6 +107,7 @@ ECvsLog::ECvsLog(int createFlags, EModel **ARoot, char *Directory, char *OnFiles
     InsertLine(p + 1, 60, "CVS: -------------------------------------------------------");
     SetPos(0, 0);
     FreeUndo();
+    free(OnFiles);
     Modified = 0;
 }
 

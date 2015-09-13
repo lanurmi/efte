@@ -16,7 +16,7 @@
 
 class EMark {
 public:
-    EMark(char *aName, char *aFileName, EPoint aPoint, EBuffer *aBuffer = 0);
+    EMark(const char *aName, const char *aFileName, EPoint aPoint, EBuffer *aBuffer = 0);
     ~EMark();
 
     int setBuffer(EBuffer *aBuffer);
@@ -47,11 +47,11 @@ public:
     EMarkIndex();
     ~EMarkIndex();
 
-    EMark *insert(char *aName, char *aFileName, EPoint aPoint, EBuffer *aBuffer = 0);
-    EMark *insert(char *aName, EBuffer *aBuffer, EPoint aPoint);
-    EMark *locate(char *aName);
-    int remove(char *aName);
-    int view(EView *aView, char *aName);
+    EMark *insert(const char *aName, const char *aFileName, EPoint aPoint, EBuffer *aBuffer = 0);
+    EMark *insert(const char *aName, EBuffer *aBuffer, EPoint aPoint);
+    EMark *locate(const char *aName);
+    int remove(const char *aName);
+    int view(EView *aView, const char *aName);
 
 //    int MarkPush(EBuffer *B, EPoint P);
 //    int MarkPop(EView *V);

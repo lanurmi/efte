@@ -164,8 +164,8 @@ static int SetDrive(int drive) { // 1 = A, 2 = B, 3 = C, ...
 #endif
 
 #if PATHTYPE == PT_UNIXISH
-int RemoveDots(char *Source, char *Dest) {
-    char *p;
+int RemoveDots(const char *Source, char *Dest) {
+    const char *p;
     char *d;
 
     p = Source;

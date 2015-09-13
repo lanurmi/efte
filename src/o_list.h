@@ -50,7 +50,7 @@ public:
     EListPort *GetViewVPort(EView *V);
     EListPort *GetVPort();
 
-    void SetTitle(char *ATitle);
+    void SetTitle(const char *ATitle);
 
     virtual int ExecCommand(int Command, ExState &State);
     virtual EEventMap *GetEventMap();

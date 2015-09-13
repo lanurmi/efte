@@ -45,7 +45,7 @@ public:
     virtual void Activate(int gotfocus);
     virtual void Resize(int width, int height);
 
-    void UpdateTitle(char *Title, char *STitle);
+    void UpdateTitle(const char *Title, char *STitle);
 
     int ReadStr(const char *Prompt, unsigned int BufLen, char *Str, Completer Comp, int Select, int HistId);
     int Choice(unsigned long Flags, const char *Title, int NSel, ... /* choices, format, args */);

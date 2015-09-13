@@ -15,7 +15,7 @@
 extern RxNode *CompletionFilter;
 
 // should use DosCopy under OS/2...
-static int copyfile(char *f1, char *f2) { // from F1 to F2
+static int copyfile(const char *f1, const char *f2) { // from F1 to F2
     void *buffer;
     int fd1, fd2;
     int rd;
@@ -41,7 +41,7 @@ static int copyfile(char *f1, char *f2) { // from F1 to F2
     return 0;
 }
 
-char *MakeBackup(char *FileName, char *NewName) {
+char *MakeBackup(const char *FileName, char *NewName) {
     int l = strlen(FileName);
     if (l <= 0)
         return NULL;

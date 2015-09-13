@@ -1244,7 +1244,7 @@ int EBuffer::FileReload(ExState &/*State*/) {
     return Reload();
 }
 
-int EBuffer::FileSaveAs(char *FName) {
+int EBuffer::FileSaveAs(const char *FName) {
     char Name[MAXPATH];
 
     if (ExpandPath(FName, Name, sizeof(Name)) == -1) {
@@ -1287,7 +1287,7 @@ int EBuffer::FileSaveAs(ExState &State) {
     return FileSaveAs(FName);
 }
 
-int EBuffer::FileWriteTo(char *FName) {
+int EBuffer::FileWriteTo(const char *FName) {
     char Name[MAXPATH];
 
     if (ExpandPath(FName, Name, sizeof(Name)) == -1) {

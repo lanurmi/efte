@@ -24,7 +24,7 @@ class FileInfo {
     int type;
 
 public:
-    FileInfo(char *Name, int type, off_t Size, time_t MTime);
+    FileInfo(const char *Name, int type, off_t Size, time_t MTime);
     ~FileInfo();
 
     const char *Name() const {

@@ -393,7 +393,7 @@ int ConClear() {
     return 0;
 }
 
-int ConSetTitle(char */*Title*/, char */*STitle*/) {
+int ConSetTitle(const char */*Title*/, char */*STitle*/) {
     return 0;
 }
 int ConGetTitle(char *Title, int /*MaxLen*/, char */*STitle*/, int /*SMaxLen*/) {

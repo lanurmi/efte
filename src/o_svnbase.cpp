@@ -75,7 +75,7 @@ void ESvnBase::FreeLines() {
     BufLen = BufPos = 0;
 }
 
-void ESvnBase::AddLine(char *file, int line, const char* msg, int status) {
+void ESvnBase::AddLine(const char *file, int line, const char* msg, int status) {
     SvnLine *l;
 
     l = (SvnLine *)malloc(sizeof(SvnLine));
@@ -202,7 +202,7 @@ int ESvnBase::GetLine(char *Line, int max) {
     return 1;
 }
 
-void ESvnBase::ParseLine(char *line, int) {
+void ESvnBase::ParseLine(const char *line, int) {
     AddLine(0, -1, line);
 }
 
@@ -228,7 +228,7 @@ void ESvnBase::NotifyPipe(int APipeId) {
     }
 }
 
-int ESvnBase::RunPipe(char *ADir, char *ACommand, char *AOnFiles) {
+int ESvnBase::RunPipe(const char *ADir, const char *ACommand, const char *AOnFiles) {
     free(Command);
     free(Directory);
     free(OnFiles);

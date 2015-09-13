@@ -180,7 +180,7 @@ int ConClear(void) {
     return ConPutLine(0, 0, ScreenCols, ScreenRows, B);
 }
 
-int ConSetTitle(char *Title, char *STitle) {
+int ConSetTitle(const char *Title, char *STitle) {
 }
 
 int ConGetTitle(char *Title, int MaxLen, char *STitle, int SMaxLen) {

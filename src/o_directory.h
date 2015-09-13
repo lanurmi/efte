@@ -20,7 +20,7 @@ public:
     char SearchName[MAXISEARCH];
     int SearchPos[MAXISEARCH];
 
-    EDirectory(int createFlags, EModel **ARoot, char *aPath);
+    EDirectory(int createFlags, EModel **ARoot, const char *aPath);
     virtual ~EDirectory();
 
     virtual int GetContext();

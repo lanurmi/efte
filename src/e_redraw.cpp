@@ -544,7 +544,7 @@ void EBuffer::Redraw() {
     RedrawToEos = 0;
 }
 
-int EBuffer::GetHilitWord(int len, char *str, ChColor &clr, int IgnCase) {
+int EBuffer::GetHilitWord(int len, const char *str, ChColor &clr, int IgnCase) {
     char *p;
 
     if (Mode == 0 || Mode->fColorize == 0)
