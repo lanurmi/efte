@@ -27,7 +27,7 @@ public:
     virtual int ExecCommand(int Command, ExState &State);
 
     virtual void Activate(int gotfocus);
-    virtual int GetContext() {
+    virtual int GetContext() const {
         return CONTEXT_NONE;
     }
     virtual ExView *GetViewContext() {
@@ -44,7 +44,7 @@ public:
     virtual void RepaintStatus();
     virtual void Resize(int width, int height);
     virtual void EndExec(int NewResult);
-    int IsActive();
+    int IsActive() const;
 
     void Repaint() {
         RepaintStatus();
@@ -63,7 +63,7 @@ public:
     int ConHideCursor();
     void ConSetInsertState(bool insert);
 
-    virtual int IsModelView() {
+    virtual int IsModelView() const {
         return 0;
     }
     virtual void WnSwitchBuffer(EModel *M) {

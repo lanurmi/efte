@@ -31,7 +31,7 @@ public:
     virtual int ExecCommand(int Command, ExState &State);
     int BlockCopy(int Append);
 
-    virtual int GetContext() {
+    virtual int GetContext() const {
         return CONTEXT_CVSDIFF;
     }
     virtual EEventMap *GetEventMap();

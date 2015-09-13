@@ -17,7 +17,7 @@
 #include "console.h"
 #include "gui.h"
 
-int GFrame::isLastFrame() {
+int GFrame::isLastFrame() const {
     if (this == Next && frames == this)
         return 1;
     else

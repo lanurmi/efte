@@ -174,7 +174,7 @@ int ECvs::DoneCommit(int commit) {
 }
 
 // If running, can't be closed without asking
-int ECvs::CanQuit() {
+int ECvs::CanQuit() const {
     if (Running) return 0;
     else return 1;
 }

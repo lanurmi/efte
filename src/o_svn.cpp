@@ -175,7 +175,7 @@ int ESvn::DoneCommit(int commit) {
 }
 
 // If running, can't be closed without asking
-int ESvn::CanQuit() {
+int ESvn::CanQuit() const {
     if (Running) return 0;
     else return 1;
 }

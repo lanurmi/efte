@@ -48,7 +48,7 @@ EView::~EView() {
         delete Port;
 }
 
-int EView::CanQuit() {
+int EView::CanQuit() const {
     if (Model)
         return Model->CanQuit();
     else
@@ -129,7 +129,7 @@ void EView::Activate(int GotFocus) {
     }
 }
 
-int EView::GetContext() {
+int EView::GetContext() const {
     return Model ? Model->GetContext() : 0;
 }
 

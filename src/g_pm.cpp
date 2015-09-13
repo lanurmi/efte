@@ -2939,7 +2939,7 @@ int GView::Execute() {
     return NewResult;
 }
 
-int GView::IsActive() {
+int GView::IsActive() const {
     return (Parent->Active == this && Parent == frames);
 }
 

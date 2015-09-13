@@ -29,7 +29,7 @@ public:
     EEventMap *GetEventMap();
     int ExecCommand(int Command, ExState &State);
 
-    virtual int GetContext();
+    virtual int GetContext() const;
     virtual ExView* GetStatusContext() {
         if (Top) return Top->GetStatusContext();
         else return 0;
@@ -57,7 +57,7 @@ public:
     int GetStr(const char *Prompt, unsigned int BufLen, char *Str, int HistId);
     int GetFile(const char *Prompt, unsigned int BufLen, char *Str, int HistId, int Flags);
 
-    int IsModelView() {
+    int IsModelView() const {
         return Top ? Top->IsModelView() : 0;
     }
 };

@@ -19,7 +19,7 @@ ExView::~ExView() {
 void ExView::Activate(int /*gotfocus*/) {
 }
 
-int ExView::IsActive() {
+int ExView::IsActive() const {
     if (Win)
         return Win->IsActive();
     return 0;

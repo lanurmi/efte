@@ -145,7 +145,7 @@ EViewPort *ESvnLog::CreateViewPort(EView *V) {
     return V->Port;
 }
 
-int ESvnLog::CanQuit() {
+int ESvnLog::CanQuit() const {
     return 0;
 }
 
@@ -175,17 +175,17 @@ int ESvnLog::ConfQuit(GxView *V, int /*multiFile*/) {
 }
 
 // Shown in "Closing xxx..." message when closing model
-void ESvnLog::GetName(char *AName, int MaxLen) {
+void ESvnLog::GetName(char *AName, int MaxLen) const {
     strncpy(AName, "SVN log", MaxLen);
 }
 
 // Shown in buffer list
-void ESvnLog::GetInfo(char *AInfo, int /*MaxLen*/) {
+void ESvnLog::GetInfo(char *AInfo, int /*MaxLen*/) const {
     sprintf(AInfo, "%2d %04d:%03d%cSVN log: %-140s", ModelNo, 1 + CP.Row, 1 + CP.Col, Modified ? '*' : ' ', FileName);
 }
 
 // Normal and short title (normal for window, short for icon in X)
-void ESvnLog::GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen) {
+void ESvnLog::GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen) const {
     strncpy(ATitle, "SVN log", MaxLen);
     strncpy(ASTitle, "SVN log", SMaxLen);
 }

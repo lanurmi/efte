@@ -320,7 +320,7 @@ void ECvsBase::DrawLine(PCell B, int Line, int Col, ChColor color, int Width) {
         }
 }
 
-char *ECvsBase::FormatLine(int Line) {
+char *ECvsBase::FormatLine(int Line) const {
     if (Line < LineCount) return strdup(Lines[Line]->Msg);
     else return 0;
 }
@@ -336,15 +336,15 @@ int ECvsBase::Activate(int No) {
     return 1;
 }
 
-int ECvsBase::CanActivate(int Line) {
+int ECvsBase::CanActivate(int Line) const {
     return Line < LineCount && Lines[Line]->File;
 }
 
-int ECvsBase::IsHilited(int Line) {
+int ECvsBase::IsHilited(int Line) const {
     return Line < LineCount && (Lines[Line]->Status&1);
 }
 
-int ECvsBase::IsMarked(int Line) {
+int ECvsBase::IsMarked(int Line) const {
     return Line < LineCount && (Lines[Line]->Status&2);
 }
 
@@ -411,12 +411,12 @@ EEventMap *ECvsBase::GetEventMap() {
 }
 
 // Shown in "Closing xxx..." message when closing model
-void ECvsBase::GetName(char *AName, int MaxLen) {
+void ECvsBase::GetName(char *AName, int MaxLen) const {
     strncpy(AName, Title, MaxLen);
 }
 
 // Shown in buffer list
-void ECvsBase::GetInfo(char *AInfo, int MaxLen) {
+void ECvsBase::GetInfo(char *AInfo, int MaxLen) const {
     char format[128];
 
     sprintf(format, "%2d %04d/%03d %s (%%.%is) ", ModelNo, Row, Count, Title, MaxLen - 24 - (int)strlen(Title));
@@ -424,14 +424,14 @@ void ECvsBase::GetInfo(char *AInfo, int MaxLen) {
 }
 
 // Used to get default directory of model
-void ECvsBase::GetPath(char *APath, int MaxLen) {
+void ECvsBase::GetPath(char *APath, int MaxLen) const {
     strncpy(APath, Directory, MaxLen);
     APath[MaxLen-1] = 0;
     Slash(APath, 0);
 }
 
 // Normal and short title (normal for window, short for icon in X)
-void ECvsBase::GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen) {
+void ECvsBase::GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen) const {
     char format[128];
 
     sprintf(format, "%s: %%.%is", Title, MaxLen - 4 - (int)strlen(Title));

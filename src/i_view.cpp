@@ -78,7 +78,7 @@ int GxView::BeginMacro() {
     return (Top) ?  Top->BeginMacro() : 1;
 }
 
-int GxView::GetContext() {
+int GxView::GetContext() const {
     return (Top) ? Top->GetContext() : CONTEXT_NONE;
 }
 

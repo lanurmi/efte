@@ -64,26 +64,26 @@ public:
     virtual void ClosePipe();
 
     void DrawLine(PCell B, int Line, int Col, ChColor color, int Width);
-    char *FormatLine(int Line);
+    char *FormatLine(int Line) const;
     void UpdateList();
     int Activate(int No);
-    int CanActivate(int Line);
-    virtual int IsHilited(int Line);
-    virtual int IsMarked(int Line);
+    int CanActivate(int Line) const;
+    virtual int IsHilited(int Line) const;
+    virtual int IsMarked(int Line) const;
     virtual int Mark(int Line);
     virtual int Unmark(int Line);
 
     virtual int ExecCommand(int Command, ExState &State);
     void ShowLine(EView *V, int err);
 
-    virtual int GetContext() {
+    virtual int GetContext() const {
         return CONTEXT_CVSBASE;
     }
     virtual EEventMap *GetEventMap();
-    virtual void GetName(char *AName, int MaxLen);
-    virtual void GetInfo(char *AInfo, int MaxLen);
-    virtual void GetPath(char *APath, int MaxLen);
-    virtual void GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen);
+    virtual void GetName(char *AName, int MaxLen) const;
+    virtual void GetInfo(char *AInfo, int MaxLen) const;
+    virtual void GetPath(char *APath, int MaxLen) const;
+    virtual void GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen) const;
 };
 
 int AddCvsIgnoreRegexp(const char *);

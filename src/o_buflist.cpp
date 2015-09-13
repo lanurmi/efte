@@ -33,7 +33,7 @@ EEventMap *BufferView::GetEventMap() {
     return FindEventMap("BUFFERS");
 }
 
-int BufferView::GetContext() {
+int BufferView::GetContext() const {
     return CONTEXT_BUFFERS;
 }
 
@@ -43,7 +43,7 @@ void BufferView::DrawLine(PCell B, int Line, int Col, ChColor color, int Width) 
             MoveStr(B, 0, Width, BList[Line] + Col, color, Width);
 }
 
-char* BufferView::FormatLine(int Line) {
+char* BufferView::FormatLine(int Line) const {
     return strdup(BList[Line]);
 }
 
@@ -217,7 +217,7 @@ void BufferView::HandleEvent(TEvent &Event) {
  * Direction should be 1 for ascending and -1 for descending.
  * Returns line found or -1 if none.
  */
-int BufferView::getMatchingLine(int start, int direction) {
+int BufferView::getMatchingLine(int start, int direction) const {
     int i = start;
     do {
         // Find SearchString at any place in string for line i
@@ -249,11 +249,11 @@ void BufferView::CancelSearch() {
     Msg(S_INFO, "");
 }
 
-void BufferView::GetInfo(char *AInfo, int /*MaxLen*/) {
+void BufferView::GetInfo(char *AInfo, int /*MaxLen*/) const {
     sprintf(AInfo, "%2d %04d/%03d Buffers", ModelNo, Row + 1, Count);
 }
 
-void BufferView::GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen) {
+void BufferView::GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen) const {
     strncpy(ATitle, "Buffers", MaxLen);
     ATitle[MaxLen - 1] = 0;
     strncpy(ASTitle, "Buffers", SMaxLen);

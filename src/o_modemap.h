@@ -30,15 +30,15 @@ public:
 
     virtual int ExecCommand(int Command, ExState &State);
     virtual EEventMap *GetEventMap();
-    virtual int GetContext();
+    virtual int GetContext() const;
 
     virtual void DrawLine(PCell B, int Line, int Col, ChColor color, int Width);
-    virtual char* FormatLine(int Line);
+    virtual char* FormatLine(int Line) const;
     virtual void UpdateList();
-    virtual int CanActivate(int Line);
-    virtual void GetName(char *AName, int MaxLen);
-    virtual void GetInfo(char *AInfo, int MaxLen);
-    virtual void GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen);
+    virtual int CanActivate(int Line) const;
+    virtual void GetName(char *AName, int MaxLen) const;
+    virtual void GetInfo(char *AInfo, int MaxLen) const;
+    virtual void GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen) const;
 };
 
 extern EventMapView *TheEventMapView;

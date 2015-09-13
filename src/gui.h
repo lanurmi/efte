@@ -61,7 +61,7 @@ public:
     int SetSbHPos(int Start, int Amount, int Total);
     int ExpandHeight(int DeltaY);
 
-    int IsActive();
+    int IsActive() const;
 
     virtual void Update();
     virtual void Repaint();
@@ -111,7 +111,7 @@ public:
     void Show();
     void Activate();
 
-    int isLastFrame();
+    int isLastFrame() const;
 };
 
 class GUI {

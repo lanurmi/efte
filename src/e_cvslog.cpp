@@ -144,7 +144,7 @@ EViewPort *ECvsLog::CreateViewPort(EView *V) {
     return V->Port;
 }
 
-int ECvsLog::CanQuit() {
+int ECvsLog::CanQuit() const {
     return 0;
 }
 
@@ -174,17 +174,17 @@ int ECvsLog::ConfQuit(GxView *V, int /*multiFile*/) {
 }
 
 // Shown in "Closing xxx..." message when closing model
-void ECvsLog::GetName(char *AName, int MaxLen) {
+void ECvsLog::GetName(char *AName, int MaxLen) const {
     strncpy(AName, "CVS log", MaxLen);
 }
 
 // Shown in buffer list
-void ECvsLog::GetInfo(char *AInfo, int /*MaxLen*/) {
+void ECvsLog::GetInfo(char *AInfo, int /*MaxLen*/) const {
     sprintf(AInfo, "%2d %04d:%03d%cCVS log: %-140s", ModelNo, 1 + CP.Row, 1 + CP.Col, Modified ? '*' : ' ', FileName);
 }
 
 // Normal and short title (normal for window, short for icon in X)
-void ECvsLog::GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen) {
+void ECvsLog::GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen) const {
     strncpy(ATitle, "CVS log", MaxLen);
     strncpy(ASTitle, "CVS log", SMaxLen);
 }

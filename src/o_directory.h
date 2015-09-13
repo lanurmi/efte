@@ -23,29 +23,29 @@ public:
     EDirectory(int createFlags, EModel **ARoot, const char *aPath);
     virtual ~EDirectory();
 
-    virtual int GetContext();
-    virtual int GetMatchForward(int start=0);
-    virtual int GetMatchBackward(int start=0);
+    virtual int GetContext() const;
+    virtual int GetMatchForward(int start=0) const;
+    virtual int GetMatchBackward(int start=0) const;
     virtual EEventMap *GetEventMap();
     virtual int ExecCommand(int Command, ExState &State);
     virtual void HandleEvent(TEvent &Event);
 
     virtual void DrawLine(PCell B, int Line, int Col, ChColor color, int Width);
-    virtual char *FormatLine(int Line);
-    virtual int IsHilited(int Line);
+    virtual char *FormatLine(int Line) const;
+    virtual int IsHilited(int Line) const;
 
     virtual void RescanList();
 //    virtual void UpdateList();
     virtual void FreeList();
-    virtual int CanActivate(int Line);
+    virtual int CanActivate(int Line) const;
     virtual int Activate(int No);
 
-    virtual void GetName(char *AName, int MaxLen);
-    virtual void GetPath(char *APath, int MaxLen);
-    virtual void GetInfo(char *AInfo, int MaxLen);
-    virtual void GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen);
+    virtual void GetName(char *AName, int MaxLen) const;
+    virtual void GetPath(char *APath, int MaxLen) const;
+    virtual void GetInfo(char *AInfo, int MaxLen) const;
+    virtual void GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen) const;
 
-    int isDir(int No);
+    int isDir(int No) const;
     int FmChDir(const char* Name);
     int FmLoad(const char* Name, EView *View);
     int FmMvFile(const char* Name);

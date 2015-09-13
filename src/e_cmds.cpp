@@ -1087,7 +1087,7 @@ int EBuffer::CanRedo() {
     return 1;
 }
 
-int EBuffer::IsLineBlank(int Row) {
+int EBuffer::IsLineBlank(int Row) const {
     PELine X = RLine(Row);
     int P;
 

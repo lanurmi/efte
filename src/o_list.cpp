@@ -401,7 +401,7 @@ void EList::HandleEvent(TEvent &/*Event*/) {
 void EList::DrawLine(PCell /*B*/, int /*Line*/, int /*Col*/, ChColor /*color*/, int /*Width*/) {
 }
 
-char *EList::FormatLine(int /*Line*/) {
+char *EList::FormatLine(int /*Line*/) const {
     return 0;
 }
 
@@ -448,22 +448,22 @@ void EList::FixPos() {
     }
 }
 
-int EList::GetContext() {
+int EList::GetContext() const {
     return CONTEXT_LIST;
 }
 int EList::BeginMacro() {
     return 1;
 }
-int EList::CanActivate(int /*Line*/) {
+int EList::CanActivate(int /*Line*/) const {
     return 1;
 }
 int EList::Activate(int /*No*/) {
     return 0;
 }
-int EList::IsHilited(int /*Line*/) {
+int EList::IsHilited(int /*Line*/) const {
     return 0;
 }
-int EList::IsMarked(int /*Line*/) {
+int EList::IsMarked(int /*Line*/) const {
     return 0;
 }
 int EList::Mark(int /*Line*/) {

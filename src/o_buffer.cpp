@@ -127,7 +127,7 @@ void EEditPort::RedrawAll() {
     ///    Redraw(0, 0, Cols, Rows);
 }
 
-int EBuffer::GetContext() {
+int EBuffer::GetContext() const {
     return CONTEXT_FILE;
 }
 
@@ -1618,7 +1618,7 @@ int EBuffer::ChangeLeftMargin(ExState &State) {
 }
 
 
-int EBuffer::CanQuit() {
+int EBuffer::CanQuit() const {
     if (Modified)
         return 0;
     else
@@ -1687,16 +1687,16 @@ int EBuffer::ConfQuit(GxView *V, int multiFile) {
     return 1;
 }
 
-void EBuffer::GetName(char *AName, int MaxLen) {
+void EBuffer::GetName(char *AName, int MaxLen) const {
     strncpy(AName, FileName, MaxLen);
     AName[MaxLen - 1] = 0;
 }
 
-void EBuffer::GetPath(char *APath, int MaxLen) {
+void EBuffer::GetPath(char *APath, int MaxLen) const {
     JustDirectory(FileName, APath, MaxLen);
 }
 
-void EBuffer::GetInfo(char *AInfo, int /*MaxLen*/) {
+void EBuffer::GetInfo(char *AInfo, int /*MaxLen*/) const {
     char buf[256] = {0};
     char winTitle[256] = {0};
 
@@ -1719,7 +1719,7 @@ void EBuffer::GetInfo(char *AInfo, int /*MaxLen*/) {
             winTitle);
 }
 
-void EBuffer::GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen) {
+void EBuffer::GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen) const {
     char *p;
 
     strncpy(ATitle, FileName, MaxLen - 1);

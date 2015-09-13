@@ -140,7 +140,7 @@ int EventMapView::ExecCommand(int Command, ExState &State) {
     return EList::ExecCommand(Command, State);
 }
 
-int EventMapView::GetContext() {
+int EventMapView::GetContext() const {
     return CONTEXT_MAPVIEW;
 }
 
@@ -150,7 +150,7 @@ void EventMapView::DrawLine(PCell B, int Line, int Col, ChColor color, int Width
             MoveStr(B, 0, Width, BList[Line] + Col, color, Width);
 }
 
-char *EventMapView::FormatLine(int Line) {
+char *EventMapView::FormatLine(int Line) const {
     return strdup(BList[Line]);
 }
 
@@ -159,15 +159,15 @@ void EventMapView::UpdateList() {
     EList::UpdateList();
 }
 
-int EventMapView::CanActivate(int /*Line*/) {
+int EventMapView::CanActivate(int /*Line*/) const {
     return 0;
 }
 
-void EventMapView::GetName(char *AName, int MaxLen) {
+void EventMapView::GetName(char *AName, int MaxLen) const {
     strncpy(AName, "EventMapView", MaxLen);
 }
 
-void EventMapView::GetInfo(char *AInfo, int /*MaxLen*/) {
+void EventMapView::GetInfo(char *AInfo, int /*MaxLen*/) const {
     sprintf(AInfo,
             "%2d %04d/%03d EventMapView (%s)",
             ModelNo,
@@ -175,7 +175,7 @@ void EventMapView::GetInfo(char *AInfo, int /*MaxLen*/) {
             EMap->Name);
 }
 
-void EventMapView::GetTitle(char *ATitle, int /*MaxLen*/, char *ASTitle, int SMaxLen) {
+void EventMapView::GetTitle(char *ATitle, int /*MaxLen*/, char *ASTitle, int SMaxLen) const {
     sprintf(ATitle, "EventMapView: %s", EMap->Name);
     strncpy(ASTitle, "EventMapView", SMaxLen);
     ASTitle[SMaxLen - 1] = 0;

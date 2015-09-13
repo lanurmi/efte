@@ -52,7 +52,7 @@ public:
     void AddFileError(EBuffer *B, int err);
     void FindFileErrors(EBuffer *B);
 
-    virtual int GetContext() {
+    virtual int GetContext() const {
         return CONTEXT_MESSAGES;
     }
     virtual EEventMap *GetEventMap();
@@ -67,17 +67,17 @@ public:
     int Compile(const char *Command);
     void ShowError(EView *V, int err);
     void DrawLine(PCell B, int Line, int Col, ChColor color, int Width);
-    char* FormatLine(int Line);
-    int IsHilited(int Line);
+    char* FormatLine(int Line) const;
+    int IsHilited(int Line) const;
     void UpdateList();
     int Activate(int No);
-    int CanActivate(int Line);
+    int CanActivate(int Line) const;
     void NotifyPipe(int APipeId);
-    virtual void GetName(char *AName, int MaxLen);
-    virtual void GetInfo(char *AInfo, int MaxLen);
-    virtual void GetPath(char *APath, int MaxLen);
-    virtual void GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen);
-    virtual int GetRowLength(int ARow);
+    virtual void GetName(char *AName, int MaxLen) const;
+    virtual void GetInfo(char *AInfo, int MaxLen) const;
+    virtual void GetPath(char *APath, int MaxLen) const;
+    virtual void GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen) const;
+    virtual int GetRowLength(int ARow) const;
 
 
     int RunPipe(const char *Dir, const char *Command);

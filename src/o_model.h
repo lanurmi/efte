@@ -62,22 +62,22 @@ public:
 
     virtual EViewPort *CreateViewPort(EView *V);
 
-    virtual int GetContext();
+    virtual int GetContext() const;
     virtual EEventMap *GetEventMap();
     virtual int BeginMacro();
     virtual int ExecCommand(int Command, ExState &State);
     virtual void HandleEvent(TEvent &Event);
 
-    virtual void GetName(char *AName, int MaxLen);
-    virtual void GetPath(char *APath, int MaxLen);
-    virtual void GetInfo(char *AInfo, int MaxLen);
+    virtual void GetName(char *AName, int MaxLen) const;
+    virtual void GetPath(char *APath, int MaxLen) const;
+    virtual void GetInfo(char *AInfo, int MaxLen) const;
     virtual void GetTitle(char *ATitle, int MaxLen,
-                          char *ASTitle, int SMaxLen);
+                          char *ASTitle, int SMaxLen) const;
 
     void UpdateTitle();
 
     void Msg(int level, const char *s, ...);
-    virtual int CanQuit();
+    virtual int CanQuit() const;
     virtual int ConfQuit(GxView *V, int multiFile = 0);
 
     virtual int GetStrVar(int var, char *str, int buflen);
@@ -111,7 +111,7 @@ public:
 
     void Activate(int GotFocus);
 
-    virtual int GetContext();
+    virtual int GetContext() const;
     virtual EEventMap *GetEventMap();
     virtual int BeginMacro();
     virtual int ExecCommand(int Command, ExState &State);
@@ -183,7 +183,7 @@ public:
     int PopGlobalBookmark();
 
     void DeleteModel(EModel *M);
-    int CanQuit();
+    int CanQuit() const;
 
     int GetStrVar(int var, char *str, int buflen);
     int GetIntVar(int var, int *value);

@@ -320,7 +320,7 @@ void ESvnBase::DrawLine(PCell B, int Line, int Col, ChColor color, int Width) {
         }
 }
 
-char *ESvnBase::FormatLine(int Line) {
+char *ESvnBase::FormatLine(int Line) const {
     if (Line < LineCount) return strdup(Lines[Line]->Msg);
     else return 0;
 }
@@ -336,15 +336,15 @@ int ESvnBase::Activate(int No) {
     return 1;
 }
 
-int ESvnBase::CanActivate(int Line) {
+int ESvnBase::CanActivate(int Line) const {
     return Line < LineCount && Lines[Line]->File;
 }
 
-int ESvnBase::IsHilited(int Line) {
+int ESvnBase::IsHilited(int Line) const {
     return Line < LineCount && (Lines[Line]->Status&1);
 }
 
-int ESvnBase::IsMarked(int Line) {
+int ESvnBase::IsMarked(int Line) const {
     return Line < LineCount && (Lines[Line]->Status&2);
 }
 
@@ -411,12 +411,12 @@ EEventMap *ESvnBase::GetEventMap() {
 }
 
 // Shown in "Closing xxx..." message when closing model
-void ESvnBase::GetName(char *AName, int MaxLen) {
+void ESvnBase::GetName(char *AName, int MaxLen) const {
     strncpy(AName, Title, MaxLen);
 }
 
 // Shown in buffer list
-void ESvnBase::GetInfo(char *AInfo, int MaxLen) {
+void ESvnBase::GetInfo(char *AInfo, int MaxLen) const {
     char format[128];
 
     sprintf(format, "%2d %04d/%03d %s (%%.%is) ", ModelNo, Row, Count, Title, MaxLen - 24 - (int)strlen(Title));
@@ -424,14 +424,14 @@ void ESvnBase::GetInfo(char *AInfo, int MaxLen) {
 }
 
 // Used to get default directory of model
-void ESvnBase::GetPath(char *APath, int MaxLen) {
+void ESvnBase::GetPath(char *APath, int MaxLen) const {
     strncpy(APath, Directory, MaxLen);
     APath[MaxLen-1] = 0;
     Slash(APath, 0);
 }
 
 // Normal and short title (normal for window, short for icon in X)
-void ESvnBase::GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen) {
+void ESvnBase::GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen) const {
     char format[128];
 
     sprintf(format, "%s: %%.%is", Title, MaxLen - 4 - (int)strlen(Title));

@@ -39,10 +39,10 @@ public:
     // Finish commit process (called on message buffer close), returns 0 if OK
     int DoneCommit(int commit);
 
-    virtual int CanQuit();
+    virtual int CanQuit() const;
     virtual int ConfQuit(GxView *V, int multiFile);
 
-    virtual int GetContext() {
+    virtual int GetContext() const {
         return CONTEXT_CVS;
     }
     virtual EEventMap *GetEventMap();

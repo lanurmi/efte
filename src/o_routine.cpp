@@ -114,7 +114,7 @@ void RoutineView::HandleEvent(TEvent &Event) {
  * Direction should be 1 for ascending and -1 for descending.
  * Returns line found or -1 if none.
  */
-int RoutineView::getMatchingLine(int start, int direction) {
+int RoutineView::getMatchingLine(int start, int direction) const {
     int i = start;
     do {
         char *str = Buffer->RLine(Buffer->rlst.Lines[i])->Chars;
@@ -145,7 +145,7 @@ void RoutineView::DrawLine(PCell B, int Line, int Col, ChColor color, int Width)
     }
 }
 
-char* RoutineView::FormatLine(int Line) {
+char* RoutineView::FormatLine(int Line) const {
     char *p = 0;
     PELine L = Buffer->RLine(Buffer->rlst.Lines[Line]);
 
@@ -183,19 +183,19 @@ void RoutineView::UpdateList() {
     NeedsUpdate = 1;
 }
 
-int RoutineView::GetContext() {
+int RoutineView::GetContext() const {
     return CONTEXT_ROUTINES;
 }
 
-void RoutineView::GetName(char *AName, int MaxLen) {
+void RoutineView::GetName(char *AName, int MaxLen) const {
     strncpy(AName, "Routines", MaxLen);
 }
 
-void RoutineView::GetInfo(char *AInfo, int /*MaxLen*/) {
+void RoutineView::GetInfo(char *AInfo, int /*MaxLen*/) const {
     sprintf(AInfo, "%2d %04d/%03d Routines (%s)", ModelNo, Row + 1, Count, Buffer->FileName);
 }
 
-void RoutineView::GetTitle(char *ATitle, int /*MaxLen*/, char *ASTitle, int SMaxLen) {
+void RoutineView::GetTitle(char *ATitle, int /*MaxLen*/, char *ASTitle, int SMaxLen) const {
     sprintf(ATitle, "Routines: %s", Buffer->FileName);
     strncpy(ASTitle, "Routines", SMaxLen);
     ASTitle[SMaxLen - 1] = 0;
