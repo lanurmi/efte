@@ -13,7 +13,7 @@
 
 #include "fte.h"
 
-static int SameDir(char *D1, char *D2) {
+static int SameDir(const char *D1, const char *D2) {
     if (!D1 || !D2) return 0;
     int l1 = strlen(D1);
     int l2 = strlen(D2);
@@ -25,7 +25,7 @@ static int SameDir(char *D1, char *D2) {
 const char *SvnStatusChars = "?XUPMCAR";
 ESvn *SvnView = 0;
 
-ESvn::ESvn(int createFlags, EModel **ARoot, char *ADir, char *ACommand, char *AOnFiles): ESvnBase(createFlags, ARoot, "SVN") {
+ESvn::ESvn(int createFlags, EModel **ARoot, const char *ADir, const char *ACommand, const char *AOnFiles): ESvnBase(createFlags, ARoot, "SVN") {
     SvnView = this;
     LogFile = 0;
     Commiting = 0;
@@ -67,7 +67,7 @@ char *ESvn::MarkedAsList() {
     return s;
 }
 
-char ESvn::GetFileStatus(char *file) {
+char ESvn::GetFileStatus(const char *file) {
     // Search backward, file can be present several times (old messages)
     for (int i = LineCount - 1;i >= 0;i--)
         if (Lines[i]->File && filecmp(Lines[i]->File, file) == 0) return Lines[i]->Msg[0];
@@ -77,14 +77,14 @@ char ESvn::GetFileStatus(char *file) {
 // Разбор строк после выполнения 'svn st'
 // Строки начинающиеся на символы из SvnStatusChars
 // Подсвечиваются и можно перейти на эти файлы
-void ESvn::ParseLine(char *line, int len) {
+void ESvn::ParseLine(const char *line, int len) {
     if (len > 2 && line[1] == ' ' && strchr(SvnStatusChars, line[0]))
         AddLine(line + 7, -1, line, 5);
     else
         AddLine(0, -1, line);
 }
 
-int ESvn::RunPipe(char *ADir, char *ACommand, char *AOnFiles) {
+int ESvn::RunPipe(const char *ADir, const char *ACommand, const char *AOnFiles) {
     Commiting = 0;
     if (!SameDir(Directory, ADir)) FreeLines();
     return ESvnBase::RunPipe(ADir, ACommand, AOnFiles);
@@ -99,7 +99,7 @@ void ESvn::ClosePipe() {
     Commiting = 0;
 }
 
-int ESvn::RunCommit(char *ADir, char *ACommand, char *AOnFiles) {
+int ESvn::RunCommit(const char *ADir, const char *ACommand, const char *AOnFiles) {
     if (!SameDir(Directory, ADir)) FreeLines();
 
     free(Command);
@@ -175,7 +175,7 @@ int ESvn::DoneCommit(int commit) {
 }
 
 // If running, can't be closed without asking
-int ESvn::CanQuit() {
+int ESvn::CanQuit() const {
     if (Running) return 0;
     else return 1;
 }

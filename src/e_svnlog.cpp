@@ -18,9 +18,10 @@
 
 ESvnLog *SvnLogView;
 
-ESvnLog::ESvnLog(int createFlags, EModel **ARoot, char *Directory, char *OnFiles): EBuffer(createFlags, ARoot, NULL) {
+ESvnLog::ESvnLog(int createFlags, EModel **ARoot, const char *Directory, const char *AOnFiles): EBuffer(createFlags, ARoot, NULL) {
     int i, j, p;
     char msgFile[MAXPATH];
+    char *OnFiles = strdup(AOnFiles);
 
     SvnLogView = this;
     // Create filename for message
@@ -107,6 +108,7 @@ ESvnLog::ESvnLog(int createFlags, EModel **ARoot, char *Directory, char *OnFiles
     InsertLine(p + 1, 60, "SVN: -------------------------------------------------------");
     SetPos(0, 0);
     FreeUndo();
+    free(OnFiles);
     Modified = 0;
 }
 
@@ -143,7 +145,7 @@ EViewPort *ESvnLog::CreateViewPort(EView *V) {
     return V->Port;
 }
 
-int ESvnLog::CanQuit() {
+int ESvnLog::CanQuit() const {
     return 0;
 }
 
@@ -173,17 +175,17 @@ int ESvnLog::ConfQuit(GxView *V, int /*multiFile*/) {
 }
 
 // Shown in "Closing xxx..." message when closing model
-void ESvnLog::GetName(char *AName, int MaxLen) {
+void ESvnLog::GetName(char *AName, int MaxLen) const {
     strncpy(AName, "SVN log", MaxLen);
 }
 
 // Shown in buffer list
-void ESvnLog::GetInfo(char *AInfo, int /*MaxLen*/) {
+void ESvnLog::GetInfo(char *AInfo, int /*MaxLen*/) const {
     sprintf(AInfo, "%2d %04d:%03d%cSVN log: %-140s", ModelNo, 1 + CP.Row, 1 + CP.Col, Modified ? '*' : ' ', FileName);
 }
 
 // Normal and short title (normal for window, short for icon in X)
-void ESvnLog::GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen) {
+void ESvnLog::GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen) const {
     strncpy(ATitle, "SVN log", MaxLen);
     strncpy(ASTitle, "SVN log", SMaxLen);
 }

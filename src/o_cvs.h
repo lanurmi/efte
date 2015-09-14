@@ -19,7 +19,7 @@ public:
     char *LogFile;
     int Commiting;
 
-    ECvs(int createFlags, EModel **ARoot, char *Dir, char *ACommand, char *AOnFiles);
+    ECvs(int createFlags, EModel **ARoot, const char *Dir, const char *ACommand, const char *AOnFiles);
     ECvs(int createFlags, EModel **ARoot);
     ~ECvs();
 
@@ -28,21 +28,21 @@ public:
     char *MarkedAsList();
     // Return CVS status char of file or 0 if unknown
     // (if char is lowercase, state was guessed from last command invoked upon file)
-    char GetFileStatus(char *file);
+    char GetFileStatus(const char *file);
 
-    virtual void ParseLine(char *line, int len);
+    virtual void ParseLine(const char *line, int len);
     // Returns 0 if OK
-    virtual int RunPipe(char *Dir, char *Command, char *OnFiles);
+    virtual int RunPipe(const char *Dir, const char *Command, const char *OnFiles);
     virtual void ClosePipe();
     // Start commit process (opens message buffer), returns 0 if OK
-    int RunCommit(char *Dir, char *Command, char *OnFiles);
+    int RunCommit(const char *Dir, const char *Command, const char *OnFiles);
     // Finish commit process (called on message buffer close), returns 0 if OK
     int DoneCommit(int commit);
 
-    virtual int CanQuit();
+    virtual int CanQuit() const;
     virtual int ConfQuit(GxView *V, int multiFile);
 
-    virtual int GetContext() {
+    virtual int GetContext() const {
         return CONTEXT_CVS;
     }
     virtual EEventMap *GetEventMap();

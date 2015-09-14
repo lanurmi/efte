@@ -42,7 +42,7 @@ void FreeCRegexp() {
     }
 }
 
-EMessages::EMessages(int createFlags, EModel **ARoot, char *ADir, char *ACommand): EList(createFlags, ARoot, "Messages") {
+EMessages::EMessages(int createFlags, EModel **ARoot, const char *ADir, const char *ACommand): EList(createFlags, ARoot, "Messages") {
     CompilerMsgs = this;
     ErrCount = 0;
     ErrList = 0;
@@ -143,7 +143,7 @@ void EMessages::FindFileErrors(EBuffer *B) {
         }
 }
 
-int EMessages::RunPipe(char *ADir, char *ACommand) {
+int EMessages::RunPipe(const char *ADir, const char *ACommand) {
     if (!KeepMessages)
         FreeErrors();
 
@@ -220,7 +220,7 @@ void EMessages::AddError(Error *p) {
     UpdateList();
 }
 
-void EMessages::AddError(char *file, int line, char *msg, const char *text, int hilit) {
+void EMessages::AddError(const char *file, int line, const char *msg, const char *text, int hilit) {
     Error *pe;
 
     pe = (Error *) malloc(sizeof(Error));
@@ -521,7 +521,7 @@ bad:
     return 1;
 }
 
-int EMessages::Compile(char * /*Command*/) {
+int EMessages::Compile(const char * /*Command*/) {
     return 0;
 }
 
@@ -569,7 +569,7 @@ void EMessages::DrawLine(PCell B, int Line, int Col, ChColor color, int Width) {
         }
 }
 
-char* EMessages::FormatLine(int Line) {
+char* EMessages::FormatLine(int Line) const {
     char *p;
     if (Line < ErrCount)
         p = strdup(ErrList[Line]->text);
@@ -578,7 +578,7 @@ char* EMessages::FormatLine(int Line) {
     return p;
 }
 
-int EMessages::IsHilited(int Line) {
+int EMessages::IsHilited(int Line) const {
     return (Line >= 0 && Line < ErrCount) ? ErrList[Line]->hilit : 0;
 }
 
@@ -594,7 +594,7 @@ int EMessages::Activate(int /*No*/) {
     return 1;
 }
 
-int EMessages::CanActivate(int Line) {
+int EMessages::CanActivate(int Line) const {
     int ok = 0;
     if (Line < ErrCount)
         if (ErrList[Line]->file || ErrList[Line]->line != -1) ok = 1;
@@ -607,11 +607,11 @@ void EMessages::NotifyPipe(int APipeId) {
         GetErrors();
 }
 
-void EMessages::GetName(char *AName, int MaxLen) {
+void EMessages::GetName(char *AName, int MaxLen) const {
     strncpy(AName, "Messages", MaxLen);
 }
 
-void EMessages::GetInfo(char *AInfo, int /*MaxLen*/) {
+void EMessages::GetInfo(char *AInfo, int /*MaxLen*/) const {
     sprintf(AInfo,
             "%2d %04d/%03d Messages: %d (%s) ",
             ModelNo,
@@ -620,20 +620,20 @@ void EMessages::GetInfo(char *AInfo, int /*MaxLen*/) {
             Command);
 }
 
-void EMessages::GetPath(char *APath, int MaxLen) {
+void EMessages::GetPath(char *APath, int MaxLen) const {
     strncpy(APath, Directory, MaxLen);
     APath[MaxLen - 1] = 0;
     Slash(APath, 0);
 }
 
-void EMessages::GetTitle(char *ATitle, int /*MaxLen*/, char *ASTitle, int SMaxLen) {
+void EMessages::GetTitle(char *ATitle, int /*MaxLen*/, char *ASTitle, int SMaxLen) const {
     sprintf(ATitle, "Messages: %s", Command);
     strncpy(ASTitle, "Messages", SMaxLen);
     ASTitle[SMaxLen - 1] = 0;
 }
 
 // get row length for specified row, used in MoveLineEnd to get actual row length
-int EMessages::GetRowLength(int ARow) {
+int EMessages::GetRowLength(int ARow) const {
     if ((ARow >= 0) && (ARow < ErrCount)) {
         return strlen(ErrList[ARow]->text);
     }

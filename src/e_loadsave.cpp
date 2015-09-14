@@ -422,7 +422,7 @@ fail:
     return 0;
 }
 
-int EBuffer::SaveTo(char *AFileName) {
+int EBuffer::SaveTo(const char *AFileName) {
     char ABackupName[MAXPATH];
     struct stat StatBuf;
 

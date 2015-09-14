@@ -1087,7 +1087,7 @@ int EBuffer::CanRedo() {
     return 1;
 }
 
-int EBuffer::IsLineBlank(int Row) {
+int EBuffer::IsLineBlank(int Row) const {
     PELine X = RLine(Row);
     int P;
 
@@ -1408,7 +1408,7 @@ int EBuffer::SetRightMargin() {
     return 1;
 }
 
-int EBuffer::ChangeMode(char *AMode) {
+int EBuffer::ChangeMode(const char *AMode) {
     if ((Mode = FindMode(AMode)) != NULL) {
         Flags = Mode->Flags;
         HilitProc = 0;
@@ -1421,7 +1421,7 @@ int EBuffer::ChangeMode(char *AMode) {
     return 0;
 }
 
-int EBuffer::ChangeKeys(char *AMode) {
+int EBuffer::ChangeKeys(const char *AMode) {
     if ((Mode = FindMode(AMode)) != NULL) {
         HilitProc = 0;
         if (Mode->fColorize)
@@ -1433,7 +1433,7 @@ int EBuffer::ChangeKeys(char *AMode) {
     return 0;
 }
 
-int EBuffer::ChangeFlags(char *AMode) {
+int EBuffer::ChangeFlags(const char *AMode) {
     if (EMode *XMode = FindMode(AMode)) {
         Flags = XMode->Flags;
         HilitProc = 0;

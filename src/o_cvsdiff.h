@@ -20,18 +20,18 @@ public:
     int CurrLine, ToLine, InToFile;
     char *CurrFile;
 
-    ECvsDiff(int createFlags, EModel **ARoot, char *Dir, char *ACommand, char *AOnFiles);
+    ECvsDiff(int createFlags, EModel **ARoot, const char *Dir, const char *ACommand, const char *AOnFiles);
     ~ECvsDiff();
 
-    void ParseFromTo(char *line, int len);
-    virtual void ParseLine(char *line, int len);
+    void ParseFromTo(const char *line, int len);
+    virtual void ParseLine(const char *line, int len);
     // Returns 0 if OK
-    virtual int RunPipe(char *Dir, char *Command, char *Info);
+    virtual int RunPipe(const char *Dir, const char *Command, const char *OnFiles);
 
     virtual int ExecCommand(int Command, ExState &State);
     int BlockCopy(int Append);
 
-    virtual int GetContext() {
+    virtual int GetContext() const {
         return CONTEXT_CVSDIFF;
     }
     virtual EEventMap *GetEventMap();

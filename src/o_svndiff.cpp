@@ -16,7 +16,7 @@
 
 ESvnDiff       *SvnDiffView = 0;
 
-ESvnDiff::ESvnDiff(int createFlags, EModel ** ARoot, char *ADir, char *ACommand,
+ESvnDiff::ESvnDiff(int createFlags, EModel ** ARoot, const char *ADir, const char *ACommand,
                    char *AOnFiles):
         ESvnBase(createFlags, ARoot, "SVN diff") {
     SvnDiffView = this;
@@ -33,8 +33,8 @@ ESvnDiff::~ESvnDiff() {
 }
 
 void
-ESvnDiff::ParseFromTo(char *line, int /*len */) {
-    char           *start;
+ESvnDiff::ParseFromTo(const char *line, int /*len */) {
+    const char           *start;
     char           *end;
 
     // "@@ -1,20 +1,20 @@"
@@ -57,7 +57,7 @@ ESvnDiff::ParseFromTo(char *line, int /*len */) {
 //AddLine(CurrFile, CurrLine, line);    - output and tofile in line, default color
 //AddLine(CurrFile, CurrLine, line, 1); - output and tofile in line, color 1
 void
-ESvnDiff::ParseLine(char *line, int len) {
+ESvnDiff::ParseLine(const char *line, int len) {
     if (len > 8 && strncmp(line, "+++ ", 4) == 0) {
         //"+++ test.txt\t...."
         free(CurrFile);
@@ -105,7 +105,7 @@ ESvnDiff::ParseLine(char *line, int len) {
 }
 
 int
-ESvnDiff::RunPipe(char *ADir, char *ACommand, char *AOnFiles) {
+ESvnDiff::RunPipe(const char *ADir, const char *ACommand, const char *AOnFiles) {
     FreeLines();
     free(CurrFile);
     CurrLine = ToLine = InToFile = 0;

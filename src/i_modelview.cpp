@@ -24,7 +24,7 @@ ExModelView::~ExModelView() {
     }
 }
 
-int ExModelView::GetContext() {
+int ExModelView::GetContext() const {
     return View->GetContext();
 }
 

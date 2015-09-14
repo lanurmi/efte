@@ -131,7 +131,7 @@ void EModel::Msg(int level, const char *s, ...) {
         View->SetMsg(msgbuftmp);
 }
 
-int EModel::CanQuit() {
+int EModel::CanQuit() const {
     return 1;
 }
 
@@ -139,7 +139,7 @@ int EModel::ConfQuit(GxView * /*V*/, int /*multiFile*/) {
     return 1;
 }
 
-int EModel::GetContext() {
+int EModel::GetContext() const {
     return CONTEXT_NONE;
 }
 EEventMap *EModel::GetEventMap() {
@@ -148,16 +148,16 @@ EEventMap *EModel::GetEventMap() {
 int EModel::BeginMacro() {
     return 1;
 }
-void EModel::GetName(char *AName, int /*MaxLen*/) {
+void EModel::GetName(char *AName, int /*MaxLen*/) const {
     *AName = 0;
 }
-void EModel::GetPath(char *APath, int /*MaxLen*/) {
+void EModel::GetPath(char *APath, int /*MaxLen*/) const {
     *APath = 0;
 }
-void EModel::GetInfo(char *AInfo, int /*MaxLen*/) {
+void EModel::GetInfo(char *AInfo, int /*MaxLen*/) const {
     *AInfo = 0;
 }
-void EModel::GetTitle(char *ATitle, int /*MaxLen*/, char *ASTitle, int /*SMaxLen*/) {
+void EModel::GetTitle(char *ATitle, int /*MaxLen*/, char *ASTitle, int /*SMaxLen*/) const {
     *ATitle = 0;
     *ASTitle = 0;
 }

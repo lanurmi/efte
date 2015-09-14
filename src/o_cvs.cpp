@@ -13,7 +13,7 @@
 
 #include "fte.h"
 
-static int SameDir(char* D1, char* D2) {
+static int SameDir(const char* D1, const char* D2) {
     if (!D1 || !D2) return 0;
     int l1 = strlen(D1);
     int l2 = strlen(D2);
@@ -25,8 +25,8 @@ static int SameDir(char* D1, char* D2) {
 const char *CvsStatusChars = "?UPMCAR";
 ECvs *CvsView = 0;
 
-ECvs::ECvs(int createFlags, EModel **ARoot, char* ADir, char* ACommand,
-           char* AOnFiles)
+ECvs::ECvs(int createFlags, EModel **ARoot, const char* ADir, const char* ACommand,
+           const char* AOnFiles)
         : ECvsBase(createFlags, ARoot, "CVS") {
     CvsView = this;
     LogFile = 0;
@@ -70,20 +70,20 @@ char* ECvs::MarkedAsList() {
     return s;
 }
 
-char ECvs::GetFileStatus(char* file) {
+char ECvs::GetFileStatus(const char* file) {
     // Search backward, file can be present several times (old messages)
     for (int i = LineCount - 1;i >= 0;i--)
         if (Lines[i]->File && filecmp(Lines[i]->File, file) == 0) return Lines[i]->Msg[0];
     return 0;
 }
 
-void ECvs::ParseLine(char* line, int len) {
+void ECvs::ParseLine(const char* line, int len) {
     if (len > 2 && line[1] == ' ' && strchr(CvsStatusChars, line[0])) {
         AddLine(line + 2, -1, line, 5);
     } else AddLine(0, -1, line);
 }
 
-int ECvs::RunPipe(char* ADir, char* ACommand, char* AOnFiles) {
+int ECvs::RunPipe(const char* ADir, const char* ACommand, const char* AOnFiles) {
     Commiting = 0;
     if (!SameDir(Directory, ADir)) FreeLines();
     return ECvsBase::RunPipe(ADir, ACommand, AOnFiles);
@@ -98,7 +98,7 @@ void ECvs::ClosePipe() {
     Commiting = 0;
 }
 
-int ECvs::RunCommit(char* ADir, char* ACommand, char* AOnFiles) {
+int ECvs::RunCommit(const char* ADir, const char* ACommand, const char* AOnFiles) {
     if (!SameDir(Directory, ADir)) FreeLines();
 
     free(Command);
@@ -174,7 +174,7 @@ int ECvs::DoneCommit(int commit) {
 }
 
 // If running, can't be closed without asking
-int ECvs::CanQuit() {
+int ECvs::CanQuit() const {
     if (Running) return 0;
     else return 1;
 }

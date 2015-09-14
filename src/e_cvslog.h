@@ -20,7 +20,7 @@
 
 class ECvsLog: public EBuffer {
 public:
-    ECvsLog(int createFlags, EModel **ARoot, char *Directory, char *OnFiles);
+    ECvsLog(int createFlags, EModel **ARoot, const char *Directory, const char *OnFiles);
     ~ECvsLog();
 
     // List files into buffer
@@ -36,13 +36,13 @@ public:
     // exc      - incexc is exclusion
     void ListFiles(int &p, const int fCount, const char *title, const int cnt, const int *position, const int *len, const char *status, const char *list, const char *excinc, const int exc = 0);
 
-    virtual int CanQuit();
+    virtual int CanQuit() const;
     virtual int ConfQuit(GxView *V, int multiFile = 0);
     virtual EViewPort *CreateViewPort(EView *V);
 
-    virtual void GetName(char *AName, int MaxLen);
-    virtual void GetInfo(char *AInfo, int MaxLen);
-    virtual void GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen);
+    virtual void GetName(char *AName, int MaxLen) const;
+    virtual void GetInfo(char *AInfo, int MaxLen) const;
+    virtual void GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen) const;
 };
 
 extern ECvsLog *CvsLogView;

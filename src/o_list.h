@@ -50,32 +50,32 @@ public:
     EListPort *GetViewVPort(EView *V);
     EListPort *GetVPort();
 
-    void SetTitle(char *ATitle);
+    void SetTitle(const char *ATitle);
 
     virtual int ExecCommand(int Command, ExState &State);
     virtual EEventMap *GetEventMap();
-    virtual int GetContext();
+    virtual int GetContext() const;
     virtual int BeginMacro();
     void HandleEvent(TEvent &Event);
 
 
     virtual void DrawLine(PCell B, int Line, int Col, ChColor color, int Width);
-    virtual char *FormatLine(int Line);
-    virtual int IsHilited(int Line);
-    virtual int IsMarked(int Line);
+    virtual char *FormatLine(int Line) const;
+    virtual int IsHilited(int Line) const;
+    virtual int IsMarked(int Line) const;
     virtual int Mark(int Line);
     virtual int Unmark(int Line);
 
     int SetPos(int ARow, int ACol);
     void FixPos();
-    virtual int GetRowLength(int ARow) {
+    virtual int GetRowLength(int ARow) const {
         return 0;
     };
 
     virtual void RescanList();
     virtual void UpdateList();
     virtual void FreeList();
-    virtual int CanActivate(int Line);
+    virtual int CanActivate(int Line) const;
     virtual int Activate(int No);
 
     int MoveLeft();

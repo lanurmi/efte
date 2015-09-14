@@ -231,21 +231,21 @@ public:
     virtual EViewPort *CreateViewPort(EView *V);
     EEditPort *GetViewVPort(EView *V);
     EEditPort *GetVPort();
-    virtual int CanQuit();
+    virtual int CanQuit() const;
     virtual int ConfQuit(GxView *V, int multiFile = 0);
 
-    virtual int GetContext();
+    virtual int GetContext() const;
     virtual EEventMap *GetEventMap();
     virtual int BeginMacro();
     virtual int ExecCommand(int Command, ExState &State);
     virtual void HandleEvent(TEvent &Event);
 
-    virtual void GetName(char *AName, int MaxLen);
-    virtual void GetPath(char *APath, int MaxLen);
-    virtual void GetInfo(char *AInfo, int MaxLen);
-    virtual void GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen);
+    virtual void GetName(char *AName, int MaxLen) const;
+    virtual void GetPath(char *APath, int MaxLen) const;
+    virtual void GetInfo(char *AInfo, int MaxLen) const;
+    virtual void GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen) const;
 
-    PELine RLine(int No) {
+    PELine RLine(int No) const {
 #ifdef DEBUG_EDITOR
         int N = GapLine(No, RGap, RCount, RAllocated);
         if (!((No < RCount) && (No >= 0) && (LL[N]))) {
@@ -262,7 +262,7 @@ public:
 #endif
         LL[GapLine(No, RGap, RCount, RAllocated)] = L;
     }
-    int Vis(int No) {
+    int Vis(int No) const {
 #ifdef DEBUG_EDITOR
         if (No < 0 || No >= VCount) {
             printf("Vis get no %d of %d\n", No, VCount);
@@ -280,7 +280,7 @@ public:
 #endif
         VV[GapLine(No, VGap, VCount, VAllocated)] = V;
     }
-    PELine VLine(int No) {
+    PELine VLine(int No) const {
 #ifdef DEBUG_EDITOR
         if (!((No < VCount) && (No >= 0))) {
             printf("VGet No = %d\n", No);
@@ -303,7 +303,7 @@ public:
         RLine(No + Vis(No), L);
     }
 
-    int VToR(int No) {
+    int VToR(int No) const {
 #ifdef DEBUG_EDITOR
         if (!(No < VCount)) {
             printf("Get No = %d\n", No);
@@ -341,11 +341,11 @@ public:
     void UpdateVis(EPoint &M, int Row, int Delta);
     void UpdateVisible(int Row, int Delta);
     int LoadFrom(const char *AFileName);
-    int SaveTo(char *AFileName);
+    int SaveTo(const char *AFileName);
 
-    int IsBlockStart();
-    int IsBlockEnd();
-    int BlockType(int Mode);
+    int IsBlockStart() const;
+    int IsBlockEnd() const;
+    int BlockType(int Mode) const;
     int BeginExtend();
     int EndExtend();
     int CheckBlock();
@@ -406,7 +406,7 @@ public:
     int InsLineText(int Row, int Col, int ACount, int Pos, PELine Line);
     int SplitLine(int Row, int Col);
     int JoinLine(int Row, int Col);
-    int CanUnfold(int Row);
+    int CanUnfold(int Row) const;
     int PadLine(int Row, int Length);
 
     int ShowRow(int Row);
@@ -423,7 +423,7 @@ public:
     void Rehilit(int ToRow);
     void Redraw();
     void FullRedraw();
-    int  GetHilitWord(int len, char *str, ChColor &clr, int IgnCase = 0);
+    int  GetHilitWord(int len, const char *str, ChColor &clr, int IgnCase = 0);
 
 /////////////////////////////////////////////////////////////////////////////
 // Utility Routines
@@ -433,11 +433,11 @@ public:
     int LineIndentedCharCount(ELine *l, const char *indentchars);
     int IndentLine(int Row, int Indent);
     int GetMap(int Row, int *StateLen, hsState **StateMap);
-    int FindStr(char *Data, int Len, int Options);
-    int FindStr(char *Data, int Len, SearchReplaceOptions &opt);
+    int FindStr(const char *Data, int Len, int Options);
+    int FindStr(const char *Data, int Len, SearchReplaceOptions &opt);
     int FindRx(RxNode *Rx, SearchReplaceOptions &opt);
     int Find(SearchReplaceOptions &opt);
-    int IsLineBlank(int Row);
+    int IsLineBlank(int Row) const;
     int TrimLine(int Row);
 
     int ScanForRoutines();
@@ -446,10 +446,10 @@ public:
 // Bookmark Routines
 /////////////////////////////////////////////////////////////////////////////
 
-    int PlaceBookmark(char *Name, EPoint P);
-    int RemoveBookmark(char *Name);
-    int GetBookmark(char *Name, EPoint &P);
-    int GotoBookmark(char *Name);
+    int PlaceBookmark(const char *Name, EPoint P);
+    int RemoveBookmark(const char *Name);
+    int GetBookmark(const char *Name, EPoint &P);
+    int GotoBookmark(const char *Name);
     int GetBookmarkForLine(int searchFrom, int searchForLine, char *&Name, EPoint &P);
 
 /////////////////////////////////////////////////////////////////////////////
@@ -655,9 +655,9 @@ public:
 
     int     ShowPosition();
 
-    int     Search(ExState &State, char *aString, int Options, int CanResume = 0);
+    int     Search(ExState &State, const char *aString, int Options, int CanResume = 0);
     int     SearchAgain(ExState &State, unsigned int Options);
-    int     SearchReplace(ExState &State, char *aString, char *aReplaceString, int Options);
+    int     SearchReplace(ExState &State, const char *aString, const char *aReplaceString, int Options);
     int     Search(ExState &State);
     int     SearchB(ExState &State);
     int     SearchRx(ExState &State);
@@ -676,7 +676,7 @@ public:
     int     FindFold(int Line);
     int     FindNearFold(int Line);
     int     FoldCreate(int Line);
-    int     FoldCreateByRegexp(char *Regexp);
+    int     FoldCreateByRegexp(const char *Regexp);
     int     FoldDestroy(int Line);
     int     FoldDestroyAll();
     int     FoldPromote(int Line);
@@ -688,9 +688,9 @@ public:
     int     FoldCloseAll();
     int     FoldToggleOpenClose();
 
-    int     ChangeMode(char *Mode);
-    int     ChangeKeys(char *Mode);
-    int     ChangeFlags(char *Mode);
+    int     ChangeMode(const char *Mode);
+    int     ChangeKeys(const char *Mode);
+    int     ChangeFlags(const char *Mode);
 
     int ScrollLeft(ExState &State);
     int ScrollRight(ExState &State);
@@ -712,9 +712,9 @@ public:
     int InsertString(ExState &State);
     int SelfInsert(ExState &State);
     int FileReload(ExState &State);
-    int FileSaveAs(char *FileName);
+    int FileSaveAs(const char *FileName);
     int FileSaveAs(ExState &State);
-    int FileWriteTo(char *FileName);
+    int FileWriteTo(const char *FileName);
     int FileWriteTo(ExState &State);
     int BlockReadX(ExState &State, int BlockMode);
     int BlockRead(ExState &State);
@@ -774,7 +774,7 @@ extern int suspendLoads;
 
 int DoneEditor();
 
-EBuffer *FindFile(char *FileName);
+EBuffer *FindFile(const char *FileName);
 
 int ParseSearchOption(int replace, char c, unsigned long &opt);
 int ParseSearchOptions(int replace, const char *str, unsigned long &Options);

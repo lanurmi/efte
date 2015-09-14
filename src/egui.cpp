@@ -199,7 +199,7 @@ int EGUI::ExecMacro(GxView *view, int Macro) {
     return ErOK;
 }
 
-void EGUI::SetMsg(char *Msg) {
+void EGUI::SetMsg(const char *Msg) {
     char CharMap[128] = "";
 
     if (Msg == 0) {
@@ -213,7 +213,7 @@ void EGUI::SetMsg(char *Msg) {
         ActiveModel->Msg(S_INFO, CharMap);
 }
 
-void EGUI::SetOverrideMap(EKeyMap *aMap, char *ModeName) {
+void EGUI::SetOverrideMap(EKeyMap *aMap, const char *ModeName) {
     OverrideMap = aMap;
     if (aMap == 0)
         SetMsg(0);

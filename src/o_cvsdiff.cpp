@@ -16,7 +16,7 @@
 
 ECvsDiff *CvsDiffView = 0;
 
-ECvsDiff::ECvsDiff(int createFlags, EModel **ARoot, char *ADir, char *ACommand, char *AOnFiles): ECvsBase(createFlags, ARoot, "CVS diff") {
+ECvsDiff::ECvsDiff(int createFlags, EModel **ARoot, const char *ADir, const char *ACommand, const char *AOnFiles): ECvsBase(createFlags, ARoot, "CVS diff") {
     CvsDiffView = this;
     CurrFile = 0;
     CurrLine = 0;
@@ -30,7 +30,7 @@ ECvsDiff::~ECvsDiff() {
     free(CurrFile);
 }
 
-void ECvsDiff::ParseFromTo(char *line, int /*len*/) {
+void ECvsDiff::ParseFromTo(const char *line, int /*len*/) {
     char *end;
     CurrLine = strtol(line + 4, &end, 10) - 1;
     if (*end == ',') ToLine = atoi(end + 1);
@@ -38,7 +38,7 @@ void ECvsDiff::ParseFromTo(char *line, int /*len*/) {
     if (!(CurrLine < ToLine && ToLine > 0)) CurrLine = ToLine = 0;
 }
 
-void ECvsDiff::ParseLine(char *line, int len) {
+void ECvsDiff::ParseLine(const char *line, int len) {
     if (len > 7 && strncmp(line, "Index: ", 7) == 0) {
         // Filename
         free(CurrFile);
@@ -78,7 +78,7 @@ void ECvsDiff::ParseLine(char *line, int len) {
     } else AddLine(0, -1, line);
 }
 
-int ECvsDiff::RunPipe(char *ADir, char *ACommand, char *AOnFiles) {
+int ECvsDiff::RunPipe(const char *ADir, const char *ACommand, const char *AOnFiles) {
     FreeLines();
     free(CurrFile);
     CurrLine = ToLine = InToFile = 0;

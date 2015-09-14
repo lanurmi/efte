@@ -16,7 +16,7 @@
 #include "c_commands.h"
 #include "c_history.h"
 
-EDirectory::EDirectory(int createFlags, EModel **ARoot, char *aPath): EList(createFlags, ARoot, aPath) {
+EDirectory::EDirectory(int createFlags, EModel **ARoot, const char *aPath): EList(createFlags, ARoot, aPath) {
     char XPath[MAXPATH];
 
     Files = 0;
@@ -90,7 +90,7 @@ void EDirectory::DrawLine(PCell B, int Line, int Col, ChColor color, int Width) 
     }
 }
 
-int EDirectory::IsHilited(int Line) {
+int EDirectory::IsHilited(int Line) const {
     return (Line >= 0 && Line < FCount) ? Files[Line]->Type() == fiDIRECTORY : 0;
 }
 
@@ -177,7 +177,7 @@ void EDirectory::FreeList() {
     FCount = 0;
 }
 
-int EDirectory::isDir(int No) {
+int EDirectory::isDir(int No) const {
     char FilePath[256];
 
     JustDirectory(Path, FilePath, sizeof(FilePath));
@@ -292,7 +292,7 @@ int EDirectory::Activate(int No) {
     return 1;
 }
 
-int EDirectory::GetMatchForward(int start) {
+int EDirectory::GetMatchForward(int start) const {
     if (start == 0) {
         // try to first select the file that starts with the search word
         for (int i = 0; i < FCount; i++) {
@@ -311,7 +311,7 @@ int EDirectory::GetMatchForward(int start) {
     return -1;
 }
 
-int EDirectory::GetMatchBackward(int start) {
+int EDirectory::GetMatchBackward(int start) const {
     for (int i = start; i > 0; i--) {
         const char *fname = Files[i]->Name();
         for (int j=0; fname[j]; j++) {
@@ -526,19 +526,19 @@ int EDirectory::FmLoad(const char *Name, EView *XView) {
     return FileLoad(0, FilePath, NULL, XView);
 }
 
-void EDirectory::GetName(char *AName, int MaxLen) {
+void EDirectory::GetName(char *AName, int MaxLen) const {
     strncpy(AName, Path, MaxLen);
     AName[MaxLen - 1] = 0;
     Slash(AName, 0);
 }
 
-void EDirectory::GetPath(char *APath, int MaxLen) {
+void EDirectory::GetPath(char *APath, int MaxLen) const {
     strncpy(APath, Path, MaxLen);
     APath[MaxLen - 1] = 0;
     Slash(APath, 0);
 }
 
-void EDirectory::GetInfo(char *AInfo, int /*MaxLen*/) {
+void EDirectory::GetInfo(char *AInfo, int /*MaxLen*/) const {
     char buf[256] = {0};
     char winTitle[256] = {0};
 
@@ -565,7 +565,7 @@ void EDirectory::GetInfo(char *AInfo, int /*MaxLen*/) {
                 Path);*/
 }
 
-void EDirectory::GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen) {
+void EDirectory::GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen) const {
 
     strncpy(ATitle, Path, MaxLen - 1);
     ATitle[MaxLen - 1] = 0;
@@ -603,12 +603,12 @@ int EDirectory::ChangeDir(ExState &State) {
     return RescanDir();
 }
 
-int EDirectory::GetContext() {
+int EDirectory::GetContext() const {
     return CONTEXT_DIRECTORY;
 }
-char *EDirectory::FormatLine(int /*Line*/) {
+char *EDirectory::FormatLine(int /*Line*/) const {
     return 0;
 }
-int EDirectory::CanActivate(int /*Line*/) {
+int EDirectory::CanActivate(int /*Line*/) const {
     return 1;
 }

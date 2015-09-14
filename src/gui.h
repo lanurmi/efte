@@ -61,7 +61,7 @@ public:
     int SetSbHPos(int Start, int Amount, int Total);
     int ExpandHeight(int DeltaY);
 
-    int IsActive();
+    int IsActive() const;
 
     virtual void Update();
     virtual void Repaint();
@@ -80,7 +80,7 @@ public:
     GFrame(int XSize, int YSize);
     virtual ~GFrame();
 
-    int ConSetTitle(char *Title, char *STitle);
+    int ConSetTitle(const char *Title, char *STitle);
     int ConGetTitle(char *Title, int MaxLen, char *STitle, int SMaxLen);
 
     int ConSetSize(int X, int Y);
@@ -111,7 +111,7 @@ public:
     void Show();
     void Activate();
 
-    int isLastFrame();
+    int isLastFrame() const;
 };
 
 class GUI {

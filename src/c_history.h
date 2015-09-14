@@ -40,13 +40,13 @@ typedef struct {
 extern char HistoryFileName[256];
 
 void ClearHistory();
-int SaveHistory(char *FileName);
-int LoadHistory(char *FileName);
+int SaveHistory(const char *FileName);
+int LoadHistory(const char *FileName);
 
-int UpdateFPos(char *FileName, int Row, int Col);
-int RetrieveFPos(char *FileName, int &Row, int &Col);
+int UpdateFPos(const char *FileName, int Row, int Col);
+int RetrieveFPos(const char *FileName, int &Row, int &Col);
 
-int AddInputHistory(int Id, char *String);
+int AddInputHistory(int Id, const char *String);
 int CountInputHistory(int Id);
 int GetInputHistory(int Id, char *String, int maxlen, int Nth);
 

@@ -22,18 +22,18 @@ public:
     BufferView(int createFlags, EModel **ARoot);
     virtual ~BufferView();
     virtual EEventMap *GetEventMap();
-    virtual int GetContext();
+    virtual int GetContext() const;
     virtual void DrawLine(PCell B, int Line, int Col, ChColor color, int Width);
-    virtual char* FormatLine(int Line);
+    virtual char* FormatLine(int Line) const;
     virtual void UpdateList();
     EModel *GetBufferById(int No);
     virtual int ExecCommand(int Command, ExState &State);
     virtual void HandleEvent(TEvent &Event);
-    int getMatchingLine(int start, int direction);
+    int getMatchingLine(int start, int direction) const;
     virtual int Activate(int No);
     void CancelSearch();
-    virtual void GetInfo(char *AInfo, int MaxLen);
-    virtual void GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen);
+    virtual void GetInfo(char *AInfo, int MaxLen) const;
+    virtual void GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen) const;
 };
 
 #endif

@@ -172,7 +172,7 @@ public:
     GFramePeer(GFrame *aFrame, int Width, int Height);
     ~GFramePeer();
 
-    int ConSetTitle(char *Title, char *STitle);
+    int ConSetTitle(const char *Title, char *STitle);
     int ConGetTitle(char *Title, int MaxLen, char *STitle, int SMaxLen);
 
     int ConSetSize(int X, int Y);
@@ -2939,7 +2939,7 @@ int GView::Execute() {
     return NewResult;
 }
 
-int GView::IsActive() {
+int GView::IsActive() const {
     return (Parent->Active == this && Parent == frames);
 }
 
@@ -3015,7 +3015,7 @@ int GFramePeer::ConQuerySize(int *X, int *Y) {
     return 1;
 }
 
-int GFramePeer::ConSetTitle(char *Title, char *STitle) {
+int GFramePeer::ConSetTitle(const char *Title, char *STitle) {
     char szTitle[256] = {0};
 
     JustFileName(Title, szTitle, sizeof(szTitle));
@@ -3182,7 +3182,7 @@ GFrame::~GFrame() {
     Next = Prev = 0;
 }
 
-int GFrame::ConSetTitle(char *Title, char *STitle) {
+int GFrame::ConSetTitle(const char *Title, char *STitle) {
     return Peer->ConSetTitle(Title, STitle);
 }
 

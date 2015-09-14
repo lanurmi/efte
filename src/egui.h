@@ -45,8 +45,8 @@ public:
     virtual int ExecMacro(GxView *view, int Macro);
     virtual int BeginMacro(GxView *view);
 
-    void SetMsg(char *Msg);
-    void SetOverrideMap(EKeyMap *aMap, char *ModeName);
+    void SetMsg(const char *Msg);
+    void SetOverrideMap(EKeyMap *aMap, const char *ModeName);
     void SetMap(EKeyMap *aMap, KeySel *ks);
 //    void CharEvent(TEvent &Event, char Ch);
 

@@ -1301,7 +1301,7 @@ int LoadDefaultConfig() {
     return 0;
 }
 
-int LoadConfig(int argc, char **argv, char *CfgFileName) {
+int LoadConfig(int argc, char **argv, const char *CfgFileName) {
     STARTFUNC("LoadConfig");
     LOG << "Config file: " << CfgFileName << ENDLINE;
 

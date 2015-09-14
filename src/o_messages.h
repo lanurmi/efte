@@ -42,7 +42,7 @@ public:
     char MsgBuf[4096];
     aDir*   curr_dir;                       // top of dir stack.
 
-    EMessages(int createFlags, EModel **ARoot, char *Dir, char *ACommand);
+    EMessages(int createFlags, EModel **ARoot, const char *Dir, const char *ACommand);
     ~EMessages();
     void freeDirStack();
 
@@ -52,35 +52,35 @@ public:
     void AddFileError(EBuffer *B, int err);
     void FindFileErrors(EBuffer *B);
 
-    virtual int GetContext() {
+    virtual int GetContext() const {
         return CONTEXT_MESSAGES;
     }
     virtual EEventMap *GetEventMap();
     virtual int ExecCommand(int Command, ExState &State);
 
     void AddError(Error *p);
-    void AddError(char *file, int line, char *msg, const char *text, int hilit = 0);
+    void AddError(const char *file, int line, const char *msg, const char *text, int hilit = 0);
 
     void FreeErrors();
     int GetLine(char *Line, int maxim);
     void GetErrors();
-    int Compile(char *Command);
+    int Compile(const char *Command);
     void ShowError(EView *V, int err);
     void DrawLine(PCell B, int Line, int Col, ChColor color, int Width);
-    char* FormatLine(int Line);
-    int IsHilited(int Line);
+    char* FormatLine(int Line) const;
+    int IsHilited(int Line) const;
     void UpdateList();
     int Activate(int No);
-    int CanActivate(int Line);
+    int CanActivate(int Line) const;
     void NotifyPipe(int APipeId);
-    virtual void GetName(char *AName, int MaxLen);
-    virtual void GetInfo(char *AInfo, int MaxLen);
-    virtual void GetPath(char *APath, int MaxLen);
-    virtual void GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen);
-    virtual int GetRowLength(int ARow);
+    virtual void GetName(char *AName, int MaxLen) const;
+    virtual void GetInfo(char *AInfo, int MaxLen) const;
+    virtual void GetPath(char *APath, int MaxLen) const;
+    virtual void GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen) const;
+    virtual int GetRowLength(int ARow) const;
 
 
-    int RunPipe(char *Dir, char *Command);
+    int RunPipe(const char *Dir, const char *Command);
 
     int CompilePrevError(EView *V);
     int CompileNextError(EView *V);
