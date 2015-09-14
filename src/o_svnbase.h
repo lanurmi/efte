@@ -55,7 +55,7 @@ public:
 
     int GetLine(char *Line, int max);
     virtual void ParseLine(const char *line, int len);
-    void NotifyPipe(int APipeId);
+    void NotifyPipe(int APipeId) override;
     // Returns 0 if OK - calls ContinuePipe() several times to complete command for all files
     virtual int RunPipe(const char *Dir, const char *Command, const char *OnFiles);
     // Returns 0 if OK - continue with next files in queue
@@ -63,27 +63,27 @@ public:
     // Reads ReturnCode, sets Running to 0, PipeId to -1
     virtual void ClosePipe();
 
-    void DrawLine(PCell B, int Line, int Col, ChColor color, int Width);
-    char *FormatLine(int Line) const;
-    void UpdateList();
-    int Activate(int No);
-    int CanActivate(int Line) const;
-    virtual int IsHilited(int Line) const;
-    virtual int IsMarked(int Line) const;
-    virtual int Mark(int Line);
-    virtual int Unmark(int Line);
+    void DrawLine(PCell B, int Line, int Col, ChColor color, int Width) override;
+    char *FormatLine(int Line) const override;
+    void UpdateList() override;
+    int Activate(int No) override;
+    int CanActivate(int Line) const override;
+    int IsHilited(int Line) const override;
+    int IsMarked(int Line) const override;
+    int Mark(int Line) override;
+    int Unmark(int Line) override;
 
-    virtual int ExecCommand(int Command, ExState &State);
+    int ExecCommand(int Command, ExState &State) override;
     void ShowLine(EView *V, int err);
 
-    virtual int GetContext() const {
+    int GetContext() const override {
         return CONTEXT_SVNBASE;
     }
-    virtual EEventMap *GetEventMap();
-    virtual void GetName(char *AName, int MaxLen) const;
-    virtual void GetInfo(char *AInfo, int MaxLen) const;
-    virtual void GetPath(char *APath, int MaxLen) const;
-    virtual void GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen) const;
+    EEventMap *GetEventMap() override;
+    void GetName(char *AName, int MaxLen) const override;
+    void GetInfo(char *AInfo, int MaxLen) const override;
+    void GetPath(char *APath, int MaxLen) const override;
+    void GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen) const override;
 };
 
 int AddSvnIgnoreRegexp(const char *);

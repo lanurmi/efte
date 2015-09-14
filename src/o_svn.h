@@ -31,22 +31,22 @@ public:
     // (if char is lowercase, state was guessed from last command invoked upon file)
     char GetFileStatus(const char *file);
 
-    virtual void ParseLine(const char *line, int len);
+    void ParseLine(const char *line, int len) override;
     // Returns 0 if OK
-    virtual int RunPipe(const char *Dir, const char *Command, const char *OnFiles);
-    virtual void ClosePipe();
+    int RunPipe(const char *Dir, const char *Command, const char *OnFiles) override;
+    void ClosePipe() override;
     // Start commit process (opens message buffer), returns 0 if OK
     int RunCommit(const char *Dir, const char *Command, const char *OnFiles);
     // Finish commit process (called on message buffer close), returns 0 if OK
     int DoneCommit(int commit);
 
-    virtual int CanQuit() const;
-    virtual int ConfQuit(GxView *V, int multiFile);
+    int CanQuit() const override;
+    int ConfQuit(GxView *V, int multiFile) override;
 
-    virtual int GetContext() const {
+    int GetContext() const override {
         return CONTEXT_SVN;
     }
-    virtual EEventMap *GetEventMap();
+    EEventMap *GetEventMap() override;
 };
 
 extern ESvn *SvnView;

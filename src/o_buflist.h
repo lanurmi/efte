@@ -21,19 +21,19 @@ public:
 
     BufferView(int createFlags, EModel **ARoot);
     virtual ~BufferView();
-    virtual EEventMap *GetEventMap();
-    virtual int GetContext() const;
-    virtual void DrawLine(PCell B, int Line, int Col, ChColor color, int Width);
-    virtual char* FormatLine(int Line) const;
-    virtual void UpdateList();
+    EEventMap *GetEventMap() override;
+    int GetContext() const override;
+    void DrawLine(PCell B, int Line, int Col, ChColor color, int Width) override;
+    char* FormatLine(int Line) const override;
+    void UpdateList() override;
     EModel *GetBufferById(int No);
-    virtual int ExecCommand(int Command, ExState &State);
-    virtual void HandleEvent(TEvent &Event);
+    int ExecCommand(int Command, ExState &State) override;
+    void HandleEvent(TEvent &Event) override;
 	int GetMatchingLine(int start, int direction) const;
-    virtual int Activate(int No);
+    int Activate(int No) override;
     void CancelSearch();
-    virtual void GetInfo(char *AInfo, int MaxLen) const;
-    virtual void GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen) const;
+    void GetInfo(char *AInfo, int MaxLen) const override;
+    void GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen) const override;
 };
 
 #endif

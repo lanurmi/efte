@@ -55,8 +55,8 @@ public:
     virtual int GetContext() const {
         return CONTEXT_MESSAGES;
     }
-    virtual EEventMap *GetEventMap();
-    virtual int ExecCommand(int Command, ExState &State);
+    EEventMap *GetEventMap() override;
+    int ExecCommand(int Command, ExState &State) override;
 
     void AddError(Error *p);
     void AddError(const char *file, int line, const char *msg, const char *text, int hilit = 0);
@@ -66,18 +66,18 @@ public:
     void GetErrors();
     int Compile(const char *Command);
     void ShowError(EView *V, int err);
-    void DrawLine(PCell B, int Line, int Col, ChColor color, int Width);
-    char* FormatLine(int Line) const;
-    int IsHilited(int Line) const;
-    void UpdateList();
-    int Activate(int No);
-    int CanActivate(int Line) const;
-    void NotifyPipe(int APipeId);
-    virtual void GetName(char *AName, int MaxLen) const;
-    virtual void GetInfo(char *AInfo, int MaxLen) const;
-    virtual void GetPath(char *APath, int MaxLen) const;
-    virtual void GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen) const;
-    virtual int GetRowLength(int ARow) const;
+    void DrawLine(PCell B, int Line, int Col, ChColor color, int Width) override;
+    char* FormatLine(int Line) const override;
+    int IsHilited(int Line) const override;
+    void UpdateList() override;
+    int Activate(int No) override;
+    int CanActivate(int Line) const override;
+    void NotifyPipe(int APipeId) override;
+    void GetName(char *AName, int MaxLen) const override;
+    void GetInfo(char *AInfo, int MaxLen) const override;
+    void GetPath(char *APath, int MaxLen) const override;
+    void GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen) const override;
+    int GetRowLength(int ARow) const override;
 
 
     int RunPipe(const char *Dir, const char *Command);

@@ -28,17 +28,17 @@ public:
     void FreeView();
     void ViewMap(EEventMap *Map);
 
-    virtual int ExecCommand(int Command, ExState &State);
-    virtual EEventMap *GetEventMap();
-    virtual int GetContext() const;
+    int ExecCommand(int Command, ExState &State) override;
+    EEventMap *GetEventMap() override;
+    int GetContext() const override;
 
-    virtual void DrawLine(PCell B, int Line, int Col, ChColor color, int Width);
-    virtual char* FormatLine(int Line) const;
-    virtual void UpdateList();
-    virtual int CanActivate(int Line) const;
-    virtual void GetName(char *AName, int MaxLen) const;
-    virtual void GetInfo(char *AInfo, int MaxLen) const;
-    virtual void GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen) const;
+    void DrawLine(PCell B, int Line, int Col, ChColor color, int Width) override;
+    char* FormatLine(int Line) const override;
+    void UpdateList() override;
+    int CanActivate(int Line) const override;
+    void GetName(char *AName, int MaxLen) const override;
+    void GetInfo(char *AInfo, int MaxLen) const override;
+    void GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen) const override;
 };
 
 extern EventMapView *TheEventMapView;

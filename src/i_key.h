@@ -19,17 +19,17 @@ public:
 
     ExKey(const char *APrompt);
     virtual ~ExKey();
-    virtual void Activate(int gotfocus);
+    void Activate(int gotfocus) override;
 
-    virtual ExView* GetViewContext() {
+    virtual ExView* GetViewContext() override {
         return Next;
     }
-    virtual int BeginMacro();
-    virtual void HandleEvent(TEvent &Event);
-    virtual void UpdateView();
-    virtual void RepaintView();
-    virtual void UpdateStatus();
-    virtual void RepaintStatus();
+    virtual int BeginMacro() override;
+    virtual void HandleEvent(TEvent &Event) override;
+    virtual void UpdateView() override;
+    virtual void RepaintView() override;
+    virtual void UpdateStatus() override;
+    virtual void RepaintStatus() override;
 };
 
 #endif

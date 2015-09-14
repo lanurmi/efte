@@ -24,17 +24,17 @@ public:
     ~ESvnDiff();
 
     void ParseFromTo(const char *line, int len);
-    virtual void ParseLine(const char *line, int len);
+    void ParseLine(const char *line, int len) override;
     // Returns 0 if OK
-    virtual int RunPipe(const char *Dir, const char *Command, const char *OnFiles);
+    int RunPipe(const char *Dir, const char *Command, const char *OnFiles) override;
 
-    virtual int ExecCommand(int Command, ExState &State);
+    int ExecCommand(int Command, ExState &State) override;
     int BlockCopy(int Append);
 
-    virtual int GetContext() const {
+    int GetContext() const override {
         return CONTEXT_SVNDIFF;
     }
-    virtual EEventMap *GetEventMap();
+    EEventMap *GetEventMap() override;
 };
 
 extern ESvnDiff *SvnDiffView;

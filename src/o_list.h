@@ -24,15 +24,15 @@ public:
     void StorePos();
     void GetPos();
 
-    virtual void HandleEvent(TEvent &Event);
-    virtual void HandleMouse(TEvent &Event);
+    void HandleEvent(TEvent &Event) override;
+    void HandleMouse(TEvent &Event);
 
     void PaintView(int PaintAll);
 
-    virtual void UpdateView();
-    virtual void RepaintView();
-    virtual void UpdateStatus();
-    virtual void RepaintStatus();
+    void UpdateView() override;
+    void RepaintView() override;
+    void UpdateStatus() override;
+    void RepaintStatus() override;
 };
 
 class EList: public EModel {
@@ -52,11 +52,11 @@ public:
 
     void SetTitle(const char *ATitle);
 
-    virtual int ExecCommand(int Command, ExState &State);
-    virtual EEventMap *GetEventMap();
-    virtual int GetContext() const;
-    virtual int BeginMacro();
-    void HandleEvent(TEvent &Event);
+    int ExecCommand(int Command, ExState &State) override;
+    EEventMap *GetEventMap() override;
+    int GetContext() const override;
+    int BeginMacro() override;
+    void HandleEvent(TEvent &Event) override;
 
 
     virtual void DrawLine(PCell B, int Line, int Col, ChColor color, int Width);

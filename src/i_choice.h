@@ -24,18 +24,18 @@ public:
 
     ExChoice(const char *ATitle, int NSel, va_list ap /* choices, format, args */);
     virtual ~ExChoice();
-    virtual void Activate(int gotfocus);
+    void Activate(int gotfocus) override;
 
-    virtual ExView* GetViewContext() {
+    ExView* GetViewContext()  override {
         return Next;
     }
-    virtual int BeginMacro();
+    int BeginMacro() override;
     int FindChoiceByPoint(int x, int y);
-    virtual void HandleEvent(TEvent &Event);
-    virtual void UpdateView();
-    virtual void RepaintView();
-    virtual void UpdateStatus();
-    virtual void RepaintStatus();
+    void HandleEvent(TEvent &Event) override;
+    void UpdateView() override;
+    void RepaintView() override;
+    void UpdateStatus() override;
+    void RepaintStatus() override;
 };
 
 #endif

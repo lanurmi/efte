@@ -38,16 +38,16 @@ public:
 
     ExComplete(EBuffer *B);
     virtual ~ExComplete();
-    virtual void Activate(int gotfocus);
-    virtual ExView* GetViewContext() {
+    void Activate(int gotfocus) override;
+    ExView* GetViewContext() override {
         return Next;
     }
-    virtual int BeginMacro();
-    virtual void HandleEvent(TEvent &Event);
-    virtual void UpdateView();
-    virtual void RepaintView();
-    virtual void UpdateStatus();
-    virtual void RepaintStatus();
+    int BeginMacro() override;
+    void HandleEvent(TEvent &Event) override;
+    void UpdateView() override;
+    void RepaintView() override;
+    void UpdateStatus() override;
+    void RepaintStatus() override;
 
     virtual bool IsSimpleCase();
     virtual int DoCompleteWord();

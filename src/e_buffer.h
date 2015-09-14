@@ -146,17 +146,17 @@ public:
     EEditPort(EBuffer *B, EView *V);
     virtual ~EEditPort();
 
-    virtual void HandleEvent(TEvent &Event);
+    void HandleEvent(TEvent &Event) override;
     virtual void HandleMouse(TEvent &Event);
-    virtual void UpdateView();
-    virtual void RepaintView();
-    virtual void UpdateStatus();
-    virtual void RepaintStatus();
+    void UpdateView() override;
+    void RepaintView() override;
+    void UpdateStatus() override;
+    void RepaintStatus() override;
 
-    virtual void Resize(int Width, int Height);
+    void Resize(int Width, int Height) override;
     int SetTop(int Col, int Row);
-    virtual void GetPos();
-    virtual void StorePos();
+    void GetPos() override;
+    void StorePos() override;
     void DrawLine(int L, TDrawBuffer B);
     void ScrollY(int Delta);
     void RedrawAll();
@@ -226,24 +226,24 @@ public:
     // constructors
     EBuffer(int createFlags, EModel **ARoot, const char *AName);
     virtual ~EBuffer();
-    virtual void DeleteRelated();
+    void DeleteRelated() override;
 
-    virtual EViewPort *CreateViewPort(EView *V);
+    EViewPort *CreateViewPort(EView *V) override;
     EEditPort *GetViewVPort(EView *V);
     EEditPort *GetVPort();
-    virtual int CanQuit() const;
-    virtual int ConfQuit(GxView *V, int multiFile = 0);
+    int CanQuit() const override;
+    int ConfQuit(GxView *V, int multiFile = 0) override;
 
-    virtual int GetContext() const;
-    virtual EEventMap *GetEventMap();
-    virtual int BeginMacro();
-    virtual int ExecCommand(int Command, ExState &State);
-    virtual void HandleEvent(TEvent &Event);
+    int GetContext() const override;
+    EEventMap *GetEventMap() override;
+    int BeginMacro() override;
+    int ExecCommand(int Command, ExState &State) override;
+    void HandleEvent(TEvent &Event) override;
 
-    virtual void GetName(char *AName, int MaxLen) const;
-    virtual void GetPath(char *APath, int MaxLen) const;
-    virtual void GetInfo(char *AInfo, int MaxLen) const;
-    virtual void GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen) const;
+    void GetName(char *AName, int MaxLen) const override;
+    void GetPath(char *APath, int MaxLen) const override;
+    void GetInfo(char *AInfo, int MaxLen) const override;
+    void GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen) const override;
 
     PELine RLine(int No) const {
 #ifdef DEBUG_EDITOR
@@ -756,8 +756,8 @@ public:
     int PlaceGlobalBookmark(ExState &State);
     int PushGlobalBookmark();
 
-    virtual int GetStrVar(int var, char *str, int buflen);
-    virtual int GetIntVar(int var, int *value);
+    int GetStrVar(int var, char *str, int buflen) override;
+    int GetIntVar(int var, int *value) override;
 
     int SetIndentWithTabs(ExState &State);
     int FoldCreateAtRoutines();

@@ -39,11 +39,11 @@ public:
         else return 0;
     }
     virtual int BeginMacro();
-    virtual void HandleEvent(TEvent &Event);
-    virtual void Update();
-    virtual void Repaint();
-    virtual void Activate(int gotfocus);
-    virtual void Resize(int width, int height);
+    void HandleEvent(TEvent &Event) override;
+    void Update() override;
+    void Repaint() override;
+    void Activate(int gotfocus) override;
+    void Resize(int width, int height) override;
 
     void UpdateTitle(const char *Title, char *STitle);
 

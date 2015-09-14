@@ -17,17 +17,17 @@ public:
 
     ExASCII();
     virtual ~ExASCII();
-    virtual void Activate(int gotfocus);
+    void Activate(int gotfocus) override;
 
-    virtual ExView* GetViewContext() {
+    ExView* GetViewContext() override {
         return Next;
     }
-    virtual int BeginMacro();
-    virtual void HandleEvent(TEvent &Event);
-    virtual void UpdateView();
-    virtual void RepaintView();
-    virtual void UpdateStatus();
-    virtual void RepaintStatus();
+    int BeginMacro() override;
+    void HandleEvent(TEvent &Event) override;
+    void UpdateView() override;
+    void RepaintView() override;
+    void UpdateStatus() override;
+    void RepaintStatus() override;
 };
 
 #endif

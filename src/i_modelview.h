@@ -21,21 +21,21 @@ public:
 
     ExModelView(EView *AView);
     virtual ~ExModelView();
-    virtual void Activate(int gotfocus);
+    void Activate(int gotfocus) override;
 
-    virtual EEventMap *GetEventMap();
-    virtual int ExecCommand(int Command, ExState &State);
+    EEventMap *GetEventMap() override;
+    int ExecCommand(int Command, ExState &State) override;
 
-    virtual int GetContext() const;
-    virtual int BeginMacro();
-    virtual void HandleEvent(TEvent &Event);
-    virtual void UpdateView();
-    virtual void RepaintView();
-    virtual void UpdateStatus();
-    virtual void RepaintStatus();
-    virtual void Resize(int width, int height);
-    virtual void WnSwitchBuffer(EModel *M);
-    virtual int IsModelView() const {
+    int GetContext() const override;
+    int BeginMacro();
+    void HandleEvent(TEvent &Event) override;
+    void UpdateView() override;
+    void RepaintView() override;
+    void UpdateStatus() override;
+    void RepaintStatus() override;
+    void Resize(int width, int height) override;
+    void WnSwitchBuffer(EModel *M) override;
+    int IsModelView() const override {
         return 1;
     }
 };

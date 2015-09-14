@@ -23,27 +23,27 @@ public:
     EDirectory(int createFlags, EModel **ARoot, const char *aPath);
     virtual ~EDirectory();
 
-    virtual int GetContext() const;
+    int GetContext() const override;
     virtual int GetMatchForward(int start=0) const;
     virtual int GetMatchBackward(int start=0) const;
-    virtual EEventMap *GetEventMap();
-    virtual int ExecCommand(int Command, ExState &State);
-    virtual void HandleEvent(TEvent &Event);
+    EEventMap *GetEventMap() override;
+    int ExecCommand(int Command, ExState &State) override;
+    void HandleEvent(TEvent &Event) override;
 
-    virtual void DrawLine(PCell B, int Line, int Col, ChColor color, int Width);
-    virtual char *FormatLine(int Line) const;
-    virtual int IsHilited(int Line) const;
+    void DrawLine(PCell B, int Line, int Col, ChColor color, int Width) override;
+    char *FormatLine(int Line) const override;
+    int IsHilited(int Line) const override;
 
-    virtual void RescanList();
-//    virtual void UpdateList();
-    virtual void FreeList();
-    virtual int CanActivate(int Line) const;
-    virtual int Activate(int No);
+    void RescanList() override;
+//    void UpdateList() override;
+    void FreeList() override;
+    int CanActivate(int Line) const override;
+    int Activate(int No) override;
 
-    virtual void GetName(char *AName, int MaxLen) const;
-    virtual void GetPath(char *APath, int MaxLen) const;
-    virtual void GetInfo(char *AInfo, int MaxLen) const;
-    virtual void GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen) const;
+    void GetName(char *AName, int MaxLen) const override;
+    void GetPath(char *APath, int MaxLen) const override;
+    void GetInfo(char *AInfo, int MaxLen) const override;
+    void GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen) const override;
 
     int IsDir(int No) const;
     int FmChDir(const char* Name);

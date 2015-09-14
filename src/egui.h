@@ -28,8 +28,8 @@ public:
     EFrame(int XSize, int YSize);
     virtual ~EFrame();
 
-    virtual void Update();
-    virtual void UpdateMenu();
+    void Update() override;
+    void UpdateMenu() override;
 };
 
 class EGUI: public GUI {
@@ -53,7 +53,7 @@ public:
     void DispatchKey(GxView *view, TEvent &Event);
     void DispatchCommand(GxView *view, TEvent &Event);
 
-    virtual void DispatchEvent(GFrame *frame, GView *view, TEvent &Event);
+    void DispatchEvent(GFrame *frame, GView *view, TEvent &Event) override;
 
     int FileCloseX(EView *View, int CreateNew, int XClose = 0);
     int FileClose(EView *View, ExState &State);
@@ -95,8 +95,8 @@ public:
     void EditorCleanup();
     void InterfaceCleanup();
 
-    virtual int Start(int &argc, char **argv);
-    virtual void Stop();
+    int Start(int &argc, char **argv) override;
+    void Stop() override;
 };
 
 #endif

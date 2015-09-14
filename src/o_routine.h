@@ -22,20 +22,20 @@ public:
 
     RoutineView(int createFlags, EModel **ARoot, EBuffer *AB);
     virtual ~RoutineView();
-    virtual EEventMap *GetEventMap();
-    virtual int ExecCommand(int Command, ExState &State);
-    virtual void HandleEvent(TEvent &Event);
-	virtual int GetMatchingLine(int start, int direction) const;
-    virtual void DrawLine(PCell B, int Line, int Col, ChColor color, int Width);
-    virtual char* FormatLine(int Line) const;
-    virtual int Activate(int No);
+    EEventMap *GetEventMap() override;
+    int ExecCommand(int Command, ExState &State) override;
+    void HandleEvent(TEvent &Event) override;
+	virtual int GetMatchingLine(int start, int direction) const override;
+    void DrawLine(PCell B, int Line, int Col, ChColor color, int Width) override;
+    char* FormatLine(int Line) const;
+    int Activate(int No) override;
     void CancelSearch();
-    virtual void RescanList();
-    void UpdateList();
-    virtual int GetContext() const;
-    virtual void GetName(char *AName, int MaxLen) const;
-    virtual void GetInfo(char *AInfo, int MaxLen) const;
-    virtual void GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen) const;
+    void RescanList() override;
+    void UpdateList() override;
+    int GetContext() const override;
+    void GetName(char *AName, int MaxLen) const override;
+    void GetInfo(char *AInfo, int MaxLen) const override;
+    void GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen) const override;
 };
 
 #endif
