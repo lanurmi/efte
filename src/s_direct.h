@@ -19,16 +19,21 @@
 
 class FileInfo {
     char *name;   // minimum set of file information
+    char *symlinkTarget;
     off_t size;
     time_t mtime;
     int type;
 
 public:
-    FileInfo(const char *Name, int type, off_t Size, time_t MTime);
+    FileInfo(const char *Name, int type, off_t Size, time_t MTime,
+             const char *SymlinkTargetName = 0);
     ~FileInfo();
 
     const char *Name() const {
         return name;
+    }
+    const char *SymlinkTargetName() const {
+        return symlinkTarget;
     }
     off_t Size() const {
         return size;

@@ -82,6 +82,10 @@ void EDirectory::DrawLine(PCell B, int Line, int Col, ChColor color, int Width) 
                 Year, Mon, Day, Hour, Min, Sec, SizeStr);
 
         strcat(s, Files[Line]->Name());
+        if (Files[Line]->SymlinkTargetName() != 0) {
+            strcat(s, " -> ");
+            strcat(s, Files[Line]->SymlinkTargetName());
+        }
         s[strlen(s) + 1] = '\0';
         s[strlen(s)] = (Files[Line]->Type() == fiDIRECTORY) ? SLASH : ' ';
 

@@ -22,10 +22,17 @@
 #include <windows.h>
 #endif
 
-FileInfo::FileInfo(const char *Name, int Type, off_t Size, time_t MTime) {
+FileInfo::FileInfo(const char *Name, int Type, off_t Size, time_t MTime,
+                  const char *SymlinkTargetName) {
     name = new char[strlen(Name) + 1];
     if (name)
         strcpy(name, Name);
+    if (SymlinkTargetName != 0) {
+        symlinkTarget = new char[strlen(SymlinkTargetName) + 1];
+        strcpy(symlinkTarget, SymlinkTargetName);
+    } else {
+        symlinkTarget = 0;
+    }
     size = Size;
     type = Type;
     mtime = MTime;
@@ -33,6 +40,7 @@ FileInfo::FileInfo(const char *Name, int Type, off_t Size, time_t MTime) {
 
 FileInfo::~FileInfo() {
     delete [] name;
+    delete [] symlinkTarget;
 }
 
 FileFind::FileFind(const char *aDirectory, const char *aPattern, int aFlags) {
@@ -268,9 +276,15 @@ again:
         *fi = new FileInfo(name, fiUNKNOWN, 0, 0);
     } else {
         struct stat st = { 0 };
+        char linktarget[MAXPATH] = "";
 
         if (!(Flags & ffFULLPATH)) // need it now
             JoinDirFile(fullpath, Directory, dent->d_name);
+
+#if defined(UNIX)
+        if (readlink(fullpath, linktarget, sizeof(linktarget)) == -1)
+            strcpy(linktarget, "");
+#endif
 
         if (Flags & ffLINK) {
             // if we are handling location of symbolic links, lstat cannot be used
@@ -299,7 +313,9 @@ again:
         *fi = new FileInfo(name,
                            S_ISDIR(st.st_mode) ? fiDIRECTORY : fiFILE,
                            st.st_size,
-                           st.st_mtime);
+                           st.st_mtime,
+                           strlen(linktarget) > 0 ? linktarget : 0
+                          );
     }
     //printf("ok\n");
     return 0;
