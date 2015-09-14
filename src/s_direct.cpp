@@ -267,7 +267,7 @@ again:
     if (Flags & ffFAST) {
         *fi = new FileInfo(name, fiUNKNOWN, 0, 0);
     } else {
-        struct stat st;
+        struct stat st = { 0 };
 
         if (!(Flags & ffFULLPATH)) // need it now
             JoinDirFile(fullpath, Directory, dent->d_name);
@@ -275,8 +275,13 @@ again:
         if (Flags & ffLINK) {
             // if we are handling location of symbolic links, lstat cannot be used
             // instead use normal stat
-            if (stat(fullpath, &st) != 0 && 0)
-                goto again;
+            if (stat(fullpath, &st) != 0)
+                // possibly a broken link, let's try to get
+                // the correct mtime for it at least
+#if defined(UNIX) // must use lstat if available
+                lstat(fullpath, &st)
+#endif
+                    ;
         } else {
             if (
 #if defined(UNIX) // must use lstat if available
