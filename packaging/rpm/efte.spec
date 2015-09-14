@@ -10,6 +10,7 @@ Requires: gpm
 Requires: ncurses
 Requires: libX11
 Requires: libXpm
+Requires: xorg-x11-fonts-misc
 BuildRequires: gcc-c++
 BuildRequires: gpm-devel
 BuildRequires: ncurses-devel
