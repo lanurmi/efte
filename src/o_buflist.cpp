@@ -149,7 +149,7 @@ int BufferView::ExecCommand(int Command, ExState &State) {
         // Find next matching line
         if (SearchLen) {
             int i = Row + 1;
-            i = getMatchingLine(i == BCount ? 0 : i, 1);
+            i = GetMatchingLine(i == BCount ? 0 : i, 1);
             // Never returns -1 since something already found before call
             Row = SearchPos[SearchLen] = i;
         }
@@ -158,7 +158,7 @@ int BufferView::ExecCommand(int Command, ExState &State) {
         // Find prev matching line
         if (SearchLen) {
             int i = Row - 1;
-            i = getMatchingLine(i == -1 ? BCount - 1 : i, -1);
+            i = GetMatchingLine(i == -1 ? BCount - 1 : i, -1);
             // Never returns -1 since something already found before call
             Row = SearchPos[SearchLen] = i;
         }
@@ -197,7 +197,7 @@ void BufferView::HandleEvent(TEvent &Event) {
                 SearchPos[SearchLen] = Row;
                 SearchString[SearchLen] = Ch;
                 SearchString[++SearchLen] = 0;
-                int i = getMatchingLine(Row, 1);
+                int i = GetMatchingLine(Row, 1);
                 if (i == -1)
                     SearchString[--SearchLen] = 0;
                 else
@@ -217,7 +217,7 @@ void BufferView::HandleEvent(TEvent &Event) {
  * Direction should be 1 for ascending and -1 for descending.
  * Returns line found or -1 if none.
  */
-int BufferView::getMatchingLine(int start, int direction) const {
+int BufferView::GetMatchingLine(int start, int direction) const {
     int i = start;
     do {
         // Find SearchString at any place in string for line i

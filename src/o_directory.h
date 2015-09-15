@@ -45,7 +45,7 @@ public:
     virtual void GetInfo(char *AInfo, int MaxLen) const;
     virtual void GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen) const;
 
-    int isDir(int No) const;
+    int IsDir(int No) const;
     int FmChDir(const char* Name);
     int FmLoad(const char* Name, EView *View);
     int FmMvFile(const char* Name);

@@ -19,17 +19,17 @@ public:
     EMark(const char *aName, const char *aFileName, EPoint aPoint, EBuffer *aBuffer = 0);
     ~EMark();
 
-    int setBuffer(EBuffer *aBuffer);
-    int removeBuffer(EBuffer *aBuffer);
+    int SetBuffer(EBuffer *aBuffer);
+    int RemoveBuffer(EBuffer *aBuffer);
 
-    char *getName() {
+    char *GetName() {
         return Name;
     }
-    char *getFileName() {
+    char *GetFileName() {
         return FileName;
     }
-    EPoint &getPoint();
-    EBuffer *getBuffer() {
+    EPoint &GetPoint();
+    EBuffer *GetBuffer() {
         return Buffer;
     }
 private:
@@ -47,24 +47,24 @@ public:
     EMarkIndex();
     ~EMarkIndex();
 
-    EMark *insert(const char *aName, const char *aFileName, EPoint aPoint, EBuffer *aBuffer = 0);
-    EMark *insert(const char *aName, EBuffer *aBuffer, EPoint aPoint);
-    EMark *locate(const char *aName);
-    int remove(const char *aName);
-    int view(EView *aView, const char *aName);
+    EMark *Insert(const char *aName, const char *aFileName, EPoint aPoint, EBuffer *aBuffer = 0);
+    EMark *Insert(const char *aName, EBuffer *aBuffer, EPoint aPoint);
+    EMark *Locate(const char *aName);
+    int Remove(const char *aName);
+    int View(EView *aView, const char *aName);
 
 //    int MarkPush(EBuffer *B, EPoint P);
 //    int MarkPop(EView *V);
 //    int MarkSwap(EView *V, EBuffer *B, EPoint P);
 //    int MarkNext(EView *V);
     //    int MarkPrev(EView *V);
-    EMark *pushMark(EBuffer *aBuffer, EPoint P);
-    int popMark(EView *aView);
+    EMark *PushMark(EBuffer *aBuffer, EPoint P);
+    int PopMark(EView *aView);
 
-    int retrieveForBuffer(EBuffer *aBuffer);
-    int storeForBuffer(EBuffer *aBuffer);
+    int RetrieveForBuffer(EBuffer *aBuffer);
+    int StoreForBuffer(EBuffer *aBuffer);
 
-    int saveToDesktop(FILE *fp);
+    int SaveToDesktop(FILE *fp);
 
 private:
     int markCount;

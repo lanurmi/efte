@@ -25,7 +25,7 @@ public:
     virtual EEventMap *GetEventMap();
     virtual int ExecCommand(int Command, ExState &State);
     virtual void HandleEvent(TEvent &Event);
-    virtual int getMatchingLine(int start, int direction) const;
+	virtual int GetMatchingLine(int start, int direction) const;
     virtual void DrawLine(PCell B, int Line, int Col, ChColor color, int Width);
     virtual char* FormatLine(int Line) const;
     virtual int Activate(int No);

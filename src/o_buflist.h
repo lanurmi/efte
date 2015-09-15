@@ -29,7 +29,7 @@ public:
     EModel *GetBufferById(int No);
     virtual int ExecCommand(int Command, ExState &State);
     virtual void HandleEvent(TEvent &Event);
-    int getMatchingLine(int start, int direction) const;
+	int GetMatchingLine(int start, int direction) const;
     virtual int Activate(int No);
     void CancelSearch();
     virtual void GetInfo(char *AInfo, int MaxLen) const;

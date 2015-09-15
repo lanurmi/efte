@@ -24,19 +24,19 @@ EMark::EMark(const char *aName, const char *aFileName, EPoint aPoint, EBuffer *a
     if (aBuffer == 0)
         aBuffer = FindFile(aFileName);
     if (aBuffer && aBuffer->Loaded)
-        setBuffer(aBuffer);
+        SetBuffer(aBuffer);
     else
         aBuffer = 0;
 }
 
 EMark::~EMark() {
     if (Buffer)
-        removeBuffer(Buffer);
+        RemoveBuffer(Buffer);
     delete[] Name;
     delete[] FileName;
 }
 
-int EMark::setBuffer(EBuffer *aBuffer) {
+int EMark::SetBuffer(EBuffer *aBuffer) {
     assert(aBuffer != 0);
     assert(filecmp(aBuffer->FileName, FileName) == 0);
 
@@ -52,7 +52,7 @@ int EMark::setBuffer(EBuffer *aBuffer) {
     return 0;
 }
 
-int EMark::removeBuffer(EBuffer *aBuffer) {
+int EMark::RemoveBuffer(EBuffer *aBuffer) {
     assert(aBuffer != 0);
     if (Buffer == 0 || Buffer != aBuffer)
         return 0;
@@ -67,7 +67,7 @@ int EMark::removeBuffer(EBuffer *aBuffer) {
     return 1;
 }
 
-EPoint &EMark::getPoint() {
+EPoint &EMark::GetPoint() {
     if (Buffer) {
         assert(Buffer->GetBookmark(Name, Point) != 0);
     }
@@ -88,7 +88,7 @@ EMarkIndex::~EMarkIndex() {
     }
 }
 
-EMark *EMarkIndex::insert(const char *aName, const char *aFileName, EPoint aPoint, EBuffer *aBuffer) {
+EMark *EMarkIndex::Insert(const char *aName, const char *aFileName, EPoint aPoint, EBuffer *aBuffer) {
     int L = 0, R = markCount, M, cmp;
 
     assert(aName != 0 && aName[0] != 0);
@@ -96,7 +96,7 @@ EMark *EMarkIndex::insert(const char *aName, const char *aFileName, EPoint aPoin
 
     while (L < R) {
         M = (L + R) / 2;
-        cmp = strcmp(aName, marks[M]->getName());
+        cmp = strcmp(aName, marks[M]->GetName());
         if (cmp == 0)
             return 0;
         else if (cmp > 0)
@@ -121,22 +121,22 @@ EMark *EMarkIndex::insert(const char *aName, const char *aFileName, EPoint aPoin
     return m;
 }
 
-EMark *EMarkIndex::insert(const char *aName, EBuffer *aBuffer, EPoint aPoint) {
+EMark *EMarkIndex::Insert(const char *aName, EBuffer *aBuffer, EPoint aPoint) {
     assert(aName != 0 && aName[0] != 0);
     assert(aBuffer != 0);
     assert(aBuffer->FileName != 0);
 
-    return insert(aName, aBuffer->FileName, aPoint, aBuffer);
+    return Insert(aName, aBuffer->FileName, aPoint, aBuffer);
 }
 
-EMark *EMarkIndex::locate(const char *aName) {
+EMark *EMarkIndex::Locate(const char *aName) {
     int L = 0, R = markCount, M, cmp;
 
     assert(aName != 0 && aName[0] != 0);
 
     while (L < R) {
         M = (L + R) / 2;
-        cmp = strcmp(aName, marks[M]->getName());
+        cmp = strcmp(aName, marks[M]->GetName());
         if (cmp == 0)
             return marks[M];
         else if (cmp > 0)
@@ -147,14 +147,14 @@ EMark *EMarkIndex::locate(const char *aName) {
     return 0;
 }
 
-int EMarkIndex::remove(const char *aName) {
+int EMarkIndex::Remove(const char *aName) {
     int L = 0, R = markCount, M, cmp;
 
     assert(aName != 0 && aName[0] != 0);
 
     while (L < R) {
         M = (L + R) / 2;
-        cmp = strcmp(aName, marks[M]->getName());
+        cmp = strcmp(aName, marks[M]->GetName());
         if (cmp == 0) {
             EMark *m = marks[M];
 
@@ -178,62 +178,62 @@ int EMarkIndex::remove(const char *aName) {
     return 0;
 }
 
-int EMarkIndex::view(EView *aView, const char *aName) {
-    EMark *m = locate(aName);
+int EMarkIndex::View(EView *aView, const char *aName) {
+    EMark *m = Locate(aName);
     if (m) {
-        EBuffer *b = m->getBuffer();
+        EBuffer *b = m->GetBuffer();
         if (b == 0) {
-            if (FileLoad(0, m->getFileName(), 0, aView) == 0)
+            if (FileLoad(0, m->GetFileName(), 0, aView) == 0)
                 return 0;
-            if (retrieveForBuffer((EBuffer *)ActiveModel) == 0)
+            if (RetrieveForBuffer((EBuffer *)ActiveModel) == 0)
                 return 0;
             b = (EBuffer *)ActiveModel;
         }
         aView->SwitchToModel(b);
-        return b->GotoBookmark(m->getName());
+        return b->GotoBookmark(m->GetName());
     }
     return 0;
 }
 
-int EMarkIndex::retrieveForBuffer(EBuffer *aBuffer) {
+int EMarkIndex::RetrieveForBuffer(EBuffer *aBuffer) {
     for (int n = 0; n < markCount; n++)
-        if (marks[n]->getBuffer() == 0 &&
-                filecmp(aBuffer->FileName, marks[n]->getFileName()) == 0) {
-            if (marks[n]->setBuffer(aBuffer) == 0)
+        if (marks[n]->GetBuffer() == 0 &&
+                filecmp(aBuffer->FileName, marks[n]->GetFileName()) == 0) {
+            if (marks[n]->SetBuffer(aBuffer) == 0)
                 return 0;
         }
     return 1;
 }
 
-int EMarkIndex::storeForBuffer(EBuffer *aBuffer) {
+int EMarkIndex::StoreForBuffer(EBuffer *aBuffer) {
     for (int n = 0; n < markCount; n++)
-        if (marks[n]->getBuffer() == aBuffer)
-            if (marks[n]->removeBuffer(aBuffer) == 0)
+        if (marks[n]->GetBuffer() == aBuffer)
+            if (marks[n]->RemoveBuffer(aBuffer) == 0)
                 return 0;
     return 1;
 }
 
-int EMarkIndex::saveToDesktop(FILE *fp) {
+int EMarkIndex::SaveToDesktop(FILE *fp) {
     for (int n = 0; n < markCount; n++) {
-        EPoint p = marks[n]->getPoint();
+        EPoint p = marks[n]->GetPoint();
 
         // ??? file of buffer or of mark? (different if file renamed) ???
         // perhaps marks should be duplicated?
         fprintf(fp, "M|%d|%d|%s|%s\n",
                 p.Row, p.Col,
-                marks[n]->getName(),
-                marks[n]->getFileName());
+                marks[n]->GetName(),
+                marks[n]->GetFileName());
     }
     return 1;
 }
 
 // needs performance fixes (perhaps a redesign ?)
 
-EMark *EMarkIndex::pushMark(EBuffer *aBuffer, EPoint P) {
+EMark *EMarkIndex::PushMark(EBuffer *aBuffer, EPoint P) {
     int stackTop = -1;
 
     for (int n = 0; n < markCount; n++) {
-        char *name = marks[n]->getName();
+        char *name = marks[n]->GetName();
         if (name && name[0] == '#' && isdigit(name[1])) {
             int no = atoi(name + 1);
             if (no > stackTop)
@@ -242,14 +242,14 @@ EMark *EMarkIndex::pushMark(EBuffer *aBuffer, EPoint P) {
     }
     char name[20];
     sprintf(name, "#%d", stackTop + 1);
-    return insert(name, aBuffer, P);
+    return Insert(name, aBuffer, P);
 }
 
-int EMarkIndex::popMark(EView *aView) {
+int EMarkIndex::PopMark(EView *aView) {
     int stackTop = -1;
 
     for (int n = 0; n < markCount; n++) {
-        char *name = marks[n]->getName();
+        char *name = marks[n]->GetName();
         if (name && name[0] == '#' && isdigit(name[1])) {
             int no = atoi(name + 1);
             if (no > stackTop)
@@ -260,7 +260,7 @@ int EMarkIndex::popMark(EView *aView) {
         return 0;
     char name[20];
     sprintf(name, "#%d", stackTop);
-    if (view(aView, name) == 0)
+    if (View(aView, name) == 0)
         return 0;
     assert(remove(name) == 1);
     return 1;

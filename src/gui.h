@@ -111,7 +111,7 @@ public:
     void Show();
     void Activate();
 
-    int isLastFrame() const;
+    int IsLastFrame() const;
 };
 
 class GUI {
@@ -143,8 +143,8 @@ public:
     int ReadPipe(int id, void *buffer, int len);
     int ClosePipe(int id);
 
-    int multiFrame();
-    void deleteFrame(GFrame *frame);
+    int MultiFrame();
+    void DeleteFrame(GFrame *frame);
 
     int fArgc;
     char **fArgv;

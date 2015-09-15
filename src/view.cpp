@@ -750,7 +750,7 @@ int EView::RemoveGlobalBookmark(ExState &State) {
 
     if (State.GetStrParam(this, name, sizeof(name)) == 0)
         if (MView->Win->GetStr("Remove Global Bookmark", sizeof(name), name, HIST_BOOKMARK) == 0) return 0;
-    if (markIndex.remove(name) == 0) {
+    if (markIndex.Remove(name) == 0) {
         Msg(S_ERROR, "Error removing global bookmark %s.", name);
         return 0;
     }
@@ -762,14 +762,14 @@ int EView::GotoGlobalBookmark(ExState &State) {
 
     if (State.GetStrParam(this, name, sizeof(name)) == 0)
         if (MView->Win->GetStr("Goto Global Bookmark", sizeof(name), name, HIST_BOOKMARK) == 0) return 0;
-    if (markIndex.view(this, name) == 0) {
+    if (markIndex.View(this, name) == 0) {
         Msg(S_ERROR, "Error locating global bookmark %s.", name);
         return 0;
     }
     return 1;
 }
 int EView::PopGlobalBookmark() {
-    if (markIndex.popMark(this) == 0) {
+    if (markIndex.PopMark(this) == 0) {
         Msg(S_INFO, "Bookmark stack empty.");
         return 0;
     }

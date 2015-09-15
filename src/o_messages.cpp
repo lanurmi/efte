@@ -64,10 +64,10 @@ EMessages::~EMessages() {
     free(Command);
     free(Directory);
     CompilerMsgs = 0;
-    freeDirStack();
+    FreeDirStack();
 }
 
-void EMessages::freeDirStack() {
+void EMessages::FreeDirStack() {
     while (curr_dir != 0) {
         aDir *a = curr_dir;
         curr_dir = curr_dir->next;

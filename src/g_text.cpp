@@ -1208,7 +1208,7 @@ int GUI::Run() {
 }
 #endif // !COMPILING_FOR_COCOA
 
-int GUI::multiFrame() {
+int GUI::MultiFrame() {
     return 0;
 }
 

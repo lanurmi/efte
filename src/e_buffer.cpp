@@ -82,7 +82,7 @@ EBuffer::~EBuffer() {
         if (BFI(this, BFI_SaveBookmarks) == 3) StoreBookmarks(this);
     }
     if (FileName && Loaded)
-        markIndex.storeForBuffer(this);
+        markIndex.StoreForBuffer(this);
 
     Clear();
     if (LL)

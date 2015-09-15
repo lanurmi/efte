@@ -17,15 +17,15 @@
 #include "console.h"
 #include "gui.h"
 
-int GFrame::isLastFrame() const {
+int GFrame::IsLastFrame() const {
     if (this == Next && frames == this)
         return 1;
     else
         return 0;
 }
 
-void GUI::deleteFrame(GFrame *frame) {
-    if (frame->isLastFrame()) {
+void GUI::DeleteFrame(GFrame *frame) {
+    if (frame->IsLastFrame()) {
         delete frame;
         frames = 0;
     } else {

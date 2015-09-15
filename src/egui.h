@@ -84,7 +84,7 @@ public:
     int DesktopSaveAs(ExState &State, GxView *View);
     int DesktopLoad(ExState &State, GxView *View);
 
-    int findDesktop(char *argv[]);
+    int FindDesktop(char *argv[]);
     void DoLoadDesktopOnEntry(int &argc, char **argv);
     void EditorInit();
     int CmdLoadFiles(int &argc, char **argv);

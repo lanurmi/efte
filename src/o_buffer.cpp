@@ -27,7 +27,7 @@ EViewPort *EBuffer::CreateViewPort(EView *V) {
         if (SvnDiffView)
             SvnDiffView->FindFileLines(this);
 
-        markIndex.retrieveForBuffer(this);
+        markIndex.RetrieveForBuffer(this);
 
         int r, c;
 
@@ -1159,7 +1159,7 @@ int EBuffer::PlaceGlobalBookmark(ExState &State) {
 
     if (State.GetStrParam(View, name, sizeof(name)) == 0)
         if (View->MView->Win->GetStr("Place Global Bookmark", sizeof(name), name, HIST_BOOKMARK) == 0) return 0;
-    if (markIndex.insert(name, this, P) == 0) {
+    if (markIndex.Insert(name, this, P) == 0) {
         Msg(S_ERROR, "Error placing global bookmark %s.", name);
     }
     return 1;
@@ -1169,9 +1169,9 @@ int EBuffer::PushGlobalBookmark() {
     EPoint P = CP;
 
     P.Row = VToR(P.Row);
-    EMark *m = markIndex.pushMark(this, P);
+    EMark *m = markIndex.PushMark(this, P);
     if (m)
-        Msg(S_INFO, "Placed bookmark %s", m->getName());
+        Msg(S_INFO, "Placed bookmark %s", m->GetName());
     return m ? 1 : 0;
 }
 

@@ -181,7 +181,7 @@ void EDirectory::FreeList() {
     FCount = 0;
 }
 
-int EDirectory::isDir(int No) const {
+int EDirectory::IsDir(int No) const {
     char FilePath[256];
 
     JustDirectory(Path, FilePath, sizeof(FilePath));
@@ -196,7 +196,7 @@ int EDirectory::ExecCommand(int Command, ExState &State) {
         SearchLen = 0;
         Msg(S_INFO, "");
         if (Files && Row >= 0 && Row < FCount) {
-            if (isDir(Row)) {
+            if (IsDir(Row)) {
             } else {
                 return FmLoad(Files[Row]->Name(), View->Next);
             }
@@ -218,7 +218,7 @@ int EDirectory::ExecCommand(int Command, ExState &State) {
         SearchLen = 0;
         Msg(S_INFO, "");
         if (Files && Row >= 0 && Row < FCount) {
-            if (isDir(Row)) {
+            if (IsDir(Row)) {
                 FmChDir(Files[Row]->Name());
                 return ErOK;
             }
@@ -286,7 +286,7 @@ int EDirectory::Activate(int No) {
     SearchLen = 0;
     Msg(S_INFO, "");
     if (Files && No >= 0 && No < FCount) {
-        if (isDir(No)) {
+        if (IsDir(No)) {
             FmChDir(Files[No]->Name());
             return 0;
         } else {

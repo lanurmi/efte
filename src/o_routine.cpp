@@ -94,7 +94,7 @@ void RoutineView::HandleEvent(TEvent &Event) {
                 SearchPos[SearchLen] = Row;
                 SearchString[SearchLen] = Ch;
                 SearchString[++SearchLen] = 0;
-                int i = getMatchingLine(Row, 1);
+                int i = GetMatchingLine(Row, 1);
                 if (i == -1)
                     SearchString[--SearchLen] = 0;
                 else
@@ -114,7 +114,7 @@ void RoutineView::HandleEvent(TEvent &Event) {
  * Direction should be 1 for ascending and -1 for descending.
  * Returns line found or -1 if none.
  */
-int RoutineView::getMatchingLine(int start, int direction) const {
+int RoutineView::GetMatchingLine(int start, int direction) const {
     int i = start;
     do {
         char *str = Buffer->RLine(Buffer->rlst.Lines[i])->Chars;

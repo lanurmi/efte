@@ -44,7 +44,7 @@ public:
 
     EMessages(int createFlags, EModel **ARoot, const char *Dir, const char *ACommand);
     ~EMessages();
-    void freeDirStack();
+    void FreeDirStack();
 
     virtual void NotifyDelete(EModel *Deleting);
     void FindErrorFiles();

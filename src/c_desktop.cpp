@@ -48,7 +48,7 @@ int SaveDesktop(char *FileName) {
             break;
     }
     TagsSave(fp);
-    markIndex.saveToDesktop(fp);
+    markIndex.SaveToDesktop(fp);
     fclose(fp);
     return 1;
 }
@@ -143,7 +143,7 @@ int LoadDesktop(char *FileName) {
                     break;
                 file = p;
 
-                markIndex.insert(name, file, P);
+                markIndex.Insert(name, file, P);
             }
         }
     }
