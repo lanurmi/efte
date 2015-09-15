@@ -51,6 +51,10 @@ void ExComplete::Activate(int gotfocus) {
     ExView::Activate(gotfocus);
 }
 
+ExView* ExComplete::GetViewContext() {
+    return Next;
+}
+
 int ExComplete::BeginMacro() {
     return 1;
 }
@@ -382,6 +386,11 @@ int ExComplete::RefreshComplete() {
     //fprintf(stderr, "Words %3d\n", WordsLast);
 
     return WordsLast;
+}
+
+int ExComplete::CheckASCII(int c) {
+    return ((c < 256)
+            && (isalnum(c) || (c == '_') || (c == '.'))) ? 1 : 0;
 }
 
 void ExComplete::FixedUpdate(int add) {

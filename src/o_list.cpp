@@ -448,6 +448,10 @@ void EList::FixPos() {
     }
 }
 
+int EList::GetRowLength(int ARow) const {
+    return 0;
+}
+
 int EList::GetContext() const {
     return CONTEXT_LIST;
 }

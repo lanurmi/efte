@@ -74,3 +74,7 @@ void ExModelView::WnSwitchBuffer(EModel *B) {
     if (View)
         View->SwitchToModel(B);
 }
+
+int ExModelView::IsModelView() const {
+    return 1;
+}

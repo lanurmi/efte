@@ -164,6 +164,79 @@ int EBuffer::FreeUndo() {
     return 1;
 }
 
+PELine EBuffer::RLine(int No) const {
+#ifdef DEBUG_EDITOR
+    int N = GapLine(No, RGap, RCount, RAllocated);
+    if (!((No < RCount) && (No >= 0) && (LL[N]))) {
+        printf("Get No = %d/%d Gap=%d RAlloc = %d, VCount = %d\n", No, RCount, RGap, RAllocated, VCount);
+        assert((No < RCount) && (No >= 0) && (LL[N]));
+    }
+#endif
+    return LL[GapLine(No, RGap, RCount, RAllocated)];
+}
+
+void EBuffer::RLine(int No, PELine L) {
+#ifdef DEBUG_EDITOR
+    if (!((No >= 0))) printf("Set No = %d\n", No);
+    assert((No >= 0));
+#endif
+    LL[GapLine(No, RGap, RCount, RAllocated)] = L;
+}
+
+int EBuffer::Vis(int No) const {
+#ifdef DEBUG_EDITOR
+    if (No < 0 || No >= VCount) {
+        printf("Vis get no %d of %d\n", No, VCount);
+        assert(No >= 0 && No < VCount);
+    }
+#endif
+    return VV[GapLine(No, VGap, VCount, VAllocated)];
+}
+
+void EBuffer::Vis(int No, int V) {
+#ifdef DEBUG_EDITOR
+    if (No < 0 || No >= VCount) {
+        printf("Vis set no %d of %d to %d\n", No, VCount, V);
+        assert(No >= 0 && No < VCount);
+    }
+#endif
+    VV[GapLine(No, VGap, VCount, VAllocated)] = V;
+}
+
+PELine EBuffer::VLine(int No) const {
+#ifdef DEBUG_EDITOR
+    if (!((No < VCount) && (No >= 0))) {
+        printf("VGet No = %d\n", No);
+        assert((No < VCount) && (No >= 0));
+    }
+    if (Vis(No) < 0)
+        assert(1 == 0);
+#endif
+    return RLine(No + Vis(No));
+}
+
+void EBuffer::VLine(int No, PELine L) {
+#ifdef DEBUG_EDITOR
+    if (!((No >= 0))) {
+        printf("VSet No = %d\n", No);
+        assert((No >= 0));
+    }
+    if (VV[No] < 0)
+        assert(1 == 0);
+#endif
+    RLine(No + Vis(No), L);
+}
+
+int EBuffer::VToR(int No) const {
+#ifdef DEBUG_EDITOR
+    if (!(No < VCount)) {
+        printf("Get No = %d\n", No);
+        assert((No < VCount));
+    }
+#endif
+    return No + Vis(No);
+}
+
 int EBuffer::Modify() {
     // if RecheckReadOnly is activated do readonly checking when necessary
     if (RecheckReadOnly != 0) {

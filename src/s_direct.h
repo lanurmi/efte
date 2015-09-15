@@ -29,21 +29,11 @@ public:
              const char *SymlinkTargetName = 0);
     ~FileInfo();
 
-    const char *Name() const {
-        return name;
-    }
-    const char *SymlinkTargetName() const {
-        return symlinkTarget;
-    }
-    off_t Size() const {
-        return size;
-    }
-    int Type() const {
-        return type;
-    }
-    time_t MTime() const {
-        return mtime;
-    }
+    const char *Name() const;
+    const char *SymlinkTargetName() const;
+    off_t Size() const;
+    int Type() const;
+    time_t MTime() const;
 };
 
 #define ffFAST       1  // optimization for UNIX (return name only, NO TYPE CHECK), ignored on OS/2 and NT

@@ -52,9 +52,7 @@ public:
     void AddFileError(EBuffer *B, int err);
     void FindFileErrors(EBuffer *B);
 
-    virtual int GetContext() const {
-        return CONTEXT_MESSAGES;
-    }
+    virtual int GetContext() const;
     virtual EEventMap *GetEventMap();
     virtual int ExecCommand(int Command, ExState &State);
 

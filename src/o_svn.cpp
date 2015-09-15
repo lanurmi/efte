@@ -201,6 +201,10 @@ int ESvn::ConfQuit(GxView *V, int multiFile) {
     } else return 1;
 }
 
+int ESvn::GetContext() const {
+    return CONTEXT_SVN;
+}
+
 // Event map - this name is used in config files when defining eventmap
 EEventMap *ESvn::GetEventMap() {
     return FindEventMap("SVN");

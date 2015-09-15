@@ -35,9 +35,7 @@ public:
     virtual void RepaintStatus();
     virtual void Resize(int width, int height);
     virtual void WnSwitchBuffer(EModel *M);
-    virtual int IsModelView() const {
-        return 1;
-    }
+    virtual int IsModelView() const;
 };
 
 #endif

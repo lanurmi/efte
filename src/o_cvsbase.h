@@ -76,9 +76,7 @@ public:
     virtual int ExecCommand(int Command, ExState &State);
     void ShowLine(EView *V, int err);
 
-    virtual int GetContext() const {
-        return CONTEXT_CVSBASE;
-    }
+    virtual int GetContext() const;
     virtual EEventMap *GetEventMap();
     virtual void GetName(char *AName, int MaxLen) const;
     virtual void GetInfo(char *AInfo, int MaxLen) const;

@@ -43,6 +43,10 @@ void ExChoice::Activate(int gotfocus) {
     ExView::Activate(gotfocus);
 }
 
+ExView* ExChoice::GetViewContext() {
+    return Next;
+}
+
 int ExChoice::BeginMacro() {
     return 1;
 }

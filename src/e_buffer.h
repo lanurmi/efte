@@ -245,73 +245,14 @@ public:
     virtual void GetInfo(char *AInfo, int MaxLen) const;
     virtual void GetTitle(char *ATitle, int MaxLen, char *ASTitle, int SMaxLen) const;
 
-    PELine RLine(int No) const {
-#ifdef DEBUG_EDITOR
-        int N = GapLine(No, RGap, RCount, RAllocated);
-        if (!((No < RCount) && (No >= 0) && (LL[N]))) {
-            printf("Get No = %d/%d Gap=%d RAlloc = %d, VCount = %d\n", No, RCount, RGap, RAllocated, VCount);
-            assert((No < RCount) && (No >= 0) && (LL[N]));
-        }
-#endif
-        return LL[GapLine(No, RGap, RCount, RAllocated)];
-    }
-    void RLine(int No, PELine L) {
-#ifdef DEBUG_EDITOR
-        if (!((No >= 0))) printf("Set No = %d\n", No);
-        assert((No >= 0));
-#endif
-        LL[GapLine(No, RGap, RCount, RAllocated)] = L;
-    }
-    int Vis(int No) const {
-#ifdef DEBUG_EDITOR
-        if (No < 0 || No >= VCount) {
-            printf("Vis get no %d of %d\n", No, VCount);
-            assert(No >= 0 && No < VCount);
-        }
-#endif
-        return VV[GapLine(No, VGap, VCount, VAllocated)];
-    }
-    void Vis(int No, int V) {
-#ifdef DEBUG_EDITOR
-        if (No < 0 || No >= VCount) {
-            printf("Vis set no %d of %d to %d\n", No, VCount, V);
-            assert(No >= 0 && No < VCount);
-        }
-#endif
-        VV[GapLine(No, VGap, VCount, VAllocated)] = V;
-    }
-    PELine VLine(int No) const {
-#ifdef DEBUG_EDITOR
-        if (!((No < VCount) && (No >= 0))) {
-            printf("VGet No = %d\n", No);
-            assert((No < VCount) && (No >= 0));
-        }
-        if (Vis(No) < 0)
-            assert(1 == 0);
-#endif
-        return RLine(No + Vis(No));
-    }
-    void VLine(int No, PELine L) {
-#ifdef DEBUG_EDITOR
-        if (!((No >= 0))) {
-            printf("VSet No = %d\n", No);
-            assert((No >= 0));
-        }
-        if (VV[No] < 0)
-            assert(1 == 0);
-#endif
-        RLine(No + Vis(No), L);
-    }
+    PELine RLine(int No) const;
+    void RLine(int No, PELine L);
+    int Vis(int No) const;
+    void Vis(int No, int V);
+    PELine VLine(int No) const;
+    void VLine(int No, PELine L);
 
-    int VToR(int No) const {
-#ifdef DEBUG_EDITOR
-        if (!(No < VCount)) {
-            printf("Get No = %d\n", No);
-            assert((No < VCount));
-        }
-#endif
-        return No + Vis(No);
-    }
+    int VToR(int No) const;
 
     int RToV(int No);
     int RToVN(int No);

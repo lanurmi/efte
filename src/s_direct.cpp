@@ -43,6 +43,26 @@ FileInfo::~FileInfo() {
     delete [] symlinkTarget;
 }
 
+const char * FileInfo::Name() const {
+    return name;
+}
+
+const char * FileInfo::SymlinkTargetName() const {
+    return symlinkTarget;
+}
+
+off_t FileInfo::Size() const {
+    return size;
+}
+
+int FileInfo::Type() const {
+    return type;
+}
+
+time_t FileInfo::MTime() const {
+    return mtime;
+}
+
 FileFind::FileFind(const char *aDirectory, const char *aPattern, int aFlags) {
     Directory = new char[strlen(aDirectory) + 1];
     if (Directory) {

@@ -28,10 +28,7 @@ class ExComplete: public ExView {
     size_t WordFixedCount;
 
     int RefreshComplete();
-    inline int CheckASCII(int c) {
-        return ((c < 256)
-                && (isalnum(c) || (c == '_') || (c == '.'))) ? 1 : 0;
-    }
+    int CheckASCII(int c);
     void FixedUpdate(int add);
 
 public:
@@ -39,9 +36,7 @@ public:
     ExComplete(EBuffer *B);
     virtual ~ExComplete();
     virtual void Activate(int gotfocus);
-    virtual ExView* GetViewContext() {
-        return Next;
-    }
+    virtual ExView* GetViewContext();
     virtual int BeginMacro();
     virtual void HandleEvent(TEvent &Event);
     virtual void UpdateView();

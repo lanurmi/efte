@@ -405,6 +405,10 @@ void ECvsBase::ShowLine(EView *V, int line) {
     }
 }
 
+int ECvsBase::GetContext() const {
+    return CONTEXT_CVSBASE;
+}
+
 // Event map - this name is used in config files when defining eventmap
 EEventMap *ECvsBase::GetEventMap() {
     return FindEventMap("CVSBASE");

@@ -31,6 +31,10 @@ void ExISearch::Activate(int gotfocus) {
     ExView::Activate(gotfocus);
 }
 
+ExView * ExISearch::GetViewContext() {
+    return Next;
+}
+
 int ExISearch::BeginMacro() {
     return 1;
 }

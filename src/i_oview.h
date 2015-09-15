@@ -27,9 +27,7 @@ public:
     virtual int ExecCommand(int Command, ExState &State);
 
     virtual void Activate(int gotfocus);
-    virtual int GetContext() const {
-        return CONTEXT_NONE;
-    }
+    virtual int GetContext() const;
     virtual ExView *GetViewContext() {
         return this;
     }
@@ -63,12 +61,8 @@ public:
     int ConHideCursor();
     void ConSetInsertState(bool insert);
 
-    virtual int IsModelView() const {
-        return 0;
-    }
-    virtual void WnSwitchBuffer(EModel *M) {
-        Next->WnSwitchBuffer(M);
-    }
+    virtual int IsModelView() const;
+    virtual void WnSwitchBuffer(EModel *M);
 };
 
 #endif

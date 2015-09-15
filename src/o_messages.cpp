@@ -143,6 +143,10 @@ void EMessages::FindFileErrors(EBuffer *B) {
         }
 }
 
+int EMessages::GetContext() const {
+    return CONTEXT_MESSAGES;
+}
+
 int EMessages::RunPipe(const char *ADir, const char *ACommand) {
     if (!KeepMessages)
         FreeErrors();

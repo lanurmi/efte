@@ -26,9 +26,7 @@ public:
     virtual ~ExChoice();
     virtual void Activate(int gotfocus);
 
-    virtual ExView* GetViewContext() {
-        return Next;
-    }
+    virtual ExView* GetViewContext();
     virtual int BeginMacro();
     int FindChoiceByPoint(int x, int y);
     virtual void HandleEvent(TEvent &Event);

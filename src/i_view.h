@@ -57,9 +57,7 @@ public:
     int GetStr(const char *Prompt, unsigned int BufLen, char *Str, int HistId);
     int GetFile(const char *Prompt, unsigned int BufLen, char *Str, int HistId, int Flags);
 
-    int IsModelView() const {
-        return Top ? Top->IsModelView() : 0;
-    }
+    int IsModelView() const;
 };
 
 #endif

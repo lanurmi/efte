@@ -200,6 +200,10 @@ int ECvs::ConfQuit(GxView* V, int multiFile) {
     } else return 1;
 }
 
+int ECvs::GetContext() const {
+    return CONTEXT_CVS;
+}
+
 // Event map - this name is used in config files when defining eventmap
 EEventMap *ECvs::GetEventMap() {
     return FindEventMap("CVS");

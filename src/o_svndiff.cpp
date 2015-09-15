@@ -158,6 +158,10 @@ ESvnDiff::BlockCopy(int Append) {
     return ErOK;
 }
 
+int ESvnDiff::GetContext() const {
+    return CONTEXT_SVNDIFF;
+}
+
 // Event map - this name is used in config files when defining eventmap
 EEventMap      *
 ESvnDiff::GetEventMap() {

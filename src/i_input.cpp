@@ -49,6 +49,10 @@ void ExInput::Activate(int gotfocus) {
     ExView::Activate(gotfocus);
 }
 
+ExView * ExInput::GetViewContext() {
+    return Next;
+}
+
 int ExInput::BeginMacro() {
     return 1;
 }

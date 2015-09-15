@@ -25,6 +25,10 @@ void ExKey::Activate(int gotfocus) {
     ExView::Activate(gotfocus);
 }
 
+ExView* ExKey::GetViewContext() {
+    return Next;
+}
+
 int ExKey::BeginMacro() {
     return 1;
 }

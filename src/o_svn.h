@@ -43,9 +43,7 @@ public:
     virtual int CanQuit() const;
     virtual int ConfQuit(GxView *V, int multiFile);
 
-    virtual int GetContext() const {
-        return CONTEXT_SVN;
-    }
+    virtual int GetContext() const;
     virtual EEventMap *GetEventMap();
 };
 

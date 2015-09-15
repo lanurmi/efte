@@ -27,6 +27,10 @@ void ExASCII::Activate(int gotfocus) {
     ExView::Activate(gotfocus);
 }
 
+ExView* ExASCII::GetViewContext() {
+    return Next;
+}
+
 int ExASCII::BeginMacro() {
     return 1;
 }

@@ -370,6 +370,10 @@ int LookAt(EBuffer *B, int Row, unsigned int Pos, const char *What, hsState Stat
     ENDFUNCRC(0);
 }
 
+int LookAtNoCase(EBuffer *B, int Row, unsigned int Pos, const char *What, hsState State, int NoWord) {
+    return LookAt(B, Row, Pos, What, State, NoWord, 1);
+}
+
 int C_Indent = 4;
 int C_BraceOfs = 0;
 int C_ParenDelta = -1;

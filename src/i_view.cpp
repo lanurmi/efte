@@ -183,6 +183,10 @@ int GxView::GetFile(const char *Prompt, unsigned int BufLen, char *Str, int Hist
         return ReadStr(Prompt, BufLen, Str, CompletePath, SelectPathname, HistId);
 }
 
+int GxView::IsModelView() const {
+    return Top ? Top->IsModelView() : 0;
+}
+
 int GxView::ReadStr(const char *Prompt, unsigned int BufLen, char *Str, Completer Comp, int Select, int HistId) {
     int rc;
     ExInput *input;

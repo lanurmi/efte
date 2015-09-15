@@ -123,6 +123,10 @@ int ECvsDiff::BlockCopy(int Append) {
     return ErOK;
 }
 
+int ECvsDiff::GetContext() const {
+    return CONTEXT_CVSDIFF;
+}
+
 // Event map - this name is used in config files when defining eventmap
 EEventMap *ECvsDiff::GetEventMap() {
     return FindEventMap("CVSDIFF");
