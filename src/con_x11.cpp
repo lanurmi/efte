@@ -414,7 +414,7 @@ static int InitXFonts(void) {
 }
 
 static int SetupXWindow(int argc, char **argv) {
-    unsigned long mask;
+    unsigned long mask = 0;
 
 #ifdef WINHCLX
     HCLXlibInit(); /* HCL - Initialize the X DLL */
