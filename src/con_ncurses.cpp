@@ -46,7 +46,7 @@ static void SaveScreen() {
         SavedScreen = (PCell *) malloc(NewSavedH * sizeof(PCell));
         for (int j = 0 ; j < NewSavedH; j++) {
             SavedScreen[j] = (PCell)malloc(NewSavedW * sizeof(TCell));
-            bzero(SavedScreen[j], sizeof(SavedScreen[j]));
+            bzero(SavedScreen[j], sizeof(*SavedScreen[j]));
         }
         MaxSavedW = SavedW = NewSavedW;
         MaxSavedH = SavedH = NewSavedH;
