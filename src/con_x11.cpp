@@ -37,6 +37,7 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/keysym.h>
+#include <X11/XF86keysym.h>
 #include <X11/Xos.h>
 #ifdef USE_XTINIT
 #include <X11/Intrinsic.h>
@@ -1085,6 +1086,8 @@ static struct {
     { XK_End,            kbEnd },
     { XK_Down,           kbDown },
     { XK_Next,           kbPgDn },
+    { XF86XK_Back,       kbLeft | kfAlt },
+    { XF86XK_Forward,    kbRight | kfAlt },
     { XK_Select,         kbEnd },
     { XK_KP_Enter,       kbEnter | kfGray },
     { XK_Insert,         kbIns | kfGray },
