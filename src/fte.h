@@ -62,6 +62,7 @@
 #include "o_svndiff.h"
 #include "c_commands.h"
 #include "c_history.h"
+#include "h_c.h"
 
 #if defined(_DEBUG) && defined(MSVC) && defined(MSVCDEBUG)
 #include <crtdbg.h>

@@ -16,19 +16,6 @@
 
 #define ISNAME(x)  (isalnum(x) || (x == '_'))
 
-
-#define hsC_Normal       0
-#define hsC_Comment      1
-#define hsC_CommentL     2
-#define hsC_Keyword      4
-#define hsC_String1     10
-#define hsC_String2     11
-#define hsC_CPP         12
-#define hsC_CPP_Comm    13
-#define hsC_CPP_String1 14
-#define hsC_CPP_String2 15
-#define hsC_CPP_ABrace  16
-
 int Hilit_C(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, hlState &State, hsState *StateMap, int *ECol) {
     int j = 0;
     int firstnw = 0;
