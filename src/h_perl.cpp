@@ -267,7 +267,7 @@ int Hilit_PERL(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
                     if (
                         p[1] != '}' &&
                         !(x < Line->Count+1 && strncmp(Line->Chars + x, "=>", 2) == 0) &&
-                        !(x > 2 && strncmp(Line->Chars + x - 2, "->", 2))
+                        !(x > 2 && strncmp(Line->Chars + x - 2, "->", 2) == 0)
                        ) {
 
                         if (j == 1) {
