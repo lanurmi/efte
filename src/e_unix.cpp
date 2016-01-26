@@ -53,7 +53,8 @@ int EView::SysShowHelp(ExState &State, const char *word) {
             close(2);
             //dup(1); // ignore error output
             close(0);
-            assert(open("/dev/null", O_RDONLY) == 0);
+            int fh = open("/dev/null", O_RDONLY);
+            assert(fh == 0);
             execlp("man", "man",
 #ifndef AIX // current AIX's don't like the -a.
                    "-a",

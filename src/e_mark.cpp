@@ -262,6 +262,8 @@ int EMarkIndex::PopMark(EView *aView) {
     sprintf(name, "#%d", stackTop);
     if (View(aView, name) == 0)
         return 0;
-    assert(Remove(name) == 1);
+
+    int removed_success = Remove(name);
+    assert(removed_success == 1);
     return 1;
 }

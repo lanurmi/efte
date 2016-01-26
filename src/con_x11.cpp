@@ -2146,7 +2146,10 @@ int GUI::OpenPipe(char *Command, EModel *notify) {
                 signal(SIGPIPE, SIG_DFL);
                 close(pfd[0]);
                 close(0);
-                assert(open("/dev/null", O_RDONLY) == 0);
+                {
+                    int handle = open("/dev/null", O_RDONLY);
+                    assert(handle == 0);
+                }
                 dup2(pfd[1], 1);
                 dup2(pfd[1], 2);
                 close(pfd[1]);
