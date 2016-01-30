@@ -3949,7 +3949,7 @@ int GUI::ClosePipe(int id) {
     return Pipes[id].RetCode;
 }
 
-int GUI::multiFrame() {
+int GUI::MultiFrame() {
     return 1;
 }
 
