@@ -627,7 +627,8 @@ int ConInit(int XSize, int YSize) {
 
     memset(&SaveKbdState, 0, sizeof(SaveKbdState));
     SaveKbdState.cb = sizeof(SaveKbdState);
-    assert(KbdGetStatus(&SaveKbdState, 0) == 0);
+    APIRET16 s = KbdGetStatus(&SaveKbdState, 0);
+    assert(s == 0);
     ConContinue();
 
     Initialized = 1;
@@ -651,7 +652,8 @@ int ConSuspend() {
     ki = SaveKbdState;
     ki.fsMask &= ~(KEYBOARD_ECHO_OFF | KEYBOARD_BINARY_MODE);
     ki.fsMask |= (KEYBOARD_ECHO_ON | KEYBOARD_ASCII_MODE);
-    assert(0 == KbdSetStatus(&ki, 0));
+    APIRET16 s = KbdSetStatus(&ki, 0);
+    assert(0 == s);
 
     ConHideMouse();
 
@@ -671,7 +673,8 @@ int ConContinue() {
     ki = SaveKbdState;
     ki.fsMask &= ~(KEYBOARD_ECHO_ON | KEYBOARD_ASCII_MODE);
     ki.fsMask |= (KEYBOARD_ECHO_OFF | KEYBOARD_BINARY_MODE);
-    assert(KbdSetStatus(&ki, 0) == 0);
+    APIRET16 s = KbdSetStatus(&ki, 0);
+    assert(s == 0);
 
     vi.cb = 6;
     vi.type = 2;
@@ -723,7 +726,8 @@ int ConGetEvent(TEventMask EventMask, TEvent *Event, int WaitTime, int Delete) {
     ki = SaveKbdState;
     ki.fsMask &= ~(KEYBOARD_ECHO_ON | KEYBOARD_ASCII_MODE);
     ki.fsMask |= (KEYBOARD_ECHO_OFF | KEYBOARD_BINARY_MODE);
-    assert(KbdSetStatus(&ki, 0) == 0);
+    APIRET16 s = KbdSetStatus(&ki, 0);
+    assert(s == 0);
 
     while ((WaitTime == -1) || (WaitTime >= 0)) {
         if ((ReadKbdEvent(Event, WaitTime) == 1) && (EventMask & evKeyboard)) break;
