@@ -256,7 +256,7 @@ int Hilit_PERL(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
                     while ((x < Line->Count) &&
                            ((Line->Chars[x] == ' ') || (Line->Chars[x] == 9))) x++;
 
-                    if (BF->GetHilitWord(Color, &Line->Chars[i], j)) {
+                    if (BF->GetHilitWord(j, &Line->Chars[i], Color)) {
                         //Color = hcPERL_Keyword;
                         State = hsPerl_Keyword | (State & R_BIT);
                         if (strncmp(p, "sub", 3) == 0) {
