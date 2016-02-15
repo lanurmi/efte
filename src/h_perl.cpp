@@ -19,6 +19,12 @@
  *    some tab handling (in & foo, etc -- if allowed)/
  */
 
+#define R_BIT     0x100    /* set if last was regexpable -- this overlaps with the CHAR, but shouldn't happen at the same time. */
+#define X_BIT     0x80     /* set if last was number, var, */
+#define X_MASK    0x7F
+#define UPPER_MASK (~X_MASK)
+#define X_NOT(state) (!((state) & X_BIT))
+
 #include "fte.h"
 #include <stdio.h>
 
@@ -26,13 +32,6 @@
 #include "o_buflist.h"
 
 #include <ctype.h>
-
-#define F_BIT     0x200    /* set if last makes this a function */
-#define R_BIT     0x100    /* set if last was regexpable -- this overlaps with the CHAR, but shouldn't happen at the same time. */
-#define X_BIT     0x80     /* set if last was number, var, */
-#define X_MASK    0x7F
-#define UPPER_MASK (~X_MASK)
-#define X_NOT(state) (!((state) & X_BIT))
 
 #define kwd(x) (isalnum(x) || (x) == '_')
 
@@ -165,14 +164,6 @@ int Hilit_PERL(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
                     State &= ~R_BIT;
                 }
 
-                if (i > 1 && p[-1] == '-' && p[0] == '>') {
-                    State |= F_BIT;
-                } else if (isspace(*p) || isalpha(*p) || *p == '_') {
-                    ; // nothing
-                } else {
-                    State &= ~F_BIT;
-                }
-
                 if (i == 0 && X_NOT(State) && len == 8 &&
                     p[0] == '_' &&
                     p[1] == '_' &&
@@ -264,20 +255,23 @@ int Hilit_PERL(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
                             ColorNext();
                             ColorNext();
                             ColorNext();
+                            j -= 3;
 
                             Color = CLR_Function;
                             while ((len > 0) && (isspace(*p)))
                                 ColorNext();
-                            while ((len > 0) && (isalnum(*p) ||
-                                                 *p == '_' ||
-                                                 *p == ':' ||
-                                                 *p == '\'')) {
-                                ColorNext();
+                            if (isalpha(*p) || *p == '_') {
+                                while ((len > 0) && (isalnum(*p) ||
+                                                     *p == '_' ||
+                                                     *p == ':' ||
+                                                     *p == '\'')) {
+                                    ColorNext();
+                                }
                             }
                             Color = CLR_Normal;
                         }
                     } else {
-                        if ((State & F_BIT) || ((x < Line->Count) && (Line->Chars[x] == '('))) {
+                        if ((x < Line->Count) && (Line->Chars[x] == '(')) {
                             Color = CLR_Function;
                         } else {
                             Color = CLR_Normal;
@@ -290,8 +284,7 @@ int Hilit_PERL(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
                     // so let's look for that and try not to hilight them.
                     if (
                         p[1] != '}' &&
-                        !(x < Line->Count+1 && strncmp(Line->Chars + x, "=>", 2) == 0) &&
-                        !(State & F_BIT)
+                        !(x < Line->Count+1 && strncmp(Line->Chars + x, "=>", 2) == 0)
                        ) {
                         if (j == 1) {
                             if (*p == 'q') op = opQ;
@@ -378,7 +371,7 @@ int Hilit_PERL(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line
                     continue;
                 } else if (
                            (*p == '&' && (len < 2 || p[1] != '&') && X_NOT(State)) ||
-                           (State & F_BIT && (isalpha(*p) || *p == '_'))
+                           (isalpha(*p) || *p == '_')
                           ){
                     State = hsPerl_Function;
                     Color = CLR_Function;
