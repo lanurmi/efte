@@ -230,10 +230,11 @@ extern EBufferFlags DefaultBufferFlags;
 #define CLR_Quotes         7
 #define CLR_Number         8
 #define CLR_HexNumber      9
-// for now, hex and octal shall have the same color
+// for now, hex, octal and binary shall have the same color
 // because octal isn't defined in most config files
 // and defaults to black
 #define CLR_OctalNumber   CLR_HexNumber
+#define CLR_BinaryNumber  CLR_HexNumber
 #define CLR_FloatNumber   11
 #define CLR_Function      12
 #define CLR_Command       13

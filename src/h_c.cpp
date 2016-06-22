@@ -16,6 +16,12 @@
 
 #define ISNAME(x)  (isalnum(x) || (x == '_'))
 
+
+// Check if the digit is a binary digit
+static int isbdigit(int c) {
+    return (c == '0' || c == '1');
+}
+
 int Hilit_C(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, hlState &State, hsState *StateMap, int *ECol) {
     int j = 0;
     int firstnw = 0;
@@ -84,14 +90,20 @@ int Hilit_C(EBuffer *BF, int /*LN*/, PCell B, int Pos, int Width, ELine *Line, h
                 } else if (isdigit(*p)) {
                     // check if it is not floating point number 0.08!
                     if ((len >= 2) && ((*p == '0') && p[1] != '.' &&
-                    // only numbers longer than 1 digit be hex/octal
-                                       (isdigit(p[1]) || toupper(p[1]) == 'X')))
+                    // only numbers longer than 1 digit be hex/octal/binary
+                                       (isdigit(p[1]) || toupper(p[1]) == 'X' ||
+                                       toupper(p[1]) == 'B')))
                     {
                         if (toupper(*(p + 1)) == 'X') {
                             Color = CLR_HexNumber;
                             ColorNext();
                             ColorNext();
                             while (len && isxdigit(*p)) ColorNext();
+                        } else if (toupper(*(p + 1)) == 'B') {
+                            Color = CLR_BinaryNumber;
+                            ColorNext();
+                            ColorNext();
+                            while (len && isbdigit(*p)) ColorNext();
                         } else { /* assume it's octal */
                             Color = CLR_OctalNumber;
                             ColorNext();
