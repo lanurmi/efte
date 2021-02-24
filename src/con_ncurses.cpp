@@ -661,6 +661,8 @@ int ConGetEvent(TEventMask /*EventMask */ ,
         KEvent->Code |= kbTab;
     } else if (ch < 32) {
         KEvent->Code |= (kfCtrl | (ch + 0100));
+    } else if (ch == 0x7f) {
+        KEvent->Code = kbBackSp;
     } else if (ch < 256) {
         KEvent->Code |= ch;
     } else { // > 255
