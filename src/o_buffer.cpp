@@ -1024,6 +1024,10 @@ int EBuffer::MoveToLine(ExState &State) {
         if (View->MView->Win->GetStr("Goto Line", sizeof(Num), Num, HIST_POSITION) == 0)
             return 0;
         No = atol(Num);
+        if (No < 0)
+        {
+             No = RCount - abs(No) + 1;
+        }
     }
     return SetNearPosR(CP.Col, No - 1);
 }
