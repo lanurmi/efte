@@ -217,7 +217,7 @@ int FileFind::FindFirst(FileInfo **fi) {
     int rc;
 
     if (dir)
-        _findclose(dir);
+        FindClose(dir);
 
     /*if (Flags & ffDIRECTORY)
     attr |= FILE_DIRECTORY;
