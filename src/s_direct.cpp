@@ -172,10 +172,10 @@ int FileFind::FindFirst(FileInfo **fi) {
     char fullpath[MAXPATH];
     char *name;
     struct tm t;
-    int rc;
+	intptr_t rc;
 
     if (dir)
-        _findclose(dir);
+        _findclose((intptr_t)dir);
 
     /*if (Flags & ffDIRECTORY)
     attr |= FILE_DIRECTORY;
@@ -192,7 +192,7 @@ int FileFind::FindFirst(FileInfo **fi) {
         //        fprintf(stderr, "%s: %d\n\n", fullpattern, rc);
         return -1;
     }
-    dir = rc;
+    dir = (void*)rc;
 
     name = find.name;
     if (Flags & ffFULLPATH) {
@@ -214,7 +214,7 @@ int FileFind::FindFirst(FileInfo **fi) {
     struct tm t;
     SYSTEMTIME st;
     FILETIME localft;                   // needed for time conversion
-    int rc;
+    void *rc;
 
     if (dir)
         FindClose(dir);
@@ -230,7 +230,7 @@ int FileFind::FindFirst(FileInfo **fi) {
     else
         JoinDirFile(fullpattern, Directory, "*");
 
-    if ((rc = (int) FindFirstFile(fullpattern, &find)) < 0) {
+    if ((rc = FindFirstFile(fullpattern, &find)) < 0) {
         //fprintf(stderr, "%s: %d\n\n", fullpattern, rc);
         return -1;
     }
@@ -382,7 +382,7 @@ again:
     struct tm t;
     int rc;
 
-    if ((rc = _findnext(dir,
+    if ((rc = _findnext((intptr_t)dir,
                         &find)) != 0) {
         // fprintf(stderr, "%d\n\n", rc);
         return -1;

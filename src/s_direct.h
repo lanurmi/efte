@@ -52,7 +52,11 @@ class FileFind {
 #elif defined(OS2) && !defined(USE_DIRENT)
     unsigned long dir; // should be HDIR, but we don't #include huge os2.h globally
 #elif defined(NT) && !defined(USE_DIRENT)
-    unsigned long dir; // should be HANDLE
+#if defined(USE_VCFIND)
+	void *dir; // should be intptr_t
+#else
+	void *dir; // should be HANDLE
+#endif
 #endif
 
 public:
