@@ -898,8 +898,8 @@ int ConSetSize(int X, int Y) {
     int i;
     int MX, MY;
 
-    assert(X <= ConMaxCols);
-    assert(Y <= ConMaxRows);
+    if (X > ConMaxCols) X = ConMaxCols;
+    if (Y > ConMaxRows) Y = ConMaxRows;
 
     p = NewBuffer = (unsigned char *) malloc(X * Y * 2);
     if (NewBuffer == NULL) return -1;
